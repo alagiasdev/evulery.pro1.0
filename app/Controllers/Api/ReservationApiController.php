@@ -42,6 +42,20 @@ class ReservationApiController
             Response::error($v->firstError(), 'VALIDATION_ERROR', 422);
         }
 
+        // Validate booking advance window
+        $bookingDate = strtotime($data['date']);
+        $today = strtotime(date('Y-m-d'));
+        $daysAhead = (int)(($bookingDate - $today) / 86400);
+        $advanceMin = (int)($tenant['booking_advance_min'] ?? 0);
+        $advanceMax = (int)($tenant['booking_advance_max'] ?? 60);
+
+        if ($daysAhead < $advanceMin) {
+            Response::error("Le prenotazioni richiedono almeno {$advanceMin} giorni di anticipo.", 'DATE_TOO_SOON', 422);
+        }
+        if ($daysAhead > $advanceMax) {
+            Response::error("Le prenotazioni sono possibili fino a {$advanceMax} giorni in anticipo.", 'DATE_TOO_FAR', 422);
+        }
+
         // Find or create customer (before locking to minimize transaction duration)
         $customer = (new Customer())->findOrCreate($tenant['id'], [
             'first_name' => $data['first_name'],

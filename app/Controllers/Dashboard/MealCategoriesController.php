@@ -36,11 +36,24 @@ class MealCategoriesController
         if (isset($data['categories']) && is_array($data['categories'])) {
             foreach ($data['categories'] as $i => $cat) {
                 if (empty($cat['name']) || empty($cat['display_name'])) continue;
+
+                // Validate time format HH:MM
+                $startTime = $cat['start_time'] ?? '';
+                $endTime = $cat['end_time'] ?? '';
+                if (!preg_match('/^\d{2}:\d{2}$/', $startTime) || !preg_match('/^\d{2}:\d{2}$/', $endTime)) {
+                    flash('danger', "Formato orario non valido per '{$cat['display_name']}'. Usa il formato HH:MM.");
+                    Response::redirect(url('dashboard/settings/meal-categories'));
+                }
+                if ($startTime >= $endTime) {
+                    flash('danger', "L'orario di inizio deve essere prima dell'orario di fine per '{$cat['display_name']}'.");
+                    Response::redirect(url('dashboard/settings/meal-categories'));
+                }
+
                 $categoryModel->upsert($tenantId, [
                     'name'         => $cat['name'],
                     'display_name' => $cat['display_name'],
-                    'start_time'   => $cat['start_time'],
-                    'end_time'     => $cat['end_time'],
+                    'start_time'   => $startTime,
+                    'end_time'     => $endTime,
                     'sort_order'   => (int)($cat['sort_order'] ?? $i),
                     'is_active'    => isset($cat['is_active']) ? true : false,
                 ]);

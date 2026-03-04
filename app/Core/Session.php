@@ -4,6 +4,9 @@ namespace App\Core;
 
 class Session
 {
+    private const IDLE_TIMEOUT = 1800;     // 30 minutes
+    private const ABSOLUTE_TIMEOUT = 28800; // 8 hours
+
     public static function start(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -16,6 +19,24 @@ class Session
                 'samesite'  => 'Lax',
             ]);
             session_start();
+
+            // Idle timeout: destroy session after 30 min of inactivity
+            if (isset($_SESSION['_last_activity']) && (time() - $_SESSION['_last_activity']) > self::IDLE_TIMEOUT) {
+                self::destroy();
+                session_start();
+                return;
+            }
+            $_SESSION['_last_activity'] = time();
+
+            // Absolute timeout: destroy session after 8 hours regardless of activity
+            if (isset($_SESSION['_created_at']) && (time() - $_SESSION['_created_at']) > self::ABSOLUTE_TIMEOUT) {
+                self::destroy();
+                session_start();
+                return;
+            }
+            if (!isset($_SESSION['_created_at'])) {
+                $_SESSION['_created_at'] = time();
+            }
         }
     }
 

@@ -88,7 +88,21 @@ class ReservationsController
             Response::redirect(url('dashboard/reservations/create'));
         }
 
+        // Validate booking advance window
+        $tenant = TenantResolver::current();
+        $bookingDate = strtotime($data['reservation_date']);
+        $today = strtotime(date('Y-m-d'));
+        $daysAhead = (int)(($bookingDate - $today) / 86400);
+        $advanceMin = (int)($tenant['booking_advance_min'] ?? 0);
+        $advanceMax = (int)($tenant['booking_advance_max'] ?? 60);
+
         $forceBooking = !empty($data['force_booking']) && (Auth::isOwner() || Auth::isSuperAdmin());
+
+        if (!$forceBooking && ($daysAhead < $advanceMin || $daysAhead > $advanceMax)) {
+            flash('warning', "La data selezionata non rientra nella finestra di prenotazione ({$advanceMin}-{$advanceMax} giorni).");
+            \App\Core\Session::flash('old_input', $data);
+            Response::redirect(url('dashboard/reservations/create'));
+        }
 
         // Find or create customer (before locking to minimize transaction duration)
         $customer = (new Customer())->findOrCreate($tenantId, [
