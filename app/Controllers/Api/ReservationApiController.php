@@ -42,21 +42,7 @@ class ReservationApiController
             Response::error($v->firstError(), 'VALIDATION_ERROR', 422);
         }
 
-        // Check availability
-        $availability = new AvailabilityService();
-        if (!$availability->canBook($tenant['id'], $data['date'], $data['time'], (int)$data['party_size'])) {
-            $suggestions = $availability->getSuggestions(
-                $tenant['id'], $data['date'], (int)$data['party_size'], $data['time']
-            );
-            Response::error(
-                'Posti non disponibili per l\'orario selezionato.',
-                'SLOT_UNAVAILABLE',
-                409,
-                ['suggestions' => $suggestions]
-            );
-        }
-
-        // Find or create customer
+        // Find or create customer (before locking to minimize transaction duration)
         $customer = (new Customer())->findOrCreate($tenant['id'], [
             'first_name' => $data['first_name'],
             'last_name'  => $data['last_name'],
@@ -70,8 +56,7 @@ class ReservationApiController
         $depositAmount = $depositRequired ? $tenant['deposit_amount'] : null;
         $status = $depositRequired ? 'pending' : 'confirmed';
 
-        // Create reservation
-        $reservationModel = new Reservation();
+        // Build reservation data
         $reservationData = [
             'tenant_id'        => $tenant['id'],
             'customer_id'      => $customer['id'],
@@ -88,7 +73,23 @@ class ReservationApiController
             $reservationData['customer_notes'] = substr($data['notes'], 0, 1000);
         }
 
-        $reservationId = $reservationModel->create($reservationData);
+        // Atomic check + book (prevents race condition / double-booking)
+        $availability = new AvailabilityService();
+        $reservationId = $availability->atomicBook(
+            $tenant['id'], $data['date'], $data['time'], (int)$data['party_size'], $reservationData
+        );
+
+        if ($reservationId === null) {
+            $suggestions = $availability->getSuggestions(
+                $tenant['id'], $data['date'], (int)$data['party_size'], $data['time']
+            );
+            Response::error(
+                'Posti non disponibili per l\'orario selezionato.',
+                'SLOT_UNAVAILABLE',
+                409,
+                ['suggestions' => $suggestions]
+            );
+        }
 
         // Log creation
         (new ReservationLog())->create($reservationId, null, $status, null, 'Prenotazione da widget');
@@ -116,12 +117,18 @@ class ReservationApiController
     public function show(Request $request): void
     {
         $slug = $request->param('slug');
+        $tenant = (new Tenant())->findBySlug($slug);
+
+        if (!$tenant || !$tenant['is_active']) {
+            Response::error('Ristorante non trovato.', 'TENANT_NOT_FOUND', 404);
+        }
+
         $id = (int)$request->param('id');
         $email = $request->query('email', '');
 
         $reservation = (new Reservation())->findWithCustomer($id);
 
-        if (!$reservation || $reservation['email'] !== $email) {
+        if (!$reservation || $reservation['email'] !== $email || (int)$reservation['tenant_id'] !== (int)$tenant['id']) {
             Response::error('Prenotazione non trovata.', 'NOT_FOUND', 404);
         }
 
@@ -137,6 +144,13 @@ class ReservationApiController
 
     public function cancel(Request $request): void
     {
+        $slug = $request->param('slug');
+        $tenant = (new Tenant())->findBySlug($slug);
+
+        if (!$tenant || !$tenant['is_active']) {
+            Response::error('Ristorante non trovato.', 'TENANT_NOT_FOUND', 404);
+        }
+
         $id = (int)$request->param('id');
         $data = $request->isJson() ? $request->json() : $request->all();
         $email = $data['email'] ?? '';
@@ -144,7 +158,7 @@ class ReservationApiController
         $reservationModel = new Reservation();
         $reservation = $reservationModel->findWithCustomer($id);
 
-        if (!$reservation || $reservation['email'] !== $email) {
+        if (!$reservation || $reservation['email'] !== $email || (int)$reservation['tenant_id'] !== (int)$tenant['id']) {
             Response::error('Prenotazione non trovata.', 'NOT_FOUND', 404);
         }
 

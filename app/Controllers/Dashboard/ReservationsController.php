@@ -88,18 +88,9 @@ class ReservationsController
             Response::redirect(url('dashboard/reservations/create'));
         }
 
-        // Check availability (unless force_booking)
         $forceBooking = !empty($data['force_booking']) && (Auth::isOwner() || Auth::isSuperAdmin());
-        if (!$forceBooking) {
-            $availability = new AvailabilityService();
-            if (!$availability->canBook($tenantId, $data['reservation_date'], $data['reservation_time'], (int)$data['party_size'])) {
-                flash('warning', 'Attenzione: orario non disponibile per il numero di coperti selezionato. Seleziona un orario diverso o forza la prenotazione.');
-                \App\Core\Session::flash('old_input', $data);
-                Response::redirect(url('dashboard/reservations/create'));
-            }
-        }
 
-        // Find or create customer
+        // Find or create customer (before locking to minimize transaction duration)
         $customer = (new Customer())->findOrCreate($tenantId, [
             'first_name' => $data['first_name'],
             'last_name'  => $data['last_name'],
@@ -113,8 +104,7 @@ class ReservationsController
             ? $data['source']
             : 'phone';
 
-        // Create reservation
-        $reservationModel = new Reservation();
+        // Build reservation data
         $reservationData = [
             'tenant_id'        => $tenantId,
             'customer_id'      => $customer['id'],
@@ -129,7 +119,22 @@ class ReservationsController
             $reservationData['customer_notes'] = substr($data['customer_notes'], 0, 1000);
         }
 
-        $reservationId = $reservationModel->create($reservationData);
+        if ($forceBooking) {
+            // Force booking: skip availability check
+            $reservationId = (new Reservation())->create($reservationData);
+        } else {
+            // Atomic check + book (prevents race condition / double-booking)
+            $availability = new AvailabilityService();
+            $reservationId = $availability->atomicBook(
+                $tenantId, $data['reservation_date'], $data['reservation_time'], (int)$data['party_size'], $reservationData
+            );
+
+            if ($reservationId === null) {
+                flash('warning', 'Attenzione: orario non disponibile per il numero di coperti selezionato. Seleziona un orario diverso o forza la prenotazione.');
+                \App\Core\Session::flash('old_input', $data);
+                Response::redirect(url('dashboard/reservations/create'));
+            }
+        }
 
         // Log
         $sourceLabels = ['phone' => 'telefono', 'walkin' => 'walk-in', 'altro' => 'altro'];

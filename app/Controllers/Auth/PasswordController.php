@@ -83,25 +83,36 @@ class PasswordController
 
         $db = Database::getInstance();
 
-        $stmt = $db->prepare(
-            'SELECT * FROM password_resets WHERE token = :token AND used = 0 AND expires_at > NOW() LIMIT 1'
-        );
-        $stmt->execute(['token' => $token]);
-        $reset = $stmt->fetch();
+        $db->beginTransaction();
+        try {
+            // Lock the token row to prevent concurrent use
+            $stmt = $db->prepare(
+                'SELECT * FROM password_resets WHERE token = :token AND used = 0 AND expires_at > NOW() LIMIT 1 FOR UPDATE'
+            );
+            $stmt->execute(['token' => $token]);
+            $reset = $stmt->fetch();
 
-        if (!$reset) {
-            flash('danger', 'Link di reset non valido o scaduto.');
+            if (!$reset) {
+                $db->rollBack();
+                flash('danger', 'Link di reset non valido o scaduto.');
+                Response::redirect(url('auth/forgot-password'));
+            }
+
+            // Mark token as used FIRST (prevents race condition)
+            $stmt = $db->prepare('UPDATE password_resets SET used = 1 WHERE id = :id');
+            $stmt->execute(['id' => $reset['id']]);
+
+            // Update password
+            $hash = password_hash($password, PASSWORD_BCRYPT);
+            $stmt = $db->prepare('UPDATE users SET password_hash = :hash WHERE id = :id');
+            $stmt->execute(['hash' => $hash, 'id' => $reset['user_id']]);
+
+            $db->commit();
+        } catch (\PDOException $e) {
+            $db->rollBack();
+            flash('danger', 'Errore durante il reset della password. Riprova.');
             Response::redirect(url('auth/forgot-password'));
         }
-
-        // Update password
-        $hash = password_hash($password, PASSWORD_BCRYPT);
-        $stmt = $db->prepare('UPDATE users SET password_hash = :hash WHERE id = :id');
-        $stmt->execute(['hash' => $hash, 'id' => $reset['user_id']]);
-
-        // Mark token as used
-        $stmt = $db->prepare('UPDATE password_resets SET used = 1 WHERE id = :id');
-        $stmt->execute(['id' => $reset['id']]);
 
         flash('success', 'Password reimpostata con successo. Puoi accedere.');
         Response::redirect(url('auth/login'));

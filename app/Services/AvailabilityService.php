@@ -124,6 +124,39 @@ class AvailabilityService
         return false;
     }
 
+    /**
+     * Atomic check + book: locks time_slots for tenant+day, re-checks availability, creates reservation.
+     * Returns reservation ID on success, null if slot not available.
+     */
+    public function atomicBook(int $tenantId, string $date, string $time, int $partySize, array $reservationData): ?int
+    {
+        $dayOfWeek = (int)date('N', strtotime($date)) - 1;
+
+        $this->db->beginTransaction();
+        try {
+            // Lock all slots for this tenant+day to serialize concurrent booking attempts
+            $stmt = $this->db->prepare(
+                'SELECT id FROM time_slots WHERE tenant_id = :tid AND day_of_week = :dow FOR UPDATE'
+            );
+            $stmt->execute(['tid' => $tenantId, 'dow' => $dayOfWeek]);
+
+            // Re-check availability within the transaction (consistent read after lock)
+            if (!$this->canBook($tenantId, $date, $time, $partySize)) {
+                $this->db->rollBack();
+                return null;
+            }
+
+            // Create reservation atomically
+            $reservationId = (new Reservation())->create($reservationData);
+
+            $this->db->commit();
+            return $reservationId;
+        } catch (\PDOException $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
     public function getDailySummary(int $tenantId, string $date): array
     {
         return (new Reservation())->countTodayByTenant($tenantId);
