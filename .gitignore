@@ -1,0 +1,25 @@
+/vendor/
+.env
+.env.backup
+/storage/logs/*.log
+/storage/cache/*
+/public/uploads/tenants/*
+!.gitkeep
+NUL
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Security audit (contiene dettagli vulnerabilita)
+SECURITY_AUDIT*.md
+
+# Composer binary
+composer.phar
+
+# IDE / Tools
+.vscode/
+.idea/
+.claude/

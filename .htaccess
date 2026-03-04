@@ -1,0 +1,18 @@
+RewriteEngine On
+
+# Block access to sensitive files
+<Files .env>
+    Require all denied
+</Files>
+<Files .env.example>
+    Require all denied
+</Files>
+<Files .gitignore>
+    Require all denied
+</Files>
+
+# Block access to sensitive directories
+RewriteRule ^(app|config|storage|vendor|database|bootstrap)(/|$) - [F,L]
+
+# Route all requests through public/
+RewriteRule ^(.*)$ public/$1 [L]
