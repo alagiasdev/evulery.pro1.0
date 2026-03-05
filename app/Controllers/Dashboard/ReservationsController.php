@@ -80,7 +80,8 @@ class ReservationsController
             ->date('reservation_date', 'Data')
             ->required('reservation_time', 'Orario')
             ->required('party_size', 'Persone')
-            ->integer('party_size', 'Persone');
+            ->integer('party_size', 'Persone')
+            ->between('party_size', 1, 50, 'Persone');
 
         if ($v->fails()) {
             flash('danger', $v->firstError());
@@ -261,7 +262,8 @@ class ReservationsController
             ->date('reservation_date', 'Data')
             ->required('reservation_time', 'Orario')
             ->required('party_size', 'Persone')
-            ->integer('party_size', 'Persone');
+            ->integer('party_size', 'Persone')
+            ->between('party_size', 1, 50, 'Persone');
 
         if ($v->fails()) {
             flash('danger', $v->firstError());

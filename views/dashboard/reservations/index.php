@@ -55,7 +55,7 @@
                 </tr>
                 <?php else: ?>
                 <?php foreach ($reservations as $r): ?>
-                <tr class="reservation-row" onclick="window.location='<?= url("dashboard/reservations/{$r['id']}") ?>'">
+                <tr class="reservation-row" data-url="<?= url("dashboard/reservations/{$r['id']}") ?>">
                     <td class="fw-semibold"><?= format_time($r['reservation_time']) ?></td>
                     <td><?= e($r['first_name'] . ' ' . $r['last_name']) ?></td>
                     <td><?= (int)$r['party_size'] ?> pax</td>

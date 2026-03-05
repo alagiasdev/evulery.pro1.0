@@ -39,7 +39,7 @@
                 </tr>
                 <?php else: ?>
                 <?php foreach ($customers as $c): ?>
-                <tr class="reservation-row" onclick="window.location='<?= url("dashboard/customers/{$c['id']}") ?>'">
+                <tr class="reservation-row" data-url="<?= url("dashboard/customers/{$c['id']}") ?>">
                     <td class="fw-semibold"><?= e($c['first_name'] . ' ' . $c['last_name']) ?></td>
                     <td><?= e($c['email']) ?></td>
                     <td><?= e($c['phone']) ?></td>

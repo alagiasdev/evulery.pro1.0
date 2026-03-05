@@ -6,7 +6,9 @@ use App\Core\Auth;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\TenantResolver;
+use App\Core\Validator;
 use App\Models\Tenant;
+use App\Services\AuditLog;
 
 class SettingsController
 {
@@ -24,6 +26,23 @@ class SettingsController
         $tenantId = Auth::tenantId();
         $data = $request->all();
 
+        $v = Validator::make($data)
+            ->required('name', 'Nome ristorante')
+            ->required('email', 'Email')
+            ->email('email', 'Email')
+            ->between('table_duration', 15, 300, 'Durata tavolo (minuti)')
+            ->between('time_step', 5, 120, 'Intervallo orario (minuti)');
+
+        if (isset($data['cancellation_policy']) && mb_strlen($data['cancellation_policy']) > 2000) {
+            flash('danger', 'La policy di cancellazione non può superare 2000 caratteri.');
+            Response::redirect(url('dashboard/settings'));
+        }
+
+        if ($v->fails()) {
+            flash('danger', $v->firstError());
+            Response::redirect(url('dashboard/settings'));
+        }
+
         (new Tenant())->update($tenantId, [
             'name'                => $data['name'] ?? '',
             'email'               => $data['email'] ?? '',
@@ -33,6 +52,8 @@ class SettingsController
             'table_duration'      => (int)($data['table_duration'] ?? 90),
             'time_step'           => (int)($data['time_step'] ?? 30),
         ]);
+
+        AuditLog::log(AuditLog::SETTINGS_UPDATED, null, Auth::id(), $tenantId);
 
         // Refresh tenant in resolver
         $tenant = (new Tenant())->findById($tenantId);

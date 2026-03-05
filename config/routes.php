@@ -73,7 +73,7 @@ $router->group('/admin', ['auth', 'admin', 'csrf'], function ($r) {
 });
 
 // --- API ROUTES (JSON) ---
-$router->group('/api/v1', [], function ($r) {
+$router->group('/api/v1', ['ratelimit'], function ($r) {
     $r->get('/tenants/{slug}/availability', [AvailabilityController::class, 'check']);
     $r->post('/tenants/{slug}/reservations', [ReservationApiController::class, 'store']);
     $r->get('/tenants/{slug}/reservations/{id}', [ReservationApiController::class, 'show']);

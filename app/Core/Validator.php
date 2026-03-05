@@ -101,6 +101,32 @@ class Validator
         return $this;
     }
 
+    public function passwordStrength(string $field, string $label = ''): self
+    {
+        $label = $label ?: $field;
+        if (isset($this->data[$field])) {
+            $val = $this->data[$field];
+            if (!preg_match('/[A-Z]/', $val)) {
+                $this->errors[$field] = "Il campo {$label} deve contenere almeno una lettera maiuscola.";
+            } elseif (!preg_match('/[0-9]/', $val)) {
+                $this->errors[$field] = "Il campo {$label} deve contenere almeno un numero.";
+            }
+        }
+        return $this;
+    }
+
+    public function between(string $field, int $min, int $max, string $label = ''): self
+    {
+        $label = $label ?: $field;
+        if (isset($this->data[$field]) && is_numeric($this->data[$field])) {
+            $value = (int)$this->data[$field];
+            if ($value < $min || $value > $max) {
+                $this->errors[$field] = "Il campo {$label} deve essere tra {$min} e {$max}.";
+            }
+        }
+        return $this;
+    }
+
     public function fails(): bool
     {
         return !empty($this->errors);

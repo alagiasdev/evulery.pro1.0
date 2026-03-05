@@ -6,6 +6,7 @@ use App\Core\Auth;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
+use App\Services\AuditLog;
 use App\Services\LoginThrottle;
 
 class LoginController
@@ -43,10 +44,12 @@ class LoginController
 
         if (Auth::attempt($email, $password)) {
             $throttle->clearAttempts($email);
+            AuditLog::log(AuditLog::LOGIN_SUCCESS, "Email: {$email}", Auth::id(), Auth::tenantId());
             $this->redirectByRole();
         }
 
         $throttle->recordFailedAttempt($email, $ip);
+        AuditLog::log(AuditLog::LOGIN_FAILED, "Email: {$email}");
 
         flash('danger', 'Email o password non validi.');
         Session::flash('old_input', ['email' => $email]);
@@ -55,6 +58,7 @@ class LoginController
 
     public function logout(Request $request): void
     {
+        AuditLog::log(AuditLog::LOGOUT, null, Auth::id(), Auth::tenantId());
         Auth::logout();
         flash('success', 'Logout effettuato con successo.');
         Response::redirect(url('auth/login'));

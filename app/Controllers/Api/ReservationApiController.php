@@ -31,6 +31,7 @@ class ReservationApiController
             ->time('time', 'Orario')
             ->required('party_size', 'Persone')
             ->integer('party_size', 'Persone')
+            ->between('party_size', 1, 50, 'Persone')
             ->required('first_name', 'Nome')
             ->required('last_name', 'Cognome')
             ->required('email', 'Email')

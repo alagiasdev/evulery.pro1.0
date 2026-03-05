@@ -71,10 +71,11 @@ class App
     private function runMiddleware(array $middleware): void
     {
         $middlewareMap = [
-            'auth'  => \App\Middleware\AuthMiddleware::class,
-            'admin' => \App\Middleware\AdminMiddleware::class,
-            'tenant' => \App\Middleware\TenantMiddleware::class,
-            'csrf'  => \App\Middleware\CSRFMiddleware::class,
+            'auth'      => \App\Middleware\AuthMiddleware::class,
+            'admin'     => \App\Middleware\AdminMiddleware::class,
+            'tenant'    => \App\Middleware\TenantMiddleware::class,
+            'csrf'      => \App\Middleware\CSRFMiddleware::class,
+            'ratelimit' => \App\Middleware\RateLimitMiddleware::class,
         ];
 
         foreach ($middleware as $name) {

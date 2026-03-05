@@ -37,7 +37,9 @@ class Tenant
 
     public function all(): array
     {
-        return $this->db->query('SELECT * FROM tenants ORDER BY created_at DESC')->fetchAll();
+        $stmt = $this->db->prepare('SELECT * FROM tenants ORDER BY created_at DESC');
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 
     public function create(array $data): int
@@ -97,11 +99,15 @@ class Tenant
 
     public function count(): int
     {
-        return (int)$this->db->query('SELECT COUNT(*) FROM tenants')->fetchColumn();
+        $stmt = $this->db->prepare('SELECT COUNT(*) FROM tenants');
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
     }
 
     public function countActive(): int
     {
-        return (int)$this->db->query('SELECT COUNT(*) FROM tenants WHERE is_active = 1')->fetchColumn();
+        $stmt = $this->db->prepare('SELECT COUNT(*) FROM tenants WHERE is_active = 1');
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
     }
 }

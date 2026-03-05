@@ -2,12 +2,14 @@
 
 namespace App\Controllers\Admin;
 
+use App\Core\Auth;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Validator;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Models\MealCategory;
+use App\Services\AuditLog;
 
 class TenantsController
 {
@@ -42,6 +44,7 @@ class TenantsController
             ->email('owner_email', 'Email proprietario')
             ->required('owner_password', 'Password proprietario')
             ->minLength('owner_password', 8, 'Password proprietario')
+            ->passwordStrength('owner_password', 'Password proprietario')
             ->required('owner_first_name', 'Nome proprietario')
             ->required('owner_last_name', 'Cognome proprietario');
 
@@ -56,7 +59,7 @@ class TenantsController
         // Check slug uniqueness
         $tenantModel = new Tenant();
         if ($tenantModel->findBySlug($slug)) {
-            $slug .= '-' . rand(100, 999);
+            $slug .= '-' . bin2hex(random_bytes(4));
         }
 
         // Create tenant
@@ -83,6 +86,8 @@ class TenantsController
             'last_name'  => $data['owner_last_name'],
             'role'       => 'owner',
         ]);
+
+        AuditLog::log(AuditLog::TENANT_CREATED, "Tenant: {$data['name']} (ID: {$tenantId})", Auth::id());
 
         flash('success', "Ristorante \"{$data['name']}\" creato con successo.");
         Response::redirect(url('admin/tenants'));
@@ -142,6 +147,7 @@ class TenantsController
     {
         $id = (int)$request->param('id');
         (new Tenant())->toggleActive($id);
+        AuditLog::log(AuditLog::TENANT_TOGGLED, "Tenant ID: {$id}", Auth::id());
         flash('success', 'Stato aggiornato.');
         Response::redirect(url('admin/tenants'));
     }

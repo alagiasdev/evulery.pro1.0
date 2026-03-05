@@ -47,6 +47,11 @@ class Response
     public static function back(): void
     {
         $referer = $_SERVER['HTTP_REFERER'] ?? url('/');
+        $host = parse_url($referer, PHP_URL_HOST);
+        $serverHost = $_SERVER['HTTP_HOST'] ?? '';
+        if ($host !== null && $host !== $serverHost) {
+            $referer = url('/');
+        }
         self::redirect($referer);
     }
 

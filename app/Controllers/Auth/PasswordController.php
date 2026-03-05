@@ -6,6 +6,8 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
+use App\Services\AuditLog;
+use App\Services\MailService;
 
 class PasswordController
 {
@@ -39,8 +41,10 @@ class PasswordController
                 'expires_at' => $expiresAt,
             ]);
 
-            // TODO: send email with reset link via url("auth/reset-password/{$token}")
+            // Send reset email
+            MailService::sendPasswordReset($email, $token, env('APP_NAME', 'Evulery'));
             app_log("Password reset requested for user {$user['id']}");
+            AuditLog::log(AuditLog::PASSWORD_RESET_REQUEST, "User ID: {$user['id']}", (int)$user['id']);
         }
 
         Response::redirect(url('auth/forgot-password'));
@@ -76,6 +80,11 @@ class PasswordController
             Response::redirect(url('auth/reset-password/' . $token));
         }
 
+        if (!preg_match('/[A-Z]/', $password) || !preg_match('/[0-9]/', $password)) {
+            flash('danger', 'La password deve contenere almeno una lettera maiuscola e un numero.');
+            Response::redirect(url('auth/reset-password/' . $token));
+        }
+
         if ($password !== $confirmation) {
             flash('danger', 'Le password non coincidono.');
             Response::redirect(url('auth/reset-password/' . $token));
@@ -108,6 +117,7 @@ class PasswordController
             $stmt->execute(['hash' => $hash, 'id' => $reset['user_id']]);
 
             $db->commit();
+            AuditLog::log(AuditLog::PASSWORD_RESET_DONE, "User ID: {$reset['user_id']}", (int)$reset['user_id']);
         } catch (\PDOException $e) {
             $db->rollBack();
             flash('danger', 'Errore durante il reset della password. Riprova.');
