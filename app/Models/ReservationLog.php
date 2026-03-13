@@ -29,6 +29,12 @@ class ReservationLog
         ]);
     }
 
+    public function deleteByReservation(int $reservationId): void
+    {
+        $this->db->prepare('DELETE FROM reservation_logs WHERE reservation_id = :id')
+                 ->execute(['id' => $reservationId]);
+    }
+
     public function findByReservation(int $reservationId): array
     {
         $stmt = $this->db->prepare(

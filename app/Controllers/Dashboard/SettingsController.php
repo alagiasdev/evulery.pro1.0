@@ -43,14 +43,27 @@ class SettingsController
             Response::redirect(url('dashboard/settings'));
         }
 
+        // Validate segment thresholds: occasionale < abituale < vip
+        $segOcc = max(1, (int)($data['segment_occasionale'] ?? 2));
+        $segAbi = max(2, (int)($data['segment_abituale'] ?? 4));
+        $segVip = max(3, (int)($data['segment_vip'] ?? 10));
+
+        if ($segOcc >= $segAbi || $segAbi >= $segVip) {
+            flash('danger', 'Le soglie segmento devono essere crescenti: Occasionale < Abituale < VIP.');
+            Response::redirect(url('dashboard/settings'));
+        }
+
         (new Tenant())->update($tenantId, [
-            'name'                => $data['name'] ?? '',
-            'email'               => $data['email'] ?? '',
-            'phone'               => $data['phone'] ?? null,
-            'address'             => $data['address'] ?? null,
-            'cancellation_policy' => $data['cancellation_policy'] ?? null,
-            'table_duration'      => (int)($data['table_duration'] ?? 90),
-            'time_step'           => (int)($data['time_step'] ?? 30),
+            'name'                 => $data['name'] ?? '',
+            'email'                => $data['email'] ?? '',
+            'phone'                => $data['phone'] ?? null,
+            'address'              => $data['address'] ?? null,
+            'cancellation_policy'  => $data['cancellation_policy'] ?? null,
+            'table_duration'       => (int)($data['table_duration'] ?? 90),
+            'time_step'            => (int)($data['time_step'] ?? 30),
+            'segment_occasionale'  => $segOcc,
+            'segment_abituale'     => $segAbi,
+            'segment_vip'          => $segVip,
         ]);
 
         AuditLog::log(AuditLog::SETTINGS_UPDATED, null, Auth::id(), $tenantId);

@@ -72,7 +72,9 @@ class Tenant
             'custom_domain', 'domain_status', 'cname_target',
             'plan', 'plan_price', 'deposit_enabled', 'deposit_amount',
             'cancellation_policy', 'table_duration', 'time_step',
-            'booking_advance_min', 'booking_advance_max', 'timezone', 'is_active',
+            'booking_advance_min', 'booking_advance_max',
+            'segment_occasionale', 'segment_abituale', 'segment_vip',
+            'timezone', 'is_active',
         ];
 
         foreach ($allowed as $field) {

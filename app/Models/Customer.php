@@ -92,10 +92,22 @@ class Customer
                  ->execute(['id' => $id]);
     }
 
+    public function decrementBookings(int $id): void
+    {
+        $this->db->prepare('UPDATE customers SET total_bookings = GREATEST(total_bookings - 1, 0) WHERE id = :id')
+                 ->execute(['id' => $id]);
+    }
+
     public function incrementNoshow(int $id): void
     {
         $this->db->prepare('UPDATE customers SET total_noshow = total_noshow + 1 WHERE id = :id')
                  ->execute(['id' => $id]);
+    }
+
+    public function updateNotes(int $id, string $notes): void
+    {
+        $this->db->prepare('UPDATE customers SET notes = :notes WHERE id = :id')
+                 ->execute(['id' => $id, 'notes' => $notes]);
     }
 
     public function countByTenant(int $tenantId): int

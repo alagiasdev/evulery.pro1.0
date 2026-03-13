@@ -46,6 +46,14 @@
                         <?= $reservation['deposit_paid'] ? '<span class="badge bg-success">Pagata</span>' : '<span class="badge bg-warning">Non pagata</span>' ?>
                     </div>
                     <?php endif; ?>
+                    <?php if (!empty($reservation['customer_notes_persistent'])): ?>
+                    <div class="col-12 mt-2">
+                        <div class="alert alert-info mb-0 py-2">
+                            <i class="bi bi-info-circle me-1"></i>
+                            <strong>Note cliente:</strong> <?= e($reservation['customer_notes_persistent']) ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -83,6 +91,31 @@
                     <button class="btn btn-outline-danger"><i class="bi bi-x-circle me-1"></i> Annulla</button>
                 </form>
                 <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Delete (only within 30 minutes of creation) -->
+        <?php
+        $minutesSinceCreation = (time() - strtotime($reservation['created_at'])) / 60;
+        $canDelete = $minutesSinceCreation <= 30;
+        ?>
+        <?php if ($canDelete): ?>
+        <div class="card mb-4 border-danger">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong class="text-danger"><i class="bi bi-trash me-1"></i>Elimina prenotazione</strong>
+                        <?php $remainingMin = max(0, (int)ceil(30 - $minutesSinceCreation)); ?>
+                        <br><small class="text-muted">Disponibile ancora per <?= $remainingMin ?> minuti dalla creazione. Questa azione è irreversibile.</small>
+                    </div>
+                    <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/delete") ?>" onsubmit="return confirm('Sei sicuro? Questa azione è IRREVERSIBILE e cancellerà definitivamente la prenotazione.')">
+                        <?= csrf_field() ?>
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash me-1"></i> Elimina
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
         <?php endif; ?>

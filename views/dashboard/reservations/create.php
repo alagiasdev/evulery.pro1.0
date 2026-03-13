@@ -227,5 +227,14 @@ window.DR_CONFIG = {
     apiUrl: '<?= url('api/v1') ?>',
     tenantSlug: '<?= e($tenantSlug) ?>',
     customerSearchUrl: '<?= url('dashboard/customers/search/json') ?>'
+    <?php if (!empty($prefillCustomer)): ?>
+    , prefillCustomer: {
+        firstName: <?= json_encode($prefillCustomer['first_name']) ?>,
+        lastName: <?= json_encode($prefillCustomer['last_name']) ?>,
+        email: <?= json_encode($prefillCustomer['email']) ?>,
+        phone: <?= json_encode($prefillCustomer['phone']) ?>,
+        notes: <?= json_encode($prefillCustomer['notes'] ?? '') ?>
+    }
+    <?php endif; ?>
 };
 </script>

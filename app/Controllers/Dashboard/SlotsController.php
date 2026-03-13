@@ -39,13 +39,17 @@ class SlotsController
             $slotsByDay[$slot['day_of_week']][] = $slot;
         }
 
+        // Load all categories (active + inactive) for visual hints in the grid
+        $allCategories = (new MealCategory())->findAllByTenant($tenantId);
+
         view('dashboard/settings/slots', [
-            'title'      => 'Orari e Coperti',
-            'activeMenu' => 'slots',
-            'slotsByDay' => $slotsByDay,
-            'dayNames'   => $this->dayNames,
-            'tenant'     => $tenant,
-            'startHour'  => $startHour,
+            'title'         => 'Orari e Coperti',
+            'activeMenu'    => 'slots',
+            'slotsByDay'    => $slotsByDay,
+            'dayNames'      => $this->dayNames,
+            'tenant'        => $tenant,
+            'startHour'     => $startHour,
+            'allCategories' => $allCategories,
         ], 'dashboard');
     }
 

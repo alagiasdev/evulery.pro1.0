@@ -44,9 +44,11 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf'], function ($r) {
     $r->post('/reservations/{id}/edit', [ReservationsController::class, 'update']);
     $r->post('/reservations/{id}/status', [ReservationsController::class, 'updateStatus']);
     $r->post('/reservations/{id}/notes', [ReservationsController::class, 'updateNotes']);
+    $r->post('/reservations/{id}/delete', [ReservationsController::class, 'destroy']);
     $r->get('/customers', [CustomersController::class, 'index']);
     $r->get('/customers/search/json', [CustomersController::class, 'searchJson']);
     $r->get('/customers/{id}', [CustomersController::class, 'show']);
+    $r->post('/customers/{id}/notes', [CustomersController::class, 'updateNotes']);
     $r->get('/settings', [SettingsController::class, 'general']);
     $r->post('/settings', [SettingsController::class, 'updateGeneral']);
     $r->get('/settings/slots', [SlotsController::class, 'index']);

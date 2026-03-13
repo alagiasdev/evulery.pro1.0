@@ -57,11 +57,22 @@ class ReservationsController
     {
         $tenant = TenantResolver::current();
 
+        // Pre-fill customer if coming from customer page
+        $prefillCustomer = null;
+        $customerId = (int)$request->query('customer_id', 0);
+        if ($customerId > 0) {
+            $customer = (new Customer())->findById($customerId);
+            if ($customer && (int)$customer['tenant_id'] === (int)Auth::tenantId()) {
+                $prefillCustomer = $customer;
+            }
+        }
+
         view('dashboard/reservations/create', [
-            'title'       => 'Nuova Prenotazione',
-            'activeMenu'  => 'reservations',
-            'tenantSlug'  => $tenant['slug'],
-            'pageScripts' => ['js/dashboard-reservation.js'],
+            'title'            => 'Nuova Prenotazione',
+            'activeMenu'       => 'reservations',
+            'tenantSlug'       => $tenant['slug'],
+            'prefillCustomer'  => $prefillCustomer,
+            'pageScripts'      => ['js/dashboard-reservation.js'],
         ], 'dashboard');
     }
 
@@ -191,6 +202,11 @@ class ReservationsController
         }
 
         flash('success', 'Stato aggiornato a: ' . status_label($newStatus));
+
+        $redirectBack = $request->input('redirect_back', '');
+        if ($redirectBack) {
+            Response::redirect(url($redirectBack));
+        }
         Response::redirect(url("dashboard/reservations/{$id}"));
     }
 
@@ -210,6 +226,40 @@ class ReservationsController
         $reservationModel->updateNotes($id, $notes);
         flash('success', 'Note aggiornate.');
         Response::redirect(url("dashboard/reservations/{$id}"));
+    }
+
+    public function destroy(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $reservationModel = new Reservation();
+        $reservation = $reservationModel->findById($id);
+
+        if (!$reservation || (int)$reservation['tenant_id'] !== (int)Auth::tenantId()) {
+            flash('danger', 'Prenotazione non trovata.');
+            Response::redirect(url('dashboard/reservations'));
+        }
+
+        // Allow delete only within 30 minutes of creation
+        $createdAt = strtotime($reservation['created_at']);
+        $now = time();
+        $minutesSinceCreation = ($now - $createdAt) / 60;
+
+        if ($minutesSinceCreation > 30) {
+            flash('danger', 'Non è più possibile eliminare questa prenotazione. Il tempo limite di 30 minuti è scaduto.');
+            Response::redirect(url("dashboard/reservations/{$id}"));
+        }
+
+        // Decrement customer booking count
+        (new Customer())->decrementBookings($reservation['customer_id']);
+
+        // Delete related logs first (foreign key)
+        (new ReservationLog())->deleteByReservation($id);
+
+        // Delete the reservation
+        $reservationModel->delete($id);
+
+        flash('success', 'Prenotazione #' . $id . ' eliminata definitivamente.');
+        Response::redirect(url('dashboard/reservations'));
     }
 
     public function edit(Request $request): void

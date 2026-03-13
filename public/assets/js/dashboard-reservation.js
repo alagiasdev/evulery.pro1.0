@@ -586,6 +586,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // ===== PREFILL CUSTOMER (from customer page link) =====
+    if (!isEdit && config.prefillCustomer) {
+        var pc = config.prefillCustomer;
+        if ($('dr-first-name')) $('dr-first-name').value = pc.firstName || '';
+        if ($('dr-last-name')) $('dr-last-name').value = pc.lastName || '';
+        if ($('dr-email')) $('dr-email').value = pc.email || '';
+        if ($('dr-phone')) $('dr-phone').value = pc.phone || '';
+        if (customerQ) customerQ.value = (pc.firstName || '') + ' ' + (pc.lastName || '');
+        if (pc.notes && $('dr-notes')) $('dr-notes').value = pc.notes;
+    }
+
     // ===== INIT =====
     var initPartySize = (isEdit && preselected.partySize) ? preselected.partySize : 2;
     initDates();

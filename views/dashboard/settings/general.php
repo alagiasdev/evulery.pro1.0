@@ -40,6 +40,37 @@
                 </div>
             </div>
 
+            <!-- Soglie Segmento Cliente -->
+            <div class="card mb-4">
+                <div class="card-header"><h6 class="mb-0">Segmento Cliente</h6></div>
+                <div class="card-body">
+                    <p class="text-muted small mb-3">Definisci il numero minimo di prenotazioni per ogni segmento. I clienti sotto la soglia "Occasionale" sono classificati come "Nuovo".</p>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Occasionale (da)</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="segment_occasionale" value="<?= (int)($tenant['segment_occasionale'] ?? 2) ?>" min="1" max="100">
+                                <span class="input-group-text">pren.</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Abituale (da)</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="segment_abituale" value="<?= (int)($tenant['segment_abituale'] ?? 4) ?>" min="2" max="200">
+                                <span class="input-group-text">pren.</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">VIP (da)</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="segment_vip" value="<?= (int)($tenant['segment_vip'] ?? 10) ?>" min="3" max="500">
+                                <span class="input-group-text">pren.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-primary">
                 <i class="bi bi-check-circle me-1"></i> Salva
             </button>

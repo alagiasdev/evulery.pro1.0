@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Dashboard v2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 180px;
+            --brand: #00844A;
+            --brand-light: #E8F5E9;
+            --brand-dark: #006837;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; }
+
+        /* Sidebar mock */
+        .mock-sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w); background: #1a1d23; color: #fff;
+            padding: 1rem 0; z-index: 100;
+        }
+        .mock-sidebar .brand { padding: 0 1rem 1rem; font-weight: 700; font-size: 1.05rem; border-bottom: 1px solid #333; margin-bottom: .5rem; }
+        .mock-sidebar .nav-item { padding: .5rem 1rem; font-size: .9rem; color: #adb5bd; }
+        .mock-sidebar .nav-item.active { background: var(--brand); color: #fff; border-radius: 6px; margin: 0 .5rem; }
+
+        /* Main content */
+        .main-content {
+            margin-left: var(--sidebar-w);
+            padding: 0;
+        }
+
+        /* Top bar — compatta */
+        .top-bar {
+            background: #fff;
+            border-bottom: 1px solid #e9ecef;
+            padding: .6rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .top-bar .date-display {
+            font-size: .9rem; color: #6c757d;
+        }
+        .top-bar .date-display i { margin-right: .3rem; }
+
+        /* Page body */
+        .page-body { padding: 1.25rem 1.5rem; }
+
+        /* Quick date buttons */
+        .date-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: .75rem;
+            margin-bottom: 1.25rem;
+        }
+        .date-btn {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: .75rem .5rem;
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            background: #fff;
+            text-decoration: none; color: #212529;
+            transition: all .15s;
+            cursor: pointer;
+            min-height: 70px;
+        }
+        .date-btn:hover { border-color: var(--brand); background: var(--brand-light); color: var(--brand); }
+        .date-btn.active {
+            border-color: var(--brand); background: var(--brand); color: #fff;
+        }
+        .date-btn .label { font-weight: 600; font-size: .95rem; }
+        .date-btn .sub { font-size: .78rem; opacity: .7; margin-top: 2px; }
+        .date-btn.active .sub { opacity: .9; }
+
+        /* Stats row — inline compatto */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: .75rem;
+            margin-bottom: 1.25rem;
+        }
+        .stat-card {
+            background: #fff; border-radius: 10px;
+            padding: .6rem .5rem; text-align: center;
+            border-top: 3px solid var(--stat-color, var(--brand));
+        }
+        .stat-card .value { font-size: 1.5rem; font-weight: 700; color: var(--stat-color); }
+        .stat-card .label { font-size: .75rem; color: #6c757d; }
+
+        /* Cards */
+        .card { border: none; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+        .card-header { background: #fff; border-bottom: 1px solid #f0f0f0; padding: .75rem 1rem; }
+        .card-header h5 { font-size: 1rem; }
+
+        /* Table */
+        .table th { font-size: .8rem; text-transform: uppercase; color: #6c757d; letter-spacing: .3px; }
+        .table td { vertical-align: middle; }
+        .badge { font-weight: 500; }
+
+        /* Prossimi giorni */
+        .upcoming-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: .5rem 0; border-bottom: 1px solid #f0f0f0;
+        }
+        .upcoming-item:last-child { border-bottom: none; }
+        .upcoming-item .day { font-weight: 600; color: var(--brand); text-decoration: none; font-size: .9rem; }
+
+        /* FAB mobile (solo hint) */
+        .fab-hint {
+            position: fixed; bottom: 1.5rem; right: 1.5rem;
+            width: 56px; height: 56px; border-radius: 50%;
+            background: var(--brand); color: #fff; border: none;
+            font-size: 1.5rem; display: none; /* visibile solo mobile */
+            align-items: center; justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,132,74,.4);
+        }
+
+        /* Calendario dropdown */
+        .cal-dropdown {
+            position: absolute; top: 100%; right: 0; z-index: 1050;
+            background: #fff; border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,.15);
+            padding: .75rem; width: 280px;
+            display: none;
+        }
+        .cal-dropdown.show { display: block; }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem; }
+        .cal-header span { font-weight: 600; font-size: .9rem; }
+        .cal-header button { background: none; border: none; padding: .25rem; cursor: pointer; color: #6c757d; }
+        .cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+        .cal-days .day-name { font-size: .7rem; color: #adb5bd; padding: .25rem 0; }
+        .cal-days .day-cell {
+            padding: .3rem; font-size: .8rem; border-radius: 6px; cursor: pointer;
+        }
+        .cal-days .day-cell:hover { background: var(--brand-light); }
+        .cal-days .day-cell.today { background: var(--brand-light); font-weight: 600; color: var(--brand); }
+        .cal-days .day-cell.selected { background: var(--brand); color: #fff; }
+        .cal-days .day-cell.empty { cursor: default; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mock-sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .date-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .fab-hint { display: flex; }
+            .btn-nuova-desktop { display: none; }
+        }
+
+        /* Annotation overlay */
+        .annotation {
+            position: absolute;
+            background: #ff6b35;
+            color: #fff;
+            font-size: .7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .wireframe-note {
+            background: #fff3cd;
+            border: 1px dashed #ffc107;
+            border-radius: 8px;
+            padding: .75rem 1rem;
+            margin-bottom: 1rem;
+            font-size: .85rem;
+            color: #664d03;
+        }
+        .wireframe-note strong { color: #cc0000; }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar mock -->
+<div class="mock-sidebar">
+    <div class="brand">Trattoria Da Mario</div>
+    <div class="nav-item active"><i class="bi bi-house me-2"></i>Dashboard</div>
+    <div class="nav-item"><i class="bi bi-calendar-check me-2"></i>Prenotazioni</div>
+    <div class="nav-item"><i class="bi bi-people me-2"></i>Clienti</div>
+    <div class="nav-item mt-3" style="font-size:.75rem; color:#555;">IMPOSTAZIONI</div>
+    <div class="nav-item"><i class="bi bi-gear me-2"></i>Generali</div>
+    <div class="nav-item"><i class="bi bi-clock me-2"></i>Orari e Coperti</div>
+    <div class="nav-item"><i class="bi bi-tags me-2"></i>Categorie Pasto</div>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+
+    <!-- Top bar compatta -->
+    <div class="top-bar">
+        <span class="date-display">
+            <i class="bi bi-calendar3"></i> Ven 06/03/2026
+        </span>
+        <div class="d-flex align-items-center gap-2">
+            <a href="#" class="btn btn-sm btn-nuova-desktop" style="background:var(--brand);color:#fff;">
+                <i class="bi bi-plus-circle me-1"></i> Nuova Prenotazione
+            </a>
+            <a href="#" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-eye me-1"></i> Pagina prenotazione
+            </a>
+        </div>
+    </div>
+
+    <div class="page-body">
+
+        <!-- Wireframe note -->
+        <div class="wireframe-note">
+            <i class="bi bi-pencil-square me-1"></i>
+            <strong>WIREFRAME v2</strong> — Modifiche rispetto alla versione attuale:
+            <strong>1)</strong> Rimossa riga titolo "Oggi" (ridondante coi pulsanti).
+            <strong>2)</strong> "Nuova Prenotazione" spostato nella top-bar.
+            <strong>3)</strong> Giorni in italiano nei "Prossimi 7 giorni".
+            <strong>4)</strong> "Altra data" con altezza coerente.
+            <strong>5)</strong> Su mobile: FAB per "Nuova Prenotazione", griglia 2x2.
+        </div>
+
+        <!-- Quick Date Buttons -->
+        <div class="date-grid">
+            <a href="#" class="date-btn active">
+                <span class="label">Oggi</span>
+                <span class="sub">Ven 6/3</span>
+            </a>
+            <a href="#" class="date-btn">
+                <span class="label">Domani</span>
+                <span class="sub">Sab 7/3</span>
+            </a>
+            <a href="#" class="date-btn">
+                <span class="label">Dopodomani</span>
+                <span class="sub">Dom 8/3</span>
+            </a>
+            <div class="position-relative">
+                <a href="#" class="date-btn" id="cal-toggle">
+                    <i class="bi bi-calendar3" style="font-size:1.1rem;"></i>
+                    <span class="label">Altra data</span>
+                </a>
+                <!-- Mini calendar -->
+                <div class="cal-dropdown" id="cal-dropdown">
+                    <div class="cal-header">
+                        <button><i class="bi bi-chevron-left"></i></button>
+                        <span>Marzo 2026</span>
+                        <button><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                    <div class="cal-days">
+                        <div class="day-name">lun</div><div class="day-name">mar</div><div class="day-name">mer</div>
+                        <div class="day-name">gio</div><div class="day-name">ven</div><div class="day-name">sab</div><div class="day-name">dom</div>
+                        <!-- Week 1 -->
+                        <div class="day-cell empty"></div><div class="day-cell empty"></div><div class="day-cell empty"></div>
+                        <div class="day-cell empty"></div><div class="day-cell empty"></div><div class="day-cell empty"></div>
+                        <div class="day-cell">1</div>
+                        <!-- Week 2 -->
+                        <div class="day-cell">2</div><div class="day-cell">3</div><div class="day-cell">4</div>
+                        <div class="day-cell">5</div><div class="day-cell today selected">6</div><div class="day-cell">7</div><div class="day-cell">8</div>
+                        <!-- Week 3 -->
+                        <div class="day-cell">9</div><div class="day-cell">10</div><div class="day-cell">11</div>
+                        <div class="day-cell">12</div><div class="day-cell">13</div><div class="day-cell">14</div><div class="day-cell">15</div>
+                        <!-- Week 4 -->
+                        <div class="day-cell">16</div><div class="day-cell">17</div><div class="day-cell">18</div>
+                        <div class="day-cell">19</div><div class="day-cell">20</div><div class="day-cell">21</div><div class="day-cell">22</div>
+                        <!-- Week 5 -->
+                        <div class="day-cell">23</div><div class="day-cell">24</div><div class="day-cell">25</div>
+                        <div class="day-cell">26</div><div class="day-cell">27</div><div class="day-cell">28</div><div class="day-cell">29</div>
+                        <!-- Week 6 -->
+                        <div class="day-cell">30</div><div class="day-cell">31</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card" style="--stat-color: #0d6efd;">
+                <div class="value">24</div>
+                <div class="label">Coperti Previsti</div>
+            </div>
+            <div class="stat-card" style="--stat-color: #198754;">
+                <div class="value">3</div>
+                <div class="label">Confermate</div>
+            </div>
+            <div class="stat-card" style="--stat-color: #ffc107;">
+                <div class="value">1</div>
+                <div class="label">In Attesa</div>
+            </div>
+            <div class="stat-card" style="--stat-color: #0dcaf0;">
+                <div class="value">4</div>
+                <div class="label">Totale Prenotazioni</div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Reservations -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Prenotazioni di oggi</h5>
+                        <a href="#" class="btn btn-sm" style="border:1px solid var(--brand);color:var(--brand);">Vedi tutte <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Orario</th>
+                                    <th>Cliente</th>
+                                    <th>Persone</th>
+                                    <th>Stato</th>
+                                    <th>Telefono</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="cursor:pointer;">
+                                    <td class="fw-semibold">12:30</td>
+                                    <td>Marco Rossi</td>
+                                    <td>4 pax</td>
+                                    <td><span class="badge bg-success">Confermata</span></td>
+                                    <td><a href="#">+39 333 1234567</a></td>
+                                    <td class="text-end"><i class="bi bi-chevron-right text-muted"></i></td>
+                                </tr>
+                                <tr style="cursor:pointer;">
+                                    <td class="fw-semibold">13:00</td>
+                                    <td>Anna Bianchi</td>
+                                    <td>2 pax</td>
+                                    <td><span class="badge bg-warning text-dark">In Attesa</span></td>
+                                    <td><a href="#">+39 338 7654321</a></td>
+                                    <td class="text-end"><i class="bi bi-chevron-right text-muted"></i></td>
+                                </tr>
+                                <tr style="cursor:pointer;">
+                                    <td class="fw-semibold">20:00</td>
+                                    <td>Luigi Verdi</td>
+                                    <td>6 pax</td>
+                                    <td><span class="badge bg-success">Confermata</span></td>
+                                    <td><a href="#">+39 340 9876543</a></td>
+                                    <td class="text-end"><i class="bi bi-chevron-right text-muted"></i></td>
+                                </tr>
+                                <tr style="cursor:pointer;">
+                                    <td class="fw-semibold">20:30</td>
+                                    <td>Giulia Neri</td>
+                                    <td>8 pax</td>
+                                    <td><span class="badge bg-success">Confermata</span></td>
+                                    <td><a href="#">+39 345 1122334</a></td>
+                                    <td class="text-end"><i class="bi bi-chevron-right text-muted"></i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prossimi 7 giorni -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header"><h5 class="mb-0">Prossimi 7 giorni</h5></div>
+                    <div class="card-body">
+                        <div class="upcoming-item">
+                            <a href="#" class="day">Sab 07/03</a>
+                            <div>
+                                <span class="badge" style="background:var(--brand);">2 pren.</span>
+                                <span class="badge bg-light text-dark border">8 cop.</span>
+                            </div>
+                        </div>
+                        <div class="upcoming-item">
+                            <a href="#" class="day">Mar 10/03</a>
+                            <div>
+                                <span class="badge" style="background:var(--brand);">1 pren.</span>
+                                <span class="badge bg-light text-dark border">2 cop.</span>
+                            </div>
+                        </div>
+                        <div class="upcoming-item">
+                            <a href="#" class="day">Gio 12/03</a>
+                            <div>
+                                <span class="badge" style="background:var(--brand);">1 pren.</span>
+                                <span class="badge bg-light text-dark border">2 cop.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /page-body -->
+</div><!-- /main-content -->
+
+<!-- FAB mobile -->
+<button class="fab-hint" title="Nuova Prenotazione">
+    <i class="bi bi-plus-lg"></i>
+</button>
+
+<script>
+// Toggle calendario
+document.getElementById('cal-toggle').addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('cal-dropdown').classList.toggle('show');
+});
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('#cal-dropdown') && !e.target.closest('#cal-toggle')) {
+        document.getElementById('cal-dropdown').classList.remove('show');
+    }
+});
+
+// Quick date buttons toggle (demo)
+document.querySelectorAll('.date-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelectorAll('.date-btn').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+    });
+});
+</script>
+
+</body>
+</html>

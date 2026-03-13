@@ -345,6 +345,35 @@
     cursor: default;
 }
 
+/* --- Home Calendar Dropdown --- */
+.home-cal-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1050;
+    margin-top: 6px;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 16px;
+    background: #fff;
+    width: 300px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* --- Slots Grid: Inactive Category Rows --- */
+tr.slot-inactive {
+    background-color: #f8f9fa;
+}
+tr.slot-inactive td {
+    color: #adb5bd;
+}
+tr.slot-inactive input {
+    background-color: #f1f3f5;
+    color: #ced4da;
+    cursor: not-allowed;
+    border-color: #e9ecef;
+}
+
 /* --- Party Size Grid --- */
 .dr-party-grid {
     display: grid;

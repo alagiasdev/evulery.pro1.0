@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Dominio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 180px;
+            --brand: #00844A;
+            --brand-light: #E8F5E9;
+            --brand-dark: #006837;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        /* ===== Sidebar ===== */
+        .mock-sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w); background: #1a1d23; color: #fff;
+            padding: 1rem 0; z-index: 100;
+        }
+        .mock-sidebar .brand { padding: 0 1rem 1rem; font-weight: 700; font-size: 1.05rem; border-bottom: 1px solid #333; margin-bottom: .5rem; }
+        .mock-sidebar .nav-item { padding: .5rem 1rem; font-size: .9rem; color: #adb5bd; cursor: pointer; }
+        .mock-sidebar .nav-item:hover { color: #fff; }
+        .mock-sidebar .nav-item.active { background: var(--brand); color: #fff; border-radius: 6px; margin: 0 .5rem; padding: .5rem .75rem; }
+        .mock-sidebar .nav-section { padding: .75rem 1rem .25rem; font-size: .7rem; color: #555; text-transform: uppercase; letter-spacing: .5px; }
+
+        /* ===== Main ===== */
+        .main-content { margin-left: var(--sidebar-w); }
+
+        /* ===== Top bar ===== */
+        .top-bar {
+            background: #fff; border-bottom: 1px solid #e9ecef;
+            padding: .5rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .top-bar-date { font-size: .85rem; color: #6c757d; }
+        .btn-brand { background: var(--brand); color: #fff; border: none; }
+        .btn-brand:hover { background: var(--brand-dark); color: #fff; }
+
+        /* ===== Page body ===== */
+        .page-body { padding: 1.25rem 1.5rem; }
+
+        /* ===== Card ===== */
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow: hidden; }
+
+        /* ===== Settings nav tabs ===== */
+        .settings-tabs {
+            display: flex; gap: .25rem; margin-bottom: 1.5rem;
+            border-bottom: 2px solid #f0f0f0; padding-bottom: 0;
+            overflow-x: auto;
+        }
+        .settings-tab {
+            padding: .55rem 1rem; font-size: .82rem; font-weight: 600;
+            color: #6c757d; text-decoration: none; cursor: pointer;
+            border-bottom: 2px solid transparent; margin-bottom: -2px;
+            white-space: nowrap; display: flex; align-items: center; gap: .35rem;
+            transition: all .15s;
+        }
+        .settings-tab:hover { color: #495057; }
+        .settings-tab.active { color: var(--brand); border-bottom-color: var(--brand); }
+        .settings-tab i { font-size: .85rem; }
+
+        /* ===== Domain input ===== */
+        .domain-input-wrap {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .domain-field {
+            display: flex; align-items: center; gap: 0;
+            background: #f8f9fa; border-radius: 10px;
+            border: 2px solid #e9ecef;
+            overflow: hidden; transition: border-color .15s;
+            max-width: 520px;
+        }
+        .domain-field:focus-within { border-color: var(--brand); }
+        .domain-prefix {
+            padding: .55rem .85rem; font-size: .85rem;
+            color: #adb5bd; font-weight: 600; background: #f0f0f0;
+            white-space: nowrap; border-right: 1px solid #e9ecef;
+        }
+        .domain-input {
+            flex: 1; border: none; background: transparent;
+            padding: .55rem .85rem; font-size: .92rem; font-weight: 600;
+            color: #212529;
+        }
+        .domain-input:focus { outline: none; }
+        .domain-input::placeholder { color: #ccc; font-weight: 400; }
+        .field-hint { font-size: .72rem; color: #adb5bd; margin-top: .5rem; }
+
+        /* ===== Status card ===== */
+        .status-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            margin-bottom: 1.25rem;
+            overflow: hidden;
+        }
+        .status-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .status-left { display: flex; align-items: center; gap: .75rem; }
+        .status-icon {
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
+        }
+        .status-title { font-size: .92rem; font-weight: 700; }
+        .status-sub { font-size: .72rem; color: #6c757d; }
+        .status-badge {
+            padding: .3rem .75rem; border-radius: 20px;
+            font-size: .72rem; font-weight: 700;
+        }
+
+        /* DNS steps */
+        .dns-steps { padding: 1rem 1.25rem; }
+        .dns-step {
+            display: flex; gap: .75rem; padding: .65rem 0;
+            border-bottom: 1px solid #f8f8f8;
+        }
+        .dns-step:last-child { border-bottom: none; }
+        .dns-num {
+            width: 24px; height: 24px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .68rem; font-weight: 800; flex-shrink: 0;
+            background: #f0f0f0; color: #495057;
+        }
+        .dns-step.done .dns-num { background: var(--brand); color: #fff; }
+        .dns-step.current .dns-num { background: #FFC107; color: #5D4037; }
+        .dns-content { flex: 1; }
+        .dns-title { font-size: .82rem; font-weight: 600; color: #495057; }
+        .dns-desc { font-size: .75rem; color: #6c757d; margin-top: .15rem; }
+
+        /* DNS record box */
+        .dns-record {
+            background: #1a1d23; border-radius: 8px;
+            padding: .75rem 1rem; margin-top: .5rem;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+        .dns-record-row {
+            display: flex; gap: 1.5rem; margin-bottom: .35rem;
+        }
+        .dns-record-row:last-child { margin-bottom: 0; }
+        .dns-label { font-size: .65rem; color: #6c757d; text-transform: uppercase; min-width: 50px; }
+        .dns-value { font-size: .78rem; color: #81C784; word-break: break-all; }
+        .dns-copy {
+            background: rgba(255,255,255,.1); color: #fff; border: none;
+            border-radius: 4px; padding: .2rem .5rem; font-size: .65rem;
+            cursor: pointer; margin-left: auto; flex-shrink: 0;
+        }
+        .dns-copy:hover { background: rgba(255,255,255,.2); }
+
+        /* ===== Preview card ===== */
+        .preview-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            margin-bottom: 1.25rem;
+        }
+        .preview-header {
+            padding: .75rem 1rem; background: #fafbfc;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: .72rem; font-weight: 700; color: #adb5bd;
+            text-transform: uppercase; letter-spacing: .3px;
+        }
+        .browser-bar {
+            display: flex; align-items: center; gap: .5rem;
+            padding: .5rem .75rem; background: #f0f0f0; border-radius: 8px;
+            margin: .75rem 1rem;
+        }
+        .browser-dots {
+            display: flex; gap: .3rem;
+        }
+        .browser-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .browser-url {
+            flex: 1; background: #fff; border-radius: 5px;
+            padding: .25rem .6rem; font-size: .72rem; color: #495057;
+            font-family: 'SF Mono', monospace;
+            display: flex; align-items: center; gap: .3rem;
+        }
+        .browser-url i { color: var(--brand); font-size: .65rem; }
+        .preview-body {
+            padding: .75rem 1rem 1rem;
+            text-align: center;
+        }
+        .preview-widget {
+            background: #f8f9fa; border-radius: 10px; border: 1px dashed #dee2e6;
+            padding: 1.5rem; color: #adb5bd; font-size: .82rem;
+        }
+
+        /* ===== Current URLs ===== */
+        .url-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            padding: 1rem 1.25rem;
+        }
+        .url-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: .5rem 0; gap: .5rem;
+        }
+        .url-row + .url-row { border-top: 1px solid #f5f5f5; }
+        .url-label { font-size: .72rem; font-weight: 600; color: #6c757d; min-width: 90px; }
+        .url-value {
+            font-family: 'SF Mono', monospace; font-size: .78rem; color: #495057;
+            flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .url-status { display: flex; align-items: center; gap: .25rem; font-size: .68rem; font-weight: 600; flex-shrink: 0; }
+
+        /* ===== Save bar ===== */
+        .save-bar {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            padding: .75rem 1.25rem;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: .5rem; flex-wrap: wrap;
+        }
+        .save-hint { font-size: .72rem; color: #adb5bd; }
+        .btn-save {
+            background: var(--brand); color: #fff; border: none;
+            border-radius: 8px; padding: .5rem 1.5rem;
+            font-size: .85rem; font-weight: 600; cursor: pointer;
+        }
+        .btn-save:hover { background: var(--brand-dark); }
+        .btn-verify {
+            background: #fff; color: var(--brand); border: 2px solid var(--brand);
+            border-radius: 8px; padding: .45rem 1.25rem;
+            font-size: .82rem; font-weight: 600; cursor: pointer;
+        }
+        .btn-verify:hover { background: var(--brand-light); }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 768px) {
+            .mock-sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .page-body { padding: 1rem; }
+            .settings-tabs { gap: 0; }
+            .settings-tab { padding: .5rem .65rem; font-size: .78rem; }
+            .dns-record-row { flex-direction: column; gap: .15rem; }
+        }
+
+        /* ===== WF note ===== */
+        .wf-note {
+            background: #E8F5E9; border: 1px dashed var(--brand); border-radius: 8px;
+            padding: .6rem 1rem; margin-bottom: 1rem;
+            font-size: .78rem; color: #1B5E20;
+        }
+        .wf-note b { color: #B71C1C; }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="mock-sidebar">
+    <div class="brand">Trattoria Da Mario</div>
+    <div class="nav-item"><i class="bi bi-house me-2"></i>Dashboard</div>
+    <div class="nav-item"><i class="bi bi-calendar-check me-2"></i>Prenotazioni</div>
+    <div class="nav-item"><i class="bi bi-people me-2"></i>Clienti</div>
+    <div class="nav-section">Impostazioni</div>
+    <div class="nav-item"><i class="bi bi-gear me-2"></i>Generali</div>
+    <div class="nav-item"><i class="bi bi-clock me-2"></i>Orari e Coperti</div>
+    <div class="nav-item"><i class="bi bi-tags me-2"></i>Categorie Pasto</div>
+    <div class="nav-item"><i class="bi bi-cash me-2"></i>Caparra</div>
+    <div class="nav-item active"><i class="bi bi-globe me-2"></i>Dominio</div>
+    <div style="position:absolute;bottom:1rem;left:0;right:0;padding:0 .5rem;">
+        <div class="nav-item" style="background:#2a2d33;border-radius:6px;text-align:center;"><i class="bi bi-box-arrow-left me-1"></i>Esci</div>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+    <div class="top-bar">
+        <span class="top-bar-date"><i class="bi bi-calendar3"></i> Ven 06/03/2026</span>
+        <div class="d-flex align-items-center gap-2">
+            <a href="#" class="btn btn-brand btn-sm"><i class="bi bi-plus-circle me-1"></i> Nuova Prenotazione</a>
+        </div>
+    </div>
+
+    <div class="page-body">
+
+        <div class="wf-note">
+            <b>WIREFRAME — Dominio Personalizzato</b> &mdash;
+            <b>1)</b> Input dominio con prefisso https://.
+            <b>2)</b> Status card con step DNS numerati (fatto/in corso/da fare).
+            <b>3)</b> Record DNS in dark code block copiabile.
+            <b>4)</b> Preview browser con URL personalizzato.
+            <b>5)</b> Riepilogo URL attivi con stato.
+        </div>
+
+        <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
+        <p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+
+        <!-- Settings tabs -->
+        <div class="settings-tabs">
+            <a class="settings-tab"><i class="bi bi-gear"></i> Generali</a>
+            <a class="settings-tab"><i class="bi bi-clock"></i> Orari e Coperti</a>
+            <a class="settings-tab"><i class="bi bi-tags"></i> Categorie Pasto</a>
+            <a class="settings-tab"><i class="bi bi-cash"></i> Caparra</a>
+            <a class="settings-tab active"><i class="bi bi-globe"></i> Dominio</a>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left column -->
+            <div class="col-lg-7">
+
+                <!-- Domain input -->
+                <div class="domain-input-wrap">
+                    <div style="font-size:.88rem;font-weight:700;color:#212529;margin-bottom:.75rem;">
+                        <i class="bi bi-globe2 me-1" style="color:var(--brand);"></i> Dominio personalizzato
+                    </div>
+                    <div class="domain-field">
+                        <span class="domain-prefix">https://</span>
+                        <input type="text" class="domain-input" value="prenota.trattoriadamario.it" placeholder="prenota.tuoristorante.it">
+                    </div>
+                    <div class="field-hint">Inserisci il sottodominio che vuoi usare per la pagina di prenotazione. Lascia vuoto per rimuoverlo.</div>
+                </div>
+
+                <!-- Status card -->
+                <div class="status-card">
+                    <div class="status-header">
+                        <div class="status-left">
+                            <div class="status-icon" style="background:#FFF8E1;color:#F57F17;">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+                            <div>
+                                <div class="status-title">Configurazione DNS</div>
+                                <div class="status-sub">prenota.trattoriadamario.it</div>
+                            </div>
+                        </div>
+                        <span class="status-badge" style="background:#FFF3E0;color:#E65100;">
+                            <i class="bi bi-clock-history me-1"></i>In attesa DNS
+                        </span>
+                    </div>
+
+                    <div class="dns-steps">
+                        <div class="dns-step done">
+                            <div class="dns-num"><i class="bi bi-check-lg" style="font-size:.6rem;"></i></div>
+                            <div class="dns-content">
+                                <div class="dns-title">Dominio registrato</div>
+                                <div class="dns-desc">prenota.trattoriadamario.it salvato nel sistema</div>
+                            </div>
+                        </div>
+
+                        <div class="dns-step current">
+                            <div class="dns-num">2</div>
+                            <div class="dns-content">
+                                <div class="dns-title">Configura il record CNAME</div>
+                                <div class="dns-desc">Vai nel pannello DNS del tuo provider e crea questo record:</div>
+                                <div class="dns-record">
+                                    <div class="dns-record-row">
+                                        <span class="dns-label">Tipo</span>
+                                        <span class="dns-value">CNAME</span>
+                                    </div>
+                                    <div class="dns-record-row">
+                                        <span class="dns-label">Host</span>
+                                        <span class="dns-value">prenota</span>
+                                    </div>
+                                    <div class="dns-record-row">
+                                        <span class="dns-label">Punta a</span>
+                                        <span class="dns-value">cname.evulery.pro</span>
+                                        <button class="dns-copy" id="copy-cname"><i class="bi bi-clipboard me-1"></i>Copia</button>
+                                    </div>
+                                    <div class="dns-record-row">
+                                        <span class="dns-label">TTL</span>
+                                        <span class="dns-value">3600 (o Auto)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dns-step">
+                            <div class="dns-num">3</div>
+                            <div class="dns-content">
+                                <div class="dns-title">Verifica propagazione</div>
+                                <div class="dns-desc">La propagazione DNS pu&ograve; richiedere fino a 48 ore. Clicca "Verifica" per controllare.</div>
+                            </div>
+                        </div>
+
+                        <div class="dns-step">
+                            <div class="dns-num">4</div>
+                            <div class="dns-content">
+                                <div class="dns-title">Certificato SSL</div>
+                                <div class="dns-desc">Emissione automatica del certificato HTTPS dopo la verifica DNS</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save / Verify -->
+                <div class="save-bar">
+                    <span class="save-hint"><i class="bi bi-info-circle me-1"></i>Dopo aver configurato il DNS, clicca Verifica</span>
+                    <div style="display:flex;gap:.5rem;">
+                        <button class="btn-verify"><i class="bi bi-arrow-repeat me-1"></i> Verifica DNS</button>
+                        <button class="btn-save"><i class="bi bi-check-circle me-1"></i> Salva</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right column -->
+            <div class="col-lg-5">
+
+                <!-- Browser preview -->
+                <div class="preview-card">
+                    <div class="preview-header"><i class="bi bi-window me-1"></i> Anteprima</div>
+                    <div class="browser-bar">
+                        <div class="browser-dots">
+                            <div class="browser-dot" style="background:#FF5F57;"></div>
+                            <div class="browser-dot" style="background:#FEBC2E;"></div>
+                            <div class="browser-dot" style="background:#28C840;"></div>
+                        </div>
+                        <div class="browser-url">
+                            <i class="bi bi-lock-fill"></i>
+                            prenota.trattoriadamario.it
+                        </div>
+                    </div>
+                    <div class="preview-body">
+                        <div class="preview-widget">
+                            <i class="bi bi-calendar-check" style="font-size:2rem;display:block;margin-bottom:.5rem;"></i>
+                            Widget di prenotazione<br>
+                            <span style="font-size:.72rem;">Trattoria Da Mario</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current URLs -->
+                <div class="url-card">
+                    <div style="font-size:.78rem;font-weight:700;color:#adb5bd;text-transform:uppercase;margin-bottom:.5rem;">
+                        <i class="bi bi-link-45deg me-1"></i> URL attivi
+                    </div>
+                    <div class="url-row">
+                        <span class="url-label">Evulery</span>
+                        <span class="url-value">evulery.pro/trattoria-da-mario</span>
+                        <span class="url-status" style="color:var(--brand);"><i class="bi bi-check-circle-fill"></i> Attivo</span>
+                    </div>
+                    <div class="url-row">
+                        <span class="url-label">Personalizzato</span>
+                        <span class="url-value">prenota.trattoriadamario.it</span>
+                        <span class="url-status" style="color:#F57F17;"><i class="bi bi-clock-fill"></i> Pending</span>
+                    </div>
+                </div>
+
+                <!-- Help card -->
+                <div class="card" style="margin-top:.75rem;border-left:4px solid #1565C0;border-radius:0 12px 12px 0;">
+                    <div style="padding:.85rem 1.25rem;">
+                        <div style="display:flex;gap:.5rem;align-items:flex-start;">
+                            <i class="bi bi-question-circle" style="color:#1565C0;font-size:1rem;margin-top:.1rem;"></i>
+                            <div>
+                                <div style="font-size:.82rem;font-weight:600;color:#495057;margin-bottom:.25rem;">Dove configuro il DNS?</div>
+                                <div style="font-size:.78rem;color:#6c757d;line-height:1.5;">
+                                    Accedi al pannello di controllo del provider dove hai acquistato il dominio
+                                    (es. GoDaddy, Aruba, Register.it, Cloudflare) e cerca la sezione <strong>DNS</strong> o <strong>Zone DNS</strong>.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// Copy CNAME demo
+document.getElementById('copy-cname').addEventListener('click', function() {
+    var orig = this.innerHTML;
+    this.innerHTML = '<i class="bi bi-check-lg me-1"></i>Copiato!';
+    var self = this;
+    setTimeout(function() { self.innerHTML = orig; }, 1500);
+});
+// Tab switch demo
+document.querySelectorAll('.settings-tab').forEach(function(tab) {
+    tab.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelectorAll('.settings-tab').forEach(function(t) { t.classList.remove('active'); });
+        this.classList.add('active');
+    });
+});
+</script>
+
+</body>
+</html>

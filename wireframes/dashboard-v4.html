@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Dashboard v4</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 200px;
+            --brand: #00844A;
+            --brand-light: #E8F5E9;
+            --brand-dark: #006837;
+            --bg: #f7f8fb;
+            --card-radius: 14px;
+            --text: #1a1a2e;
+            --muted: #7c8293;
+            --border: #ebedf2;
+            --pending-bg: #FFF8E1;
+            --pending-border: #FFD54F;
+        }
+        * { box-sizing: border-box; }
+        body { background: var(--bg); font-family: 'Inter', system-ui, -apple-system, sans-serif; margin: 0; color: var(--text); }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w); background: #0f1117; color: #fff;
+            padding: 1.25rem 0; z-index: 100;
+            display: flex; flex-direction: column;
+        }
+        .sidebar .logo {
+            padding: 0 1.25rem 1.25rem; font-weight: 800; font-size: 1rem;
+            letter-spacing: -.3px; border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+        .sidebar .logo small { display: block; font-weight: 400; font-size: .7rem; color: rgba(255,255,255,.4); margin-top: 2px; }
+        .sidebar nav { flex: 1; padding: .75rem .5rem; }
+        .sidebar .nav-link {
+            display: flex; align-items: center; gap: .6rem;
+            padding: .55rem .75rem; font-size: .85rem; color: rgba(255,255,255,.55);
+            border-radius: 8px; text-decoration: none; margin-bottom: 2px;
+            transition: all .15s;
+        }
+        .sidebar .nav-link:hover { color: #fff; background: rgba(255,255,255,.06); }
+        .sidebar .nav-link.active { color: #fff; background: var(--brand); font-weight: 600; }
+        .sidebar .nav-link i { font-size: 1rem; width: 20px; text-align: center; }
+        .sidebar .nav-section {
+            font-size: .65rem; text-transform: uppercase; letter-spacing: .8px;
+            color: rgba(255,255,255,.25); padding: 1rem .75rem .4rem; font-weight: 600;
+        }
+        .sidebar-footer {
+            padding: .5rem; border-top: 1px solid rgba(255,255,255,.08);
+        }
+        .sidebar-footer .nav-link { color: rgba(255,255,255,.4); }
+
+        /* ===== Main ===== */
+        .main { margin-left: var(--sidebar-w); min-height: 100vh; }
+
+        /* ===== Top bar ===== */
+        .topbar {
+            background: #fff; border-bottom: 1px solid var(--border);
+            padding: .55rem 1.75rem;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .topbar-date { font-size: .82rem; color: var(--muted); display: flex; align-items: center; gap: .4rem; }
+        .btn-brand { background: var(--brand); color: #fff; border: none; font-weight: 600; font-size: .82rem; }
+        .btn-brand:hover { background: var(--brand-dark); color: #fff; }
+        .btn-ghost { background: none; border: 1px solid var(--border); color: var(--muted); font-size: .82rem; }
+        .btn-ghost:hover { border-color: #ccc; color: var(--text); }
+
+        /* ===== Page ===== */
+        .page { padding: 1.5rem 1.75rem; max-width: 1400px; }
+
+        /* ===== Date strip ===== */
+        .date-strip { display: flex; gap: .5rem; margin-bottom: 1.5rem; }
+        .d-chip {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: .55rem 1.5rem; border: 2px solid var(--border);
+            border-radius: 10px; background: #fff;
+            text-decoration: none; color: var(--text);
+            transition: all .15s; cursor: pointer; min-width: 100px;
+        }
+        .d-chip:hover { border-color: var(--brand); color: var(--brand); }
+        .d-chip.active { border-color: var(--brand); background: var(--brand); color: #fff; }
+        .d-chip .d-label { font-weight: 700; font-size: .88rem; }
+        .d-chip .d-sub { font-size: .7rem; opacity: .6; margin-top: 1px; }
+        .d-chip.active .d-sub { opacity: .85; }
+        .d-chip-other { position: relative; }
+
+        /* Calendar dropdown */
+        .cal-drop {
+            position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+            z-index: 1050; background: #fff; border-radius: 12px;
+            box-shadow: 0 12px 36px rgba(0,0,0,.12), 0 0 0 1px rgba(0,0,0,.05);
+            padding: .85rem; width: 290px; display: none;
+        }
+        .cal-drop.show { display: block; }
+        .cal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem; }
+        .cal-head span { font-weight: 700; font-size: .85rem; }
+        .cal-head button { background: none; border: none; cursor: pointer; color: var(--muted); padding: .2rem .4rem; border-radius: 4px; }
+        .cal-head button:hover { background: #f0f0f0; }
+        .cal-g { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+        .cal-dn { font-size: .65rem; color: #adb5bd; padding: .2rem 0; font-weight: 600; }
+        .cal-d {
+            padding: .35rem; font-size: .78rem; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            aspect-ratio: 1; position: relative; color: #495057;
+        }
+        .cal-d:hover { background: var(--brand-light); }
+        .cal-d.today { background: var(--brand-light); color: var(--brand); font-weight: 700; }
+        .cal-d.sel { background: var(--brand); color: #fff; font-weight: 600; }
+        .cal-d.empty { cursor: default; visibility: hidden; }
+        .cal-d.has-dot::after {
+            content: ''; position: absolute; bottom: 3px;
+            width: 4px; height: 4px; border-radius: 50%; background: var(--brand);
+        }
+        .cal-d.sel.has-dot::after { background: #fff; }
+
+        /* ===== Hero row: capacity + pending ===== */
+        .hero-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+
+        /* Capacity card */
+        .capacity-card {
+            background: #fff; border-radius: var(--card-radius); padding: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.04);
+        }
+        .capacity-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75rem; }
+        .capacity-header h6 { margin: 0; font-size: .82rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .3px; }
+        .capacity-stats { display: flex; gap: 1.75rem; margin-bottom: .75rem; }
+        .cap-stat .cap-val { font-size: 1.75rem; font-weight: 800; line-height: 1; }
+        .cap-stat .cap-lbl { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+        .capacity-bar { height: 8px; background: #eef0f4; border-radius: 4px; overflow: hidden; }
+        .capacity-fill { height: 100%; border-radius: 4px; transition: width .5s ease; }
+        .capacity-pct { font-size: .72rem; color: var(--muted); margin-top: .35rem; text-align: right; }
+
+        /* Pending card */
+        .pending-card {
+            background: var(--pending-bg); border: 1px solid var(--pending-border);
+            border-radius: var(--card-radius); padding: 1.25rem;
+        }
+        .pending-card.none { background: #fff; border: 1px solid var(--border); }
+        .pending-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .6rem; }
+        .pending-header h6 { margin: 0; font-size: .82rem; font-weight: 700; color: #E65100; text-transform: uppercase; letter-spacing: .3px; }
+        .pending-card.none .pending-header h6 { color: var(--muted); }
+        .pending-count { font-size: .72rem; background: #FF8F00; color: #fff; border-radius: 10px; padding: 1px 8px; font-weight: 700; }
+        .pending-card.none .pending-count { display: none; }
+        .pending-item {
+            display: flex; align-items: center; gap: .6rem;
+            padding: .45rem 0; border-bottom: 1px solid rgba(0,0,0,.06);
+        }
+        .pending-item:last-child { border-bottom: none; }
+        .pending-time { font-weight: 700; font-size: .85rem; min-width: 42px; color: #E65100; }
+        .pending-name { flex: 1; font-weight: 600; font-size: .85rem; }
+        .pending-pax { font-size: .78rem; color: var(--muted); }
+        .pending-actions { display: flex; gap: .35rem; }
+        .pending-actions button {
+            width: 28px; height: 28px; border-radius: 6px; border: none;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .85rem; cursor: pointer; transition: all .1s;
+        }
+        .btn-confirm { background: #C8E6C9; color: #2E7D32; }
+        .btn-confirm:hover { background: #2E7D32; color: #fff; }
+        .btn-call { background: #E3F2FD; color: #1565C0; }
+        .btn-call:hover { background: #1565C0; color: #fff; }
+
+        /* ===== Main grid ===== */
+        .content-grid { display: grid; grid-template-columns: 1fr 280px; gap: 1.25rem; }
+
+        /* ===== Reservations card ===== */
+        .res-card {
+            background: #fff; border-radius: var(--card-radius);
+            box-shadow: 0 1px 3px rgba(0,0,0,.04); overflow: hidden;
+        }
+        .res-header {
+            padding: .7rem 1.15rem;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+        .res-header h6 { margin: 0; font-weight: 700; font-size: .92rem; }
+        .meal-divider {
+            display: flex; align-items: center; gap: .5rem;
+            padding: .35rem 1.15rem; background: #fafbfc;
+            border-bottom: 1px solid var(--border);
+        }
+        .meal-divider i { color: var(--muted); font-size: .8rem; }
+        .meal-divider span { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); }
+        .meal-divider .meal-count { margin-left: auto; font-size: .68rem; color: var(--muted); font-weight: 500; }
+
+        .r-row {
+            display: grid; grid-template-columns: 50px 8px 1fr auto;
+            align-items: center; gap: .65rem;
+            padding: .65rem 1.15rem;
+            border-bottom: 1px solid #f5f5f5;
+            cursor: pointer; transition: background .1s;
+        }
+        .r-row:hover { background: #fafcff; }
+        .r-row:last-child { border-bottom: none; }
+        .r-time { font-weight: 700; font-size: .88rem; color: var(--text); }
+        .r-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .r-dot.ok { background: #4CAF50; }
+        .r-dot.wait { background: #FFC107; }
+        .r-dot.no { background: #EF5350; }
+        .r-info {}
+        .r-name { font-weight: 600; font-size: .85rem; }
+        .r-phone { font-size: .72rem; color: var(--muted); }
+        .r-right { display: flex; align-items: center; gap: .6rem; }
+        .r-pax {
+            display: flex; align-items: center; gap: .25rem;
+            font-size: .78rem; font-weight: 600; color: var(--muted);
+            background: #f5f6f8; border-radius: 6px; padding: 3px 8px;
+        }
+        .r-pax i { font-size: .7rem; }
+        .r-arrow { color: #d0d0d0; font-size: .7rem; }
+
+        /* ===== Right column ===== */
+        .right-col { display: flex; flex-direction: column; gap: 1rem; }
+
+        /* Mini cal */
+        .mini-cal-card {
+            background: #fff; border-radius: var(--card-radius);
+            box-shadow: 0 1px 3px rgba(0,0,0,.04); padding: .85rem;
+        }
+
+        /* Upcoming */
+        .upcoming-card {
+            background: #fff; border-radius: var(--card-radius);
+            box-shadow: 0 1px 3px rgba(0,0,0,.04); overflow: hidden;
+        }
+        .up-header { padding: .6rem 1rem; border-bottom: 1px solid var(--border); }
+        .up-header h6 { margin: 0; font-size: .82rem; font-weight: 700; }
+        .up-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: .5rem 1rem; border-bottom: 1px solid #f8f8f8;
+            text-decoration: none; color: inherit; transition: background .1s;
+        }
+        .up-row:hover { background: #fafbfc; }
+        .up-row:last-child { border-bottom: none; }
+        .up-day { font-weight: 700; font-size: .82rem; color: var(--brand); }
+        .up-badges { display: flex; gap: .3rem; }
+        .up-badges .badge { font-size: .68rem; font-weight: 600; }
+        .badge-brand { background: var(--brand); color: #fff; }
+        .badge-light { background: #f0f1f3; color: #555; }
+
+        /* ===== FAB ===== */
+        .fab {
+            position: fixed; bottom: 1.5rem; right: 1.5rem;
+            width: 56px; height: 56px; border-radius: 16px;
+            background: var(--brand); color: #fff; border: none;
+            font-size: 1.4rem; display: none; align-items: center; justify-content: center;
+            box-shadow: 0 6px 20px rgba(0,132,74,.35); z-index: 200;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 1100px) {
+            .hero-row { grid-template-columns: 1fr; }
+            .content-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; }
+            .page { padding: 1rem; }
+            .date-strip { overflow-x: auto; padding-bottom: .25rem; }
+            .d-chip { min-width: 80px; padding: .45rem .75rem; }
+            .hero-row { gap: .75rem; }
+            .fab { display: flex; }
+            .btn-nuova-desk { display: none !important; }
+        }
+
+        /* ===== Note ===== */
+        .wf-note {
+            background: #EDE7F6; border: 1px dashed #9575CD; border-radius: 10px;
+            padding: .65rem 1rem; margin-bottom: 1.25rem;
+            font-size: .78rem; color: #4527A0;
+        }
+        .wf-note b { color: #D32F2F; }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="logo">Trattoria Da Mario<small>evulery.pro</small></div>
+    <nav>
+        <a href="#" class="nav-link active"><i class="bi bi-columns-gap"></i> Dashboard</a>
+        <a href="#" class="nav-link"><i class="bi bi-calendar-check"></i> Prenotazioni</a>
+        <a href="#" class="nav-link"><i class="bi bi-people"></i> Clienti</a>
+        <div class="nav-section">Impostazioni</div>
+        <a href="#" class="nav-link"><i class="bi bi-sliders"></i> Generali</a>
+        <a href="#" class="nav-link"><i class="bi bi-clock-history"></i> Orari e Coperti</a>
+        <a href="#" class="nav-link"><i class="bi bi-bookmarks"></i> Categorie Pasto</a>
+        <a href="#" class="nav-link"><i class="bi bi-credit-card"></i> Caparra</a>
+        <a href="#" class="nav-link"><i class="bi bi-globe2"></i> Dominio</a>
+    </nav>
+    <div class="sidebar-footer">
+        <a href="#" class="nav-link"><i class="bi bi-box-arrow-left"></i> Esci</a>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+    <div class="topbar">
+        <div class="topbar-date"><i class="bi bi-calendar3"></i> Venerdi 6 Marzo 2026</div>
+        <div class="d-flex gap-2">
+            <a href="#" class="btn btn-brand btn-sm btn-nuova-desk"><i class="bi bi-plus-circle me-1"></i> Nuova Prenotazione</a>
+            <a href="#" class="btn btn-ghost btn-sm"><i class="bi bi-eye me-1"></i> Vedi pagina</a>
+        </div>
+    </div>
+
+    <div class="page">
+
+        <div class="wf-note">
+            <b>WIREFRAME v4</b> —
+            <b>1)</b> Card capacita con barra progresso (coperti usati / max).
+            <b>2)</b> Card "Da confermare" con azioni rapide (conferma + chiama) in primo piano.
+            <b>3)</b> Prenotazioni con griglia allineata e raggruppamento pranzo/cena.
+            <b>4)</b> Calendario laterale sempre visibile con pallini sui giorni con prenotazioni.
+            <b>5)</b> Design piu pulito e moderno.
+        </div>
+
+        <!-- Date strip -->
+        <div class="date-strip">
+            <a href="#" class="d-chip active">
+                <span class="d-label">Oggi</span>
+                <span class="d-sub">Ven 6/3</span>
+            </a>
+            <a href="#" class="d-chip">
+                <span class="d-label">Domani</span>
+                <span class="d-sub">Sab 7/3</span>
+            </a>
+            <a href="#" class="d-chip">
+                <span class="d-label">Dopodomani</span>
+                <span class="d-sub">Dom 8/3</span>
+            </a>
+            <div class="d-chip-other">
+                <a href="#" class="d-chip" id="cal-toggle">
+                    <i class="bi bi-calendar3" style="font-size:.9rem;"></i>
+                    <span class="d-label">Altra data</span>
+                </a>
+                <div class="cal-drop" id="cal-drop">
+                    <div class="cal-head">
+                        <button><i class="bi bi-chevron-left"></i></button>
+                        <span>Marzo 2026</span>
+                        <button><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                    <div class="cal-g">
+                        <div class="cal-dn">L</div><div class="cal-dn">M</div><div class="cal-dn">M</div>
+                        <div class="cal-dn">G</div><div class="cal-dn">V</div><div class="cal-dn">S</div><div class="cal-dn">D</div>
+                        <div class="cal-d empty">.</div><div class="cal-d empty">.</div><div class="cal-d empty">.</div>
+                        <div class="cal-d empty">.</div><div class="cal-d empty">.</div><div class="cal-d empty">.</div>
+                        <div class="cal-d">1</div>
+                        <div class="cal-d">2</div><div class="cal-d">3</div><div class="cal-d">4</div>
+                        <div class="cal-d">5</div><div class="cal-d today sel">6</div><div class="cal-d has-dot">7</div><div class="cal-d">8</div>
+                        <div class="cal-d">9</div><div class="cal-d has-dot">10</div><div class="cal-d">11</div>
+                        <div class="cal-d has-dot">12</div><div class="cal-d">13</div><div class="cal-d">14</div><div class="cal-d">15</div>
+                        <div class="cal-d">16</div><div class="cal-d">17</div><div class="cal-d">18</div>
+                        <div class="cal-d">19</div><div class="cal-d has-dot">20</div><div class="cal-d">21</div><div class="cal-d">22</div>
+                        <div class="cal-d">23</div><div class="cal-d">24</div><div class="cal-d has-dot">25</div>
+                        <div class="cal-d">26</div><div class="cal-d">27</div><div class="cal-d">28</div><div class="cal-d">29</div>
+                        <div class="cal-d">30</div><div class="cal-d">31</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero row: capacity + pending -->
+        <div class="hero-row">
+            <!-- Capacity -->
+            <div class="capacity-card">
+                <div class="capacity-header">
+                    <h6><i class="bi bi-pie-chart me-1"></i> Capacita di oggi</h6>
+                </div>
+                <div class="capacity-stats">
+                    <div class="cap-stat">
+                        <div class="cap-val" style="color: var(--brand);">24</div>
+                        <div class="cap-lbl">Coperti prenotati</div>
+                    </div>
+                    <div class="cap-stat">
+                        <div class="cap-val" style="color: #ccc;">60</div>
+                        <div class="cap-lbl">Capacita max</div>
+                    </div>
+                    <div class="cap-stat">
+                        <div class="cap-val" style="color:#0dcaf0;">4</div>
+                        <div class="cap-lbl">Prenotazioni</div>
+                    </div>
+                    <div class="cap-stat">
+                        <div class="cap-val" style="color:#198754;">3</div>
+                        <div class="cap-lbl">Confermate</div>
+                    </div>
+                </div>
+                <div class="capacity-bar">
+                    <div class="capacity-fill" style="width: 40%; background: linear-gradient(90deg, var(--brand), #43A047);"></div>
+                </div>
+                <div class="capacity-pct">40% occupato</div>
+            </div>
+
+            <!-- Pending -->
+            <div class="pending-card">
+                <div class="pending-header">
+                    <h6><i class="bi bi-exclamation-circle me-1"></i> Da confermare</h6>
+                    <span class="pending-count">2</span>
+                </div>
+                <div class="pending-item">
+                    <div class="pending-time">13:00</div>
+                    <div class="pending-name">Anna Bianchi</div>
+                    <div class="pending-pax">2 pax</div>
+                    <div class="pending-actions">
+                        <button class="btn-confirm" title="Conferma"><i class="bi bi-check-lg"></i></button>
+                        <button class="btn-call" title="Chiama"><i class="bi bi-telephone"></i></button>
+                    </div>
+                </div>
+                <div class="pending-item">
+                    <div class="pending-time">21:00</div>
+                    <div class="pending-name">Sara Ferrari</div>
+                    <div class="pending-pax">3 pax</div>
+                    <div class="pending-actions">
+                        <button class="btn-confirm" title="Conferma"><i class="bi bi-check-lg"></i></button>
+                        <button class="btn-call" title="Chiama"><i class="bi bi-telephone"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content grid -->
+        <div class="content-grid">
+
+            <!-- Reservations -->
+            <div class="res-card">
+                <div class="res-header">
+                    <h6>Prenotazioni di oggi</h6>
+                    <a href="#" class="btn btn-sm btn-ghost">Vedi tutte <i class="bi bi-arrow-right ms-1"></i></a>
+                </div>
+
+                <!-- Pranzo -->
+                <div class="meal-divider">
+                    <i class="bi bi-sun"></i>
+                    <span>Pranzo</span>
+                    <span class="meal-count">3 prenotazioni &middot; 12 coperti</span>
+                </div>
+                <div class="r-row">
+                    <div class="r-time">12:30</div>
+                    <div class="r-dot ok"></div>
+                    <div class="r-info">
+                        <div class="r-name">Marco Rossi</div>
+                        <div class="r-phone">+39 333 1234567</div>
+                    </div>
+                    <div class="r-right">
+                        <span class="r-pax"><i class="bi bi-person-fill"></i> 4</span>
+                        <i class="bi bi-chevron-right r-arrow"></i>
+                    </div>
+                </div>
+                <div class="r-row" style="background:#FFFDE7;">
+                    <div class="r-time" style="color:#E65100;">13:00</div>
+                    <div class="r-dot wait"></div>
+                    <div class="r-info">
+                        <div class="r-name">Anna Bianchi</div>
+                        <div class="r-phone">+39 338 7654321</div>
+                    </div>
+                    <div class="r-right">
+                        <span class="r-pax"><i class="bi bi-person-fill"></i> 2</span>
+                        <i class="bi bi-chevron-right r-arrow"></i>
+                    </div>
+                </div>
+                <div class="r-row">
+                    <div class="r-time">13:30</div>
+                    <div class="r-dot ok"></div>
+                    <div class="r-info">
+                        <div class="r-name">Paolo Conti</div>
+                        <div class="r-phone">+39 320 5551234</div>
+                    </div>
+                    <div class="r-right">
+                        <span class="r-pax"><i class="bi bi-person-fill"></i> 6</span>
+                        <i class="bi bi-chevron-right r-arrow"></i>
+                    </div>
+                </div>
+
+                <!-- Cena -->
+                <div class="meal-divider">
+                    <i class="bi bi-moon-stars"></i>
+                    <span>Cena</span>
+                    <span class="meal-count">3 prenotazioni &middot; 17 coperti</span>
+                </div>
+                <div class="r-row">
+                    <div class="r-time">20:00</div>
+                    <div class="r-dot ok"></div>
+                    <div class="r-info">
+                        <div class="r-name">Luigi Verdi</div>
+                        <div class="r-phone">+39 340 9876543</div>
+                    </div>
+                    <div class="r-right">
+                        <span class="r-pax"><i class="bi bi-person-fill"></i> 6</span>
+                        <i class="bi bi-chevron-right r-arrow"></i>
+                    </div>
+                </div>
+                <div class="r-row">
+                    <div class="r-time">20:30</div>
+                    <div class="r-dot ok"></div>
+                    <div class="r-info">
+                        <div class="r-name">Giulia Neri</div>
+                        <div class="r-phone">+39 345 1122334</div>
+                    </div>
+                    <div class="r-right">
+                        <span class="r-pax"><i class="bi bi-person-fill"></i> 8</span>
+                        <i class="bi bi-chevron-right r-arrow"></i>
+                    </div>
+                </div>
+                <div class="r-row" style="background:#FFFDE7;">
+                    <div class="r-time" style="color:#E65100;">21:00</div>
+                    <div class="r-dot wait"></div>
+                    <div class="r-info">
+                        <div class="r-name">Sara Ferrari</div>
+                        <div class="r-phone">+39 347 9988776</div>
+                    </div>
+                    <div class="r-right">
+                        <span class="r-pax"><i class="bi bi-person-fill"></i> 3</span>
+                        <i class="bi bi-chevron-right r-arrow"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right column -->
+            <div class="right-col">
+                <!-- Calendar -->
+                <div class="mini-cal-card">
+                    <div class="cal-head">
+                        <button><i class="bi bi-chevron-left"></i></button>
+                        <span>Marzo 2026</span>
+                        <button><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                    <div class="cal-g">
+                        <div class="cal-dn">L</div><div class="cal-dn">M</div><div class="cal-dn">M</div>
+                        <div class="cal-dn">G</div><div class="cal-dn">V</div><div class="cal-dn">S</div><div class="cal-dn">D</div>
+                        <div class="cal-d empty">.</div><div class="cal-d empty">.</div><div class="cal-d empty">.</div>
+                        <div class="cal-d empty">.</div><div class="cal-d empty">.</div><div class="cal-d empty">.</div>
+                        <div class="cal-d">1</div>
+                        <div class="cal-d">2</div><div class="cal-d">3</div><div class="cal-d">4</div>
+                        <div class="cal-d">5</div><div class="cal-d today sel">6</div><div class="cal-d has-dot">7</div><div class="cal-d">8</div>
+                        <div class="cal-d">9</div><div class="cal-d has-dot">10</div><div class="cal-d">11</div>
+                        <div class="cal-d has-dot">12</div><div class="cal-d">13</div><div class="cal-d">14</div><div class="cal-d">15</div>
+                        <div class="cal-d">16</div><div class="cal-d">17</div><div class="cal-d">18</div>
+                        <div class="cal-d">19</div><div class="cal-d has-dot">20</div><div class="cal-d">21</div><div class="cal-d">22</div>
+                        <div class="cal-d">23</div><div class="cal-d">24</div><div class="cal-d has-dot">25</div>
+                        <div class="cal-d">26</div><div class="cal-d">27</div><div class="cal-d">28</div><div class="cal-d">29</div>
+                        <div class="cal-d">30</div><div class="cal-d">31</div>
+                    </div>
+                </div>
+
+                <!-- Upcoming -->
+                <div class="upcoming-card">
+                    <div class="up-header"><h6><i class="bi bi-calendar-week me-1"></i> Prossimi giorni</h6></div>
+                    <a href="#" class="up-row">
+                        <span class="up-day">Sab 07/03</span>
+                        <div class="up-badges">
+                            <span class="badge badge-brand">2 pren.</span>
+                            <span class="badge badge-light">8 cop.</span>
+                        </div>
+                    </a>
+                    <a href="#" class="up-row">
+                        <span class="up-day">Mar 10/03</span>
+                        <div class="up-badges">
+                            <span class="badge badge-brand">1 pren.</span>
+                            <span class="badge badge-light">2 cop.</span>
+                        </div>
+                    </a>
+                    <a href="#" class="up-row">
+                        <span class="up-day">Gio 12/03</span>
+                        <div class="up-badges">
+                            <span class="badge badge-brand">1 pren.</span>
+                            <span class="badge badge-light">2 cop.</span>
+                        </div>
+                    </a>
+                    <a href="#" class="up-row">
+                        <span class="up-day">Sab 20/03</span>
+                        <div class="up-badges">
+                            <span class="badge badge-brand">3 pren.</span>
+                            <span class="badge badge-light">14 cop.</span>
+                        </div>
+                    </a>
+                    <a href="#" class="up-row">
+                        <span class="up-day">Gio 25/03</span>
+                        <div class="up-badges">
+                            <span class="badge badge-brand">1 pren.</span>
+                            <span class="badge badge-light">5 cop.</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- FAB -->
+<button class="fab"><i class="bi bi-plus-lg"></i></button>
+
+<script>
+document.querySelectorAll('.d-chip').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelectorAll('.d-chip').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+    });
+});
+document.getElementById('cal-toggle').addEventListener('click', function(e) {
+    e.preventDefault(); e.stopPropagation();
+    document.getElementById('cal-drop').classList.toggle('show');
+});
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('#cal-drop') && !e.target.closest('#cal-toggle'))
+        document.getElementById('cal-drop').classList.remove('show');
+});
+document.querySelectorAll('.r-row').forEach(function(r) {
+    r.addEventListener('click', function() { alert('Apri dettaglio prenotazione'); });
+});
+document.querySelectorAll('.btn-confirm').forEach(function(b) {
+    b.addEventListener('click', function(e) { e.stopPropagation(); this.closest('.pending-item').style.opacity='.3'; });
+});
+</script>
+
+</body>
+</html>

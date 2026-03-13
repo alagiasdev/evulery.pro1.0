@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Dashboard v3</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 180px;
+            --brand: #00844A;
+            --brand-light: #E8F5E9;
+            --brand-dark: #006837;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        /* ===== Sidebar ===== */
+        .mock-sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w); background: #1a1d23; color: #fff;
+            padding: 1rem 0; z-index: 100;
+        }
+        .mock-sidebar .brand { padding: 0 1rem 1rem; font-weight: 700; font-size: 1.05rem; border-bottom: 1px solid #333; margin-bottom: .5rem; }
+        .mock-sidebar .nav-item { padding: .5rem 1rem; font-size: .9rem; color: #adb5bd; cursor: pointer; }
+        .mock-sidebar .nav-item:hover { color: #fff; }
+        .mock-sidebar .nav-item.active { background: var(--brand); color: #fff; border-radius: 6px; margin: 0 .5rem; padding: .5rem .75rem; }
+        .mock-sidebar .nav-section { padding: .75rem 1rem .25rem; font-size: .7rem; color: #555; text-transform: uppercase; letter-spacing: .5px; }
+
+        /* ===== Main ===== */
+        .main-content { margin-left: var(--sidebar-w); }
+
+        /* ===== Top bar ===== */
+        .top-bar {
+            background: #fff; border-bottom: 1px solid #e9ecef;
+            padding: .5rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .top-bar-left { display: flex; align-items: center; gap: 1rem; }
+        .top-bar-date { font-size: .85rem; color: #6c757d; }
+        .top-bar-date i { margin-right: .25rem; }
+        .btn-brand { background: var(--brand); color: #fff; border: none; }
+        .btn-brand:hover { background: var(--brand-dark); color: #fff; }
+        .btn-brand-outline { border: 1px solid var(--brand); color: var(--brand); background: transparent; }
+        .btn-brand-outline:hover { background: var(--brand-light); color: var(--brand-dark); }
+
+        /* ===== Page body ===== */
+        .page-body { padding: 1.25rem 1.5rem; }
+
+        /* ===== Date nav strip ===== */
+        .date-strip {
+            display: flex; align-items: stretch; gap: .5rem;
+            margin-bottom: 1.25rem;
+            overflow-x: auto;
+        }
+        .date-chip {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: .5rem 1.25rem;
+            border: 2px solid #dee2e6; border-radius: 10px;
+            background: #fff; text-decoration: none; color: #495057;
+            transition: all .15s; cursor: pointer;
+            white-space: nowrap; min-width: 90px;
+        }
+        .date-chip:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+        .date-chip.active { border-color: var(--brand); background: var(--brand); color: #fff; }
+        .date-chip .chip-label { font-weight: 600; font-size: .9rem; }
+        .date-chip .chip-sub { font-size: .72rem; opacity: .65; margin-top: 1px; }
+        .date-chip.active .chip-sub { opacity: .85; }
+        .date-chip-cal { position: relative; }
+
+        /* ===== Stats banner ===== */
+        .stats-banner {
+            display: flex; gap: 1.5rem; align-items: center;
+            background: #fff; border-radius: 12px;
+            padding: .75rem 1.25rem;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+        }
+        .stat-item { display: flex; align-items: center; gap: .5rem; }
+        .stat-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .stat-num { font-size: 1.25rem; font-weight: 700; line-height: 1; }
+        .stat-label { font-size: .72rem; color: #6c757d; line-height: 1.2; }
+        .stats-divider { width: 1px; height: 30px; background: #e9ecef; }
+
+        /* ===== Layout grid ===== */
+        .dash-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 1.25rem;
+            align-items: start;
+        }
+
+        /* ===== Cards ===== */
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow: hidden; }
+        .card-header {
+            background: #fff; border-bottom: 1px solid #f0f0f0;
+            padding: .65rem 1rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .card-header h6 { margin: 0; font-size: .9rem; font-weight: 600; }
+
+        /* ===== Meal section ===== */
+        .meal-section { margin-bottom: .75rem; }
+        .meal-section:last-child { margin-bottom: 0; }
+        .meal-label {
+            font-size: .7rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .5px; color: #6c757d;
+            padding: .4rem 1rem; background: #f8f9fa;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* ===== Reservation row ===== */
+        .res-row {
+            display: flex; align-items: center; gap: .75rem;
+            padding: .6rem 1rem;
+            border-bottom: 1px solid #f5f5f5;
+            cursor: pointer; transition: background .1s;
+        }
+        .res-row:hover { background: #fafbfc; }
+        .res-row:last-child { border-bottom: none; }
+        .res-time {
+            font-weight: 700; font-size: .9rem; color: #212529;
+            min-width: 48px;
+        }
+        .res-info { flex: 1; min-width: 0; }
+        .res-name { font-weight: 600; font-size: .88rem; color: #212529; }
+        .res-meta { font-size: .75rem; color: #6c757d; }
+        .res-right { display: flex; align-items: center; gap: .5rem; }
+        .res-pax {
+            background: #f0f0f0; border-radius: 6px;
+            padding: 2px 8px; font-size: .78rem; font-weight: 600; color: #495057;
+        }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .status-dot.confirmed { background: #198754; }
+        .status-dot.pending { background: #ffc107; }
+        .status-dot.cancelled { background: #dc3545; }
+
+        /* ===== Sidebar panel ===== */
+        .side-panel { display: flex; flex-direction: column; gap: 1.25rem; }
+
+        /* ===== Mini calendar ===== */
+        .mini-cal { padding: .75rem; }
+        .cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem; }
+        .cal-nav span { font-weight: 600; font-size: .85rem; }
+        .cal-nav button { background: none; border: none; padding: .2rem .4rem; cursor: pointer; color: #6c757d; border-radius: 4px; }
+        .cal-nav button:hover { background: #f0f0f0; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; text-align: center; }
+        .cal-day-name { font-size: .65rem; color: #adb5bd; padding: .25rem 0; font-weight: 600; }
+        .cal-day {
+            padding: .3rem; font-size: .78rem; border-radius: 6px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            aspect-ratio: 1; color: #495057;
+        }
+        .cal-day:hover { background: var(--brand-light); }
+        .cal-day.today { background: var(--brand-light); color: var(--brand); font-weight: 700; }
+        .cal-day.selected { background: var(--brand); color: #fff; font-weight: 600; }
+        .cal-day.has-res::after {
+            content: ''; position: absolute; bottom: 2px;
+            width: 4px; height: 4px; border-radius: 50%; background: var(--brand);
+        }
+        .cal-day { position: relative; }
+        .cal-day.empty { cursor: default; color: transparent; }
+
+        /* ===== Upcoming ===== */
+        .upcoming-list { padding: 0; }
+        .upcoming-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: .55rem 1rem;
+            border-bottom: 1px solid #f5f5f5;
+            text-decoration: none; color: inherit;
+            transition: background .1s;
+        }
+        .upcoming-row:hover { background: #fafbfc; }
+        .upcoming-row:last-child { border-bottom: none; }
+        .upcoming-day { font-weight: 600; font-size: .85rem; color: var(--brand); }
+        .upcoming-badges { display: flex; gap: .35rem; }
+        .upcoming-badges .badge { font-size: .7rem; font-weight: 600; }
+
+        /* ===== Quick action ===== */
+        .quick-action-card {
+            background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+            border-radius: 12px; padding: 1rem;
+            color: #fff; text-align: center;
+            cursor: pointer; transition: transform .15s;
+            text-decoration: none; display: block;
+        }
+        .quick-action-card:hover { transform: translateY(-2px); color: #fff; }
+        .quick-action-card i { font-size: 1.5rem; margin-bottom: .25rem; }
+        .quick-action-card .qa-label { font-weight: 600; font-size: .9rem; }
+
+        /* ===== FAB ===== */
+        .fab {
+            position: fixed; bottom: 1.5rem; right: 1.5rem;
+            width: 56px; height: 56px; border-radius: 50%;
+            background: var(--brand); color: #fff; border: none;
+            font-size: 1.5rem; display: none;
+            align-items: center; justify-content: center;
+            box-shadow: 0 4px 14px rgba(0,132,74,.4);
+            z-index: 200;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 992px) {
+            .dash-grid { grid-template-columns: 1fr; }
+            .side-panel { flex-direction: row; flex-wrap: wrap; }
+            .side-panel > * { flex: 1; min-width: 250px; }
+        }
+        @media (max-width: 768px) {
+            .mock-sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .date-strip { gap: .4rem; }
+            .date-chip { padding: .4rem .75rem; min-width: 75px; }
+            .date-chip .chip-label { font-size: .8rem; }
+            .stats-banner { flex-wrap: wrap; gap: .75rem; padding: .6rem 1rem; }
+            .stats-divider { display: none; }
+            .fab { display: flex; }
+            .btn-nuova-desktop { display: none !important; }
+            .page-body { padding: 1rem; }
+        }
+
+        /* ===== Wireframe note ===== */
+        .wf-note {
+            background: #fff3cd; border: 1px dashed #ffc107; border-radius: 8px;
+            padding: .6rem 1rem; margin-bottom: 1rem;
+            font-size: .8rem; color: #664d03;
+        }
+        .wf-note strong { color: #cc0000; }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="mock-sidebar">
+    <div class="brand">Trattoria Da Mario</div>
+    <div class="nav-item active"><i class="bi bi-house me-2"></i>Dashboard</div>
+    <div class="nav-item"><i class="bi bi-calendar-check me-2"></i>Prenotazioni</div>
+    <div class="nav-item"><i class="bi bi-people me-2"></i>Clienti</div>
+    <div class="nav-section">Impostazioni</div>
+    <div class="nav-item"><i class="bi bi-gear me-2"></i>Generali</div>
+    <div class="nav-item"><i class="bi bi-clock me-2"></i>Orari e Coperti</div>
+    <div class="nav-item"><i class="bi bi-tags me-2"></i>Categorie Pasto</div>
+    <div class="nav-item"><i class="bi bi-cash me-2"></i>Caparra</div>
+    <div class="nav-item"><i class="bi bi-globe me-2"></i>Dominio</div>
+    <div style="position:absolute;bottom:1rem;left:0;right:0;padding:0 .5rem;">
+        <div class="nav-item" style="background:#2a2d33;border-radius:6px;text-align:center;"><i class="bi bi-box-arrow-left me-1"></i>Esci</div>
+    </div>
+</div>
+
+<!-- Main content -->
+<div class="main-content">
+
+    <!-- Top bar -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <span class="top-bar-date"><i class="bi bi-calendar3"></i> Ven 06/03/2026</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a href="#" class="btn btn-brand btn-sm btn-nuova-desktop">
+                <i class="bi bi-plus-circle me-1"></i> Nuova Prenotazione
+            </a>
+            <a href="#" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-eye me-1"></i> Vedi pagina
+            </a>
+        </div>
+    </div>
+
+    <div class="page-body">
+
+        <!-- Note wireframe -->
+        <div class="wf-note">
+            <strong>WIREFRAME v3</strong> —
+            <strong>1)</strong> Niente titolo ridondante, la data e nel date-strip.
+            <strong>2)</strong> Stats in banner orizzontale compatto (1 riga).
+            <strong>3)</strong> Prenotazioni raggruppate per fascia (Pranzo/Cena) con status-dot colorato.
+            <strong>4)</strong> Sidebar destra: mini-calendario sempre visibile + prossimi giorni + azione rapida.
+            <strong>5)</strong> Mobile: FAB, sidebar collassa sotto.
+        </div>
+
+        <!-- Date strip -->
+        <div class="date-strip">
+            <a href="#" class="date-chip active" data-offset="0">
+                <span class="chip-label">Oggi</span>
+                <span class="chip-sub">Ven 6/3</span>
+            </a>
+            <a href="#" class="date-chip" data-offset="1">
+                <span class="chip-label">Domani</span>
+                <span class="chip-sub">Sab 7/3</span>
+            </a>
+            <a href="#" class="date-chip" data-offset="2">
+                <span class="chip-label">Dopodomani</span>
+                <span class="chip-sub">Dom 8/3</span>
+            </a>
+            <div class="date-chip-cal">
+                <a href="#" class="date-chip" id="cal-toggle-strip">
+                    <i class="bi bi-calendar3"></i>
+                    <span class="chip-label">Altra data</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats banner -->
+        <div class="stats-banner">
+            <div class="stat-item">
+                <div class="stat-dot" style="background:#0d6efd;"></div>
+                <div>
+                    <div class="stat-num" style="color:#0d6efd;">24</div>
+                    <div class="stat-label">Coperti</div>
+                </div>
+            </div>
+            <div class="stats-divider"></div>
+            <div class="stat-item">
+                <div class="stat-dot" style="background:#198754;"></div>
+                <div>
+                    <div class="stat-num" style="color:#198754;">3</div>
+                    <div class="stat-label">Confermate</div>
+                </div>
+            </div>
+            <div class="stats-divider"></div>
+            <div class="stat-item">
+                <div class="stat-dot" style="background:#ffc107;"></div>
+                <div>
+                    <div class="stat-num" style="color:#ffc107;">1</div>
+                    <div class="stat-label">In Attesa</div>
+                </div>
+            </div>
+            <div class="stats-divider"></div>
+            <div class="stat-item">
+                <div class="stat-dot" style="background:#0dcaf0;"></div>
+                <div>
+                    <div class="stat-num" style="color:#0dcaf0;">4</div>
+                    <div class="stat-label">Totale</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main grid -->
+        <div class="dash-grid">
+
+            <!-- Left: reservations -->
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <h6>Prenotazioni di oggi</h6>
+                        <a href="#" class="btn btn-sm btn-brand-outline" style="font-size:.78rem;">
+                            Vedi tutte <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+
+                    <!-- Pranzo -->
+                    <div class="meal-section">
+                        <div class="meal-label"><i class="bi bi-sun me-1"></i> Pranzo</div>
+                        <div class="res-row">
+                            <div class="res-time">12:30</div>
+                            <div class="status-dot confirmed" title="Confermata"></div>
+                            <div class="res-info">
+                                <div class="res-name">Marco Rossi</div>
+                                <div class="res-meta"><i class="bi bi-telephone me-1"></i>+39 333 1234567</div>
+                            </div>
+                            <div class="res-right">
+                                <span class="res-pax"><i class="bi bi-people-fill me-1"></i>4</span>
+                                <i class="bi bi-chevron-right text-muted" style="font-size:.75rem;"></i>
+                            </div>
+                        </div>
+                        <div class="res-row">
+                            <div class="res-time">13:00</div>
+                            <div class="status-dot pending" title="In Attesa"></div>
+                            <div class="res-info">
+                                <div class="res-name">Anna Bianchi</div>
+                                <div class="res-meta"><i class="bi bi-telephone me-1"></i>+39 338 7654321</div>
+                            </div>
+                            <div class="res-right">
+                                <span class="res-pax"><i class="bi bi-people-fill me-1"></i>2</span>
+                                <i class="bi bi-chevron-right text-muted" style="font-size:.75rem;"></i>
+                            </div>
+                        </div>
+                        <div class="res-row">
+                            <div class="res-time">13:30</div>
+                            <div class="status-dot confirmed" title="Confermata"></div>
+                            <div class="res-info">
+                                <div class="res-name">Paolo Conti</div>
+                                <div class="res-meta"><i class="bi bi-telephone me-1"></i>+39 320 5551234</div>
+                            </div>
+                            <div class="res-right">
+                                <span class="res-pax"><i class="bi bi-people-fill me-1"></i>6</span>
+                                <i class="bi bi-chevron-right text-muted" style="font-size:.75rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cena -->
+                    <div class="meal-section">
+                        <div class="meal-label"><i class="bi bi-moon me-1"></i> Cena</div>
+                        <div class="res-row">
+                            <div class="res-time">20:00</div>
+                            <div class="status-dot confirmed" title="Confermata"></div>
+                            <div class="res-info">
+                                <div class="res-name">Luigi Verdi</div>
+                                <div class="res-meta"><i class="bi bi-telephone me-1"></i>+39 340 9876543</div>
+                            </div>
+                            <div class="res-right">
+                                <span class="res-pax"><i class="bi bi-people-fill me-1"></i>6</span>
+                                <i class="bi bi-chevron-right text-muted" style="font-size:.75rem;"></i>
+                            </div>
+                        </div>
+                        <div class="res-row">
+                            <div class="res-time">20:30</div>
+                            <div class="status-dot confirmed" title="Confermata"></div>
+                            <div class="res-info">
+                                <div class="res-name">Giulia Neri</div>
+                                <div class="res-meta"><i class="bi bi-telephone me-1"></i>+39 345 1122334</div>
+                            </div>
+                            <div class="res-right">
+                                <span class="res-pax"><i class="bi bi-people-fill me-1"></i>8</span>
+                                <i class="bi bi-chevron-right text-muted" style="font-size:.75rem;"></i>
+                            </div>
+                        </div>
+                        <div class="res-row">
+                            <div class="res-time">21:00</div>
+                            <div class="status-dot pending" title="In Attesa"></div>
+                            <div class="res-info">
+                                <div class="res-name">Sara Ferrari</div>
+                                <div class="res-meta"><i class="bi bi-telephone me-1"></i>+39 347 9988776</div>
+                            </div>
+                            <div class="res-right">
+                                <span class="res-pax"><i class="bi bi-people-fill me-1"></i>3</span>
+                                <i class="bi bi-chevron-right text-muted" style="font-size:.75rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right sidebar -->
+            <div class="side-panel">
+
+                <!-- Mini calendar -->
+                <div class="card">
+                    <div class="mini-cal">
+                        <div class="cal-nav">
+                            <button><i class="bi bi-chevron-left"></i></button>
+                            <span>Marzo 2026</span>
+                            <button><i class="bi bi-chevron-right"></i></button>
+                        </div>
+                        <div class="cal-grid">
+                            <div class="cal-day-name">L</div><div class="cal-day-name">M</div><div class="cal-day-name">M</div>
+                            <div class="cal-day-name">G</div><div class="cal-day-name">V</div><div class="cal-day-name">S</div><div class="cal-day-name">D</div>
+                            <div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div>
+                            <div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div>
+                            <div class="cal-day">1</div>
+                            <div class="cal-day">2</div><div class="cal-day">3</div><div class="cal-day">4</div>
+                            <div class="cal-day">5</div><div class="cal-day today selected">6</div><div class="cal-day has-res">7</div><div class="cal-day">8</div>
+                            <div class="cal-day">9</div><div class="cal-day has-res">10</div><div class="cal-day">11</div>
+                            <div class="cal-day has-res">12</div><div class="cal-day">13</div><div class="cal-day">14</div><div class="cal-day">15</div>
+                            <div class="cal-day">16</div><div class="cal-day">17</div><div class="cal-day">18</div>
+                            <div class="cal-day">19</div><div class="cal-day">20</div><div class="cal-day">21</div><div class="cal-day">22</div>
+                            <div class="cal-day">23</div><div class="cal-day">24</div><div class="cal-day">25</div>
+                            <div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div>
+                            <div class="cal-day">30</div><div class="cal-day">31</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prossimi giorni -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6><i class="bi bi-calendar-week me-1"></i> Prossimi giorni</h6>
+                    </div>
+                    <div class="upcoming-list">
+                        <a href="#" class="upcoming-row">
+                            <span class="upcoming-day">Sab 07/03</span>
+                            <div class="upcoming-badges">
+                                <span class="badge" style="background:var(--brand);">2 pren.</span>
+                                <span class="badge bg-light text-dark border">8 cop.</span>
+                            </div>
+                        </a>
+                        <a href="#" class="upcoming-row">
+                            <span class="upcoming-day">Mar 10/03</span>
+                            <div class="upcoming-badges">
+                                <span class="badge" style="background:var(--brand);">1 pren.</span>
+                                <span class="badge bg-light text-dark border">2 cop.</span>
+                            </div>
+                        </a>
+                        <a href="#" class="upcoming-row">
+                            <span class="upcoming-day">Gio 12/03</span>
+                            <div class="upcoming-badges">
+                                <span class="badge" style="background:var(--brand);">1 pren.</span>
+                                <span class="badge bg-light text-dark border">2 cop.</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick action -->
+                <a href="#" class="quick-action-card">
+                    <i class="bi bi-plus-circle d-block"></i>
+                    <span class="qa-label">Nuova Prenotazione</span>
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- FAB mobile -->
+<button class="fab" title="Nuova Prenotazione"><i class="bi bi-plus-lg"></i></button>
+
+<script>
+// Date chip toggle (demo)
+document.querySelectorAll('.date-chip').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelectorAll('.date-chip').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+    });
+});
+// Reservation row hover (demo)
+document.querySelectorAll('.res-row').forEach(function(row) {
+    row.addEventListener('click', function() {
+        alert('Apri dettaglio prenotazione');
+    });
+});
+</script>
+
+</body>
+</html>

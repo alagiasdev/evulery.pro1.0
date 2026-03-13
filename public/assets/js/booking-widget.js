@@ -367,7 +367,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var details = getEl('confirmation-details');
                 var confHtml =
                     '<div class="bw-conf-summary">' +
-                    '<div class="bw-conf-row"><span>Data</span><strong>' + formatDatePill(body.date) + ' (' + body.date + ')</strong></div>' +
+                    '<div class="bw-conf-row"><span>Data</span><strong>' + formatDatePill(body.date) + ' (' + formatDateDMY(body.date) + ')</strong></div>' +
                     '<div class="bw-conf-row"><span>Orario</span><strong>' + body.time + '</strong></div>' +
                     '<div class="bw-conf-row"><span>Persone</span><strong>' + body.party_size + '</strong></div>' +
                     '<div class="bw-conf-row"><span>Nome</span><strong>' + escapeHtml(firstName + ' ' + lastName) + '</strong></div>';
@@ -439,6 +439,11 @@ document.addEventListener('DOMContentLoaded', function() {
         var m = String(d.getMonth() + 1).padStart(2, '0');
         var day = String(d.getDate()).padStart(2, '0');
         return y + '-' + m + '-' + day;
+    }
+
+    function formatDateDMY(dateStr) {
+        var parts = dateStr.split('-');
+        return parts[2] + '/' + parts[1] + '/' + parts[0];
     }
 
     function escapeHtml(str) {

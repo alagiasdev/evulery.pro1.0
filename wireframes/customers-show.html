@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Cliente dettaglio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 180px;
+            --brand: #00844A;
+            --brand-light: #E8F5E9;
+            --brand-dark: #006837;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        /* ===== Sidebar ===== */
+        .mock-sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w); background: #1a1d23; color: #fff;
+            padding: 1rem 0; z-index: 100;
+        }
+        .mock-sidebar .brand { padding: 0 1rem 1rem; font-weight: 700; font-size: 1.05rem; border-bottom: 1px solid #333; margin-bottom: .5rem; }
+        .mock-sidebar .nav-item { padding: .5rem 1rem; font-size: .9rem; color: #adb5bd; cursor: pointer; }
+        .mock-sidebar .nav-item:hover { color: #fff; }
+        .mock-sidebar .nav-item.active { background: var(--brand); color: #fff; border-radius: 6px; margin: 0 .5rem; padding: .5rem .75rem; }
+        .mock-sidebar .nav-section { padding: .75rem 1rem .25rem; font-size: .7rem; color: #555; text-transform: uppercase; letter-spacing: .5px; }
+
+        /* ===== Main ===== */
+        .main-content { margin-left: var(--sidebar-w); }
+
+        /* ===== Top bar ===== */
+        .top-bar {
+            background: #fff; border-bottom: 1px solid #e9ecef;
+            padding: .5rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .top-bar-date { font-size: .85rem; color: #6c757d; }
+        .btn-brand { background: var(--brand); color: #fff; border: none; }
+        .btn-brand:hover { background: var(--brand-dark); color: #fff; }
+
+        /* ===== Page body ===== */
+        .page-body { padding: 1.25rem 1.5rem; }
+
+        /* ===== Breadcrumb ===== */
+        .breadcrumb-bar {
+            display: flex; align-items: center; gap: .4rem;
+            margin-bottom: 1rem; font-size: .82rem; color: #6c757d;
+        }
+        .breadcrumb-bar a { color: var(--brand); text-decoration: none; }
+        .breadcrumb-bar a:hover { text-decoration: underline; }
+
+        /* ===== Card ===== */
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow: hidden; }
+
+        /* ===== Hero card ===== */
+        .hero-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.25rem;
+            display: flex; align-items: center; gap: 1.25rem;
+        }
+        .hero-avatar {
+            width: 64px; height: 64px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 1.4rem; color: #fff;
+            flex-shrink: 0;
+        }
+        .hero-info { flex: 1; min-width: 0; }
+        .hero-name { font-size: 1.35rem; font-weight: 700; color: #212529; }
+        .hero-contacts { display: flex; gap: 1.25rem; margin-top: .3rem; flex-wrap: wrap; }
+        .hero-contact {
+            display: flex; align-items: center; gap: .35rem;
+            font-size: .82rem; color: #6c757d;
+        }
+        .hero-contact a { color: #6c757d; text-decoration: none; }
+        .hero-contact a:hover { color: var(--brand); }
+        .hero-contact i { font-size: .75rem; }
+        .hero-meta { font-size: .72rem; color: #adb5bd; margin-top: .25rem; }
+        .hero-actions { display: flex; gap: .5rem; flex-shrink: 0; }
+        .hero-actions .btn { font-size: .82rem; padding: .4rem .85rem; border-radius: 8px; }
+
+        /* Segment badge */
+        .seg-badge {
+            padding: 3px 12px; border-radius: 12px;
+            font-size: .75rem; font-weight: 700;
+            display: inline-block; margin-left: .5rem; vertical-align: middle;
+        }
+        .seg-badge.vip { background: #FFF3E0; color: #E65100; }
+        .seg-badge.abituale { background: #E8F5E9; color: #2E7D32; }
+        .seg-badge.occasionale { background: #E3F2FD; color: #1565C0; }
+        .seg-badge.nuovo { background: #F5F5F5; color: #757575; }
+
+        /* ===== Stats strip ===== */
+        .stats-strip {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: .75rem;
+            margin-bottom: 1.25rem;
+        }
+        .stat-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            padding: .85rem .75rem; text-align: center;
+        }
+        .stat-value { font-size: 1.4rem; font-weight: 800; }
+        .stat-label { font-size: .7rem; color: #6c757d; text-transform: uppercase; letter-spacing: .3px; font-weight: 600; margin-top: .1rem; }
+
+        /* ===== Reliability bar ===== */
+        .reliability-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+        .rel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem; }
+        .rel-title { font-size: .82rem; font-weight: 700; color: #495057; }
+        .rel-value { font-size: .85rem; font-weight: 800; }
+        .rel-bar { height: 10px; background: #f0f0f0; border-radius: 6px; overflow: hidden; }
+        .rel-bar-fill { height: 100%; border-radius: 6px; transition: width .3s; }
+
+        /* ===== Notes card ===== */
+        .notes-card {
+            background: #FFFDE7; border-left: 4px solid #FFC107;
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+        .notes-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; color: #F57F17; margin-bottom: .4rem; }
+        .notes-text { font-size: .88rem; color: #5D4037; line-height: 1.5; }
+        .notes-textarea {
+            width: 100%; border: 1px solid #e0e0e0; border-radius: 8px;
+            padding: .5rem .75rem; font-size: .85rem;
+            resize: vertical; min-height: 60px;
+        }
+        .notes-textarea:focus { outline: none; border-color: var(--brand); }
+
+        /* ===== Section label ===== */
+        .section-label {
+            font-size: .78rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .5px; color: #adb5bd; margin-bottom: .75rem;
+            display: flex; align-items: center; gap: .4rem;
+        }
+        .section-label i { font-size: .85rem; }
+
+        /* ===== History list ===== */
+        .history-row {
+            display: grid;
+            grid-template-columns: 90px 50px auto 50px 90px 24px;
+            align-items: center; gap: .5rem;
+            padding: .55rem 1rem;
+            border-bottom: 1px solid #f5f5f5;
+            cursor: pointer; transition: background .1s;
+        }
+        .history-row:hover { background: #fafbfc; }
+        .history-row:last-child { border-bottom: none; }
+        .h-date { font-size: .82rem; font-weight: 600; color: #495057; }
+        .h-time { font-size: .82rem; color: #6c757d; }
+        .h-detail { font-size: .82rem; color: #6c757d; }
+        .h-pax { font-size: .82rem; font-weight: 600; text-align: center; }
+        .h-status { display: flex; align-items: center; gap: .35rem; justify-content: flex-end; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .status-label { font-size: .72rem; font-weight: 600; }
+        .h-arrow { color: #d0d0d0; font-size: .7rem; }
+
+        .history-header {
+            display: grid;
+            grid-template-columns: 90px 50px auto 50px 90px 24px;
+            gap: .5rem; padding: .5rem 1rem;
+            background: #fafbfc; border-bottom: 1px solid #f0f0f0;
+        }
+        .history-header span {
+            font-size: .68rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .3px; color: #adb5bd;
+        }
+
+        /* Status colors */
+        .st-arrived .status-dot { background: var(--brand); }
+        .st-arrived .status-label { color: var(--brand); }
+        .st-confirmed .status-dot { background: #0d6efd; }
+        .st-confirmed .status-label { color: #0d6efd; }
+        .st-noshow .status-dot { background: #dc3545; }
+        .st-noshow .status-label { color: #dc3545; }
+        .st-cancelled .status-dot { background: #6c757d; }
+        .st-cancelled .status-label { color: #6c757d; }
+        .st-pending .status-dot { background: #ffc107; }
+        .st-pending .status-label { color: #E65100; }
+
+        /* ===== Quick insights ===== */
+        .insight-chip {
+            display: inline-flex; align-items: center; gap: .35rem;
+            padding: .3rem .65rem; border-radius: 8px;
+            font-size: .72rem; font-weight: 600;
+            background: #f8f9fa; color: #495057;
+            margin-right: .35rem; margin-bottom: .35rem;
+        }
+        .insight-chip i { font-size: .7rem; }
+
+        /* ===== Mobile ===== */
+        .mobile-history { display: none; }
+        .mh-card {
+            background: #fff; border-radius: 10px;
+            box-shadow: 0 1px 2px rgba(0,0,0,.05);
+            padding: .65rem .85rem; margin-bottom: .5rem;
+            display: flex; justify-content: space-between; align-items: center;
+            text-decoration: none; color: inherit;
+        }
+        .mh-left {}
+        .mh-date { font-weight: 600; font-size: .85rem; color: #495057; }
+        .mh-meta { font-size: .72rem; color: #adb5bd; }
+        .mh-right { display: flex; align-items: center; gap: .5rem; }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 992px) {
+            .stats-strip { grid-template-columns: repeat(3, 1fr); }
+            .hero-card { flex-direction: column; text-align: center; }
+            .hero-contacts { justify-content: center; }
+            .hero-actions { justify-content: center; }
+            .history-row { grid-template-columns: 80px 50px auto 40px 80px 20px; }
+        }
+        @media (max-width: 768px) {
+            .mock-sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .page-body { padding: 1rem; }
+            .stats-strip { grid-template-columns: repeat(2, 1fr); }
+            .desktop-history { display: none !important; }
+            .mobile-history { display: block !important; }
+            .hero-actions { flex-direction: column; width: 100%; }
+            .hero-actions .btn { width: 100%; }
+        }
+
+        /* ===== WF note ===== */
+        .wf-note {
+            background: #E8F5E9; border: 1px dashed var(--brand); border-radius: 8px;
+            padding: .6rem 1rem; margin-bottom: 1rem;
+            font-size: .78rem; color: #1B5E20;
+        }
+        .wf-note b { color: #B71C1C; }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="mock-sidebar">
+    <div class="brand">Trattoria Da Mario</div>
+    <div class="nav-item"><i class="bi bi-house me-2"></i>Dashboard</div>
+    <div class="nav-item"><i class="bi bi-calendar-check me-2"></i>Prenotazioni</div>
+    <div class="nav-item active"><i class="bi bi-people me-2"></i>Clienti</div>
+    <div class="nav-section">Impostazioni</div>
+    <div class="nav-item"><i class="bi bi-gear me-2"></i>Generali</div>
+    <div class="nav-item"><i class="bi bi-clock me-2"></i>Orari e Coperti</div>
+    <div class="nav-item"><i class="bi bi-tags me-2"></i>Categorie Pasto</div>
+    <div class="nav-item"><i class="bi bi-cash me-2"></i>Caparra</div>
+    <div class="nav-item"><i class="bi bi-globe me-2"></i>Dominio</div>
+    <div style="position:absolute;bottom:1rem;left:0;right:0;padding:0 .5rem;">
+        <div class="nav-item" style="background:#2a2d33;border-radius:6px;text-align:center;"><i class="bi bi-box-arrow-left me-1"></i>Esci</div>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+    <div class="top-bar">
+        <span class="top-bar-date"><i class="bi bi-calendar3"></i> Ven 06/03/2026</span>
+        <div class="d-flex align-items-center gap-2">
+            <a href="#" class="btn btn-brand btn-sm"><i class="bi bi-plus-circle me-1"></i> Nuova Prenotazione</a>
+        </div>
+    </div>
+
+    <div class="page-body">
+
+        <div class="wf-note">
+            <b>WIREFRAME — Cliente dettaglio</b> &mdash;
+            <b>1)</b> Hero card con avatar, nome, segmento, contatti e azioni rapide.
+            <b>2)</b> 5 stat card orizzontali (prenotazioni, no-show, media coperti, ultima visita, cliente dal).
+            <b>3)</b> Barra affidabilit&agrave; con progress bar colorata.
+            <b>4)</b> Note cliente editabili (card gialla).
+            <b>5)</b> Storico prenotazioni con status dots + mobile card list.
+        </div>
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-bar">
+            <a href="#">Clienti</a>
+            <i class="bi bi-chevron-right" style="font-size:.65rem;"></i>
+            <span>Laura Colombo</span>
+        </div>
+
+        <!-- Hero Card -->
+        <div class="hero-card">
+            <div class="hero-avatar" style="background: #E65100;">LC</div>
+            <div class="hero-info">
+                <div class="hero-name">
+                    Laura Colombo
+                    <span class="seg-badge vip">VIP</span>
+                </div>
+                <div class="hero-contacts">
+                    <div class="hero-contact">
+                        <i class="bi bi-telephone-fill"></i>
+                        <a href="tel:+393351112233">+39 335 111 2233</a>
+                    </div>
+                    <div class="hero-contact">
+                        <i class="bi bi-envelope-fill"></i>
+                        <a href="mailto:l.colombo@email.it">l.colombo@email.it</a>
+                    </div>
+                </div>
+                <div class="hero-meta">Cliente dal 15 settembre 2025</div>
+            </div>
+            <div class="hero-actions">
+                <a href="#" class="btn btn-brand"><i class="bi bi-plus-circle me-1"></i> Prenota</a>
+                <a href="#" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Lista</a>
+            </div>
+        </div>
+
+        <!-- Stats Strip -->
+        <div class="stats-strip">
+            <div class="stat-card">
+                <div class="stat-value" style="color: var(--brand);">14</div>
+                <div class="stat-label">Prenotazioni</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: #dc3545;">1</div>
+                <div class="stat-label">No-show</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: #6c757d;">3.2</div>
+                <div class="stat-label">Media coperti</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: #495057;">28 Feb</div>
+                <div class="stat-label">Ultima visita</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: #adb5bd;">6 mesi</div>
+                <div class="stat-label">Cliente da</div>
+            </div>
+        </div>
+
+        <!-- Reliability bar -->
+        <div class="reliability-card">
+            <div class="rel-header">
+                <span class="rel-title"><i class="bi bi-shield-check me-1"></i> Affidabilit&agrave;</span>
+                <span class="rel-value" style="color: var(--brand);">Ottima &mdash; 93%</span>
+            </div>
+            <div class="rel-bar">
+                <div class="rel-bar-fill" style="width: 93%; background: var(--brand);"></div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left column -->
+            <div class="col-lg-4">
+
+                <!-- Quick insights -->
+                <div class="section-label"><i class="bi bi-lightbulb"></i> Insight</div>
+                <div style="margin-bottom: 1.25rem;">
+                    <span class="insight-chip"><i class="bi bi-moon-stars" style="color:#5C6BC0;"></i> Preferisce la cena</span>
+                    <span class="insight-chip"><i class="bi bi-calendar-week" style="color:var(--brand);"></i> Viene il venerd&igrave;</span>
+                    <span class="insight-chip"><i class="bi bi-people" style="color:#E65100;"></i> Tavoli da 2-4</span>
+                    <span class="insight-chip"><i class="bi bi-clock" style="color:#1565C0;"></i> Ore 20:00-20:30</span>
+                </div>
+
+                <!-- Notes -->
+                <div class="notes-card">
+                    <div class="notes-label"><i class="bi bi-sticky me-1"></i> Note cliente</div>
+                    <textarea class="notes-textarea" rows="3">Allergica alle noci. Preferisce tavolo vicino alla finestra. Compleanno: 12 marzo.</textarea>
+                    <div class="d-flex justify-content-end mt-2">
+                        <button class="btn btn-sm btn-outline-warning" style="font-size:.78rem;border-radius:6px;">
+                            <i class="bi bi-check-lg me-1"></i>Salva note
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right column: History -->
+            <div class="col-lg-8">
+                <div class="section-label"><i class="bi bi-clock-history"></i> Storico prenotazioni</div>
+
+                <!-- Desktop history table -->
+                <div class="card desktop-history">
+                    <div class="history-header">
+                        <span>Data</span>
+                        <span>Ora</span>
+                        <span>Dettaglio</span>
+                        <span style="text-align:center;">Pax</span>
+                        <span style="text-align:right;">Stato</span>
+                        <span></span>
+                    </div>
+
+                    <div class="history-row">
+                        <div class="h-date">06 Mar 2026</div>
+                        <div class="h-time">20:30</div>
+                        <div class="h-detail">Cena &middot; Telefono</div>
+                        <div class="h-pax">4</div>
+                        <div class="h-status st-confirmed">
+                            <span class="status-dot"></span>
+                            <span class="status-label">Confermata</span>
+                        </div>
+                        <i class="bi bi-chevron-right h-arrow"></i>
+                    </div>
+
+                    <div class="history-row">
+                        <div class="h-date">28 Feb 2026</div>
+                        <div class="h-time">20:00</div>
+                        <div class="h-detail">Cena &middot; Telefono</div>
+                        <div class="h-pax">2</div>
+                        <div class="h-status st-arrived">
+                            <span class="status-dot"></span>
+                            <span class="status-label">Arrivata</span>
+                        </div>
+                        <i class="bi bi-chevron-right h-arrow"></i>
+                    </div>
+
+                    <div class="history-row">
+                        <div class="h-date">21 Feb 2026</div>
+                        <div class="h-time">13:00</div>
+                        <div class="h-detail">Pranzo &middot; Walk-in</div>
+                        <div class="h-pax">3</div>
+                        <div class="h-status st-arrived">
+                            <span class="status-dot"></span>
+                            <span class="status-label">Arrivata</span>
+                        </div>
+                        <i class="bi bi-chevron-right h-arrow"></i>
+                    </div>
+
+                    <div class="history-row">
+                        <div class="h-date">14 Feb 2026</div>
+                        <div class="h-time">20:30</div>
+                        <div class="h-detail">Cena &middot; Telefono</div>
+                        <div class="h-pax">2</div>
+                        <div class="h-status st-arrived">
+                            <span class="status-dot"></span>
+                            <span class="status-label">Arrivata</span>
+                        </div>
+                        <i class="bi bi-chevron-right h-arrow"></i>
+                    </div>
+
+                    <div class="history-row">
+                        <div class="h-date">07 Feb 2026</div>
+                        <div class="h-time">20:00</div>
+                        <div class="h-detail">Cena &middot; Telefono</div>
+                        <div class="h-pax">4</div>
+                        <div class="h-status st-noshow">
+                            <span class="status-dot"></span>
+                            <span class="status-label">No-show</span>
+                        </div>
+                        <i class="bi bi-chevron-right h-arrow"></i>
+                    </div>
+
+                    <div class="history-row">
+                        <div class="h-date">31 Gen 2026</div>
+                        <div class="h-time">13:00</div>
+                        <div class="h-detail">Pranzo &middot; Telefono</div>
+                        <div class="h-pax">3</div>
+                        <div class="h-status st-arrived">
+                            <span class="status-dot"></span>
+                            <span class="status-label">Arrivata</span>
+                        </div>
+                        <i class="bi bi-chevron-right h-arrow"></i>
+                    </div>
+
+                    <div class="history-row">
+                        <div class="h-date">24 Gen 2026</div>
+                        <div class="h-time">20:30</div>
+                        <div class="h-detail">Cena &middot; Walk-in</div>
+                        <div class="h-pax">2</div>
+                        <div class="h-status st-arrived">
+                            <span class="status-dot"></span>
+                            <span class="status-label">Arrivata</span>
+                        </div>
+                        <i class="bi bi-chevron-right h-arrow"></i>
+                    </div>
+
+                    <div class="history-row">
+                        <div class="h-date">17 Gen 2026</div>
+                        <div class="h-time">20:00</div>
+                        <div class="h-detail">Cena &middot; Telefono</div>
+                        <div class="h-pax">4</div>
+                        <div class="h-status st-cancelled">
+                            <span class="status-dot"></span>
+                            <span class="status-label">Cancellata</span>
+                        </div>
+                        <i class="bi bi-chevron-right h-arrow"></i>
+                    </div>
+
+                    <!-- Load more -->
+                    <div style="padding:.75rem 1rem; text-align:center; border-top:1px solid #f0f0f0;">
+                        <a href="#" style="font-size:.82rem; color:var(--brand); text-decoration:none; font-weight:600;">
+                            Mostra tutte le 14 prenotazioni <i class="bi bi-chevron-down ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mobile history -->
+                <div class="mobile-history">
+                    <a href="#" class="mh-card">
+                        <div class="mh-left">
+                            <div class="mh-date">06 Mar 2026 &middot; 20:30</div>
+                            <div class="mh-meta">4 pax &middot; Cena &middot; Telefono</div>
+                        </div>
+                        <div class="mh-right">
+                            <div class="h-status st-confirmed">
+                                <span class="status-dot"></span>
+                                <span class="status-label">Confermata</span>
+                            </div>
+                            <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+                        </div>
+                    </a>
+                    <a href="#" class="mh-card">
+                        <div class="mh-left">
+                            <div class="mh-date">28 Feb 2026 &middot; 20:00</div>
+                            <div class="mh-meta">2 pax &middot; Cena &middot; Telefono</div>
+                        </div>
+                        <div class="mh-right">
+                            <div class="h-status st-arrived">
+                                <span class="status-dot"></span>
+                                <span class="status-label">Arrivata</span>
+                            </div>
+                            <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+                        </div>
+                    </a>
+                    <a href="#" class="mh-card">
+                        <div class="mh-left">
+                            <div class="mh-date">07 Feb 2026 &middot; 20:00</div>
+                            <div class="mh-meta">4 pax &middot; Cena &middot; Telefono</div>
+                        </div>
+                        <div class="mh-right">
+                            <div class="h-status st-noshow">
+                                <span class="status-dot"></span>
+                                <span class="status-label">No-show</span>
+                            </div>
+                            <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+                        </div>
+                    </a>
+                    <a href="#" class="mh-card">
+                        <div class="mh-left">
+                            <div class="mh-date">17 Gen 2026 &middot; 20:00</div>
+                            <div class="mh-meta">4 pax &middot; Cena &middot; Telefono</div>
+                        </div>
+                        <div class="mh-right">
+                            <div class="h-status st-cancelled">
+                                <span class="status-dot"></span>
+                                <span class="status-label">Cancellata</span>
+                            </div>
+                            <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// Row click demo
+document.querySelectorAll('.history-row, .mh-card').forEach(function(row) {
+    row.addEventListener('click', function(e) {
+        e.preventDefault();
+        alert('Apri dettaglio prenotazione');
+    });
+});
+</script>
+
+</body>
+</html>

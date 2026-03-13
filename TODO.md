@@ -1,7 +1,7 @@
 # Evulery.Pro 1.0 - Prossimi Passi
 
 ## Stato Attuale
-Fasi completate: Foundation, Auth, Admin Panel, Multi-Tenant, Slot/Capacita, Booking Widget, Dashboard Ristoratore.
+Fasi completate: Foundation, Auth, Admin Panel, Multi-Tenant, Slot/Capacita, Booking Widget, Dashboard Ristoratore, Security Audit (25/25), Dashboard UX improvements.
 Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widget e dashboard.
 
 **Completato recentemente:**
@@ -9,6 +9,98 @@ Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widg
 - [x] Tabella `meal_categories` + Model + API `?grouped=1`
 - [x] Dashboard gestione categorie pasto
 - [x] Social proof ("Gia X prenotazioni per oggi")
+- [x] Security Audit completo 25/25 (CSRF, XSS, SQL injection, brute force, rate limiting, audit log, CSP, password policy, open redirect, input validation)
+- [x] PHPMailer integrato + MailService (reset password funzionante)
+- [x] Eliminazione prenotazione (entro 30 min dalla creazione, con countdown)
+- [x] Pulsante "Segna Arrivato" nella lista prenotazioni (con redirect back alla lista)
+- [x] Fix phantom slots nella tabella Orari e Coperti (disabilitati + rimossi al salvataggio)
+
+---
+
+## MIGLIORIE IMMEDIATE (ordine consigliato)
+
+### 1. Email conferma al cliente
+**Complessita: Bassa** | File: 3 | Priorita: ALTA
+Il cliente non riceve nessuna email dopo la prenotazione. `MailService` esiste gia.
+- [ ] Template HTML conferma prenotazione (data, ora, persone, nome ristorante)
+- [ ] Hook in `ReservationApiController::store()` (prenotazione da widget)
+- [ ] Hook in `ReservationsController::store()` (prenotazione da dashboard)
+- [ ] Link di cancellazione nell'email (se attivo link magico)
+
+### 2. Esportazione CSV prenotazioni
+**Complessita: Bassa** | File: 3 | Priorita: MEDIA
+- [ ] Metodo `export()` in `ReservationsController` (genera CSV con header)
+- [ ] Rotta GET `/dashboard/reservations/export`
+- [ ] Pulsante "Esporta CSV" nella pagina prenotazioni (con filtri data/stato)
+- [ ] Campi: data, orario, nome, cognome, email, telefono, persone, stato, fonte, note
+
+### 3. Note cliente persistenti
+**Complessita: Bassa** | File: 4 | Migrazione: 1 colonna
+- [ ] Migrazione: colonna `notes` (TEXT) su tabella `customers`
+- [ ] Form textarea in `views/dashboard/customers/show.php`
+- [ ] Metodo `updateNotes()` in `Customer` model
+- [ ] Mostrare note nella sidebar di `reservations/show.php` (sotto storico cliente)
+- [ ] Contenuto tipico: allergie, preferenze tavolo, compleanni
+
+### 4. Dashboard home migliorata
+**Complessita: Media** | File: 2 | Priorita: MEDIA
+- [ ] Coperti totali del giorno (somma party_size prenotazioni confermate/arrivate)
+- [ ] Tasso no-show del ristorante (ultimi 30 giorni)
+- [ ] Prossime prenotazioni in arrivo (ordinate per orario, con countdown)
+- [ ] Confronto con settimana precedente (+ o - prenotazioni)
+- [ ] Card riassuntive con icone Bootstrap Icons
+
+### 5. Ricerca globale prenotazioni
+**Complessita: Media-bassa** | File: 3
+- [ ] Metodo `searchGlobal()` in `Reservation` model (nome, telefono, email cross-date)
+- [ ] Form di ricerca nella pagina prenotazioni (campo testo + risultati)
+- [ ] Rotta GET `/dashboard/reservations/search?q=...`
+
+### 6. Email promemoria (reminder)
+**Complessita: Media** | File: 4 | Migrazione: 1 colonna
+- [ ] Script cron PHP `scripts/send-reminders.php`
+- [ ] Colonna `reminder_sent_at` su tabella `reservations`
+- [ ] Query: prenotazioni confermate nelle prossime 24h senza reminder inviato
+- [ ] Template HTML reminder (riepilogo + eventuale link cancellazione)
+- [ ] Setup cron/Task Scheduler per esecuzione periodica (ogni 15 min)
+
+### 7. Vista timeline / calendario
+**Complessita: Alta** | File: 3+ | JS significativo
+- [ ] Vista griglia oraria con prenotazioni come blocchi colorati
+- [ ] Opzione: libreria FullCalendar (timeline resource view) o custom JS
+- [ ] Toggle lista/timeline nella pagina prenotazioni
+- [ ] Visualizzazione densita oraria a colpo d'occhio
+
+### 8. Gestione tavoli
+**Complessita: Molto alta** | File: 10+ | Migrazioni: 2+ tabelle
+- [ ] Tabella `tables` (tenant_id, name, capacity, position_x, position_y, is_active)
+- [ ] Tabella `reservation_tables` (reservation_id, table_id) - assegnazione
+- [ ] Model + Controller + CRUD tavoli
+- [ ] Vista mappa sala (drag & drop per posizionamento)
+- [ ] Assegnazione automatica/manuale tavoli alle prenotazioni
+- [ ] Modulo sostanzialmente nuovo, equivalente a una mini-fase
+
+### 9. Dark mode
+**Complessita: Media** | File: 2-3 | Solo frontend
+- [ ] CSS variables per tutti i colori nel layout dashboard
+- [ ] Toggle chiaro/scuro nel header
+- [ ] Salvare preferenza in localStorage
+- [ ] Nessuna modifica backend
+
+### 10. PWA (Progressive Web App)
+**Complessita: Bassa** | File: 3 | Solo frontend
+- [ ] `public/manifest.json` con nome, icone, colori
+- [ ] Service worker base per cache offline
+- [ ] Meta tags in layout dashboard (`<link rel="manifest">`)
+- [ ] Installabile su tablet del ristorante da Chrome
+
+### 11. Multi-lingua
+**Complessita: Molto alta** | File: 30+
+- [ ] Sistema di traduzioni (file PHP con array chiave-valore per lingua)
+- [ ] Helper `__('chiave')` per le view
+- [ ] Estrazione di tutte le stringhe hardcoded (100+ occorrenze)
+- [ ] Almeno: Italiano (default) + Inglese (widget per turisti)
+- [ ] Selettore lingua nel widget booking
 
 ---
 
@@ -230,7 +322,7 @@ Newsletter semplice per comunicare con i clienti (eventi, nuovo menu, promozioni
 - [ ] Rate limiting: max 1 broadcast al giorno per evitare spam
 - [ ] Gate: `PlanService::can('email_broadcast')` - richiede piano Pro+
 
-## FASE 16: Dashboard Prenotazione Rapida (Touch-Friendly)
+## FASE 16: Dashboard Prenotazione Rapida (Touch-Friendly) [COMPLETATA]
 Riscrittura completa della pagina "Nuova Prenotazione" per uso su schermi touch e gestione prenotazioni telefoniche.
 Obiettivo: 5 tocchi in 5 secondi per registrare una prenotazione telefonica.
 
@@ -278,9 +370,12 @@ Obiettivo: 5 tocchi in 5 secondi per registrare una prenotazione telefonica.
 - [ ] Filtri avanzati prenotazioni (range date, stato multiplo)
 - [ ] Upload logo ristorante (form + salvataggio in `public/uploads/tenants/`)
 - [ ] Responsive mobile per sidebar dashboard (toggle hamburger)
-- [ ] Export prenotazioni in CSV (richiede piano Starter+)
+- [ ] Export prenotazioni in CSV → vedi Miglioria #2
 - [ ] Validazione frontend piu robusta (feedback inline nei form)
-- [ ] Rate limiting sulle API pubbliche
+- [x] Rate limiting sulle API pubbliche (completato in Security Audit)
+- [x] Security headers (CSP, X-Frame-Options, etc.)
+- [x] Audit logging
+- [x] Brute force protection (LoginThrottle)
 
 ## FASE 18: Billing SaaS (Stripe Subscriptions)
 - [ ] Stripe Subscriptions collegato a `plan_definitions`

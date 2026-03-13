@@ -21,6 +21,28 @@
                 }
             }
 
+            // Build inactive category lookup: for each time, check if it falls in an inactive category
+            $inactiveRanges = [];
+            foreach ($allCategories as $cat) {
+                if (!$cat['is_active']) {
+                    $inactiveRanges[] = [
+                        'name'  => $cat['display_name'],
+                        'start' => (int)substr($cat['start_time'], 0, 2) * 60 + (int)substr($cat['start_time'], 3, 2),
+                        'end'   => (int)substr($cat['end_time'], 0, 2) * 60 + (int)substr($cat['end_time'], 3, 2),
+                    ];
+                }
+            }
+            function getInactiveCategory(string $time, array $ranges): ?string {
+                $parts = explode(':', $time);
+                $mins = (int)$parts[0] * 60 + (int)$parts[1];
+                foreach ($ranges as $r) {
+                    if ($mins >= $r['start'] && $mins < $r['end']) {
+                        return $r['name'];
+                    }
+                }
+                return null;
+            }
+
             // Detect phantom slots in DB (from old time_step) not in current grid
             $timesSet = array_flip($times);
             $phantomTimes = [];
@@ -42,7 +64,7 @@
             <div class="alert alert-warning mb-3">
                 <i class="bi bi-exclamation-triangle me-1"></i>
                 Trovati <strong><?= count($phantomTimes) ?></strong> orari non standard (da un vecchio step).
-                Sono evidenziati in giallo. <strong>Salva</strong> per allineare tutto allo step attuale di <?= $timeStep ?> min.
+                Sono evidenziati in giallo e disabilitati. Clicca <strong>Salva</strong> per rimuoverli e allineare tutto allo step attuale di <?= $timeStep ?> min.
             </div>
             <?php endif; ?>
 
@@ -58,9 +80,23 @@
                     </thead>
                     <tbody>
                         <?php foreach ($times as $time): ?>
-                        <?php $isPhantom = isset($phantomTimes[$time]); ?>
-                        <tr<?= $isPhantom ? ' class="table-warning"' : '' ?>>
-                            <td class="fw-semibold"><?= $time ?><?= $isPhantom ? ' <i class="bi bi-exclamation-triangle text-warning"></i>' : '' ?></td>
+                        <?php
+                            $isPhantom = isset($phantomTimes[$time]);
+                            $inactiveCat = getInactiveCategory($time, $inactiveRanges);
+                            $isInactive = ($inactiveCat !== null);
+                            $rowClass = '';
+                            if ($isPhantom) $rowClass = 'table-warning';
+                            elseif ($isInactive) $rowClass = 'slot-inactive';
+                        ?>
+                        <tr<?= $rowClass ? ' class="' . $rowClass . '"' : '' ?>>
+                            <td class="fw-semibold<?= $isInactive ? ' text-muted' : '' ?>">
+                                <?= $time ?>
+                                <?php if ($isPhantom): ?>
+                                    <i class="bi bi-exclamation-triangle text-warning"></i>
+                                <?php elseif ($isInactive): ?>
+                                    <small class="text-muted fw-normal ms-1"><?= e($inactiveCat) ?></small>
+                                <?php endif; ?>
+                            </td>
                             <?php for ($day = 0; $day < 7; $day++): ?>
                             <?php
                                 $currentVal = 0;
@@ -72,12 +108,16 @@
                                         }
                                     }
                                 }
+                                $isDisabled = $isPhantom || $isInactive;
                             ?>
                             <td class="text-center">
                                 <input type="number" class="form-control form-control-sm text-center"
-                                       name="slots[<?= $day ?>][<?= $time ?>]"
-                                       value="<?= $currentVal ?>"
-                                       min="0" max="200" style="width: 70px; margin: 0 auto;">
+                                       <?= $isDisabled ? '' : 'name="slots[' . $day . '][' . $time . ']"' ?>
+                                       value="<?= $isInactive ? 0 : $currentVal ?>"
+                                       min="0" max="200" style="width: 70px; margin: 0 auto;"
+                                       <?php if ($isPhantom): ?>disabled title="Verrà rimosso al salvataggio"
+                                       <?php elseif ($isInactive): ?>readonly tabindex="-1" title="Categoria &quot;<?= e($inactiveCat) ?>&quot; disattivata"
+                                       <?php endif; ?>>
                             </td>
                             <?php endfor; ?>
                         </tr>

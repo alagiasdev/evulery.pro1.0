@@ -24,7 +24,7 @@ class Reservation
     public function findWithCustomer(int $id): ?array
     {
         $stmt = $this->db->prepare(
-            'SELECT r.*, c.first_name, c.last_name, c.email, c.phone, c.total_bookings, c.total_noshow
+            'SELECT r.*, c.first_name, c.last_name, c.email, c.phone, c.total_bookings, c.total_noshow, c.notes AS customer_notes_persistent
              FROM reservations r
              JOIN customers c ON r.customer_id = c.id
              WHERE r.id = :id LIMIT 1'
@@ -159,6 +159,11 @@ class Reservation
         );
         $stmt->execute(['tenant_id' => $tenantId]);
         return $stmt->fetch();
+    }
+
+    public function delete(int $id): void
+    {
+        $this->db->prepare('DELETE FROM reservations WHERE id = :id')->execute(['id' => $id]);
     }
 
     public function getOccupiedCovers(int $tenantId, string $date, string $slotTime, int $tableDuration): int

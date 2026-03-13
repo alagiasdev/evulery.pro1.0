@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Prenotazione (dettaglio)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 180px;
+            --brand: #00844A;
+            --brand-light: #E8F5E9;
+            --brand-dark: #006837;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        /* ===== Sidebar ===== */
+        .mock-sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w); background: #1a1d23; color: #fff;
+            padding: 1rem 0; z-index: 100;
+        }
+        .mock-sidebar .brand { padding: 0 1rem 1rem; font-weight: 700; font-size: 1.05rem; border-bottom: 1px solid #333; margin-bottom: .5rem; }
+        .mock-sidebar .nav-item { padding: .5rem 1rem; font-size: .9rem; color: #adb5bd; cursor: pointer; }
+        .mock-sidebar .nav-item:hover { color: #fff; }
+        .mock-sidebar .nav-item.active { background: var(--brand); color: #fff; border-radius: 6px; margin: 0 .5rem; padding: .5rem .75rem; }
+        .mock-sidebar .nav-section { padding: .75rem 1rem .25rem; font-size: .7rem; color: #555; text-transform: uppercase; letter-spacing: .5px; }
+
+        /* ===== Main ===== */
+        .main-content { margin-left: var(--sidebar-w); }
+
+        /* ===== Top bar ===== */
+        .top-bar {
+            background: #fff; border-bottom: 1px solid #e9ecef;
+            padding: .5rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .top-bar-date { font-size: .85rem; color: #6c757d; }
+        .top-bar-date i { margin-right: .25rem; }
+        .btn-brand { background: var(--brand); color: #fff; border: none; }
+        .btn-brand:hover { background: var(--brand-dark); color: #fff; }
+        .btn-brand-outline { border: 1px solid var(--brand); color: var(--brand); background: transparent; }
+        .btn-brand-outline:hover { background: var(--brand-light); color: var(--brand-dark); }
+
+        /* ===== Page body ===== */
+        .page-body { padding: 1.25rem 1.5rem; max-width: 1200px; }
+
+        /* ===== Breadcrumb / back ===== */
+        .page-back {
+            display: flex; align-items: center; gap: .5rem;
+            margin-bottom: 1rem;
+        }
+        .page-back a {
+            display: flex; align-items: center; gap: .35rem;
+            font-size: .82rem; color: #6c757d; text-decoration: none;
+            padding: .3rem .6rem; border-radius: 6px;
+            transition: all .1s;
+        }
+        .page-back a:hover { background: #e9ecef; color: #333; }
+
+        /* ===== Hero card ===== */
+        .hero-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            margin-bottom: 1.25rem; overflow: hidden;
+        }
+        .hero-top {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .hero-name { font-size: 1.15rem; font-weight: 700; }
+        .hero-id { font-size: .78rem; color: #adb5bd; margin-left: .5rem; }
+        .status-badge {
+            padding: .3rem .75rem; border-radius: 20px;
+            font-size: .78rem; font-weight: 700;
+        }
+        .status-badge.confirmed { background: #E8F5E9; color: #2E7D32; }
+        .status-badge.pending { background: #FFF8E1; color: #E65100; }
+        .status-badge.arrived { background: #E3F2FD; color: #1565C0; }
+        .status-badge.noshow { background: #FFEBEE; color: #C62828; }
+        .status-badge.cancelled { background: #F5F5F5; color: #757575; }
+
+        /* Hero details grid */
+        .hero-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            padding: 1rem 1.25rem;
+            gap: .75rem;
+        }
+        .detail-item {}
+        .detail-label {
+            font-size: .68rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: .4px; color: #adb5bd; margin-bottom: 2px;
+        }
+        .detail-value { font-size: .9rem; font-weight: 600; color: #212529; }
+        .detail-value a { color: var(--brand); text-decoration: none; }
+        .detail-value a:hover { text-decoration: underline; }
+
+        /* Customer note */
+        .customer-note {
+            margin: 0 1.25rem 1rem;
+            padding: .6rem .85rem;
+            background: #FFF8E1; border-left: 3px solid #FFB300;
+            border-radius: 0 8px 8px 0;
+            font-size: .82rem; color: #795548;
+        }
+        .customer-note i { color: #FFB300; margin-right: .35rem; }
+
+        /* ===== Layout grid ===== */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 1.25rem;
+            align-items: start;
+        }
+
+        /* ===== Card ===== */
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow: hidden; }
+        .card-head {
+            padding: .65rem 1rem; border-bottom: 1px solid #f0f0f0;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .card-head h6 { margin: 0; font-size: .85rem; font-weight: 700; }
+        .card-body-c { padding: 1rem; }
+
+        /* ===== Action buttons ===== */
+        .actions-bar {
+            display: flex; gap: .5rem; flex-wrap: wrap;
+            padding: 1rem 1.25rem;
+            background: #fafbfc;
+            border-top: 1px solid #f0f0f0;
+        }
+        .btn-action {
+            display: flex; align-items: center; gap: .35rem;
+            padding: .45rem .85rem; border-radius: 8px;
+            font-size: .82rem; font-weight: 600; cursor: pointer;
+            border: none; transition: all .15s;
+        }
+        .btn-action i { font-size: .9rem; }
+        .btn-act-edit { background: #E8F5E9; color: #2E7D32; }
+        .btn-act-edit:hover { background: #C8E6C9; }
+        .btn-act-confirm { background: #E8F5E9; color: #2E7D32; }
+        .btn-act-confirm:hover { background: #2E7D32; color: #fff; }
+        .btn-act-arrived { background: #E3F2FD; color: #1565C0; }
+        .btn-act-arrived:hover { background: #1565C0; color: #fff; }
+        .btn-act-noshow { background: #FFEBEE; color: #C62828; }
+        .btn-act-noshow:hover { background: #C62828; color: #fff; }
+        .btn-act-cancel { background: #f5f5f5; color: #757575; }
+        .btn-act-cancel:hover { background: #757575; color: #fff; }
+
+        /* ===== Notes form ===== */
+        .notes-textarea {
+            width: 100%; border: 1px solid #e9ecef; border-radius: 8px;
+            padding: .6rem .75rem; font-size: .85rem; resize: vertical;
+            min-height: 80px; font-family: inherit;
+            transition: border-color .15s;
+        }
+        .notes-textarea:focus { outline: none; border-color: var(--brand); }
+
+        /* ===== Delete zone ===== */
+        .delete-zone {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: .75rem 1rem;
+            border: 1px dashed #EF9A9A; border-radius: 10px;
+            background: #FFF5F5;
+        }
+        .delete-zone-info { font-size: .82rem; }
+        .delete-zone-info strong { color: #C62828; }
+        .delete-zone-info small { color: #999; display: block; margin-top: 2px; }
+        .btn-delete {
+            padding: .35rem .75rem; border-radius: 8px;
+            background: #EF5350; color: #fff; border: none;
+            font-size: .8rem; font-weight: 600; cursor: pointer;
+        }
+        .btn-delete:hover { background: #C62828; }
+
+        /* ===== Sidebar cards ===== */
+        /* Customer history */
+        .history-header {
+            display: flex; align-items: center; gap: .5rem;
+            padding: .65rem 1rem; border-bottom: 1px solid #f0f0f0;
+        }
+        .history-header h6 { margin: 0; font-size: .85rem; font-weight: 700; }
+        .history-stats {
+            display: flex; gap: .75rem; padding: .6rem 1rem;
+            background: #fafbfc; border-bottom: 1px solid #f0f0f0;
+        }
+        .hs-item { text-align: center; }
+        .hs-num { font-size: 1.1rem; font-weight: 700; line-height: 1; }
+        .hs-label { font-size: .65rem; color: #6c757d; }
+        .history-list { padding: 0; }
+        .history-row {
+            display: flex; align-items: center; gap: .5rem;
+            padding: .45rem 1rem;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: .8rem;
+        }
+        .history-row:last-child { border-bottom: none; }
+        .h-date { color: #6c757d; min-width: 70px; }
+        .h-dot { width: 6px; height: 6px; border-radius: 50%; }
+        .h-dot.confirmed { background: #198754; }
+        .h-dot.pending { background: #ffc107; }
+        .h-dot.arrived { background: #0d6efd; }
+        .h-dot.noshow { background: #dc3545; }
+        .h-dot.cancelled { background: #adb5bd; }
+        .h-status { font-weight: 600; font-size: .75rem; }
+        .h-pax { margin-left: auto; color: #6c757d; font-size: .75rem; }
+
+        /* Segment badge */
+        .segment-badge {
+            font-size: .68rem; font-weight: 600; padding: 2px 8px;
+            border-radius: 10px; margin-left: auto;
+        }
+        .segment-badge.vip { background: #FFF3E0; color: #E65100; }
+        .segment-badge.abituale { background: #E8F5E9; color: #2E7D32; }
+        .segment-badge.occasionale { background: #E3F2FD; color: #1565C0; }
+        .segment-badge.nuovo { background: #F3E5F5; color: #7B1FA2; }
+
+        /* Timeline / log */
+        .timeline-list { padding: .5rem 1rem; }
+        .tl-item {
+            display: flex; gap: .6rem;
+            padding: .5rem 0;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: .8rem;
+        }
+        .tl-item:last-child { border-bottom: none; }
+        .tl-icon {
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .7rem; flex-shrink: 0;
+            background: #f0f0f0; color: #6c757d;
+        }
+        .tl-icon.created { background: #E8F5E9; color: #2E7D32; }
+        .tl-icon.status-change { background: #E3F2FD; color: #1565C0; }
+        .tl-icon.edit { background: #FFF3E0; color: #E65100; }
+        .tl-body { flex: 1; }
+        .tl-time { font-size: .68rem; color: #adb5bd; }
+        .tl-text { color: #495057; }
+        .tl-text strong { font-weight: 600; }
+        .tl-user { font-size: .7rem; color: #adb5bd; }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 992px) {
+            .detail-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .mock-sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .page-body { padding: 1rem; }
+            .hero-details { grid-template-columns: repeat(2, 1fr); }
+            .actions-bar { justify-content: stretch; }
+            .actions-bar .btn-action { flex: 1; justify-content: center; }
+        }
+
+        /* ===== Note ===== */
+        .wf-note {
+            background: #E8F5E9; border: 1px dashed var(--brand); border-radius: 8px;
+            padding: .6rem 1rem; margin-bottom: 1rem;
+            font-size: .78rem; color: #1B5E20;
+        }
+        .wf-note b { color: #B71C1C; }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="mock-sidebar">
+    <div class="brand">Trattoria Da Mario</div>
+    <div class="nav-item"><i class="bi bi-house me-2"></i>Dashboard</div>
+    <div class="nav-item active"><i class="bi bi-calendar-check me-2"></i>Prenotazioni</div>
+    <div class="nav-item"><i class="bi bi-people me-2"></i>Clienti</div>
+    <div class="nav-section">Impostazioni</div>
+    <div class="nav-item"><i class="bi bi-gear me-2"></i>Generali</div>
+    <div class="nav-item"><i class="bi bi-clock me-2"></i>Orari e Coperti</div>
+    <div class="nav-item"><i class="bi bi-tags me-2"></i>Categorie Pasto</div>
+    <div class="nav-item"><i class="bi bi-cash me-2"></i>Caparra</div>
+    <div class="nav-item"><i class="bi bi-globe me-2"></i>Dominio</div>
+    <div style="position:absolute;bottom:1rem;left:0;right:0;padding:0 .5rem;">
+        <div class="nav-item" style="background:#2a2d33;border-radius:6px;text-align:center;"><i class="bi bi-box-arrow-left me-1"></i>Esci</div>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+
+    <!-- Top bar -->
+    <div class="top-bar">
+        <span class="top-bar-date"><i class="bi bi-calendar3"></i> Ven 06/03/2026</span>
+        <div class="d-flex align-items-center gap-2">
+            <a href="#" class="btn btn-brand btn-sm">
+                <i class="bi bi-plus-circle me-1"></i> Nuova Prenotazione
+            </a>
+        </div>
+    </div>
+
+    <div class="page-body">
+
+        <!-- Note -->
+        <div class="wf-note">
+            <b>WIREFRAME — Prenotazione (dettaglio)</b> —
+            <b>1)</b> Hero card con nome, stato, dettagli in griglia compatta.
+            <b>2)</b> Azioni come bottoni colorati in barra dedicata (non piu form sparsi).
+            <b>3)</b> Note cliente in evidenza (banner giallo).
+            <b>4)</b> Sidebar: storico cliente con stats + segmento, cronologia con timeline.
+            <b>5)</b> Zona elimina separata e chiara.
+        </div>
+
+        <!-- Back -->
+        <div class="page-back">
+            <a href="#"><i class="bi bi-arrow-left"></i> Torna alle prenotazioni</a>
+        </div>
+
+        <!-- Hero card -->
+        <div class="hero-card">
+            <div class="hero-top">
+                <div>
+                    <span class="hero-name">Marco Rossi</span>
+                    <span class="hero-id">#42</span>
+                </div>
+                <span class="status-badge confirmed">Confermata</span>
+            </div>
+
+            <div class="hero-details">
+                <div class="detail-item">
+                    <div class="detail-label"><i class="bi bi-calendar3 me-1"></i>Data</div>
+                    <div class="detail-value">06/03/2026</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label"><i class="bi bi-clock me-1"></i>Orario</div>
+                    <div class="detail-value">12:30</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label"><i class="bi bi-people me-1"></i>Persone</div>
+                    <div class="detail-value">4 pax</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label"><i class="bi bi-telephone me-1"></i>Telefono</div>
+                    <div class="detail-value"><a href="#">+39 333 1234567</a></div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label"><i class="bi bi-envelope me-1"></i>Email</div>
+                    <div class="detail-value"><a href="#">m.rossi@email.it</a></div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label"><i class="bi bi-globe me-1"></i>Fonte</div>
+                    <div class="detail-value">Widget</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label"><i class="bi bi-credit-card me-1"></i>Caparra</div>
+                    <div class="detail-value">&euro;20,00 <span style="background:#E8F5E9;color:#2E7D32;font-size:.7rem;font-weight:600;padding:1px 6px;border-radius:4px;">Pagata</span></div>
+                </div>
+            </div>
+
+            <!-- Customer note -->
+            <div class="customer-note">
+                <i class="bi bi-chat-left-text"></i>
+                <strong>Note cliente:</strong> Allergia ai crostacei, tavolo preferibilmente vicino alla finestra.
+            </div>
+
+            <!-- Action buttons -->
+            <div class="actions-bar">
+                <button class="btn-action btn-act-edit"><i class="bi bi-pencil"></i> Modifica</button>
+                <button class="btn-action btn-act-arrived"><i class="bi bi-person-check"></i> Segna Arrivato</button>
+                <button class="btn-action btn-act-noshow"><i class="bi bi-person-x"></i> No-Show</button>
+                <button class="btn-action btn-act-cancel"><i class="bi bi-x-circle"></i> Annulla</button>
+            </div>
+        </div>
+
+        <!-- Detail grid -->
+        <div class="detail-grid">
+
+            <!-- Left column -->
+            <div>
+                <!-- Notes -->
+                <div class="card" style="margin-bottom:1.25rem;">
+                    <div class="card-head">
+                        <h6><i class="bi bi-journal-text me-1"></i> Note Interne</h6>
+                    </div>
+                    <div class="card-body-c">
+                        <textarea class="notes-textarea" placeholder="Aggiungi note interne sulla prenotazione...">Tavolo 5 prenotato. Chiesto seggiolone per bambino.</textarea>
+                        <div style="margin-top:.5rem; text-align:right;">
+                            <button class="btn-action btn-act-edit" style="display:inline-flex;"><i class="bi bi-check-lg"></i> Salva note</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete zone -->
+                <div class="delete-zone">
+                    <div class="delete-zone-info">
+                        <strong><i class="bi bi-trash me-1"></i>Elimina prenotazione</strong>
+                        <small>Disponibile ancora per 18 minuti. Azione irreversibile.</small>
+                    </div>
+                    <button class="btn-delete"><i class="bi bi-trash me-1"></i> Elimina</button>
+                </div>
+            </div>
+
+            <!-- Right column -->
+            <div>
+                <!-- Customer history -->
+                <div class="card" style="margin-bottom:1.25rem;">
+                    <div class="history-header">
+                        <h6><i class="bi bi-person-circle me-2"></i>Storico Cliente</h6>
+                        <span class="segment-badge abituale">Abituale</span>
+                    </div>
+                    <div class="history-stats">
+                        <div class="hs-item">
+                            <div class="hs-num" style="color:var(--brand);">7</div>
+                            <div class="hs-label">Prenotazioni</div>
+                        </div>
+                        <div class="hs-item">
+                            <div class="hs-num" style="color:#dc3545;">0</div>
+                            <div class="hs-label">No-show</div>
+                        </div>
+                        <div class="hs-item">
+                            <div class="hs-num" style="color:#0d6efd;">32</div>
+                            <div class="hs-label">Coperti tot.</div>
+                        </div>
+                    </div>
+                    <div class="history-list">
+                        <div class="history-row">
+                            <span class="h-date">06/03/26</span>
+                            <span class="h-dot confirmed"></span>
+                            <span class="h-status" style="color:#198754;">Confermata</span>
+                            <span class="h-pax">4 pax</span>
+                        </div>
+                        <div class="history-row">
+                            <span class="h-date">22/02/26</span>
+                            <span class="h-dot arrived"></span>
+                            <span class="h-status" style="color:#0d6efd;">Arrivato</span>
+                            <span class="h-pax">2 pax</span>
+                        </div>
+                        <div class="history-row">
+                            <span class="h-date">14/02/26</span>
+                            <span class="h-dot arrived"></span>
+                            <span class="h-status" style="color:#0d6efd;">Arrivato</span>
+                            <span class="h-pax">6 pax</span>
+                        </div>
+                        <div class="history-row">
+                            <span class="h-date">01/02/26</span>
+                            <span class="h-dot arrived"></span>
+                            <span class="h-status" style="color:#0d6efd;">Arrivato</span>
+                            <span class="h-pax">4 pax</span>
+                        </div>
+                        <div class="history-row">
+                            <span class="h-date">18/01/26</span>
+                            <span class="h-dot cancelled"></span>
+                            <span class="h-status" style="color:#757575;">Annullata</span>
+                            <span class="h-pax">3 pax</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline / log -->
+                <div class="card">
+                    <div class="card-head">
+                        <h6><i class="bi bi-clock-history me-1"></i> Cronologia</h6>
+                    </div>
+                    <div class="timeline-list">
+                        <div class="tl-item">
+                            <div class="tl-icon status-change"><i class="bi bi-arrow-repeat"></i></div>
+                            <div class="tl-body">
+                                <div class="tl-time">06/03/2026 09:15</div>
+                                <div class="tl-text">In Attesa <i class="bi bi-arrow-right" style="font-size:.65rem;"></i> <strong>Confermata</strong></div>
+                                <div class="tl-user">da Mario Bianchi</div>
+                            </div>
+                        </div>
+                        <div class="tl-item">
+                            <div class="tl-icon edit"><i class="bi bi-pencil"></i></div>
+                            <div class="tl-body">
+                                <div class="tl-time">05/03/2026 18:30</div>
+                                <div class="tl-text">Modificata: persone 2 <i class="bi bi-arrow-right" style="font-size:.65rem;"></i> <strong>4</strong></div>
+                                <div class="tl-user">da Mario Bianchi</div>
+                            </div>
+                        </div>
+                        <div class="tl-item">
+                            <div class="tl-icon created"><i class="bi bi-plus"></i></div>
+                            <div class="tl-body">
+                                <div class="tl-time">05/03/2026 16:42</div>
+                                <div class="tl-text"><strong>Creata</strong> via widget</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// Demo: action buttons
+document.querySelectorAll('.btn-action').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        alert('Azione: ' + this.textContent.trim());
+    });
+});
+document.querySelector('.btn-delete').addEventListener('click', function() {
+    if (confirm('Sei sicuro? Questa azione e IRREVERSIBILE.')) {
+        alert('Prenotazione eliminata (demo)');
+    }
+});
+</script>
+
+</body>
+</html>
