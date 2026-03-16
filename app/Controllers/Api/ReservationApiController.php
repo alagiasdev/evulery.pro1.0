@@ -10,6 +10,7 @@ use App\Models\Reservation;
 use App\Models\ReservationLog;
 use App\Models\Tenant;
 use App\Services\AvailabilityService;
+use App\Services\MailService;
 
 class ReservationApiController
 {
@@ -109,6 +110,17 @@ class ReservationApiController
         // Log creation
         (new ReservationLog())->create($reservationId, null, $status, null, 'Prenotazione da widget');
         (new Customer())->incrementBookings($customer['id']);
+
+        // Send confirmation email (non-blocking: failure doesn't affect booking)
+        if ($status === 'confirmed') {
+            $emailData = array_merge($customer, [
+                'reservation_date' => $data['date'],
+                'reservation_time' => $data['time'],
+                'party_size'       => (int)$data['party_size'],
+                'customer_notes'   => $reservationData['customer_notes'] ?? '',
+            ]);
+            MailService::sendReservationConfirmation($emailData, $tenant);
+        }
 
         $responseData = [
             'reservation_id' => $reservationId,

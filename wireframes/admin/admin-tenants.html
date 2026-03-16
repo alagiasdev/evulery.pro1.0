@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Admin Ristoranti</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 220px;
+            --brand: #00844A;
+            --brand-light: #E8F5E9;
+            --brand-dark: #006837;
+            --admin-accent: #1565C0;
+            --admin-accent-dark: #0D47A1;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        /* ===== Sidebar ===== */
+        .admin-sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w); background: #1a1d23; color: #fff;
+            display: flex; flex-direction: column; z-index: 100;
+        }
+        .sidebar-brand { padding: 1.1rem 1.25rem; border-bottom: 1px solid #2a2d33; }
+        .sidebar-brand-name { font-weight: 700; font-size: 1.1rem; }
+        .sidebar-brand-role {
+            font-size: .68rem; color: #ffc107; font-weight: 600;
+            text-transform: uppercase; letter-spacing: .5px;
+        }
+        .sidebar-nav { padding: .75rem .5rem; flex: 1; }
+        .sidebar-link {
+            display: flex; align-items: center; gap: .6rem;
+            padding: .55rem .85rem; border-radius: 8px;
+            color: #adb5bd; font-size: .85rem; font-weight: 500;
+            text-decoration: none; margin-bottom: .15rem;
+            transition: all .15s; cursor: pointer;
+        }
+        .sidebar-link:hover { color: #fff; background: rgba(255,255,255,.06); }
+        .sidebar-link.active { color: #fff; background: var(--admin-accent); }
+        .sidebar-link i { font-size: .95rem; width: 20px; text-align: center; }
+        .sidebar-footer { padding: .75rem 1rem; border-top: 1px solid #2a2d33; }
+        .sidebar-logout {
+            display: flex; align-items: center; justify-content: center; gap: .4rem;
+            width: 100%; padding: .45rem; border-radius: 8px;
+            background: #2a2d33; color: #adb5bd; border: none;
+            font-size: .8rem; font-weight: 500; cursor: pointer; transition: all .15s;
+        }
+        .sidebar-logout:hover { background: #363940; color: #fff; }
+
+        /* ===== Main ===== */
+        .main-content { margin-left: var(--sidebar-w); }
+
+        /* ===== Top bar ===== */
+        .top-bar {
+            background: #fff; border-bottom: 1px solid #e9ecef;
+            padding: .65rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .top-bar-title { font-size: .95rem; font-weight: 700; color: #1a1d23; }
+        .top-bar-user {
+            display: flex; align-items: center; gap: .5rem;
+            font-size: .82rem; color: #6c757d;
+        }
+        .top-bar-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--admin-accent); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .72rem; font-weight: 700;
+        }
+
+        /* ===== Page body ===== */
+        .page-body { padding: 1.25rem 1.5rem; }
+        .page-title { font-size: 1.25rem; font-weight: 700; color: #1a1d23; margin-bottom: .25rem; }
+        .page-subtitle { font-size: .82rem; color: #6c757d; margin-bottom: 1.25rem; }
+
+        /* ===== Card ===== */
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow: hidden; }
+        .card-hdr {
+            padding: .85rem 1.25rem; background: #fafbfc;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .card-hdr-title { font-size: .88rem; font-weight: 700; color: #495057; }
+        .card-inner { padding: 1.25rem; }
+
+        /* ===== Table ===== */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th {
+            font-size: .72rem; font-weight: 600; color: #6c757d;
+            text-transform: uppercase; letter-spacing: .5px;
+            padding: .6rem 1rem; border-bottom: 1px solid #f0f0f0;
+        }
+        .data-table td {
+            padding: .7rem 1rem; font-size: .85rem; color: #495057;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        .data-table tr:last-child td { border-bottom: none; }
+        .badge-status {
+            padding: 2px 8px; border-radius: 6px;
+            font-size: .7rem; font-weight: 600;
+        }
+        .badge-active { background: #E8F5E9; color: #2E7D32; }
+        .badge-inactive { background: #F5F5F5; color: #757575; }
+        .badge-plan {
+            padding: 2px 8px; border-radius: 6px;
+            font-size: .7rem; font-weight: 600;
+            background: #E3F2FD; color: #1565C0;
+        }
+        .slug-code {
+            font-size: .78rem; background: #f8f9fa;
+            padding: 2px 6px; border-radius: 4px;
+            font-family: monospace;
+        }
+
+        /* ===== Action buttons ===== */
+        .action-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 30px; height: 30px; border-radius: 8px;
+            border: 1px solid #dee2e6; background: #fff;
+            color: #6c757d; font-size: .82rem; cursor: pointer;
+            transition: all .15s; text-decoration: none;
+        }
+        .action-btn:hover { border-color: var(--admin-accent); color: var(--admin-accent); }
+        .action-btn.warn:hover { border-color: #E65100; color: #E65100; }
+
+        /* ===== Primary button ===== */
+        .btn-admin {
+            display: inline-flex; align-items: center; gap: .4rem;
+            padding: .55rem 1.1rem; border-radius: 10px;
+            font-size: .82rem; font-weight: 600;
+            text-decoration: none; cursor: pointer; transition: all .15s;
+        }
+        .btn-admin-primary { background: var(--admin-accent); color: #fff; border: none; }
+        .btn-admin-primary:hover { background: var(--admin-accent-dark); color: #fff; }
+        .btn-admin-outline { background: #fff; color: #495057; border: 1px solid #dee2e6; }
+        .btn-admin-outline:hover { border-color: var(--admin-accent); color: var(--admin-accent); }
+
+        /* ===== Form ===== */
+        .form-label-sm { font-size: .78rem; font-weight: 600; color: #495057; margin-bottom: .3rem; display: block; }
+        .form-input {
+            width: 100%; border: 1px solid #dee2e6; border-radius: 8px;
+            padding: .55rem .75rem; font-size: .85rem; color: #1a1d23;
+            transition: border-color .15s, box-shadow .15s;
+        }
+        .form-input:focus { outline: none; border-color: var(--admin-accent); box-shadow: 0 0 0 3px rgba(21,101,192,.08); }
+        .form-select-sm {
+            width: 100%; border: 1px solid #dee2e6; border-radius: 8px;
+            padding: .55rem .75rem; font-size: .85rem; color: #1a1d23;
+            background: #fff; cursor: pointer;
+        }
+        .form-check-row { display: flex; align-items: center; gap: .4rem; font-size: .85rem; color: #495057; }
+        .form-check-row input { width: 16px; height: 16px; accent-color: var(--admin-accent); }
+        .form-hint { font-size: .72rem; color: #adb5bd; margin-top: .2rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+        .form-row-full { margin-bottom: 1rem; }
+
+        /* ===== Info card (edit sidebar) ===== */
+        .info-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 1rem; overflow: hidden; }
+        .info-card-hdr {
+            padding: .65rem 1rem; background: #fafbfc; border-bottom: 1px solid #f0f0f0;
+            font-size: .82rem; font-weight: 700; color: #495057;
+        }
+        .info-card-body { padding: 1rem; }
+        .user-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: .45rem 0; font-size: .82rem;
+        }
+        .user-row + .user-row { border-top: 1px solid #f8f9fa; }
+        .user-name { font-weight: 600; color: #1a1d23; }
+        .user-email { font-size: .75rem; color: #adb5bd; }
+        .link-box {
+            background: #f8f9fa; border-radius: 8px; padding: .5rem .75rem;
+            font-family: monospace; font-size: .78rem; color: #495057;
+            word-break: break-all;
+        }
+
+        /* ===== Page switcher ===== */
+        .page-switcher {
+            position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 200;
+            display: flex; gap: .35rem; background: #1a1d23;
+            padding: .35rem; border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+        }
+        .page-sw-btn {
+            padding: .4rem .75rem; border-radius: 7px;
+            font-size: .72rem; font-weight: 600; cursor: pointer;
+            border: none; color: #adb5bd; background: transparent;
+            transition: all .15s;
+        }
+        .page-sw-btn.active { background: var(--admin-accent); color: #fff; }
+        .page-sw-btn:hover:not(.active) { color: #fff; }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* ===== WF note ===== */
+        .wf-note {
+            background: #E8F5E9; border: 1px dashed var(--brand); border-radius: 8px;
+            padding: .6rem 1rem; margin-bottom: 1rem;
+            font-size: .78rem; color: #1B5E20;
+        }
+        .wf-note b { color: #B71C1C; }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 768px) {
+            .admin-sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="admin-sidebar">
+    <div class="sidebar-brand">
+        <div class="sidebar-brand-name">Evulery</div>
+        <div class="sidebar-brand-role">Super Admin</div>
+    </div>
+    <nav class="sidebar-nav">
+        <a class="sidebar-link" data-page-link="dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a class="sidebar-link active" data-page-link="index"><i class="bi bi-shop"></i> Ristoranti</a>
+        <a class="sidebar-link"><i class="bi bi-credit-card-2-front"></i> Abbonamenti</a>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="sidebar-logout"><i class="bi bi-box-arrow-left"></i> Esci</button>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+    <div class="top-bar">
+        <div class="top-bar-title">Admin Panel</div>
+        <div class="top-bar-user">
+            <span>Admin</span>
+            <div class="top-bar-avatar">A</div>
+        </div>
+    </div>
+
+    <!-- ========== PAGE: INDEX (Lista Ristoranti) ========== -->
+    <div class="page active" id="page-index">
+        <div class="page-body">
+            <div class="wf-note">
+                <b>WIREFRAME — Ristoranti (Elenco)</b> &mdash;
+                <b>1)</b> Header con titolo + bottone "Nuovo Ristorante".
+                <b>2)</b> Tabella con colonne: Nome, Slug, Email, Piano, Stato, Creato, Azioni.
+                <b>3)</b> Azioni: vedi pagina, modifica, attiva/disattiva.
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+                <div>
+                    <h1 class="page-title" style="margin-bottom:0;">Ristoranti</h1>
+                    <p style="font-size:.82rem;color:#6c757d;margin:0;">Gestisci tutti i ristoranti della piattaforma</p>
+                </div>
+                <button class="btn-admin btn-admin-primary" data-goto="create">
+                    <i class="bi bi-plus-circle"></i> Nuovo Ristorante
+                </button>
+            </div>
+
+            <div class="card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Slug</th>
+                            <th>Email</th>
+                            <th>Piano</th>
+                            <th>Stato</th>
+                            <th>Creato</th>
+                            <th style="text-align:right;">Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight:600;">Trattoria Da Mario</td>
+                            <td><span class="slug-code">trattoria-da-mario</span></td>
+                            <td>info@trattoriadamario.it</td>
+                            <td><span class="badge-plan">Base</span></td>
+                            <td><span class="badge-status badge-active">Attivo</span></td>
+                            <td style="color:#adb5bd;">27/02/2026</td>
+                            <td style="text-align:right;">
+                                <a class="action-btn" title="Vedi pagina"><i class="bi bi-eye"></i></a>
+                                <a class="action-btn" title="Modifica" data-goto="edit"><i class="bi bi-pencil"></i></a>
+                                <a class="action-btn warn" title="Disattiva"><i class="bi bi-pause"></i></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:600;">Ristorante Bella Vista</td>
+                            <td><span class="slug-code">bella-vista</span></td>
+                            <td>prenotazioni@bellavista.com</td>
+                            <td><span class="badge-plan">Deposit</span></td>
+                            <td><span class="badge-status badge-active">Attivo</span></td>
+                            <td style="color:#adb5bd;">01/03/2026</td>
+                            <td style="text-align:right;">
+                                <a class="action-btn" title="Vedi pagina"><i class="bi bi-eye"></i></a>
+                                <a class="action-btn" title="Modifica" data-goto="edit"><i class="bi bi-pencil"></i></a>
+                                <a class="action-btn warn" title="Disattiva"><i class="bi bi-pause"></i></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:600;">Pizzeria Napoli</td>
+                            <td><span class="slug-code">pizzeria-napoli</span></td>
+                            <td>napoli@email.it</td>
+                            <td><span class="badge-plan">Base</span></td>
+                            <td><span class="badge-status badge-inactive">Inattivo</span></td>
+                            <td style="color:#adb5bd;">10/03/2026</td>
+                            <td style="text-align:right;">
+                                <a class="action-btn" title="Vedi pagina"><i class="bi bi-eye"></i></a>
+                                <a class="action-btn" title="Modifica" data-goto="edit"><i class="bi bi-pencil"></i></a>
+                                <a class="action-btn" title="Attiva" style="border-color:#2E7D32;color:#2E7D32;"><i class="bi bi-play"></i></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:600;">Osteria del Borgo</td>
+                            <td><span class="slug-code">osteria-del-borgo</span></td>
+                            <td>info@osteriadelborgo.it</td>
+                            <td><span class="badge-plan">Base</span></td>
+                            <td><span class="badge-status badge-active">Attivo</span></td>
+                            <td style="color:#adb5bd;">14/03/2026</td>
+                            <td style="text-align:right;">
+                                <a class="action-btn" title="Vedi pagina"><i class="bi bi-eye"></i></a>
+                                <a class="action-btn" title="Modifica" data-goto="edit"><i class="bi bi-pencil"></i></a>
+                                <a class="action-btn warn" title="Disattiva"><i class="bi bi-pause"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PAGE: CREATE (Nuovo Ristorante) ========== -->
+    <div class="page" id="page-create">
+        <div class="page-body">
+            <div class="wf-note">
+                <b>WIREFRAME — Nuovo Ristorante</b> &mdash;
+                <b>1)</b> Due sezioni card: Dati Ristorante + Account Proprietario.
+                <b>2)</b> Layout a due colonne per i campi.
+                <b>3)</b> Piano selezionabile con prezzo.
+                <b>4)</b> Checkbox "Attivo subito".
+            </div>
+
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;">
+                <button class="action-btn" data-goto="index" title="Torna alla lista"><i class="bi bi-arrow-left"></i></button>
+                <div>
+                    <h1 class="page-title" style="margin-bottom:0;">Nuovo Ristorante</h1>
+                    <p style="font-size:.82rem;color:#6c757d;margin:0;">Crea un nuovo ristorante sulla piattaforma</p>
+                </div>
+            </div>
+
+            <div style="max-width:720px;">
+                <!-- Dati Ristorante -->
+                <div class="card" style="margin-bottom:1.25rem;">
+                    <div class="card-hdr">
+                        <span class="card-hdr-title"><i class="bi bi-shop me-1"></i> Dati Ristorante</span>
+                    </div>
+                    <div class="card-inner">
+                        <div class="form-row">
+                            <div>
+                                <label class="form-label-sm">Nome ristorante *</label>
+                                <input type="text" class="form-input" placeholder="es. Trattoria Da Mario">
+                            </div>
+                            <div>
+                                <label class="form-label-sm">Email ristorante *</label>
+                                <input type="email" class="form-input" placeholder="info@ristorante.it">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div>
+                                <label class="form-label-sm">Telefono</label>
+                                <input type="text" class="form-input" placeholder="+39 ...">
+                            </div>
+                            <div>
+                                <label class="form-label-sm">Piano</label>
+                                <select class="form-select-sm">
+                                    <option>Base (49&euro;/mese)</option>
+                                    <option>Deposit (79&euro;/mese)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row-full">
+                            <label class="form-label-sm">Indirizzo</label>
+                            <input type="text" class="form-input" placeholder="Via Roma 1, 00100 Roma">
+                        </div>
+                        <div class="form-check-row">
+                            <input type="checkbox" checked> <span>Attivo subito</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Proprietario -->
+                <div class="card" style="margin-bottom:1.25rem;">
+                    <div class="card-hdr">
+                        <span class="card-hdr-title"><i class="bi bi-person me-1"></i> Account Proprietario</span>
+                    </div>
+                    <div class="card-inner">
+                        <div class="form-row">
+                            <div>
+                                <label class="form-label-sm">Nome *</label>
+                                <input type="text" class="form-input" placeholder="Mario">
+                            </div>
+                            <div>
+                                <label class="form-label-sm">Cognome *</label>
+                                <input type="text" class="form-input" placeholder="Rossi">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div>
+                                <label class="form-label-sm">Email login *</label>
+                                <input type="email" class="form-input" placeholder="mario@email.it">
+                            </div>
+                            <div>
+                                <label class="form-label-sm">Password *</label>
+                                <input type="password" class="form-input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
+                                <div class="form-hint">Minimo 8 caratteri</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div style="display:flex;gap:.75rem;">
+                    <button class="btn-admin btn-admin-primary">
+                        <i class="bi bi-check-circle"></i> Crea Ristorante
+                    </button>
+                    <button class="btn-admin btn-admin-outline" data-goto="index">Annulla</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PAGE: EDIT (Modifica Ristorante) ========== -->
+    <div class="page" id="page-edit">
+        <div class="page-body">
+            <div class="wf-note">
+                <b>WIREFRAME — Modifica Ristorante</b> &mdash;
+                <b>1)</b> Layout a due colonne: form a sinistra, info a destra.
+                <b>2)</b> Campi extra: durata tavolo, step orari, slug (disabled).
+                <b>3)</b> Sidebar destra: utenti associati + link prenotazione.
+            </div>
+
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;">
+                <button class="action-btn" data-goto="index" title="Torna alla lista"><i class="bi bi-arrow-left"></i></button>
+                <div>
+                    <h1 class="page-title" style="margin-bottom:0;">Modifica: Trattoria Da Mario</h1>
+                    <p style="font-size:.82rem;color:#6c757d;margin:0;">Aggiorna i dati del ristorante</p>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 300px;gap:1.25rem;align-items:start;">
+                <!-- Left: Form -->
+                <div>
+                    <div class="card" style="margin-bottom:1.25rem;">
+                        <div class="card-hdr">
+                            <span class="card-hdr-title"><i class="bi bi-shop me-1"></i> Dati Ristorante</span>
+                        </div>
+                        <div class="card-inner">
+                            <div class="form-row">
+                                <div>
+                                    <label class="form-label-sm">Nome *</label>
+                                    <input type="text" class="form-input" value="Trattoria Da Mario">
+                                </div>
+                                <div>
+                                    <label class="form-label-sm">Email *</label>
+                                    <input type="email" class="form-input" value="info@trattoriadamario.it">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div>
+                                    <label class="form-label-sm">Telefono</label>
+                                    <input type="text" class="form-input" value="+39 06 1234567">
+                                </div>
+                                <div>
+                                    <label class="form-label-sm">Piano</label>
+                                    <select class="form-select-sm">
+                                        <option selected>Base</option>
+                                        <option>Deposit</option>
+                                        <option>Custom</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row-full">
+                                <label class="form-label-sm">Indirizzo</label>
+                                <input type="text" class="form-input" value="Via Roma 42, 00185 Roma RM">
+                            </div>
+                            <div class="form-row" style="grid-template-columns:1fr 1fr 1fr;">
+                                <div>
+                                    <label class="form-label-sm">Durata tavolo (min)</label>
+                                    <input type="number" class="form-input" value="90">
+                                </div>
+                                <div>
+                                    <label class="form-label-sm">Step orari (min)</label>
+                                    <input type="number" class="form-input" value="15">
+                                </div>
+                                <div>
+                                    <label class="form-label-sm">Slug</label>
+                                    <input type="text" class="form-input" value="trattoria-da-mario" disabled style="background:#f8f9fa;color:#adb5bd;">
+                                </div>
+                            </div>
+                            <div class="form-check-row" style="margin-top:.5rem;">
+                                <input type="checkbox" checked> <span>Attivo</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;gap:.75rem;">
+                        <button class="btn-admin btn-admin-primary">
+                            <i class="bi bi-check-circle"></i> Salva Modifiche
+                        </button>
+                        <button class="btn-admin btn-admin-outline" data-goto="index">Torna alla lista</button>
+                    </div>
+                </div>
+
+                <!-- Right: Info cards -->
+                <div>
+                    <div class="info-card">
+                        <div class="info-card-hdr"><i class="bi bi-people me-1"></i> Utenti associati</div>
+                        <div class="info-card-body">
+                            <div class="user-row">
+                                <div>
+                                    <div class="user-name">Mario Rossi</div>
+                                    <div class="user-email">mario@trattoriadamario.it</div>
+                                </div>
+                                <span class="badge-status badge-active">Attivo</span>
+                            </div>
+                            <div class="user-row">
+                                <div>
+                                    <div class="user-name">Laura Bianchi</div>
+                                    <div class="user-email">laura@trattoriadamario.it</div>
+                                </div>
+                                <span class="badge-status badge-active">Attivo</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-hdr"><i class="bi bi-link-45deg me-1"></i> Link prenotazione</div>
+                        <div class="info-card-body">
+                            <div class="link-box">https://evulery.pro/trattoria-da-mario</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Page Switcher -->
+<div class="page-switcher">
+    <button class="page-sw-btn active" data-page="index">Elenco</button>
+    <button class="page-sw-btn" data-page="create">Nuovo</button>
+    <button class="page-sw-btn" data-page="edit">Modifica</button>
+</div>
+
+<script>
+// Page switcher
+document.querySelectorAll('[data-page]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var target = this.getAttribute('data-page');
+        document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+        document.querySelectorAll('.page-sw-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.getElementById('page-' + target).classList.add('active');
+        this.classList.add('active');
+    });
+});
+// Navigation links
+document.querySelectorAll('[data-goto]').forEach(function(el) {
+    el.addEventListener('click', function() {
+        var target = this.getAttribute('data-goto');
+        document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+        document.querySelectorAll('.page-sw-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.getElementById('page-' + target).classList.add('active');
+        document.querySelector('.page-sw-btn[data-page="' + target + '"]').classList.add('active');
+        window.scrollTo(0, 0);
+    });
+});
+</script>
+
+</body>
+</html>

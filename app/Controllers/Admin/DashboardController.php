@@ -23,6 +23,9 @@ class DashboardController
         // Count total users
         $totalUsers = $db->query('SELECT COUNT(*) as c FROM users WHERE role != "super_admin"')->fetch()['c'];
 
+        // Recent tenants (last 5)
+        $recentTenants = $db->query('SELECT id, name, slug, plan, is_active, created_at FROM tenants ORDER BY created_at DESC LIMIT 5')->fetchAll();
+
         view('admin/dashboard', [
             'title'             => 'Admin Dashboard',
             'activeMenu'        => 'admin-home',
@@ -30,6 +33,7 @@ class DashboardController
             'activeTenants'     => $activeTenants,
             'todayReservations' => $todayReservations,
             'totalUsers'        => $totalUsers,
+            'recentTenants'     => $recentTenants,
         ], 'admin');
     }
 }

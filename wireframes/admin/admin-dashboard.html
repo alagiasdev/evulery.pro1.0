@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 220px;
+            --brand: #00844A;
+            --brand-light: #E8F5E9;
+            --brand-dark: #006837;
+            --admin-accent: #1565C0;
+            --admin-accent-dark: #0D47A1;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        /* ===== Sidebar ===== */
+        .admin-sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w); background: #1a1d23; color: #fff;
+            display: flex; flex-direction: column; z-index: 100;
+        }
+        .sidebar-brand {
+            padding: 1.1rem 1.25rem; border-bottom: 1px solid #2a2d33;
+        }
+        .sidebar-brand-name { font-weight: 700; font-size: 1.1rem; }
+        .sidebar-brand-role {
+            font-size: .68rem; color: #ffc107; font-weight: 600;
+            text-transform: uppercase; letter-spacing: .5px;
+        }
+        .sidebar-nav { padding: .75rem .5rem; flex: 1; }
+        .sidebar-link {
+            display: flex; align-items: center; gap: .6rem;
+            padding: .55rem .85rem; border-radius: 8px;
+            color: #adb5bd; font-size: .85rem; font-weight: 500;
+            text-decoration: none; margin-bottom: .15rem;
+            transition: all .15s;
+        }
+        .sidebar-link:hover { color: #fff; background: rgba(255,255,255,.06); }
+        .sidebar-link.active { color: #fff; background: var(--admin-accent); }
+        .sidebar-link i { font-size: .95rem; width: 20px; text-align: center; }
+        .sidebar-footer {
+            padding: .75rem 1rem; border-top: 1px solid #2a2d33;
+        }
+        .sidebar-logout {
+            display: flex; align-items: center; justify-content: center; gap: .4rem;
+            width: 100%; padding: .45rem; border-radius: 8px;
+            background: #2a2d33; color: #adb5bd; border: none;
+            font-size: .8rem; font-weight: 500; cursor: pointer;
+            transition: all .15s;
+        }
+        .sidebar-logout:hover { background: #363940; color: #fff; }
+
+        /* ===== Main ===== */
+        .main-content { margin-left: var(--sidebar-w); }
+
+        /* ===== Top bar ===== */
+        .top-bar {
+            background: #fff; border-bottom: 1px solid #e9ecef;
+            padding: .65rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .top-bar-title { font-size: .95rem; font-weight: 700; color: #1a1d23; }
+        .top-bar-user {
+            display: flex; align-items: center; gap: .5rem;
+            font-size: .82rem; color: #6c757d;
+        }
+        .top-bar-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--admin-accent); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .72rem; font-weight: 700;
+        }
+
+        /* ===== Page body ===== */
+        .page-body { padding: 1.25rem 1.5rem; }
+        .page-title { font-size: 1.25rem; font-weight: 700; color: #1a1d23; margin-bottom: .25rem; }
+        .page-subtitle { font-size: .82rem; color: #6c757d; margin-bottom: 1.25rem; }
+
+        /* ===== Stat cards ===== */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            padding: 1.25rem;
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .stat-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; flex-shrink: 0;
+        }
+        .stat-value { font-size: 1.75rem; font-weight: 700; color: #1a1d23; line-height: 1; }
+        .stat-label { font-size: .75rem; color: #6c757d; font-weight: 500; margin-top: .15rem; }
+
+        /* ===== Card ===== */
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow: hidden; }
+        .card-hdr {
+            padding: .85rem 1.25rem; background: #fafbfc;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .card-hdr-title { font-size: .88rem; font-weight: 700; color: #495057; }
+        .card-inner { padding: 1.25rem; }
+
+        /* ===== Quick actions ===== */
+        .quick-actions { display: flex; gap: .75rem; flex-wrap: wrap; }
+        .quick-action {
+            display: flex; align-items: center; gap: .5rem;
+            padding: .6rem 1rem; border-radius: 10px;
+            font-size: .82rem; font-weight: 600;
+            text-decoration: none; transition: all .15s;
+            cursor: pointer;
+        }
+        .qa-primary { background: var(--admin-accent); color: #fff; border: none; }
+        .qa-primary:hover { background: var(--admin-accent-dark); color: #fff; }
+        .qa-outline { background: #fff; color: #495057; border: 1px solid #dee2e6; }
+        .qa-outline:hover { border-color: var(--admin-accent); color: var(--admin-accent); }
+
+        /* ===== Recent table ===== */
+        .recent-table { width: 100%; border-collapse: collapse; }
+        .recent-table th {
+            font-size: .72rem; font-weight: 600; color: #6c757d;
+            text-transform: uppercase; letter-spacing: .5px;
+            padding: .6rem 1rem; border-bottom: 1px solid #f0f0f0;
+        }
+        .recent-table td {
+            padding: .7rem 1rem; font-size: .85rem; color: #495057;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        .recent-table tr:last-child td { border-bottom: none; }
+        .badge-status {
+            padding: 2px 8px; border-radius: 6px;
+            font-size: .7rem; font-weight: 600;
+        }
+        .badge-active { background: #E8F5E9; color: #2E7D32; }
+        .badge-inactive { background: #F5F5F5; color: #757575; }
+        .badge-plan {
+            padding: 2px 8px; border-radius: 6px;
+            font-size: .7rem; font-weight: 600;
+            background: #E3F2FD; color: #1565C0;
+        }
+
+        /* ===== WF note ===== */
+        .wf-note {
+            background: #E8F5E9; border: 1px dashed var(--brand); border-radius: 8px;
+            padding: .6rem 1rem; margin-bottom: 1rem;
+            font-size: .78rem; color: #1B5E20;
+        }
+        .wf-note b { color: #B71C1C; }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 992px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .admin-sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="admin-sidebar">
+    <div class="sidebar-brand">
+        <div class="sidebar-brand-name">Evulery</div>
+        <div class="sidebar-brand-role">Super Admin</div>
+    </div>
+    <nav class="sidebar-nav">
+        <a class="sidebar-link active" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a class="sidebar-link" href="#"><i class="bi bi-shop"></i> Ristoranti</a>
+        <a class="sidebar-link" href="#"><i class="bi bi-credit-card-2-front"></i> Abbonamenti</a>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="sidebar-logout"><i class="bi bi-box-arrow-left"></i> Esci</button>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+    <div class="top-bar">
+        <div class="top-bar-title">Admin Panel</div>
+        <div class="top-bar-user">
+            <span>Admin</span>
+            <div class="top-bar-avatar">A</div>
+        </div>
+    </div>
+
+    <div class="page-body">
+
+        <div class="wf-note">
+            <b>WIREFRAME — Admin Dashboard</b> &mdash;
+            <b>1)</b> Sidebar scura con accent blu (#1565C0) per distinguerla dalla dashboard ristoratore (verde).
+            <b>2)</b> 4 stat card con icone colorate.
+            <b>3)</b> Azioni rapide con bottoni.
+            <b>4)</b> Tabella ristoranti recenti con badge stato/piano.
+        </div>
+
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Panoramica del sistema Evulery</p>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#E3F2FD;color:#1565C0;"><i class="bi bi-shop"></i></div>
+                <div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Ristoranti totali</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#E8F5E9;color:#2E7D32;"><i class="bi bi-check-circle"></i></div>
+                <div>
+                    <div class="stat-value">10</div>
+                    <div class="stat-label">Attivi</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#FFF3E0;color:#E65100;"><i class="bi bi-calendar-check"></i></div>
+                <div>
+                    <div class="stat-value">47</div>
+                    <div class="stat-label">Prenotazioni oggi</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#FCE4EC;color:#C62828;"><i class="bi bi-people"></i></div>
+                <div>
+                    <div class="stat-value">18</div>
+                    <div class="stat-label">Utenti</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="card" style="margin-bottom:1.5rem;">
+            <div class="card-hdr">
+                <span class="card-hdr-title">Azioni rapide</span>
+            </div>
+            <div class="card-inner">
+                <div class="quick-actions">
+                    <a class="quick-action qa-primary"><i class="bi bi-plus-circle"></i> Nuovo Ristorante</a>
+                    <a class="quick-action qa-outline"><i class="bi bi-list"></i> Gestisci Ristoranti</a>
+                    <a class="quick-action qa-outline"><i class="bi bi-credit-card"></i> Abbonamenti</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent tenants -->
+        <div class="card">
+            <div class="card-hdr">
+                <span class="card-hdr-title">Ristoranti recenti</span>
+                <a href="#" style="font-size:.78rem;color:var(--admin-accent);text-decoration:none;font-weight:600;">Vedi tutti <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <table class="recent-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Slug</th>
+                        <th>Piano</th>
+                        <th>Stato</th>
+                        <th>Creato</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-weight:600;">Trattoria Da Mario</td>
+                        <td><code style="font-size:.78rem;background:#f8f9fa;padding:2px 6px;border-radius:4px;">trattoria-da-mario</code></td>
+                        <td><span class="badge-plan">Base</span></td>
+                        <td><span class="badge-status badge-active">Attivo</span></td>
+                        <td style="color:#adb5bd;">27/02/2026</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600;">Ristorante Bella Vista</td>
+                        <td><code style="font-size:.78rem;background:#f8f9fa;padding:2px 6px;border-radius:4px;">bella-vista</code></td>
+                        <td><span class="badge-plan">Deposit</span></td>
+                        <td><span class="badge-status badge-active">Attivo</span></td>
+                        <td style="color:#adb5bd;">01/03/2026</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600;">Pizzeria Napoli</td>
+                        <td><code style="font-size:.78rem;background:#f8f9fa;padding:2px 6px;border-radius:4px;">pizzeria-napoli</code></td>
+                        <td><span class="badge-plan">Base</span></td>
+                        <td><span class="badge-status badge-inactive">Inattivo</span></td>
+                        <td style="color:#adb5bd;">10/03/2026</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

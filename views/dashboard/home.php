@@ -1,31 +1,42 @@
-<?php $isToday = ($date === date('Y-m-d')); ?>
+<?php
+$isToday = ($date === date('Y-m-d'));
+$DAYS_IT = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="mb-0"><?= $isToday ? 'Oggi' : format_date($date, 'd/m/Y') ?></h2>
-    <a href="<?= url('dashboard/reservations/create') ?>" class="btn btn-primary">
-        <i class="bi bi-plus-circle me-1"></i> Nuova Prenotazione
-    </a>
-</div>
+// Meal categorization helper
+function categorizeMeal(string $time): string {
+    $h = (int)substr($time, 0, 2);
+    return ($h < 16) ? 'pranzo' : 'cena';
+}
 
-<!-- Quick Date Buttons -->
-<div class="dr-date-grid mb-4" id="home-date-grid">
-    <a href="#" class="dr-date-btn" data-offset="0">
-        <span class="dr-date-label">Oggi</span>
-        <span class="dr-date-sub" id="home-date-0"></span>
+// Group reservations by meal
+$byMeal = ['pranzo' => [], 'cena' => []];
+$mealCovers = ['pranzo' => 0, 'cena' => 0];
+foreach ($reservations as $r) {
+    $meal = categorizeMeal($r['reservation_time']);
+    $byMeal[$meal][] = $r;
+    $mealCovers[$meal] += (int)$r['party_size'];
+}
+?>
+
+<!-- Date strip -->
+<div class="date-strip" id="home-date-strip">
+    <a href="#" class="date-chip" data-offset="0">
+        <span class="chip-label">Oggi</span>
+        <span class="chip-sub" id="home-chip-0"></span>
     </a>
-    <a href="#" class="dr-date-btn" data-offset="1">
-        <span class="dr-date-label">Domani</span>
-        <span class="dr-date-sub" id="home-date-1"></span>
+    <a href="#" class="date-chip" data-offset="1">
+        <span class="chip-label">Domani</span>
+        <span class="chip-sub" id="home-chip-1"></span>
     </a>
-    <a href="#" class="dr-date-btn" data-offset="2">
-        <span class="dr-date-label">Dopodomani</span>
-        <span class="dr-date-sub" id="home-date-2"></span>
+    <a href="#" class="date-chip" data-offset="2">
+        <span class="chip-label">Dopodomani</span>
+        <span class="chip-sub" id="home-chip-2"></span>
     </a>
-    <div class="position-relative">
-        <a href="#" class="dr-date-btn" id="home-cal-toggle">
+    <div class="date-chip-cal">
+        <a href="#" class="date-chip" id="home-cal-toggle">
             <i class="bi bi-calendar3"></i>
-            <span class="dr-date-label">Altra data</span>
-            <span class="dr-date-sub" id="home-date-other"></span>
+            <span class="chip-label">Altra data</span>
+            <span class="chip-sub" id="home-chip-other"></span>
         </a>
         <!-- Mini Calendar Dropdown -->
         <div class="home-cal-dropdown" id="home-cal-dropdown" style="display:none;">
@@ -48,97 +59,154 @@
     </div>
 </div>
 
-<!-- Stats -->
-<?php
-$dashCards = [
-    ['label' => 'Coperti Previsti',    'value' => (int)$stats['covers'],    'color' => '#0d6efd'],
-    ['label' => 'Confermate',          'value' => (int)$stats['confirmed'], 'color' => '#198754'],
-    ['label' => 'In Attesa',           'value' => (int)$stats['pending'],   'color' => '#ffc107'],
-    ['label' => 'Totale Prenotazioni', 'value' => (int)$stats['total'],     'color' => '#0dcaf0'],
-];
-?>
-<div class="row g-3 mb-4">
-    <?php foreach ($dashCards as $dc): ?>
-    <div class="col-6 col-md-3">
-        <div class="card text-center h-100" style="border-top: 3px solid <?= $dc['color'] ?>;">
-            <div class="card-body py-2 px-1">
-                <div class="fw-bold" style="color: <?= $dc['color'] ?>; font-size: clamp(1.2rem, 4vw, 1.75rem);"><?= $dc['value'] ?></div>
-                <div class="text-muted" style="font-size: clamp(0.65rem, 2vw, 0.85rem);"><?= $dc['label'] ?></div>
+<!-- Capacity banner -->
+<div class="capacity-banner">
+    <div class="cap-stats">
+        <div class="cap-item">
+            <div class="cap-dot" style="background:#0d6efd;"></div>
+            <div>
+                <div class="cap-num" style="color:#0d6efd;"><?= (int)$stats['covers'] ?></div>
+                <div class="cap-label">Coperti</div>
+            </div>
+        </div>
+        <div class="cap-divider"></div>
+        <div class="cap-item">
+            <div class="cap-dot" style="background:#198754;"></div>
+            <div>
+                <div class="cap-num" style="color:#198754;"><?= (int)$stats['confirmed'] ?></div>
+                <div class="cap-label">Confermate</div>
+            </div>
+        </div>
+        <div class="cap-divider"></div>
+        <div class="cap-item">
+            <div class="cap-dot" style="background:#ffc107;"></div>
+            <div>
+                <div class="cap-num" style="color:#ffc107;"><?= (int)$stats['pending'] ?></div>
+                <div class="cap-label">In Attesa</div>
+            </div>
+        </div>
+        <div class="cap-divider"></div>
+        <div class="cap-item">
+            <div class="cap-dot" style="background:#0dcaf0;"></div>
+            <div>
+                <div class="cap-num" style="color:#0dcaf0;"><?= (int)$stats['total'] ?></div>
+                <div class="cap-label">Totale</div>
             </div>
         </div>
     </div>
-    <?php endforeach; ?>
+    <?php if ((int)$stats['covers'] > 0): ?>
+    <div class="cap-divider"></div>
+    <div class="cap-bar-wrap">
+        <div class="cap-bar-header">
+            <span class="cap-bar-title"><i class="bi bi-pie-chart me-1"></i>Coperti</span>
+            <span class="cap-bar-pct"><?= (int)$stats['covers'] ?> previsti</span>
+        </div>
+        <div class="cap-bar">
+            <div class="cap-bar-fill" style="width: <?= min(100, (int)$stats['covers']) ?>%;"></div>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
 
-<div class="row g-4">
-    <!-- Reservations List -->
-    <div class="col-lg-8">
+<!-- Main grid -->
+<div class="dash-grid">
+
+    <!-- Left: Reservations -->
+    <div>
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Prenotazioni <?= $isToday ? 'di oggi' : 'del ' . format_date($date, 'd/m/Y') ?></h5>
-                <a href="<?= url('dashboard/reservations?date=' . $date) ?>" class="btn btn-sm btn-outline-primary">
-                    Vedi tutte <i class="bi bi-arrow-right"></i>
+            <div class="card-header">
+                <h6>Prenotazioni <?= $isToday ? 'di oggi' : 'del ' . format_date($date, 'd/m/Y') ?></h6>
+                <a href="<?= url('dashboard/reservations?date=' . $date) ?>" class="btn btn-sm btn-brand-outline" style="font-size:.78rem;">
+                    Vedi tutte <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Orario</th>
-                            <th>Cliente</th>
-                            <th>Persone</th>
-                            <th>Stato</th>
-                            <th>Telefono</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (empty($reservations)): ?>
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-4">Nessuna prenotazione per questa data.</td>
-                        </tr>
-                        <?php else: ?>
-                        <?php foreach ($reservations as $r): ?>
-                        <tr class="reservation-row" data-url="<?= url("dashboard/reservations/{$r['id']}") ?>">
-                            <td class="fw-semibold"><?= format_time($r['reservation_time']) ?></td>
-                            <td><?= e($r['first_name'] . ' ' . $r['last_name']) ?></td>
-                            <td><?= (int)$r['party_size'] ?> pax</td>
-                            <td><span class="badge <?= status_badge($r['status']) ?>"><?= status_label($r['status']) ?></span></td>
-                            <td><a href="tel:<?= e($r['phone']) ?>" onclick="event.stopPropagation()"><?= e($r['phone']) ?></a></td>
-                            <td class="text-end"><i class="bi bi-chevron-right text-muted"></i></td>
-                        </tr>
+
+            <?php if (empty($reservations)): ?>
+                <div class="text-center text-muted py-4">
+                    <i class="bi bi-calendar-x" style="font-size:2rem;display:block;margin-bottom:.5rem;color:#dee2e6;"></i>
+                    Nessuna prenotazione per questa data.
+                </div>
+            <?php else: ?>
+                <?php foreach (['pranzo' => ['bi-sun', 'Pranzo'], 'cena' => ['bi-moon-stars', 'Cena']] as $mealKey => [$mealIcon, $mealName]): ?>
+                    <?php if (!empty($byMeal[$mealKey])): ?>
+                    <div class="meal-section">
+                        <div class="meal-label">
+                            <i class="bi <?= $mealIcon ?>"></i> <?= $mealName ?>
+                            <span class="meal-count"><?= count($byMeal[$mealKey]) ?> prenotazioni &middot; <?= $mealCovers[$mealKey] ?> coperti</span>
+                        </div>
+                        <?php foreach ($byMeal[$mealKey] as $r): ?>
+                        <div class="res-row" data-url="<?= url("dashboard/reservations/{$r['id']}") ?>">
+                            <div class="res-time"><?= format_time($r['reservation_time']) ?></div>
+                            <div class="status-dot <?= e($r['status']) ?>" title="<?= status_label($r['status']) ?>"></div>
+                            <div class="res-info">
+                                <div class="res-name"><?= e($r['first_name'] . ' ' . $r['last_name']) ?></div>
+                                <div class="res-meta">
+                                    <i class="bi bi-telephone me-1"></i>
+                                    <a href="tel:<?= e($r['phone']) ?>" style="color:inherit;text-decoration:none;"><?= e($r['phone']) ?></a>
+                                </div>
+                            </div>
+                            <div class="res-right">
+                                <span class="res-pax"><i class="bi bi-people-fill me-1"></i><?= (int)$r['party_size'] ?></span>
+                                <i class="bi bi-chevron-right text-muted" style="font-size:.75rem;"></i>
+                            </div>
+                        </div>
                         <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+                    </div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
 
-    <!-- Upcoming days -->
-    <div class="col-lg-4">
+    <!-- Right sidebar -->
+    <div class="side-panel">
+
+        <!-- Mini calendar -->
         <div class="card">
-            <div class="card-header"><h5 class="mb-0">Prossimi 7 giorni</h5></div>
-            <div class="card-body">
+            <div class="mini-cal" id="home-mini-cal">
+                <div class="cal-nav">
+                    <button type="button" id="mini-cal-prev"><i class="bi bi-chevron-left"></i></button>
+                    <span id="mini-cal-month"></span>
+                    <button type="button" id="mini-cal-next"><i class="bi bi-chevron-right"></i></button>
+                </div>
+                <div class="cal-grid" id="mini-cal-grid">
+                    <div class="cal-day-name">L</div><div class="cal-day-name">M</div><div class="cal-day-name">M</div>
+                    <div class="cal-day-name">G</div><div class="cal-day-name">V</div><div class="cal-day-name">S</div><div class="cal-day-name">D</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming days -->
+        <div class="card">
+            <div class="card-header">
+                <h6><i class="bi bi-calendar-week me-1"></i> Prossimi giorni</h6>
+            </div>
+            <div class="upcoming-list">
                 <?php if (empty($upcoming)): ?>
-                    <p class="text-muted mb-0">Nessuna prenotazione in arrivo.</p>
+                    <div class="text-center text-muted py-3" style="font-size:.85rem;">Nessuna prenotazione in arrivo.</div>
                 <?php else: ?>
-                <ul class="list-unstyled mb-0">
-                    <?php foreach ($upcoming as $u): ?>
-                    <li class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-                        <a href="<?= url('dashboard?date=' . $u['reservation_date']) ?>" class="text-decoration-none">
-                            <strong><?= format_date($u['reservation_date'], 'D d/m') ?></strong>
-                        </a>
-                        <div>
-                            <span class="badge bg-primary"><?= (int)$u['count'] ?> pren.</span>
-                            <span class="badge bg-outline-secondary text-dark"><?= (int)$u['covers'] ?> cop.</span>
+                    <?php foreach ($upcoming as $u):
+                        $uDate = new DateTime($u['reservation_date']);
+                        $dayLabel = $DAYS_IT[(int)$uDate->format('w')] . ' ' . $uDate->format('d/m');
+                    ?>
+                    <a href="<?= url('dashboard?date=' . $u['reservation_date']) ?>" class="upcoming-row">
+                        <span class="upcoming-day"><?= $dayLabel ?></span>
+                        <div class="upcoming-badges">
+                            <span class="badge" style="background:var(--brand);"><?= (int)$u['count'] ?> pren.</span>
+                            <span class="badge bg-light text-dark border"><?= (int)$u['covers'] ?> cop.</span>
                         </div>
-                    </li>
+                    </a>
                     <?php endforeach; ?>
-                </ul>
                 <?php endif; ?>
             </div>
         </div>
+
+        <!-- Quick action -->
+        <a href="<?= url('dashboard/reservations/create') ?>" class="quick-action-card">
+            <i class="bi bi-plus-circle d-block"></i>
+            <span class="qa-label">Nuova Prenotazione</span>
+        </a>
+
     </div>
 </div>
 
@@ -149,40 +217,31 @@ $dashCards = [
     var selectedDate = '<?= e($date) ?>';
     var baseUrl = '<?= url('dashboard') ?>';
 
-    // DOM refs
-    var dropdown = document.getElementById('home-cal-dropdown');
-    var grid = document.getElementById('home-cal-grid');
-    var monthLabel = document.getElementById('home-cal-month');
-    var toggle = document.getElementById('home-cal-toggle');
-
     function pad(n) { return n < 10 ? '0' + n : '' + n; }
     function isoDate(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
 
-    // === Quick date buttons: populate sub-labels and mark active ===
     var today = new Date(); today.setHours(0,0,0,0);
     var quickDates = [];
     var matchedQuick = -1;
 
+    // Populate date chips
     for (var i = 0; i <= 2; i++) {
         var d = new Date(today);
         d.setDate(d.getDate() + i);
         quickDates.push(isoDate(d));
-
-        // Populate sub-label (e.g. "Ven 6/3")
-        var subEl = document.getElementById('home-date-' + i);
+        var subEl = document.getElementById('home-chip-' + i);
         if (subEl) subEl.textContent = DAYS_SHORT[d.getDay()] + ' ' + d.getDate() + '/' + (d.getMonth() + 1);
-
         if (isoDate(d) === selectedDate) matchedQuick = i;
     }
 
-    // Mark active button
-    var quickBtns = document.querySelectorAll('#home-date-grid .dr-date-btn[data-offset]');
-    var otherSub = document.getElementById('home-date-other');
+    // Mark active chip
+    var chips = document.querySelectorAll('#home-date-strip .date-chip[data-offset]');
+    var toggle = document.getElementById('home-cal-toggle');
+    var otherSub = document.getElementById('home-chip-other');
 
     if (matchedQuick >= 0) {
-        quickBtns[matchedQuick].classList.add('active');
+        chips[matchedQuick].classList.add('active');
     } else {
-        // "Altra data" is active — show selected date
         toggle.classList.add('active');
         if (otherSub) {
             var sel = new Date(selectedDate + 'T00:00:00');
@@ -190,31 +249,29 @@ $dashCards = [
         }
     }
 
-    // Quick button click → navigate
-    quickBtns.forEach(function(btn) {
+    // Chip click → navigate
+    chips.forEach(function(btn) {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
-            var offset = parseInt(this.dataset.offset);
-            window.location = baseUrl + '?date=' + quickDates[offset];
+            window.location = baseUrl + '?date=' + quickDates[parseInt(this.dataset.offset)];
         });
     });
 
-    // === Calendar for "Altra data" ===
+    // === Calendar dropdown for "Altra data" ===
+    var dropdown = document.getElementById('home-cal-dropdown');
+    var grid = document.getElementById('home-cal-grid');
+    var monthLabel = document.getElementById('home-cal-month');
     var selDate = new Date(selectedDate + 'T00:00:00');
     var calMonth = selDate.getMonth();
     var calYear = selDate.getFullYear();
 
     function renderCal() {
         monthLabel.textContent = MONTHS[calMonth] + ' ' + calYear;
-
         var first = new Date(calYear, calMonth, 1);
-        var startDow = first.getDay() - 1;
-        if (startDow < 0) startDow = 6;
+        var startDow = first.getDay() - 1; if (startDow < 0) startDow = 6;
         var days = new Date(calYear, calMonth + 1, 0).getDate();
-
         var html = '';
         for (var i = 0; i < startDow; i++) html += '<div class="dr-cal-cell dr-cal-empty"></div>';
-
         for (var d = 1; d <= days; d++) {
             var dt = new Date(calYear, calMonth, d); dt.setHours(0,0,0,0);
             var ds = isoDate(dt);
@@ -224,39 +281,67 @@ $dashCards = [
             html += '<div class="' + cls + '" data-date="' + ds + '">' + d + '</div>';
         }
         grid.innerHTML = html;
-
         grid.querySelectorAll('.dr-cal-cell:not(.dr-cal-empty)').forEach(function(cell) {
-            cell.addEventListener('click', function() {
-                window.location = baseUrl + '?date=' + this.dataset.date;
-            });
+            cell.addEventListener('click', function() { window.location = baseUrl + '?date=' + this.dataset.date; });
         });
     }
 
     toggle.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault(); e.stopPropagation();
         dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
         if (dropdown.style.display === 'block') renderCal();
     });
-
     document.getElementById('home-cal-prev').addEventListener('click', function(e) {
-        e.stopPropagation();
-        calMonth--;
-        if (calMonth < 0) { calMonth = 11; calYear--; }
-        renderCal();
+        e.stopPropagation(); calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCal();
     });
-
     document.getElementById('home-cal-next').addEventListener('click', function(e) {
-        e.stopPropagation();
-        calMonth++;
-        if (calMonth > 11) { calMonth = 0; calYear++; }
-        renderCal();
+        e.stopPropagation(); calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCal();
+    });
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#home-cal-dropdown') && !e.target.closest('#home-cal-toggle'))
+            dropdown.style.display = 'none';
     });
 
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('#home-cal-dropdown') && !e.target.closest('#home-cal-toggle')) {
-            dropdown.style.display = 'none';
+    // === Mini calendar (sidebar) ===
+    var mcGrid = document.getElementById('mini-cal-grid');
+    var mcMonth = document.getElementById('mini-cal-month');
+    var mcMo = selDate.getMonth(), mcYr = selDate.getFullYear();
+
+    var upcomingDates = {};
+    <?php foreach ($upcoming as $u): ?>
+    upcomingDates['<?= $u['reservation_date'] ?>'] = true;
+    <?php endforeach; ?>
+
+    function renderMiniCal() {
+        mcMonth.textContent = MONTHS[mcMo] + ' ' + mcYr;
+        var first = new Date(mcYr, mcMo, 1);
+        var startDow = first.getDay() - 1; if (startDow < 0) startDow = 6;
+        var days = new Date(mcYr, mcMo + 1, 0).getDate();
+        var existing = mcGrid.querySelectorAll('.cal-day');
+        existing.forEach(function(el) { el.remove(); });
+        var html = '';
+        for (var i = 0; i < startDow; i++) html += '<div class="cal-day empty">.</div>';
+        for (var d = 1; d <= days; d++) {
+            var dt = new Date(mcYr, mcMo, d); dt.setHours(0,0,0,0);
+            var ds = isoDate(dt);
+            var cls = 'cal-day';
+            if (dt.getTime() === today.getTime()) cls += ' today';
+            if (ds === selectedDate) cls += ' selected';
+            if (upcomingDates[ds]) cls += ' has-res';
+            html += '<div class="' + cls + '" data-date="' + ds + '">' + d + '</div>';
         }
+        mcGrid.insertAdjacentHTML('beforeend', html);
+        mcGrid.querySelectorAll('.cal-day:not(.empty)').forEach(function(cell) {
+            cell.addEventListener('click', function() { window.location = baseUrl + '?date=' + this.dataset.date; });
+        });
+    }
+    renderMiniCal();
+
+    document.getElementById('mini-cal-prev').addEventListener('click', function() {
+        mcMo--; if (mcMo < 0) { mcMo = 11; mcYr--; } renderMiniCal();
+    });
+    document.getElementById('mini-cal-next').addEventListener('click', function() {
+        mcMo++; if (mcMo > 11) { mcMo = 0; mcYr++; } renderMiniCal();
     });
 })();
 </script>

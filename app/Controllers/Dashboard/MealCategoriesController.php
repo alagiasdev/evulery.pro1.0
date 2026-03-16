@@ -55,7 +55,7 @@ class MealCategoriesController
                     'start_time'   => $startTime,
                     'end_time'     => $endTime,
                     'sort_order'   => (int)($cat['sort_order'] ?? $i),
-                    'is_active'    => isset($cat['is_active']) ? true : false,
+                    'is_active'    => !empty($cat['is_active']),
                 ]);
             }
         }

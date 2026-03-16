@@ -1,78 +1,102 @@
-<h2 class="mb-4">Dashboard</h2>
+<h1 class="admin-page-title">Dashboard</h1>
+<p class="admin-page-sub">Panoramica del sistema <?= e(env('APP_NAME', 'Evulery')) ?></p>
 
-<div class="row g-4 mb-4">
-    <div class="col-md-3">
-        <div class="card stat-card border-primary">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h6 class="text-muted mb-1">Ristoranti Totali</h6>
-                        <h3 class="mb-0"><?= (int)$totalTenants ?></h3>
-                    </div>
-                    <div class="align-self-center">
-                        <i class="bi bi-shop fs-1 text-primary"></i>
-                    </div>
-                </div>
-            </div>
+<!-- Stats -->
+<div class="admin-stats">
+    <div class="admin-stat">
+        <div class="admin-stat-icon" style="background:#E3F2FD;color:#1565C0;">
+            <i class="bi bi-shop"></i>
+        </div>
+        <div>
+            <div class="admin-stat-value"><?= (int)$totalTenants ?></div>
+            <div class="admin-stat-label">Ristoranti totali</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card stat-card border-success">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h6 class="text-muted mb-1">Attivi</h6>
-                        <h3 class="mb-0"><?= (int)$activeTenants ?></h3>
-                    </div>
-                    <div class="align-self-center">
-                        <i class="bi bi-check-circle fs-1 text-success"></i>
-                    </div>
-                </div>
-            </div>
+    <div class="admin-stat">
+        <div class="admin-stat-icon" style="background:#E8F5E9;color:#2E7D32;">
+            <i class="bi bi-check-circle"></i>
+        </div>
+        <div>
+            <div class="admin-stat-value"><?= (int)$activeTenants ?></div>
+            <div class="admin-stat-label">Attivi</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card stat-card border-warning">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h6 class="text-muted mb-1">Prenotazioni Oggi</h6>
-                        <h3 class="mb-0"><?= (int)$todayReservations ?></h3>
-                    </div>
-                    <div class="align-self-center">
-                        <i class="bi bi-calendar-check fs-1 text-warning"></i>
-                    </div>
-                </div>
-            </div>
+    <div class="admin-stat">
+        <div class="admin-stat-icon" style="background:#FFF3E0;color:#E65100;">
+            <i class="bi bi-calendar-check"></i>
+        </div>
+        <div>
+            <div class="admin-stat-value"><?= (int)$todayReservations ?></div>
+            <div class="admin-stat-label">Prenotazioni oggi</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card stat-card border-danger">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h6 class="text-muted mb-1">Utenti</h6>
-                        <h3 class="mb-0"><?= (int)$totalUsers ?></h3>
-                    </div>
-                    <div class="align-self-center">
-                        <i class="bi bi-people fs-1 text-danger"></i>
-                    </div>
-                </div>
-            </div>
+    <div class="admin-stat">
+        <div class="admin-stat-icon" style="background:#FCE4EC;color:#C62828;">
+            <i class="bi bi-people"></i>
+        </div>
+        <div>
+            <div class="admin-stat-value"><?= (int)$totalUsers ?></div>
+            <div class="admin-stat-label">Utenti</div>
         </div>
     </div>
 </div>
 
-<div class="card">
-    <div class="card-header">
-        <h5 class="mb-0">Azioni rapide</h5>
+<!-- Quick actions -->
+<div class="adm-card">
+    <div class="adm-card-hdr">
+        <span class="adm-card-hdr-title">Azioni rapide</span>
     </div>
-    <div class="card-body">
-        <a href="<?= url('admin/tenants/create') ?>" class="btn btn-primary me-2">
-            <i class="bi bi-plus-circle me-1"></i> Nuovo Ristorante
-        </a>
-        <a href="<?= url('admin/tenants') ?>" class="btn btn-outline-secondary">
-            <i class="bi bi-list me-1"></i> Gestisci Ristoranti
-        </a>
+    <div class="adm-card-body">
+        <div class="admin-quick-actions">
+            <a href="<?= url('admin/tenants/create') ?>" class="admin-qa admin-qa-primary">
+                <i class="bi bi-plus-circle"></i> Nuovo Ristorante
+            </a>
+            <a href="<?= url('admin/tenants') ?>" class="admin-qa admin-qa-outline">
+                <i class="bi bi-list"></i> Gestisci Ristoranti
+            </a>
+            <a href="<?= url('admin/subscriptions') ?>" class="admin-qa admin-qa-outline">
+                <i class="bi bi-credit-card"></i> Abbonamenti
+            </a>
+        </div>
     </div>
 </div>
+
+<!-- Recent tenants -->
+<?php if (!empty($recentTenants)): ?>
+<div class="adm-card">
+    <div class="adm-card-hdr">
+        <span class="adm-card-hdr-title">Ristoranti recenti</span>
+        <a href="<?= url('admin/tenants') ?>" style="font-size:.78rem;color:var(--admin-accent);text-decoration:none;font-weight:600;">
+            Vedi tutti <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+    <table class="adm-table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Slug</th>
+                <th>Piano</th>
+                <th>Stato</th>
+                <th>Creato</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($recentTenants as $t): ?>
+            <tr>
+                <td class="cell-name"><?= e($t['name']) ?></td>
+                <td><span class="slug-code"><?= e($t['slug']) ?></span></td>
+                <td><span class="adm-badge adm-badge-plan"><?= e(ucfirst($t['plan'])) ?></span></td>
+                <td>
+                    <?php if ($t['is_active']): ?>
+                        <span class="adm-badge adm-badge-active">Attivo</span>
+                    <?php else: ?>
+                        <span class="adm-badge adm-badge-inactive">Inattivo</span>
+                    <?php endif; ?>
+                </td>
+                <td class="cell-date"><?= format_date($t['created_at']) ?></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+<?php endif; ?>

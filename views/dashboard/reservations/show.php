@@ -1,189 +1,265 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Prenotazione #<?= (int)$reservation['id'] ?></h2>
-    <a href="<?= url('dashboard/reservations?date=' . $reservation['reservation_date']) ?>" class="btn btn-outline-secondary">
-        <i class="bi bi-arrow-left me-1"></i> Torna alla lista
+<?php
+// Segment calculation: nuovo (<2), occasionale (2-3), abituale (4-9), vip (10+)
+$bookings = (int)$reservation['total_bookings'];
+if ($bookings >= 10) { $segment = 'vip'; $segmentLabel = 'VIP'; }
+elseif ($bookings >= 4) { $segment = 'abituale'; $segmentLabel = 'Abituale'; }
+elseif ($bookings >= 2) { $segment = 'occasionale'; $segmentLabel = 'Occasionale'; }
+else { $segment = 'nuovo'; $segmentLabel = 'Nuovo'; }
+
+// Total covers from history
+$totalHistoryCovers = 0;
+foreach ($history as $h) {
+    $totalHistoryCovers += (int)$h['party_size'];
+}
+
+// Delete timer
+$minutesSinceCreation = (time() - strtotime($reservation['created_at'])) / 60;
+$canDelete = $minutesSinceCreation <= 30;
+$remainingMin = max(0, (int)ceil(30 - $minutesSinceCreation));
+
+// Source labels
+$sourceLabels = ['phone' => 'Telefono', 'walkin' => 'Walk-in', 'widget' => 'Widget', 'altro' => 'Altro'];
+$sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['source']);
+?>
+
+<!-- Back -->
+<div class="page-back">
+    <a href="<?= url('dashboard/reservations?date=' . $reservation['reservation_date']) ?>">
+        <i class="bi bi-arrow-left"></i> Torna alle prenotazioni
     </a>
 </div>
 
-<div class="row g-4">
-    <!-- Main Info -->
-    <div class="col-lg-8">
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><?= e($reservation['first_name'] . ' ' . $reservation['last_name']) ?></h5>
-                <span class="badge <?= status_badge($reservation['status']) ?> fs-6"><?= status_label($reservation['status']) ?></span>
-            </div>
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <strong>Data</strong><br>
-                        <?= format_date($reservation['reservation_date'], 'd/m/Y') ?>
-                    </div>
-                    <div class="col-md-4">
-                        <strong>Orario</strong><br>
-                        <?= format_time($reservation['reservation_time']) ?>
-                    </div>
-                    <div class="col-md-4">
-                        <strong>Persone</strong><br>
-                        <?= (int)$reservation['party_size'] ?> pax
-                    </div>
-                    <div class="col-md-4">
-                        <strong>Telefono</strong><br>
-                        <a href="tel:<?= e($reservation['phone']) ?>"><?= e($reservation['phone']) ?></a>
-                    </div>
-                    <div class="col-md-4">
-                        <strong>Email</strong><br>
-                        <a href="mailto:<?= e($reservation['email']) ?>"><?= e($reservation['email']) ?></a>
-                    </div>
-                    <div class="col-md-4">
-                        <strong>Fonte</strong><br>
-                        <?= e(ucfirst($reservation['source'])) ?>
-                    </div>
-                    <?php if ($reservation['deposit_required']): ?>
-                    <div class="col-md-4">
-                        <strong>Caparra</strong><br>
-                        &euro;<?= number_format($reservation['deposit_amount'], 2) ?>
-                        <?= $reservation['deposit_paid'] ? '<span class="badge bg-success">Pagata</span>' : '<span class="badge bg-warning">Non pagata</span>' ?>
-                    </div>
-                    <?php endif; ?>
-                    <?php if (!empty($reservation['customer_notes_persistent'])): ?>
-                    <div class="col-12 mt-2">
-                        <div class="alert alert-info mb-0 py-2">
-                            <i class="bi bi-info-circle me-1"></i>
-                            <strong>Note cliente:</strong> <?= e($reservation['customer_notes_persistent']) ?>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                </div>
-            </div>
+<!-- Hero card -->
+<div class="hero-card">
+    <div class="hero-top">
+        <div>
+            <span class="hero-name"><?= e($reservation['first_name'] . ' ' . $reservation['last_name']) ?></span>
+            <span class="hero-id">#<?= (int)$reservation['id'] ?></span>
         </div>
+        <span class="status-badge <?= e($reservation['status']) ?>"><?= status_label($reservation['status']) ?></span>
+    </div>
 
-        <!-- Actions -->
-        <?php if (!in_array($reservation['status'], ['cancelled', 'noshow', 'arrived'])): ?>
-        <div class="card mb-4">
-            <div class="card-header"><h5 class="mb-0">Azioni</h5></div>
-            <div class="card-body d-flex gap-2 flex-wrap">
-                <a href="<?= url("dashboard/reservations/{$reservation['id']}/edit") ?>" class="btn btn-outline-primary">
-                    <i class="bi bi-pencil me-1"></i> Modifica
-                </a>
-                <?php if ($reservation['status'] === 'pending'): ?>
-                <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/status") ?>">
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="status" value="confirmed">
-                    <button class="btn btn-success"><i class="bi bi-check-circle me-1"></i> Conferma</button>
-                </form>
-                <?php endif; ?>
-
-                <?php if (in_array($reservation['status'], ['confirmed', 'pending'])): ?>
-                <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/status") ?>">
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="status" value="arrived">
-                    <button class="btn btn-primary"><i class="bi bi-person-check me-1"></i> Segna Arrivato</button>
-                </form>
-                <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/status") ?>">
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="status" value="noshow">
-                    <button class="btn btn-danger"><i class="bi bi-person-x me-1"></i> No-Show</button>
-                </form>
-                <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/status") ?>" onsubmit="return confirm('Sei sicuro di voler annullare?')">
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="status" value="cancelled">
-                    <button class="btn btn-outline-danger"><i class="bi bi-x-circle me-1"></i> Annulla</button>
-                </form>
+    <div class="hero-details">
+        <div>
+            <div class="detail-label"><i class="bi bi-calendar3 me-1"></i>Data</div>
+            <div class="detail-value"><?= format_date($reservation['reservation_date'], 'd/m/Y') ?></div>
+        </div>
+        <div>
+            <div class="detail-label"><i class="bi bi-clock me-1"></i>Orario</div>
+            <div class="detail-value"><?= format_time($reservation['reservation_time']) ?></div>
+        </div>
+        <div>
+            <div class="detail-label"><i class="bi bi-people me-1"></i>Persone</div>
+            <div class="detail-value"><?= (int)$reservation['party_size'] ?> pax</div>
+        </div>
+        <div>
+            <div class="detail-label"><i class="bi bi-telephone me-1"></i>Telefono</div>
+            <div class="detail-value"><a href="tel:<?= e($reservation['phone']) ?>"><?= e($reservation['phone']) ?></a></div>
+        </div>
+        <div>
+            <div class="detail-label"><i class="bi bi-envelope me-1"></i>Email</div>
+            <div class="detail-value"><a href="mailto:<?= e($reservation['email']) ?>"><?= e($reservation['email']) ?></a></div>
+        </div>
+        <div>
+            <div class="detail-label"><i class="bi bi-globe me-1"></i>Fonte</div>
+            <div class="detail-value"><?= e($sourceLabel) ?></div>
+        </div>
+        <?php if ($reservation['deposit_required']): ?>
+        <div>
+            <div class="detail-label"><i class="bi bi-credit-card me-1"></i>Caparra</div>
+            <div class="detail-value">
+                &euro;<?= number_format($reservation['deposit_amount'], 2) ?>
+                <?php if ($reservation['deposit_paid']): ?>
+                    <span style="background:#E8F5E9;color:#2E7D32;font-size:.7rem;font-weight:600;padding:1px 6px;border-radius:4px;">Pagata</span>
+                <?php else: ?>
+                    <span style="background:#FFF8E1;color:#E65100;font-size:.7rem;font-weight:600;padding:1px 6px;border-radius:4px;">Non pagata</span>
                 <?php endif; ?>
             </div>
         </div>
         <?php endif; ?>
+    </div>
 
-        <!-- Delete (only within 30 minutes of creation) -->
-        <?php
-        $minutesSinceCreation = (time() - strtotime($reservation['created_at'])) / 60;
-        $canDelete = $minutesSinceCreation <= 30;
-        ?>
-        <?php if ($canDelete): ?>
-        <div class="card mb-4 border-danger">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong class="text-danger"><i class="bi bi-trash me-1"></i>Elimina prenotazione</strong>
-                        <?php $remainingMin = max(0, (int)ceil(30 - $minutesSinceCreation)); ?>
-                        <br><small class="text-muted">Disponibile ancora per <?= $remainingMin ?> minuti dalla creazione. Questa azione è irreversibile.</small>
-                    </div>
-                    <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/delete") ?>" onsubmit="return confirm('Sei sicuro? Questa azione è IRREVERSIBILE e cancellerà definitivamente la prenotazione.')">
-                        <?= csrf_field() ?>
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash me-1"></i> Elimina
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
+    <?php if (!empty($reservation['customer_notes'])): ?>
+    <div class="customer-note">
+        <i class="bi bi-chat-left-text"></i>
+        <strong>Note prenotazione:</strong> <?= e($reservation['customer_notes']) ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if (!empty($reservation['customer_notes_persistent'])): ?>
+    <div class="customer-note" style="background:#E3F2FD;">
+        <i class="bi bi-person-lines-fill"></i>
+        <strong>Note interne cliente:</strong> <?= e($reservation['customer_notes_persistent']) ?>
+    </div>
+    <?php endif; ?>
+
+    <!-- Action buttons -->
+    <?php if (!in_array($reservation['status'], ['cancelled', 'noshow'])): ?>
+    <div class="actions-bar">
+        <?php if ($reservation['status'] !== 'arrived'): ?>
+        <a href="<?= url("dashboard/reservations/{$reservation['id']}/edit") ?>" class="btn-action btn-act-edit">
+            <i class="bi bi-pencil"></i> Modifica
+        </a>
         <?php endif; ?>
 
+        <?php if ($reservation['status'] === 'pending'): ?>
+        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/status") ?>" class="d-inline">
+            <?= csrf_field() ?>
+            <input type="hidden" name="status" value="confirmed">
+            <button type="submit" class="btn-action btn-act-confirm"><i class="bi bi-check-circle"></i> Conferma</button>
+        </form>
+        <?php endif; ?>
+
+        <?php if (in_array($reservation['status'], ['confirmed', 'pending'])): ?>
+        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/status") ?>" class="d-inline">
+            <?= csrf_field() ?>
+            <input type="hidden" name="status" value="arrived">
+            <button type="submit" class="btn-action btn-act-arrived"><i class="bi bi-person-check"></i> Segna Arrivato</button>
+        </form>
+        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/status") ?>" class="d-inline">
+            <?= csrf_field() ?>
+            <input type="hidden" name="status" value="noshow">
+            <button type="submit" class="btn-action btn-act-noshow"><i class="bi bi-person-x"></i> No-Show</button>
+        </form>
+        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/status") ?>" class="d-inline" data-confirm="Sei sicuro di voler annullare?">
+            <?= csrf_field() ?>
+            <input type="hidden" name="status" value="cancelled">
+            <button type="submit" class="btn-action btn-act-cancel"><i class="bi bi-x-circle"></i> Annulla</button>
+        </form>
+        <?php endif; ?>
+
+        <?php if ($reservation['status'] === 'arrived'): ?>
+        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/status") ?>" class="d-inline">
+            <?= csrf_field() ?>
+            <input type="hidden" name="status" value="confirmed">
+            <button type="submit" class="btn-action btn-act-undo-arrived"><i class="bi bi-arrow-counterclockwise"></i> Annulla arrivo</button>
+        </form>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+</div>
+
+<!-- Detail grid -->
+<div class="detail-grid">
+
+    <!-- Left column -->
+    <div>
         <!-- Notes -->
-        <div class="card mb-4">
-            <div class="card-header"><h5 class="mb-0">Note Interne</h5></div>
+        <div class="card" style="margin-bottom:1.25rem;">
+            <div class="card-header">
+                <h6><i class="bi bi-journal-text me-1"></i> Note Interne</h6>
+            </div>
             <div class="card-body">
                 <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/notes") ?>">
                     <?= csrf_field() ?>
-                    <textarea class="form-control mb-2" name="internal_notes" rows="3"><?= e($reservation['internal_notes'] ?? '') ?></textarea>
-                    <button type="submit" class="btn btn-sm btn-outline-primary">Salva note</button>
+                    <textarea class="notes-textarea" name="internal_notes" placeholder="Aggiungi note interne sulla prenotazione..."><?= e($reservation['internal_notes'] ?? '') ?></textarea>
+                    <div style="margin-top:.5rem; text-align:right;">
+                        <button type="submit" class="btn-action btn-act-edit" style="display:inline-flex;">
+                            <i class="bi bi-check-lg"></i> Salva note
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
+
+        <!-- Delete zone -->
+        <?php if ($canDelete): ?>
+        <div class="delete-zone">
+            <div class="delete-zone-info">
+                <strong><i class="bi bi-trash me-1"></i>Elimina prenotazione</strong>
+                <small>Disponibile ancora per <?= $remainingMin ?> minuti. Azione irreversibile.</small>
+            </div>
+            <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/delete") ?>" data-confirm="Sei sicuro? Questa azione è IRREVERSIBILE e cancellerà definitivamente la prenotazione.">
+                <?= csrf_field() ?>
+                <button type="submit" class="btn-delete"><i class="bi bi-trash me-1"></i> Elimina</button>
+            </form>
+        </div>
+        <?php endif; ?>
     </div>
 
-    <!-- Sidebar -->
-    <div class="col-lg-4">
-        <!-- Customer Info -->
-        <div class="card mb-4">
-            <div class="card-header"><h6 class="mb-0">Storico Cliente</h6></div>
-            <div class="card-body">
-                <p class="mb-1"><strong>Prenotazioni totali:</strong> <?= (int)$reservation['total_bookings'] ?></p>
-                <p class="mb-3"><strong>No-show:</strong> <?= (int)$reservation['total_noshow'] ?></p>
-
-                <?php if (!empty($history)): ?>
-                <ul class="list-unstyled mb-0">
-                    <?php foreach (array_slice($history, 0, 10) as $h): ?>
-                    <li class="mb-1">
-                        <small>
-                            <?= format_date($h['reservation_date']) ?> -
-                            <span class="badge <?= status_badge($h['status']) ?> badge-sm"><?= status_label($h['status']) ?></span>
-                            <?= (int)$h['party_size'] ?> pax
-                        </small>
-                    </li>
-                    <?php endforeach; ?>
-                </ul>
-                <?php endif; ?>
+    <!-- Right column -->
+    <div>
+        <!-- Customer history -->
+        <div class="card" style="margin-bottom:1.25rem;">
+            <div class="history-header">
+                <h6><i class="bi bi-person-circle me-2"></i>Storico Cliente</h6>
+                <span class="segment-badge <?= $segment ?>"><?= $segmentLabel ?></span>
             </div>
+            <div class="history-stats">
+                <div class="hs-item">
+                    <div class="hs-num" style="color:var(--brand);"><?= $bookings ?></div>
+                    <div class="hs-label">Prenotazioni</div>
+                </div>
+                <div class="hs-item">
+                    <div class="hs-num" style="color:#dc3545;"><?= (int)$reservation['total_noshow'] ?></div>
+                    <div class="hs-label">No-show</div>
+                </div>
+                <div class="hs-item">
+                    <div class="hs-num" style="color:#0d6efd;"><?= $totalHistoryCovers ?></div>
+                    <div class="hs-label">Coperti tot.</div>
+                </div>
+            </div>
+            <?php if (!empty($history)): ?>
+            <div class="history-list">
+                <?php foreach (array_slice($history, 0, 8) as $h): ?>
+                <div class="history-row">
+                    <span class="h-date"><?= format_date($h['reservation_date'], 'd/m/y') ?></span>
+                    <span class="h-dot <?= e($h['status']) ?>"></span>
+                    <span class="h-status"><?= status_label($h['status']) ?></span>
+                    <span class="h-pax"><?= (int)$h['party_size'] ?> pax</span>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
         </div>
 
-        <!-- Log -->
+        <!-- Timeline / log -->
         <div class="card">
-            <div class="card-header"><h6 class="mb-0">Cronologia</h6></div>
+            <div class="card-header">
+                <h6><i class="bi bi-clock-history me-1"></i> Cronologia</h6>
+            </div>
+            <?php if (empty($logs)): ?>
             <div class="card-body">
-                <?php if (empty($logs)): ?>
-                    <p class="text-muted mb-0">Nessuna attivita registrata.</p>
-                <?php else: ?>
-                <ul class="list-unstyled mb-0">
-                    <?php foreach ($logs as $log): ?>
-                    <li class="mb-2 pb-2 border-bottom">
-                        <small class="text-muted"><?= format_date($log['created_at'], 'd/m/Y H:i') ?></small><br>
-                        <?php if ($log['old_status']): ?>
-                            <?= status_label($log['old_status']) ?> &rarr;
-                        <?php endif; ?>
-                        <strong><?= status_label($log['new_status']) ?></strong>
+                <p class="text-muted mb-0" style="font-size:.85rem;">Nessuna attività registrata.</p>
+            </div>
+            <?php else: ?>
+            <div class="timeline-list">
+                <?php foreach ($logs as $log):
+                    // Determine icon type
+                    $iconClass = 'status-change';
+                    $iconName = 'bi-arrow-repeat';
+                    if (!$log['old_status']) {
+                        $iconClass = 'created';
+                        $iconName = 'bi-plus';
+                    } elseif ($log['note'] && str_contains($log['note'], 'Modificata')) {
+                        $iconClass = 'edit';
+                        $iconName = 'bi-pencil';
+                    }
+                ?>
+                <div class="tl-item">
+                    <div class="tl-icon <?= $iconClass ?>"><i class="bi <?= $iconName ?>"></i></div>
+                    <div class="tl-body">
+                        <div class="tl-time"><?= format_date($log['created_at'], 'd/m/Y H:i') ?></div>
+                        <div class="tl-text">
+                            <?php if ($log['old_status']): ?>
+                                <?= status_label($log['old_status']) ?>
+                                <i class="bi bi-arrow-right" style="font-size:.65rem;"></i>
+                                <strong><?= status_label($log['new_status']) ?></strong>
+                            <?php else: ?>
+                                <strong><?= status_label($log['new_status']) ?></strong>
+                            <?php endif; ?>
+                        </div>
                         <?php if ($log['first_name']): ?>
-                            <br><small class="text-muted">da <?= e($log['first_name'] . ' ' . $log['last_name']) ?></small>
+                            <div class="tl-user">da <?= e($log['first_name'] . ' ' . $log['last_name']) ?></div>
                         <?php endif; ?>
                         <?php if ($log['note']): ?>
-                            <br><small><?= e($log['note']) ?></small>
+                            <div class="tl-text" style="font-size:.75rem;color:#6c757d;"><?= e($log['note']) ?></div>
                         <?php endif; ?>
-                    </li>
-                    <?php endforeach; ?>
-                </ul>
-                <?php endif; ?>
+                    </div>
+                </div>
+                <?php endforeach; ?>
             </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

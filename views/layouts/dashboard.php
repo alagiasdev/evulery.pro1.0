@@ -9,7 +9,7 @@
     <link href="<?= asset('css/dashboard.css') ?>" rel="stylesheet">
 </head>
 <body>
-    <!-- Mobile Header (solo mobile) -->
+    <!-- Mobile Header -->
     <div class="mobile-header d-md-none" id="mobile-header">
         <button class="mobile-header-toggle" id="sidebar-toggle" type="button">
             <i class="bi bi-list"></i>
@@ -17,110 +17,109 @@
         <span class="mobile-header-title"><?= e(tenant()['name'] ?? env('APP_NAME', 'Evulery')) ?></span>
     </div>
 
-    <div class="d-flex" id="wrapper">
-        <!-- Sidebar -->
-        <div class="bg-dark text-white" id="sidebar" style="width: 250px; min-height: 100vh;">
-            <div class="p-3 border-bottom border-secondary d-none d-md-block">
-                <h5 class="mb-0"><?= e(tenant()['name'] ?? env('APP_NAME', 'Evulery')) ?></h5>
-                <small class="text-muted"><?= e(auth()['name'] ?? '') ?></small>
-            </div>
-            <!-- Mobile: close button inside sidebar -->
-            <div class="p-3 border-bottom border-secondary d-md-none d-flex align-items-center justify-content-between">
-                <div>
-                    <h5 class="mb-0"><?= e(tenant()['name'] ?? env('APP_NAME', 'Evulery')) ?></h5>
-                    <small class="text-muted"><?= e(auth()['name'] ?? '') ?></small>
-                </div>
-                <button class="btn btn-outline-light btn-sm" id="sidebar-close" type="button">
-                    <i class="bi bi-x-lg"></i>
-                </button>
-            </div>
-            <nav class="p-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item mb-1">
-                        <a class="nav-link text-white <?= ($activeMenu ?? '') === 'home' ? 'active bg-primary rounded' : '' ?>" href="<?= url('dashboard') ?>">
-                            <i class="bi bi-house-door me-2"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item mb-1">
-                        <a class="nav-link text-white <?= ($activeMenu ?? '') === 'reservations' ? 'active bg-primary rounded' : '' ?>" href="<?= url('dashboard/reservations') ?>">
-                            <i class="bi bi-calendar-check me-2"></i> Prenotazioni
-                        </a>
-                    </li>
-                    <li class="nav-item mb-1">
-                        <a class="nav-link text-white <?= ($activeMenu ?? '') === 'customers' ? 'active bg-primary rounded' : '' ?>" href="<?= url('dashboard/customers') ?>">
-                            <i class="bi bi-people me-2"></i> Clienti
-                        </a>
-                    </li>
-                    <li class="nav-item mt-3 mb-1">
-                        <small class="text-uppercase text-muted px-3">Impostazioni</small>
-                    </li>
-                    <li class="nav-item mb-1">
-                        <a class="nav-link text-white <?= ($activeMenu ?? '') === 'settings' ? 'active bg-primary rounded' : '' ?>" href="<?= url('dashboard/settings') ?>">
-                            <i class="bi bi-gear me-2"></i> Generali
-                        </a>
-                    </li>
-                    <li class="nav-item mb-1">
-                        <a class="nav-link text-white <?= ($activeMenu ?? '') === 'slots' ? 'active bg-primary rounded' : '' ?>" href="<?= url('dashboard/settings/slots') ?>">
-                            <i class="bi bi-clock me-2"></i> Orari e Coperti
-                        </a>
-                    </li>
-                    <li class="nav-item mb-1">
-                        <a class="nav-link text-white <?= ($activeMenu ?? '') === 'meal-categories' ? 'active bg-primary rounded' : '' ?>" href="<?= url('dashboard/settings/meal-categories') ?>">
-                            <i class="bi bi-list-columns me-2"></i> Categorie Pasto
-                        </a>
-                    </li>
-                    <li class="nav-item mb-1">
-                        <a class="nav-link text-white <?= ($activeMenu ?? '') === 'deposit' ? 'active bg-primary rounded' : '' ?>" href="<?= url('dashboard/settings/deposit') ?>">
-                            <i class="bi bi-credit-card me-2"></i> Caparra
-                        </a>
-                    </li>
-                    <li class="nav-item mb-1">
-                        <a class="nav-link text-white <?= ($activeMenu ?? '') === 'domain' ? 'active bg-primary rounded' : '' ?>" href="<?= url('dashboard/settings/domain') ?>">
-                            <i class="bi bi-globe me-2"></i> Dominio
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="p-3 mt-auto border-top border-secondary">
-                <form method="POST" action="<?= url('auth/logout') ?>">
-                    <?= csrf_field() ?>
-                    <button type="submit" class="btn btn-outline-light btn-sm w-100">
-                        <i class="bi bi-box-arrow-right me-1"></i> Esci
-                    </button>
-                </form>
-            </div>
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <div class="sidebar-brand d-none d-md-block"><?= e(tenant()['name'] ?? env('APP_NAME', 'Evulery')) ?></div>
+        <div class="sidebar-user d-none d-md-block"><?= e(auth()['name'] ?? '') ?></div>
+        <!-- Mobile: close button -->
+        <div class="d-md-none d-flex align-items-center justify-content-between" style="padding:.85rem 1rem;border-bottom:1px solid #333;">
+            <span style="font-weight:700;font-size:1.05rem;"><?= e(tenant()['name'] ?? env('APP_NAME', 'Evulery')) ?></span>
+            <button class="btn btn-sm" id="sidebar-close" type="button" style="color:#adb5bd;border:none;">
+                <i class="bi bi-x-lg"></i>
+            </button>
         </div>
-
-        <!-- Sidebar Overlay (mobile) -->
-        <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-        <!-- Page Content -->
-        <div class="flex-grow-1">
-            <!-- Top Bar (desktop only) -->
-            <nav class="navbar navbar-light bg-white shadow-sm px-4 d-none d-md-flex">
-                <span class="navbar-text">
-                    <i class="bi bi-calendar3 me-1"></i> <?= date('d/m/Y') ?>
-                </span>
-                <div>
-                    <a href="<?= url(tenant()['slug'] ?? '') ?>" target="_blank" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-eye me-1"></i> Vedi pagina prenotazione
+        <nav style="padding:.5rem 0;">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'home' ? 'active' : '' ?>" href="<?= url('dashboard') ?>">
+                        <i class="bi bi-house-door me-2"></i> Dashboard
                     </a>
-                </div>
-            </nav>
-
-            <!-- Main Content -->
-            <div class="p-4">
-                <?php partial('flash-messages'); ?>
-                <?= $content ?>
-            </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'reservations' ? 'active' : '' ?>" href="<?= url('dashboard/reservations') ?>">
+                        <i class="bi bi-calendar-check me-2"></i> Prenotazioni
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'customers' ? 'active' : '' ?>" href="<?= url('dashboard/customers') ?>">
+                        <i class="bi bi-people me-2"></i> Clienti
+                    </a>
+                </li>
+                <li class="nav-item"><div class="sidebar-section">Impostazioni</div></li>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'settings' ? 'active' : '' ?>" href="<?= url('dashboard/settings') ?>">
+                        <i class="bi bi-gear me-2"></i> Generali
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'slots' ? 'active' : '' ?>" href="<?= url('dashboard/settings/slots') ?>">
+                        <i class="bi bi-clock me-2"></i> Orari e Coperti
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'meal-categories' ? 'active' : '' ?>" href="<?= url('dashboard/settings/meal-categories') ?>">
+                        <i class="bi bi-tags me-2"></i> Categorie Pasto
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'deposit' ? 'active' : '' ?>" href="<?= url('dashboard/settings/deposit') ?>">
+                        <i class="bi bi-cash me-2"></i> Caparra
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'domain' ? 'active' : '' ?>" href="<?= url('dashboard/settings/domain') ?>">
+                        <i class="bi bi-globe me-2"></i> Dominio
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="sidebar-logout">
+            <form method="POST" action="<?= url('auth/logout') ?>">
+                <?= csrf_field() ?>
+                <button type="submit" class="btn">
+                    <i class="bi bi-box-arrow-left me-1"></i> Esci
+                </button>
+            </form>
         </div>
     </div>
+
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Top Bar (desktop) -->
+        <div class="top-bar d-none d-md-flex">
+            <span class="top-bar-date">
+                <i class="bi bi-calendar3 me-1"></i> <?= format_date(date('Y-m-d'), 'D d/m/Y') ?>
+            </span>
+            <div class="d-flex align-items-center gap-2">
+                <a href="<?= url('dashboard/reservations/create') ?>" class="btn btn-brand btn-sm btn-nuova-desktop">
+                    <i class="bi bi-plus-circle me-1"></i> Nuova Prenotazione
+                </a>
+                <a href="<?= url(tenant()['slug'] ?? '') ?>" target="_blank" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-eye me-1"></i> Vedi pagina
+                </a>
+            </div>
+        </div>
+
+        <div class="page-body">
+            <?php partial('flash-messages'); ?>
+            <?= $content ?>
+        </div>
+    </div>
+
+    <!-- FAB mobile -->
+    <a href="<?= url('dashboard/reservations/create') ?>" class="fab d-md-none" title="Nuova Prenotazione">
+        <i class="bi bi-plus-lg"></i>
+    </a>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="<?= asset('js/app.js') ?>"></script>
     <script>
     document.addEventListener('click', function(e) {
         var row = e.target.closest('[data-url]');
-        if (row && !e.target.closest('a, button')) {
+        if (row && !e.target.closest('a, button, form')) {
             window.location = row.getAttribute('data-url');
         }
     });

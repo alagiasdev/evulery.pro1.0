@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Admin Abbonamenti</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 220px;
+            --brand: #00844A;
+            --brand-light: #E8F5E9;
+            --brand-dark: #006837;
+            --admin-accent: #1565C0;
+            --admin-accent-dark: #0D47A1;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        /* ===== Sidebar ===== */
+        .admin-sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w); background: #1a1d23; color: #fff;
+            display: flex; flex-direction: column; z-index: 100;
+        }
+        .sidebar-brand { padding: 1.1rem 1.25rem; border-bottom: 1px solid #2a2d33; }
+        .sidebar-brand-name { font-weight: 700; font-size: 1.1rem; }
+        .sidebar-brand-role {
+            font-size: .68rem; color: #ffc107; font-weight: 600;
+            text-transform: uppercase; letter-spacing: .5px;
+        }
+        .sidebar-nav { padding: .75rem .5rem; flex: 1; }
+        .sidebar-link {
+            display: flex; align-items: center; gap: .6rem;
+            padding: .55rem .85rem; border-radius: 8px;
+            color: #adb5bd; font-size: .85rem; font-weight: 500;
+            text-decoration: none; margin-bottom: .15rem;
+            transition: all .15s; cursor: pointer;
+        }
+        .sidebar-link:hover { color: #fff; background: rgba(255,255,255,.06); }
+        .sidebar-link.active { color: #fff; background: var(--admin-accent); }
+        .sidebar-link i { font-size: .95rem; width: 20px; text-align: center; }
+        .sidebar-footer { padding: .75rem 1rem; border-top: 1px solid #2a2d33; }
+        .sidebar-logout {
+            display: flex; align-items: center; justify-content: center; gap: .4rem;
+            width: 100%; padding: .45rem; border-radius: 8px;
+            background: #2a2d33; color: #adb5bd; border: none;
+            font-size: .8rem; font-weight: 500; cursor: pointer; transition: all .15s;
+        }
+        .sidebar-logout:hover { background: #363940; color: #fff; }
+
+        /* ===== Main ===== */
+        .main-content { margin-left: var(--sidebar-w); }
+
+        /* ===== Top bar ===== */
+        .top-bar {
+            background: #fff; border-bottom: 1px solid #e9ecef;
+            padding: .65rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .top-bar-title { font-size: .95rem; font-weight: 700; color: #1a1d23; }
+        .top-bar-user {
+            display: flex; align-items: center; gap: .5rem;
+            font-size: .82rem; color: #6c757d;
+        }
+        .top-bar-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--admin-accent); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .72rem; font-weight: 700;
+        }
+
+        /* ===== Page body ===== */
+        .page-body { padding: 1.25rem 1.5rem; }
+        .page-title { font-size: 1.25rem; font-weight: 700; color: #1a1d23; margin-bottom: .25rem; }
+        .page-subtitle { font-size: .82rem; color: #6c757d; margin-bottom: 1.25rem; }
+
+        /* ===== Stat cards ===== */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            padding: 1.25rem;
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .stat-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; flex-shrink: 0;
+        }
+        .stat-value { font-size: 1.75rem; font-weight: 700; color: #1a1d23; line-height: 1; }
+        .stat-label { font-size: .75rem; color: #6c757d; font-weight: 500; margin-top: .15rem; }
+
+        /* ===== Card ===== */
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow: hidden; }
+        .card-hdr {
+            padding: .85rem 1.25rem; background: #fafbfc;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .card-hdr-title { font-size: .88rem; font-weight: 700; color: #495057; }
+
+        /* ===== Table ===== */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th {
+            font-size: .72rem; font-weight: 600; color: #6c757d;
+            text-transform: uppercase; letter-spacing: .5px;
+            padding: .6rem 1rem; border-bottom: 1px solid #f0f0f0;
+        }
+        .data-table td {
+            padding: .7rem 1rem; font-size: .85rem; color: #495057;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        .data-table tr:last-child td { border-bottom: none; }
+        .badge-status {
+            padding: 2px 8px; border-radius: 6px;
+            font-size: .7rem; font-weight: 600;
+        }
+        .badge-active { background: #E8F5E9; color: #2E7D32; }
+        .badge-warning { background: #FFF3E0; color: #E65100; }
+        .badge-inactive { background: #F5F5F5; color: #757575; }
+        .badge-plan {
+            padding: 2px 8px; border-radius: 6px;
+            font-size: .7rem; font-weight: 600;
+            background: #E3F2FD; color: #1565C0;
+        }
+        .badge-plan-deposit {
+            padding: 2px 8px; border-radius: 6px;
+            font-size: .7rem; font-weight: 600;
+            background: #F3E5F5; color: #7B1FA2;
+        }
+
+        /* ===== WF note ===== */
+        .wf-note {
+            background: #E8F5E9; border: 1px dashed var(--brand); border-radius: 8px;
+            padding: .6rem 1rem; margin-bottom: 1rem;
+            font-size: .78rem; color: #1B5E20;
+        }
+        .wf-note b { color: #B71C1C; }
+
+        /* ===== Filter pills ===== */
+        .filter-pills { display: flex; gap: .35rem; }
+        .filter-pill {
+            padding: .35rem .75rem; border-radius: 8px;
+            font-size: .75rem; font-weight: 600; cursor: pointer;
+            border: 1px solid #dee2e6; background: #fff; color: #6c757d;
+            transition: all .15s;
+        }
+        .filter-pill.active { background: var(--admin-accent); color: #fff; border-color: var(--admin-accent); }
+        .filter-pill:hover:not(.active) { border-color: var(--admin-accent); color: var(--admin-accent); }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 992px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .admin-sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="admin-sidebar">
+    <div class="sidebar-brand">
+        <div class="sidebar-brand-name">Evulery</div>
+        <div class="sidebar-brand-role">Super Admin</div>
+    </div>
+    <nav class="sidebar-nav">
+        <a class="sidebar-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a class="sidebar-link"><i class="bi bi-shop"></i> Ristoranti</a>
+        <a class="sidebar-link active"><i class="bi bi-credit-card-2-front"></i> Abbonamenti</a>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="sidebar-logout"><i class="bi bi-box-arrow-left"></i> Esci</button>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+    <div class="top-bar">
+        <div class="top-bar-title">Admin Panel</div>
+        <div class="top-bar-user">
+            <span>Admin</span>
+            <div class="top-bar-avatar">A</div>
+        </div>
+    </div>
+
+    <div class="page-body">
+
+        <div class="wf-note">
+            <b>WIREFRAME — Abbonamenti</b> &mdash;
+            <b>1)</b> 3 stat card di riepilogo (totale MRR, attivi, in scadenza).
+            <b>2)</b> Filtri rapidi per stato.
+            <b>3)</b> Tabella con ristorante, piano, prezzo, stato, periodo.
+            <b>4)</b> Badge colorati per piano (Base blu, Deposit viola).
+        </div>
+
+        <h1 class="page-title">Abbonamenti</h1>
+        <p class="page-subtitle">Gestisci gli abbonamenti dei ristoranti</p>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#E8F5E9;color:#2E7D32;"><i class="bi bi-currency-euro"></i></div>
+                <div>
+                    <div class="stat-value">&euro;592</div>
+                    <div class="stat-label">MRR (Ricavo mensile)</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#E3F2FD;color:#1565C0;"><i class="bi bi-check2-circle"></i></div>
+                <div>
+                    <div class="stat-value">10</div>
+                    <div class="stat-label">Abbonamenti attivi</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#FFF3E0;color:#E65100;"><i class="bi bi-exclamation-triangle"></i></div>
+                <div>
+                    <div class="stat-value">2</div>
+                    <div class="stat-label">In scadenza (7 gg)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="card">
+            <div class="card-hdr">
+                <span class="card-hdr-title">Elenco abbonamenti</span>
+                <div class="filter-pills">
+                    <button class="filter-pill active">Tutti</button>
+                    <button class="filter-pill">Attivi</button>
+                    <button class="filter-pill">In scadenza</button>
+                    <button class="filter-pill">Scaduti</button>
+                </div>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Ristorante</th>
+                        <th>Piano</th>
+                        <th>Prezzo</th>
+                        <th>Stato</th>
+                        <th>Periodo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-weight:600;">Trattoria Da Mario</td>
+                        <td><span class="badge-plan">Base</span></td>
+                        <td>&euro;49,00</td>
+                        <td><span class="badge-status badge-active">Attivo</span></td>
+                        <td style="color:#6c757d;">01/03/2026 - 31/03/2026</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600;">Ristorante Bella Vista</td>
+                        <td><span class="badge-plan-deposit">Deposit</span></td>
+                        <td>&euro;79,00</td>
+                        <td><span class="badge-status badge-active">Attivo</span></td>
+                        <td style="color:#6c757d;">01/03/2026 - 31/03/2026</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600;">Osteria del Borgo</td>
+                        <td><span class="badge-plan">Base</span></td>
+                        <td>&euro;49,00</td>
+                        <td><span class="badge-status badge-warning">In scadenza</span></td>
+                        <td style="color:#E65100;font-weight:500;">01/03/2026 - 18/03/2026</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600;">Pizzeria Napoli</td>
+                        <td><span class="badge-plan">Base</span></td>
+                        <td>&euro;49,00</td>
+                        <td><span class="badge-status badge-inactive">Scaduto</span></td>
+                        <td style="color:#adb5bd;">01/02/2026 - 28/02/2026</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600;">La Pergola</td>
+                        <td><span class="badge-plan-deposit">Deposit</span></td>
+                        <td>&euro;79,00</td>
+                        <td><span class="badge-status badge-active">Attivo</span></td>
+                        <td style="color:#6c757d;">01/03/2026 - 31/03/2026</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600;">Ristorante Il Giardino</td>
+                        <td><span class="badge-plan">Base</span></td>
+                        <td>&euro;49,00</td>
+                        <td><span class="badge-status badge-active">Attivo</span></td>
+                        <td style="color:#6c757d;">05/03/2026 - 04/04/2026</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600;">Trattoria Nonna Rosa</td>
+                        <td><span class="badge-plan-deposit">Deposit</span></td>
+                        <td>&euro;79,00</td>
+                        <td><span class="badge-status badge-warning">In scadenza</span></td>
+                        <td style="color:#E65100;font-weight:500;">01/03/2026 - 19/03/2026</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
