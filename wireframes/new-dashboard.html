@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe - New Dashboard Home</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #006B3C;
+    --blue: #0d6efd;
+    --orange: #fd7e14;
+    --red: #dc3545;
+    --cyan: #0dcaf0;
+    --gray-100: #f8f9fa;
+    --gray-200: #e9ecef;
+    --gray-500: #adb5bd;
+    --gray-600: #6c757d;
+    --gray-900: #1a1d23;
+    --radius: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:#f5f6f8; color:var(--gray-900); }
+
+.page-wrap { max-width:1200px; margin:0 auto; padding:24px 16px; }
+
+/* ===== Header row ===== */
+.dash-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.dash-greeting h1 { font-size:1.4rem; font-weight:700; }
+.dash-greeting p { font-size:.85rem; color:var(--gray-600); margin-top:2px; }
+.dash-actions { display:flex; gap:8px; }
+.btn-brand { display:inline-flex; align-items:center; gap:6px; background:var(--brand); color:#fff; padding:8px 18px; border-radius:10px; font-size:.85rem; font-weight:600; text-decoration:none; border:none; cursor:pointer; }
+.btn-brand:hover { background:var(--brand-dark); }
+.btn-outline { background:#fff; color:var(--gray-900); border:1.5px solid var(--gray-200); }
+.btn-outline:hover { border-color:var(--brand); color:var(--brand); }
+
+/* ===== Date strip ===== */
+.date-strip { display:flex; gap:6px; margin-bottom:20px; align-items:center; }
+.date-chip { padding:8px 16px; border:1.5px solid var(--gray-200); border-radius:10px; background:#fff; font-size:.82rem; font-weight:600; color:var(--gray-600); cursor:pointer; text-decoration:none; text-align:center; transition:all .15s; }
+.date-chip.active { background:var(--brand); color:#fff; border-color:var(--brand); }
+.date-chip .chip-sub { display:block; font-size:.68rem; font-weight:400; opacity:.7; }
+
+/* ===== Stat cards row ===== */
+.stat-cards { display:grid; grid-template-columns: repeat(5, 1fr); gap:12px; margin-bottom:20px; }
+.stat-card {
+    background:#fff; border-radius:var(--radius); padding:16px 18px;
+    box-shadow:var(--shadow); display:flex; align-items:center; gap:14px;
+}
+.stat-icon {
+    width:44px; height:44px; border-radius:12px; display:flex; align-items:center;
+    justify-content:center; font-size:1.2rem; flex-shrink:0;
+}
+.stat-icon.blue { background:#e8f0fe; color:var(--blue); }
+.stat-icon.green { background:#e6f4ea; color:var(--brand); }
+.stat-icon.orange { background:#fef3e2; color:var(--orange); }
+.stat-icon.red { background:#fde8e8; color:var(--red); }
+.stat-icon.cyan { background:#e0f7fa; color:var(--cyan); }
+.stat-value { font-size:1.5rem; font-weight:700; line-height:1; }
+.stat-label { font-size:.72rem; color:var(--gray-600); text-transform:uppercase; letter-spacing:.3px; font-weight:500; }
+.stat-trend { font-size:.7rem; font-weight:600; margin-top:2px; }
+.stat-trend.up { color:var(--brand); }
+.stat-trend.down { color:var(--red); }
+
+/* ===== Main grid ===== */
+.dash-grid { display:grid; grid-template-columns:1fr 320px; gap:20px; }
+
+/* ===== Card ===== */
+.card { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; margin-bottom:16px; }
+.card-head { display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--gray-200); }
+.card-head h3 { font-size:.9rem; font-weight:700; }
+.card-link { font-size:.78rem; color:var(--brand); text-decoration:none; font-weight:600; }
+
+/* ===== Next arriving ===== */
+.next-list { padding:0; }
+.next-item {
+    display:flex; align-items:center; gap:12px; padding:12px 18px;
+    border-bottom:1px solid #f5f5f5; cursor:pointer; transition:background .1s;
+}
+.next-item:hover { background:#fafbfc; }
+.next-item:last-child { border-bottom:0; }
+.next-time {
+    font-size:.82rem; font-weight:700; color:var(--brand); min-width:50px;
+    background:#e6f4ea; padding:4px 10px; border-radius:8px; text-align:center;
+}
+.next-name { font-size:.85rem; font-weight:600; }
+.next-meta { font-size:.72rem; color:var(--gray-600); }
+.next-pax { margin-left:auto; font-size:.85rem; font-weight:700; color:var(--blue); display:flex; align-items:center; gap:4px; }
+.next-countdown {
+    font-size:.68rem; font-weight:600; color:var(--orange); background:#fef3e2;
+    padding:2px 8px; border-radius:6px; margin-left:8px; white-space:nowrap;
+}
+
+/* ===== Pranzo/Cena split ===== */
+.meal-split { display:grid; grid-template-columns:1fr 1fr; gap:0; }
+.meal-half { padding:18px; }
+.meal-half + .meal-half { border-left:1px solid var(--gray-200); }
+.meal-title { font-size:.78rem; font-weight:700; color:var(--gray-600); text-transform:uppercase; letter-spacing:.3px; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+.meal-title i { font-size:1rem; }
+.meal-big { font-size:1.8rem; font-weight:800; color:var(--gray-900); display:inline; }
+.meal-cap { font-size:1rem; font-weight:600; color:var(--gray-500); }
+.meal-sub { font-size:.72rem; color:var(--gray-600); margin-top:2px; }
+.cap-bar { height:10px; border-radius:5px; background:var(--gray-200); overflow:hidden; margin-top:10px; }
+.cap-fill { height:100%; border-radius:5px; transition:width .3s; }
+.cap-fill.ok { background:var(--brand); }
+.cap-fill.warn { background:var(--orange); }
+.cap-fill.over { background:var(--red); }
+.cap-info { display:flex; justify-content:space-between; align-items:center; margin-top:6px; }
+.cap-text { font-size:.72rem; color:var(--gray-600); }
+.cap-text strong { font-weight:700; }
+.overbooking-badge {
+    display:inline-flex; align-items:center; gap:4px; font-size:.7rem; font-weight:700;
+    color:var(--red); background:#fde8e8; padding:2px 10px; border-radius:6px;
+}
+
+/* ===== No-show rate ===== */
+.noshow-bar-wrap { padding:18px; }
+.noshow-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+.noshow-pct { font-size:1.3rem; font-weight:800; }
+.noshow-pct.ok { color:var(--brand); }
+.noshow-pct.warn { color:var(--orange); }
+.noshow-pct.bad { color:var(--red); }
+.noshow-label { font-size:.72rem; color:var(--gray-600); }
+.noshow-bar { height:8px; border-radius:4px; background:var(--gray-200); overflow:hidden; }
+.noshow-fill { height:100%; border-radius:4px; transition:width .3s; }
+.noshow-detail { font-size:.72rem; color:var(--gray-600); margin-top:6px; }
+
+/* ===== Source breakdown ===== */
+.source-list { padding:14px 18px; }
+.source-row { display:flex; align-items:center; gap:10px; padding:6px 0; }
+.source-dot { width:10px; height:10px; border-radius:50%; }
+.source-name { font-size:.82rem; flex:1; }
+.source-num { font-size:.85rem; font-weight:700; }
+.source-pct { font-size:.72rem; color:var(--gray-600); width:40px; text-align:right; }
+.source-bar-wrap { flex:1; max-width:100px; height:6px; background:var(--gray-200); border-radius:3px; }
+.source-bar { height:100%; border-radius:3px; }
+
+/* ===== Sidebar cards ===== */
+.mini-cal { padding:12px; }
+.cal-nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.cal-nav span { font-size:.82rem; font-weight:700; }
+.cal-nav button { background:none; border:none; font-size:1rem; color:var(--gray-600); cursor:pointer; padding:4px 8px; }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); text-align:center; gap:2px; }
+.cal-day-name { font-size:.65rem; font-weight:600; color:var(--gray-500); padding:4px 0; }
+.cal-day { font-size:.75rem; padding:6px 2px; border-radius:6px; cursor:pointer; }
+.cal-day:hover { background:#e6f4ea; }
+.cal-day.today { background:var(--brand); color:#fff; font-weight:700; border-radius:50%; }
+.cal-day.has-res { position:relative; }
+.cal-day.has-res::after { content:''; width:4px; height:4px; border-radius:50%; background:var(--brand); position:absolute; bottom:2px; left:50%; transform:translateX(-50%); }
+.cal-day.empty { visibility:hidden; }
+
+/* Upcoming */
+.upcoming-row { display:flex; justify-content:space-between; align-items:center; padding:10px 16px; border-bottom:1px solid #f5f5f5; text-decoration:none; color:inherit; }
+.upcoming-row:hover { background:#fafbfc; }
+.upcoming-day { font-size:.82rem; font-weight:600; }
+.upcoming-badges { display:flex; gap:6px; }
+.badge { padding:3px 8px; border-radius:6px; font-size:.7rem; font-weight:600; }
+.badge-green { background:#e6f4ea; color:var(--brand); }
+.badge-gray { background:var(--gray-100); color:var(--gray-600); border:1px solid var(--gray-200); }
+
+/* Quick actions */
+.qa-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:12px; }
+.qa-btn {
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    padding:14px 8px; border-radius:10px; border:1.5px solid var(--gray-200);
+    background:#fff; font-size:.72rem; font-weight:600; color:var(--gray-600);
+    cursor:pointer; text-decoration:none; transition:all .15s;
+}
+.qa-btn:hover { border-color:var(--brand); color:var(--brand); }
+.qa-btn i { font-size:1.2rem; }
+
+/* ===== Week comparison ===== */
+.week-compare { padding:18px; }
+.wc-row { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+.wc-label { font-size:.78rem; color:var(--gray-600); min-width:100px; }
+.wc-bar-wrap { flex:1; height:20px; background:var(--gray-100); border-radius:6px; overflow:hidden; position:relative; }
+.wc-bar { height:100%; border-radius:6px; }
+.wc-num { font-size:.78rem; font-weight:700; min-width:30px; text-align:right; }
+
+/* ===== Responsive ===== */
+@media (max-width:992px) {
+    .dash-grid { grid-template-columns:1fr; }
+    .stat-cards { grid-template-columns:repeat(3,1fr); }
+}
+@media (max-width:600px) {
+    .stat-cards { grid-template-columns:repeat(2,1fr); }
+    .meal-split { grid-template-columns:1fr; }
+    .meal-half + .meal-half { border-left:none; border-top:1px solid var(--gray-200); }
+    .dash-header { flex-direction:column; align-items:flex-start; gap:10px; }
+}
+
+/* ===== Wireframe note ===== */
+.wf-note {
+    background:#fffde7; border:1px dashed #fbc02d; border-radius:8px;
+    padding:10px 14px; font-size:.75rem; color:#795548; margin-bottom:20px;
+    display:flex; align-items:center; gap:8px;
+}
+.wf-note i { font-size:1rem; color:#fbc02d; }
+.wf-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:.65rem; font-weight:700; text-transform:uppercase; }
+.wf-new { background:#e8f5e9; color:var(--brand); }
+.wf-existing { background:#e3f2fd; color:#1565C0; }
+.wf-enhanced { background:#fce4ec; color:#c62828; }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+    <div class="wf-note">
+        <i class="bi bi-lightbulb"></i>
+        <div>
+            <strong>Wireframe - Dashboard Home Migliorata</strong><br>
+            <span class="wf-badge wf-new">NUOVO</span> = elemento da aggiungere &nbsp;
+            <span class="wf-badge wf-existing">ESISTENTE</span> = gia presente &nbsp;
+            <span class="wf-badge wf-enhanced">MIGLIORATO</span> = esistente con dati aggiuntivi
+        </div>
+    </div>
+
+    <!-- ===== Header ===== -->
+    <div class="dash-header">
+        <div class="dash-greeting">
+            <h1>Buonasera, Mario <span class="wf-badge wf-new">NUOVO</span></h1>
+            <p>Trattoria da Mario &middot; Luned&igrave; 16 Marzo 2026</p>
+        </div>
+        <div class="dash-actions">
+            <a href="#" class="btn-brand"><i class="bi bi-plus-lg"></i> Nuova Prenotazione</a>
+        </div>
+    </div>
+
+    <!-- ===== Date strip ===== -->
+    <div class="date-strip">
+        <a class="date-chip active">
+            <span>Oggi</span>
+            <span class="chip-sub">Lun 16/3</span>
+        </a>
+        <a class="date-chip">
+            <span>Domani</span>
+            <span class="chip-sub">Mar 17/3</span>
+        </a>
+        <a class="date-chip">
+            <span>Dopodomani</span>
+            <span class="chip-sub">Mer 18/3</span>
+        </a>
+        <a class="date-chip"><i class="bi bi-calendar3"></i> Altra data</a>
+        <span class="wf-badge wf-existing">ESISTENTE</span>
+    </div>
+
+    <!-- ===== Stat cards ===== -->
+    <div class="stat-cards">
+        <div class="stat-card">
+            <div class="stat-icon blue"><i class="bi bi-people-fill"></i></div>
+            <div>
+                <div class="stat-value">68</div>
+                <div class="stat-label">Coperti totali</div>
+                <div class="stat-trend up"><i class="bi bi-arrow-up"></i> +12 vs sett. scorsa</div>
+            </div>
+            <span class="wf-badge wf-enhanced" style="position:absolute;right:8px;top:8px;">MIGLIORATO</span>
+        </div>
+        <div class="stat-card" style="position:relative;">
+            <div class="stat-icon green"><i class="bi bi-check-circle-fill"></i></div>
+            <div>
+                <div class="stat-value">14</div>
+                <div class="stat-label">Confermate</div>
+                <div class="stat-trend up"><i class="bi bi-arrow-up"></i> +3</div>
+            </div>
+            <span class="wf-badge wf-enhanced" style="position:absolute;right:8px;top:8px;">MIGLIORATO</span>
+        </div>
+        <div class="stat-card" style="position:relative;">
+            <div class="stat-icon orange"><i class="bi bi-clock-fill"></i></div>
+            <div>
+                <div class="stat-value">2</div>
+                <div class="stat-label">In attesa</div>
+            </div>
+            <span class="wf-badge wf-existing" style="position:absolute;right:8px;top:8px;">ESISTENTE</span>
+        </div>
+        <div class="stat-card" style="position:relative;">
+            <div class="stat-icon cyan"><i class="bi bi-person-check-fill"></i></div>
+            <div>
+                <div class="stat-value">5</div>
+                <div class="stat-label">Arrivati</div>
+            </div>
+            <span class="wf-badge wf-existing" style="position:absolute;right:8px;top:8px;">ESISTENTE</span>
+        </div>
+        <div class="stat-card" style="position:relative;">
+            <div class="stat-icon red"><i class="bi bi-person-x-fill"></i></div>
+            <div>
+                <div class="stat-value">1</div>
+                <div class="stat-label">No-show</div>
+            </div>
+            <span class="wf-badge wf-new" style="position:absolute;right:8px;top:8px;">NUOVO</span>
+        </div>
+    </div>
+
+    <!-- ===== Main grid ===== -->
+    <div class="dash-grid">
+
+        <!-- LEFT COLUMN -->
+        <div>
+
+            <!-- Prossimi in arrivo (nuova sezione) -->
+            <div class="card" style="position:relative;">
+                <span class="wf-badge wf-new" style="position:absolute;right:12px;top:12px;">NUOVO</span>
+                <div class="card-head">
+                    <h3><i class="bi bi-clock-history me-1"></i> Prossimi in arrivo</h3>
+                    <span class="card-link">Ordine cronologico</span>
+                </div>
+                <div class="next-list">
+                    <div class="next-item">
+                        <div class="next-time">12:30</div>
+                        <div>
+                            <div class="next-name">Marco Bianchi</div>
+                            <div class="next-meta"><i class="bi bi-telephone me-1"></i>333 1234567</div>
+                        </div>
+                        <div class="next-pax"><i class="bi bi-people-fill"></i> 4</div>
+                        <div class="next-countdown"><i class="bi bi-hourglass-split me-1"></i>tra 25 min</div>
+                    </div>
+                    <div class="next-item">
+                        <div class="next-time">13:00</div>
+                        <div>
+                            <div class="next-name">Laura Rossi</div>
+                            <div class="next-meta"><i class="bi bi-telephone me-1"></i>348 9876543</div>
+                        </div>
+                        <div class="next-pax"><i class="bi bi-people-fill"></i> 2</div>
+                        <div class="next-countdown"><i class="bi bi-hourglass-split me-1"></i>tra 55 min</div>
+                    </div>
+                    <div class="next-item">
+                        <div class="next-time">13:00</div>
+                        <div>
+                            <div class="next-name">Giovanni Verdi</div>
+                            <div class="next-meta"><i class="bi bi-telephone me-1"></i>339 5551234</div>
+                        </div>
+                        <div class="next-pax"><i class="bi bi-people-fill"></i> 6</div>
+                        <div class="next-countdown"><i class="bi bi-hourglass-split me-1"></i>tra 55 min</div>
+                    </div>
+                    <div class="next-item" style="opacity:.5;">
+                        <div class="next-time">19:30</div>
+                        <div>
+                            <div class="next-name">Anna Neri</div>
+                            <div class="next-meta"><i class="bi bi-telephone me-1"></i>340 1112233</div>
+                        </div>
+                        <div class="next-pax"><i class="bi bi-people-fill"></i> 3</div>
+                        <div class="next-countdown" style="background:#e8f0fe;color:var(--blue);"><i class="bi bi-moon me-1"></i>stasera</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pranzo / Cena split con capienza -->
+            <div class="card" style="position:relative;">
+                <span class="wf-badge wf-new" style="position:absolute;right:12px;top:12px;">NUOVO</span>
+                <div class="card-head">
+                    <h3><i class="bi bi-bar-chart me-1"></i> Riepilogo servizi</h3>
+                </div>
+                <div class="meal-split">
+                    <!-- Pranzo: situazione normale (76%) -->
+                    <div class="meal-half">
+                        <div class="meal-title"><i class="bi bi-sun"></i> Pranzo</div>
+                        <div><span class="meal-big">38</span> <span class="meal-cap">/ 50</span></div>
+                        <div class="meal-sub">coperti prenotati &middot; 9 prenotazioni</div>
+                        <div class="cap-bar"><div class="cap-fill ok" style="width:76%;"></div></div>
+                        <div class="cap-info">
+                            <span class="cap-text"><strong>12</strong> coperti disponibili</span>
+                            <span class="cap-text">76%</span>
+                        </div>
+                    </div>
+                    <!-- Cena: overbooking (+5) -->
+                    <div class="meal-half">
+                        <div class="meal-title"><i class="bi bi-moon-stars"></i> Cena</div>
+                        <div><span class="meal-big">55</span> <span class="meal-cap">/ 50</span></div>
+                        <div class="meal-sub">coperti prenotati &middot; 12 prenotazioni</div>
+                        <div class="cap-bar"><div class="cap-fill over" style="width:100%;"></div></div>
+                        <div class="cap-info">
+                            <span class="overbooking-badge"><i class="bi bi-exclamation-triangle-fill"></i> +5 overbooking</span>
+                            <span class="cap-text" style="color:var(--red);font-weight:700;">110%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confronto settimana -->
+            <div class="card" style="position:relative;">
+                <span class="wf-badge wf-new" style="position:absolute;right:12px;top:12px;">NUOVO</span>
+                <div class="card-head">
+                    <h3><i class="bi bi-graph-up me-1"></i> Confronto settimana</h3>
+                    <span style="font-size:.72rem;color:var(--gray-600);">vs luned&igrave; scorso</span>
+                </div>
+                <div class="week-compare">
+                    <div class="wc-row">
+                        <div class="wc-label">Sett. scorsa</div>
+                        <div class="wc-bar-wrap"><div class="wc-bar" style="width:70%;background:var(--gray-500);"></div></div>
+                        <div class="wc-num">56</div>
+                    </div>
+                    <div class="wc-row">
+                        <div class="wc-label">Questa sett.</div>
+                        <div class="wc-bar-wrap"><div class="wc-bar" style="width:85%;background:var(--brand);"></div></div>
+                        <div class="wc-num" style="color:var(--brand);">68</div>
+                    </div>
+                    <div style="text-align:center;margin-top:8px;">
+                        <span style="font-size:.85rem;font-weight:700;color:var(--brand);"><i class="bi bi-arrow-up"></i> +21%</span>
+                        <span style="font-size:.72rem;color:var(--gray-600);margin-left:6px;">rispetto alla settimana precedente</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No-show + Fonte prenotazioni (2 col) -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <!-- No-show rate -->
+                <div class="card" style="position:relative;">
+                    <span class="wf-badge wf-new" style="position:absolute;right:12px;top:12px;">NUOVO</span>
+                    <div class="card-head">
+                        <h3><i class="bi bi-person-x me-1"></i> No-show rate</h3>
+                        <span style="font-size:.68rem;color:var(--gray-600);">ultimi 30 gg</span>
+                    </div>
+                    <div class="noshow-bar-wrap">
+                        <div class="noshow-header">
+                            <div class="noshow-pct ok">4.2%</div>
+                            <div class="noshow-label">3 su 72 prenotazioni</div>
+                        </div>
+                        <div class="noshow-bar">
+                            <div class="noshow-fill" style="width:4.2%;background:var(--brand);"></div>
+                        </div>
+                        <div class="noshow-detail">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Sotto il 5% = ottimo. Media settore: 15-20%.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fonte prenotazioni -->
+                <div class="card" style="position:relative;">
+                    <span class="wf-badge wf-new" style="position:absolute;right:12px;top:12px;">NUOVO</span>
+                    <div class="card-head">
+                        <h3><i class="bi bi-pie-chart me-1"></i> Fonte</h3>
+                        <span style="font-size:.68rem;color:var(--gray-600);">ultimi 30 gg</span>
+                    </div>
+                    <div class="source-list">
+                        <div class="source-row">
+                            <div class="source-dot" style="background:var(--brand);"></div>
+                            <div class="source-name">Widget online</div>
+                            <div class="source-bar-wrap"><div class="source-bar" style="width:58%;background:var(--brand);"></div></div>
+                            <div class="source-num">42</div>
+                            <div class="source-pct">58%</div>
+                        </div>
+                        <div class="source-row">
+                            <div class="source-dot" style="background:var(--blue);"></div>
+                            <div class="source-name">Telefono</div>
+                            <div class="source-bar-wrap"><div class="source-bar" style="width:31%;background:var(--blue);"></div></div>
+                            <div class="source-num">22</div>
+                            <div class="source-pct">31%</div>
+                        </div>
+                        <div class="source-row">
+                            <div class="source-dot" style="background:var(--orange);"></div>
+                            <div class="source-name">Walk-in</div>
+                            <div class="source-bar-wrap"><div class="source-bar" style="width:8%;background:var(--orange);"></div></div>
+                            <div class="source-num">6</div>
+                            <div class="source-pct">8%</div>
+                        </div>
+                        <div class="source-row">
+                            <div class="source-dot" style="background:var(--gray-500);"></div>
+                            <div class="source-name">Altro</div>
+                            <div class="source-bar-wrap"><div class="source-bar" style="width:3%;background:var(--gray-500);"></div></div>
+                            <div class="source-num">2</div>
+                            <div class="source-pct">3%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <div>
+
+            <!-- Mini calendario -->
+            <div class="card" style="position:relative;">
+                <span class="wf-badge wf-existing" style="position:absolute;right:8px;top:8px;">ESISTENTE</span>
+                <div class="mini-cal">
+                    <div class="cal-nav">
+                        <button><i class="bi bi-chevron-left"></i></button>
+                        <span>Marzo 2026</span>
+                        <button><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                    <div class="cal-grid">
+                        <div class="cal-day-name">L</div><div class="cal-day-name">M</div><div class="cal-day-name">M</div>
+                        <div class="cal-day-name">G</div><div class="cal-day-name">V</div><div class="cal-day-name">S</div><div class="cal-day-name">D</div>
+                        <div class="cal-day empty">.</div>
+                        <div class="cal-day empty">.</div>
+                        <div class="cal-day empty">.</div>
+                        <div class="cal-day empty">.</div>
+                        <div class="cal-day empty">.</div>
+                        <div class="cal-day empty">.</div>
+                        <div class="cal-day">1</div>
+                        <div class="cal-day has-res">2</div>
+                        <div class="cal-day has-res">3</div>
+                        <div class="cal-day">4</div>
+                        <div class="cal-day has-res">5</div>
+                        <div class="cal-day has-res">6</div>
+                        <div class="cal-day has-res">7</div>
+                        <div class="cal-day has-res">8</div>
+                        <div class="cal-day has-res">9</div>
+                        <div class="cal-day has-res">10</div>
+                        <div class="cal-day">11</div>
+                        <div class="cal-day has-res">12</div>
+                        <div class="cal-day has-res">13</div>
+                        <div class="cal-day has-res">14</div>
+                        <div class="cal-day has-res">15</div>
+                        <div class="cal-day today">16</div>
+                        <div class="cal-day has-res">17</div>
+                        <div class="cal-day has-res">18</div>
+                        <div class="cal-day">19</div>
+                        <div class="cal-day has-res">20</div>
+                        <div class="cal-day">21</div>
+                        <div class="cal-day has-res">22</div>
+                        <div class="cal-day">23</div>
+                        <div class="cal-day">24</div>
+                        <div class="cal-day">25</div>
+                        <div class="cal-day">26</div>
+                        <div class="cal-day">27</div>
+                        <div class="cal-day">28</div>
+                        <div class="cal-day">29</div>
+                        <div class="cal-day">30</div>
+                        <div class="cal-day">31</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prossimi giorni -->
+            <div class="card" style="position:relative;">
+                <span class="wf-badge wf-existing" style="position:absolute;right:8px;top:8px;">ESISTENTE</span>
+                <div class="card-head">
+                    <h3><i class="bi bi-calendar-week me-1"></i> Prossimi giorni</h3>
+                </div>
+                <div>
+                    <a class="upcoming-row" href="#">
+                        <span class="upcoming-day">Mar 17/3</span>
+                        <div class="upcoming-badges">
+                            <span class="badge badge-green">12 pren.</span>
+                            <span class="badge badge-gray">48 cop.</span>
+                        </div>
+                    </a>
+                    <a class="upcoming-row" href="#">
+                        <span class="upcoming-day">Mer 18/3</span>
+                        <div class="upcoming-badges">
+                            <span class="badge badge-green">8 pren.</span>
+                            <span class="badge badge-gray">32 cop.</span>
+                        </div>
+                    </a>
+                    <a class="upcoming-row" href="#">
+                        <span class="upcoming-day">Gio 19/3</span>
+                        <div class="upcoming-badges">
+                            <span class="badge badge-green">5 pren.</span>
+                            <span class="badge badge-gray">18 cop.</span>
+                        </div>
+                    </a>
+                    <a class="upcoming-row" href="#">
+                        <span class="upcoming-day">Ven 20/3</span>
+                        <div class="upcoming-badges">
+                            <span class="badge badge-green">18 pren.</span>
+                            <span class="badge badge-gray">72 cop.</span>
+                        </div>
+                    </a>
+                    <a class="upcoming-row" href="#">
+                        <span class="upcoming-day">Sab 21/3</span>
+                        <div class="upcoming-badges">
+                            <span class="badge badge-green">22 pren.</span>
+                            <span class="badge badge-gray">86 cop.</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Azioni rapide -->
+            <div class="card" style="position:relative;">
+                <span class="wf-badge wf-enhanced" style="position:absolute;right:8px;top:8px;">MIGLIORATO</span>
+                <div class="card-head">
+                    <h3><i class="bi bi-lightning me-1"></i> Azioni rapide</h3>
+                </div>
+                <div class="qa-grid">
+                    <a href="#" class="qa-btn">
+                        <i class="bi bi-plus-circle" style="color:var(--brand);"></i>
+                        Nuova Prenotazione
+                    </a>
+                    <a href="#" class="qa-btn">
+                        <i class="bi bi-people" style="color:var(--blue);"></i>
+                        Clienti
+                    </a>
+                    <a href="#" class="qa-btn">
+                        <i class="bi bi-download" style="color:var(--orange);"></i>
+                        Esporta CSV
+                    </a>
+                    <a href="#" class="qa-btn">
+                        <i class="bi bi-gear" style="color:var(--gray-600);"></i>
+                        Impostazioni
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

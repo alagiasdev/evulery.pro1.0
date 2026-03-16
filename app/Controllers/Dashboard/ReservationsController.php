@@ -11,6 +11,7 @@ use App\Models\Customer;
 use App\Models\Reservation;
 use App\Models\ReservationLog;
 use App\Services\AvailabilityService;
+use App\Services\MailService;
 
 class ReservationsController
 {
@@ -168,6 +169,15 @@ class ReservationsController
         (new ReservationLog())->create($reservationId, null, 'confirmed', Auth::id(), "Creata da dashboard ({$sourceLabel})");
         (new Customer())->incrementBookings($customer['id']);
 
+        // Send confirmation email (non-blocking: failure doesn't affect booking)
+        $emailData = array_merge($customer, [
+            'reservation_date' => $data['reservation_date'],
+            'reservation_time' => $data['reservation_time'],
+            'party_size'       => (int)$data['party_size'],
+            'customer_notes'   => $reservationData['customer_notes'] ?? '',
+        ]);
+        MailService::sendReservationConfirmation($emailData, $tenant);
+
         flash('success', 'Prenotazione creata con successo.');
         Response::redirect(url("dashboard/reservations/{$reservationId}"));
     }
@@ -260,6 +270,69 @@ class ReservationsController
 
         flash('success', 'Prenotazione #' . $id . ' eliminata definitivamente.');
         Response::redirect(url('dashboard/reservations'));
+    }
+
+    public function export(Request $request): void
+    {
+        $tenantId = Auth::tenantId();
+        $dateFrom = $request->query('date_from', date('Y-m-d'));
+        $dateTo = $request->query('date_to', $dateFrom);
+        $status = $request->query('status');
+
+        $reservations = (new Reservation())->findForExport($tenantId, $dateFrom, $dateTo, $status);
+
+        $statusLabels = [
+            'confirmed' => 'Confermata',
+            'pending'   => 'In attesa',
+            'arrived'   => 'Arrivato',
+            'noshow'    => 'No-show',
+            'cancelled' => 'Annullata',
+        ];
+        $sourceLabels = [
+            'widget' => 'Widget',
+            'phone'  => 'Telefono',
+            'walkin'  => 'Walk-in',
+            'altro'  => 'Altro',
+        ];
+
+        $tenant = TenantResolver::current();
+        $tenantSlug = $tenant['slug'] ?? 'export';
+        $filename = "prenotazioni_{$tenantSlug}_{$dateFrom}_{$dateTo}.csv";
+
+        header('Content-Type: text/csv; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: no-cache, no-store, must-revalidate');
+
+        $output = fopen('php://output', 'w');
+
+        // UTF-8 BOM for Excel compatibility
+        fwrite($output, "\xEF\xBB\xBF");
+
+        // Header row
+        fputcsv($output, [
+            'Data', 'Orario', 'Nome', 'Cognome', 'Email', 'Telefono',
+            'Persone', 'Stato', 'Fonte', 'Note cliente', 'Note interne', 'Creata il'
+        ], ';');
+
+        foreach ($reservations as $r) {
+            fputcsv($output, [
+                $r['reservation_date'],
+                substr($r['reservation_time'], 0, 5),
+                $r['first_name'],
+                $r['last_name'],
+                $r['email'],
+                $r['phone'],
+                $r['party_size'],
+                $statusLabels[$r['status']] ?? $r['status'],
+                $sourceLabels[$r['source']] ?? $r['source'],
+                $r['customer_notes'] ?? '',
+                $r['internal_notes'] ?? '',
+                $r['created_at'],
+            ], ';');
+        }
+
+        fclose($output);
+        exit;
     }
 
     public function edit(Request $request): void
@@ -357,6 +430,13 @@ class ReservationsController
         if (!empty($changes)) {
             $note = 'Modificata da dashboard: ' . implode(', ', $changes);
             (new ReservationLog())->create($id, $reservation['status'], $reservation['status'], Auth::id(), $note);
+
+            // Send update notification email to customer
+            $updated = (new Reservation())->findWithCustomer($id);
+            if ($updated) {
+                $tenant = TenantResolver::current();
+                MailService::sendReservationConfirmation($updated, $tenant, 'updated');
+            }
         }
 
         flash('success', 'Prenotazione modificata con successo.');

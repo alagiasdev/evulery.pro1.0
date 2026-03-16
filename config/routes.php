@@ -38,6 +38,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf'], function ($r) {
     $r->get('', [HomeController::class, 'index']);
     $r->get('/reservations', [ReservationsController::class, 'index']);
     $r->get('/reservations/create', [ReservationsController::class, 'create']);
+    $r->get('/reservations/export', [ReservationsController::class, 'export']);
     $r->post('/reservations', [ReservationsController::class, 'store']);
     $r->get('/reservations/{id}', [ReservationsController::class, 'show']);
     $r->get('/reservations/{id}/edit', [ReservationsController::class, 'edit']);

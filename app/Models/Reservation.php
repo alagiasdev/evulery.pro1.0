@@ -35,7 +35,7 @@ class Reservation
 
     public function findByTenantAndDate(int $tenantId, string $date, ?string $status = null): array
     {
-        $sql = 'SELECT r.*, c.first_name, c.last_name, c.email, c.phone
+        $sql = 'SELECT r.*, c.first_name, c.last_name, c.email, c.phone, c.total_bookings
                 FROM reservations r
                 JOIN customers c ON r.customer_id = c.id
                 WHERE r.tenant_id = :tenant_id AND r.reservation_date = :date';
@@ -47,6 +47,35 @@ class Reservation
         }
 
         $sql .= ' ORDER BY r.reservation_time ASC';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    public function findForExport(int $tenantId, ?string $dateFrom, ?string $dateTo, ?string $status = null): array
+    {
+        $sql = 'SELECT r.reservation_date, r.reservation_time, c.first_name, c.last_name,
+                       c.email, c.phone, r.party_size, r.status, r.source, r.customer_notes,
+                       r.internal_notes, r.created_at
+                FROM reservations r
+                JOIN customers c ON r.customer_id = c.id
+                WHERE r.tenant_id = :tenant_id';
+        $params = ['tenant_id' => $tenantId];
+
+        if ($dateFrom) {
+            $sql .= ' AND r.reservation_date >= :date_from';
+            $params['date_from'] = $dateFrom;
+        }
+        if ($dateTo) {
+            $sql .= ' AND r.reservation_date <= :date_to';
+            $params['date_to'] = $dateTo;
+        }
+        if ($status) {
+            $sql .= ' AND r.status = :status';
+            $params['status'] = $status;
+        }
+
+        $sql .= ' ORDER BY r.reservation_date ASC, r.reservation_time ASC';
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();

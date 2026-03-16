@@ -1,113 +1,236 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Prenotazioni</h2>
-    <a href="<?= url('dashboard/reservations/create') ?>" class="btn btn-primary">
-        <i class="bi bi-plus-circle me-1"></i> Nuova
-    </a>
-</div>
+<?php
+// Segment badge helper (self-contained, reads tenant thresholds internally)
+function getSegmentBadge(int $bookings): string {
+    static $th = null;
+    if ($th === null) {
+        $t = tenant();
+        $th = [
+            'occ' => (int)($t['segment_occasionale'] ?? 2),
+            'abi' => (int)($t['segment_abituale'] ?? 4),
+            'vip' => (int)($t['segment_vip'] ?? 10),
+        ];
+    }
+    if ($bookings >= $th['vip']) return '<span class="seg-badge-sm vip">VIP</span>';
+    if ($bookings >= $th['abi']) return '<span class="seg-badge-sm abituale">Abituale</span>';
+    if ($bookings >= $th['occ']) return '<span class="seg-badge-sm occasionale">Occasionale</span>';
+    return '';
+}
 
-<!-- Filters -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="GET" action="<?= url('dashboard/reservations') ?>" class="row g-3 align-items-end">
-            <div class="col-md-3">
-                <label class="form-label">Data</label>
-                <div class="position-relative">
-                    <button type="button" class="form-control text-start" id="res-cal-toggle">
-                        <i class="bi bi-calendar3 me-2"></i><?= format_date($date, 'd/m/Y') ?>
-                    </button>
-                    <input type="hidden" name="date" id="res-date-value" value="<?= e($date) ?>">
-                    <div class="home-cal-dropdown" id="res-cal-dropdown" style="display:none;">
-                        <div class="dr-cal-header">
-                            <button type="button" class="dr-cal-nav" id="res-cal-prev"><i class="bi bi-chevron-left"></i></button>
-                            <span class="dr-cal-month" id="res-cal-month"></span>
-                            <button type="button" class="dr-cal-nav" id="res-cal-next"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                        <div class="dr-cal-days-header">
-                            <div class="dr-cal-day-name">lun</div>
-                            <div class="dr-cal-day-name">mar</div>
-                            <div class="dr-cal-day-name">mer</div>
-                            <div class="dr-cal-day-name">gio</div>
-                            <div class="dr-cal-day-name">ven</div>
-                            <div class="dr-cal-day-name">sab</div>
-                            <div class="dr-cal-day-name">dom</div>
-                        </div>
-                        <div class="dr-cal-grid" id="res-cal-grid"></div>
-                    </div>
+// Compute stats from reservations
+$totalCount = count($reservations);
+$confirmedCount = 0;
+$pendingCount = 0;
+$totalCovers = 0;
+$pranzo = [];
+$cena = [];
+
+foreach ($reservations as $r) {
+    $totalCovers += (int)$r['party_size'];
+    if ($r['status'] === 'confirmed') $confirmedCount++;
+    if ($r['status'] === 'pending') $pendingCount++;
+
+    $hour = (int)substr($r['reservation_time'], 0, 2);
+    if ($hour < 16) {
+        $pranzo[] = $r;
+    } else {
+        $cena[] = $r;
+    }
+}
+
+$pranzoCovers = array_sum(array_map(fn($r) => (int)$r['party_size'], $pranzo));
+$cenaCovers = array_sum(array_map(fn($r) => (int)$r['party_size'], $cena));
+
+// Date chips: today, tomorrow, day after
+$today = date('Y-m-d');
+$DAYS_IT = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+
+$chipDates = [];
+for ($i = 0; $i < 3; $i++) {
+    $d = date('Y-m-d', strtotime("+{$i} days"));
+    $dt = new DateTime($d);
+    $dayName = $DAYS_IT[(int)$dt->format('w')];
+    $label = $i === 0 ? 'Oggi' : ($i === 1 ? 'Domani' : 'Dopodomani');
+    $chipDates[] = ['date' => $d, 'label' => $label, 'sub' => $dayName . ' ' . $dt->format('j/n')];
+}
+?>
+
+<!-- Filter bar -->
+<form method="GET" action="<?= url('dashboard/reservations') ?>" id="res-filter-form">
+<div class="filter-bar">
+    <div class="date-chips">
+        <?php foreach ($chipDates as $chip): ?>
+        <a href="<?= url('dashboard/reservations?date=' . $chip['date'] . ($status ? '&status=' . e($status) : '')) ?>"
+           class="date-chip-sm <?= $date === $chip['date'] ? 'active' : '' ?>">
+            <?= $chip['label'] ?> <span class="chip-day"><?= $chip['sub'] ?></span>
+        </a>
+        <?php endforeach; ?>
+        <div class="position-relative">
+            <a href="#" class="date-chip-sm" id="res-cal-toggle"><i class="bi bi-calendar3"></i></a>
+            <input type="hidden" name="date" id="res-date-value" value="<?= e($date) ?>">
+            <?php if ($status): ?><input type="hidden" name="status" value="<?= e($status) ?>"><?php endif; ?>
+            <div class="home-cal-dropdown" id="res-cal-dropdown" style="display:none;">
+                <div class="dr-cal-header">
+                    <button type="button" class="dr-cal-nav" id="res-cal-prev"><i class="bi bi-chevron-left"></i></button>
+                    <span class="dr-cal-month" id="res-cal-month"></span>
+                    <button type="button" class="dr-cal-nav" id="res-cal-next"><i class="bi bi-chevron-right"></i></button>
                 </div>
+                <div class="dr-cal-days-header">
+                    <div class="dr-cal-day-name">lun</div>
+                    <div class="dr-cal-day-name">mar</div>
+                    <div class="dr-cal-day-name">mer</div>
+                    <div class="dr-cal-day-name">gio</div>
+                    <div class="dr-cal-day-name">ven</div>
+                    <div class="dr-cal-day-name">sab</div>
+                    <div class="dr-cal-day-name">dom</div>
+                </div>
+                <div class="dr-cal-grid" id="res-cal-grid"></div>
             </div>
-            <div class="col-md-3">
-                <label class="form-label">Stato</label>
-                <select class="form-select" name="status">
+        </div>
+    </div>
+    <div class="filter-divider"></div>
+    <div class="filter-group">
+        <label>Stato</label>
+        <select class="filter-input" name="status" onchange="this.form.submit()">
+            <option value="">Tutti</option>
+            <option value="confirmed" <?= $status === 'confirmed' ? 'selected' : '' ?>>Confermate</option>
+            <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>In attesa</option>
+            <option value="arrived" <?= $status === 'arrived' ? 'selected' : '' ?>>Arrivati</option>
+            <option value="noshow" <?= $status === 'noshow' ? 'selected' : '' ?>>No-show</option>
+            <option value="cancelled" <?= $status === 'cancelled' ? 'selected' : '' ?>>Annullate</option>
+        </select>
+    </div>
+    <div class="filter-actions">
+        <button type="submit" class="btn-filter btn-filter-primary"><i class="bi bi-search me-1"></i>Filtra</button>
+        <a href="<?= url('dashboard/reservations') ?>" class="btn-filter btn-filter-reset"><i class="bi bi-x-lg"></i></a>
+        <button type="button" class="btn-filter btn-filter-outline" id="export-toggle" title="Esporta CSV">
+            <i class="bi bi-download me-1"></i>CSV
+        </button>
+    </div>
+</div>
+</form>
+
+<!-- Export panel -->
+<div class="export-panel" id="export-panel" style="display:none;">
+    <div class="export-panel-inner">
+        <div class="export-panel-title"><i class="bi bi-file-earmark-spreadsheet me-1"></i>Esporta Prenotazioni</div>
+        <div class="export-panel-form">
+            <div class="export-field">
+                <label class="export-label">Da</label>
+                <input type="date" class="export-input" id="export-date-from" value="<?= e(date('Y-m-01')) ?>">
+            </div>
+            <div class="export-field">
+                <label class="export-label">A</label>
+                <input type="date" class="export-input" id="export-date-to" value="<?= e(date('Y-m-t')) ?>">
+            </div>
+            <div class="export-field">
+                <label class="export-label">Stato</label>
+                <select class="export-input" id="export-status">
                     <option value="">Tutti</option>
-                    <option value="confirmed" <?= $status === 'confirmed' ? 'selected' : '' ?>>Confermate</option>
-                    <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>In attesa</option>
-                    <option value="arrived" <?= $status === 'arrived' ? 'selected' : '' ?>>Arrivati</option>
-                    <option value="noshow" <?= $status === 'noshow' ? 'selected' : '' ?>>No-show</option>
-                    <option value="cancelled" <?= $status === 'cancelled' ? 'selected' : '' ?>>Annullate</option>
+                    <option value="confirmed">Confermate</option>
+                    <option value="arrived">Arrivati</option>
+                    <option value="noshow">No-show</option>
+                    <option value="cancelled">Annullate</option>
+                    <option value="pending">In attesa</option>
                 </select>
             </div>
-            <div class="col-md-2">
-                <div class="d-flex gap-1">
-                    <button type="submit" class="btn btn-outline-primary flex-grow-1">
-                        <i class="bi bi-search me-1"></i> Filtra
-                    </button>
-                    <a href="<?= url('dashboard/reservations') ?>" class="btn btn-outline-secondary" title="Reset">
-                        <i class="bi bi-x-lg"></i>
-                    </a>
-                </div>
+            <div class="export-field export-field-actions">
+                <a href="#" class="btn-filter btn-filter-primary" id="export-download"><i class="bi bi-download me-1"></i>Scarica CSV</a>
+                <button type="button" class="btn-filter btn-filter-reset" id="export-close"><i class="bi bi-x-lg"></i></button>
             </div>
-        </form>
+        </div>
+        <div class="export-shortcuts">
+            <button type="button" class="export-shortcut" data-period="month">Mese corrente</button>
+            <button type="button" class="export-shortcut" data-period="last-month">Mese scorso</button>
+            <button type="button" class="export-shortcut" data-period="week">Questa settimana</button>
+            <button type="button" class="export-shortcut" data-period="year">Anno corrente</button>
+        </div>
     </div>
 </div>
 
-<!-- List -->
-<div class="card">
-    <div class="table-responsive">
-        <table class="table table-hover mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th>Orario</th>
-                    <th>Cliente</th>
-                    <th>Persone</th>
-                    <th>Stato</th>
-                    <th>Email</th>
-                    <th>Telefono</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (empty($reservations)): ?>
-                <tr>
-                    <td colspan="7" class="text-center text-muted py-4">Nessuna prenotazione trovata.</td>
-                </tr>
-                <?php else: ?>
-                <?php foreach ($reservations as $r): ?>
-                <tr class="reservation-row" data-url="<?= url("dashboard/reservations/{$r['id']}") ?>">
-                    <td class="fw-semibold"><?= format_time($r['reservation_time']) ?></td>
-                    <td><?= e($r['first_name'] . ' ' . $r['last_name']) ?></td>
-                    <td><?= (int)$r['party_size'] ?> pax</td>
-                    <td><span class="badge <?= status_badge($r['status']) ?>"><?= status_label($r['status']) ?></span></td>
-                    <td><?= e($r['email']) ?></td>
-                    <td><?= e($r['phone']) ?></td>
-                    <td class="text-end">
-                        <?php if (in_array($r['status'], ['confirmed', 'pending'])): ?>
-                        <form method="POST" action="<?= url("dashboard/reservations/{$r['id']}/status") ?>" class="d-inline">
-                            <?= csrf_field() ?>
-                            <input type="hidden" name="status" value="arrived">
-                            <input type="hidden" name="redirect_back" value="dashboard/reservations?date=<?= e($date) ?><?= $status ? '&status=' . e($status) : '' ?>">
-                            <button type="submit" class="btn btn-success btn-sm" title="Segna Arrivato">
-                                <i class="bi bi-person-check"></i>
-                            </button>
-                        </form>
-                        <?php endif; ?>
-                        <i class="bi bi-chevron-right text-muted ms-1"></i>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
+<!-- Mini stats -->
+<div class="stats-mini">
+    <div class="stat-pill">
+        <div class="sp-dot" style="background:#0dcaf0;"></div>
+        <span class="sp-num" style="color:#0dcaf0;"><?= $totalCount ?></span>
+        <span class="sp-label">Totale</span>
     </div>
+    <div class="stat-pill">
+        <div class="sp-dot" style="background:#198754;"></div>
+        <span class="sp-num" style="color:#198754;"><?= $confirmedCount ?></span>
+        <span class="sp-label">Confermate</span>
+    </div>
+    <div class="stat-pill">
+        <div class="sp-dot" style="background:#ffc107;"></div>
+        <span class="sp-num" style="color:#ffc107;"><?= $pendingCount ?></span>
+        <span class="sp-label">In Attesa</span>
+    </div>
+    <div class="stat-pill">
+        <div class="sp-dot" style="background:#0d6efd;"></div>
+        <span class="sp-num" style="color:#0d6efd;"><?= $totalCovers ?></span>
+        <span class="sp-label">Coperti</span>
+    </div>
+</div>
+
+<!-- Reservation list -->
+<div class="card">
+    <?php if (empty($reservations)): ?>
+    <div class="empty-state">
+        <i class="bi bi-calendar-x"></i>
+        <p>Nessuna prenotazione per <?= format_date($date, 'd/m/Y') ?></p>
+    </div>
+    <?php else: ?>
+
+    <?php
+    // Render a meal group
+    function renderMealGroup($label, $icon, $rows, $covers, $date, $status) {
+        if (empty($rows)) return;
+        ?>
+        <div class="meal-divider">
+            <i class="bi bi-<?= $icon ?>"></i>
+            <span><?= $label ?></span>
+            <span class="meal-count"><?= count($rows) ?> prenotazion<?= count($rows) === 1 ? 'e' : 'i' ?> &middot; <?= $covers ?> coperti</span>
+        </div>
+        <?php foreach ($rows as $r): ?>
+        <div class="res-row <?= $r['status'] === 'pending' ? 'is-pending' : '' ?>"
+             data-url="<?= url("dashboard/reservations/{$r['id']}") ?>">
+            <span class="res-time"><?= format_time($r['reservation_time']) ?></span>
+            <span class="status-dot <?= e($r['status']) ?>"></span>
+            <div class="res-info">
+                <div class="res-name"><?= e($r['first_name'] . ' ' . $r['last_name']) ?> <?= getSegmentBadge((int)($r['total_bookings'] ?? 0)) ?></div>
+                <div class="res-contact">
+                    <i class="bi bi-telephone me-1"></i><?= e($r['phone']) ?>
+                    &nbsp;&middot;&nbsp;
+                    <i class="bi bi-envelope me-1"></i><?= e($r['email']) ?>
+                </div>
+            </div>
+            <div class="res-right">
+                <span class="res-pax"><i class="bi bi-person-fill me-1"></i><?= (int)$r['party_size'] ?></span>
+                <?php if (in_array($r['status'], ['confirmed', 'pending'])): ?>
+                <form method="POST" action="<?= url("dashboard/reservations/{$r['id']}/status") ?>" class="d-inline">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="status" value="arrived">
+                    <input type="hidden" name="redirect_back" value="dashboard/reservations?date=<?= e($date) ?><?= $status ? '&status=' . e($status) : '' ?>">
+                    <button type="submit" class="btn-action-sm btn-arrived" title="Segna Arrivato">
+                        <i class="bi bi-person-check"></i>
+                    </button>
+                </form>
+                <?php endif; ?>
+                <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+            </div>
+        </div>
+        <?php endforeach;
+    }
+
+    renderMealGroup('Pranzo', 'sun', $pranzo, $pranzoCovers, $date, $status);
+    renderMealGroup('Cena', 'moon-stars', $cena, $cenaCovers, $date, $status);
+    ?>
+
+    <!-- Pagination info -->
+    <div class="pagination-bar">
+        <span class="pagination-info"><?= $totalCount ?> prenotazion<?= $totalCount === 1 ? 'e' : 'i' ?> &middot; <?= format_date($date, 'd/m/Y') ?></span>
+    </div>
+
+    <?php endif; ?>
 </div>
 
 <script>
@@ -126,10 +249,6 @@
 
     function pad(n) { return n < 10 ? '0' + n : '' + n; }
     function isoDate(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
-    function formatLabel(ds) {
-        var d = new Date(ds + 'T00:00:00');
-        return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear();
-    }
 
     function render() {
         monthLabel.textContent = MONTHS[calMonth] + ' ' + calYear;
@@ -155,14 +274,13 @@
             cell.addEventListener('click', function() {
                 selectedDate = this.dataset.date;
                 hiddenInput.value = selectedDate;
-                toggle.innerHTML = '<i class="bi bi-calendar3 me-2"></i>' + formatLabel(selectedDate);
-                dropdown.style.display = 'none';
-                hiddenInput.closest('form').submit();
+                document.getElementById('res-filter-form').submit();
             });
         });
     }
 
     toggle.addEventListener('click', function(e) {
+        e.preventDefault();
         e.stopPropagation();
         dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
         if (dropdown.style.display === 'block') render();
@@ -186,6 +304,65 @@
         if (!e.target.closest('#res-cal-dropdown') && !e.target.closest('#res-cal-toggle')) {
             dropdown.style.display = 'none';
         }
+    });
+})();
+
+// Export panel logic
+(function() {
+    var panel = document.getElementById('export-panel');
+    var toggleBtn = document.getElementById('export-toggle');
+    var closeBtn = document.getElementById('export-close');
+    var downloadBtn = document.getElementById('export-download');
+    var dateFrom = document.getElementById('export-date-from');
+    var dateTo = document.getElementById('export-date-to');
+    var statusSel = document.getElementById('export-status');
+    var baseUrl = '<?= url("dashboard/reservations/export") ?>';
+
+    toggleBtn.addEventListener('click', function() {
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    });
+    closeBtn.addEventListener('click', function() { panel.style.display = 'none'; });
+
+    function updateLink() {
+        var url = baseUrl + '?date_from=' + dateFrom.value + '&date_to=' + dateTo.value;
+        if (statusSel.value) url += '&status=' + statusSel.value;
+        downloadBtn.href = url;
+    }
+    dateFrom.addEventListener('change', updateLink);
+    dateTo.addEventListener('change', updateLink);
+    statusSel.addEventListener('change', updateLink);
+    updateLink();
+
+    // Shortcut buttons
+    document.querySelectorAll('.export-shortcut').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var now = new Date();
+            var y = now.getFullYear(), m = now.getMonth();
+            var from, to;
+            switch(this.dataset.period) {
+                case 'month':
+                    from = new Date(y, m, 1);
+                    to = new Date(y, m + 1, 0);
+                    break;
+                case 'last-month':
+                    from = new Date(y, m - 1, 1);
+                    to = new Date(y, m, 0);
+                    break;
+                case 'week':
+                    var dow = now.getDay() || 7;
+                    from = new Date(y, m, now.getDate() - dow + 1);
+                    to = new Date(from); to.setDate(from.getDate() + 6);
+                    break;
+                case 'year':
+                    from = new Date(y, 0, 1);
+                    to = new Date(y, 11, 31);
+                    break;
+            }
+            function iso(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+            dateFrom.value = iso(from);
+            dateTo.value = iso(to);
+            updateLink();
+        });
     });
 })();
 </script>

@@ -1,10 +1,24 @@
 # Evulery.Pro 1.0 - Prossimi Passi
 
 ## Stato Attuale
-Fasi completate: Foundation, Auth, Admin Panel, Multi-Tenant, Slot/Capacita, Booking Widget, Dashboard Ristoratore, Security Audit (25/25), Dashboard UX improvements.
+Fasi completate: Foundation, Auth, Admin Panel, Multi-Tenant, Slot/Capacita, Booking Widget, Dashboard Ristoratore, Security Audit (25/25), Dashboard UX improvements, Prenotazione Rapida Touch (FASE 16), Design System v3.1.
 Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widget e dashboard.
 
 **Completato recentemente:**
+- [x] Email conferma al cliente: template HTML conferma + aggiornamento, hook widget + dashboard, sender dinamico (nome ristorante), Reply-To email tenant
+- [x] Esportazione CSV prenotazioni: export con range date, filtro stato, scorciatoie rapide (mese/settimana/anno), separatore ; per Excel IT, BOM UTF-8
+- [x] Wireframe new-dashboard: riepilogo servizi con capienza/overbooking, prossimi in arrivo con countdown, confronto settimana, no-show rate, fonte prenotazioni
+- [x] Design System v3.1: brand #00844A, card radius 12px, shadow leggera, input radius 8px
+- [x] Redesign pagine auth (login, forgot-password, reset-password) in stile v3.1
+- [x] Redesign create/edit prenotazione in stile v3.1 (section-card, summary bar, grid layout)
+- [x] Fix calendario dropdown dashboard home (overflow-x: auto → visible)
+- [x] Fix "Segna Arrivato" lista prenotazioni (global click handler esclude form)
+- [x] Pulsante "Annulla arrivo" nella pagina dettaglio prenotazione
+- [x] Fix toggle categorie pasto (isset → !empty per hidden input)
+- [x] Fix mobile: settings tabs flex-wrap, calendario dropdown positioning
+- [x] Branding "Evulery · by alagias. - Soluzioni per il web" nelle pagine auth
+- [x] check-live.md: checklist pre/post deploy
+- [x] Note cliente persistenti (colonna notes su customers, textarea in scheda cliente, visibili in show prenotazione)
 - [x] Redesign widget prenotazione stile TheFork (calendario visuale, 4 step, slot raggruppati per categoria pasto)
 - [x] Tabella `meal_categories` + Model + API `?grouped=1`
 - [x] Dashboard gestione categorie pasto
@@ -19,28 +33,31 @@ Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widg
 
 ## MIGLIORIE IMMEDIATE (ordine consigliato)
 
-### 1. Email conferma al cliente
-**Complessita: Bassa** | File: 3 | Priorita: ALTA
-Il cliente non riceve nessuna email dopo la prenotazione. `MailService` esiste gia.
-- [ ] Template HTML conferma prenotazione (data, ora, persone, nome ristorante)
-- [ ] Hook in `ReservationApiController::store()` (prenotazione da widget)
-- [ ] Hook in `ReservationsController::store()` (prenotazione da dashboard)
-- [ ] Link di cancellazione nell'email (se attivo link magico)
+### ~~1. Email conferma al cliente~~ → COMPLETATO
+~~**Complessita: Bassa** | File: 3 | Priorita: ALTA~~
+- [x] Template HTML conferma prenotazione (data, ora, persone, nome ristorante)
+- [x] Template HTML aggiornamento prenotazione (variante blu)
+- [x] Hook in `ReservationApiController::store()` (prenotazione da widget)
+- [x] Hook in `ReservationsController::store()` (prenotazione da dashboard)
+- [x] Hook in `ReservationsController::update()` (modifica da dashboard)
+- [x] Sender dinamico: FromName = nome ristorante, Reply-To = email tenant
+- [ ] Link di cancellazione nell'email (richiede link magico, FASE 11)
 
-### 2. Esportazione CSV prenotazioni
-**Complessita: Bassa** | File: 3 | Priorita: MEDIA
-- [ ] Metodo `export()` in `ReservationsController` (genera CSV con header)
-- [ ] Rotta GET `/dashboard/reservations/export`
-- [ ] Pulsante "Esporta CSV" nella pagina prenotazioni (con filtri data/stato)
-- [ ] Campi: data, orario, nome, cognome, email, telefono, persone, stato, fonte, note
+### ~~2. Esportazione CSV prenotazioni~~ → COMPLETATO
+~~**Complessita: Bassa** | File: 3 | Priorita: MEDIA~~
+- [x] Metodo `export()` in `ReservationsController` (genera CSV con header)
+- [x] Metodo `findForExport()` in `Reservation` model (filtri date_from/date_to/status)
+- [x] Rotta GET `/dashboard/reservations/export`
+- [x] Pannello export inline con range date, filtro stato, scorciatoie rapide
+- [x] Campi: data, orario, nome, cognome, email, telefono, persone, stato, fonte, note cliente, note interne, creata il
+- [x] BOM UTF-8 + separatore `;` per compatibilita Excel italiano
 
-### 3. Note cliente persistenti
-**Complessita: Bassa** | File: 4 | Migrazione: 1 colonna
-- [ ] Migrazione: colonna `notes` (TEXT) su tabella `customers`
-- [ ] Form textarea in `views/dashboard/customers/show.php`
-- [ ] Metodo `updateNotes()` in `Customer` model
-- [ ] Mostrare note nella sidebar di `reservations/show.php` (sotto storico cliente)
-- [ ] Contenuto tipico: allergie, preferenze tavolo, compleanni
+### ~~3. Note cliente persistenti~~ → COMPLETATO
+~~**Complessita: Bassa** | File: 4 | Migrazione: 1 colonna~~
+- [x] Colonna `notes` (TEXT) su tabella `customers`
+- [x] Form textarea in `views/dashboard/customers/show.php`
+- [x] Metodo `updateNotes()` in `Customer` model
+- [x] Note visibili in `reservations/show.php` (customer_notes_persistent)
 
 ### 4. Dashboard home migliorata
 **Complessita: Media** | File: 2 | Priorita: MEDIA
@@ -191,11 +208,11 @@ Sistema automatico di gestione clienti per il ristoratore + self-service per il 
 ### CRM Automatico (senza account cliente)
 Il sistema raggruppa le prenotazioni per email, tenant-scoped. Nessuna azione richiesta dal cliente.
 - [ ] Gate: `PlanService::can('crm')` - richiede piano Starter+
-- [ ] Tabella `customers` (tenant_id, first_name, last_name, email UNIQUE per tenant, phone, total_bookings, total_noshow, last_booking_at)
-- [ ] Auto-creazione/aggiornamento customer ad ogni prenotazione (match per email + tenant)
-- [ ] Dashboard ristoratore: lista clienti con storico visite, no-show rate, party size medio
-- [ ] Scheda cliente: tutte le prenotazioni passate e future
-- [ ] Segmentazione automatica: Nuovo (1 visita), Occasionale (2-3), Abituale (4-9), VIP (10+)
+- [x] Tabella `customers` (tenant_id, first_name, last_name, email UNIQUE per tenant, phone, total_bookings, total_noshow, last_booking_at)
+- [x] Auto-creazione/aggiornamento customer ad ogni prenotazione (match per email + tenant)
+- [x] Dashboard ristoratore: lista clienti con storico visite, no-show rate, party size medio
+- [x] Scheda cliente: tutte le prenotazioni passate e future
+- [x] Segmentazione automatica: Nuovo (1 visita), Occasionale (2-3), Abituale (4-9), VIP (10+)
 - [ ] Top clienti per frequenza nel periodo selezionato
 - [ ] Statistiche: nuovi vs ritorno (percentuale sul totale prenotazioni)
 
@@ -225,11 +242,10 @@ Il cliente gestisce la prenotazione tramite un link unico ricevuto via email. Ne
 - [ ] Bottone blocca/sblocca nella scheda cliente
 - [ ] Indicatore visivo nella lista clienti (badge rosso)
 
-### Note Clienti
-- [ ] Gate: `PlanService::can('customer_notes')` - richiede piano Starter+
-- [ ] Campo `notes` (TEXT) sulla tabella `customers`
-- [ ] Textarea nella scheda cliente per aggiungere/modificare note
-- [ ] Note visibili nella vista prenotazione in arrivo (es. "Allergia noci", "Preferisce veranda")
+### Note Clienti → COMPLETATO
+- [x] Campo `notes` (TEXT) sulla tabella `customers`
+- [x] Textarea nella scheda cliente per aggiungere/modificare note
+- [x] Note visibili nella vista prenotazione (customer_notes_persistent in show.php)
 
 ## FASE 12: Giorni di Chiusura e Conferma Manuale
 
@@ -327,55 +343,61 @@ Riscrittura completa della pagina "Nuova Prenotazione" per uso su schermi touch 
 Obiettivo: 5 tocchi in 5 secondi per registrare una prenotazione telefonica.
 
 ### Selezione Data
-- [ ] Pulsanti rapidi: **Oggi** / **Domani** / **Dopodomani** (evidenziati, grandi, touch-friendly)
-- [ ] Pulsante "Altra data" che apre un calendario visuale (stesso stile del widget)
-- [ ] La data selezionata aggiorna automaticamente gli slot disponibili
+- [x] Pulsanti rapidi: **Oggi** / **Domani** / **Dopodomani** (evidenziati, grandi, touch-friendly)
+- [x] Pulsante "Altra data" che apre un calendario visuale (stesso stile del widget)
+- [x] La data selezionata aggiorna automaticamente gli slot disponibili
 
 ### Selezione Orario
-- [ ] Slot raggruppati per servizio (Pranzo, Cena, ecc.) con etichette categoria pasto
-- [ ] Pulsanti orario con indicatore disponibilita in tempo reale (coperti liberi)
-- [ ] Colore verde = disponibile, giallo = quasi pieno, rosso = pieno
-- [ ] Caricamento dinamico via API al cambio data
+- [x] Slot raggruppati per servizio (Pranzo, Cena, ecc.) con etichette categoria pasto
+- [x] Pulsanti orario con indicatore disponibilita in tempo reale (coperti liberi)
+- [x] Colore verde = disponibile, giallo = quasi pieno, rosso = pieno
+- [x] Caricamento dinamico via API al cambio data
 
 ### Numero Coperti
-- [ ] Griglia touch: pulsanti da 1 a 10 (celle grandi, facili da toccare)
-- [ ] Campo input numerico per gruppi superiori a 10
-- [ ] Aggiornamento disponibilita in tempo reale al cambio coperti
+- [x] Griglia touch: pulsanti da 1 a 10 (celle grandi, facili da toccare)
+- [x] Campo input numerico per gruppi superiori a 10
+- [x] Aggiornamento disponibilita in tempo reale al cambio coperti
 
 ### Ricerca Cliente (da CRM)
-- [ ] Campo ricerca unico: digitare telefono o nome per cercare
-- [ ] Autocompletamento con risultati dal CRM (clienti esistenti del ristorante)
-- [ ] Se cliente trovato: auto-compilazione nome, cognome, email, telefono
-- [ ] Se cliente nuovo: compilazione manuale dei campi
-- [ ] Badge segmento visibile (Nuovo, Abituale, VIP) accanto al nome trovato
-- [ ] Avviso se cliente in blacklist: "Cliente bloccato - prenotazione non consentita"
+- [x] Campo ricerca unico: digitare telefono o nome per cercare
+- [x] Autocompletamento con risultati dal CRM (clienti esistenti del ristorante)
+- [x] Se cliente trovato: auto-compilazione nome, cognome, email, telefono
+- [x] Se cliente nuovo: compilazione manuale dei campi
+- [x] Badge segmento visibile (Nuovo, Abituale, VIP) accanto al nome trovato
+- [x] Avviso se cliente in blacklist: "Cliente bloccato - prenotazione non consentita"
 
 ### Sorgente Prenotazione
-- [ ] Selettore sorgente: **Telefono** / **Walk-in** / **Altro** (pulsanti toggle)
-- [ ] Sorgente salvata nella prenotazione per statistiche (da dove arrivano le prenotazioni)
+- [x] Selettore sorgente: **Telefono** / **Walk-in** / **Altro** (pulsanti toggle)
+- [x] Sorgente salvata nella prenotazione per statistiche (da dove arrivano le prenotazioni)
 
 ### Note e Conferma
-- [ ] Campo note rapide: allergie, intolleranze, seggiolone, richieste particolari
-- [ ] Riepilogo visivo prima della conferma: data, ora, coperti, cliente, sorgente
-- [ ] Pulsante "Salva Prenotazione" grande e ben visibile
+- [x] Campo note rapide: allergie, intolleranze, seggiolone, richieste particolari
+- [x] Riepilogo visivo prima della conferma: data, ora, coperti, cliente, sorgente
+- [x] Pulsante "Salva Prenotazione" grande e ben visibile
 
 ### Layout e UX
-- [ ] Pulsanti grandi (minimo 48x48px) con spaziatura generosa per schermi touch
-- [ ] Flusso verticale a singola colonna su mobile
-- [ ] Nessun dropdown nativo: tutti pulsanti e griglie
-- [ ] Feedback visivo immediato ad ogni selezione (evidenziazione verde)
+- [x] Pulsanti grandi (minimo 48x48px) con spaziatura generosa per schermi touch
+- [x] Flusso verticale a singola colonna su mobile
+- [x] Nessun dropdown nativo: tutti pulsanti e griglie
+- [x] Feedback visivo immediato ad ogni selezione (evidenziazione verde)
+
+### Design System v3.1 (applicato)
+- [x] Redesign create.php con section-card, section-num, dr-form-grid, dr-summary-bar
+- [x] Redesign edit.php con stessa struttura, sezione cliente read-only
+- [x] CSS dashboard.css: tutte le classi dr-* aggiornate al design system
 
 ## FASE 17: Polish e UX
 - [ ] Paginazione nelle liste (prenotazioni, clienti, tenants)
 - [ ] Filtri avanzati prenotazioni (range date, stato multiplo)
 - [ ] Upload logo ristorante (form + salvataggio in `public/uploads/tenants/`)
-- [ ] Responsive mobile per sidebar dashboard (toggle hamburger)
+- [x] Responsive mobile per sidebar dashboard (toggle hamburger in app.js)
 - [ ] Export prenotazioni in CSV → vedi Miglioria #2
 - [ ] Validazione frontend piu robusta (feedback inline nei form)
 - [x] Rate limiting sulle API pubbliche (completato in Security Audit)
 - [x] Security headers (CSP, X-Frame-Options, etc.)
 - [x] Audit logging
 - [x] Brute force protection (LoginThrottle)
+- [x] Pagine auth redesign v3.1 (login, forgot-password, reset-password)
 
 ## FASE 18: Billing SaaS (Stripe Subscriptions)
 - [ ] Stripe Subscriptions collegato a `plan_definitions`
@@ -403,6 +425,15 @@ Obiettivo: 5 tocchi in 5 secondi per registrare una prenotazione telefonica.
 - [ ] Configurare Stripe live keys
 - [ ] Backup automatico database
 - [ ] Monitoring errori (Sentry o simile)
+
+---
+
+## Bug Noti / Da Verificare in Produzione
+Vedi `check-live.md` per la checklist completa. Punti principali:
+- [ ] Calendario mobile dashboard home: verificare su device reale (≥375px)
+- [ ] Calendario mobile pagina prenotazioni: tagliato su mobile (mancano sab/dom)
+- [ ] CSP: verificare che non ci siano policy server-level che sovrascrivano .htaccess
+- [ ] HTTPS: verificare mixed content e cookie Secure flag
 
 ---
 
