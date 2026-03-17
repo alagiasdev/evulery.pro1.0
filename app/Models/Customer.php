@@ -50,6 +50,116 @@ class Customer
         return $stmt->fetchAll();
     }
 
+    /**
+     * Paginated customer list with search + segment filter (SQL-based).
+     */
+    public function findByTenantPaginated(
+        int $tenantId,
+        ?string $search,
+        ?string $segment,
+        array $thresholds,
+        int $limit,
+        int $offset
+    ): array {
+        $sql = 'SELECT * FROM customers WHERE tenant_id = :tenant_id';
+        $params = ['tenant_id' => $tenantId];
+
+        if ($search) {
+            $sql .= ' AND (first_name LIKE :s1 OR last_name LIKE :s2 OR email LIKE :s3 OR phone LIKE :s4)';
+            $like = "%{$search}%";
+            $params['s1'] = $like;
+            $params['s2'] = $like;
+            $params['s3'] = $like;
+            $params['s4'] = $like;
+        }
+
+        $sql .= $this->segmentWhere($segment, $thresholds, $params);
+        $sql .= ' ORDER BY last_name ASC, first_name ASC LIMIT :lim OFFSET :off';
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $k => $v) {
+            $stmt->bindValue($k, $v);
+        }
+        $stmt->bindValue('lim', $limit, PDO::PARAM_INT);
+        $stmt->bindValue('off', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Count customers with search + segment filter.
+     */
+    public function countByTenantFiltered(
+        int $tenantId,
+        ?string $search,
+        ?string $segment,
+        array $thresholds
+    ): int {
+        $sql = 'SELECT COUNT(*) FROM customers WHERE tenant_id = :tenant_id';
+        $params = ['tenant_id' => $tenantId];
+
+        if ($search) {
+            $sql .= ' AND (first_name LIKE :s1 OR last_name LIKE :s2 OR email LIKE :s3 OR phone LIKE :s4)';
+            $like = "%{$search}%";
+            $params['s1'] = $like;
+            $params['s2'] = $like;
+            $params['s3'] = $like;
+            $params['s4'] = $like;
+        }
+
+        $sql .= $this->segmentWhere($segment, $thresholds, $params);
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn();
+    }
+
+    /**
+     * Get segment counts for stats tabs (single query).
+     */
+    public function segmentCounts(int $tenantId, array $thresholds): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT
+                COUNT(*) as totale,
+                SUM(CASE WHEN total_bookings < :th_occ1 THEN 1 ELSE 0 END) as nuovo,
+                SUM(CASE WHEN total_bookings >= :th_occ2 AND total_bookings < :th_abi1 THEN 1 ELSE 0 END) as occasionale,
+                SUM(CASE WHEN total_bookings >= :th_abi2 AND total_bookings < :th_vip1 THEN 1 ELSE 0 END) as abituale,
+                SUM(CASE WHEN total_bookings >= :th_vip2 THEN 1 ELSE 0 END) as vip
+             FROM customers WHERE tenant_id = :tenant_id'
+        );
+        $stmt->execute([
+            'tenant_id' => $tenantId,
+            'th_occ1'   => $thresholds['occ'],
+            'th_occ2'   => $thresholds['occ'],
+            'th_abi1'   => $thresholds['abi'],
+            'th_abi2'   => $thresholds['abi'],
+            'th_vip1'   => $thresholds['vip'],
+            'th_vip2'   => $thresholds['vip'],
+        ]);
+        $row = $stmt->fetch();
+        return [
+            'totale'      => (int)$row['totale'],
+            'nuovo'       => (int)$row['nuovo'],
+            'occasionale' => (int)$row['occasionale'],
+            'abituale'    => (int)$row['abituale'],
+            'vip'         => (int)$row['vip'],
+        ];
+    }
+
+    private function segmentWhere(?string $segment, array $thresholds, array &$params): string
+    {
+        if (!$segment) return '';
+
+        return match ($segment) {
+            'nuovo'       => ' AND total_bookings < ' . (int)$thresholds['occ'],
+            'occasionale' => ' AND total_bookings >= ' . (int)$thresholds['occ'] . ' AND total_bookings < ' . (int)$thresholds['abi'],
+            'abituale'    => ' AND total_bookings >= ' . (int)$thresholds['abi'] . ' AND total_bookings < ' . (int)$thresholds['vip'],
+            'vip'         => ' AND total_bookings >= ' . (int)$thresholds['vip'],
+            default       => '',
+        };
+    }
+
     public function findOrCreate(int $tenantId, array $data): array
     {
         $existing = $this->findByTenantAndEmail($tenantId, $data['email']);
@@ -115,5 +225,24 @@ class Customer
         $stmt = $this->db->prepare('SELECT COUNT(*) FROM customers WHERE tenant_id = :tenant_id');
         $stmt->execute(['tenant_id' => $tenantId]);
         return (int)$stmt->fetchColumn();
+    }
+
+    public function block(int $id): void
+    {
+        $this->db->prepare('UPDATE customers SET is_blocked = 1, blocked_at = NOW() WHERE id = :id')
+                 ->execute(['id' => $id]);
+    }
+
+    public function unblock(int $id): void
+    {
+        $this->db->prepare('UPDATE customers SET is_blocked = 0, blocked_at = NULL WHERE id = :id')
+                 ->execute(['id' => $id]);
+    }
+
+    public function isBlocked(int $id): bool
+    {
+        $stmt = $this->db->prepare('SELECT is_blocked FROM customers WHERE id = :id LIMIT 1');
+        $stmt->execute(['id' => $id]);
+        return (bool)$stmt->fetchColumn();
     }
 }

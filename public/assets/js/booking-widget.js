@@ -23,7 +23,9 @@ document.addEventListener('DOMContentLoaded', function() {
         groupedSlots: [],
         todayBookings: 0,
         lastFetchPartySize: 2,
-        lastFetchDate: null
+        lastFetchDate: null,
+        closedDates: {},       // { 'YYYY-MM': ['YYYY-MM-DD', ...] }
+        closedDatesLoading: {} // { 'YYYY-MM': true }
     };
 
     // ===== ITALIAN LOCALE =====
@@ -48,12 +50,48 @@ document.addEventListener('DOMContentLoaded', function() {
     var errorContainer = getEl('error-container');
     var errorMessage = getEl('error-message');
 
+    // ===== CLOSED DATES =====
+    function fetchClosedDates(year, month) {
+        var key = year + '-' + String(month + 1).padStart(2, '0');
+        if (state.closedDates[key] || state.closedDatesLoading[key]) return;
+
+        state.closedDatesLoading[key] = true;
+        var from = key + '-01';
+        var lastDay = new Date(year, month + 1, 0).getDate();
+        var to = key + '-' + String(lastDay).padStart(2, '0');
+
+        fetch(apiUrl + '/tenants/' + slug + '/closures?from=' + from + '&to=' + to)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success && data.data.closed_dates) {
+                    state.closedDates[key] = data.data.closed_dates;
+                } else {
+                    state.closedDates[key] = [];
+                }
+                delete state.closedDatesLoading[key];
+                renderCalendar();
+            })
+            .catch(function() {
+                state.closedDates[key] = [];
+                delete state.closedDatesLoading[key];
+            });
+    }
+
+    function isDateClosed(dateStr) {
+        var key = dateStr.substring(0, 7); // 'YYYY-MM'
+        var dates = state.closedDates[key];
+        return dates && dates.indexOf(dateStr) !== -1;
+    }
+
     // ===== CALENDAR =====
     function renderCalendar() {
         var year = state.calendarYear;
         var month = state.calendarMonth;
 
         getEl('cal-month-label').textContent = MONTHS[month] + ' ' + year;
+
+        // Fetch closed dates for this month (async, re-renders when ready)
+        fetchClosedDates(year, month);
 
         // Day name headers
         var headerEl = getEl('cal-days-header');
@@ -89,20 +127,25 @@ document.addEventListener('DOMContentLoaded', function() {
             var dateStr = formatDateISO(d);
 
             var classes = 'bw-cal-cell';
+            var isClosed = isDateClosed(dateStr);
 
             if (d.getTime() === today.getTime()) {
                 classes += ' bw-cal-today';
             }
 
-            if (d < minDate || d > maxDate) {
+            if (d < minDate || d > maxDate || isClosed) {
                 classes += ' bw-cal-disabled';
+            }
+
+            if (isClosed) {
+                classes += ' bw-cal-closed';
             }
 
             if (state.selectedDate === dateStr) {
                 classes += ' bw-cal-selected';
             }
 
-            html += '<div class="' + classes + '" data-date="' + dateStr + '">' + day + '</div>';
+            html += '<div class="' + classes + '" data-date="' + dateStr + '"' + (isClosed ? ' title="Chiuso"' : '') + '>' + day + '</div>';
         }
 
         getEl('cal-grid').innerHTML = html;

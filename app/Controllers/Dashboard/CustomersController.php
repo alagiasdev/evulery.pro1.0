@@ -3,6 +3,7 @@
 namespace App\Controllers\Dashboard;
 
 use App\Core\Auth;
+use App\Core\Paginator;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\TenantResolver;
@@ -16,37 +17,34 @@ class CustomersController
         $tenantId = Auth::tenantId();
         $search = $request->query('q');
         $segment = $request->query('segment');
+        $page = max(1, (int)$request->query('page', 1));
+        $perPage = 25;
         $tenant = TenantResolver::current();
-        $thOcc = (int)($tenant['segment_occasionale'] ?? 2);
-        $thAbi = (int)($tenant['segment_abituale'] ?? 4);
-        $thVip = (int)($tenant['segment_vip'] ?? 10);
+        $thresholds = [
+            'occ' => (int)($tenant['segment_occasionale'] ?? 2),
+            'abi' => (int)($tenant['segment_abituale'] ?? 4),
+            'vip' => (int)($tenant['segment_vip'] ?? 10),
+        ];
 
-        // Load all customers for stats (unfiltered)
-        $allCustomers = (new Customer())->findByTenant($tenantId);
-        $stats = ['totale' => count($allCustomers), 'nuovo' => 0, 'occasionale' => 0, 'abituale' => 0, 'vip' => 0];
-        foreach ($allCustomers as $c) {
-            $b = (int)$c['total_bookings'];
-            if ($b >= $thVip) $stats['vip']++;
-            elseif ($b >= $thAbi) $stats['abituale']++;
-            elseif ($b >= $thOcc) $stats['occasionale']++;
-            else $stats['nuovo']++;
-        }
+        $customerModel = new Customer();
 
-        // Apply search + segment filters
-        $customers = $search ? (new Customer())->findByTenant($tenantId, $search) : $allCustomers;
+        // Segment stats (single SQL query, no full load)
+        $stats = $customerModel->segmentCounts($tenantId, $thresholds);
 
-        if ($segment) {
-            $customers = array_filter($customers, function ($c) use ($segment, $thOcc, $thAbi, $thVip) {
-                $b = (int)$c['total_bookings'];
-                return match ($segment) {
-                    'nuovo'        => $b < $thOcc,
-                    'occasionale'  => $b >= $thOcc && $b < $thAbi,
-                    'abituale'     => $b >= $thAbi && $b < $thVip,
-                    'vip'          => $b >= $thVip,
-                    default        => true,
-                };
-            });
-        }
+        // Count + paginated fetch with search + segment filter
+        $total = $customerModel->countByTenantFiltered($tenantId, $search, $segment, $thresholds);
+
+        // Build base URL preserving filters
+        $baseParams = [];
+        if ($search) $baseParams[] = 'q=' . urlencode($search);
+        if ($segment) $baseParams[] = 'segment=' . urlencode($segment);
+        $baseUrl = url('dashboard/customers') . ($baseParams ? '?' . implode('&', $baseParams) : '');
+
+        $paginator = new Paginator($total, $perPage, $page, $baseUrl);
+        $customers = $customerModel->findByTenantPaginated(
+            $tenantId, $search, $segment, $thresholds,
+            $paginator->limit(), $paginator->offset()
+        );
 
         view('dashboard/customers/index', [
             'title'      => 'Clienti',
@@ -56,6 +54,7 @@ class CustomersController
             'segment'    => $segment,
             'stats'      => $stats,
             'tenant'     => $tenant,
+            'pagination' => $paginator->links(),
         ], 'dashboard');
     }
 
@@ -91,6 +90,7 @@ class CustomersController
                 'total_bookings' => $bookings,
                 'total_noshow'   => (int)$c['total_noshow'],
                 'segment'        => $segment,
+                'is_blocked'     => (bool)($c['is_blocked'] ?? false),
             ];
         }
 
@@ -132,6 +132,28 @@ class CustomersController
         (new Customer())->updateNotes($id, $notes);
 
         flash('success', 'Note aggiornate.');
+        Response::redirect(url("dashboard/customers/{$id}"));
+    }
+
+    public function toggleBlock(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $customerModel = new Customer();
+        $customer = $customerModel->findById($id);
+
+        if (!$customer || (int)$customer['tenant_id'] !== (int)Auth::tenantId()) {
+            flash('danger', 'Cliente non trovato.');
+            Response::redirect(url('dashboard/customers'));
+        }
+
+        if ($customer['is_blocked']) {
+            $customerModel->unblock($id);
+            flash('success', $customer['first_name'] . ' ' . $customer['last_name'] . ' è stato sbloccato.');
+        } else {
+            $customerModel->block($id);
+            flash('warning', $customer['first_name'] . ' ' . $customer['last_name'] . ' è stato bloccato. Non potrà prenotare.');
+        }
+
         Response::redirect(url("dashboard/customers/{$id}"));
     }
 }

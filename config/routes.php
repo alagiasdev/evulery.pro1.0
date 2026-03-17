@@ -17,6 +17,8 @@ use App\Controllers\Dashboard\SettingsController;
 use App\Controllers\Dashboard\SlotsController;
 use App\Controllers\Dashboard\DomainController;
 use App\Controllers\Dashboard\MealCategoriesController;
+use App\Controllers\Dashboard\ClosuresController;
+use App\Controllers\ProfileController;
 use App\Controllers\Booking\BookingController;
 use App\Controllers\Api\AvailabilityController;
 use App\Controllers\Api\ReservationApiController;
@@ -50,6 +52,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf'], function ($r) {
     $r->get('/customers/search/json', [CustomersController::class, 'searchJson']);
     $r->get('/customers/{id}', [CustomersController::class, 'show']);
     $r->post('/customers/{id}/notes', [CustomersController::class, 'updateNotes']);
+    $r->post('/customers/{id}/toggle-block', [CustomersController::class, 'toggleBlock']);
     $r->get('/settings', [SettingsController::class, 'general']);
     $r->post('/settings', [SettingsController::class, 'updateGeneral']);
     $r->get('/settings/slots', [SlotsController::class, 'index']);
@@ -61,6 +64,11 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf'], function ($r) {
     $r->get('/settings/domain', [DomainController::class, 'index']);
     $r->post('/settings/domain', [DomainController::class, 'update']);
     $r->post('/settings/domain/verify', [DomainController::class, 'verify']);
+    $r->get('/settings/closures', [ClosuresController::class, 'index']);
+    $r->post('/settings/closures', [ClosuresController::class, 'store']);
+    $r->post('/settings/closures/{id}/delete', [ClosuresController::class, 'delete']);
+    $r->get('/profile', [ProfileController::class, 'show']);
+    $r->post('/profile', [ProfileController::class, 'update']);
 });
 
 // --- SUPER ADMIN ROUTES ---
@@ -72,12 +80,16 @@ $router->group('/admin', ['auth', 'admin', 'csrf'], function ($r) {
     $r->get('/tenants/{id}/edit', [TenantsController::class, 'edit']);
     $r->post('/tenants/{id}', [TenantsController::class, 'update']);
     $r->post('/tenants/{id}/toggle', [TenantsController::class, 'toggle']);
+    $r->post('/tenants/{id}/users/{userId}', [TenantsController::class, 'updateUser']);
     $r->get('/subscriptions', [SubscriptionsController::class, 'index']);
+    $r->get('/profile', [ProfileController::class, 'show']);
+    $r->post('/profile', [ProfileController::class, 'update']);
 });
 
 // --- API ROUTES (JSON) ---
 $router->group('/api/v1', ['ratelimit'], function ($r) {
     $r->get('/tenants/{slug}/availability', [AvailabilityController::class, 'check']);
+    $r->get('/tenants/{slug}/closures', [AvailabilityController::class, 'closedDates']);
     $r->post('/tenants/{slug}/reservations', [ReservationApiController::class, 'store']);
     $r->get('/tenants/{slug}/reservations/{id}', [ReservationApiController::class, 'show']);
     $r->post('/tenants/{slug}/reservations/{id}/cancel', [ReservationApiController::class, 'cancel']);

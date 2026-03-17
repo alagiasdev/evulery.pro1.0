@@ -87,9 +87,14 @@ $segTabs = [
         [$seg, $segLabel] = customerSegment((int)$c['total_bookings'], $thOcc, $thAbi, $thVip);
         $createdDate = isset($c['created_at']) ? format_date($c['created_at'], 'd/m/Y') : '';
     ?>
-    <div class="cust-row" data-url="<?= url("dashboard/customers/{$c['id']}") ?>">
+    <div class="cust-row<?= !empty($c['is_blocked']) ? ' cust-blocked' : '' ?>" data-url="<?= url("dashboard/customers/{$c['id']}") ?>">
         <div>
-            <div class="c-name"><?= e($c['first_name'] . ' ' . $c['last_name']) ?></div>
+            <div class="c-name">
+                <?= e($c['first_name'] . ' ' . $c['last_name']) ?>
+                <?php if (!empty($c['is_blocked'])): ?>
+                <span class="blocked-badge"><i class="bi bi-slash-circle"></i> Bloccato</span>
+                <?php endif; ?>
+            </div>
             <?php if ($createdDate): ?>
             <div class="c-sub">Cliente dal <?= $createdDate ?></div>
             <?php endif; ?>
@@ -107,9 +112,30 @@ $segTabs = [
     </div>
     <?php endforeach; ?>
 
+    <?php if (!empty($pagination)): ?>
+    <div class="pagination-bar">
+        <span class="pagination-info"><?= $pagination['from'] ?>-<?= $pagination['to'] ?> di <?= $pagination['totalItems'] ?> client<?= $pagination['totalItems'] === 1 ? 'e' : 'i' ?></span>
+        <div class="pagination-nav">
+            <?php if ($pagination['prev']): ?>
+            <a href="<?= $pagination['prev'] ?>" class="pg-btn"><i class="bi bi-chevron-left"></i></a>
+            <?php endif; ?>
+            <?php foreach ($pagination['pages'] as $pg): ?>
+                <?php if ($pg['type'] === 'gap'): ?>
+                    <span class="pg-gap">&hellip;</span>
+                <?php else: ?>
+                    <a href="<?= $pg['url'] ?>" class="pg-btn <?= $pg['active'] ? 'pg-active' : '' ?>"><?= $pg['number'] ?></a>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            <?php if ($pagination['next']): ?>
+            <a href="<?= $pagination['next'] ?>" class="pg-btn"><i class="bi bi-chevron-right"></i></a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php else: ?>
     <div class="pagination-bar">
         <span class="pagination-info"><?= count($customers) ?> client<?= count($customers) === 1 ? 'e' : 'i' ?></span>
     </div>
+    <?php endif; ?>
     <?php endif; ?>
 </div>
 
@@ -126,10 +152,15 @@ $segTabs = [
         $initials = mb_strtoupper(mb_substr($c['first_name'], 0, 1) . mb_substr($c['last_name'], 0, 1));
         $avatarColor = $avatarColors[$seg] ?? '#757575';
     ?>
-    <a href="<?= url("dashboard/customers/{$c['id']}") ?>" class="mobile-card">
-        <div class="mc-avatar" style="background:<?= $avatarColor ?>;"><?= $initials ?></div>
+    <a href="<?= url("dashboard/customers/{$c['id']}") ?>" class="mobile-card<?= !empty($c['is_blocked']) ? ' cust-blocked' : '' ?>">
+        <div class="mc-avatar" style="background:<?= !empty($c['is_blocked']) ? '#dc3545' : $avatarColor ?>;"><?= $initials ?></div>
         <div class="mc-info">
-            <div class="mc-name"><?= e($c['first_name'] . ' ' . $c['last_name']) ?></div>
+            <div class="mc-name">
+                <?= e($c['first_name'] . ' ' . $c['last_name']) ?>
+                <?php if (!empty($c['is_blocked'])): ?>
+                <span class="blocked-badge"><i class="bi bi-slash-circle"></i></span>
+                <?php endif; ?>
+            </div>
             <div class="mc-meta"><?= e($c['phone']) ?> &middot; <?= (int)$c['total_bookings'] ?> pren.</div>
         </div>
         <div class="mc-right">
@@ -141,5 +172,26 @@ $segTabs = [
         </div>
     </a>
     <?php endforeach; ?>
+
+    <?php if (!empty($pagination)): ?>
+    <div class="pagination-bar" style="padding:.75rem 1rem;">
+        <span class="pagination-info"><?= $pagination['from'] ?>-<?= $pagination['to'] ?> di <?= $pagination['totalItems'] ?></span>
+        <div class="pagination-nav">
+            <?php if ($pagination['prev']): ?>
+            <a href="<?= $pagination['prev'] ?>" class="pg-btn"><i class="bi bi-chevron-left"></i></a>
+            <?php endif; ?>
+            <?php foreach ($pagination['pages'] as $pg): ?>
+                <?php if ($pg['type'] === 'gap'): ?>
+                    <span class="pg-gap">&hellip;</span>
+                <?php else: ?>
+                    <a href="<?= $pg['url'] ?>" class="pg-btn <?= $pg['active'] ? 'pg-active' : '' ?>"><?= $pg['number'] ?></a>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            <?php if ($pagination['next']): ?>
+            <a href="<?= $pagination['next'] ?>" class="pg-btn"><i class="bi bi-chevron-right"></i></a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endif; ?>
     <?php endif; ?>
 </div>

@@ -8,6 +8,21 @@
     </a>
 </div>
 
+<!-- Search bar -->
+<form method="GET" action="<?= url('admin/tenants') ?>" style="margin-bottom:1rem;">
+    <div style="display:flex;gap:.5rem;align-items:center;">
+        <div style="position:relative;flex:1;max-width:400px;">
+            <i class="bi bi-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#adb5bd;"></i>
+            <input type="text" name="q" value="<?= e($search ?? '') ?>" placeholder="Cerca ristorante..."
+                   style="width:100%;padding:.5rem .75rem .5rem 2.25rem;border:1px solid #dee2e6;border-radius:8px;font-size:.85rem;">
+        </div>
+        <button type="submit" class="adm-btn adm-btn-primary" style="padding:.5rem 1rem;"><i class="bi bi-search"></i></button>
+        <?php if (!empty($search)): ?>
+        <a href="<?= url('admin/tenants') ?>" class="adm-btn" style="padding:.5rem 1rem;"><i class="bi bi-x-lg"></i></a>
+        <?php endif; ?>
+    </div>
+</form>
+
 <div class="adm-card">
     <table class="adm-table">
         <thead>
@@ -24,7 +39,7 @@
         <tbody>
             <?php if (empty($tenants)): ?>
             <tr>
-                <td colspan="7" class="adm-empty">Nessun ristorante registrato.</td>
+                <td colspan="7" class="adm-empty">Nessun ristorante <?= !empty($search) ? 'trovato' : 'registrato' ?>.</td>
             </tr>
             <?php else: ?>
             <?php foreach ($tenants as $t): ?>
@@ -66,4 +81,25 @@
             <?php endif; ?>
         </tbody>
     </table>
+
+    <?php if (!empty($pagination)): ?>
+    <div class="pagination-bar" style="padding:.75rem 1rem;border-top:1px solid #eee;">
+        <span class="pagination-info" style="font-size:.8rem;color:#6c757d;"><?= $pagination['from'] ?>-<?= $pagination['to'] ?> di <?= $pagination['totalItems'] ?> ristoranti</span>
+        <div class="pagination-nav">
+            <?php if ($pagination['prev']): ?>
+            <a href="<?= $pagination['prev'] ?>" class="pg-btn"><i class="bi bi-chevron-left"></i></a>
+            <?php endif; ?>
+            <?php foreach ($pagination['pages'] as $pg): ?>
+                <?php if ($pg['type'] === 'gap'): ?>
+                    <span class="pg-gap">&hellip;</span>
+                <?php else: ?>
+                    <a href="<?= $pg['url'] ?>" class="pg-btn <?= $pg['active'] ? 'pg-active' : '' ?>"><?= $pg['number'] ?></a>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            <?php if ($pagination['next']): ?>
+            <a href="<?= $pagination['next'] ?>" class="pg-btn"><i class="bi bi-chevron-right"></i></a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>

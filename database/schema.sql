@@ -107,6 +107,8 @@ CREATE TABLE IF NOT EXISTS `customers` (
     `total_bookings`    INT UNSIGNED NOT NULL DEFAULT 0,
     `total_noshow`      INT UNSIGNED NOT NULL DEFAULT 0,
     `notes`             TEXT DEFAULT NULL,
+    `is_blocked`        TINYINT(1) NOT NULL DEFAULT 0,
+    `blocked_at`        DATETIME DEFAULT NULL,
     `created_at`        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 

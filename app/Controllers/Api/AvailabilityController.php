@@ -4,6 +4,7 @@ namespace App\Controllers\Api;
 
 use App\Core\Request;
 use App\Core\Response;
+use App\Models\SlotOverride;
 use App\Models\Tenant;
 use App\Services\AvailabilityService;
 
@@ -45,5 +46,29 @@ class AvailabilityController
         }
 
         Response::success($responseData);
+    }
+
+    /**
+     * Returns closed dates for a given month range (for widget calendar).
+     * GET /api/v1/tenants/{slug}/closures?from=2026-03-01&to=2026-03-31
+     */
+    public function closedDates(Request $request): void
+    {
+        $slug = $request->param('slug');
+        $from = $request->query('from');
+        $to = $request->query('to');
+
+        if (!$from || !$to) {
+            Response::error('Parametri from e to obbligatori.', 'MISSING_PARAMS', 400);
+        }
+
+        $tenant = (new Tenant())->findBySlug($slug);
+        if (!$tenant || !$tenant['is_active']) {
+            Response::error('Ristorante non trovato.', 'TENANT_NOT_FOUND', 404);
+        }
+
+        $dates = (new SlotOverride())->getClosedDates($tenant['id'], $from, $to);
+
+        Response::success(['closed_dates' => $dates]);
     }
 }

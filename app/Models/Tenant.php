@@ -42,6 +42,48 @@ class Tenant
         return $stmt->fetchAll();
     }
 
+    public function allPaginated(?string $search, int $limit, int $offset): array
+    {
+        $sql = 'SELECT * FROM tenants';
+        $params = [];
+
+        if ($search) {
+            $sql .= ' WHERE (name LIKE :s1 OR slug LIKE :s2 OR email LIKE :s3)';
+            $like = "%{$search}%";
+            $params['s1'] = $like;
+            $params['s2'] = $like;
+            $params['s3'] = $like;
+        }
+
+        $sql .= ' ORDER BY created_at DESC LIMIT :lim OFFSET :off';
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $k => $v) {
+            $stmt->bindValue($k, $v);
+        }
+        $stmt->bindValue('lim', $limit, PDO::PARAM_INT);
+        $stmt->bindValue('off', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function countFiltered(?string $search): int
+    {
+        $sql = 'SELECT COUNT(*) FROM tenants';
+        $params = [];
+
+        if ($search) {
+            $sql .= ' WHERE (name LIKE :s1 OR slug LIKE :s2 OR email LIKE :s3)';
+            $like = "%{$search}%";
+            $params['s1'] = $like;
+            $params['s2'] = $like;
+            $params['s3'] = $like;
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn();
+    }
+
     public function create(array $data): int
     {
         $stmt = $this->db->prepare(

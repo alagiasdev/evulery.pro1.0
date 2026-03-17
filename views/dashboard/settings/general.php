@@ -2,9 +2,10 @@
 $settingsTabs = [
     ['url' => url('dashboard/settings'),                'icon' => 'bi-gear',  'label' => 'Generali',         'key' => 'settings'],
     ['url' => url('dashboard/settings/slots'),          'icon' => 'bi-clock', 'label' => 'Orari e Coperti',  'key' => 'slots'],
-    ['url' => url('dashboard/settings/meal-categories'),'icon' => 'bi-tags',  'label' => 'Categorie Pasto',  'key' => 'meal-categories'],
-    ['url' => url('dashboard/settings/deposit'),        'icon' => 'bi-cash',  'label' => 'Caparra',          'key' => 'deposit'],
-    ['url' => url('dashboard/settings/domain'),         'icon' => 'bi-globe', 'label' => 'Dominio',          'key' => 'domain'],
+    ['url' => url('dashboard/settings/meal-categories'),'icon' => 'bi-tags',       'label' => 'Categorie Pasto',  'key' => 'meal-categories'],
+    ['url' => url('dashboard/settings/closures'),       'icon' => 'bi-calendar-x', 'label' => 'Chiusure',         'key' => 'closures'],
+    ['url' => url('dashboard/settings/deposit'),        'icon' => 'bi-cash',       'label' => 'Caparra',          'key' => 'deposit'],
+    ['url' => url('dashboard/settings/domain'),         'icon' => 'bi-globe',      'label' => 'Dominio',          'key' => 'domain'],
 ];
 $segOcc = (int)($tenant['segment_occasionale'] ?? 2);
 $segAbi = (int)($tenant['segment_abituale'] ?? 4);
@@ -25,7 +26,7 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
     <?php endforeach; ?>
 </div>
 
-<form method="POST" action="<?= url('dashboard/settings') ?>">
+<form method="POST" action="<?= url('dashboard/settings') ?>" enctype="multipart/form-data">
     <?= csrf_field() ?>
     <div class="row g-4">
         <!-- Left: Form -->
@@ -57,6 +58,34 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                         <div class="col-md-6 field-row">
                             <label class="field-label">Indirizzo</label>
                             <input type="text" class="field-input" name="address" value="<?= e($tenant['address'] ?? '') ?>">
+                        </div>
+                        <div class="col-12 field-row">
+                            <label class="field-label">Logo</label>
+                            <div class="field-hint" style="margin-bottom:.5rem;">Visibile solo nella pagina di prenotazione (widget)</div>
+                            <div class="logo-upload-area">
+                                <?php if (!empty($tenant['logo_url'])): ?>
+                                <div class="logo-preview" id="logo-preview">
+                                    <img src="<?= e($tenant['logo_url']) ?>" alt="Logo" class="logo-preview-img">
+                                    <div class="logo-preview-actions">
+                                        <label class="logo-change-btn" title="Cambia logo">
+                                            <i class="bi bi-pencil"></i>
+                                            <input type="file" name="logo" accept="image/jpeg,image/png,image/webp,image/svg+xml" class="d-none" id="logo-input">
+                                        </label>
+                                        <button type="button" class="logo-remove-btn" title="Rimuovi logo" id="logo-remove-btn">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="remove_logo" id="remove-logo-input" value="">
+                                <?php else: ?>
+                                <label class="logo-dropzone" id="logo-dropzone">
+                                    <i class="bi bi-image" style="font-size:1.5rem;color:#adb5bd;"></i>
+                                    <span class="logo-dropzone-text">Clicca per caricare il logo</span>
+                                    <span class="logo-dropzone-hint">JPG, PNG, WebP o SVG &middot; Max 2 MB</span>
+                                    <input type="file" name="logo" accept="image/jpeg,image/png,image/webp,image/svg+xml" class="d-none" id="logo-input">
+                                </label>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -229,4 +258,48 @@ document.querySelectorAll('[data-copy-text]').forEach(function(btn) {
         });
     });
 });
+
+// Logo upload preview
+(function() {
+    var input = document.getElementById('logo-input');
+    var removeBtn = document.getElementById('logo-remove-btn');
+    var removeInput = document.getElementById('remove-logo-input');
+
+    if (input) {
+        input.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                var file = this.files[0];
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Il file supera il limite di 2 MB.');
+                    this.value = '';
+                    return;
+                }
+                // Show preview
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var area = document.querySelector('.logo-upload-area');
+                    area.innerHTML = '<div class="logo-preview"><img src="' + e.target.result + '" alt="Preview" class="logo-preview-img"><div class="logo-dropzone-hint" style="margin-top:.5rem;">Salva per applicare</div></div>';
+                    // Re-append the input (it was removed by innerHTML)
+                    var newInput = document.createElement('input');
+                    newInput.type = 'file'; newInput.name = 'logo'; newInput.id = 'logo-input';
+                    newInput.accept = 'image/jpeg,image/png,image/webp,image/svg+xml';
+                    newInput.className = 'd-none';
+                    newInput.files = input.files;
+                    area.appendChild(newInput);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    if (removeBtn) {
+        removeBtn.addEventListener('click', function() {
+            removeInput.value = '1';
+            var preview = document.getElementById('logo-preview');
+            if (preview) {
+                preview.innerHTML = '<div style="padding:1rem;text-align:center;color:#dc3545;font-size:.85rem;"><i class="bi bi-trash me-1"></i>Logo rimosso. Salva per applicare.</div>';
+            }
+        });
+    }
+})();
 </script>

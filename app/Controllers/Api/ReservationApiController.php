@@ -66,6 +66,15 @@ class ReservationApiController
             'phone'      => $data['phone'],
         ]);
 
+        // Block blacklisted customers
+        if (!empty($customer['is_blocked'])) {
+            Response::error(
+                'Non è possibile effettuare la prenotazione. Contatta il ristorante telefonicamente.',
+                'CUSTOMER_BLOCKED',
+                403
+            );
+        }
+
         // Determine deposit - only require if Stripe is configured
         $stripeConfigured = !empty(env('STRIPE_SECRET_KEY', '')) && env('STRIPE_SECRET_KEY') !== 'sk_test_xxx';
         $depositRequired = ($tenant['deposit_enabled'] && $stripeConfigured) ? 1 : 0;

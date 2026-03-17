@@ -41,10 +41,10 @@
 <div class="admin-main">
     <div class="admin-topbar">
         <div class="topbar-title">Admin Panel</div>
-        <div class="topbar-user">
+        <a href="<?= url('admin/profile') ?>" class="topbar-user" style="text-decoration:none;color:inherit;">
             <span><?= e(auth()['name'] ?? 'Admin') ?></span>
             <div class="topbar-avatar"><?= strtoupper(substr(auth()['name'] ?? 'A', 0, 1)) ?></div>
-        </div>
+        </a>
     </div>
 
     <div class="admin-page">

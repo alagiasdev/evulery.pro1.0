@@ -472,16 +472,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 var html = '';
                 data.data.forEach(function(c) {
-                    var badge = getSegmentBadge(c.segment);
+                    var badge = c.is_blocked
+                        ? '<span class="dr-badge dr-badge-blocked"><i class="bi bi-slash-circle"></i> Bloccato</span>'
+                        : getSegmentBadge(c.segment);
 
-                    html += '<div class="dr-customer-item"'
+                    var itemClass = 'dr-customer-item' + (c.is_blocked ? ' dr-customer-blocked' : '');
+
+                    html += '<div class="' + itemClass + '"'
                         + ' data-fn="' + escapeHtml(c.first_name) + '"'
                         + ' data-ln="' + escapeHtml(c.last_name) + '"'
                         + ' data-email="' + escapeHtml(c.email) + '"'
                         + ' data-phone="' + escapeHtml(c.phone) + '"'
                         + ' data-segment="' + c.segment + '"'
                         + ' data-bookings="' + c.total_bookings + '"'
-                        + ' data-noshow="' + c.total_noshow + '">'
+                        + ' data-noshow="' + c.total_noshow + '"'
+                        + ' data-blocked="' + (c.is_blocked ? '1' : '0') + '">'
                         + '<div>'
                         + '<span class="dr-customer-name">' + escapeHtml(c.first_name + ' ' + c.last_name) + '</span>'
                         + '<br><span class="dr-customer-detail">'
@@ -508,6 +513,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function selectCustomer(el) {
+        var isBlocked = el.dataset.blocked === '1';
+
         $('dr-first-name').value = el.dataset.fn;
         $('dr-last-name').value = el.dataset.ln;
         $('dr-email').value = el.dataset.email;
@@ -516,13 +523,22 @@ document.addEventListener('DOMContentLoaded', function() {
         customerResults.style.display = 'none';
         customerQ.value = el.dataset.fn + ' ' + el.dataset.ln;
 
-        // Show segment badge
+        // Show segment badge or blocked warning
         var segment = el.dataset.segment;
         var bookings = parseInt(el.dataset.bookings);
         var noshow = parseInt(el.dataset.noshow);
+        var badgeHtml = '';
 
-        var badgeHtml = getSegmentBadge(segment);
-        badgeHtml += ' <small class="text-muted">' + bookings + ' prenotazioni</small>';
+        if (isBlocked) {
+            badgeHtml = '<div class="dr-blocked-warning">'
+                + '<i class="bi bi-slash-circle me-1"></i>'
+                + '<strong>Cliente bloccato</strong> — la prenotazione dal widget verra rifiutata. '
+                + 'Puoi comunque salvare da qui.'
+                + '</div>';
+        } else {
+            badgeHtml = getSegmentBadge(segment);
+            badgeHtml += ' <small class="text-muted">' + bookings + ' prenotazioni</small>';
+        }
 
         if (noshow > 0) {
             badgeHtml += '<div class="dr-noshow-warning">'

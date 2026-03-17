@@ -20,7 +20,7 @@
     <!-- Sidebar -->
     <div id="sidebar">
         <div class="sidebar-brand d-none d-md-block"><?= e(tenant()['name'] ?? env('APP_NAME', 'Evulery')) ?></div>
-        <div class="sidebar-user d-none d-md-block"><?= e(auth()['name'] ?? '') ?></div>
+        <a href="<?= url('dashboard/profile') ?>" class="sidebar-user d-none d-md-block"><?= e(auth()['name'] ?? '') ?> <i class="bi bi-pencil-square" style="font-size:.7rem;opacity:.5;margin-left:.25rem;"></i></a>
         <!-- Mobile: close button -->
         <div class="d-md-none d-flex align-items-center justify-content-between" style="padding:.85rem 1rem;border-bottom:1px solid #333;">
             <span style="font-weight:700;font-size:1.05rem;"><?= e(tenant()['name'] ?? env('APP_NAME', 'Evulery')) ?></span>
@@ -59,6 +59,11 @@
                 <li class="nav-item">
                     <a class="nav-link <?= ($activeMenu ?? '') === 'meal-categories' ? 'active' : '' ?>" href="<?= url('dashboard/settings/meal-categories') ?>">
                         <i class="bi bi-tags me-2"></i> Categorie Pasto
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'closures' ? 'active' : '' ?>" href="<?= url('dashboard/settings/closures') ?>">
+                        <i class="bi bi-calendar-x me-2"></i> Chiusure
                     </a>
                 </li>
                 <li class="nav-item">

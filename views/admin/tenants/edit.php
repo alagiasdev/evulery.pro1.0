@@ -86,15 +86,27 @@
                     <p style="color:#adb5bd;font-size:.82rem;margin:0;">Nessun utente.</p>
                 <?php else: ?>
                     <?php foreach ($users as $u): ?>
-                    <div class="adm-user-row">
-                        <div>
-                            <div class="adm-user-name"><?= e($u['first_name'] . ' ' . $u['last_name']) ?></div>
-                            <div class="adm-user-email"><?= e($u['email']) ?></div>
+                    <form method="POST" action="<?= url("admin/tenants/{$tenant['id']}/users/{$u['id']}") ?>" style="margin-bottom:.75rem;padding:.75rem;background:#f8f9fa;border-radius:8px;">
+                        <?= csrf_field() ?>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
+                            <input type="text" name="first_name" value="<?= e($u['first_name']) ?>" placeholder="Nome"
+                                   style="padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                            <input type="text" name="last_name" value="<?= e($u['last_name']) ?>" placeholder="Cognome"
+                                   style="padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
                         </div>
-                        <span class="adm-badge <?= $u['is_active'] ? 'adm-badge-active' : 'adm-badge-inactive' ?>">
-                            <?= $u['is_active'] ? 'Attivo' : 'Inattivo' ?>
-                        </span>
-                    </div>
+                        <div style="margin-bottom:.5rem;">
+                            <input type="email" name="email" value="<?= e($u['email']) ?>" placeholder="Email"
+                                   style="width:100%;padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                        </div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <span class="adm-badge <?= $u['is_active'] ? 'adm-badge-active' : 'adm-badge-inactive' ?>" style="font-size:.7rem;">
+                                <?= e(ucfirst($u['role'])) ?> &middot; <?= $u['is_active'] ? 'Attivo' : 'Inattivo' ?>
+                            </span>
+                            <button type="submit" class="adm-btn adm-btn-primary" style="padding:.3rem .7rem;font-size:.75rem;">
+                                <i class="bi bi-check-lg"></i> Salva
+                            </button>
+                        </div>
+                    </form>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>

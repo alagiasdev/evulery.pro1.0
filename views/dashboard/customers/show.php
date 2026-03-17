@@ -80,13 +80,26 @@ $sourceLabels = ['phone' => 'Telefono', 'walkin' => 'Walk-in', 'widget' => 'Widg
     <span style="color:#adb5bd;font-size:.82rem;margin-left:.25rem;">/ <?= e($customer['first_name'] . ' ' . $customer['last_name']) ?></span>
 </div>
 
+<?php if (!empty($customer['is_blocked'])): ?>
+<div class="blocked-banner">
+    <i class="bi bi-slash-circle"></i>
+    <div>
+        <strong>Cliente bloccato</strong>
+        <span>Non puo effettuare prenotazioni<?= $customer['blocked_at'] ? ' — bloccato il ' . format_date($customer['blocked_at'], 'd/m/Y') : '' ?></span>
+    </div>
+</div>
+<?php endif; ?>
+
 <!-- Hero Card -->
-<div class="hero-card hero-customer">
-    <div class="hero-avatar" style="background: <?= $avatarColor ?>;"><?= $initials ?></div>
+<div class="hero-card hero-customer<?= !empty($customer['is_blocked']) ? ' cust-blocked' : '' ?>">
+    <div class="hero-avatar" style="background: <?= !empty($customer['is_blocked']) ? '#dc3545' : $avatarColor ?>;"><?= $initials ?></div>
     <div class="hero-info">
         <div class="hero-name">
             <?= e($customer['first_name'] . ' ' . $customer['last_name']) ?>
             <span class="seg-badge <?= $segment ?>"><?= $segmentLabel ?></span>
+            <?php if (!empty($customer['is_blocked'])): ?>
+            <span class="blocked-badge"><i class="bi bi-slash-circle"></i> Bloccato</span>
+            <?php endif; ?>
         </div>
         <div class="hero-contacts">
             <div class="hero-contact">
@@ -101,9 +114,24 @@ $sourceLabels = ['phone' => 'Telefono', 'walkin' => 'Walk-in', 'widget' => 'Widg
         <div class="hero-meta">Cliente dal <?= format_date($customer['created_at'], 'd F Y') ?></div>
     </div>
     <div class="hero-actions">
+        <?php if (empty($customer['is_blocked'])): ?>
         <a href="<?= url('dashboard/reservations/create?customer_id=' . (int)$customer['id']) ?>" class="btn btn-brand">
             <i class="bi bi-plus-circle me-1"></i> Prenota
         </a>
+        <?php endif; ?>
+        <form method="POST" action="<?= url("dashboard/customers/{$customer['id']}/toggle-block") ?>" style="display:inline;">
+            <?= csrf_field() ?>
+            <?php if (!empty($customer['is_blocked'])): ?>
+            <button type="submit" class="btn btn-outline-success" title="Sblocca cliente">
+                <i class="bi bi-unlock me-1"></i> Sblocca
+            </button>
+            <?php else: ?>
+            <button type="submit" class="btn btn-outline-danger" title="Blocca cliente"
+                    data-confirm="Bloccare <?= e($customer['first_name'] . ' ' . $customer['last_name']) ?>? Non potra prenotare.">
+                <i class="bi bi-slash-circle me-1"></i> Blocca
+            </button>
+            <?php endif; ?>
+        </form>
         <a href="<?= url('dashboard/customers') ?>" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-1"></i> Lista
         </a>
@@ -240,3 +268,13 @@ $sourceLabels = ['phone' => 'Telefono', 'walkin' => 'Walk-in', 'widget' => 'Widg
         <?php endif; ?>
     </div>
 </div>
+
+<script>
+document.querySelectorAll('[data-confirm]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+        if (!confirm(this.dataset.confirm)) {
+            e.preventDefault();
+        }
+    });
+});
+</script>

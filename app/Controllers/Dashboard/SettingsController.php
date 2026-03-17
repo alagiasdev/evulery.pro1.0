@@ -53,7 +53,23 @@ class SettingsController
             Response::redirect(url('dashboard/settings'));
         }
 
-        (new Tenant())->update($tenantId, [
+        // Handle logo upload
+        $logoUrl = null;
+        if (!empty($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
+            $logoUrl = $this->handleLogoUpload($tenantId);
+            if ($logoUrl === false) {
+                Response::redirect(url('dashboard/settings'));
+            }
+        }
+
+        // Handle logo removal
+        if (!empty($data['remove_logo'])) {
+            $currentTenant = TenantResolver::current();
+            $this->deleteOldLogo($currentTenant);
+            $logoUrl = '';
+        }
+
+        $updateData = [
             'name'                 => $data['name'] ?? '',
             'email'                => $data['email'] ?? '',
             'phone'                => $data['phone'] ?? null,
@@ -64,7 +80,13 @@ class SettingsController
             'segment_occasionale'  => $segOcc,
             'segment_abituale'     => $segAbi,
             'segment_vip'          => $segVip,
-        ]);
+        ];
+
+        if ($logoUrl !== null) {
+            $updateData['logo_url'] = $logoUrl ?: null;
+        }
+
+        (new Tenant())->update($tenantId, $updateData);
 
         AuditLog::log(AuditLog::SETTINGS_UPDATED, null, Auth::id(), $tenantId);
 
@@ -74,6 +96,70 @@ class SettingsController
 
         flash('success', 'Impostazioni aggiornate.');
         Response::redirect(url('dashboard/settings'));
+    }
+
+    /**
+     * Handle logo file upload. Returns URL on success, false on error.
+     */
+    private function handleLogoUpload(int $tenantId): string|false
+    {
+        $file = $_FILES['logo'];
+        $allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+        $maxSize = 2 * 1024 * 1024; // 2MB
+
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($file['tmp_name']);
+
+        if (!in_array($mime, $allowed)) {
+            flash('danger', 'Formato logo non valido. Usa JPG, PNG, WebP o SVG.');
+            return false;
+        }
+
+        if ($file['size'] > $maxSize) {
+            flash('danger', 'Il logo non può superare 2 MB.');
+            return false;
+        }
+
+        // Delete old logo
+        $this->deleteOldLogo(TenantResolver::current());
+
+        $ext = match ($mime) {
+            'image/jpeg'    => 'jpg',
+            'image/png'     => 'png',
+            'image/webp'    => 'webp',
+            'image/svg+xml' => 'svg',
+            default         => 'png',
+        };
+
+        $uploadDir = BASE_PATH . '/public/uploads/tenants/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        $filename = 'logo_' . $tenantId . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+        $destPath = $uploadDir . $filename;
+
+        if (!move_uploaded_file($file['tmp_name'], $destPath)) {
+            flash('danger', 'Errore durante il caricamento del logo.');
+            return false;
+        }
+
+        return url('uploads/tenants/' . $filename);
+    }
+
+    private function deleteOldLogo(array $tenant): void
+    {
+        if (empty($tenant['logo_url'])) {
+            return;
+        }
+        // Extract relative path from URL
+        $baseUrl = url('');
+        $relative = str_replace($baseUrl, '', $tenant['logo_url']);
+        $relative = ltrim($relative, '/');
+        $oldPath = BASE_PATH . '/public/' . $relative;
+        if (file_exists($oldPath)) {
+            @unlink($oldPath);
+        }
     }
 
     public function deposit(Request $request): void

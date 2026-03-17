@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Auth;
+use App\Core\Paginator;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Validator;
@@ -15,12 +16,26 @@ class TenantsController
 {
     public function index(Request $request): void
     {
-        $tenants = (new Tenant())->all();
+        $search = $request->query('q');
+        $page = max(1, (int)$request->query('page', 1));
+        $perPage = 25;
+
+        $tenantModel = new Tenant();
+        $total = $tenantModel->countFiltered($search);
+
+        $baseParams = [];
+        if ($search) $baseParams[] = 'q=' . urlencode($search);
+        $baseUrl = url('admin/tenants') . ($baseParams ? '?' . implode('&', $baseParams) : '');
+
+        $paginator = new Paginator($total, $perPage, $page, $baseUrl);
+        $tenants = $tenantModel->allPaginated($search, $paginator->limit(), $paginator->offset());
 
         view('admin/tenants/index', [
             'title'      => 'Ristoranti',
             'activeMenu' => 'tenants',
             'tenants'    => $tenants,
+            'search'     => $search,
+            'pagination' => $paginator->links(),
         ], 'admin');
     }
 
@@ -150,5 +165,47 @@ class TenantsController
         AuditLog::log(AuditLog::TENANT_TOGGLED, "Tenant ID: {$id}", Auth::id());
         flash('success', 'Stato aggiornato.');
         Response::redirect(url('admin/tenants'));
+    }
+
+    public function updateUser(Request $request): void
+    {
+        $tenantId = (int)$request->param('id');
+        $userId = (int)$request->param('userId');
+        $data = $request->all();
+
+        $userModel = new User();
+        $user = $userModel->findById($userId);
+
+        if (!$user || (int)$user['tenant_id'] !== $tenantId) {
+            flash('danger', 'Utente non trovato.');
+            Response::redirect(url("admin/tenants/{$tenantId}/edit"));
+        }
+
+        $v = Validator::make($data)
+            ->required('first_name', 'Nome')
+            ->required('last_name', 'Cognome')
+            ->required('email', 'Email')
+            ->email('email', 'Email');
+
+        if ($v->fails()) {
+            flash('danger', $v->firstError());
+            Response::redirect(url("admin/tenants/{$tenantId}/edit"));
+        }
+
+        // Check email uniqueness
+        $existing = $userModel->findByEmail($data['email']);
+        if ($existing && (int)$existing['id'] !== $userId) {
+            flash('danger', 'Questa email è già utilizzata da un altro account.');
+            Response::redirect(url("admin/tenants/{$tenantId}/edit"));
+        }
+
+        $userModel->update($userId, [
+            'first_name' => trim($data['first_name']),
+            'last_name'  => trim($data['last_name']),
+            'email'      => trim($data['email']),
+        ]);
+
+        flash('success', 'Utente aggiornato.');
+        Response::redirect(url("admin/tenants/{$tenantId}/edit"));
     }
 }

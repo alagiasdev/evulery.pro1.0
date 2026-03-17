@@ -5,6 +5,9 @@ Fasi completate: Foundation, Auth, Admin Panel, Multi-Tenant, Slot/Capacita, Boo
 Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widget e dashboard.
 
 **Completato recentemente:**
+- [x] Paginazione server-side liste: clienti (25/pag con filtro segmento + ricerca), admin tenants (25/pag con ricerca)
+- [x] Upload logo ristorante: upload in settings, validazione MIME + 2MB, preview, rimozione. Logo visibile solo sul widget di prenotazione (sfondo chiaro)
+- [x] Classe `Paginator` riutilizzabile (app/Core/Paginator.php): offset/limit, URL con query params, link con gaps
 - [x] Dashboard home redesign: stat cards con trend, countdown arrivi, capienza pranzo/cena, confronto settimana, no-show rate, fonte prenotazioni, sidebar con calendario e azioni rapide
 - [x] Ricerca globale prenotazioni: barra di ricerca cross-date per nome/telefono/email nella pagina prenotazioni
 - [x] Email reminder: script cron con reminder 24h (blu) + 2h (arancione), template HTML, migrazione colonne reminder_sent_at
@@ -109,12 +112,9 @@ Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widg
 - [ ] Salvare preferenza in localStorage
 - [ ] Nessuna modifica backend
 
-### 10. PWA (Progressive Web App)
-**Complessita: Bassa** | File: 3 | Solo frontend
-- [ ] `public/manifest.json` con nome, icone, colori
-- [ ] Service worker base per cache offline
-- [ ] Meta tags in layout dashboard (`<link rel="manifest">`)
-- [ ] Installabile su tablet del ristorante da Chrome
+### 10. ~~PWA (Progressive Web App)~~ → SCARTATA
+~~**Complessita: Bassa** | File: 3 | Solo frontend~~
+Scartata: ogni ristorante genererebbe un'icona separata sul telefono del cliente, creando confusione se piu ristoranti nella stessa citta usano Evulery. Non utile.
 
 ### 11. Multi-lingua
 **Complessita: Molto alta** | File: 30+
@@ -392,9 +392,9 @@ Obiettivo: 5 tocchi in 5 secondi per registrare una prenotazione telefonica.
 - [x] CSS dashboard.css: tutte le classi dr-* aggiornate al design system
 
 ## FASE 17: Polish e UX
-- [ ] Paginazione nelle liste (prenotazioni, clienti, tenants)
+- [x] Paginazione server-side: clienti (25/pag, filtro segmento + ricerca), admin tenants (25/pag, ricerca)
 - [ ] Filtri avanzati prenotazioni (range date, stato multiplo)
-- [ ] Upload logo ristorante (form + salvataggio in `public/uploads/tenants/`)
+- [x] Upload logo ristorante (form settings, MIME validation, preview, rimozione, visibile solo su widget)
 - [x] Responsive mobile per sidebar dashboard (toggle hamburger in app.js)
 - [ ] Export prenotazioni in CSV → vedi Miglioria #2
 - [ ] Validazione frontend piu robusta (feedback inline nei form)
