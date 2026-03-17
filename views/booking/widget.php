@@ -142,6 +142,19 @@
             <span id="error-message"></span>
         </div>
     </div>
+
+    <!-- Duplicate Warning Modal -->
+    <div class="bw-modal-overlay" id="duplicate-modal" style="display:none;">
+        <div class="bw-modal">
+            <div class="bw-modal-icon"><i class="bi bi-exclamation-triangle"></i></div>
+            <div class="bw-modal-title">Prenotazione esistente</div>
+            <div class="bw-modal-message" id="duplicate-modal-message"></div>
+            <div class="bw-modal-actions">
+                <button type="button" class="bw-modal-btn bw-modal-btn-cancel" id="duplicate-modal-cancel">Annulla</button>
+                <button type="button" class="bw-modal-btn bw-modal-btn-confirm" id="duplicate-modal-confirm">Prenota comunque</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -151,6 +164,7 @@ window.BOOKING_CONFIG = {
     depositEnabled: <?= $tenant['deposit_enabled'] ? 'true' : 'false' ?>,
     depositAmount: <?= $tenant['deposit_amount'] ? number_format($tenant['deposit_amount'], 2, '.', '') : '0' ?>,
     advanceMin: <?= (int)($tenant['booking_advance_min'] ?? 0) ?>,
-    advanceMax: <?= (int)($tenant['booking_advance_max'] ?? 60) ?>
+    advanceMax: <?= (int)($tenant['booking_advance_max'] ?? 60) ?>,
+    confirmationMode: '<?= e($tenant['confirmation_mode'] ?? 'auto') ?>'
 };
 </script>

@@ -489,6 +489,83 @@
     gap: 8px;
 }
 
+/* ---- Duplicate Warning Modal ---- */
+.bw-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    border-radius: var(--bw-radius);
+    padding: 20px;
+}
+
+.bw-modal {
+    background: #fff;
+    border-radius: var(--bw-radius);
+    padding: 28px 24px;
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,.15);
+}
+
+.bw-modal-icon {
+    font-size: 2rem;
+    color: #E65100;
+    margin-bottom: 8px;
+}
+
+.bw-modal-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1a1d23;
+    margin-bottom: 8px;
+}
+
+.bw-modal-message {
+    font-size: .88rem;
+    color: #6c757d;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.bw-modal-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.bw-modal-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: var(--bw-radius-xs);
+    font-size: .88rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all .15s;
+}
+
+.bw-modal-btn-cancel {
+    background: #f0f0f0;
+    color: #495057;
+}
+
+.bw-modal-btn-cancel:hover {
+    background: #e0e0e0;
+}
+
+.bw-modal-btn-confirm {
+    background: #00844A;
+    color: #fff;
+}
+
+.bw-modal-btn-confirm:hover {
+    background: #006838;
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 576px) {
     .bw-widget { border-radius: 0; box-shadow: none; }

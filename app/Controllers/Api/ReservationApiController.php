@@ -75,11 +75,36 @@ class ReservationApiController
             );
         }
 
+        // Check for duplicate booking (same customer, same date, active status)
+        $forceDuplicate = !empty($data['force_duplicate']);
+        if (!$forceDuplicate) {
+            $existing = (new Reservation())->findActiveByCustomerDate($tenant['id'], $customer['id'], $data['date']);
+            if (!empty($existing)) {
+                $times = array_map(fn($r) => substr($r['reservation_time'], 0, 5), $existing);
+                Response::json([
+                    'success' => false,
+                    'error'   => [
+                        'code'    => 'DUPLICATE_WARNING',
+                        'message' => 'Hai già una prenotazione per questo giorno alle ' . implode(', ', $times) . '. Vuoi procedere comunque?',
+                    ],
+                    'existing' => $existing,
+                ], 409);
+            }
+        }
+
         // Determine deposit - only require if Stripe is configured
         $stripeConfigured = !empty(env('STRIPE_SECRET_KEY', '')) && env('STRIPE_SECRET_KEY') !== 'sk_test_xxx';
         $depositRequired = ($tenant['deposit_enabled'] && $stripeConfigured) ? 1 : 0;
         $depositAmount = $depositRequired ? $tenant['deposit_amount'] : null;
-        $status = $depositRequired ? 'pending' : 'confirmed';
+
+        // Determine initial status: pending if deposit required OR manual confirmation mode
+        if ($depositRequired) {
+            $status = 'pending';
+        } elseif (($tenant['confirmation_mode'] ?? 'auto') === 'manual') {
+            $status = 'pending';
+        } else {
+            $status = 'confirmed';
+        }
 
         // Build reservation data
         $reservationData = [
@@ -117,18 +142,18 @@ class ReservationApiController
         }
 
         // Log creation
-        (new ReservationLog())->create($reservationId, null, $status, null, 'Prenotazione da widget');
+        $isManualMode = !$depositRequired && ($tenant['confirmation_mode'] ?? 'auto') === 'manual';
+        $logNote = $isManualMode ? 'Prenotazione da widget (in attesa di conferma)' : 'Prenotazione da widget';
+        (new ReservationLog())->create($reservationId, null, $status, null, $logNote);
         (new Customer())->incrementBookings($customer['id']);
 
         // Send confirmation email (non-blocking: failure doesn't affect booking)
+        // In manual mode, email is sent later when the owner confirms
         if ($status === 'confirmed') {
-            $emailData = array_merge($customer, [
-                'reservation_date' => $data['date'],
-                'reservation_time' => $data['time'],
-                'party_size'       => (int)$data['party_size'],
-                'customer_notes'   => $reservationData['customer_notes'] ?? '',
-            ]);
-            MailService::sendReservationConfirmation($emailData, $tenant);
+            $full = (new Reservation())->findWithCustomer($reservationId);
+            if ($full) {
+                MailService::sendReservationConfirmation($full, $tenant);
+            }
         }
 
         $responseData = [
@@ -147,7 +172,10 @@ class ReservationApiController
             $responseData['message'] = 'Prenotazione creata. Caparra richiesta.';
         }
 
-        Response::success($responseData, 'Prenotazione creata con successo.', 201);
+        $successMsg = $isManualMode
+            ? 'Prenotazione ricevuta! Il ristorante confermerà a breve.'
+            : 'Prenotazione creata con successo.';
+        Response::success($responseData, $successMsg, 201);
     }
 
     public function show(Request $request): void

@@ -105,3 +105,26 @@ Controlli da eseguire quando si pubblica su server di produzione.
 **File coinvolti:**
 - `public/assets/js/dashboard-reservation.js` → rendering slot nella sidebar
 - `app/Services/AvailabilityService.php` → eventualmente filtrare lato server
+
+---
+
+## 10. Stripe - Configurazione in Produzione
+
+**Stato attuale:** la logica Stripe è predisposta ma non collegata. Le variabili `.env` (`STRIPE_SECRET_KEY`) sono globali — da convertire in chiavi per-tenant.
+
+**Da implementare al deploy:**
+- Ogni ristoratore deve inserire le proprie chiavi Stripe (public + secret) dal pannello Settings > Caparra
+- Salvare le chiavi come campi tenant (`stripe_public_key`, `stripe_secret_key`)
+- Implementare `StripeService.php` con Checkout Session per-tenant
+- Webhook endpoint `/stripe/webhook` (già previsto nelle routes) per `checkout.session.completed` e `checkout.session.expired`
+- Pagine success/cancel pagamento (routes già presenti: `/{slug}/booking/success`, `/{slug}/booking/cancel`)
+- Richiede URL pubblico con HTTPS per i webhook Stripe
+- Testare con carte test Stripe prima di andare live
+
+**File coinvolti:**
+- `app/Controllers/Dashboard/SettingsController.php` → form chiavi Stripe per-tenant
+- `app/Models/Tenant.php` → campi `stripe_public_key`, `stripe_secret_key`
+- `app/Services/StripeService.php` → da creare
+- `app/Controllers/Api/WebhookController.php` → handler webhook
+- `app/Controllers/Api/ReservationApiController.php` → creazione Checkout Session dopo prenotazione
+- `views/dashboard/settings/deposit.php` → form inserimento chiavi

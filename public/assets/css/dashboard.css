@@ -204,11 +204,16 @@ a.sidebar-user:hover { color: #adb5bd; }
 
 /* ===== Filter bar (reservations index) ===== */
 .filter-bar {
-    display: flex; align-items: center; gap: .75rem;
     background: #fff; border-radius: 12px;
-    padding: .65rem 1rem; margin-bottom: 1.25rem;
+    padding: .75rem 1rem; margin-bottom: 1.25rem;
     box-shadow: 0 1px 3px rgba(0,0,0,.06);
-    flex-wrap: wrap;
+}
+.filter-row {
+    display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+}
+.filter-row + .filter-row {
+    margin-top: .6rem; padding-top: .6rem;
+    border-top: 1px solid #f0f0f0;
 }
 .filter-group { display: flex; align-items: center; gap: .4rem; }
 .filter-group label {
@@ -346,6 +351,8 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     display: inline-flex; align-items: center; justify-content: center;
     font-size: .8rem; cursor: pointer; transition: all .1s;
 }
+.btn-confirm { background: #E8F5E9; color: #2E7D32; }
+.btn-confirm:hover { background: #2E7D32; color: #fff; }
 .btn-arrived { background: #E3F2FD; color: #1565C0; }
 .btn-arrived:hover { background: #1565C0; color: #fff; }
 
@@ -1652,9 +1659,9 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     .btn-nuova-desktop { display: none !important; }
     .page-body { padding: 1rem; }
     .top-bar { display: none; }
-    .filter-bar { flex-direction: column; align-items: stretch; gap: .5rem; }
+    .filter-row { gap: .5rem; }
     .filter-divider { display: none; }
-    .filter-actions { margin-left: 0; }
+    .filter-actions { margin-left: 0; width: 100%; justify-content: flex-end; }
     .date-chips { flex-wrap: wrap; }
     .stats-mini { gap: .5rem; }
     .btn-action-sm { display: none; }

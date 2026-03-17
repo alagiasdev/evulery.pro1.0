@@ -95,6 +95,8 @@ class MailService
         $restaurantAddress = e($tenant['address'] ?? '');
         $restaurantPhone   = e($tenant['phone'] ?? '');
         $bookingUrl        = url($tenant['slug'] ?? '');
+        $manageToken       = $reservation['manage_token'] ?? '';
+        $manageUrl         = $manageToken ? url("manage/{$manageToken}") : '';
 
         // Notes section (only if present)
         $notesHtml = '';
@@ -123,6 +125,12 @@ class MailService
         }
 
         $personeLabel = $partySize === 1 ? 'persona' : 'persone';
+
+        // Manage link (build before heredoc for interpolation)
+        $manageLinkHtml = '';
+        if ($manageUrl) {
+            $manageLinkHtml = '<a href="' . $manageUrl . '" style="display:inline-block;background:#00844A;color:#ffffff;padding:12px 32px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;">Gestisci prenotazione</a><br>';
+        }
 
         // Type-specific content
         if ($type === 'updated') {
@@ -228,7 +236,8 @@ class MailService
 
                 <!-- CTA -->
                 <div style="text-align:center;padding:0 32px 24px;">
-                    <a href="{$bookingUrl}" style="display:inline-block;background:#00844A;color:#ffffff;padding:12px 32px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;">Prenota ancora</a>
+                    {$manageLinkHtml}
+                    <a href="{$bookingUrl}" style="display:inline-block;background:#f0f0f0;color:#495057;padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;text-decoration:none;margin-top:8px;">Prenota ancora</a>
                 </div>
 
                 <div style="border-top:1px solid #f0f0f0;margin:0 32px;"></div>

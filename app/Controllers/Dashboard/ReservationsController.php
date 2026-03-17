@@ -20,21 +20,34 @@ class ReservationsController
         $tenantId = Auth::tenantId();
         $searchQuery = trim($request->query('q', ''));
         $date = $request->query('date', date('Y-m-d'));
+        $dateTo = $request->query('date_to');
         $status = $request->query('status');
+        $source = $request->query('source');
+
+        // Validate source
+        $allowedSources = ['widget', 'phone', 'walkin', 'altro'];
+        if ($source && !in_array($source, $allowedSources)) {
+            $source = null;
+        }
 
         $searchResults = null;
         if ($searchQuery !== '') {
             $searchResults = (new Reservation())->searchGlobal($tenantId, $searchQuery);
         }
 
-        $reservations = (new Reservation())->findByTenantAndDate($tenantId, $date, $status);
+        $reservations = (new Reservation())->findByTenantAndDate($tenantId, $date, $status, $dateTo, $source);
+
+        $isRange = $dateTo && $dateTo !== $date;
 
         view('dashboard/reservations/index', [
             'title'        => 'Prenotazioni',
             'activeMenu'   => 'reservations',
             'reservations' => $reservations,
             'date'         => $date,
+            'dateTo'       => $dateTo,
+            'isRange'      => $isRange,
             'status'       => $status,
+            'source'       => $source,
             'searchQuery'  => $searchQuery,
             'searchResults' => $searchResults,
         ], 'dashboard');
@@ -178,13 +191,10 @@ class ReservationsController
         (new Customer())->incrementBookings($customer['id']);
 
         // Send confirmation email (non-blocking: failure doesn't affect booking)
-        $emailData = array_merge($customer, [
-            'reservation_date' => $data['reservation_date'],
-            'reservation_time' => $data['reservation_time'],
-            'party_size'       => (int)$data['party_size'],
-            'customer_notes'   => $reservationData['customer_notes'] ?? '',
-        ]);
-        MailService::sendReservationConfirmation($emailData, $tenant);
+        $full = (new Reservation())->findWithCustomer($reservationId);
+        if ($full) {
+            MailService::sendReservationConfirmation($full, $tenant);
+        }
 
         flash('success', 'Prenotazione creata con successo.');
         Response::redirect(url("dashboard/reservations/{$reservationId}"));
@@ -217,6 +227,15 @@ class ReservationsController
         // Update customer stats
         if ($newStatus === 'noshow') {
             (new Customer())->incrementNoshow($reservation['customer_id']);
+        }
+
+        // Send confirmation email when manually confirming a pending reservation
+        if ($newStatus === 'confirmed' && $reservation['status'] === 'pending') {
+            $full = $reservationModel->findWithCustomer($id);
+            if ($full) {
+                $tenant = TenantResolver::current();
+                MailService::sendReservationConfirmation($full, $tenant);
+            }
         }
 
         flash('success', 'Stato aggiornato a: ' . status_label($newStatus));

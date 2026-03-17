@@ -33,6 +33,9 @@ Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widg
 - [x] Eliminazione prenotazione (entro 30 min dalla creazione, con countdown)
 - [x] Pulsante "Segna Arrivato" nella lista prenotazioni (con redirect back alla lista)
 - [x] Fix phantom slots nella tabella Orari e Coperti (disabilitati + rimossi al salvataggio)
+- [x] Conferma manuale prenotazioni: toggle auto/manual in settings, status pending, bottone conferma rapida in lista, email al cliente alla conferma
+- [x] Link magico gestione prenotazione: token 64-char, pagina pubblica /manage/{token}, visualizzazione + cancellazione, link nell'email di conferma
+- [x] Warning prenotazione duplicata: avviso soft nel widget se cliente ha già prenotazione attiva per la stessa data (può procedere comunque)
 
 ---
 
@@ -89,40 +92,13 @@ Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widg
 - [x] Template HTML reminder (blu 24h, arancione 2h) con riepilogo prenotazione
 - [ ] Setup cron sul server di produzione (ogni 15 min) — da configurare al deploy
 
-### 7. Vista timeline / calendario
-**Complessita: Alta** | File: 3+ | JS significativo
-- [ ] Vista griglia oraria con prenotazioni come blocchi colorati
-- [ ] Opzione: libreria FullCalendar (timeline resource view) o custom JS
-- [ ] Toggle lista/timeline nella pagina prenotazioni
-- [ ] Visualizzazione densita oraria a colpo d'occhio
-
-### 8. Gestione tavoli
-**Complessita: Molto alta** | File: 10+ | Migrazioni: 2+ tabelle
-- [ ] Tabella `tables` (tenant_id, name, capacity, position_x, position_y, is_active)
-- [ ] Tabella `reservation_tables` (reservation_id, table_id) - assegnazione
-- [ ] Model + Controller + CRUD tavoli
-- [ ] Vista mappa sala (drag & drop per posizionamento)
-- [ ] Assegnazione automatica/manuale tavoli alle prenotazioni
-- [ ] Modulo sostanzialmente nuovo, equivalente a una mini-fase
-
-### 9. Dark mode
-**Complessita: Media** | File: 2-3 | Solo frontend
-- [ ] CSS variables per tutti i colori nel layout dashboard
-- [ ] Toggle chiaro/scuro nel header
-- [ ] Salvare preferenza in localStorage
-- [ ] Nessuna modifica backend
-
-### 10. ~~PWA (Progressive Web App)~~ → SCARTATA
-~~**Complessita: Bassa** | File: 3 | Solo frontend~~
-Scartata: ogni ristorante genererebbe un'icona separata sul telefono del cliente, creando confusione se piu ristoranti nella stessa citta usano Evulery. Non utile.
-
-### 11. Multi-lingua
-**Complessita: Molto alta** | File: 30+
-- [ ] Sistema di traduzioni (file PHP con array chiave-valore per lingua)
-- [ ] Helper `__('chiave')` per le view
-- [ ] Estrazione di tutte le stringhe hardcoded (100+ occorrenze)
-- [ ] Almeno: Italiano (default) + Inglese (widget per turisti)
-- [ ] Selettore lingua nel widget booking
+### ~~7-11. Sviluppo futuro~~ → RIMANDATI
+Le seguenti migliorie non sono prioritarie per il lancio e vengono rimandate a fasi successive:
+- **Vista timeline/calendario** (Alta) — griglia oraria con blocchi colorati, FullCalendar
+- **Gestione tavoli** (Molto alta) — tabelle, mappa sala, assegnazione automatica
+- **Dark mode** (Media) — CSS variables, toggle, localStorage
+- **~~PWA~~** — Scartata: icone duplicate per ogni ristorante
+- **Multi-lingua** (Molto alta) — i18n, helper `__()`, IT + EN
 
 ---
 
@@ -224,11 +200,12 @@ Il sistema raggruppa le prenotazioni per email, tenant-scoped. Nessuna azione ri
 ### Link Magico - Gestione Prenotazione (self-service cliente)
 Il cliente gestisce la prenotazione tramite un link unico ricevuto via email. Nessuna registrazione.
 - [ ] Gate: `PlanService::can('manage_link')` - richiede piano Starter+
-- [ ] Colonna `manage_token` (VARCHAR 64, UNIQUE) sulla tabella `reservations`, generato alla creazione
-- [ ] Route: `/{slug}/booking/manage/{token}` → pagina di gestione
-- [ ] Vista dettagli: data, ora, persone, stato prenotazione
-- [ ] Modifica prenotazione: cambio data, ora, numero persone (con verifica disponibilita in tempo reale)
-- [ ] Cancellazione prenotazione: conferma + motivo opzionale
+- [x] Colonna `manage_token` (VARCHAR 64, UNIQUE) sulla tabella `reservations`, generato alla creazione
+- [x] Route: `/manage/{token}` → pagina di gestione (layout minimal standalone)
+- [x] Vista dettagli: data, ora, persone, stato prenotazione (con date in italiano)
+- [x] Cancellazione prenotazione: conferma JS + aggiornamento stato + log
+- [x] Link "Gestisci prenotazione" nell'email di conferma
+- [ ] **Sviluppo futuro:** Modifica prenotazione (cambio data, ora, persone con verifica disponibilita)
 - [ ] Regole ristoratore: "modifiche consentite fino a X ore prima" (configurabile da dashboard)
 - [ ] Scadenza link: funziona fino a X ore dopo il termine della prenotazione
 - [ ] Notifica al ristoratore nel dashboard ad ogni modifica/cancellazione del cliente

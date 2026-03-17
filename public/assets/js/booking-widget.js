@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ===== SUBMIT =====
-    getEl('btn-submit').addEventListener('click', function() {
+    function submitBooking(forceDuplicate) {
         var firstName = getEl('booking-first-name').value.trim();
         var lastName = getEl('booking-last-name').value.trim();
         var phone = getEl('booking-phone').value.trim();
@@ -397,6 +397,10 @@ document.addEventListener('DOMContentLoaded', function() {
             body.notes = notes;
         }
 
+        if (forceDuplicate) {
+            body.force_duplicate = true;
+        }
+
         fetch(apiUrl + '/tenants/' + slug + '/reservations', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -405,6 +409,12 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(function(r) { return r.json(); })
         .then(function(data) {
             loadingOverlay.style.display = 'none';
+
+            // Handle duplicate warning — show custom modal
+            if (!data.success && data.error && data.error.code === 'DUPLICATE_WARNING') {
+                showDuplicateModal(data.error.message);
+                return;
+            }
 
             if (data.success) {
                 var details = getEl('confirmation-details');
@@ -419,10 +429,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     confHtml += '<div class="bw-conf-row"><span>Note</span><strong>' + escapeHtml(notes) + '</strong></div>';
                 }
 
-                confHtml += '</div>' +
-                    '<p>Riceverai una conferma via email a <strong>' + escapeHtml(email) + '</strong></p>';
+                confHtml += '</div>';
+
+                if (data.data && data.data.status === 'pending' && !data.data.deposit_required) {
+                    confHtml += '<p style="color:#E65100;"><i class="bi bi-hourglass-split"></i> La tua prenotazione è <strong>in attesa di conferma</strong> dal ristorante. Riceverai un\'email quando sarà confermata.</p>';
+                } else {
+                    confHtml += '<p>Riceverai una conferma via email a <strong>' + escapeHtml(email) + '</strong></p>';
+                }
 
                 details.innerHTML = confHtml;
+
+                // Update heading/icon for pending (manual confirmation) vs confirmed
+                var confirmStep = steps.confirm;
+                var headingEl = confirmStep.querySelector('h3');
+                var iconEl = confirmStep.querySelector('.bw-confirm-icon i');
+                if (data.data && data.data.status === 'pending' && !data.data.deposit_required) {
+                    if (headingEl) headingEl.textContent = 'Prenotazione Ricevuta!';
+                    if (iconEl) { iconEl.className = 'bi bi-hourglass-split'; iconEl.style.color = '#E65100'; }
+                } else {
+                    if (headingEl) headingEl.textContent = 'Prenotazione Confermata!';
+                    if (iconEl) { iconEl.className = 'bi bi-check-circle-fill'; iconEl.style.color = ''; }
+                }
 
                 if (data.data && data.data.deposit_required) {
                     details.innerHTML += '<div class="bw-deposit-info" style="margin-top:12px;">Verrai reindirizzato alla pagina di pagamento per la caparra.</div>';
@@ -453,6 +480,29 @@ document.addEventListener('DOMContentLoaded', function() {
             loadingOverlay.style.display = 'none';
             showError('Errore di connessione. Riprova.');
         });
+    }
+
+    getEl('btn-submit').addEventListener('click', function() {
+        submitBooking(false);
+    });
+
+    // ===== DUPLICATE WARNING MODAL =====
+    var duplicateModal = getEl('duplicate-modal');
+    var duplicateModalMessage = getEl('duplicate-modal-message');
+
+    function showDuplicateModal(message) {
+        duplicateModalMessage.textContent = message;
+        duplicateModal.style.display = 'flex';
+    }
+
+    function hideDuplicateModal() {
+        duplicateModal.style.display = 'none';
+    }
+
+    getEl('duplicate-modal-cancel').addEventListener('click', hideDuplicateModal);
+    getEl('duplicate-modal-confirm').addEventListener('click', function() {
+        hideDuplicateModal();
+        submitBooking(true);
     });
 
     // ===== SOCIAL PROOF =====

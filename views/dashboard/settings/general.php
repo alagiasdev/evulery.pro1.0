@@ -102,6 +102,23 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                 </div>
                 <div class="form-body">
                     <div class="row g-3">
+                        <div class="col-12 field-row">
+                            <label class="field-label">Modalità conferma</label>
+                            <div style="display:flex;gap:.5rem;margin-top:.25rem;">
+                                <label style="display:flex;align-items:center;gap:.4rem;padding:.45rem .85rem;border:1.5px solid <?= ($tenant['confirmation_mode'] ?? 'auto') === 'auto' ? 'var(--brand)' : '#dee2e6' ?>;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:500;background:<?= ($tenant['confirmation_mode'] ?? 'auto') === 'auto' ? 'var(--brand-light)' : '#fff' ?>;">
+                                    <input type="radio" name="confirmation_mode" value="auto" <?= ($tenant['confirmation_mode'] ?? 'auto') === 'auto' ? 'checked' : '' ?> style="accent-color:var(--brand);">
+                                    <i class="bi bi-check-circle" style="color:var(--brand);"></i> Automatica
+                                </label>
+                                <label style="display:flex;align-items:center;gap:.4rem;padding:.45rem .85rem;border:1.5px solid <?= ($tenant['confirmation_mode'] ?? 'auto') === 'manual' ? '#E65100' : '#dee2e6' ?>;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:500;background:<?= ($tenant['confirmation_mode'] ?? 'auto') === 'manual' ? '#FFF3E0' : '#fff' ?>;">
+                                    <input type="radio" name="confirmation_mode" value="manual" <?= ($tenant['confirmation_mode'] ?? 'auto') === 'manual' ? 'checked' : '' ?> style="accent-color:#E65100;">
+                                    <i class="bi bi-hand-index" style="color:#E65100;"></i> Manuale
+                                </label>
+                            </div>
+                            <div class="field-hint">
+                                <strong>Automatica</strong>: le prenotazioni dal widget vengono confermate subito.
+                                <strong>Manuale</strong>: restano "in attesa" finché non le approvi dalla dashboard.
+                            </div>
+                        </div>
                         <div class="col-md-6 field-row">
                             <label class="field-label">Durata tavolo</label>
                             <div class="input-suffix">

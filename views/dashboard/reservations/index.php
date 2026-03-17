@@ -104,54 +104,79 @@ for ($i = 0; $i < 3; $i++) {
 <!-- Filter bar -->
 <form method="GET" action="<?= url('dashboard/reservations') ?>" id="res-filter-form">
 <div class="filter-bar">
-    <div class="date-chips">
-        <?php foreach ($chipDates as $chip): ?>
-        <a href="<?= url('dashboard/reservations?date=' . $chip['date'] . ($status ? '&status=' . e($status) : '')) ?>"
-           class="date-chip-sm <?= $date === $chip['date'] ? 'active' : '' ?>">
-            <?= $chip['label'] ?> <span class="chip-day"><?= $chip['sub'] ?></span>
-        </a>
-        <?php endforeach; ?>
-        <div class="position-relative">
-            <a href="#" class="date-chip-sm" id="res-cal-toggle"><i class="bi bi-calendar3"></i></a>
-            <input type="hidden" name="date" id="res-date-value" value="<?= e($date) ?>">
-            <?php if ($status): ?><input type="hidden" name="status" value="<?= e($status) ?>"><?php endif; ?>
-            <div class="home-cal-dropdown" id="res-cal-dropdown" style="display:none;">
-                <div class="dr-cal-header">
-                    <button type="button" class="dr-cal-nav" id="res-cal-prev"><i class="bi bi-chevron-left"></i></button>
-                    <span class="dr-cal-month" id="res-cal-month"></span>
-                    <button type="button" class="dr-cal-nav" id="res-cal-next"><i class="bi bi-chevron-right"></i></button>
+    <!-- Row 1: Quick date navigation -->
+    <div class="filter-row">
+        <div class="date-chips">
+            <?php foreach ($chipDates as $chip): ?>
+            <a href="<?= url('dashboard/reservations?date=' . $chip['date'] . ($status ? '&status=' . e($status) : '') . ($source ? '&source=' . e($source) : '')) ?>"
+               class="date-chip-sm <?= $date === $chip['date'] && !$isRange ? 'active' : '' ?>">
+                <?= $chip['label'] ?> <span class="chip-day"><?= $chip['sub'] ?></span>
+            </a>
+            <?php endforeach; ?>
+            <div class="position-relative">
+                <a href="#" class="date-chip-sm" id="res-cal-toggle"><i class="bi bi-calendar3"></i></a>
+                <div class="home-cal-dropdown" id="res-cal-dropdown" style="display:none;">
+                    <div class="dr-cal-header">
+                        <button type="button" class="dr-cal-nav" id="res-cal-prev"><i class="bi bi-chevron-left"></i></button>
+                        <span class="dr-cal-month" id="res-cal-month"></span>
+                        <button type="button" class="dr-cal-nav" id="res-cal-next"><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                    <div class="dr-cal-days-header">
+                        <div class="dr-cal-day-name">lun</div>
+                        <div class="dr-cal-day-name">mar</div>
+                        <div class="dr-cal-day-name">mer</div>
+                        <div class="dr-cal-day-name">gio</div>
+                        <div class="dr-cal-day-name">ven</div>
+                        <div class="dr-cal-day-name">sab</div>
+                        <div class="dr-cal-day-name">dom</div>
+                    </div>
+                    <div class="dr-cal-grid" id="res-cal-grid"></div>
                 </div>
-                <div class="dr-cal-days-header">
-                    <div class="dr-cal-day-name">lun</div>
-                    <div class="dr-cal-day-name">mar</div>
-                    <div class="dr-cal-day-name">mer</div>
-                    <div class="dr-cal-day-name">gio</div>
-                    <div class="dr-cal-day-name">ven</div>
-                    <div class="dr-cal-day-name">sab</div>
-                    <div class="dr-cal-day-name">dom</div>
-                </div>
-                <div class="dr-cal-grid" id="res-cal-grid"></div>
             </div>
         </div>
+        <div class="filter-actions">
+            <button type="button" class="btn-filter btn-filter-outline" id="export-toggle" title="Esporta CSV">
+                <i class="bi bi-download me-1"></i>CSV
+            </button>
+        </div>
     </div>
-    <div class="filter-divider"></div>
-    <div class="filter-group">
-        <label>Stato</label>
-        <select class="filter-input" name="status" onchange="this.form.submit()">
-            <option value="">Tutti</option>
-            <option value="confirmed" <?= $status === 'confirmed' ? 'selected' : '' ?>>Confermate</option>
-            <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>In attesa</option>
-            <option value="arrived" <?= $status === 'arrived' ? 'selected' : '' ?>>Arrivati</option>
-            <option value="noshow" <?= $status === 'noshow' ? 'selected' : '' ?>>No-show</option>
-            <option value="cancelled" <?= $status === 'cancelled' ? 'selected' : '' ?>>Annullate</option>
-        </select>
-    </div>
-    <div class="filter-actions">
-        <button type="submit" class="btn-filter btn-filter-primary"><i class="bi bi-search me-1"></i>Filtra</button>
-        <a href="<?= url('dashboard/reservations') ?>" class="btn-filter btn-filter-reset"><i class="bi bi-x-lg"></i></a>
-        <button type="button" class="btn-filter btn-filter-outline" id="export-toggle" title="Esporta CSV">
-            <i class="bi bi-download me-1"></i>CSV
-        </button>
+
+    <!-- Row 2: Advanced filters -->
+    <div class="filter-row">
+        <div class="filter-group">
+            <label>Da</label>
+            <input type="date" class="filter-input" name="date" value="<?= e($date) ?>" id="filter-date-from" style="width:auto;">
+        </div>
+        <div class="filter-group">
+            <label>A</label>
+            <input type="date" class="filter-input" name="date_to" value="<?= e($dateTo ?? $date) ?>" id="filter-date-to" style="width:auto;">
+        </div>
+        <div class="filter-divider"></div>
+        <div class="filter-group">
+            <label>Stato</label>
+            <select class="filter-input" name="status" onchange="this.form.submit()">
+                <option value="">Tutti</option>
+                <option value="confirmed" <?= $status === 'confirmed' ? 'selected' : '' ?>>Confermate</option>
+                <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>In attesa</option>
+                <option value="arrived" <?= $status === 'arrived' ? 'selected' : '' ?>>Arrivati</option>
+                <option value="noshow" <?= $status === 'noshow' ? 'selected' : '' ?>>No-show</option>
+                <option value="cancelled" <?= $status === 'cancelled' ? 'selected' : '' ?>>Annullate</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Fonte</label>
+            <select class="filter-input" name="source" onchange="this.form.submit()">
+                <option value="">Tutte</option>
+                <option value="widget" <?= ($source ?? '') === 'widget' ? 'selected' : '' ?>>Widget</option>
+                <option value="phone" <?= ($source ?? '') === 'phone' ? 'selected' : '' ?>>Telefono</option>
+                <option value="walkin" <?= ($source ?? '') === 'walkin' ? 'selected' : '' ?>>Walk-in</option>
+                <option value="altro" <?= ($source ?? '') === 'altro' ? 'selected' : '' ?>>Altro</option>
+            </select>
+        </div>
+        <div class="filter-actions">
+            <button type="submit" class="btn-filter btn-filter-primary"><i class="bi bi-search me-1"></i>Filtra</button>
+            <a href="<?= url('dashboard/reservations') ?>" class="btn-filter btn-filter-reset"><i class="bi bi-x-lg"></i></a>
+        </div>
     </div>
 </div>
 </form>
@@ -228,18 +253,21 @@ for ($i = 0; $i < 3; $i++) {
     <?php else: ?>
 
     <?php
-    // Render a meal group
-    function renderMealGroup($label, $icon, $rows, $covers, $date, $status) {
-        if (empty($rows)) return;
+    // Build redirect back URL preserving filters
+    $redirectParams = 'date=' . e($date);
+    if (!empty($dateTo) && $dateTo !== $date) $redirectParams .= '&date_to=' . e($dateTo);
+    if ($status) $redirectParams .= '&status=' . e($status);
+    if (!empty($source)) $redirectParams .= '&source=' . e($source);
+    $redirectBack = 'dashboard/reservations?' . $redirectParams;
+
+    // Render a single reservation row
+    function renderResRow($r, $redirectBack, $showDate = false) {
         ?>
-        <div class="meal-divider">
-            <i class="bi bi-<?= $icon ?>"></i>
-            <span><?= $label ?></span>
-            <span class="meal-count"><?= count($rows) ?> prenotazion<?= count($rows) === 1 ? 'e' : 'i' ?> &middot; <?= $covers ?> coperti</span>
-        </div>
-        <?php foreach ($rows as $r): ?>
         <div class="res-row <?= $r['status'] === 'pending' ? 'is-pending' : '' ?>"
              data-url="<?= url("dashboard/reservations/{$r['id']}") ?>">
+            <?php if ($showDate): ?>
+            <span class="res-time"><?= format_date($r['reservation_date'], 'd/m') ?></span>
+            <?php endif; ?>
             <span class="res-time"><?= format_time($r['reservation_time']) ?></span>
             <span class="status-dot <?= e($r['status']) ?>"></span>
             <div class="res-info">
@@ -252,11 +280,21 @@ for ($i = 0; $i < 3; $i++) {
             </div>
             <div class="res-right">
                 <span class="res-pax"><i class="bi bi-person-fill me-1"></i><?= (int)$r['party_size'] ?></span>
+                <?php if ($r['status'] === 'pending'): ?>
+                <form method="POST" action="<?= url("dashboard/reservations/{$r['id']}/status") ?>" class="d-inline">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="status" value="confirmed">
+                    <input type="hidden" name="redirect_back" value="<?= e($redirectBack) ?>">
+                    <button type="submit" class="btn-action-sm btn-confirm" title="Conferma">
+                        <i class="bi bi-check-circle"></i>
+                    </button>
+                </form>
+                <?php endif; ?>
                 <?php if (in_array($r['status'], ['confirmed', 'pending'])): ?>
                 <form method="POST" action="<?= url("dashboard/reservations/{$r['id']}/status") ?>" class="d-inline">
                     <?= csrf_field() ?>
                     <input type="hidden" name="status" value="arrived">
-                    <input type="hidden" name="redirect_back" value="dashboard/reservations?date=<?= e($date) ?><?= $status ? '&status=' . e($status) : '' ?>">
+                    <input type="hidden" name="redirect_back" value="<?= e($redirectBack) ?>">
                     <button type="submit" class="btn-action-sm btn-arrived" title="Segna Arrivato">
                         <i class="bi bi-person-check"></i>
                     </button>
@@ -265,16 +303,52 @@ for ($i = 0; $i < 3; $i++) {
                 <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
             </div>
         </div>
-        <?php endforeach;
+        <?php
     }
 
-    renderMealGroup('Pranzo', 'sun', $pranzo, $pranzoCovers, $date, $status);
-    renderMealGroup('Cena', 'moon-stars', $cena, $cenaCovers, $date, $status);
+    if ($isRange):
+        // Range mode: group by date
+        $byDate = [];
+        foreach ($reservations as $r) {
+            $byDate[$r['reservation_date']][] = $r;
+        }
+        foreach ($byDate as $d => $rows):
+            $dayCovers = array_sum(array_map(fn($r) => (int)$r['party_size'], $rows));
+        ?>
+        <div class="meal-divider">
+            <i class="bi bi-calendar3"></i>
+            <span><?= format_date($d, 'D d/m/Y') ?></span>
+            <span class="meal-count"><?= count($rows) ?> pren. &middot; <?= $dayCovers ?> coperti</span>
+        </div>
+        <?php foreach ($rows as $r) { renderResRow($r, $redirectBack, false); } ?>
+        <?php endforeach;
+    else:
+        // Single date mode: group by pranzo/cena
+        function renderMealGroup($label, $icon, $rows, $covers, $redirectBack) {
+            if (empty($rows)) return;
+            ?>
+            <div class="meal-divider">
+                <i class="bi bi-<?= $icon ?>"></i>
+                <span><?= $label ?></span>
+                <span class="meal-count"><?= count($rows) ?> prenotazion<?= count($rows) === 1 ? 'e' : 'i' ?> &middot; <?= $covers ?> coperti</span>
+            </div>
+            <?php foreach ($rows as $r) { renderResRow($r, $redirectBack, false); }
+        }
+
+        renderMealGroup('Pranzo', 'sun', $pranzo, $pranzoCovers, $redirectBack);
+        renderMealGroup('Cena', 'moon-stars', $cena, $cenaCovers, $redirectBack);
+    endif;
     ?>
 
     <!-- Pagination info -->
     <div class="pagination-bar">
-        <span class="pagination-info"><?= $totalCount ?> prenotazion<?= $totalCount === 1 ? 'e' : 'i' ?> &middot; <?= format_date($date, 'd/m/Y') ?></span>
+        <span class="pagination-info"><?= $totalCount ?> prenotazion<?= $totalCount === 1 ? 'e' : 'i' ?>
+        <?php if ($isRange): ?>
+            &middot; <?= format_date($date, 'd/m/Y') ?> &ndash; <?= format_date($dateTo, 'd/m/Y') ?>
+        <?php else: ?>
+            &middot; <?= format_date($date, 'd/m/Y') ?>
+        <?php endif; ?>
+        </span>
     </div>
 
     <?php endif; ?>
@@ -293,7 +367,7 @@ for ($i = 0; $i < 3; $i++) {
     var dropdown = document.getElementById('res-cal-dropdown');
     var grid = document.getElementById('res-cal-grid');
     var monthLabel = document.getElementById('res-cal-month');
-    var hiddenInput = document.getElementById('res-date-value');
+    var dateFromInput = document.getElementById('filter-date-from');
 
     var sel = new Date(selectedDate + 'T00:00:00');
     var calMonth = sel.getMonth();
@@ -325,7 +399,8 @@ for ($i = 0; $i < 3; $i++) {
         grid.querySelectorAll('.dr-cal-cell:not(.dr-cal-empty)').forEach(function(cell) {
             cell.addEventListener('click', function() {
                 selectedDate = this.dataset.date;
-                hiddenInput.value = selectedDate;
+                dateFromInput.value = selectedDate;
+                document.getElementById('filter-date-to').value = selectedDate;
                 document.getElementById('res-filter-form').submit();
             });
         });

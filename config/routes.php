@@ -20,6 +20,7 @@ use App\Controllers\Dashboard\MealCategoriesController;
 use App\Controllers\Dashboard\ClosuresController;
 use App\Controllers\ProfileController;
 use App\Controllers\Booking\BookingController;
+use App\Controllers\ManageReservationController;
 use App\Controllers\Api\AvailabilityController;
 use App\Controllers\Api\ReservationApiController;
 use App\Controllers\Api\WebhookController;
@@ -95,6 +96,10 @@ $router->group('/api/v1', ['ratelimit'], function ($r) {
     $r->post('/tenants/{slug}/reservations/{id}/cancel', [ReservationApiController::class, 'cancel']);
     $r->post('/stripe/webhook', [WebhookController::class, 'handle']);
 });
+
+// --- MANAGE RESERVATION (magic link, public) ---
+$router->get('/manage/{token}', [ManageReservationController::class, 'show']);
+$router->post('/manage/{token}/cancel', [ManageReservationController::class, 'cancel'], ['csrf']);
 
 // --- PUBLIC BOOKING ROUTES (tenant-scoped, must be last) ---
 $router->get('/{slug}', [BookingController::class, 'show']);

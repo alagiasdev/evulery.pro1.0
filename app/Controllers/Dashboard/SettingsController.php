@@ -69,12 +69,16 @@ class SettingsController
             $logoUrl = '';
         }
 
+        // Validate confirmation_mode
+        $confirmationMode = ($data['confirmation_mode'] ?? 'auto') === 'manual' ? 'manual' : 'auto';
+
         $updateData = [
             'name'                 => $data['name'] ?? '',
             'email'                => $data['email'] ?? '',
             'phone'                => $data['phone'] ?? null,
             'address'              => $data['address'] ?? null,
             'cancellation_policy'  => $data['cancellation_policy'] ?? null,
+            'confirmation_mode'    => $confirmationMode,
             'table_duration'       => (int)($data['table_duration'] ?? 90),
             'time_step'            => (int)($data['time_step'] ?? 30),
             'segment_occasionale'  => $segOcc,
