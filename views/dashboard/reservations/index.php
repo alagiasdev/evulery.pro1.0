@@ -54,6 +54,53 @@ for ($i = 0; $i < 3; $i++) {
 }
 ?>
 
+<!-- Search bar (global) -->
+<form method="GET" action="<?= url('dashboard/reservations') ?>" class="gs-form" id="global-search-form">
+    <div class="gs-bar">
+        <i class="bi bi-search gs-icon"></i>
+        <input type="text" name="q" class="gs-input" placeholder="Cerca per nome, telefono o email..." value="<?= e($searchQuery) ?>" autocomplete="off">
+        <?php if ($searchQuery !== ''): ?>
+            <a href="<?= url('dashboard/reservations') ?>" class="gs-clear" title="Cancella ricerca"><i class="bi bi-x-lg"></i></a>
+        <?php endif; ?>
+    </div>
+</form>
+
+<?php if ($searchResults !== null): ?>
+<!-- Search results -->
+<div class="card" style="margin-bottom:1.25rem;">
+    <div class="card-header">
+        <h6><i class="bi bi-search me-1"></i> Risultati per "<?= e($searchQuery) ?>"</h6>
+        <span style="font-size:.78rem;color:#6c757d;"><?= count($searchResults) ?> trovate</span>
+    </div>
+    <?php if (empty($searchResults)): ?>
+        <div class="text-center text-muted py-4">
+            <i class="bi bi-inbox" style="font-size:2rem;display:block;margin-bottom:.5rem;color:#dee2e6;"></i>
+            Nessuna prenotazione trovata per "<?= e($searchQuery) ?>".
+        </div>
+    <?php else: ?>
+        <?php foreach ($searchResults as $sr): ?>
+        <div class="res-row" data-url="<?= url("dashboard/reservations/{$sr['id']}") ?>">
+            <div class="res-time"><?= format_date($sr['reservation_date'], 'd/m') ?></div>
+            <div class="res-time" style="color:#6c757d;"><?= format_time($sr['reservation_time']) ?></div>
+            <div class="status-dot <?= e($sr['status']) ?>" title="<?= status_label($sr['status']) ?>"></div>
+            <div class="res-info">
+                <div class="res-name"><?= e($sr['first_name'] . ' ' . $sr['last_name']) ?> <?= getSegmentBadge((int)$sr['total_bookings']) ?></div>
+                <div class="res-meta">
+                    <i class="bi bi-telephone me-1"></i><?= e($sr['phone']) ?>
+                    <?php if ($sr['email']): ?> &middot; <?= e($sr['email']) ?><?php endif; ?>
+                </div>
+            </div>
+            <div class="res-right">
+                <span class="res-pax"><i class="bi bi-people-fill me-1"></i><?= (int)$sr['party_size'] ?></span>
+                <span class="res-status-label <?= e($sr['status']) ?>"><?= status_label($sr['status']) ?></span>
+                <i class="bi bi-chevron-right text-muted" style="font-size:.75rem;"></i>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</div>
+<?php else: ?>
+
 <!-- Filter bar -->
 <form method="GET" action="<?= url('dashboard/reservations') ?>" id="res-filter-form">
 <div class="filter-bar">
@@ -233,14 +280,19 @@ for ($i = 0; $i < 3; $i++) {
     <?php endif; ?>
 </div>
 
+<?php endif; /* close searchResults === null */ ?>
+
 <script>
 (function() {
+    // Skip filter/calendar JS when in search mode
+    var toggle = document.getElementById('res-cal-toggle');
+    if (!toggle) return;
+
     var MONTHS = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
     var selectedDate = '<?= e($date) ?>';
     var dropdown = document.getElementById('res-cal-dropdown');
     var grid = document.getElementById('res-cal-grid');
     var monthLabel = document.getElementById('res-cal-month');
-    var toggle = document.getElementById('res-cal-toggle');
     var hiddenInput = document.getElementById('res-date-value');
 
     var sel = new Date(selectedDate + 'T00:00:00');
@@ -309,8 +361,9 @@ for ($i = 0; $i < 3; $i++) {
 
 // Export panel logic
 (function() {
-    var panel = document.getElementById('export-panel');
     var toggleBtn = document.getElementById('export-toggle');
+    if (!toggleBtn) return;
+    var panel = document.getElementById('export-panel');
     var closeBtn = document.getElementById('export-close');
     var downloadBtn = document.getElementById('export-download');
     var dateFrom = document.getElementById('export-date-from');

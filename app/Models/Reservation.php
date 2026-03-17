@@ -190,6 +190,34 @@ class Reservation
         return $stmt->fetch();
     }
 
+    public function searchGlobal(int $tenantId, string $query, int $limit = 50): array
+    {
+        $like = '%' . $query . '%';
+        $stmt = $this->db->prepare(
+            'SELECT r.id, r.reservation_date, r.reservation_time, r.party_size, r.status, r.source,
+                    c.first_name, c.last_name, c.email, c.phone, c.total_bookings
+             FROM reservations r
+             JOIN customers c ON r.customer_id = c.id
+             WHERE r.tenant_id = :tenant_id
+             AND (c.first_name LIKE :q1
+                  OR c.last_name LIKE :q2
+                  OR c.phone LIKE :q3
+                  OR c.email LIKE :q4
+                  OR CONCAT(c.first_name, " ", c.last_name) LIKE :q5)
+             ORDER BY r.reservation_date DESC, r.reservation_time DESC
+             LIMIT :lim'
+        );
+        $stmt->bindValue('tenant_id', $tenantId, PDO::PARAM_INT);
+        $stmt->bindValue('q1', $like);
+        $stmt->bindValue('q2', $like);
+        $stmt->bindValue('q3', $like);
+        $stmt->bindValue('q4', $like);
+        $stmt->bindValue('q5', $like);
+        $stmt->bindValue('lim', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
     public function delete(int $id): void
     {
         $this->db->prepare('DELETE FROM reservations WHERE id = :id')->execute(['id' => $id]);

@@ -18,8 +18,14 @@ class ReservationsController
     public function index(Request $request): void
     {
         $tenantId = Auth::tenantId();
+        $searchQuery = trim($request->query('q', ''));
         $date = $request->query('date', date('Y-m-d'));
         $status = $request->query('status');
+
+        $searchResults = null;
+        if ($searchQuery !== '') {
+            $searchResults = (new Reservation())->searchGlobal($tenantId, $searchQuery);
+        }
 
         $reservations = (new Reservation())->findByTenantAndDate($tenantId, $date, $status);
 
@@ -29,6 +35,8 @@ class ReservationsController
             'reservations' => $reservations,
             'date'         => $date,
             'status'       => $status,
+            'searchQuery'  => $searchQuery,
+            'searchResults' => $searchResults,
         ], 'dashboard');
     }
 

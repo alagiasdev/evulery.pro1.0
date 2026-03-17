@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Vista Timeline Prenotazioni</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-light: #e6f4ed;
+            --bg: #f5f6f8;
+            --card-bg: #fff;
+            --text: #1a1d23;
+            --muted: #6c757d;
+            --border: #e9ecef;
+            --radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h2 { font-size: 1.35rem; font-weight: 700; margin-bottom: .25rem; }
+        .subtitle { font-size: .82rem; color: var(--muted); margin-bottom: 1rem; }
+
+        /* ============================================================
+           VIEW TOGGLE - lista vs timeline
+           ============================================================ */
+        .view-toggle {
+            display: inline-flex;
+            background: #f0f1f3;
+            border-radius: 8px;
+            padding: 3px;
+            gap: 2px;
+        }
+        .view-toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all .15s;
+        }
+        .view-toggle-btn.active {
+            background: var(--card-bg);
+            color: var(--text);
+            box-shadow: 0 1px 3px rgba(0,0,0,.1);
+        }
+        .view-toggle-btn i { font-size: .85rem; }
+
+        /* ============================================================
+           FILTER BAR (kept from existing page)
+           ============================================================ */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 10px 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,.04);
+            flex-wrap: wrap;
+        }
+        .date-chips { display: flex; gap: 6px; align-items: center; }
+        .date-chip {
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: .78rem;
+            font-weight: 600;
+            background: #f0f1f3;
+            color: var(--muted);
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all .15s;
+        }
+        .date-chip.active { background: var(--brand); color: #fff; }
+        .date-chip .chip-day { font-weight: 400; opacity: .7; margin-left: 4px; }
+
+        .filter-divider { width: 1px; height: 28px; background: var(--border); }
+        .filter-group { display: flex; align-items: center; gap: 6px; }
+        .filter-group label { font-size: .72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .3px; }
+        .filter-input {
+            padding: 5px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: .8rem;
+            background: var(--card-bg);
+        }
+        .filter-actions { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+
+        /* ============================================================
+           MINI STATS (kept from existing page)
+           ============================================================ */
+        .stats-mini {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .78rem;
+            font-weight: 600;
+        }
+        .sp-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+        }
+        .sp-num { font-size: .9rem; }
+        .sp-label { color: var(--muted); font-weight: 400; }
+
+        /* ============================================================
+           TIMELINE VIEW
+           ============================================================ */
+        .timeline-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 1px 6px rgba(0,0,0,.06);
+            overflow: hidden;
+        }
+
+        /* Timeline header with hour scale */
+        .tl-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+        }
+        .tl-header-title {
+            font-size: .82rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .tl-legend {
+            display: flex;
+            gap: 12px;
+            margin-left: auto;
+            font-size: .7rem;
+        }
+        .tl-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--muted);
+        }
+        .tl-legend-dot {
+            width: 10px; height: 10px; border-radius: 3px;
+        }
+
+        /* Scrollable timeline container */
+        .tl-scroll {
+            overflow-x: auto;
+            overflow-y: visible;
+            padding: 0;
+        }
+
+        .tl-grid {
+            display: grid;
+            min-width: 900px; /* ensures scrollability on mobile */
+            position: relative;
+        }
+
+        /* Hour columns header */
+        .tl-hours {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            background: #fafbfc;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+        .tl-hour-label-zone {
+            width: 80px;
+            min-width: 80px;
+            padding: 8px 12px;
+            font-size: .7rem;
+            font-weight: 700;
+            color: var(--muted);
+            border-right: 1px solid var(--border);
+            text-align: center;
+        }
+        .tl-hours-track {
+            display: flex;
+            flex: 1;
+            position: relative;
+        }
+        .tl-hour-col {
+            flex: 1;
+            text-align: center;
+            padding: 8px 0;
+            font-size: .68rem;
+            font-weight: 600;
+            color: var(--muted);
+            border-right: 1px solid #f0f1f3;
+            position: relative;
+        }
+        .tl-hour-col.meal-start {
+            border-left: 2px solid var(--brand);
+        }
+        .tl-hour-col .tl-meal-tag {
+            position: absolute;
+            top: -1px;
+            left: 4px;
+            font-size: .58rem;
+            font-weight: 700;
+            color: var(--brand);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        /* Density bar under hours */
+        .tl-density-row {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            background: #fafbfc;
+        }
+        .tl-density-zone {
+            width: 80px;
+            min-width: 80px;
+            border-right: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tl-density-zone span {
+            font-size: .62rem;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+        .tl-density-track {
+            display: flex;
+            flex: 1;
+        }
+        .tl-density-cell {
+            flex: 1;
+            height: 6px;
+            margin: 6px 1px;
+            border-radius: 3px;
+            background: #e9ecef;
+            position: relative;
+        }
+        .tl-density-cell.low { background: #c8e6c9; }
+        .tl-density-cell.medium { background: #fff3cd; }
+        .tl-density-cell.high { background: #ffcdd2; }
+        .tl-density-cell.full { background: #ef5350; }
+
+        /* Reservation rows (grouped by meal) */
+        .tl-meal-divider {
+            display: flex;
+            align-items: center;
+            padding: 6px 16px;
+            background: var(--brand-light);
+            font-size: .72rem;
+            font-weight: 700;
+            color: var(--brand);
+            gap: 6px;
+            border-bottom: 1px solid var(--border);
+        }
+        .tl-meal-divider .tl-meal-count {
+            font-weight: 400;
+            color: var(--muted);
+            margin-left: 8px;
+        }
+
+        /* Individual reservation block */
+        .tl-res-row {
+            display: flex;
+            min-height: 48px;
+            border-bottom: 1px solid #f5f6f8;
+            align-items: stretch;
+            position: relative;
+            transition: background .1s;
+        }
+        .tl-res-row:hover { background: #fafbfc; }
+
+        .tl-res-info {
+            width: 80px;
+            min-width: 80px;
+            padding: 6px 8px;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .tl-res-name {
+            font-size: .72rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 72px;
+        }
+        .tl-res-pax {
+            font-size: .62rem;
+            color: var(--muted);
+        }
+
+        .tl-res-track {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        /* The reservation block on the timeline */
+        .tl-block {
+            position: absolute;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            gap: 5px;
+            font-size: .68rem;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,.12);
+            transition: transform .1s, box-shadow .1s;
+            z-index: 1;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .tl-block:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0,0,0,.18);
+            z-index: 5;
+        }
+
+        /* Status colors */
+        .tl-block.confirmed { background: #198754; }
+        .tl-block.pending { background: #ffc107; color: #664d03; }
+        .tl-block.arrived { background: #0dcaf0; color: #055160; }
+        .tl-block.noshow { background: #dc3545; }
+        .tl-block.cancelled { background: #adb5bd; }
+
+        .tl-block-time { opacity: .85; font-weight: 500; }
+        .tl-block-name { font-weight: 700; }
+        .tl-block-pax {
+            background: rgba(255,255,255,.25);
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-size: .62rem;
+        }
+
+        /* Segment badge inside block */
+        .tl-seg {
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-size: .55rem;
+            font-weight: 700;
+            background: rgba(255,255,255,.3);
+        }
+
+        /* Now indicator line */
+        .tl-now-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #dc3545;
+            z-index: 10;
+        }
+        .tl-now-dot {
+            position: absolute;
+            top: -4px;
+            left: -3px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #dc3545;
+        }
+        .tl-now-label {
+            position: absolute;
+            top: -16px;
+            left: -10px;
+            font-size: .55rem;
+            font-weight: 700;
+            color: #dc3545;
+            white-space: nowrap;
+        }
+
+        /* ============================================================
+           TOOLTIP (on hover over block)
+           ============================================================ */
+        .tl-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: .72rem;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .15s;
+            z-index: 20;
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+        }
+        .tl-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--text);
+        }
+        .tl-block:hover .tl-tooltip { opacity: 1; }
+        .tl-tooltip-row { display: flex; gap: 12px; align-items: center; }
+        .tl-tooltip-row + .tl-tooltip-row { margin-top: 4px; }
+        .tl-tooltip-label { color: rgba(255,255,255,.6); font-size: .62rem; min-width: 50px; }
+        .tl-tooltip-val { font-weight: 600; }
+
+        /* ============================================================
+           HOUR GRID LINES (vertical)
+           ============================================================ */
+        .tl-gridlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .tl-gridline {
+            flex: 1;
+            border-right: 1px solid #f5f6f8;
+        }
+        .tl-gridline.meal-border {
+            border-left: 1px dashed rgba(0,132,74,.15);
+        }
+
+        /* ============================================================
+           EMPTY STATE
+           ============================================================ */
+        .tl-empty {
+            text-align: center;
+            padding: 48px 20px;
+            color: var(--muted);
+        }
+        .tl-empty i { font-size: 2.5rem; color: #dee2e6; display: block; margin-bottom: 8px; }
+
+        /* ============================================================
+           DESIGN NOTES (wireframe only)
+           ============================================================ */
+        .design-notes {
+            margin-top: 32px;
+            padding: 20px;
+            background: #fff3cd;
+            border: 1px solid #ffe082;
+            border-radius: var(--radius);
+            font-size: .8rem;
+            line-height: 1.6;
+        }
+        .design-notes h3 {
+            font-size: .9rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #664d03;
+        }
+        .design-notes ul { padding-left: 20px; }
+        .design-notes li { margin-bottom: 4px; }
+        .design-notes code {
+            background: rgba(0,0,0,.06);
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: .75rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            .filter-bar { flex-wrap: wrap; gap: 8px; }
+            .filter-divider { display: none; }
+            .stats-mini { gap: 10px; }
+            .tl-scroll { -webkit-overflow-scrolling: touch; }
+        }
+    </style>
+</head>
+<body>
+
+<h2>Prenotazioni</h2>
+<p class="subtitle">Gestione prenotazioni giornaliera</p>
+
+<!-- ============================================================
+     FILTER BAR (same as current, with view toggle added)
+     ============================================================ -->
+<div class="filter-bar">
+    <div class="date-chips">
+        <button class="date-chip active">Oggi <span class="chip-day">Mar 17/3</span></button>
+        <button class="date-chip">Domani <span class="chip-day">Mer 18/3</span></button>
+        <button class="date-chip">Dopodomani <span class="chip-day">Gio 19/3</span></button>
+        <button class="date-chip"><i class="bi bi-calendar3"></i></button>
+    </div>
+
+    <div class="filter-divider"></div>
+
+    <div class="filter-group">
+        <label>Stato</label>
+        <select class="filter-input">
+            <option>Tutti</option>
+            <option>Confermate</option>
+            <option>In attesa</option>
+            <option>Arrivati</option>
+        </select>
+    </div>
+
+    <div class="filter-divider"></div>
+
+    <!-- NEW: View toggle -->
+    <div class="view-toggle">
+        <button class="view-toggle-btn" id="btn-list">
+            <i class="bi bi-list-ul"></i> Lista
+        </button>
+        <button class="view-toggle-btn active" id="btn-timeline">
+            <i class="bi bi-calendar2-range"></i> Timeline
+        </button>
+    </div>
+
+    <div class="filter-actions">
+        <button class="date-chip" style="font-size:.72rem;"><i class="bi bi-download me-1"></i>CSV</button>
+    </div>
+</div>
+
+<!-- Mini stats (same as current) -->
+<div class="stats-mini">
+    <div class="stat-pill">
+        <div class="sp-dot" style="background:#0dcaf0;"></div>
+        <span class="sp-num" style="color:#0dcaf0;">12</span>
+        <span class="sp-label">Totale</span>
+    </div>
+    <div class="stat-pill">
+        <div class="sp-dot" style="background:#198754;"></div>
+        <span class="sp-num" style="color:#198754;">8</span>
+        <span class="sp-label">Confermate</span>
+    </div>
+    <div class="stat-pill">
+        <div class="sp-dot" style="background:#ffc107;"></div>
+        <span class="sp-num" style="color:#ffc107;">2</span>
+        <span class="sp-label">In Attesa</span>
+    </div>
+    <div class="stat-pill">
+        <div class="sp-dot" style="background:#0d6efd;"></div>
+        <span class="sp-num" style="color:#0d6efd;">38</span>
+        <span class="sp-label">Coperti</span>
+    </div>
+</div>
+
+<!-- ============================================================
+     TIMELINE VIEW
+     ============================================================ -->
+<div class="timeline-card">
+    <!-- Header -->
+    <div class="tl-header">
+        <span class="tl-header-title"><i class="bi bi-calendar2-range me-1"></i> Timeline &mdash; Martedi 17 Marzo 2026</span>
+        <div class="tl-legend">
+            <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#198754;"></div> Confermata</div>
+            <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#ffc107;"></div> In attesa</div>
+            <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#0dcaf0;"></div> Arrivato</div>
+            <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#dc3545;"></div> No-show</div>
+            <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#adb5bd;"></div> Annullata</div>
+        </div>
+    </div>
+
+    <div class="tl-scroll">
+        <div class="tl-grid">
+
+            <!-- Hour labels row -->
+            <div class="tl-hours">
+                <div class="tl-hour-label-zone"></div>
+                <div class="tl-hours-track">
+                    <div class="tl-hour-col meal-start">
+                        <span class="tl-meal-tag">Pranzo</span>
+                        11:00
+                    </div>
+                    <div class="tl-hour-col">11:30</div>
+                    <div class="tl-hour-col">12:00</div>
+                    <div class="tl-hour-col">12:30</div>
+                    <div class="tl-hour-col">13:00</div>
+                    <div class="tl-hour-col">13:30</div>
+                    <div class="tl-hour-col">14:00</div>
+                    <div class="tl-hour-col">14:30</div>
+                    <div class="tl-hour-col" style="background:#f0f1f3;color:#ccc;">15:00</div>
+                    <div class="tl-hour-col" style="background:#f0f1f3;color:#ccc;">15:30</div>
+                    <div class="tl-hour-col" style="background:#f0f1f3;color:#ccc;">16:00</div>
+                    <div class="tl-hour-col" style="background:#f0f1f3;color:#ccc;">16:30</div>
+                    <div class="tl-hour-col" style="background:#f0f1f3;color:#ccc;">17:00</div>
+                    <div class="tl-hour-col" style="background:#f0f1f3;color:#ccc;">17:30</div>
+                    <div class="tl-hour-col" style="background:#f0f1f3;color:#ccc;">18:00</div>
+                    <div class="tl-hour-col meal-start">
+                        <span class="tl-meal-tag">Cena</span>
+                        18:30
+                    </div>
+                    <div class="tl-hour-col">19:00</div>
+                    <div class="tl-hour-col">19:30</div>
+                    <div class="tl-hour-col">20:00</div>
+                    <div class="tl-hour-col">20:30</div>
+                    <div class="tl-hour-col">21:00</div>
+                    <div class="tl-hour-col">21:30</div>
+                    <div class="tl-hour-col">22:00</div>
+                    <div class="tl-hour-col">22:30</div>
+                </div>
+            </div>
+
+            <!-- Density bar -->
+            <div class="tl-density-row">
+                <div class="tl-density-zone"><span>Densita</span></div>
+                <div class="tl-density-track">
+                    <!-- Pranzo slots -->
+                    <div class="tl-density-cell low"></div>
+                    <div class="tl-density-cell low"></div>
+                    <div class="tl-density-cell medium"></div>
+                    <div class="tl-density-cell high"></div>
+                    <div class="tl-density-cell high"></div>
+                    <div class="tl-density-cell medium"></div>
+                    <div class="tl-density-cell low"></div>
+                    <div class="tl-density-cell"></div>
+                    <!-- Gap -->
+                    <div class="tl-density-cell"></div>
+                    <div class="tl-density-cell"></div>
+                    <div class="tl-density-cell"></div>
+                    <div class="tl-density-cell"></div>
+                    <div class="tl-density-cell"></div>
+                    <div class="tl-density-cell"></div>
+                    <div class="tl-density-cell"></div>
+                    <!-- Cena slots -->
+                    <div class="tl-density-cell low"></div>
+                    <div class="tl-density-cell medium"></div>
+                    <div class="tl-density-cell high"></div>
+                    <div class="tl-density-cell full"></div>
+                    <div class="tl-density-cell high"></div>
+                    <div class="tl-density-cell medium"></div>
+                    <div class="tl-density-cell low"></div>
+                    <div class="tl-density-cell"></div>
+                    <div class="tl-density-cell"></div>
+                </div>
+            </div>
+
+            <!-- ================================================
+                 PRANZO section
+                 ================================================ -->
+            <div class="tl-meal-divider">
+                <i class="bi bi-sun"></i> Pranzo
+                <span class="tl-meal-count">5 prenotazioni &middot; 16 coperti</span>
+            </div>
+
+            <!-- Reservation rows -->
+            <div class="tl-res-row">
+                <div class="tl-res-info">
+                    <span class="tl-res-name">Rossi M.</span>
+                    <span class="tl-res-pax"><i class="bi bi-person-fill"></i> 4</span>
+                </div>
+                <div class="tl-res-track">
+                    <div class="tl-gridlines">
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                    </div>
+                    <!-- Block: 12:00 to 13:30 (duration 90min) = starts at col 2, spans 3 cols -->
+                    <div class="tl-block confirmed" style="left: calc(2/24 * 100%); width: calc(3/24 * 100%);">
+                        <span class="tl-block-time">12:00</span>
+                        <span class="tl-block-name">Rossi Marco</span>
+                        <span class="tl-block-pax">4</span>
+                        <div class="tl-tooltip">
+                            <div class="tl-tooltip-row"><span class="tl-tooltip-label">Orario</span> <span class="tl-tooltip-val">12:00 - 13:30</span></div>
+                            <div class="tl-tooltip-row"><span class="tl-tooltip-label">Persone</span> <span class="tl-tooltip-val">4</span></div>
+                            <div class="tl-tooltip-row"><span class="tl-tooltip-label">Telefono</span> <span class="tl-tooltip-val">333 123 4567</span></div>
+                            <div class="tl-tooltip-row"><span class="tl-tooltip-label">Note</span> <span class="tl-tooltip-val">Allergia arachidi</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tl-res-row">
+                <div class="tl-res-info">
+                    <span class="tl-res-name">Bianchi L.</span>
+                    <span class="tl-res-pax"><i class="bi bi-person-fill"></i> 2</span>
+                </div>
+                <div class="tl-res-track">
+                    <div class="tl-gridlines">
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                    </div>
+                    <!-- Block: 12:30 to 14:00 -->
+                    <div class="tl-block pending" style="left: calc(3/24 * 100%); width: calc(3/24 * 100%);">
+                        <span class="tl-block-time">12:30</span>
+                        <span class="tl-block-name">Bianchi Laura</span>
+                        <span class="tl-block-pax">2</span>
+                        <span class="tl-seg">VIP</span>
+                        <div class="tl-tooltip">
+                            <div class="tl-tooltip-row"><span class="tl-tooltip-label">Orario</span> <span class="tl-tooltip-val">12:30 - 14:00</span></div>
+                            <div class="tl-tooltip-row"><span class="tl-tooltip-label">Persone</span> <span class="tl-tooltip-val">2</span></div>
+                            <div class="tl-tooltip-row"><span class="tl-tooltip-label">Stato</span> <span class="tl-tooltip-val">In attesa di conferma</span></div>
+                            <div class="tl-tooltip-row"><span class="tl-tooltip-label">Segmento</span> <span class="tl-tooltip-val">VIP (12 visite)</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tl-res-row">
+                <div class="tl-res-info">
+                    <span class="tl-res-name">Verdi G.</span>
+                    <span class="tl-res-pax"><i class="bi bi-person-fill"></i> 6</span>
+                </div>
+                <div class="tl-res-track">
+                    <div class="tl-gridlines">
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                    </div>
+                    <!-- Block: 13:00 to 14:30 -->
+                    <div class="tl-block arrived" style="left: calc(4/24 * 100%); width: calc(3/24 * 100%);">
+                        <span class="tl-block-time">13:00</span>
+                        <span class="tl-block-name">Verdi Giuseppe</span>
+                        <span class="tl-block-pax">6</span>
+                        <div class="tl-tooltip">
+                            <div class="tl-tooltip-row"><span class="tl-tooltip-label">Orario</span> <span class="tl-tooltip-val">13:00 - 14:30</span></div>
+                            <div class="tl-tooltip-row"><span class="tl-tooltip-label">Persone</span> <span class="tl-tooltip-val">6</span></div>
+                            <div class="tl-tooltip-row"><span class="tl-tooltip-label">Stato</span> <span class="tl-tooltip-val">Arrivato alle 12:55</span></div>
+                            <div class="tl-tooltip-row"><span class="tl-tooltip-label">Note</span> <span class="tl-tooltip-val">Seggiolone necessario</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tl-res-row">
+                <div class="tl-res-info">
+                    <span class="tl-res-name">Neri A.</span>
+                    <span class="tl-res-pax"><i class="bi bi-person-fill"></i> 2</span>
+                </div>
+                <div class="tl-res-track">
+                    <div class="tl-gridlines">
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                    </div>
+                    <!-- Block: 12:00 to 13:30 (same time as Rossi, shows overlap) -->
+                    <div class="tl-block noshow" style="left: calc(2/24 * 100%); width: calc(3/24 * 100%);">
+                        <span class="tl-block-time">12:00</span>
+                        <span class="tl-block-name">Neri Andrea</span>
+                        <span class="tl-block-pax">2</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tl-res-row">
+                <div class="tl-res-info">
+                    <span class="tl-res-name">Ferrari S.</span>
+                    <span class="tl-res-pax"><i class="bi bi-person-fill"></i> 2</span>
+                </div>
+                <div class="tl-res-track">
+                    <div class="tl-gridlines">
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                    </div>
+                    <div class="tl-block cancelled" style="left: calc(5/24 * 100%); width: calc(3/24 * 100%);">
+                        <span class="tl-block-time">13:30</span>
+                        <span class="tl-block-name">Ferrari Sara</span>
+                        <span class="tl-block-pax">2</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================================================
+                 CENA section
+                 ================================================ -->
+            <div class="tl-meal-divider">
+                <i class="bi bi-moon-stars"></i> Cena
+                <span class="tl-meal-count">7 prenotazioni &middot; 22 coperti</span>
+            </div>
+
+            <div class="tl-res-row">
+                <div class="tl-res-info">
+                    <span class="tl-res-name">Esposito T.</span>
+                    <span class="tl-res-pax"><i class="bi bi-person-fill"></i> 4</span>
+                </div>
+                <div class="tl-res-track">
+                    <div class="tl-gridlines">
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                    </div>
+                    <!-- Block: 19:00 to 20:30 -->
+                    <div class="tl-block confirmed" style="left: calc(16/24 * 100%); width: calc(3/24 * 100%);">
+                        <span class="tl-block-time">19:00</span>
+                        <span class="tl-block-name">Esposito Teresa</span>
+                        <span class="tl-block-pax">4</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tl-res-row">
+                <div class="tl-res-info">
+                    <span class="tl-res-name">Colombo P.</span>
+                    <span class="tl-res-pax"><i class="bi bi-person-fill"></i> 8</span>
+                </div>
+                <div class="tl-res-track">
+                    <div class="tl-gridlines">
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                    </div>
+                    <!-- Block: 20:00 to 21:30 (wide block = big party) -->
+                    <div class="tl-block confirmed" style="left: calc(18/24 * 100%); width: calc(3/24 * 100%); height: 36px;">
+                        <span class="tl-block-time">20:00</span>
+                        <span class="tl-block-name">Colombo Paolo</span>
+                        <span class="tl-block-pax">8</span>
+                        <span class="tl-seg">VIP</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tl-res-row">
+                <div class="tl-res-info">
+                    <span class="tl-res-name">Moretti C.</span>
+                    <span class="tl-res-pax"><i class="bi bi-person-fill"></i> 2</span>
+                </div>
+                <div class="tl-res-track">
+                    <div class="tl-gridlines">
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                    </div>
+                    <!-- Block: 19:30 to 21:00 -->
+                    <div class="tl-block confirmed" style="left: calc(17/24 * 100%); width: calc(3/24 * 100%);">
+                        <span class="tl-block-time">19:30</span>
+                        <span class="tl-block-name">Moretti Chiara</span>
+                        <span class="tl-block-pax">2</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tl-res-row">
+                <div class="tl-res-info">
+                    <span class="tl-res-name">Ricci F.</span>
+                    <span class="tl-res-pax"><i class="bi bi-person-fill"></i> 3</span>
+                </div>
+                <div class="tl-res-track">
+                    <div class="tl-gridlines">
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                        <div class="tl-gridline"></div><div class="tl-gridline"></div><div class="tl-gridline"></div>
+                    </div>
+                    <!-- Block: 20:30 to 22:00 -->
+                    <div class="tl-block pending" style="left: calc(19/24 * 100%); width: calc(3/24 * 100%);">
+                        <span class="tl-block-time">20:30</span>
+                        <span class="tl-block-name">Ricci Francesca</span>
+                        <span class="tl-block-pax">3</span>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /tl-grid -->
+    </div><!-- /tl-scroll -->
+
+    <!-- Footer -->
+    <div style="padding: 10px 16px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: .72rem; color: var(--muted);">
+            12 prenotazioni &middot; 38 coperti &middot; Durata tavolo: 90 min
+        </span>
+        <span style="font-size: .68rem; color: #dc3545; font-weight: 600;">
+            <i class="bi bi-circle-fill" style="font-size:.4rem;vertical-align:middle;"></i> Aggiornamento live
+        </span>
+    </div>
+</div>
+
+<!-- ============================================================
+     DESIGN NOTES
+     ============================================================ -->
+<div class="design-notes">
+    <h3><i class="bi bi-lightbulb me-1"></i> Note di Design / Decisioni Implementative</h3>
+    <ul>
+        <li><strong>Toggle Lista/Timeline:</strong> nella filter bar, un gruppo di 2 pulsanti (<code>.view-toggle</code>). Il toggle salva la preferenza in <code>localStorage</code> e ricarica la pagina con <code>?view=timeline</code> o <code>?view=list</code></li>
+        <li><strong>Asse orario dinamico:</strong> le colonne partono dall'ora del primo slot configurato (es. 11:00) fino all'ultimo (es. 23:00), usando lo step del tenant (15/30 min). Le ore senza prenotazioni nel "gap" tra pranzo e cena sono grigie</li>
+        <li><strong>Barra densita:</strong> mostra a colpo d'occhio dove si concentrano le prenotazioni. Colori: verde (0-50%), giallo (50-75%), arancione (75-90%), rosso (90-100%+ overbooking)</li>
+        <li><strong>Blocchi prenotazione:</strong> larghezza = <code>table_duration</code> del tenant (es. 90 min = 3 colonne da 30min). Colore = stato. Posizione = ora di inizio. Click apre dettaglio prenotazione</li>
+        <li><strong>Tooltip hover:</strong> mostra orario completo, persone, telefono, note, segmento cliente. Appare al passaggio del mouse sul blocco</li>
+        <li><strong>Linea "Adesso":</strong> riga rossa verticale sulla posizione dell'ora corrente, aggiornata ogni minuto. Visibile solo se la data selezionata e oggi</li>
+        <li><strong>Nessuna libreria esterna:</strong> CSS Grid + positioning per i blocchi, no FullCalendar. Meno dipendenze, piu controllo</li>
+        <li><strong>Divisore categorie pasto:</strong> barra verde "Pranzo" / "Cena" come nella lista, con conteggio prenotazioni e coperti</li>
+        <li><strong>Pannello laterale info (left):</strong> cognome abbreviato + persone per ogni riga, cosi anche scorrendo orizzontalmente si sa chi e</li>
+        <li><strong>Scroll orizzontale mobile:</strong> la griglia ha <code>min-width: 900px</code>, su mobile si scrolla. Il pannello info a sinistra e sticky</li>
+        <li><strong>Overlap visuale:</strong> prenotazioni allo stesso orario sono su righe separate (non sovrapposte), cosi si vedono tutte. Esempio: Rossi e Neri entrambi alle 12:00</li>
+        <li><strong>Dati necessari dal backend:</strong> stessi dati di <code>index.php</code> + <code>table_duration</code> dal tenant + time_step. Nessuna nuova query</li>
+    </ul>
+</div>
+
+<!-- Interactive toggle demo -->
+<script>
+document.getElementById('btn-list').addEventListener('click', function() {
+    this.classList.add('active');
+    document.getElementById('btn-timeline').classList.remove('active');
+});
+document.getElementById('btn-timeline').addEventListener('click', function() {
+    this.classList.add('active');
+    document.getElementById('btn-list').classList.remove('active');
+});
+</script>
+
+</body>
+</html>

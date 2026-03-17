@@ -5,9 +5,11 @@ Fasi completate: Foundation, Auth, Admin Panel, Multi-Tenant, Slot/Capacita, Boo
 Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widget e dashboard.
 
 **Completato recentemente:**
+- [x] Dashboard home redesign: stat cards con trend, countdown arrivi, capienza pranzo/cena, confronto settimana, no-show rate, fonte prenotazioni, sidebar con calendario e azioni rapide
+- [x] Ricerca globale prenotazioni: barra di ricerca cross-date per nome/telefono/email nella pagina prenotazioni
+- [x] Email reminder: script cron con reminder 24h (blu) + 2h (arancione), template HTML, migrazione colonne reminder_sent_at
 - [x] Email conferma al cliente: template HTML conferma + aggiornamento, hook widget + dashboard, sender dinamico (nome ristorante), Reply-To email tenant
 - [x] Esportazione CSV prenotazioni: export con range date, filtro stato, scorciatoie rapide (mese/settimana/anno), separatore ; per Excel IT, BOM UTF-8
-- [x] Wireframe new-dashboard: riepilogo servizi con capienza/overbooking, prossimi in arrivo con countdown, confronto settimana, no-show rate, fonte prenotazioni
 - [x] Design System v3.1: brand #00844A, card radius 12px, shadow leggera, input radius 8px
 - [x] Redesign pagine auth (login, forgot-password, reset-password) in stile v3.1
 - [x] Redesign create/edit prenotazione in stile v3.1 (section-card, summary bar, grid layout)
@@ -59,27 +61,30 @@ Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widg
 - [x] Metodo `updateNotes()` in `Customer` model
 - [x] Note visibili in `reservations/show.php` (customer_notes_persistent)
 
-### 4. Dashboard home migliorata
-**Complessita: Media** | File: 2 | Priorita: MEDIA
-- [ ] Coperti totali del giorno (somma party_size prenotazioni confermate/arrivate)
-- [ ] Tasso no-show del ristorante (ultimi 30 giorni)
-- [ ] Prossime prenotazioni in arrivo (ordinate per orario, con countdown)
-- [ ] Confronto con settimana precedente (+ o - prenotazioni)
-- [ ] Card riassuntive con icone Bootstrap Icons
+### ~~4. Dashboard home migliorata~~ → COMPLETATO
+~~**Complessita: Media** | File: 2 | Priorita: MEDIA~~
+- [x] Coperti totali del giorno (somma party_size prenotazioni confermate/arrivate)
+- [x] Tasso no-show del ristorante (ultimi 30 giorni)
+- [x] Prossime prenotazioni in arrivo (ordinate per orario, con countdown live)
+- [x] Confronto con settimana precedente (barre comparative)
+- [x] Card riassuntive con icone Bootstrap Icons + trend indicators
+- [x] Riepilogo servizi pranzo/cena con capienza e overbooking
+- [x] Fonte prenotazioni (widget vs dashboard vs telefono)
+- [x] Sidebar: mini calendario, prossimi 7 giorni, azioni rapide
 
-### 5. Ricerca globale prenotazioni
-**Complessita: Media-bassa** | File: 3
-- [ ] Metodo `searchGlobal()` in `Reservation` model (nome, telefono, email cross-date)
-- [ ] Form di ricerca nella pagina prenotazioni (campo testo + risultati)
-- [ ] Rotta GET `/dashboard/reservations/search?q=...`
+### ~~5. Ricerca globale prenotazioni~~ → COMPLETATO
+~~**Complessita: Media-bassa** | File: 3~~
+- [x] Metodo `searchGlobal()` in `Reservation` model (nome, telefono, email cross-date)
+- [x] Barra di ricerca nella pagina prenotazioni (campo testo + risultati inline)
+- [x] Ricerca via parametro `?q=` nella rotta esistente `/dashboard/reservations`
 
-### 6. Email promemoria (reminder)
-**Complessita: Media** | File: 4 | Migrazione: 1 colonna
-- [ ] Script cron PHP `scripts/send-reminders.php`
-- [ ] Colonna `reminder_sent_at` su tabella `reservations`
-- [ ] Query: prenotazioni confermate nelle prossime 24h senza reminder inviato
-- [ ] Template HTML reminder (riepilogo + eventuale link cancellazione)
-- [ ] Setup cron/Task Scheduler per esecuzione periodica (ogni 15 min)
+### ~~6. Email promemoria (reminder)~~ → COMPLETATO
+~~**Complessita: Media** | File: 4 | Migrazione: 2 colonne~~
+- [x] Script cron PHP `scripts/send-reminders.php` (24h + 2h prima)
+- [x] Colonne `reminder_24h_sent_at` e `reminder_2h_sent_at` su tabella `reservations`
+- [x] Query: prenotazioni confermate con margine temporale (23-25h e 1.5-2.5h)
+- [x] Template HTML reminder (blu 24h, arancione 2h) con riepilogo prenotazione
+- [ ] Setup cron sul server di produzione (ogni 15 min) — da configurare al deploy
 
 ### 7. Vista timeline / calendario
 **Complessita: Alta** | File: 3+ | JS significativo
@@ -430,6 +435,8 @@ Obiettivo: 5 tocchi in 5 secondi per registrare una prenotazione telefonica.
 
 ## Bug Noti / Da Verificare in Produzione
 Vedi `check-live.md` per la checklist completa. Punti principali:
+- [x] Slot orfani: fallback gruppo "Altro" in `getGroupedSlots()` per slot fuori da categorie pasto
+- [x] startHour dinamico: tabella Orari e Coperti parte dall'ora minima tra categorie attive e slot esistenti (floor 9)
 - [ ] Calendario mobile dashboard home: verificare su device reale (≥375px)
 - [ ] Calendario mobile pagina prenotazioni: tagliato su mobile (mancano sab/dom)
 - [ ] CSP: verificare che non ci siano policy server-level che sovrascrivano .htaccess

@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Gestione Tavoli</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-light: #e6f4ed;
+            --bg: #f5f6f8;
+            --card-bg: #fff;
+            --text: #1a1d23;
+            --muted: #6c757d;
+            --border: #e9ecef;
+            --radius: 12px;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #0dcaf0;
+            --success: #198754;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h2 { font-size: 1.35rem; font-weight: 700; margin-bottom: .25rem; }
+        .subtitle { font-size: .82rem; color: var(--muted); margin-bottom: 1rem; }
+
+        /* ============================================================
+           SETTINGS TABS (same as existing settings pages)
+           ============================================================ */
+        .settings-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+        }
+        .settings-tab {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-decoration: none;
+            transition: all .15s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .settings-tab:hover { background: #f0f1f3; color: var(--text); }
+        .settings-tab.active { background: var(--brand); color: #fff; }
+
+        /* ============================================================
+           PAGE LAYOUT: two columns (floor plan + table list)
+           ============================================================ */
+        .tm-layout {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 16px;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .tm-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ============================================================
+           FLOOR PLAN (left side)
+           ============================================================ */
+        .floor-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 1px 6px rgba(0,0,0,.06);
+            overflow: hidden;
+        }
+
+        .floor-header {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            gap: 10px;
+        }
+        .floor-title {
+            font-size: .85rem;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        /* Room selector tabs */
+        .room-tabs {
+            display: flex;
+            gap: 4px;
+        }
+        .room-tab {
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: .7rem;
+            font-weight: 600;
+            background: #f0f1f3;
+            color: var(--muted);
+            border: none;
+            cursor: pointer;
+            transition: all .15s;
+        }
+        .room-tab.active { background: var(--brand); color: #fff; }
+        .room-tab-add {
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: .7rem;
+            background: transparent;
+            color: var(--muted);
+            border: 1px dashed #ccc;
+            cursor: pointer;
+        }
+
+        /* Floor plan toolbar */
+        .floor-toolbar {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            background: #fafbfc;
+            border-bottom: 1px solid var(--border);
+            gap: 8px;
+        }
+        .ft-btn {
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: .7rem;
+            font-weight: 600;
+            background: var(--card-bg);
+            color: var(--muted);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all .15s;
+        }
+        .ft-btn:hover { border-color: var(--brand); color: var(--brand); }
+        .ft-btn.active { background: var(--brand-light); color: var(--brand); border-color: var(--brand); }
+        .ft-sep { width: 1px; height: 20px; background: var(--border); }
+        .ft-zoom {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: auto;
+        }
+        .ft-zoom-btn {
+            width: 26px; height: 26px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: .75rem;
+            color: var(--muted);
+        }
+        .ft-zoom-label { font-size: .68rem; color: var(--muted); font-weight: 600; min-width: 30px; text-align: center; }
+
+        /* The floor plan canvas */
+        .floor-canvas {
+            position: relative;
+            width: 100%;
+            height: 520px;
+            background:
+                radial-gradient(circle, #e9ecef 1px, transparent 1px);
+            background-size: 20px 20px;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        /* Table elements on the floor */
+        .table-el {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            transition: box-shadow .15s;
+            user-select: none;
+        }
+        .table-el:hover { z-index: 10; }
+        .table-el.selected {
+            z-index: 20;
+        }
+
+        /* Table shape */
+        .table-shape {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .72rem;
+            font-weight: 700;
+            color: #fff;
+            position: relative;
+            transition: transform .15s;
+        }
+        .table-el:hover .table-shape { transform: scale(1.05); }
+        .table-el.selected .table-shape {
+            box-shadow: 0 0 0 3px var(--brand), 0 0 0 5px rgba(0,132,74,.2);
+        }
+
+        /* Round table */
+        .table-shape.round {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+        }
+
+        /* Square table */
+        .table-shape.square {
+            width: 64px; height: 64px;
+            border-radius: 10px;
+        }
+
+        /* Rectangular table (long) */
+        .table-shape.rect {
+            width: 100px; height: 52px;
+            border-radius: 10px;
+        }
+
+        /* Large table */
+        .table-shape.large {
+            width: 120px; height: 56px;
+            border-radius: 12px;
+        }
+
+        /* Table states */
+        .table-shape.free { background: var(--success); }
+        .table-shape.occupied { background: #0d6efd; }
+        .table-shape.reserved { background: var(--warning); color: #664d03; }
+        .table-shape.unavailable { background: #adb5bd; }
+
+        /* Table label */
+        .table-label {
+            margin-top: 4px;
+            font-size: .62rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-align: center;
+            white-space: nowrap;
+        }
+        .table-capacity {
+            font-size: .55rem;
+            color: #adb5bd;
+        }
+
+        /* Chairs around tables */
+        .chair {
+            position: absolute;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #d0d0d0;
+            border: 1.5px solid #bbb;
+        }
+
+        /* Occupied badge on table */
+        .table-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            background: var(--danger);
+            color: #fff;
+            font-size: .55rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--card-bg);
+        }
+
+        /* Reservation info tooltip on table */
+        .table-res-info {
+            position: absolute;
+            bottom: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: .68rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .15s;
+            z-index: 30;
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+        }
+        .table-res-info::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--text);
+        }
+        .table-el:hover .table-res-info { opacity: 1; }
+
+        /* Floor plan legend */
+        .floor-legend {
+            display: flex;
+            gap: 16px;
+            padding: 10px 16px;
+            border-top: 1px solid var(--border);
+            background: #fafbfc;
+        }
+        .fl-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: .68rem;
+            color: var(--muted);
+        }
+        .fl-dot {
+            width: 12px; height: 12px; border-radius: 4px;
+        }
+
+        /* Static elements (walls, bar, etc) */
+        .floor-wall {
+            position: absolute;
+            background: #dee2e6;
+            border-radius: 3px;
+        }
+        .floor-label-static {
+            position: absolute;
+            font-size: .6rem;
+            font-weight: 700;
+            color: #adb5bd;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+        .floor-door {
+            position: absolute;
+            width: 30px;
+            border-top: 3px dashed #adb5bd;
+        }
+
+        /* ============================================================
+           TABLE LIST (right side)
+           ============================================================ */
+        .tables-panel {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 1px 6px rgba(0,0,0,.06);
+            overflow: hidden;
+        }
+
+        .tp-header {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            gap: 8px;
+        }
+        .tp-title {
+            font-size: .85rem;
+            font-weight: 700;
+            flex: 1;
+        }
+        .tp-count {
+            font-size: .7rem;
+            color: var(--muted);
+            background: #f0f1f3;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .tp-add-btn {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: .72rem;
+            font-weight: 600;
+            background: var(--brand);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Stats bar */
+        .tp-stats {
+            display: flex;
+            padding: 10px 16px;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            background: #fafbfc;
+        }
+        .tp-stat {
+            text-align: center;
+            flex: 1;
+        }
+        .tp-stat-num {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .tp-stat-label {
+            font-size: .6rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .3px;
+            font-weight: 600;
+        }
+
+        /* Table list items */
+        .tp-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .tp-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            gap: 10px;
+            border-bottom: 1px solid #f5f6f8;
+            cursor: pointer;
+            transition: background .1s;
+        }
+        .tp-item:hover { background: #fafbfc; }
+        .tp-item.selected { background: var(--brand-light); }
+
+        .tp-item-shape {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .7rem;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .tp-item-shape.round { border-radius: 50%; }
+
+        .tp-item-info { flex: 1; min-width: 0; }
+        .tp-item-name {
+            font-size: .78rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tp-item-meta {
+            font-size: .65rem;
+            color: var(--muted);
+            display: flex;
+            gap: 8px;
+            margin-top: 1px;
+        }
+
+        .tp-item-status {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: .6rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .tp-item-status.free { background: #d1e7dd; color: #0a5c36; }
+        .tp-item-status.occupied { background: #cfe2ff; color: #084298; }
+        .tp-item-status.reserved { background: #fff3cd; color: #664d03; }
+
+        .tp-item-actions {
+            display: flex;
+            gap: 4px;
+        }
+        .tp-act {
+            width: 28px; height: 28px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: .7rem;
+            color: var(--muted);
+            transition: all .1s;
+        }
+        .tp-act:hover { border-color: var(--brand); color: var(--brand); }
+        .tp-act.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+        /* ============================================================
+           ADD/EDIT TABLE MODAL
+           ============================================================ */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .modal-box {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            width: 420px;
+            max-width: 95vw;
+            box-shadow: 0 8px 32px rgba(0,0,0,.15);
+            overflow: hidden;
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .modal-title {
+            font-size: .9rem;
+            font-weight: 700;
+            flex: 1;
+        }
+        .modal-close {
+            width: 28px; height: 28px;
+            border-radius: 6px;
+            border: none;
+            background: #f0f1f3;
+            cursor: pointer;
+            font-size: .8rem;
+            color: var(--muted);
+        }
+        .modal-body { padding: 20px; }
+
+        .form-group { margin-bottom: 14px; }
+        .form-label {
+            display: block;
+            font-size: .72rem;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: .82rem;
+            transition: border-color .15s;
+        }
+        .form-input:focus { outline: none; border-color: var(--brand); }
+
+        .form-row { display: flex; gap: 12px; }
+        .form-row .form-group { flex: 1; }
+
+        /* Shape selector */
+        .shape-selector {
+            display: flex;
+            gap: 8px;
+        }
+        .shape-opt {
+            width: 56px; height: 56px;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .15s;
+            gap: 3px;
+        }
+        .shape-opt:hover { border-color: var(--brand); }
+        .shape-opt.active { border-color: var(--brand); background: var(--brand-light); }
+        .shape-opt-icon {
+            width: 24px; height: 24px;
+            border-radius: 4px;
+            background: #d0d0d0;
+        }
+        .shape-opt-icon.round { border-radius: 50%; }
+        .shape-opt-icon.rect { width: 32px; height: 18px; }
+        .shape-opt-icon.large { width: 36px; height: 18px; }
+        .shape-opt-label {
+            font-size: .55rem;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            background: #fafbfc;
+        }
+        .btn-cancel {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: .78rem;
+            font-weight: 600;
+            background: var(--card-bg);
+            color: var(--muted);
+            border: 1px solid var(--border);
+            cursor: pointer;
+        }
+        .btn-save {
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: .78rem;
+            font-weight: 600;
+            background: var(--brand);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* ============================================================
+           ASSIGN TABLE PANEL (in reservation detail/create)
+           ============================================================ */
+        .assign-panel {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 1px 6px rgba(0,0,0,.06);
+            overflow: hidden;
+            margin-top: 24px;
+        }
+        .assign-header {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            gap: 8px;
+        }
+        .assign-title {
+            font-size: .85rem;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .assign-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            padding: 16px;
+        }
+        .assign-table {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 8px;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: all .15s;
+            gap: 4px;
+        }
+        .assign-table:hover { border-color: var(--brand); }
+        .assign-table.assigned {
+            border-color: var(--brand);
+            background: var(--brand-light);
+        }
+        .assign-table.unavail {
+            opacity: .4;
+            pointer-events: none;
+        }
+        .assign-table-shape {
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .68rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .assign-table-shape.round { border-radius: 50%; }
+        .assign-table-name {
+            font-size: .65rem;
+            font-weight: 600;
+        }
+        .assign-table-cap {
+            font-size: .55rem;
+            color: var(--muted);
+        }
+        .assign-check {
+            color: var(--brand);
+            font-size: .8rem;
+        }
+
+        /* ============================================================
+           DESIGN NOTES
+           ============================================================ */
+        .design-notes {
+            margin-top: 32px;
+            padding: 20px;
+            background: #fff3cd;
+            border: 1px solid #ffe082;
+            border-radius: var(--radius);
+            font-size: .8rem;
+            line-height: 1.6;
+        }
+        .design-notes h3 {
+            font-size: .9rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #664d03;
+        }
+        .design-notes ul { padding-left: 20px; }
+        .design-notes li { margin-bottom: 4px; }
+        .design-notes code {
+            background: rgba(0,0,0,.06);
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: .75rem;
+        }
+        .section-divider {
+            margin: 32px 0;
+            border: none;
+            border-top: 2px dashed #dee2e6;
+        }
+        .section-label {
+            font-size: .9rem;
+            font-weight: 700;
+            color: var(--brand);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Impostazioni</h2>
+<p class="subtitle">Configura il tuo ristorante</p>
+
+<!-- Settings tabs -->
+<div class="settings-tabs">
+    <a href="#" class="settings-tab"><i class="bi bi-gear"></i> Generali</a>
+    <a href="#" class="settings-tab"><i class="bi bi-clock"></i> Orari e Coperti</a>
+    <a href="#" class="settings-tab"><i class="bi bi-tags"></i> Categorie Pasto</a>
+    <a href="#" class="settings-tab active"><i class="bi bi-grid-3x3"></i> Tavoli</a>
+    <a href="#" class="settings-tab"><i class="bi bi-cash"></i> Caparra</a>
+    <a href="#" class="settings-tab"><i class="bi bi-globe"></i> Dominio</a>
+</div>
+
+<!-- ============================================================
+     SEZIONE 1: PAGINA SETTINGS > TAVOLI
+     Layout a due colonne: mappa sala + lista tavoli
+     ============================================================ -->
+<div class="section-label"><i class="bi bi-1-circle-fill"></i> Pagina Settings &gt; Tavoli (Impostazioni)</div>
+
+<div class="tm-layout">
+
+    <!-- LEFT: Floor Plan -->
+    <div class="floor-card">
+        <div class="floor-header">
+            <span class="floor-title"><i class="bi bi-grid-3x3 me-1"></i> Mappa Sala</span>
+            <div class="room-tabs">
+                <button class="room-tab active">Sala Principale</button>
+                <button class="room-tab">Terrazza</button>
+                <button class="room-tab-add"><i class="bi bi-plus"></i></button>
+            </div>
+        </div>
+
+        <div class="floor-toolbar">
+            <button class="ft-btn active"><i class="bi bi-cursor"></i> Seleziona</button>
+            <button class="ft-btn"><i class="bi bi-arrows-move"></i> Sposta</button>
+            <div class="ft-sep"></div>
+            <button class="ft-btn"><i class="bi bi-grid-3x3-gap"></i> Griglia</button>
+            <button class="ft-btn"><i class="bi bi-eye"></i> Stato Live</button>
+            <div class="ft-zoom">
+                <button class="ft-zoom-btn">-</button>
+                <span class="ft-zoom-label">100%</span>
+                <button class="ft-zoom-btn">+</button>
+            </div>
+        </div>
+
+        <div class="floor-canvas">
+            <!-- Walls -->
+            <div class="floor-wall" style="top:0; left:0; right:0; height:4px;"></div>
+            <div class="floor-wall" style="bottom:0; left:0; right:0; height:4px;"></div>
+            <div class="floor-wall" style="top:0; left:0; bottom:0; width:4px;"></div>
+            <div class="floor-wall" style="top:0; right:0; bottom:0; width:4px;"></div>
+
+            <!-- Door -->
+            <div class="floor-door" style="bottom:0; left:80px;"></div>
+            <div class="floor-label-static" style="bottom:10px; left:75px;">Ingresso</div>
+
+            <!-- Bar area -->
+            <div class="floor-wall" style="top:20px; right:20px; width:120px; height:40px; border-radius:6px; background:#e0e0e0;"></div>
+            <div class="floor-label-static" style="top:32px; right:45px;">Bar</div>
+
+            <!-- Cucina -->
+            <div class="floor-wall" style="top:20px; left:20px; width:100px; height:50px; border-radius:6px; background:#f0e6d3;"></div>
+            <div class="floor-label-static" style="top:38px; left:42px;">Cucina</div>
+
+            <!-- Tables -->
+            <!-- T1: Round, 4 seats, free -->
+            <div class="table-el" style="left:60px; top:140px;">
+                <div class="table-shape round free">T1</div>
+                <span class="table-label">Tavolo 1 <span class="table-capacity">(4)</span></span>
+            </div>
+
+            <!-- T2: Round, 2 seats, occupied -->
+            <div class="table-el" style="left:180px; top:120px;">
+                <div class="table-shape round occupied">T2
+                    <div class="table-badge">2</div>
+                </div>
+                <span class="table-label">Tavolo 2 <span class="table-capacity">(2)</span></span>
+                <div class="table-res-info">
+                    <div><strong>Rossi Marco</strong> &middot; 2 pers.</div>
+                    <div style="color:rgba(255,255,255,.6);font-size:.6rem;">12:30 - Arrivato</div>
+                </div>
+            </div>
+
+            <!-- T3: Square, 4 seats, reserved -->
+            <div class="table-el" style="left:310px; top:130px;">
+                <div class="table-shape square reserved">T3</div>
+                <span class="table-label">Tavolo 3 <span class="table-capacity">(4)</span></span>
+                <div class="table-res-info">
+                    <div><strong>Bianchi Laura</strong> &middot; 4 pers.</div>
+                    <div style="color:rgba(255,255,255,.6);font-size:.6rem;">13:00 - Confermata</div>
+                </div>
+            </div>
+
+            <!-- T4: Rect, 6 seats, free -->
+            <div class="table-el" style="left:440px; top:120px;">
+                <div class="table-shape rect free">T4</div>
+                <span class="table-label">Tavolo 4 <span class="table-capacity">(6)</span></span>
+            </div>
+
+            <!-- T5: Large, 8 seats, occupied -->
+            <div class="table-el" style="left:280px; top:260px;">
+                <div class="table-shape large occupied">T5
+                    <div class="table-badge">8</div>
+                </div>
+                <span class="table-label">Tavolo 5 <span class="table-capacity">(8)</span></span>
+                <div class="table-res-info">
+                    <div><strong>Verdi Giuseppe</strong> &middot; 8 pers.</div>
+                    <div style="color:rgba(255,255,255,.6);font-size:.6rem;">12:00 - Arrivato &middot; VIP</div>
+                </div>
+            </div>
+
+            <!-- T6: Round, 2 seats, free -->
+            <div class="table-el" style="left:60px; top:280px;">
+                <div class="table-shape round free">T6</div>
+                <span class="table-label">Tavolo 6 <span class="table-capacity">(2)</span></span>
+            </div>
+
+            <!-- T7: Square, 4 seats, unavailable -->
+            <div class="table-el" style="left:160px; top:290px;">
+                <div class="table-shape square unavailable">T7</div>
+                <span class="table-label" style="color:#ccc;">Tavolo 7 <span class="table-capacity">(4)</span></span>
+            </div>
+
+            <!-- T8: Rect, 6 seats, reserved -->
+            <div class="table-el" style="left:470px; top:280px;">
+                <div class="table-shape rect reserved">T8
+                    <div class="table-badge">5</div>
+                </div>
+                <span class="table-label">Tavolo 8 <span class="table-capacity">(6)</span></span>
+                <div class="table-res-info">
+                    <div><strong>Esposito Teresa</strong> &middot; 5 pers.</div>
+                    <div style="color:rgba(255,255,255,.6);font-size:.6rem;">13:30 - Confermata</div>
+                </div>
+            </div>
+
+            <!-- T9: Round, 2 seats, free -->
+            <div class="table-el selected" style="left:60px; top:410px;">
+                <div class="table-shape round free">T9</div>
+                <span class="table-label">Tavolo 9 <span class="table-capacity">(2)</span></span>
+            </div>
+
+            <!-- T10: Square, 4 seats, free -->
+            <div class="table-el" style="left:200px; top:420px;">
+                <div class="table-shape square free">T10</div>
+                <span class="table-label">Tavolo 10 <span class="table-capacity">(4)</span></span>
+            </div>
+
+        </div>
+
+        <div class="floor-legend">
+            <div class="fl-item"><div class="fl-dot" style="background:var(--success);"></div> Libero</div>
+            <div class="fl-item"><div class="fl-dot" style="background:#0d6efd;"></div> Occupato</div>
+            <div class="fl-item"><div class="fl-dot" style="background:var(--warning);"></div> Prenotato</div>
+            <div class="fl-item"><div class="fl-dot" style="background:#adb5bd;"></div> Non disponibile</div>
+            <span style="margin-left:auto;font-size:.62rem;color:#adb5bd;">Trascina i tavoli per posizionarli</span>
+        </div>
+    </div>
+
+    <!-- RIGHT: Table List -->
+    <div class="tables-panel">
+        <div class="tp-header">
+            <span class="tp-title">Tavoli</span>
+            <span class="tp-count">10</span>
+            <button class="tp-add-btn"><i class="bi bi-plus-lg"></i> Nuovo</button>
+        </div>
+
+        <div class="tp-stats">
+            <div class="tp-stat">
+                <div class="tp-stat-num" style="color:var(--success);">5</div>
+                <div class="tp-stat-label">Liberi</div>
+            </div>
+            <div class="tp-stat">
+                <div class="tp-stat-num" style="color:#0d6efd;">3</div>
+                <div class="tp-stat-label">Occupati</div>
+            </div>
+            <div class="tp-stat">
+                <div class="tp-stat-num" style="color:var(--warning);">2</div>
+                <div class="tp-stat-label">Prenotati</div>
+            </div>
+            <div class="tp-stat">
+                <div class="tp-stat-num">40</div>
+                <div class="tp-stat-label">Coperti tot.</div>
+            </div>
+        </div>
+
+        <div class="tp-list">
+            <div class="tp-item">
+                <div class="tp-item-shape free">T1</div>
+                <div class="tp-item-info">
+                    <div class="tp-item-name">Tavolo 1</div>
+                    <div class="tp-item-meta"><span><i class="bi bi-person-fill"></i> 4 posti</span> <span>Rotondo</span></div>
+                </div>
+                <span class="tp-item-status free">Libero</span>
+                <div class="tp-item-actions">
+                    <button class="tp-act"><i class="bi bi-pencil"></i></button>
+                    <button class="tp-act danger"><i class="bi bi-trash3"></i></button>
+                </div>
+            </div>
+
+            <div class="tp-item">
+                <div class="tp-item-shape round occupied">T2</div>
+                <div class="tp-item-info">
+                    <div class="tp-item-name">Tavolo 2 <span style="font-size:.6rem;color:#0d6efd;font-weight:400;">Rossi M.</span></div>
+                    <div class="tp-item-meta"><span><i class="bi bi-person-fill"></i> 2 posti</span> <span>Rotondo</span></div>
+                </div>
+                <span class="tp-item-status occupied">Occupato</span>
+                <div class="tp-item-actions">
+                    <button class="tp-act"><i class="bi bi-pencil"></i></button>
+                </div>
+            </div>
+
+            <div class="tp-item">
+                <div class="tp-item-shape reserved">T3</div>
+                <div class="tp-item-info">
+                    <div class="tp-item-name">Tavolo 3 <span style="font-size:.6rem;color:#b8860b;font-weight:400;">Bianchi L. 13:00</span></div>
+                    <div class="tp-item-meta"><span><i class="bi bi-person-fill"></i> 4 posti</span> <span>Quadrato</span></div>
+                </div>
+                <span class="tp-item-status reserved">Prenotato</span>
+                <div class="tp-item-actions">
+                    <button class="tp-act"><i class="bi bi-pencil"></i></button>
+                </div>
+            </div>
+
+            <div class="tp-item">
+                <div class="tp-item-shape free">T4</div>
+                <div class="tp-item-info">
+                    <div class="tp-item-name">Tavolo 4</div>
+                    <div class="tp-item-meta"><span><i class="bi bi-person-fill"></i> 6 posti</span> <span>Rettangolare</span></div>
+                </div>
+                <span class="tp-item-status free">Libero</span>
+                <div class="tp-item-actions">
+                    <button class="tp-act"><i class="bi bi-pencil"></i></button>
+                    <button class="tp-act danger"><i class="bi bi-trash3"></i></button>
+                </div>
+            </div>
+
+            <div class="tp-item">
+                <div class="tp-item-shape occupied" style="width:38px;border-radius:8px;">T5</div>
+                <div class="tp-item-info">
+                    <div class="tp-item-name">Tavolo 5 <span style="font-size:.6rem;color:#0d6efd;font-weight:400;">Verdi G. (VIP)</span></div>
+                    <div class="tp-item-meta"><span><i class="bi bi-person-fill"></i> 8 posti</span> <span>Grande</span></div>
+                </div>
+                <span class="tp-item-status occupied">Occupato</span>
+                <div class="tp-item-actions">
+                    <button class="tp-act"><i class="bi bi-pencil"></i></button>
+                </div>
+            </div>
+
+            <div class="tp-item" style="opacity:.5;">
+                <div class="tp-item-shape" style="background:#adb5bd;">T7</div>
+                <div class="tp-item-info">
+                    <div class="tp-item-name" style="color:#adb5bd;">Tavolo 7 <span style="font-size:.6rem;font-weight:400;">Disattivato</span></div>
+                    <div class="tp-item-meta"><span><i class="bi bi-person-fill"></i> 4 posti</span> <span>Quadrato</span></div>
+                </div>
+                <div class="tp-item-actions">
+                    <button class="tp-act"><i class="bi bi-pencil"></i></button>
+                    <button class="tp-act"><i class="bi bi-toggle-off"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ============================================================
+     SEZIONE 2: MODALE AGGIUNGI/MODIFICA TAVOLO
+     ============================================================ -->
+<hr class="section-divider">
+<div class="section-label"><i class="bi bi-2-circle-fill"></i> Modale Aggiungi / Modifica Tavolo</div>
+
+<div style="position:relative; height: 480px; background:rgba(0,0,0,.1); border-radius:12px; display:flex; align-items:center; justify-content:center;">
+    <div class="modal-box" style="position:relative;">
+        <div class="modal-header">
+            <span class="modal-title"><i class="bi bi-plus-circle me-1"></i> Nuovo Tavolo</span>
+            <button class="modal-close"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Nome tavolo</label>
+                <input type="text" class="form-input" value="Tavolo 11" placeholder="es. Tavolo 11, T11, Finestra 1">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Posti (capacita)</label>
+                    <input type="number" class="form-input" value="4" min="1" max="20">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Sala</label>
+                    <select class="form-input">
+                        <option>Sala Principale</option>
+                        <option>Terrazza</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Forma</label>
+                <div class="shape-selector">
+                    <div class="shape-opt active">
+                        <div class="shape-opt-icon round" style="background:var(--brand);"></div>
+                        <span class="shape-opt-label">Rotondo</span>
+                    </div>
+                    <div class="shape-opt">
+                        <div class="shape-opt-icon"></div>
+                        <span class="shape-opt-label">Quadrato</span>
+                    </div>
+                    <div class="shape-opt">
+                        <div class="shape-opt-icon rect"></div>
+                        <span class="shape-opt-label">Rettang.</span>
+                    </div>
+                    <div class="shape-opt">
+                        <div class="shape-opt-icon large"></div>
+                        <span class="shape-opt-label">Grande</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Posti min. (opzionale)</label>
+                    <input type="number" class="form-input" value="2" min="1">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Stato</label>
+                    <select class="form-input">
+                        <option>Attivo</option>
+                        <option>Disattivato</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel">Annulla</button>
+            <button class="btn-save"><i class="bi bi-check-circle me-1"></i> Salva Tavolo</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     SEZIONE 3: ASSEGNAZIONE TAVOLO (nella pagina prenotazione)
+     ============================================================ -->
+<hr class="section-divider">
+<div class="section-label"><i class="bi bi-3-circle-fill"></i> Assegnazione Tavolo (in Dettaglio/Crea Prenotazione)</div>
+
+<div class="assign-panel" style="max-width:700px;">
+    <div class="assign-header">
+        <i class="bi bi-grid-3x3" style="color:var(--brand);"></i>
+        <span class="assign-title">Assegna Tavolo</span>
+        <span style="font-size:.7rem;color:var(--muted);">4 persone &middot; 13:00 Martedi 17/3</span>
+    </div>
+    <div class="assign-grid">
+        <div class="assign-table assigned">
+            <div class="assign-table-shape free" style="background:var(--success);">T1</div>
+            <span class="assign-table-name">Tavolo 1</span>
+            <span class="assign-table-cap">4 posti</span>
+            <span class="assign-check"><i class="bi bi-check-circle-fill"></i></span>
+        </div>
+        <div class="assign-table unavail">
+            <div class="assign-table-shape round" style="background:#adb5bd;">T2</div>
+            <span class="assign-table-name">Tavolo 2</span>
+            <span class="assign-table-cap">2 posti</span>
+        </div>
+        <div class="assign-table unavail">
+            <div class="assign-table-shape" style="background:#adb5bd;">T3</div>
+            <span class="assign-table-name">Tavolo 3</span>
+            <span class="assign-table-cap">4 posti</span>
+        </div>
+        <div class="assign-table">
+            <div class="assign-table-shape" style="background:var(--success);">T4</div>
+            <span class="assign-table-name">Tavolo 4</span>
+            <span class="assign-table-cap">6 posti</span>
+        </div>
+        <div class="assign-table unavail">
+            <div class="assign-table-shape" style="background:#adb5bd;">T5</div>
+            <span class="assign-table-name">Tavolo 5</span>
+            <span class="assign-table-cap">8 posti</span>
+        </div>
+        <div class="assign-table">
+            <div class="assign-table-shape round" style="background:var(--success);">T6</div>
+            <span class="assign-table-name">Tavolo 6</span>
+            <span class="assign-table-cap">2 posti</span>
+        </div>
+        <div class="assign-table unavail" style="opacity:.3;">
+            <div class="assign-table-shape" style="background:#ccc;">T7</div>
+            <span class="assign-table-name" style="color:#ccc;">Tavolo 7</span>
+            <span class="assign-table-cap">Disattivato</span>
+        </div>
+        <div class="assign-table">
+            <div class="assign-table-shape" style="background:var(--success);">T8</div>
+            <span class="assign-table-name">Tavolo 8</span>
+            <span class="assign-table-cap">6 posti</span>
+        </div>
+        <div class="assign-table">
+            <div class="assign-table-shape round" style="background:var(--success);">T9</div>
+            <span class="assign-table-name">Tavolo 9</span>
+            <span class="assign-table-cap">2 posti</span>
+        </div>
+        <div class="assign-table">
+            <div class="assign-table-shape" style="background:var(--success);">T10</div>
+            <span class="assign-table-name">Tavolo 10</span>
+            <span class="assign-table-cap">4 posti</span>
+        </div>
+    </div>
+    <div style="padding:10px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;">
+        <span style="font-size:.68rem;color:var(--muted);flex:1;">
+            <i class="bi bi-info-circle me-1"></i>
+            I tavoli grigi sono gia occupati/prenotati per questo orario. Quelli verdi sono disponibili.
+        </span>
+        <button class="btn-save" style="padding:6px 14px;font-size:.72rem;"><i class="bi bi-check me-1"></i> Conferma</button>
+    </div>
+</div>
+
+<!-- ============================================================
+     DESIGN NOTES
+     ============================================================ -->
+<div class="design-notes">
+    <h3><i class="bi bi-lightbulb me-1"></i> Note di Design / Decisioni Implementative</h3>
+    <ul>
+        <li><strong>Database:</strong>
+            <ul>
+                <li><code>tables</code>: id, tenant_id, name, capacity, min_capacity, shape (round/square/rect/large), room, position_x, position_y, sort_order, is_active</li>
+                <li><code>reservation_tables</code>: reservation_id, table_id (tabella ponte, consente multi-tavolo per gruppi grandi)</li>
+                <li><code>rooms</code> (opzionale, puo essere un semplice campo VARCHAR su tables): id, tenant_id, name, sort_order</li>
+            </ul>
+        </li>
+        <li><strong>Pagina Settings > Tavoli:</strong> nuova tab nelle impostazioni ristorante. Due pannelli: mappa visuale (sinistra) + lista tavoli (destra)</li>
+        <li><strong>Mappa sala:</strong> canvas con griglia a punti. I tavoli si trascinano (drag & drop con JS vanilla, <code>mousedown/mousemove/mouseup</code>). Le posizioni (x,y) si salvano nel DB. Lo zoom e opzionale (v2)</li>
+        <li><strong>Forme tavolo:</strong> 4 forme base (rotondo, quadrato, rettangolare, grande). La forma determina il CSS (<code>border-radius</code>, <code>width/height</code>). Nessuna libreria SVG necessaria</li>
+        <li><strong>Sale multiple:</strong> tabs per passare da una sala all'altra (es. "Sala Principale", "Terrazza", "Privata"). Ogni sala ha la sua mappa indipendente. Implementazione: campo <code>room</code> su tabella <code>tables</code></li>
+        <li><strong>Stato live:</strong> pulsante "Stato Live" nella toolbar mostra lo stato corrente dei tavoli (libero/occupato/prenotato) basato sulle prenotazioni di oggi + <code>table_duration</code>. Senza polling automatico, refresh manuale</li>
+        <li><strong>Modale nuovo tavolo:</strong> form semplice con nome, capacita, forma, sala. Il tavolo nuovo appare al centro della mappa, poi si trascina nella posizione corretta</li>
+        <li><strong>Assegnazione tavolo:</strong> sezione nella pagina dettaglio prenotazione (e opzionalmente nel form di creazione). Griglia di tavoli con disponibilita per quell'orario. I tavoli inadeguati (capacita insufficiente o gia occupati) sono grigi e non cliccabili</li>
+        <li><strong>Auto-assegnazione (v2):</strong> algoritmo semplice che assegna il tavolo piu piccolo disponibile che puo ospitare il party_size. Configurabile on/off dal ristoratore</li>
+        <li><strong>Nessuna libreria esterna:</strong> drag & drop con JS vanilla. Il canvas usa <code>position: relative</code> + <code>position: absolute</code> per i tavoli. Niente Canvas API o SVG</li>
+        <li><strong>Mobile:</strong> su mobile la mappa e in sola visualizzazione (no drag). La lista tavoli appare sotto. L'assegnazione funziona normalmente (griglia touch-friendly)</li>
+        <li><strong>Ordine implementazione consigliato:</strong>
+            <ol>
+                <li>Migrazione DB (tables + reservation_tables)</li>
+                <li>Model Table + CRUD base (senza mappa)</li>
+                <li>Pagina settings con lista tavoli (CRUD funzionante)</li>
+                <li>Mappa sala statica (posizionamento, no drag)</li>
+                <li>Drag & drop per posizionamento</li>
+                <li>Assegnazione tavolo nella prenotazione</li>
+                <li>Stato live sulla mappa</li>
+            </ol>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>

@@ -1,22 +1,49 @@
 <?php
 $isToday = ($date === date('Y-m-d'));
 $DAYS_IT = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+$MONTHS_IT = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 
-// Meal categorization helper
-function categorizeMeal(string $time): string {
-    $h = (int)substr($time, 0, 2);
-    return ($h < 16) ? 'pranzo' : 'cena';
-}
+// Time-based greeting
+$hour = (int)date('H');
+if ($hour < 13) $greeting = 'Buongiorno';
+elseif ($hour < 18) $greeting = 'Buon pomeriggio';
+else $greeting = 'Buonasera';
 
-// Group reservations by meal
+// Format selected date
+$dateObj = new DateTime($date);
+$dayName = $DAYS_IT[(int)$dateObj->format('w')];
+$formattedDate = $dayName . ' ' . $dateObj->format('d') . ' ' . $MONTHS_IT[(int)$dateObj->format('n') - 1] . ' ' . $dateObj->format('Y');
+
+// Meal categorization
 $byMeal = ['pranzo' => [], 'cena' => []];
 $mealCovers = ['pranzo' => 0, 'cena' => 0];
 foreach ($reservations as $r) {
-    $meal = categorizeMeal($r['reservation_time']);
+    $meal = ((int)substr($r['reservation_time'], 0, 2) < 16) ? 'pranzo' : 'cena';
     $byMeal[$meal][] = $r;
     $mealCovers[$meal] += (int)$r['party_size'];
 }
+
+// Trend calculations
+$coversDiff = (int)$stats['covers'] - (int)$lastWeekStats['covers'];
+$confirmedDiff = (int)$stats['confirmed'] - (int)$lastWeekStats['confirmed'];
+
+// Source labels & colors
+$sourceLabels = ['widget' => 'Widget online', 'dashboard' => 'Dashboard', 'phone' => 'Telefono', 'walkin' => 'Walk-in'];
+$sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' => '#0d6efd', 'walkin' => '#fd7e14'];
 ?>
+
+<!-- Header with greeting -->
+<div class="dh-header">
+    <div class="dh-greeting">
+        <h1><?= e($greeting) ?>, <?= e($userName) ?></h1>
+        <p><?= e($tenantName) ?> &middot; <?= $formattedDate ?></p>
+    </div>
+    <div class="dh-actions">
+        <a href="<?= url('dashboard/reservations/create') ?>" class="btn btn-brand-solid">
+            <i class="bi bi-plus-lg"></i> Nuova Prenotazione
+        </a>
+    </div>
+</div>
 
 <!-- Date strip -->
 <div class="date-strip" id="home-date-strip">
@@ -38,7 +65,6 @@ foreach ($reservations as $r) {
             <span class="chip-label">Altra data</span>
             <span class="chip-sub" id="home-chip-other"></span>
         </a>
-        <!-- Mini Calendar Dropdown -->
         <div class="home-cal-dropdown" id="home-cal-dropdown" style="display:none;">
             <div class="dr-cal-header">
                 <button type="button" class="dr-cal-nav" id="home-cal-prev"><i class="bi bi-chevron-left"></i></button>
@@ -46,12 +72,8 @@ foreach ($reservations as $r) {
                 <button type="button" class="dr-cal-nav" id="home-cal-next"><i class="bi bi-chevron-right"></i></button>
             </div>
             <div class="dr-cal-days-header">
-                <div class="dr-cal-day-name">lun</div>
-                <div class="dr-cal-day-name">mar</div>
-                <div class="dr-cal-day-name">mer</div>
-                <div class="dr-cal-day-name">gio</div>
-                <div class="dr-cal-day-name">ven</div>
-                <div class="dr-cal-day-name">sab</div>
+                <div class="dr-cal-day-name">lun</div><div class="dr-cal-day-name">mar</div><div class="dr-cal-day-name">mer</div>
+                <div class="dr-cal-day-name">gio</div><div class="dr-cal-day-name">ven</div><div class="dr-cal-day-name">sab</div>
                 <div class="dr-cal-day-name">dom</div>
             </div>
             <div class="dr-cal-grid" id="home-cal-grid"></div>
@@ -59,106 +81,230 @@ foreach ($reservations as $r) {
     </div>
 </div>
 
-<!-- Capacity banner -->
-<div class="capacity-banner">
-    <div class="cap-stats">
-        <div class="cap-item">
-            <div class="cap-dot" style="background:#0d6efd;"></div>
-            <div>
-                <div class="cap-num" style="color:#0d6efd;"><?= (int)$stats['covers'] ?></div>
-                <div class="cap-label">Coperti</div>
+<!-- Stat cards -->
+<div class="dh-stat-cards">
+    <div class="dh-stat-card">
+        <div class="dh-stat-icon blue"><i class="bi bi-people-fill"></i></div>
+        <div>
+            <div class="dh-stat-value"><?= (int)$stats['covers'] ?></div>
+            <div class="dh-stat-label">Coperti totali</div>
+            <?php if ($coversDiff !== 0): ?>
+            <div class="dh-stat-trend <?= $coversDiff > 0 ? 'up' : 'down' ?>">
+                <i class="bi bi-arrow-<?= $coversDiff > 0 ? 'up' : 'down' ?>"></i>
+                <?= ($coversDiff > 0 ? '+' : '') . $coversDiff ?> vs sett. scorsa
             </div>
-        </div>
-        <div class="cap-divider"></div>
-        <div class="cap-item">
-            <div class="cap-dot" style="background:#198754;"></div>
-            <div>
-                <div class="cap-num" style="color:#198754;"><?= (int)$stats['confirmed'] ?></div>
-                <div class="cap-label">Confermate</div>
-            </div>
-        </div>
-        <div class="cap-divider"></div>
-        <div class="cap-item">
-            <div class="cap-dot" style="background:#ffc107;"></div>
-            <div>
-                <div class="cap-num" style="color:#ffc107;"><?= (int)$stats['pending'] ?></div>
-                <div class="cap-label">In Attesa</div>
-            </div>
-        </div>
-        <div class="cap-divider"></div>
-        <div class="cap-item">
-            <div class="cap-dot" style="background:#0dcaf0;"></div>
-            <div>
-                <div class="cap-num" style="color:#0dcaf0;"><?= (int)$stats['total'] ?></div>
-                <div class="cap-label">Totale</div>
-            </div>
+            <?php endif; ?>
         </div>
     </div>
-    <?php if ((int)$stats['covers'] > 0): ?>
-    <div class="cap-divider"></div>
-    <div class="cap-bar-wrap">
-        <div class="cap-bar-header">
-            <span class="cap-bar-title"><i class="bi bi-pie-chart me-1"></i>Coperti</span>
-            <span class="cap-bar-pct"><?= (int)$stats['covers'] ?> previsti</span>
-        </div>
-        <div class="cap-bar">
-            <div class="cap-bar-fill" style="width: <?= min(100, (int)$stats['covers']) ?>%;"></div>
+    <div class="dh-stat-card">
+        <div class="dh-stat-icon green"><i class="bi bi-check-circle-fill"></i></div>
+        <div>
+            <div class="dh-stat-value"><?= (int)$stats['confirmed'] ?></div>
+            <div class="dh-stat-label">Confermate</div>
+            <?php if ($confirmedDiff !== 0): ?>
+            <div class="dh-stat-trend <?= $confirmedDiff > 0 ? 'up' : 'down' ?>">
+                <i class="bi bi-arrow-<?= $confirmedDiff > 0 ? 'up' : 'down' ?>"></i>
+                <?= ($confirmedDiff > 0 ? '+' : '') . $confirmedDiff ?>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
-    <?php endif; ?>
+    <div class="dh-stat-card">
+        <div class="dh-stat-icon orange"><i class="bi bi-clock-fill"></i></div>
+        <div>
+            <div class="dh-stat-value"><?= (int)$stats['pending'] ?></div>
+            <div class="dh-stat-label">In attesa</div>
+        </div>
+    </div>
+    <div class="dh-stat-card">
+        <div class="dh-stat-icon cyan"><i class="bi bi-person-check-fill"></i></div>
+        <div>
+            <div class="dh-stat-value"><?= (int)$stats['arrived'] ?></div>
+            <div class="dh-stat-label">Arrivati</div>
+        </div>
+    </div>
+    <div class="dh-stat-card">
+        <div class="dh-stat-icon red"><i class="bi bi-person-x-fill"></i></div>
+        <div>
+            <div class="dh-stat-value"><?= (int)$stats['noshow'] ?></div>
+            <div class="dh-stat-label">No-show</div>
+        </div>
+    </div>
 </div>
 
 <!-- Main grid -->
 <div class="dash-grid">
 
-    <!-- Left: Reservations -->
+    <!-- LEFT COLUMN -->
     <div>
+
+        <!-- Prossimi in arrivo -->
+        <?php if ($isToday && !empty($nextArrivals)): ?>
         <div class="card">
             <div class="card-header">
-                <h6>Prenotazioni <?= $isToday ? 'di oggi' : 'del ' . format_date($date, 'd/m/Y') ?></h6>
+                <h6><i class="bi bi-clock-history me-1"></i> Prossimi in arrivo</h6>
+                <span style="font-size:.72rem;color:var(--gray-600);">Ordine cronologico</span>
+            </div>
+            <div class="dh-next-list">
+                <?php foreach ($nextArrivals as $arr):
+                    $arrHour = (int)substr($arr['reservation_time'], 0, 2);
+                    $isEvening = ($arrHour >= 18);
+                ?>
+                <a href="<?= url("dashboard/reservations/{$arr['id']}") ?>" class="dh-next-item<?= $isEvening ? ' dh-next-evening' : '' ?>">
+                    <div class="dh-next-time"><?= format_time($arr['reservation_time']) ?></div>
+                    <div class="dh-next-info">
+                        <div class="dh-next-name"><?= e($arr['first_name'] . ' ' . $arr['last_name']) ?></div>
+                        <div class="dh-next-meta"><i class="bi bi-telephone me-1"></i><?= e($arr['phone']) ?></div>
+                    </div>
+                    <div class="dh-next-pax"><i class="bi bi-people-fill"></i> <?= (int)$arr['party_size'] ?></div>
+                    <div class="dh-next-countdown" data-time="<?= e($arr['reservation_time']) ?>">
+                        <?php if ($isEvening): ?>
+                            <i class="bi bi-moon me-1"></i>stasera
+                        <?php else: ?>
+                            <i class="bi bi-hourglass-split me-1"></i>...
+                        <?php endif; ?>
+                    </div>
+                </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Riepilogo servizi (Pranzo/Cena con capienza) -->
+        <div class="card">
+            <div class="card-header">
+                <h6><i class="bi bi-bar-chart me-1"></i> Riepilogo servizi</h6>
                 <a href="<?= url('dashboard/reservations?date=' . $date) ?>" class="btn btn-sm btn-brand-outline" style="font-size:.78rem;">
                     Vedi tutte <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
-
-            <?php if (empty($reservations)): ?>
-                <div class="text-center text-muted py-4">
-                    <i class="bi bi-calendar-x" style="font-size:2rem;display:block;margin-bottom:.5rem;color:#dee2e6;"></i>
-                    Nessuna prenotazione per questa data.
-                </div>
-            <?php else: ?>
-                <?php foreach (['pranzo' => ['bi-sun', 'Pranzo'], 'cena' => ['bi-moon-stars', 'Cena']] as $mealKey => [$mealIcon, $mealName]): ?>
-                    <?php if (!empty($byMeal[$mealKey])): ?>
-                    <div class="meal-section">
-                        <div class="meal-label">
-                            <i class="bi <?= $mealIcon ?>"></i> <?= $mealName ?>
-                            <span class="meal-count"><?= count($byMeal[$mealKey]) ?> prenotazioni &middot; <?= $mealCovers[$mealKey] ?> coperti</span>
+            <div class="dh-meal-split">
+                <?php foreach (['pranzo' => ['bi-sun', 'Pranzo'], 'cena' => ['bi-moon-stars', 'Cena']] as $mealKey => [$mealIcon, $mealName]):
+                    $cap = $mealCapacity[$mealKey];
+                    $booked = $cap['booked'];
+                    $maxCap = $cap['capacity'];
+                    $count = $cap['count'];
+                    $pct = $maxCap > 0 ? round(($booked / $maxCap) * 100) : 0;
+                    $barClass = 'ok';
+                    if ($pct > 100) $barClass = 'over';
+                    elseif ($pct > 80) $barClass = 'warn';
+                    $available = $maxCap - $booked;
+                ?>
+                <div class="dh-meal-half">
+                    <div class="dh-meal-title"><i class="bi <?= $mealIcon ?>"></i> <?= $mealName ?></div>
+                    <?php if ($maxCap > 0): ?>
+                        <div><span class="dh-meal-big"><?= $booked ?></span> <span class="dh-meal-cap">/ <?= $maxCap ?></span></div>
+                        <div class="dh-meal-sub">coperti prenotati &middot; <?= $count ?> prenotazioni</div>
+                        <div class="dh-cap-bar"><div class="dh-cap-fill <?= $barClass ?>" style="width:<?= min(100, $pct) ?>%;"></div></div>
+                        <div class="dh-cap-info">
+                            <?php if ($available >= 0): ?>
+                                <span class="dh-cap-text"><strong><?= $available ?></strong> coperti disponibili</span>
+                            <?php else: ?>
+                                <span class="dh-overbooking-badge"><i class="bi bi-exclamation-triangle-fill"></i> <?= $available ?> overbooking</span>
+                            <?php endif; ?>
+                            <span class="dh-cap-text<?= $pct > 100 ? ' dh-cap-over' : '' ?>"><?= $pct ?>%</span>
                         </div>
-                        <?php foreach ($byMeal[$mealKey] as $r): ?>
-                        <div class="res-row" data-url="<?= url("dashboard/reservations/{$r['id']}") ?>">
-                            <div class="res-time"><?= format_time($r['reservation_time']) ?></div>
-                            <div class="status-dot <?= e($r['status']) ?>" title="<?= status_label($r['status']) ?>"></div>
-                            <div class="res-info">
-                                <div class="res-name"><?= e($r['first_name'] . ' ' . $r['last_name']) ?></div>
-                                <div class="res-meta">
-                                    <i class="bi bi-telephone me-1"></i>
-                                    <a href="tel:<?= e($r['phone']) ?>" style="color:inherit;text-decoration:none;"><?= e($r['phone']) ?></a>
-                                </div>
-                            </div>
-                            <div class="res-right">
-                                <span class="res-pax"><i class="bi bi-people-fill me-1"></i><?= (int)$r['party_size'] ?></span>
-                                <i class="bi bi-chevron-right text-muted" style="font-size:.75rem;"></i>
-                            </div>
+                    <?php else: ?>
+                        <div class="dh-meal-sub" style="margin-top:8px;">Nessuno slot configurato</div>
+                    <?php endif; ?>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <!-- Confronto settimana -->
+        <?php
+        $thisCovers = (int)$stats['covers'];
+        $lastCovers = (int)$lastWeekStats['covers'];
+        $maxBar = max($thisCovers, $lastCovers, 1);
+        $weekDiff = $lastCovers > 0 ? round((($thisCovers - $lastCovers) / $lastCovers) * 100) : ($thisCovers > 0 ? 100 : 0);
+        ?>
+        <div class="card">
+            <div class="card-header">
+                <h6><i class="bi bi-graph-up me-1"></i> Confronto settimana</h6>
+                <span style="font-size:.72rem;color:var(--gray-600);">vs <?= strtolower($DAYS_IT[(int)date('w', strtotime($lastWeekDate))]) ?> scorso</span>
+            </div>
+            <div class="dh-week-compare">
+                <div class="dh-wc-row">
+                    <div class="dh-wc-label">Sett. scorsa</div>
+                    <div class="dh-wc-bar-wrap"><div class="dh-wc-bar" style="width:<?= $maxBar > 0 ? round(($lastCovers/$maxBar)*100) : 0 ?>%;background:var(--gray-500);"></div></div>
+                    <div class="dh-wc-num"><?= $lastCovers ?></div>
+                </div>
+                <div class="dh-wc-row">
+                    <div class="dh-wc-label">Questa sett.</div>
+                    <div class="dh-wc-bar-wrap"><div class="dh-wc-bar" style="width:<?= $maxBar > 0 ? round(($thisCovers/$maxBar)*100) : 0 ?>%;background:var(--brand);"></div></div>
+                    <div class="dh-wc-num" style="color:var(--brand);"><?= $thisCovers ?></div>
+                </div>
+                <?php if ($weekDiff !== 0): ?>
+                <div style="text-align:center;margin-top:8px;">
+                    <span style="font-size:.85rem;font-weight:700;color:<?= $weekDiff > 0 ? 'var(--brand)' : 'var(--red)' ?>;">
+                        <i class="bi bi-arrow-<?= $weekDiff > 0 ? 'up' : 'down' ?>"></i> <?= ($weekDiff > 0 ? '+' : '') . $weekDiff ?>%
+                    </span>
+                    <span style="font-size:.72rem;color:var(--gray-600);margin-left:6px;">rispetto alla settimana precedente</span>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- No-show + Fonte (2 colonne) -->
+        <div class="dh-two-col">
+            <!-- No-show rate -->
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="bi bi-person-x me-1"></i> No-show rate</h6>
+                    <span style="font-size:.68rem;color:var(--gray-600);">ultimi 30 gg</span>
+                </div>
+                <div class="dh-noshow-wrap">
+                    <?php
+                    $nsRate = $noshow['rate'];
+                    $nsClass = 'ok';
+                    if ($nsRate >= 15) $nsClass = 'bad';
+                    elseif ($nsRate >= 5) $nsClass = 'warn';
+                    ?>
+                    <div class="dh-noshow-header">
+                        <div class="dh-noshow-pct <?= $nsClass ?>"><?= $nsRate ?>%</div>
+                        <div class="dh-noshow-label"><?= $noshow['noshow'] ?> su <?= $noshow['total'] ?> prenotazioni</div>
+                    </div>
+                    <div class="dh-noshow-bar">
+                        <div class="dh-noshow-fill <?= $nsClass ?>" style="width:<?= min(100, $nsRate) ?>%;"></div>
+                    </div>
+                    <div class="dh-noshow-detail">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Sotto il 5% = ottimo. Media settore: 15-20%.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fonte prenotazioni -->
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="bi bi-pie-chart me-1"></i> Fonte</h6>
+                    <span style="font-size:.68rem;color:var(--gray-600);">ultimi 30 gg</span>
+                </div>
+                <div class="dh-source-list">
+                    <?php if (empty($sources['items'])): ?>
+                        <div class="text-center text-muted py-3" style="font-size:.85rem;">Nessun dato disponibile.</div>
+                    <?php else: ?>
+                        <?php foreach ($sources['items'] as $src):
+                            $srcLabel = $sourceLabels[$src['source']] ?? ucfirst($src['source']);
+                            $srcColor = $sourceColors[$src['source']] ?? 'var(--gray-500)';
+                        ?>
+                        <div class="dh-source-row">
+                            <div class="dh-source-dot" style="background:<?= $srcColor ?>;"></div>
+                            <div class="dh-source-name"><?= e($srcLabel) ?></div>
+                            <div class="dh-source-bar-wrap"><div class="dh-source-bar" style="width:<?= $src['pct'] ?>%;background:<?= $srcColor ?>;"></div></div>
+                            <div class="dh-source-num"><?= $src['count'] ?></div>
+                            <div class="dh-source-pct"><?= $src['pct'] ?>%</div>
                         </div>
                         <?php endforeach; ?>
-                    </div>
                     <?php endif; ?>
-                <?php endforeach; ?>
-            <?php endif; ?>
+                </div>
+            </div>
         </div>
+
     </div>
 
-    <!-- Right sidebar -->
+    <!-- RIGHT SIDEBAR -->
     <div class="side-panel">
 
         <!-- Mini calendar -->
@@ -192,7 +338,7 @@ foreach ($reservations as $r) {
                     <a href="<?= url('dashboard?date=' . $u['reservation_date']) ?>" class="upcoming-row">
                         <span class="upcoming-day"><?= $dayLabel ?></span>
                         <div class="upcoming-badges">
-                            <span class="badge" style="background:var(--brand);"><?= (int)$u['count'] ?> pren.</span>
+                            <span class="badge" style="background:var(--brand-light);color:var(--brand);"><?= (int)$u['count'] ?> pren.</span>
                             <span class="badge bg-light text-dark border"><?= (int)$u['covers'] ?> cop.</span>
                         </div>
                     </a>
@@ -201,11 +347,30 @@ foreach ($reservations as $r) {
             </div>
         </div>
 
-        <!-- Quick action -->
-        <a href="<?= url('dashboard/reservations/create') ?>" class="quick-action-card">
-            <i class="bi bi-plus-circle d-block"></i>
-            <span class="qa-label">Nuova Prenotazione</span>
-        </a>
+        <!-- Quick actions -->
+        <div class="card">
+            <div class="card-header">
+                <h6><i class="bi bi-lightning me-1"></i> Azioni rapide</h6>
+            </div>
+            <div class="dh-qa-grid">
+                <a href="<?= url('dashboard/reservations/create') ?>" class="dh-qa-btn">
+                    <i class="bi bi-plus-circle" style="color:var(--brand);"></i>
+                    Nuova Prenotazione
+                </a>
+                <a href="<?= url('dashboard/customers') ?>" class="dh-qa-btn">
+                    <i class="bi bi-people" style="color:#0d6efd;"></i>
+                    Clienti
+                </a>
+                <a href="<?= url('dashboard/reservations') ?>" class="dh-qa-btn">
+                    <i class="bi bi-download" style="color:#fd7e14;"></i>
+                    Esporta CSV
+                </a>
+                <a href="<?= url('dashboard/settings') ?>" class="dh-qa-btn">
+                    <i class="bi bi-gear" style="color:var(--gray-600);"></i>
+                    Impostazioni
+                </a>
+            </div>
+        </div>
 
     </div>
 </div>
@@ -249,7 +414,7 @@ foreach ($reservations as $r) {
         }
     }
 
-    // Chip click → navigate
+    // Chip click
     chips.forEach(function(btn) {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -257,7 +422,7 @@ foreach ($reservations as $r) {
         });
     });
 
-    // === Calendar dropdown for "Altra data" ===
+    // Calendar dropdown
     var dropdown = document.getElementById('home-cal-dropdown');
     var grid = document.getElementById('home-cal-grid');
     var monthLabel = document.getElementById('home-cal-month');
@@ -302,7 +467,7 @@ foreach ($reservations as $r) {
             dropdown.style.display = 'none';
     });
 
-    // === Mini calendar (sidebar) ===
+    // Mini calendar (sidebar)
     var mcGrid = document.getElementById('mini-cal-grid');
     var mcMonth = document.getElementById('mini-cal-month');
     var mcMo = selDate.getMonth(), mcYr = selDate.getFullYear();
@@ -343,5 +508,31 @@ foreach ($reservations as $r) {
     document.getElementById('mini-cal-next').addEventListener('click', function() {
         mcMo++; if (mcMo > 11) { mcMo = 0; mcYr++; } renderMiniCal();
     });
+
+    // Countdown for "prossimi in arrivo"
+    function updateCountdowns() {
+        var now = new Date();
+        document.querySelectorAll('.dh-next-countdown[data-time]').forEach(function(el) {
+            var time = el.dataset.time;
+            var h = parseInt(time.substring(0, 2));
+            var m = parseInt(time.substring(3, 5));
+            if (h >= 18) return; // "stasera" stays static
+            var target = new Date(now);
+            target.setHours(h, m, 0, 0);
+            var diff = Math.floor((target - now) / 60000);
+            if (diff <= 0) {
+                el.innerHTML = '<i class="bi bi-check-circle me-1"></i>ora';
+                el.classList.add('dh-next-now');
+            } else if (diff < 60) {
+                el.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>tra ' + diff + ' min';
+            } else {
+                var hours = Math.floor(diff / 60);
+                var mins = diff % 60;
+                el.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>tra ' + hours + 'h ' + (mins > 0 ? mins + 'm' : '');
+            }
+        });
+    }
+    updateCountdowns();
+    setInterval(updateCountdowns, 60000);
 })();
 </script>
