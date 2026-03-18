@@ -22,14 +22,14 @@ Controlli da eseguire quando si pubblica su server di produzione.
 
 ---
 
-## 2. CSP (Content Security Policy)
+## ~~2. CSP (Content Security Policy)~~ → RISOLTO
 
-**Attuale:** `.htaccess` include `'unsafe-inline'` per `script-src`.
+**Soluzione implementata:** CSP con nonce dinamico per request. Header impostati via PHP (`App::boot()`), non piu `.htaccess`. `unsafe-inline` rimosso da `script-src`, tutti gli `<script>` inline hanno attributo `nonce`. Inline event handlers (`onchange`) convertiti in `data-autosubmit` + listener JS.
 
 **Cosa verificare:**
-- Se il server di produzione ha una CSP diversa (es. nginx/Apache config a livello server), potrebbe sovrascrivere quella in `.htaccess`
-- Tutti gli `<script>` inline nelle views devono funzionare
-- Nessun errore CSP nella console del browser
+- Nessun errore CSP nella console del browser (aprire DevTools > Console)
+- Se il server ha una CSP a livello server (nginx/Apache config), potrebbe sovrascrivere quella PHP — verificare che non ci siano header duplicati
+- Tutti gli script inline devono funzionare (calendario, filtri, toggle)
 
 ---
 
