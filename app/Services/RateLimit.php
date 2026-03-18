@@ -72,6 +72,35 @@ class RateLimit
         return max(0, $windowSeconds - (time() - strtotime($oldest)));
     }
 
+    public function checkCustom(string $ip, string $key, int $maxRequests, int $windowSeconds): bool
+    {
+        $this->cleanup();
+
+        $since = date('Y-m-d H:i:s', time() - $windowSeconds);
+
+        $stmt = $this->db->prepare(
+            'SELECT COUNT(*) FROM rate_limits WHERE ip_address = :ip AND endpoint = :endpoint AND attempted_at > :since'
+        );
+        $stmt->execute([
+            'ip'       => $ip,
+            'endpoint' => $key,
+            'since'    => $since,
+        ]);
+
+        return (int)$stmt->fetchColumn() < $maxRequests;
+    }
+
+    public function recordCustom(string $ip, string $key): void
+    {
+        $stmt = $this->db->prepare(
+            'INSERT INTO rate_limits (ip_address, endpoint, attempted_at) VALUES (:ip, :endpoint, NOW())'
+        );
+        $stmt->execute([
+            'ip'       => $ip,
+            'endpoint' => $key,
+        ]);
+    }
+
     private function cleanup(): void
     {
         // Remove records older than 5 minutes

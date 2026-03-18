@@ -249,7 +249,7 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
     </div>
 </form>
 
-<script>
+<script nonce="<?= csp_nonce() ?>">
 // Copy link buttons
 document.querySelectorAll('[data-copy-target]').forEach(function(btn) {
     btn.addEventListener('click', function(e) {

@@ -118,11 +118,11 @@ $time = substr($reservation['reservation_time'], 0, 5);
     <?php endif; ?>
 
     <div class="manage-footer">
-        Powered by Evulery
+        &copy; <?= date('Y') ?> Evulery &middot; by alagias. - Soluzioni per il web
     </div>
 </div>
 
-<script>
+<script nonce="<?= csp_nonce() ?>">
 document.getElementById('cancel-form')?.addEventListener('submit', function(e) {
     if (!confirm('Sei sicuro di voler annullare la prenotazione?')) {
         e.preventDefault();

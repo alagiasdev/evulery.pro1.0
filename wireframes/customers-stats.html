@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Statistiche Clienti</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 180px;
+            --brand: #00844A;
+            --brand-light: #E8F5E9;
+            --brand-dark: #006837;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        /* ===== Sidebar ===== */
+        .mock-sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w); background: #1a1d23; color: #fff;
+            padding: 1rem 0; z-index: 100;
+        }
+        .mock-sidebar .brand { padding: 0 1rem 1rem; font-weight: 700; font-size: 1.05rem; border-bottom: 1px solid #333; margin-bottom: .5rem; }
+        .mock-sidebar .nav-item { padding: .5rem 1rem; font-size: .9rem; color: #adb5bd; cursor: pointer; }
+        .mock-sidebar .nav-item:hover { color: #fff; }
+        .mock-sidebar .nav-item.active { background: var(--brand); color: #fff; border-radius: 6px; margin: 0 .5rem; padding: .5rem .75rem; }
+
+        /* ===== Main ===== */
+        .main { margin-left: var(--sidebar-w); padding: 1.5rem; }
+        .page-title { font-size: 1.3rem; font-weight: 700; margin-bottom: .25rem; }
+        .page-sub { font-size: .85rem; color: #6c757d; margin-bottom: 1.25rem; }
+
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 1rem; }
+        .card-header { background: none; border-bottom: 1px solid #f0f0f0; padding: .75rem 1rem; display: flex; justify-content: space-between; align-items: center; }
+        .card-header h6 { margin: 0; font-size: .88rem; font-weight: 700; }
+
+        /* ===== Filters ===== */
+        .stats-filters {
+            display: flex; gap: .5rem; align-items: center; flex-wrap: wrap;
+            margin-bottom: 1.25rem; padding: .75rem 1rem;
+            background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+        }
+        .stats-filters label { font-size: .78rem; font-weight: 600; color: #6c757d; margin-right: .25rem; }
+        .stats-filters select, .stats-filters input {
+            font-size: .82rem; padding: .35rem .6rem; border: 1px solid #dee2e6;
+            border-radius: 8px; background: #f8f9fa;
+        }
+        .stats-filters .btn-apply {
+            background: var(--brand); color: #fff; border: none; padding: .35rem .75rem;
+            border-radius: 8px; font-size: .82rem; font-weight: 600; cursor: pointer;
+        }
+
+        /* ===== KPI Cards ===== */
+        .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
+        .kpi-card {
+            background: #fff; border-radius: 12px; padding: 1rem 1.25rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,.06); text-align: center;
+        }
+        .kpi-value { font-size: 1.5rem; font-weight: 800; color: #212529; }
+        .kpi-label { font-size: .75rem; color: #6c757d; margin-top: 2px; }
+        .kpi-trend { font-size: .72rem; margin-top: 4px; }
+        .kpi-trend.up { color: var(--brand); }
+        .kpi-trend.down { color: #dc3545; }
+
+        /* ===== Two columns ===== */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        /* ===== Top Clienti ===== */
+        .top-list { padding: 0; }
+        .top-item {
+            display: flex; align-items: center; gap: .75rem; padding: .6rem 1rem;
+            border-bottom: 1px solid #f5f5f5; text-decoration: none; color: inherit;
+        }
+        .top-item:last-child { border-bottom: none; }
+        .top-item:hover { background: #f8f9fa; }
+        .top-rank {
+            width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: .72rem; font-weight: 700; flex-shrink: 0;
+        }
+        .top-rank.gold { background: #FFF8E1; color: #F57F17; }
+        .top-rank.silver { background: #f0f0f0; color: #757575; }
+        .top-rank.bronze { background: #FBE9E7; color: #BF360C; }
+        .top-rank.normal { background: #f5f5f5; color: #adb5bd; }
+        .top-name { font-size: .85rem; font-weight: 600; }
+        .top-meta { font-size: .72rem; color: #6c757d; }
+        .top-count { margin-left: auto; font-size: .85rem; font-weight: 700; color: var(--brand); }
+        .top-count small { font-weight: 400; color: #6c757d; font-size: .7rem; }
+
+        /* ===== Segment Breakdown ===== */
+        .segment-row { display: flex; align-items: center; gap: .75rem; padding: .6rem 1rem; }
+        .segment-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .segment-name { font-size: .82rem; font-weight: 600; min-width: 90px; }
+        .segment-bar-wrap { flex: 1; height: 8px; background: #f0f0f0; border-radius: 4px; overflow: hidden; }
+        .segment-bar { height: 100%; border-radius: 4px; transition: width .3s; }
+        .segment-num { font-size: .82rem; font-weight: 700; min-width: 30px; text-align: right; }
+        .segment-pct { font-size: .72rem; color: #6c757d; min-width: 35px; text-align: right; }
+
+        /* ===== Nuovi vs Ritorno ===== */
+        .nvr-chart {
+            display: flex; align-items: center; justify-content: center; gap: 2rem;
+            padding: 1.5rem;
+        }
+        .nvr-donut {
+            width: 120px; height: 120px; border-radius: 50%;
+            background: conic-gradient(var(--brand) 0% 68%, #0d6efd 68% 100%);
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
+        .nvr-donut-inner {
+            width: 80px; height: 80px; border-radius: 50%; background: #fff;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column;
+        }
+        .nvr-donut-pct { font-size: 1.2rem; font-weight: 800; }
+        .nvr-donut-label { font-size: .65rem; color: #6c757d; }
+        .nvr-legend { display: flex; flex-direction: column; gap: .5rem; }
+        .nvr-legend-item { display: flex; align-items: center; gap: .5rem; font-size: .82rem; }
+        .nvr-legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+        .nvr-legend-val { font-weight: 700; }
+
+        @media (max-width: 768px) {
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+            .two-col { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="mock-sidebar">
+    <div class="brand">Evulery.Pro</div>
+    <div class="nav-item">Dashboard</div>
+    <div class="nav-item">Prenotazioni</div>
+    <div class="nav-item active"><i class="bi bi-people me-1"></i> Clienti</div>
+    <div class="nav-item">Impostazioni</div>
+</div>
+
+<!-- Main -->
+<div class="main">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <div class="page-title"><i class="bi bi-graph-up-arrow me-2"></i>Statistiche Clienti</div>
+            <div class="page-sub">Analisi della clientela e delle tendenze di prenotazione</div>
+        </div>
+        <a href="#" class="btn btn-sm" style="background:var(--brand-light);color:var(--brand);font-size:.82rem;font-weight:600;">
+            <i class="bi bi-arrow-left me-1"></i> Torna a Clienti
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="stats-filters">
+        <label>Periodo:</label>
+        <select>
+            <option>Ultimi 30 giorni</option>
+            <option selected>Ultimi 90 giorni</option>
+            <option>Ultimo anno</option>
+            <option>Personalizzato</option>
+        </select>
+        <label style="margin-left:.75rem;">Da:</label>
+        <input type="date" value="2025-12-18">
+        <label>A:</label>
+        <input type="date" value="2026-03-18">
+        <button class="btn-apply">Applica</button>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-row">
+        <div class="kpi-card">
+            <div class="kpi-value">127</div>
+            <div class="kpi-label">Clienti totali</div>
+            <div class="kpi-trend up"><i class="bi bi-arrow-up"></i> +18 nuovi nel periodo</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-value">3.2</div>
+            <div class="kpi-label">Prenotazioni medie / cliente</div>
+            <div class="kpi-trend up"><i class="bi bi-arrow-up"></i> +0.4 vs periodo prec.</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-value">68%</div>
+            <div class="kpi-label">Tasso di ritorno</div>
+            <div class="kpi-trend up"><i class="bi bi-arrow-up"></i> +5% vs periodo prec.</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-value">4.8%</div>
+            <div class="kpi-label">Tasso no-show</div>
+            <div class="kpi-trend up"><i class="bi bi-arrow-down"></i> -1.2% vs periodo prec.</div>
+        </div>
+    </div>
+
+    <div class="two-col">
+        <!-- Top Clienti per Frequenza -->
+        <div class="card">
+            <div class="card-header">
+                <h6><i class="bi bi-trophy me-1"></i> Top clienti per frequenza</h6>
+                <span style="font-size:.68rem;color:#6c757d;">nel periodo selezionato</span>
+            </div>
+            <div class="top-list">
+                <a href="#" class="top-item">
+                    <div class="top-rank gold">1</div>
+                    <div>
+                        <div class="top-name">Marco Bianchi</div>
+                        <div class="top-meta"><span class="badge" style="background:#E8F5E9;color:var(--brand);font-size:.65rem;">VIP</span> &middot; 0 no-show</div>
+                    </div>
+                    <div class="top-count">14 <small>pren.</small></div>
+                </a>
+                <a href="#" class="top-item">
+                    <div class="top-rank silver">2</div>
+                    <div>
+                        <div class="top-name">Laura Verdi</div>
+                        <div class="top-meta"><span class="badge" style="background:#E8F5E9;color:var(--brand);font-size:.65rem;">VIP</span> &middot; 1 no-show</div>
+                    </div>
+                    <div class="top-count">11 <small>pren.</small></div>
+                </a>
+                <a href="#" class="top-item">
+                    <div class="top-rank bronze">3</div>
+                    <div>
+                        <div class="top-name">Giovanni Russo</div>
+                        <div class="top-meta"><span class="badge" style="background:#E3F2FD;color:#1565C0;font-size:.65rem;">Abituale</span> &middot; 0 no-show</div>
+                    </div>
+                    <div class="top-count">9 <small>pren.</small></div>
+                </a>
+                <a href="#" class="top-item">
+                    <div class="top-rank normal">4</div>
+                    <div>
+                        <div class="top-name">Francesca Neri</div>
+                        <div class="top-meta"><span class="badge" style="background:#E3F2FD;color:#1565C0;font-size:.65rem;">Abituale</span> &middot; 2 no-show</div>
+                    </div>
+                    <div class="top-count">8 <small>pren.</small></div>
+                </a>
+                <a href="#" class="top-item">
+                    <div class="top-rank normal">5</div>
+                    <div>
+                        <div class="top-name">Alessio Fontana</div>
+                        <div class="top-meta"><span class="badge" style="background:#E3F2FD;color:#1565C0;font-size:.65rem;">Abituale</span> &middot; 0 no-show</div>
+                    </div>
+                    <div class="top-count">7 <small>pren.</small></div>
+                </a>
+                <a href="#" class="top-item">
+                    <div class="top-rank normal">6</div>
+                    <div>
+                        <div class="top-name">Chiara Romano</div>
+                        <div class="top-meta"><span class="badge" style="background:#FFF3E0;color:#E65100;font-size:.65rem;">Occasionale</span> &middot; 0 no-show</div>
+                    </div>
+                    <div class="top-count">5 <small>pren.</small></div>
+                </a>
+                <a href="#" class="top-item">
+                    <div class="top-rank normal">7</div>
+                    <div>
+                        <div class="top-name">Paolo Costa</div>
+                        <div class="top-meta"><span class="badge" style="background:#FFF3E0;color:#E65100;font-size:.65rem;">Occasionale</span> &middot; 1 no-show</div>
+                    </div>
+                    <div class="top-count">4 <small>pren.</small></div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Nuovi vs Ritorno -->
+        <div>
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="bi bi-pie-chart me-1"></i> Nuovi vs Ritorno</h6>
+                    <span style="font-size:.68rem;color:#6c757d;">sul totale prenotazioni</span>
+                </div>
+                <div class="nvr-chart">
+                    <div class="nvr-donut">
+                        <div class="nvr-donut-inner">
+                            <div class="nvr-donut-pct">68%</div>
+                            <div class="nvr-donut-label">ritorno</div>
+                        </div>
+                    </div>
+                    <div class="nvr-legend">
+                        <div class="nvr-legend-item">
+                            <div class="nvr-legend-dot" style="background:var(--brand);"></div>
+                            <span>Clienti di ritorno</span>
+                            <span class="nvr-legend-val">274</span>
+                        </div>
+                        <div class="nvr-legend-item">
+                            <div class="nvr-legend-dot" style="background:#0d6efd;"></div>
+                            <span>Nuovi clienti</span>
+                            <span class="nvr-legend-val">129</span>
+                        </div>
+                        <div style="margin-top:.5rem;font-size:.72rem;color:#6c757d;">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Totale: 403 prenotazioni nel periodo
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Segmentazione -->
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="bi bi-diagram-3 me-1"></i> Segmentazione clienti</h6>
+                </div>
+                <div>
+                    <div class="segment-row">
+                        <div class="segment-dot" style="background:#E0E0E0;"></div>
+                        <div class="segment-name">Nuovo</div>
+                        <div class="segment-bar-wrap"><div class="segment-bar" style="width:45%;background:#9E9E9E;"></div></div>
+                        <div class="segment-num">57</div>
+                        <div class="segment-pct">45%</div>
+                    </div>
+                    <div class="segment-row">
+                        <div class="segment-dot" style="background:#FFF3E0;"></div>
+                        <div class="segment-name">Occasionale</div>
+                        <div class="segment-bar-wrap"><div class="segment-bar" style="width:28%;background:#FF9800;"></div></div>
+                        <div class="segment-num">36</div>
+                        <div class="segment-pct">28%</div>
+                    </div>
+                    <div class="segment-row">
+                        <div class="segment-dot" style="background:#E3F2FD;"></div>
+                        <div class="segment-name">Abituale</div>
+                        <div class="segment-bar-wrap"><div class="segment-bar" style="width:19%;background:#1565C0;"></div></div>
+                        <div class="segment-num">24</div>
+                        <div class="segment-pct">19%</div>
+                    </div>
+                    <div class="segment-row">
+                        <div class="segment-dot" style="background:#E8F5E9;"></div>
+                        <div class="segment-name">VIP</div>
+                        <div class="segment-bar-wrap"><div class="segment-bar" style="width:8%;background:var(--brand);"></div></div>
+                        <div class="segment-num">10</div>
+                        <div class="segment-pct">8%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

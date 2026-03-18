@@ -46,4 +46,12 @@ document.addEventListener('DOMContentLoaded', function() {
             link.addEventListener('click', closeSidebar);
         });
     }
+
+    // Auto-submit forms when [data-autosubmit] selects change
+    document.querySelectorAll('[data-autosubmit]').forEach(function(el) {
+        el.addEventListener('change', function() {
+            var form = this.closest('form');
+            if (form) form.submit();
+        });
+    });
 });

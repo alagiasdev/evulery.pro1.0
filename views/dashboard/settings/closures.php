@@ -204,7 +204,7 @@ foreach (array_merge($upcoming, $past) as $c) {
     </div>
 </div>
 
-<script>
+<script nonce="<?= csp_nonce() ?>">
 (function() {
     var MONTHS = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
     var closedDates = <?= json_encode(array_keys($closedSet)) ?>;

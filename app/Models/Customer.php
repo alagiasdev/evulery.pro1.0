@@ -245,4 +245,89 @@ class Customer
         $stmt->execute(['id' => $id]);
         return (bool)$stmt->fetchColumn();
     }
+
+    // ===== Statistics methods =====
+
+    /**
+     * KPI stats for a tenant within a date range.
+     * Returns: total_customers, new_in_period, avg_bookings, return_rate, noshow_rate
+     */
+    public function getStats(int $tenantId, string $dateFrom, string $dateTo): array
+    {
+        // Total customers
+        $stmt = $this->db->prepare('SELECT COUNT(*) FROM customers WHERE tenant_id = :tid');
+        $stmt->execute(['tid' => $tenantId]);
+        $totalCustomers = (int)$stmt->fetchColumn();
+
+        // New customers in period
+        $stmt = $this->db->prepare(
+            'SELECT COUNT(*) FROM customers WHERE tenant_id = :tid AND created_at >= :from AND created_at <= :to'
+        );
+        $stmt->execute(['tid' => $tenantId, 'from' => $dateFrom . ' 00:00:00', 'to' => $dateTo . ' 23:59:59']);
+        $newInPeriod = (int)$stmt->fetchColumn();
+
+        // Average bookings per customer (only customers with at least 1 booking)
+        $stmt = $this->db->prepare(
+            'SELECT AVG(total_bookings) FROM customers WHERE tenant_id = :tid AND total_bookings > 0'
+        );
+        $stmt->execute(['tid' => $tenantId]);
+        $avgBookings = round((float)$stmt->fetchColumn(), 1);
+
+        // Reservations in period: total, by returning customers, noshow
+        $stmt = $this->db->prepare(
+            'SELECT
+                COUNT(*) as total_res,
+                SUM(CASE WHEN c.total_bookings >= 2 THEN 1 ELSE 0 END) as returning_res,
+                SUM(CASE WHEN r.status = "noshow" THEN 1 ELSE 0 END) as noshow_res
+             FROM reservations r
+             JOIN customers c ON r.customer_id = c.id
+             WHERE r.tenant_id = :tid
+             AND r.reservation_date >= :from
+             AND r.reservation_date <= :to
+             AND r.status != "cancelled"'
+        );
+        $stmt->execute(['tid' => $tenantId, 'from' => $dateFrom, 'to' => $dateTo]);
+        $resStats = $stmt->fetch();
+
+        $totalRes = (int)$resStats['total_res'];
+        $returnRate = $totalRes > 0 ? round(((int)$resStats['returning_res'] / $totalRes) * 100) : 0;
+        $noshowRate = $totalRes > 0 ? round(((int)$resStats['noshow_res'] / $totalRes) * 100, 1) : 0;
+
+        return [
+            'total_customers' => $totalCustomers,
+            'new_in_period'   => $newInPeriod,
+            'avg_bookings'    => $avgBookings,
+            'return_rate'     => $returnRate,
+            'noshow_rate'     => $noshowRate,
+            'total_res'       => $totalRes,
+            'returning_res'   => (int)$resStats['returning_res'],
+            'new_res'         => $totalRes - (int)$resStats['returning_res'],
+        ];
+    }
+
+    /**
+     * Top customers by reservation count in a date range.
+     */
+    public function getTopByFrequency(int $tenantId, string $dateFrom, string $dateTo, int $limit = 7): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT c.id, c.first_name, c.last_name, c.total_bookings, c.total_noshow,
+                    COUNT(r.id) as period_bookings
+             FROM reservations r
+             JOIN customers c ON r.customer_id = c.id
+             WHERE r.tenant_id = :tid
+             AND r.reservation_date >= :from
+             AND r.reservation_date <= :to
+             AND r.status IN ("confirmed", "pending", "arrived")
+             GROUP BY c.id
+             ORDER BY period_bookings DESC
+             LIMIT :lim'
+        );
+        $stmt->bindValue('tid', $tenantId, PDO::PARAM_INT);
+        $stmt->bindValue('from', $dateFrom);
+        $stmt->bindValue('to', $dateTo);
+        $stmt->bindValue('lim', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }

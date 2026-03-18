@@ -15,15 +15,15 @@
         </div>
         <div class="bw-progress-divider"><i class="bi bi-chevron-right"></i></div>
         <div class="bw-progress-step" data-step="2" id="prog-2">
-            <span class="bw-step-icon"><i class="bi bi-clock"></i></span>
-            <span class="bw-step-label">Orario</span>
-            <span class="bw-pill" id="pill-time" style="display:none;"></span>
-        </div>
-        <div class="bw-progress-divider"><i class="bi bi-chevron-right"></i></div>
-        <div class="bw-progress-step" data-step="3" id="prog-3">
             <span class="bw-step-icon"><i class="bi bi-people"></i></span>
             <span class="bw-step-label">Persone</span>
             <span class="bw-pill" id="pill-party" style="display:none;"></span>
+        </div>
+        <div class="bw-progress-divider"><i class="bi bi-chevron-right"></i></div>
+        <div class="bw-progress-step" data-step="3" id="prog-3">
+            <span class="bw-step-icon"><i class="bi bi-clock"></i></span>
+            <span class="bw-step-label">Orario</span>
+            <span class="bw-pill" id="pill-time" style="display:none;"></span>
         </div>
         <div class="bw-progress-divider"><i class="bi bi-chevron-right"></i></div>
         <div class="bw-progress-step" data-step="4" id="prog-4">
@@ -45,20 +45,9 @@
         </div>
     </div>
 
-    <!-- Step 2: Time Slots Grouped -->
+    <!-- Step 2: Party Size -->
     <div class="bw-step" id="step-2" style="display:none;">
         <button type="button" class="bw-back" id="btn-back-1">
-            <i class="bi bi-chevron-left"></i> Indietro
-        </button>
-        <h5 class="bw-step-title">Scegli l'orario</h5>
-        <div id="grouped-slots-container">
-            <div class="bw-loading-inline"><div class="spinner-border spinner-border-sm"></div> Caricamento orari...</div>
-        </div>
-    </div>
-
-    <!-- Step 3: Party Size -->
-    <div class="bw-step" id="step-3" style="display:none;">
-        <button type="button" class="bw-back" id="btn-back-2">
             <i class="bi bi-chevron-left"></i> Indietro
         </button>
         <h5 class="bw-step-title">Numero di persone</h5>
@@ -67,6 +56,17 @@
             <a href="#" id="party-more-link">Opzioni per piu persone <i class="bi bi-plus"></i></a>
         </div>
         <div class="bw-party-grid bw-party-extended" id="party-extended" style="display:none;"></div>
+    </div>
+
+    <!-- Step 3: Time Slots Grouped -->
+    <div class="bw-step" id="step-3" style="display:none;">
+        <button type="button" class="bw-back" id="btn-back-2">
+            <i class="bi bi-chevron-left"></i> Indietro
+        </button>
+        <h5 class="bw-step-title">Scegli l'orario</h5>
+        <div id="grouped-slots-container">
+            <div class="bw-loading-inline"><div class="spinner-border spinner-border-sm"></div> Caricamento orari...</div>
+        </div>
     </div>
 
     <!-- Step 4: Contact Form -->
@@ -157,7 +157,7 @@
     </div>
 </div>
 
-<script>
+<script nonce="<?= csp_nonce() ?>">
 window.BOOKING_CONFIG = {
     slug: '<?= e($slug) ?>',
     apiUrl: '<?= url('api/v1') ?>',

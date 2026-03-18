@@ -78,12 +78,16 @@ class AvailabilityService
             $occupied = $reservationModel->getOccupiedCovers($tenantId, $date, $slotTime, $tableDuration);
             $available = $maxCovers - $occupied;
 
+            // Flag past slots when date is today
+            $isPast = ($date === date('Y-m-d') && $slotTime < date('H:i'));
+
             $result[] = [
                 'time'             => $slotTime,
                 'max_covers'       => $maxCovers,
                 'occupied_covers'  => $occupied,
                 'available_covers' => max(0, $available),
                 'is_available'     => $available >= $partySize,
+                'is_past'          => $isPast,
             ];
         }
 

@@ -1,10 +1,22 @@
 # Evulery.Pro 1.0 - Prossimi Passi
 
 ## Stato Attuale
-Fasi completate: Foundation, Auth, Admin Panel, Multi-Tenant, Slot/Capacita, Booking Widget, Dashboard Ristoratore, Security Audit (25/25), Dashboard UX improvements, Prenotazione Rapida Touch (FASE 16), Design System v3.1.
+Fasi completate: Foundation, Auth, Admin Panel, Multi-Tenant, Slot/Capacita, Booking Widget, Dashboard Ristoratore, Security Audit (25/25), Dashboard UX improvements, Prenotazione Rapida Touch (FASE 16), Design System v3.1, Booking Widget Polish (FASE 17 parziale).
 Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widget e dashboard.
 
-**Completato recentemente:**
+**Completato recentemente (sessione corrente - Marzo 2026):**
+- [x] Slot passati nascosti per "Oggi": widget li nasconde completamente, dashboard li mostra grigi (dashed border, opacity .6) ma cliccabili per walk-in
+- [x] CSS stati slot passati: `.dr-slot-past` con 3 stati (normal, hover con opacity 1, active con sfondo grigio)
+- [x] Flag `is_past` negli slot availability (AvailabilityService): confronto data/ora corrente
+- [x] Validazione frontend inline booking widget: errori per-campo on-blur, auto-clear su input, classi `.bw-has-error`/`.bw-has-success`, nessun alert() nativo
+- [x] Statistiche clienti: pagina `/dashboard/customers/stats` con KPI (clienti totali, pren. medie, tasso ritorno, tasso no-show), top clienti per frequenza nel periodo, donut nuovi vs ritorno, segmentazione barre
+- [x] Filtro periodo statistiche: preset 30/90/365 giorni + date custom
+- [x] Tab "Statistiche" integrato nei segment tabs della lista clienti (margin-left auto, bordo dashed verde)
+- [x] Fix filter-bar clienti: wrappato in `.filter-row` per layout flex corretto
+- [x] Footer branding: "© {anno} Evulery · by alagias. - Soluzioni per il web" su tutte le pagine
+- [x] Wireframe creati: `customers-stats.html`, `booking-widget-validation.html`, `plans-feature-flags.html`
+
+**Completato in sessioni precedenti:**
 - [x] Paginazione server-side liste: clienti (25/pag con filtro segmento + ricerca), admin tenants (25/pag con ricerca)
 - [x] Upload logo ristorante: upload in settings, validazione MIME + 2MB, preview, rimozione. Logo visibile solo sul widget di prenotazione (sfondo chiaro)
 - [x] Classe `Paginator` riutilizzabile (app/Core/Paginator.php): offset/limit, URL con query params, link con gaps
@@ -194,8 +206,11 @@ Il sistema raggruppa le prenotazioni per email, tenant-scoped. Nessuna azione ri
 - [x] Dashboard ristoratore: lista clienti con storico visite, no-show rate, party size medio
 - [x] Scheda cliente: tutte le prenotazioni passate e future
 - [x] Segmentazione automatica: Nuovo (1 visita), Occasionale (2-3), Abituale (4-9), VIP (10+)
-- [ ] Top clienti per frequenza nel periodo selezionato
-- [ ] Statistiche: nuovi vs ritorno (percentuale sul totale prenotazioni)
+- [x] Top clienti per frequenza nel periodo selezionato (pagina /dashboard/customers/stats)
+- [x] Statistiche: nuovi vs ritorno (percentuale sul totale prenotazioni, donut chart CSS)
+- [x] KPI cards: clienti totali, pren. medie/cliente, tasso ritorno, tasso no-show
+- [x] Segmentazione clienti con barre proporzionali
+- [x] Filtro periodo (30/90/365 giorni + personalizzato)
 
 ### Link Magico - Gestione Prenotazione (self-service cliente)
 Il cliente gestisce la prenotazione tramite un link unico ricevuto via email. Nessuna registrazione.
@@ -217,12 +232,12 @@ Il cliente gestisce la prenotazione tramite un link unico ricevuto via email. Ne
   - Permettere modifica data (si/no)
   - Permettere modifica persone (si/no)
 
-### Blacklist Clienti
+### Blacklist Clienti → COMPLETATO (senza gate, da integrare con PlanService)
 - [ ] Gate: `PlanService::can('blacklist')` - richiede piano Starter+
-- [ ] Flag `is_blocked` sulla tabella `customers`
-- [ ] Quando cliente bloccato tenta di prenotare (match email) → messaggio "Contatta il ristorante telefonicamente"
-- [ ] Bottone blocca/sblocca nella scheda cliente
-- [ ] Indicatore visivo nella lista clienti (badge rosso)
+- [x] Flag `is_blocked` + `blocked_at` sulla tabella `customers`
+- [x] Quando cliente bloccato tenta di prenotare (match email) → messaggio "Contatta il ristorante telefonicamente"
+- [x] Bottone blocca/sblocca nella scheda cliente (toggle con flash message)
+- [x] Indicatore visivo nella lista clienti (badge rosso, riga semitrasparente, avatar rosso su mobile)
 
 ### Note Clienti → COMPLETATO
 - [x] Campo `notes` (TEXT) sulla tabella `customers`
@@ -374,7 +389,9 @@ Obiettivo: 5 tocchi in 5 secondi per registrare una prenotazione telefonica.
 - [x] Upload logo ristorante (form settings, MIME validation, preview, rimozione, visibile solo su widget)
 - [x] Responsive mobile per sidebar dashboard (toggle hamburger in app.js)
 - [ ] Export prenotazioni in CSV → vedi Miglioria #2
-- [ ] Validazione frontend piu robusta (feedback inline nei form)
+- [x] Validazione frontend inline booking widget (per-campo on-blur, auto-clear, no alert() nativi)
+- [x] Slot passati nascosti per "Oggi" (widget: hidden, dashboard: grigi cliccabili)
+- [x] Statistiche clienti (pagina dedicata con KPI, top frequenza, nuovi vs ritorno, segmentazione)
 - [x] Rate limiting sulle API pubbliche (completato in Security Audit)
 - [x] Security headers (CSP, X-Frame-Options, etc.)
 - [x] Audit logging
@@ -414,6 +431,7 @@ Obiettivo: 5 tocchi in 5 secondi per registrare una prenotazione telefonica.
 Vedi `check-live.md` per la checklist completa. Punti principali:
 - [x] Slot orfani: fallback gruppo "Altro" in `getGroupedSlots()` per slot fuori da categorie pasto
 - [x] startHour dinamico: tabella Orari e Coperti parte dall'ora minima tra categorie attive e slot esistenti (floor 9)
+- [x] Slot passati per "Oggi": widget li nasconde, dashboard li mostra grigi ma cliccabili (walk-in)
 - [ ] Calendario mobile dashboard home: verificare su device reale (≥375px)
 - [ ] Calendario mobile pagina prenotazioni: tagliato su mobile (mancano sab/dom)
 - [ ] CSP: verificare che non ci siano policy server-level che sovrascrivano .htaccess

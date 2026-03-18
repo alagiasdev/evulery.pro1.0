@@ -21,6 +21,14 @@ class App
         // Start session
         Session::start();
 
+        // Security headers (CSP with nonce, set via PHP for dynamic nonce)
+        $nonce = csp_nonce();
+        header("X-Content-Type-Options: nosniff");
+        header("X-Frame-Options: DENY");
+        header("Referrer-Policy: strict-origin-when-cross-origin");
+        header("Permissions-Policy: geolocation=(), microphone=(), camera=()");
+        header("Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-{$nonce}' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self'");
+
         // Load routes
         $router = $this->router;
         require BASE_PATH . '/config/routes.php';
@@ -76,6 +84,7 @@ class App
             'tenant'    => \App\Middleware\TenantMiddleware::class,
             'csrf'      => \App\Middleware\CSRFMiddleware::class,
             'ratelimit' => \App\Middleware\RateLimitMiddleware::class,
+            'dashboard-ratelimit' => \App\Middleware\DashboardRateLimitMiddleware::class,
         ];
 
         foreach ($middleware as $name) {

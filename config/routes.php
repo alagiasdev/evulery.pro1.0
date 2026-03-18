@@ -37,7 +37,7 @@ $router->group('/auth', ['csrf'], function ($r) {
 });
 
 // --- DASHBOARD ROUTES (restaurant owner) ---
-$router->group('/dashboard', ['auth', 'tenant', 'csrf'], function ($r) {
+$router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], function ($r) {
     $r->get('', [HomeController::class, 'index']);
     $r->get('/reservations', [ReservationsController::class, 'index']);
     $r->get('/reservations/create', [ReservationsController::class, 'create']);
@@ -50,6 +50,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf'], function ($r) {
     $r->post('/reservations/{id}/notes', [ReservationsController::class, 'updateNotes']);
     $r->post('/reservations/{id}/delete', [ReservationsController::class, 'destroy']);
     $r->get('/customers', [CustomersController::class, 'index']);
+    $r->get('/customers/stats', [CustomersController::class, 'stats']);
     $r->get('/customers/search/json', [CustomersController::class, 'searchJson']);
     $r->get('/customers/{id}', [CustomersController::class, 'show']);
     $r->post('/customers/{id}/notes', [CustomersController::class, 'updateNotes']);
@@ -73,7 +74,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf'], function ($r) {
 });
 
 // --- SUPER ADMIN ROUTES ---
-$router->group('/admin', ['auth', 'admin', 'csrf'], function ($r) {
+$router->group('/admin', ['auth', 'admin', 'csrf', 'dashboard-ratelimit'], function ($r) {
     $r->get('', [AdminDashboardController::class, 'index']);
     $r->get('/tenants', [TenantsController::class, 'index']);
     $r->get('/tenants/create', [TenantsController::class, 'create']);

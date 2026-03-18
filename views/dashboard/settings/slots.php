@@ -236,7 +236,7 @@ $DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
     </div>
 </form>
 
-<script>
+<script nonce="<?= csp_nonce() ?>">
 // Fill all buttons
 document.querySelectorAll('.tb-btn[data-fill]').forEach(function(btn) {
     btn.addEventListener('click', function() {

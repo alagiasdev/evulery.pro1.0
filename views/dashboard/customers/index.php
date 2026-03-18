@@ -25,7 +25,7 @@ $segTabs = [
 ];
 ?>
 
-<!-- Segment tabs -->
+<!-- Segment tabs + Stats link -->
 <div class="seg-tabs">
     <?php foreach ($segTabs as $tab):
         $isActive = $tab['key'] === $currentSeg;
@@ -41,26 +41,35 @@ $segTabs = [
         </div>
     </a>
     <?php endforeach; ?>
+    <a href="<?= url('dashboard/customers/stats') ?>" class="seg-tab seg-tab-stats" style="--seg-color:#00844A;">
+        <i class="bi bi-graph-up-arrow"></i>
+        <div>
+            <div class="seg-count" style="font-size:.85rem;">Statistiche</div>
+            <div class="seg-label">analisi</div>
+        </div>
+    </a>
 </div>
 
 <!-- Filter bar -->
 <form method="GET" action="<?= url('dashboard/customers') ?>">
 <div class="filter-bar">
-    <div class="search-wrap">
-        <i class="bi bi-search"></i>
-        <input type="text" name="q" value="<?= e($search ?? '') ?>" placeholder="Cerca per nome, email o telefono...">
-    </div>
-    <div class="filter-divider"></div>
-    <select class="filter-input" name="segment" onchange="this.form.submit()">
-        <option value="">Tutti i segmenti</option>
-        <option value="nuovo" <?= $currentSeg === 'nuovo' ? 'selected' : '' ?>>Nuovo</option>
-        <option value="occasionale" <?= $currentSeg === 'occasionale' ? 'selected' : '' ?>>Occasionale</option>
-        <option value="abituale" <?= $currentSeg === 'abituale' ? 'selected' : '' ?>>Abituale</option>
-        <option value="vip" <?= $currentSeg === 'vip' ? 'selected' : '' ?>>VIP</option>
-    </select>
-    <div class="filter-actions">
-        <button type="submit" class="btn-filter btn-filter-primary"><i class="bi bi-search me-1"></i>Filtra</button>
-        <a href="<?= url('dashboard/customers') ?>" class="btn-filter btn-filter-reset"><i class="bi bi-x-lg"></i></a>
+    <div class="filter-row">
+        <div class="search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" name="q" value="<?= e($search ?? '') ?>" placeholder="Cerca per nome, email o telefono...">
+        </div>
+        <div class="filter-divider"></div>
+        <select class="filter-input" name="segment" data-autosubmit>
+            <option value="">Tutti i segmenti</option>
+            <option value="nuovo" <?= $currentSeg === 'nuovo' ? 'selected' : '' ?>>Nuovo</option>
+            <option value="occasionale" <?= $currentSeg === 'occasionale' ? 'selected' : '' ?>>Occasionale</option>
+            <option value="abituale" <?= $currentSeg === 'abituale' ? 'selected' : '' ?>>Abituale</option>
+            <option value="vip" <?= $currentSeg === 'vip' ? 'selected' : '' ?>>VIP</option>
+        </select>
+        <div class="filter-actions">
+            <button type="submit" class="btn-filter btn-filter-primary"><i class="bi bi-search me-1"></i>Filtra</button>
+            <a href="<?= url('dashboard/customers') ?>" class="btn-filter btn-filter-reset"><i class="bi bi-x-lg"></i></a>
+        </div>
     </div>
 </div>
 </form>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Piani e Feature Flags (FASE 9)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 180px;
+            --brand: #00844A;
+            --brand-light: #E8F5E9;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        .mock-sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w); background: #1a1d23; color: #fff;
+            padding: 1rem 0; z-index: 100;
+        }
+        .mock-sidebar .brand { padding: 0 1rem 1rem; font-weight: 700; font-size: 1.05rem; border-bottom: 1px solid #333; margin-bottom: .5rem; }
+        .mock-sidebar .nav-item { padding: .5rem 1rem; font-size: .9rem; color: #adb5bd; cursor: pointer; }
+        .mock-sidebar .nav-item.active { background: var(--brand); color: #fff; border-radius: 6px; margin: 0 .5rem; padding: .5rem .75rem; }
+
+        .main { margin-left: var(--sidebar-w); padding: 1.5rem; }
+        .page-title { font-size: 1.3rem; font-weight: 700; margin-bottom: .25rem; }
+        .page-sub { font-size: .85rem; color: #6c757d; margin-bottom: 1.5rem; }
+
+        /* ===== Architecture Diagram ===== */
+        .arch-section {
+            background: #fff; border-radius: 12px; padding: 1.5rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 1.5rem;
+        }
+        .arch-title { font-size: .95rem; font-weight: 700; margin-bottom: 1rem; }
+        .arch-diagram {
+            display: flex; align-items: flex-start; gap: 1.5rem; overflow-x: auto; padding-bottom: .5rem;
+        }
+        .arch-box {
+            background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 10px;
+            padding: .75rem 1rem; min-width: 180px; text-align: center;
+        }
+        .arch-box.highlight { border-color: var(--brand); background: var(--brand-light); }
+        .arch-box-title { font-size: .82rem; font-weight: 700; margin-bottom: .25rem; }
+        .arch-box-detail { font-size: .72rem; color: #6c757d; }
+        .arch-arrow {
+            display: flex; align-items: center; color: #adb5bd; font-size: 1.5rem;
+            min-width: 30px; justify-content: center;
+        }
+
+        /* ===== Plans Grid ===== */
+        .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
+        .plan-card {
+            background: #fff; border-radius: 12px; padding: 1.25rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,.06); text-align: center;
+            border: 2px solid transparent; position: relative;
+        }
+        .plan-card.popular {
+            border-color: var(--brand);
+        }
+        .plan-badge {
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            background: var(--brand); color: #fff; font-size: .65rem; font-weight: 700;
+            padding: .2rem .6rem; border-radius: 10px; text-transform: uppercase;
+        }
+        .plan-name { font-size: 1.1rem; font-weight: 800; margin-top: .25rem; }
+        .plan-price { font-size: 1.8rem; font-weight: 800; margin: .5rem 0 .25rem; }
+        .plan-price small { font-size: .75rem; font-weight: 400; color: #6c757d; }
+        .plan-desc { font-size: .78rem; color: #6c757d; margin-bottom: 1rem; }
+
+        .plan-features { text-align: left; }
+        .plan-feature {
+            display: flex; align-items: flex-start; gap: .5rem; font-size: .8rem;
+            padding: .3rem 0; color: #495057;
+        }
+        .plan-feature i.yes { color: var(--brand); }
+        .plan-feature i.no { color: #dee2e6; }
+        .plan-feature.disabled { color: #adb5bd; }
+
+        .plan-btn {
+            display: block; width: 100%; padding: .5rem; border-radius: 10px;
+            font-size: .85rem; font-weight: 700; text-decoration: none;
+            margin-top: 1rem; text-align: center;
+        }
+        .plan-btn.outline { border: 2px solid var(--brand); color: var(--brand); background: none; }
+        .plan-btn.solid { background: var(--brand); color: #fff; border: none; }
+
+        /* ===== Feature Matrix ===== */
+        .matrix-card {
+            background: #fff; border-radius: 12px; padding: 0;
+            box-shadow: 0 1px 4px rgba(0,0,0,.06); overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .matrix-header {
+            padding: .75rem 1rem; background: #f8f9fa;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: .88rem; font-weight: 700;
+        }
+        .matrix-table { width: 100%; border-collapse: collapse; }
+        .matrix-table th {
+            padding: .5rem .75rem; font-size: .72rem; font-weight: 700;
+            text-transform: uppercase; color: #6c757d; text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .matrix-table th:first-child { text-align: left; }
+        .matrix-table td {
+            padding: .55rem .75rem; font-size: .82rem; border-bottom: 1px solid #f8f8f8;
+            text-align: center;
+        }
+        .matrix-table td:first-child { text-align: left; font-weight: 500; }
+        .matrix-table tr:last-child td { border-bottom: none; }
+        .matrix-check { color: var(--brand); font-size: 1rem; }
+        .matrix-cross { color: #dee2e6; font-size: 1rem; }
+        .matrix-limit { font-size: .72rem; color: #6c757d; font-weight: 600; }
+
+        /* ===== Gate UI (locked feature) ===== */
+        .gate-demo {
+            background: #fff; border-radius: 12px; padding: 1.25rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 1.5rem;
+        }
+        .gate-header { font-size: .95rem; font-weight: 700; margin-bottom: 1rem; }
+        .gate-locked {
+            display: flex; align-items: center; gap: 1rem; padding: 1rem;
+            background: #FFF8E1; border: 1.5px dashed #FFB300; border-radius: 10px;
+        }
+        .gate-icon { font-size: 2rem; color: #FFB300; }
+        .gate-text h5 { font-size: .88rem; font-weight: 700; margin: 0 0 .25rem; }
+        .gate-text p { font-size: .78rem; color: #6c757d; margin: 0; }
+        .gate-upgrade {
+            margin-left: auto; background: var(--brand); color: #fff; border: none;
+            padding: .4rem .75rem; border-radius: 8px; font-size: .78rem;
+            font-weight: 600; cursor: pointer; white-space: nowrap;
+        }
+
+        /* ===== Code Snippet ===== */
+        .code-block {
+            background: #1a1d23; color: #e0e0e0; padding: 1rem 1.25rem;
+            border-radius: 10px; font-size: .78rem; font-family: 'Fira Code', monospace;
+            overflow-x: auto; margin-top: .75rem; line-height: 1.6;
+        }
+        .code-comment { color: #6c757d; }
+        .code-keyword { color: #C678DD; }
+        .code-string { color: #98C379; }
+        .code-func { color: #61AFEF; }
+        .code-var { color: #E06C75; }
+
+        .notes-section {
+            background: #f8f9fa; border-radius: 12px; padding: 1.25rem;
+            margin-top: 1.5rem;
+        }
+        .notes-section h4 { font-size: .9rem; font-weight: 700; margin-bottom: .75rem; }
+        .notes-section ul { padding-left: 1.25rem; margin: 0; font-size: .82rem; color: #495057; }
+        .notes-section li { margin-bottom: .4rem; }
+        .notes-section code { background: #e9ecef; padding: .1rem .3rem; border-radius: 3px; font-size: .75rem; }
+
+        @media (max-width: 992px) {
+            .plans-grid { grid-template-columns: 1fr; max-width: 400px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="mock-sidebar">
+    <div class="brand">Evulery.Pro</div>
+    <div class="nav-item">Dashboard</div>
+    <div class="nav-item">Prenotazioni</div>
+    <div class="nav-item">Clienti</div>
+    <div class="nav-item active"><i class="bi bi-gear me-1"></i> Impostazioni</div>
+</div>
+
+<!-- Main -->
+<div class="main">
+    <div class="page-title"><i class="bi bi-shield-check me-2"></i>Sistema Piani e Feature Flags (FASE 9)</div>
+    <div class="page-sub">Architettura per gestione piani, limiti e upgrade — wireframe progettuale</div>
+
+    <!-- Architecture -->
+    <div class="arch-section">
+        <div class="arch-title"><i class="bi bi-diagram-3 me-2"></i>Architettura</div>
+        <div class="arch-diagram">
+            <div class="arch-box highlight">
+                <div class="arch-box-title">PlanService</div>
+                <div class="arch-box-detail">
+                    can('feature')<br>
+                    limit('resource')<br>
+                    currentPlan()
+                </div>
+            </div>
+            <div class="arch-arrow"><i class="bi bi-arrow-right"></i></div>
+            <div class="arch-box">
+                <div class="arch-box-title">tenants.plan</div>
+                <div class="arch-box-detail">
+                    'free' | 'starter' | 'pro'<br>
+                    colonna nella tabella tenants
+                </div>
+            </div>
+            <div class="arch-arrow"><i class="bi bi-arrow-right"></i></div>
+            <div class="arch-box">
+                <div class="arch-box-title">plans.php (config)</div>
+                <div class="arch-box-detail">
+                    Feature map statica<br>
+                    Limiti per piano
+                </div>
+            </div>
+            <div class="arch-arrow"><i class="bi bi-arrow-right"></i></div>
+            <div class="arch-box">
+                <div class="arch-box-title">Gate UI</div>
+                <div class="arch-box-detail">
+                    Banner upgrade<br>
+                    Feature bloccata
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plans -->
+    <div class="plans-grid">
+        <!-- Free -->
+        <div class="plan-card">
+            <div class="plan-name">Free</div>
+            <div class="plan-price">&euro;0 <small>/mese</small></div>
+            <div class="plan-desc">Per provare il sistema senza impegno</div>
+            <div class="plan-features">
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Prenotazioni illimitate</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Widget di prenotazione</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Dashboard base</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Email conferma</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> 1 utente</div>
+                <div class="plan-feature disabled"><i class="bi bi-x-circle no"></i> Categorie pasto</div>
+                <div class="plan-feature disabled"><i class="bi bi-x-circle no"></i> Link gestione cliente</div>
+                <div class="plan-feature disabled"><i class="bi bi-x-circle no"></i> Statistiche avanzate</div>
+                <div class="plan-feature disabled"><i class="bi bi-x-circle no"></i> Caparra Stripe</div>
+                <div class="plan-feature disabled"><i class="bi bi-x-circle no"></i> Dominio personalizzato</div>
+                <div class="plan-feature disabled"><i class="bi bi-x-circle no"></i> Esporta CSV</div>
+            </div>
+            <a href="#" class="plan-btn outline">Piano attuale</a>
+        </div>
+
+        <!-- Starter -->
+        <div class="plan-card popular">
+            <div class="plan-badge">Consigliato</div>
+            <div class="plan-name">Starter</div>
+            <div class="plan-price">&euro;29 <small>/mese</small></div>
+            <div class="plan-desc">Per ristoranti che vogliono crescere</div>
+            <div class="plan-features">
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Tutto di Free +</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Categorie pasto</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Link gestione cliente</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Conferma manuale</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Esporta CSV</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> 3 utenti</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Statistiche clienti</div>
+                <div class="plan-feature disabled"><i class="bi bi-x-circle no"></i> Caparra Stripe</div>
+                <div class="plan-feature disabled"><i class="bi bi-x-circle no"></i> Dominio personalizzato</div>
+                <div class="plan-feature disabled"><i class="bi bi-x-circle no"></i> Supporto prioritario</div>
+            </div>
+            <a href="#" class="plan-btn solid">Passa a Starter</a>
+        </div>
+
+        <!-- Pro -->
+        <div class="plan-card">
+            <div class="plan-name">Pro</div>
+            <div class="plan-price">&euro;59 <small>/mese</small></div>
+            <div class="plan-desc">Per ristoranti con esigenze avanzate</div>
+            <div class="plan-features">
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Tutto di Starter +</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Caparra Stripe</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Dominio personalizzato</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Utenti illimitati</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Supporto prioritario</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Multi-sede (prossimamente)</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> API accesso</div>
+                <div class="plan-feature"><i class="bi bi-check-circle-fill yes"></i> Webhook personalizzati</div>
+            </div>
+            <a href="#" class="plan-btn outline">Passa a Pro</a>
+        </div>
+    </div>
+
+    <!-- Feature Matrix -->
+    <div class="matrix-card">
+        <div class="matrix-header"><i class="bi bi-table me-2"></i>Matrice Feature per Piano</div>
+        <table class="matrix-table">
+            <thead>
+                <tr>
+                    <th style="width:40%;">Funzionalita</th>
+                    <th>Free</th>
+                    <th>Starter</th>
+                    <th>Pro</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Prenotazioni</td>
+                    <td><span class="matrix-limit">50/mese</span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                </tr>
+                <tr>
+                    <td>Widget di prenotazione</td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                </tr>
+                <tr>
+                    <td>Email conferma</td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                </tr>
+                <tr>
+                    <td>Categorie pasto</td>
+                    <td><span class="matrix-cross"><i class="bi bi-x-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                </tr>
+                <tr>
+                    <td>Link gestione prenotazione</td>
+                    <td><span class="matrix-cross"><i class="bi bi-x-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                </tr>
+                <tr>
+                    <td>Conferma manuale</td>
+                    <td><span class="matrix-cross"><i class="bi bi-x-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                </tr>
+                <tr>
+                    <td>Statistiche clienti</td>
+                    <td><span class="matrix-cross"><i class="bi bi-x-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                </tr>
+                <tr>
+                    <td>Esporta CSV</td>
+                    <td><span class="matrix-cross"><i class="bi bi-x-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                </tr>
+                <tr>
+                    <td>Caparra Stripe</td>
+                    <td><span class="matrix-cross"><i class="bi bi-x-lg"></i></span></td>
+                    <td><span class="matrix-cross"><i class="bi bi-x-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                </tr>
+                <tr>
+                    <td>Dominio personalizzato</td>
+                    <td><span class="matrix-cross"><i class="bi bi-x-lg"></i></span></td>
+                    <td><span class="matrix-cross"><i class="bi bi-x-lg"></i></span></td>
+                    <td><span class="matrix-check"><i class="bi bi-check-lg"></i></span></td>
+                </tr>
+                <tr>
+                    <td>Utenti</td>
+                    <td><span class="matrix-limit">1</span></td>
+                    <td><span class="matrix-limit">3</span></td>
+                    <td><span class="matrix-check"><i class="bi bi-infinity"></i></span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Gate UI Demo -->
+    <div class="gate-demo">
+        <div class="gate-header"><i class="bi bi-lock me-2"></i>Gate UI - Come appare una feature bloccata</div>
+        <div class="gate-locked">
+            <div class="gate-icon"><i class="bi bi-lock-fill"></i></div>
+            <div class="gate-text">
+                <h5>Statistiche Clienti</h5>
+                <p>Le statistiche avanzate sono disponibili a partire dal piano <strong>Starter</strong>. Passa al piano superiore per sbloccare questa funzionalita.</p>
+            </div>
+            <button class="gate-upgrade"><i class="bi bi-arrow-up-circle me-1"></i> Upgrade</button>
+        </div>
+
+        <!-- Code example -->
+        <div class="code-block">
+<span class="code-comment">// Controller - verificare accesso alla feature</span>
+<span class="code-keyword">if</span> (!<span class="code-func">PlanService</span>::<span class="code-func">can</span>(<span class="code-string">'customer_stats'</span>)) {
+    <span class="code-keyword">return</span> <span class="code-func">view</span>(<span class="code-string">'dashboard/upgrade-required'</span>, [
+        <span class="code-string">'feature'</span> => <span class="code-string">'Statistiche Clienti'</span>,
+        <span class="code-string">'min_plan'</span> => <span class="code-string">'starter'</span>,
+    ]);
+}
+
+<span class="code-comment">// View - mostrare gate inline</span>
+&lt;?php <span class="code-keyword">if</span> (<span class="code-func">PlanService</span>::<span class="code-func">can</span>(<span class="code-string">'export_csv'</span>)): ?&gt;
+    &lt;a href=&quot;...&quot;&gt;Esporta CSV&lt;/a&gt;
+&lt;?php <span class="code-keyword">else</span>: ?&gt;
+    &lt;span class=&quot;gate-locked&quot;&gt;Piano Starter+ richiesto&lt;/span&gt;
+&lt;?php <span class="code-keyword">endif</span>; ?&gt;
+
+<span class="code-comment">// Config: config/plans.php</span>
+<span class="code-keyword">return</span> [
+    <span class="code-string">'free'</span> => [
+        <span class="code-string">'features'</span> => [<span class="code-string">'widget'</span>, <span class="code-string">'email_confirm'</span>],
+        <span class="code-string">'limits'</span>   => [<span class="code-string">'reservations_monthly'</span> => <span class="code-var">50</span>, <span class="code-string">'users'</span> => <span class="code-var">1</span>],
+    ],
+    <span class="code-string">'starter'</span> => [
+        <span class="code-string">'features'</span> => [<span class="code-string">'meal_categories'</span>, <span class="code-string">'manage_link'</span>, <span class="code-string">'manual_confirm'</span>,
+                     <span class="code-string">'export_csv'</span>, <span class="code-string">'customer_stats'</span>],
+        <span class="code-string">'limits'</span>   => [<span class="code-string">'reservations_monthly'</span> => <span class="code-var">null</span>, <span class="code-string">'users'</span> => <span class="code-var">3</span>],
+    ],
+    <span class="code-string">'pro'</span> => [
+        <span class="code-string">'features'</span> => [<span class="code-string">'stripe_deposit'</span>, <span class="code-string">'custom_domain'</span>, <span class="code-string">'api_access'</span>],
+        <span class="code-string">'limits'</span>   => [<span class="code-string">'reservations_monthly'</span> => <span class="code-var">null</span>, <span class="code-string">'users'</span> => <span class="code-var">null</span>],
+    ],
+];
+        </div>
+    </div>
+
+    <!-- Implementation Notes -->
+    <div class="notes-section">
+        <h4><i class="bi bi-lightbulb me-2"></i>Note di Implementazione</h4>
+        <ul>
+            <li><strong>Tabella DB</strong>: aggiungere colonna <code>plan ENUM('free','starter','pro') DEFAULT 'free'</code> a <code>tenants</code></li>
+            <li><strong>PlanService</strong>: classe statica, legge piano da <code>TenantResolver::current()['plan']</code>, confronta con <code>config/plans.php</code></li>
+            <li><strong>can($feature)</strong>: controlla se la feature e nel piano corrente o superiore (ereditarieta: pro include tutto di starter)</li>
+            <li><strong>limit($resource)</strong>: ritorna il limite numerico (null = illimitato)</li>
+            <li><strong>withinLimit($resource, $currentCount)</strong>: ritorna bool per check contatore</li>
+            <li><strong>Gate UI</strong>: componente riutilizzabile <code>views/components/gate.php</code> con parametri feature/min_plan</li>
+            <li><strong>Sidebar</strong>: le voci di menu per feature bloccate mostrano lucchetto grigio, cliccabili ma portano alla pagina upgrade</li>
+            <li><strong>Nessun pagamento</strong> in questa fase — solo logica di gating. Il pagamento verra aggiunto con Stripe in produzione</li>
+            <li><strong>Admin panel</strong>: possibilita di cambiare piano manualmente per ogni tenant (utile per trial/demo)</li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

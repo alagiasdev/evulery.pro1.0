@@ -164,7 +164,7 @@ $tlStart = 9; $tlEnd = 24; $tlSpan = $tlEnd - $tlStart;
     </div>
 </form>
 
-<script>
+<script nonce="<?= csp_nonce() ?>">
 // Toggle active/inactive
 document.querySelectorAll('.cat-toggle').forEach(function(toggle) {
     toggle.addEventListener('click', function(e) {

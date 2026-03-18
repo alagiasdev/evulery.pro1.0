@@ -173,7 +173,7 @@ $depositAmountRaw = $tenant['deposit_amount'] ? number_format((float)$tenant['de
     </div>
 </form>
 
-<script>
+<script nonce="<?= csp_nonce() ?>">
 // Master toggle
 document.getElementById('main-toggle').addEventListener('click', function() {
     this.classList.toggle('on');

@@ -269,7 +269,7 @@ $sourceLabels = ['phone' => 'Telefono', 'walkin' => 'Walk-in', 'widget' => 'Widg
     </div>
 </div>
 
-<script>
+<script nonce="<?= csp_nonce() ?>">
 document.querySelectorAll('[data-confirm]').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
         if (!confirm(this.dataset.confirm)) {

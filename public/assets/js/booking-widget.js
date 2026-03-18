@@ -1,6 +1,6 @@
 /**
  * Evulery.Pro - Booking Widget JS (TheFork Style)
- * 4-step flow: Date (calendar) -> Time (grouped) -> Party Size -> Contact
+ * 4-step flow: Date (calendar) -> Party Size -> Time (grouped) -> Contact
  */
 document.addEventListener('DOMContentLoaded', function() {
     const widget = document.getElementById('booking-widget');
@@ -223,11 +223,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         var html = '';
+        var hasAnySlot = false;
         state.groupedSlots.forEach(function(group) {
+            // Filter out past slots for the public widget
+            var visibleSlots = group.slots.filter(function(slot) { return !slot.is_past; });
+            if (!visibleSlots.length) return;
+            hasAnySlot = true;
+
             html += '<div class="bw-slot-group">';
             html += '<div class="bw-slot-group-label">' + escapeHtml(group.display_name) + '</div>';
             html += '<div class="bw-slot-group-times">';
-            group.slots.forEach(function(slot) {
+            visibleSlots.forEach(function(slot) {
                 var active = (state.selectedTime === slot.time) ? ' bw-slot-active' : '';
                 var disabled = !slot.is_available ? ' bw-slot-disabled' : '';
                 var title = slot.is_available
@@ -237,6 +243,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             html += '</div></div>';
         });
+
+        if (!hasAnySlot) {
+            slotsContainer.innerHTML = '<div class="bw-no-slots">Nessun orario disponibile per questa data.</div>';
+            return;
+        }
+
         slotsContainer.innerHTML = html;
 
         // Bind clicks
@@ -246,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.classList.add('bw-slot-active');
                 state.selectedTime = this.dataset.time;
                 updatePill('time', state.selectedTime);
-                setTimeout(function() { goToStep(3); }, 250);
+                setTimeout(function() { goToStep(4); }, 250);
             });
         });
     }
@@ -274,8 +286,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 widget.querySelectorAll('.bw-party-btn').forEach(function(b) { b.classList.remove('bw-party-active'); });
                 this.classList.add('bw-party-active');
                 state.selectedPartySize = parseInt(this.dataset.size);
+                state.selectedTime = null;
+                if (pills.time) pills.time.style.display = 'none';
                 updatePill('party', state.selectedPartySize + ' Pers.');
-                setTimeout(function() { goToStep(4); }, 250);
+                setTimeout(function() { goToStep(3); }, 250);
             });
         });
     }
@@ -291,8 +305,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ===== STEP NAVIGATION =====
     function goToStep(stepNum) {
-        // If going to step 2, check if we need to re-fetch slots
-        if (stepNum === 2) {
+        // If going to step 3 (time slots), check if we need to re-fetch slots
+        if (stepNum === 3) {
             var currentParty = state.selectedPartySize || 2;
             if (currentParty !== state.lastFetchPartySize || state.selectedDate !== state.lastFetchDate || !slotsContainer.querySelector('.bw-slot-group')) {
                 loadGroupedSlots();
@@ -362,6 +376,93 @@ document.addEventListener('DOMContentLoaded', function() {
         return d.getDate() + ' ' + MONTHS[d.getMonth()].substring(0, 3);
     }
 
+    // ===== INLINE VALIDATION =====
+    var validationRules = {
+        'booking-first-name': { required: true, msg: 'Inserisci il nome' },
+        'booking-last-name':  { required: true, msg: 'Inserisci il cognome' },
+        'booking-phone':      { required: true, msg: 'Inserisci il telefono', minDigits: 8, msgFormat: 'Inserisci un numero valido (min. 8 cifre)' },
+        'booking-email':      { required: true, msg: 'Inserisci l\'email', email: true, msgFormat: 'Inserisci un indirizzo email valido' }
+    };
+
+    function validateField(fieldId) {
+        var el = getEl(fieldId);
+        if (!el) return true;
+        var val = el.value.trim();
+        var rule = validationRules[fieldId];
+        if (!rule) return true;
+
+        var group = el.closest('.bw-form-group');
+        var errorEl = group.querySelector('.bw-field-error');
+
+        // Create error element if missing
+        if (!errorEl) {
+            errorEl = document.createElement('div');
+            errorEl.className = 'bw-field-error';
+            errorEl.innerHTML = '<i class="bi bi-exclamation-circle"></i> <span></span>';
+            group.appendChild(errorEl);
+        }
+        var errorText = errorEl.querySelector('span');
+
+        // Reset
+        group.classList.remove('bw-has-error', 'bw-has-success');
+
+        if (rule.required && !val) {
+            group.classList.add('bw-has-error');
+            errorText.textContent = rule.msg;
+            return false;
+        }
+
+        if (val && rule.email) {
+            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(val)) {
+                group.classList.add('bw-has-error');
+                errorText.textContent = rule.msgFormat;
+                return false;
+            }
+        }
+
+        if (val && rule.minDigits) {
+            var digits = val.replace(/\D/g, '');
+            if (digits.length < rule.minDigits) {
+                group.classList.add('bw-has-error');
+                errorText.textContent = rule.msgFormat;
+                return false;
+            }
+        }
+
+        if (val) {
+            group.classList.add('bw-has-success');
+        }
+        return true;
+    }
+
+    function validateAllFields() {
+        var allValid = true;
+        var firstError = null;
+        Object.keys(validationRules).forEach(function(fieldId) {
+            if (!validateField(fieldId)) {
+                allValid = false;
+                if (!firstError) firstError = getEl(fieldId);
+            }
+        });
+        if (firstError) firstError.focus();
+        return allValid;
+    }
+
+    // Validate on blur
+    Object.keys(validationRules).forEach(function(fieldId) {
+        var el = getEl(fieldId);
+        if (el) {
+            el.addEventListener('blur', function() { validateField(fieldId); });
+            el.addEventListener('input', function() {
+                var group = this.closest('.bw-form-group');
+                if (group.classList.contains('bw-has-error')) {
+                    validateField(fieldId);
+                }
+            });
+        }
+    });
+
     // ===== SUBMIT =====
     function submitBooking(forceDuplicate) {
         var firstName = getEl('booking-first-name').value.trim();
@@ -370,13 +471,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var email = getEl('booking-email').value.trim();
         var notes = getEl('booking-notes').value.trim();
 
-        if (!firstName || !lastName || !phone || !email) {
-            showError('Compila tutti i campi obbligatori.');
-            return;
-        }
-
-        if (!email.includes('@') || !email.includes('.')) {
-            showError('Inserisci un indirizzo email valido.');
+        if (!validateAllFields()) {
             return;
         }
 
@@ -469,7 +564,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var msg = data.error ? data.error.message : 'Errore nella prenotazione.';
 
                 if (data.suggestions && data.suggestions.length > 0) {
-                    goToStep(2);
+                    goToStep(3);
                     showError('Orario non disponibile. Scegli un altro orario.');
                 } else {
                     showError(msg);

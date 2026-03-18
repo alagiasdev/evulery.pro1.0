@@ -169,7 +169,7 @@
     </div>
 </form>
 
-<script>
+<script nonce="<?= csp_nonce() ?>">
 window.DR_CONFIG = {
     apiUrl: '<?= url('api/v1') ?>',
     tenantSlug: '<?= e($tenantSlug) ?>',

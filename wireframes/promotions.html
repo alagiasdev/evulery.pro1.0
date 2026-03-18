@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Promozioni e Badge Sconto (FASE 14)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 180px;
+            --brand: #00844A;
+            --brand-light: #E8F5E9;
+            --brand-dark: #006837;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        /* ===== Sidebar ===== */
+        .mock-sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w); background: #1a1d23; color: #fff;
+            padding: 1rem 0; z-index: 100;
+        }
+        .mock-sidebar .brand { padding: 0 1rem 1rem; font-weight: 700; font-size: 1.05rem; border-bottom: 1px solid #333; margin-bottom: .5rem; }
+        .mock-sidebar .nav-item { padding: .5rem 1rem; font-size: .9rem; color: #adb5bd; cursor: pointer; }
+        .mock-sidebar .nav-item:hover { color: #fff; }
+        .mock-sidebar .nav-item.active { background: var(--brand); color: #fff; border-radius: 6px; margin: 0 .5rem; padding: .5rem .75rem; }
+        .mock-sidebar .nav-section { padding: .75rem 1rem .25rem; font-size: .7rem; color: #555; text-transform: uppercase; letter-spacing: .5px; }
+
+        /* ===== Main ===== */
+        .main-content { margin-left: var(--sidebar-w); }
+
+        /* ===== Top bar ===== */
+        .top-bar {
+            background: #fff; border-bottom: 1px solid #e9ecef;
+            padding: .5rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .top-bar-date { font-size: .85rem; color: #6c757d; }
+        .btn-brand { background: var(--brand); color: #fff; border: none; }
+        .btn-brand:hover { background: var(--brand-dark); color: #fff; }
+
+        /* ===== Page body ===== */
+        .page-body { padding: 1.25rem 1.5rem; }
+
+        /* ===== Card ===== */
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow: hidden; }
+
+        /* ===== WF note ===== */
+        .wf-note {
+            background: #E8F5E9; border: 1px dashed var(--brand); border-radius: 8px;
+            padding: .6rem 1rem; margin-bottom: 1rem;
+            font-size: .78rem; color: #1B5E20;
+        }
+        .wf-note b { color: #B71C1C; }
+
+        /* ===== Section card ===== */
+        .section-card { margin-bottom: 1.25rem; }
+        .section-header {
+            display: flex; align-items: center; gap: .5rem;
+            padding: .85rem 1.25rem;
+            background: #fafbfc; border-bottom: 1px solid #f0f0f0;
+        }
+        .section-icon {
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .9rem; color: #fff; flex-shrink: 0;
+        }
+        .section-title { font-size: .88rem; font-weight: 700; color: #495057; }
+        .section-subtitle { font-size: .72rem; color: #adb5bd; }
+
+        /* ===== Form ===== */
+        .form-body { padding: 1rem 1.25rem; }
+        .field-row { margin-bottom: .85rem; }
+        .field-label { font-size: .78rem; font-weight: 600; color: #495057; margin-bottom: .3rem; display: block; }
+        .field-hint { font-size: .7rem; color: #adb5bd; margin-top: .2rem; }
+        .field-input {
+            width: 100%; border: 1px solid #dee2e6; border-radius: 8px;
+            padding: .45rem .75rem; font-size: .85rem;
+        }
+        .field-input:focus { outline: none; border-color: var(--brand); }
+        .input-suffix { display: flex; align-items: center; }
+        .input-suffix .field-input { border-radius: 8px 0 0 8px; }
+        .input-suffix .suffix {
+            background: #f8f9fa; border: 1px solid #dee2e6; border-left: none;
+            border-radius: 0 8px 8px 0; padding: .45rem .6rem;
+            font-size: .78rem; color: #6c757d; white-space: nowrap;
+        }
+
+        /* ===== Page header ===== */
+        .page-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1.25rem; flex-wrap: wrap; gap: .75rem;
+        }
+        .page-header h2 { font-size: 1.35rem; font-weight: 700; margin: 0; }
+        .page-header p { font-size: .82rem; color: #6c757d; margin: .15rem 0 0; }
+
+        /* ===== KPI row ===== */
+        .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
+        .kpi-card {
+            background: #fff; border-radius: 12px; padding: 1rem 1.25rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+        }
+        .kpi-value { font-size: 1.75rem; font-weight: 800; color: #212529; }
+        .kpi-label { font-size: .75rem; color: #6c757d; margin-top: .1rem; }
+
+        /* ===== Promo list ===== */
+        .promo-item {
+            display: flex; align-items: center; gap: 1rem;
+            padding: .85rem 1.25rem;
+            border-bottom: 1px solid #f5f5f5;
+            transition: background .15s;
+        }
+        .promo-item:last-child { border-bottom: none; }
+        .promo-item:hover { background: #fafbfc; }
+
+        .promo-badge {
+            min-width: 56px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            font-weight: 800; font-size: 1rem; color: #fff;
+            flex-shrink: 0;
+        }
+        .promo-badge.orange { background: linear-gradient(135deg, #FF6D00, #FF9100); }
+        .promo-badge.green { background: linear-gradient(135deg, #00844A, #43A047); }
+        .promo-badge.blue { background: linear-gradient(135deg, #1565C0, #42A5F5); }
+
+        .promo-info { flex: 1; min-width: 0; }
+        .promo-name { font-size: .88rem; font-weight: 700; color: #212529; }
+        .promo-meta { font-size: .75rem; color: #6c757d; margin-top: .15rem; display: flex; flex-wrap: wrap; gap: .5rem; }
+        .promo-meta-item { display: flex; align-items: center; gap: .2rem; }
+
+        .promo-right { display: flex; align-items: center; gap: .75rem; flex-shrink: 0; }
+
+        .promo-toggle {
+            width: 42px; height: 24px; border-radius: 12px;
+            background: #dee2e6; border: none; cursor: pointer;
+            position: relative; transition: background .2s;
+        }
+        .promo-toggle.on { background: var(--brand); }
+        .promo-toggle::after {
+            content: ''; position: absolute; top: 2px; left: 2px;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: #fff; transition: transform .2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,.15);
+        }
+        .promo-toggle.on::after { transform: translateX(18px); }
+
+        .promo-actions { display: flex; gap: .35rem; }
+        .promo-actions button {
+            width: 32px; height: 32px; border-radius: 8px; border: 1px solid #e9ecef;
+            background: #fff; color: #6c757d; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .85rem; transition: all .15s;
+        }
+        .promo-actions button:hover { border-color: var(--brand); color: var(--brand); }
+        .promo-actions button.del:hover { border-color: #dc3545; color: #dc3545; }
+
+        .promo-stats { text-align: right; }
+        .promo-stats-val { font-size: .95rem; font-weight: 700; color: #212529; }
+        .promo-stats-label { font-size: .65rem; color: #adb5bd; }
+
+        /* ===== Empty state ===== */
+        .empty-promo {
+            text-align: center; padding: 3rem 1rem; color: #adb5bd;
+        }
+        .empty-promo i { font-size: 2.5rem; margin-bottom: .5rem; display: block; }
+        .empty-promo p { font-size: .85rem; margin: .25rem 0; }
+
+        /* ===== Create form ===== */
+        .create-form { padding: 1.25rem; }
+
+        .type-selector { display: flex; gap: .5rem; margin-bottom: 1rem; }
+        .type-btn {
+            flex: 1; padding: .75rem .5rem; border: 2px solid #dee2e6; border-radius: 10px;
+            background: #fff; cursor: pointer; text-align: center;
+            transition: all .15s;
+        }
+        .type-btn:hover { border-color: var(--brand); }
+        .type-btn.active { border-color: var(--brand); background: var(--brand-light); }
+        .type-btn i { display: block; font-size: 1.3rem; margin-bottom: .25rem; color: var(--brand); }
+        .type-btn span { font-size: .75rem; font-weight: 600; color: #495057; }
+
+        .day-grid { display: flex; gap: .35rem; flex-wrap: wrap; }
+        .day-chip {
+            width: 42px; height: 36px; border-radius: 8px;
+            border: 2px solid #dee2e6; background: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .75rem; font-weight: 600; color: #495057;
+            cursor: pointer; transition: all .15s;
+        }
+        .day-chip:hover { border-color: var(--brand); }
+        .day-chip.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+
+        .time-range { display: flex; align-items: center; gap: .5rem; }
+        .time-range input { width: 110px; }
+        .time-range span { font-size: .82rem; color: #6c757d; }
+
+        /* ===== Preview panel ===== */
+        .preview-panel {
+            background: #1a1d23; border-radius: 12px; padding: 1.5rem;
+            color: #fff;
+        }
+        .preview-title { font-size: .75rem; color: #6c757d; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: .5px; }
+        .preview-label { font-size: .75rem; color: #adb5bd; margin-bottom: .35rem; }
+
+        /* Widget preview slot */
+        .wp-group-label { font-size: .82rem; font-weight: 700; color: #adb5bd; margin-bottom: .5rem; }
+        .wp-slots { display: flex; flex-wrap: wrap; gap: .4rem; }
+        .wp-slot {
+            min-width: 72px; padding: 8px 14px;
+            border: 2px solid #333; border-radius: 10px;
+            background: #242830; color: #adb5bd;
+            font-size: .85rem; font-weight: 600;
+            text-align: center; position: relative;
+        }
+        .wp-slot.has-discount {
+            border-color: #FF9100;
+            background: #2a2520;
+        }
+        .wp-slot.has-discount .wp-discount-badge {
+            display: block;
+        }
+        .wp-discount-badge {
+            display: none;
+            font-size: .6rem; font-weight: 800;
+            color: #FF9100;
+            margin-top: 2px;
+        }
+
+        /* ===== WIDGET DEMO (bottom) ===== */
+        .widget-demo {
+            max-width: 420px; margin: 0 auto;
+            background: #fff; border-radius: 16px;
+            padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,.08);
+        }
+        .wd-header { text-align: center; margin-bottom: 1rem; }
+        .wd-header h5 { font-size: 1rem; font-weight: 700; margin: 0; }
+        .wd-header p { font-size: .78rem; color: #6c757d; margin: .15rem 0 0; }
+
+        .wd-group { margin-bottom: 1.25rem; }
+        .wd-group:last-child { margin-bottom: 0; }
+        .wd-group-label {
+            font-size: .78rem; font-weight: 700; color: #6c757d;
+            margin-bottom: .5rem; text-transform: uppercase; letter-spacing: .3px;
+        }
+        .wd-slots { display: flex; flex-wrap: wrap; gap: .5rem; }
+        .wd-slot {
+            min-width: 80px; padding: 10px 16px;
+            border: 2px solid #e9ecef; border-radius: 10px;
+            background: #fff; text-align: center;
+            cursor: pointer; transition: all .15s;
+            position: relative;
+        }
+        .wd-slot:hover { border-color: var(--brand); }
+        .wd-slot .wd-time { font-size: .9rem; font-weight: 700; color: #212529; }
+        .wd-slot .wd-covers { font-size: .65rem; color: #adb5bd; margin-top: 1px; }
+
+        /* Discount badge on widget slot */
+        .wd-slot .wd-badge {
+            position: absolute; top: -8px; right: -6px;
+            background: linear-gradient(135deg, #FF6D00, #FF9100);
+            color: #fff; font-size: .6rem; font-weight: 800;
+            padding: 2px 6px; border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(255,109,0,.35);
+            line-height: 1.3;
+        }
+
+        /* Discount badge variant: inline below time */
+        .wd-slot.has-discount-inline {
+            border-color: #FF9100;
+            background: #FFFAF5;
+        }
+        .wd-slot .wd-badge-inline {
+            display: block;
+            font-size: .65rem; font-weight: 800;
+            color: #FF6D00;
+            margin-top: 2px;
+        }
+
+        /* Selected slot with discount */
+        .wd-slot.selected {
+            background: var(--brand); border-color: var(--brand);
+        }
+        .wd-slot.selected .wd-time { color: #fff; }
+        .wd-slot.selected .wd-covers { color: rgba(255,255,255,.7); }
+        .wd-slot.selected .wd-badge-inline { color: rgba(255,255,255,.85); }
+
+        /* Disabled slot */
+        .wd-slot.disabled {
+            opacity: .35; cursor: not-allowed;
+        }
+        .wd-slot.disabled .wd-time { text-decoration: line-through; }
+
+        /* ===== Variant comparison ===== */
+        .variant-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .variant-box {
+            background: #fff; border-radius: 12px; padding: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+        }
+        .variant-label {
+            font-size: .72rem; font-weight: 700; color: #6c757d;
+            text-transform: uppercase; letter-spacing: .5px; margin-bottom: .75rem;
+            display: flex; align-items: center; gap: .35rem;
+        }
+        .variant-label .rec { background: var(--brand); color: #fff; padding: 1px 6px; border-radius: 4px; font-size: .6rem; }
+
+        /* ===== Confirmation recap ===== */
+        .confirm-recap {
+            background: #FFFAF5; border: 1px solid #FFE0B2; border-radius: 10px;
+            padding: .85rem 1.1rem; margin-top: 1rem;
+        }
+        .confirm-recap-title { font-size: .78rem; font-weight: 700; color: #E65100; margin-bottom: .35rem; }
+        .confirm-recap-line { font-size: .78rem; color: #495057; }
+        .confirm-recap-line i { color: #FF9100; margin-right: .25rem; }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 768px) {
+            .mock-sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .page-body { padding: 1rem; }
+            .kpi-row { grid-template-columns: 1fr; }
+            .variant-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="mock-sidebar">
+    <div class="brand">Trattoria Da Mario</div>
+    <div class="nav-item"><i class="bi bi-house me-2"></i>Dashboard</div>
+    <div class="nav-item"><i class="bi bi-calendar-check me-2"></i>Prenotazioni</div>
+    <div class="nav-item"><i class="bi bi-people me-2"></i>Clienti</div>
+    <div class="nav-section">Strumenti</div>
+    <div class="nav-item active"><i class="bi bi-percent me-2"></i>Promozioni</div>
+    <div class="nav-section">Impostazioni</div>
+    <div class="nav-item"><i class="bi bi-gear me-2"></i>Generali</div>
+    <div class="nav-item"><i class="bi bi-clock me-2"></i>Orari e Coperti</div>
+    <div class="nav-item"><i class="bi bi-tags me-2"></i>Categorie Pasto</div>
+    <div class="nav-item"><i class="bi bi-calendar-x me-2"></i>Chiusure</div>
+    <div style="position:absolute;bottom:1rem;left:0;right:0;padding:0 .5rem;">
+        <div class="nav-item" style="background:#2a2d33;border-radius:6px;text-align:center;"><i class="bi bi-box-arrow-left me-1"></i>Esci</div>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+    <div class="top-bar">
+        <span class="top-bar-date"><i class="bi bi-calendar3"></i> Mer 18/03/2026</span>
+        <div class="d-flex align-items-center gap-2">
+            <a href="#" class="btn btn-brand btn-sm"><i class="bi bi-plus-circle me-1"></i> Nuova Prenotazione</a>
+        </div>
+    </div>
+
+    <div class="page-body">
+
+        <!-- ==================== SEZIONE 1: DASHBOARD PROMOZIONI ==================== -->
+
+        <div class="wf-note">
+            <b>WIREFRAME — FASE 14: Promozioni e Badge Sconto</b><br>
+            <b>Pagina 1/3:</b> Dashboard gestione promozioni del ristoratore.<br>
+            <b>1)</b> KPI cards: promozioni attive, prenotazioni con sconto, efficacia.<br>
+            <b>2)</b> Lista promozioni con toggle attiva/disattiva, badge sconto, meta info, stats inline.<br>
+            <b>3)</b> Form creazione con 3 tipologie: ricorrente (giorno settimana), fascia oraria, data specifica.<br>
+            <b>4)</b> Preview live: come appare il badge nel widget di prenotazione.
+        </div>
+
+        <div class="page-header">
+            <div>
+                <h2><i class="bi bi-percent" style="color:var(--brand);"></i> Promozioni</h2>
+                <p>Incentiva le prenotazioni nelle fasce orarie e nei giorni meno richiesti</p>
+            </div>
+            <button class="btn btn-brand btn-sm" onclick="document.getElementById('create-section').scrollIntoView({behavior:'smooth'})">
+                <i class="bi bi-plus-circle me-1"></i> Nuova promozione
+            </button>
+        </div>
+
+        <!-- KPI -->
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-value" style="color:var(--brand);">3</div>
+                <div class="kpi-label">Promozioni attive</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">47</div>
+                <div class="kpi-label">Prenotazioni con sconto (ultimi 30gg)</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value" style="color:#FF6D00;">+32%</div>
+                <div class="kpi-label">Aumento prenotazioni nelle fasce promo</div>
+            </div>
+        </div>
+
+        <!-- Promo list -->
+        <div class="card section-card">
+            <div class="section-header">
+                <div class="section-icon" style="background:#FF6D00;"><i class="bi bi-megaphone"></i></div>
+                <div>
+                    <div class="section-title">Le tue promozioni</div>
+                    <div class="section-subtitle">Gestisci sconti ricorrenti e occasionali</div>
+                </div>
+            </div>
+
+            <!-- Promo 1: Recurring day -->
+            <div class="promo-item">
+                <div class="promo-badge orange">-20%</div>
+                <div class="promo-info">
+                    <div class="promo-name">Martedi Sconto</div>
+                    <div class="promo-meta">
+                        <span class="promo-meta-item"><i class="bi bi-arrow-repeat"></i> Ogni martedi</span>
+                        <span class="promo-meta-item"><i class="bi bi-clock"></i> Tutto il giorno</span>
+                        <span class="promo-meta-item"><i class="bi bi-calendar-range"></i> Dal 01/03 al 30/06</span>
+                    </div>
+                </div>
+                <div class="promo-stats">
+                    <div class="promo-stats-val">23</div>
+                    <div class="promo-stats-label">prenotazioni</div>
+                </div>
+                <div class="promo-right">
+                    <button class="promo-toggle on" title="Attiva"></button>
+                    <div class="promo-actions">
+                        <button title="Modifica"><i class="bi bi-pencil"></i></button>
+                        <button class="del" title="Elimina"><i class="bi bi-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Promo 2: Time slot -->
+            <div class="promo-item">
+                <div class="promo-badge green">-15%</div>
+                <div class="promo-info">
+                    <div class="promo-name">Early Bird Cena</div>
+                    <div class="promo-meta">
+                        <span class="promo-meta-item"><i class="bi bi-arrow-repeat"></i> Lun – Ven</span>
+                        <span class="promo-meta-item"><i class="bi bi-clock"></i> 18:00 – 19:30</span>
+                        <span class="promo-meta-item"><i class="bi bi-infinity"></i> Sempre attiva</span>
+                    </div>
+                </div>
+                <div class="promo-stats">
+                    <div class="promo-stats-val">18</div>
+                    <div class="promo-stats-label">prenotazioni</div>
+                </div>
+                <div class="promo-right">
+                    <button class="promo-toggle on" title="Attiva"></button>
+                    <div class="promo-actions">
+                        <button title="Modifica"><i class="bi bi-pencil"></i></button>
+                        <button class="del" title="Elimina"><i class="bi bi-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Promo 3: Specific date -->
+            <div class="promo-item">
+                <div class="promo-badge blue">-30%</div>
+                <div class="promo-info">
+                    <div class="promo-name">Festa della Donna</div>
+                    <div class="promo-meta">
+                        <span class="promo-meta-item"><i class="bi bi-calendar-event"></i> 08/03/2026</span>
+                        <span class="promo-meta-item"><i class="bi bi-clock"></i> Solo cena (19:00–22:00)</span>
+                    </div>
+                </div>
+                <div class="promo-stats">
+                    <div class="promo-stats-val">6</div>
+                    <div class="promo-stats-label">prenotazioni</div>
+                </div>
+                <div class="promo-right">
+                    <button class="promo-toggle" title="Disattiva"></button>
+                    <div class="promo-actions">
+                        <button title="Modifica"><i class="bi bi-pencil"></i></button>
+                        <button class="del" title="Elimina"><i class="bi bi-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SEZIONE 2: FORM CREAZIONE ==================== -->
+
+        <div id="create-section"></div>
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card section-card">
+                    <div class="section-header">
+                        <div class="section-icon" style="background:var(--brand);"><i class="bi bi-plus-circle"></i></div>
+                        <div>
+                            <div class="section-title">Nuova promozione</div>
+                            <div class="section-subtitle">Definisci sconto, giorni e fascia oraria</div>
+                        </div>
+                    </div>
+
+                    <div class="create-form">
+                        <!-- Tipo -->
+                        <div class="field-row">
+                            <label class="field-label">Tipo di promozione</label>
+                            <div class="type-selector">
+                                <div class="type-btn active" data-type="recurring">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                    <span>Ricorrente</span>
+                                </div>
+                                <div class="type-btn" data-type="timeslot">
+                                    <i class="bi bi-clock-history"></i>
+                                    <span>Fascia oraria</span>
+                                </div>
+                                <div class="type-btn" data-type="specific">
+                                    <i class="bi bi-calendar-event"></i>
+                                    <span>Data specifica</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nome -->
+                        <div class="field-row">
+                            <label class="field-label">Nome promozione *</label>
+                            <input type="text" class="field-input" placeholder="Es: Martedi Sconto, Early Bird, Lancio menu estivo...">
+                            <div class="field-hint">Nome interno, non visibile al cliente</div>
+                        </div>
+
+                        <!-- Sconto -->
+                        <div class="field-row">
+                            <label class="field-label">Sconto *</label>
+                            <div class="input-suffix" style="max-width: 180px;">
+                                <input type="number" class="field-input" value="20" min="5" max="50" step="5">
+                                <span class="suffix">%</span>
+                            </div>
+                            <div class="field-hint">Lo sconto si applica al conto al tavolo (non alla caparra)</div>
+                        </div>
+
+                        <!-- Giorni (per tipo ricorrente) -->
+                        <div class="field-row" id="days-section">
+                            <label class="field-label">Giorni della settimana *</label>
+                            <div class="day-grid">
+                                <div class="day-chip">Lun</div>
+                                <div class="day-chip active">Mar</div>
+                                <div class="day-chip">Mer</div>
+                                <div class="day-chip">Gio</div>
+                                <div class="day-chip">Ven</div>
+                                <div class="day-chip">Sab</div>
+                                <div class="day-chip">Dom</div>
+                            </div>
+                        </div>
+
+                        <!-- Fascia oraria (opzionale) -->
+                        <div class="field-row">
+                            <label class="field-label">Fascia oraria <span style="font-weight:400; color:#adb5bd;">(opzionale, lascia vuoto per tutto il giorno)</span></label>
+                            <div class="time-range">
+                                <input type="time" class="field-input" value="18:00">
+                                <span>—</span>
+                                <input type="time" class="field-input" value="19:30">
+                            </div>
+                        </div>
+
+                        <!-- Periodo validita -->
+                        <div class="field-row">
+                            <label class="field-label">Periodo di validita</label>
+                            <div class="time-range">
+                                <input type="date" class="field-input" value="2026-03-01">
+                                <span>—</span>
+                                <input type="date" class="field-input" value="2026-06-30">
+                            </div>
+                            <div class="field-hint">Lascia vuoto per promozione senza scadenza</div>
+                        </div>
+
+                        <!-- Save -->
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-top:1.25rem; padding-top:1rem; border-top:1px solid #f0f0f0;">
+                            <span style="font-size:.72rem; color:#adb5bd;"><i class="bi bi-info-circle me-1"></i>La promozione sara visibile immediatamente nel widget</span>
+                            <button class="btn btn-brand btn-sm" style="padding:.5rem 1.5rem;">
+                                <i class="bi bi-check-circle me-1"></i> Crea promozione
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Preview -->
+            <div class="col-lg-5">
+                <div class="preview-panel">
+                    <div class="preview-title"><i class="bi bi-eye me-1"></i> Anteprima widget</div>
+                    <div class="preview-label">Come vedra il cliente nel widget di prenotazione:</div>
+
+                    <div style="margin-top:1rem;">
+                        <div class="wp-group-label">Turno Cena</div>
+                        <div class="wp-slots">
+                            <div class="wp-slot has-discount">
+                                18:00
+                                <div class="wp-discount-badge">-20%</div>
+                            </div>
+                            <div class="wp-slot has-discount">
+                                18:30
+                                <div class="wp-discount-badge">-20%</div>
+                            </div>
+                            <div class="wp-slot has-discount">
+                                19:00
+                                <div class="wp-discount-badge">-20%</div>
+                            </div>
+                            <div class="wp-slot">19:30</div>
+                            <div class="wp-slot">20:00</div>
+                            <div class="wp-slot">20:30</div>
+                            <div class="wp-slot">21:00</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:1.25rem; padding-top:1rem; border-top:1px solid #333;">
+                        <div class="preview-label">Nella conferma prenotazione:</div>
+                        <div style="background:#2a2d33; border-radius:8px; padding:.75rem 1rem; margin-top:.5rem;">
+                            <div style="display:flex; align-items:center; gap:.5rem;">
+                                <i class="bi bi-tag-fill" style="color:#FF9100;"></i>
+                                <span style="font-size:.82rem; color:#fff;">Promozione applicata: <strong>-20% sul conto</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help -->
+                <div class="card section-card" style="margin-top:1rem;">
+                    <div class="form-body" style="padding:.85rem 1.25rem;">
+                        <div style="display:flex;gap:.5rem;align-items:flex-start;">
+                            <i class="bi bi-lightbulb" style="color:#FFC107;font-size:1.1rem;margin-top:.1rem;"></i>
+                            <div>
+                                <div style="font-size:.82rem;font-weight:600;color:#495057;margin-bottom:.25rem;">Come funziona</div>
+                                <div style="font-size:.78rem;color:#6c757d;line-height:1.5;">
+                                    Lo sconto appare come <strong>badge colorato</strong> sotto l'orario nel widget di prenotazione.
+                                    Non modifica la caparra Stripe (che resta un deposito).
+                                    Lo sconto si applica <strong>al conto al tavolo</strong>: il ristoratore lo comunica al cliente al momento del pagamento.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SEZIONE 3: VARIANTI BADGE WIDGET ==================== -->
+
+        <div style="margin-top:2.5rem;">
+            <div class="wf-note">
+                <b>Pagina 2/3:</b> Varianti per il badge sconto nel widget di prenotazione.<br>
+                <b>A)</b> Badge esterno (posizionato in alto a destra dello slot) — piu visibile, stile TheFork.<br>
+                <b>B)</b> Badge inline (sotto l'orario, dentro lo slot) — piu pulito, meno intrusivo.<br>
+                <b>Raccomandazione:</b> Variante B (inline) per coerenza con il design minimale del widget.
+            </div>
+
+            <h2 style="font-size:1.2rem; font-weight:700; margin-bottom:1rem;">Varianti Badge nel Widget</h2>
+
+            <div class="variant-row">
+                <!-- Variante A: Badge esterno -->
+                <div class="variant-box">
+                    <div class="variant-label">Variante A — Badge esterno (stile TheFork)</div>
+                    <div class="widget-demo">
+                        <div class="wd-group">
+                            <div class="wd-group-label">Turno Cena</div>
+                            <div class="wd-slots">
+                                <div class="wd-slot" style="position:relative;">
+                                    <div class="wd-badge">-20%</div>
+                                    <div class="wd-time">18:00</div>
+                                    <div class="wd-covers">8 posti</div>
+                                </div>
+                                <div class="wd-slot" style="position:relative;">
+                                    <div class="wd-badge">-20%</div>
+                                    <div class="wd-time">18:30</div>
+                                    <div class="wd-covers">5 posti</div>
+                                </div>
+                                <div class="wd-slot">
+                                    <div class="wd-time">19:00</div>
+                                    <div class="wd-covers">12 posti</div>
+                                </div>
+                                <div class="wd-slot">
+                                    <div class="wd-time">19:30</div>
+                                    <div class="wd-covers">10 posti</div>
+                                </div>
+                                <div class="wd-slot disabled">
+                                    <div class="wd-time">20:00</div>
+                                    <div class="wd-covers">0 posti</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Variante B: Badge inline -->
+                <div class="variant-box">
+                    <div class="variant-label">Variante B — Badge inline <span class="rec">Consigliata</span></div>
+                    <div class="widget-demo">
+                        <div class="wd-group">
+                            <div class="wd-group-label">Turno Cena</div>
+                            <div class="wd-slots">
+                                <div class="wd-slot has-discount-inline">
+                                    <div class="wd-time">18:00</div>
+                                    <div class="wd-badge-inline">-20%</div>
+                                </div>
+                                <div class="wd-slot has-discount-inline">
+                                    <div class="wd-time">18:30</div>
+                                    <div class="wd-badge-inline">-20%</div>
+                                </div>
+                                <div class="wd-slot">
+                                    <div class="wd-time">19:00</div>
+                                    <div class="wd-covers">12 posti</div>
+                                </div>
+                                <div class="wd-slot selected">
+                                    <div class="wd-time">19:30</div>
+                                    <div class="wd-covers">10 posti</div>
+                                </div>
+                                <div class="wd-slot disabled">
+                                    <div class="wd-time">20:00</div>
+                                    <div class="wd-covers">0 posti</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selected state with discount -->
+            <div class="variant-row">
+                <div class="variant-box">
+                    <div class="variant-label">Stato: Slot con sconto selezionato (variante B)</div>
+                    <div class="widget-demo">
+                        <div class="wd-group">
+                            <div class="wd-group-label">Turno Cena</div>
+                            <div class="wd-slots">
+                                <div class="wd-slot has-discount-inline">
+                                    <div class="wd-time">18:00</div>
+                                    <div class="wd-badge-inline">-20%</div>
+                                </div>
+                                <div class="wd-slot has-discount-inline selected">
+                                    <div class="wd-time">18:30</div>
+                                    <div class="wd-badge-inline">-20%</div>
+                                </div>
+                                <div class="wd-slot">
+                                    <div class="wd-time">19:00</div>
+                                    <div class="wd-covers">12 posti</div>
+                                </div>
+                                <div class="wd-slot">
+                                    <div class="wd-time">19:30</div>
+                                    <div class="wd-covers">10 posti</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Confirmation recap -->
+                        <div class="confirm-recap">
+                            <div class="confirm-recap-title"><i class="bi bi-tag-fill me-1"></i> Promozione applicata!</div>
+                            <div class="confirm-recap-line"><i class="bi bi-check2"></i> Sconto del 20% sul conto al tavolo</div>
+                            <div class="confirm-recap-line"><i class="bi bi-info-circle"></i> Lo sconto non si applica alla caparra</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile view -->
+                <div class="variant-box">
+                    <div class="variant-label">Mobile: badge inline su schermo piccolo</div>
+                    <div class="widget-demo" style="max-width: 320px;">
+                        <div class="wd-group">
+                            <div class="wd-group-label">Turno Pranzo</div>
+                            <div class="wd-slots">
+                                <div class="wd-slot has-discount-inline" style="min-width:65px; padding:8px 12px;">
+                                    <div class="wd-time" style="font-size:.82rem;">12:00</div>
+                                    <div class="wd-badge-inline">-15%</div>
+                                </div>
+                                <div class="wd-slot has-discount-inline" style="min-width:65px; padding:8px 12px;">
+                                    <div class="wd-time" style="font-size:.82rem;">12:30</div>
+                                    <div class="wd-badge-inline">-15%</div>
+                                </div>
+                                <div class="wd-slot" style="min-width:65px; padding:8px 12px;">
+                                    <div class="wd-time" style="font-size:.82rem;">13:00</div>
+                                </div>
+                                <div class="wd-slot" style="min-width:65px; padding:8px 12px;">
+                                    <div class="wd-time" style="font-size:.82rem;">13:30</div>
+                                </div>
+                                <div class="wd-slot" style="min-width:65px; padding:8px 12px;">
+                                    <div class="wd-time" style="font-size:.82rem;">14:00</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="wd-group">
+                            <div class="wd-group-label">Turno Cena</div>
+                            <div class="wd-slots">
+                                <div class="wd-slot has-discount-inline" style="min-width:65px; padding:8px 12px;">
+                                    <div class="wd-time" style="font-size:.82rem;">18:00</div>
+                                    <div class="wd-badge-inline">-20%</div>
+                                </div>
+                                <div class="wd-slot" style="min-width:65px; padding:8px 12px;">
+                                    <div class="wd-time" style="font-size:.82rem;">19:00</div>
+                                </div>
+                                <div class="wd-slot" style="min-width:65px; padding:8px 12px;">
+                                    <div class="wd-time" style="font-size:.82rem;">20:00</div>
+                                </div>
+                                <div class="wd-slot" style="min-width:65px; padding:8px 12px;">
+                                    <div class="wd-time" style="font-size:.82rem;">20:30</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SEZIONE 4: EMAIL + LINK MAGICO ==================== -->
+
+        <div style="margin-top:2rem;">
+            <div class="wf-note">
+                <b>Pagina 3/3:</b> Come lo sconto appare nella conferma, nell'email e nel link magico.<br>
+                <b>1)</b> Step conferma widget: banner arancione "Promozione applicata: -X%".<br>
+                <b>2)</b> Email conferma: riga aggiuntiva con icona tag + testo sconto.<br>
+                <b>3)</b> Link magico: box info arancione nella vista dettaglio.<br>
+                <b>Nota:</b> Lo sconto NON modifica la caparra Stripe. E un'informazione visiva che il ristoratore applica al conto.
+            </div>
+
+            <h2 style="font-size:1.2rem; font-weight:700; margin-bottom:1rem;">Sconto nella conferma e comunicazioni</h2>
+
+            <div class="variant-row" style="grid-template-columns: repeat(3, 1fr);">
+                <!-- Conferma widget -->
+                <div class="variant-box">
+                    <div class="variant-label">Widget — Step conferma</div>
+                    <div style="background:#fff; border-radius:12px; padding:1.25rem; text-align:center; border:1px solid #e9ecef;">
+                        <div style="font-size:3rem; color:var(--brand); margin-bottom:.5rem;"><i class="bi bi-check-circle-fill"></i></div>
+                        <h5 style="font-size:1.05rem; font-weight:700;">Prenotazione Confermata!</h5>
+                        <div style="font-size:.82rem; color:#6c757d; margin:.5rem 0;">
+                            <div><strong>Martedi 24 Marzo 2026</strong></div>
+                            <div>Ore 18:30 &middot; 2 persone</div>
+                        </div>
+                        <div style="background:#FFFAF5; border:1px solid #FFE0B2; border-radius:8px; padding:.6rem .85rem; margin-top:.75rem; display:inline-flex; align-items:center; gap:.4rem;">
+                            <i class="bi bi-tag-fill" style="color:#FF9100;"></i>
+                            <span style="font-size:.82rem; font-weight:600; color:#E65100;">Sconto 20% sul conto</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="variant-box">
+                    <div class="variant-label">Email conferma</div>
+                    <div style="background:#f8f9fa; border-radius:12px; padding:1rem; font-size:.78rem; border:1px solid #e9ecef;">
+                        <div style="text-align:center; margin-bottom:.75rem;">
+                            <strong style="color:var(--brand);">Trattoria Da Mario</strong>
+                        </div>
+                        <div style="background:#fff; border-radius:8px; padding:.75rem; border:1px solid #e9ecef;">
+                            <div style="font-weight:700; margin-bottom:.35rem;">Riepilogo prenotazione</div>
+                            <div style="color:#6c757d;"><i class="bi bi-calendar3 me-1"></i>Mar 24/03/2026</div>
+                            <div style="color:#6c757d;"><i class="bi bi-clock me-1"></i>18:30</div>
+                            <div style="color:#6c757d;"><i class="bi bi-people me-1"></i>2 persone</div>
+                            <div style="margin-top:.5rem; padding-top:.5rem; border-top:1px dashed #e9ecef;">
+                                <div style="display:flex; align-items:center; gap:.35rem; color:#E65100; font-weight:600;">
+                                    <i class="bi bi-tag-fill"></i> Promozione: -20% sul conto
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Link magico -->
+                <div class="variant-box">
+                    <div class="variant-label">Link magico — Gestione prenotazione</div>
+                    <div style="background:#f8f9fa; border-radius:12px; padding:1rem; font-size:.78rem; border:1px solid #e9ecef;">
+                        <div style="text-align:center; margin-bottom:.75rem;">
+                            <strong>La tua prenotazione</strong>
+                        </div>
+                        <div style="background:#fff; border-radius:8px; padding:.75rem; border:1px solid #e9ecef;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:.25rem;">
+                                <span style="color:#6c757d;">Data</span>
+                                <strong>Mar 24/03/2026</strong>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:.25rem;">
+                                <span style="color:#6c757d;">Orario</span>
+                                <strong>18:30</strong>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:.25rem;">
+                                <span style="color:#6c757d;">Persone</span>
+                                <strong>2</strong>
+                            </div>
+                            <div style="display:flex; justify-content:space-between;">
+                                <span style="color:#6c757d;">Stato</span>
+                                <span style="background:#E8F5E9; color:#2E7D32; padding:1px 8px; border-radius:10px; font-weight:600; font-size:.72rem;">Confermata</span>
+                            </div>
+                        </div>
+                        <div style="background:#FFFAF5; border:1px solid #FFE0B2; border-radius:8px; padding:.5rem .75rem; margin-top:.5rem; display:flex; align-items:center; gap:.35rem;">
+                            <i class="bi bi-tag-fill" style="color:#FF9100;"></i>
+                            <span style="color:#E65100; font-weight:600;">Promozione -20% sul conto al tavolo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SEZIONE 5: NOTE TECNICHE ==================== -->
+
+        <div style="margin-top:2rem;">
+            <div class="card section-card">
+                <div class="section-header">
+                    <div class="section-icon" style="background:#5C6BC0;"><i class="bi bi-code-slash"></i></div>
+                    <div>
+                        <div class="section-title">Note tecniche di implementazione</div>
+                        <div class="section-subtitle">Architettura e decisioni di design</div>
+                    </div>
+                </div>
+                <div class="form-body" style="font-size:.82rem; color:#495057; line-height:1.7;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+                        <div>
+                            <strong style="color:#212529;">Database</strong>
+                            <div style="background:#f8f9fa; border-radius:8px; padding:.75rem; margin-top:.35rem; font-family:'SF Mono',monospace; font-size:.72rem; line-height:1.6;">
+                                <strong>promotions</strong><br>
+                                &nbsp;&nbsp;id, tenant_id, name<br>
+                                &nbsp;&nbsp;discount_percent (5-50)<br>
+                                &nbsp;&nbsp;type: 'recurring' | 'specific_date'<br>
+                                &nbsp;&nbsp;days_of_week (bitmask: 1=Lun...7=Dom)<br>
+                                &nbsp;&nbsp;time_from, time_to (TIME, nullable)<br>
+                                &nbsp;&nbsp;date_from, date_to (DATE)<br>
+                                &nbsp;&nbsp;is_active (TINYINT, default 1)<br>
+                                &nbsp;&nbsp;created_at, updated_at
+                            </div>
+                        </div>
+                        <div>
+                            <strong style="color:#212529;">API Availability (modifica)</strong>
+                            <div style="background:#f8f9fa; border-radius:8px; padding:.75rem; margin-top:.35rem; font-family:'SF Mono',monospace; font-size:.72rem; line-height:1.6;">
+                                GET /api/v1/tenants/{slug}/availability<br>
+                                &nbsp;&nbsp;?date=2026-03-24&party_size=2<br><br>
+                                Response slot aggiuntivo:<br>
+                                &nbsp;&nbsp;"discount_percent": 20,<br>
+                                &nbsp;&nbsp;"discount_name": "Martedi Sconto"<br><br>
+                                Se null → nessuno sconto per lo slot.
+                            </div>
+                        </div>
+                        <div>
+                            <strong style="color:#212529;">Flusso dati</strong>
+                            <ol style="margin:.35rem 0 0; padding-left:1.25rem;">
+                                <li>Ristoratore crea promozione nel dashboard</li>
+                                <li>API availability include discount_percent per slot applicabili</li>
+                                <li>Widget mostra badge arancione sugli slot con sconto</li>
+                                <li>Al submit, il widget invia discount_percent selezionato</li>
+                                <li>Backend salva su reservations.discount_percent</li>
+                                <li>Email + link magico mostrano lo sconto</li>
+                                <li>Lo sconto NON tocca Stripe/caparra</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <strong style="color:#212529;">Regole di business</strong>
+                            <ul style="margin:.35rem 0 0; padding-left:1.25rem;">
+                                <li>Max 1 promozione per slot (la piu alta vince)</li>
+                                <li>Range sconto: 5% – 50% (step 5%)</li>
+                                <li>Promozione senza date = sempre attiva</li>
+                                <li>Toggle attiva/disattiva immediato</li>
+                                <li>Sconto e informativo, il ristoratore lo applica al conto</li>
+                                <li>Statistiche: conteggio prenotazioni per promozione</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// Type selector toggle
+document.querySelectorAll('.type-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.type-btn').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+    });
+});
+// Day chip toggle
+document.querySelectorAll('.day-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+        this.classList.toggle('active');
+    });
+});
+// Toggle demo
+document.querySelectorAll('.promo-toggle').forEach(function(toggle) {
+    toggle.addEventListener('click', function() {
+        this.classList.toggle('on');
+    });
+});
+// Slot click demo
+document.querySelectorAll('.wd-slot:not(.disabled)').forEach(function(slot) {
+    slot.addEventListener('click', function() {
+        var parent = this.closest('.wd-slots');
+        parent.querySelectorAll('.wd-slot').forEach(function(s) { s.classList.remove('selected'); });
+        this.classList.add('selected');
+    });
+});
+</script>
+
+</body>
+</html>

@@ -375,7 +375,7 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
     </div>
 </div>
 
-<script>
+<script nonce="<?= csp_nonce() ?>">
 (function() {
     var MONTHS = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
     var DAYS_SHORT = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];

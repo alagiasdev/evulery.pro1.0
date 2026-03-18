@@ -97,6 +97,43 @@ class CustomersController
         Response::json(['success' => true, 'data' => $results]);
     }
 
+    public function stats(Request $request): void
+    {
+        $tenantId = Auth::tenantId();
+        $tenant = TenantResolver::current();
+
+        // Period filter (default: last 90 days)
+        $dateTo = $request->query('to', date('Y-m-d'));
+        $dateFrom = $request->query('from', date('Y-m-d', strtotime('-90 days')));
+
+        // Validate dates
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateFrom)) $dateFrom = date('Y-m-d', strtotime('-90 days'));
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateTo)) $dateTo = date('Y-m-d');
+
+        $thresholds = [
+            'occ' => (int)($tenant['segment_occasionale'] ?? 2),
+            'abi' => (int)($tenant['segment_abituale'] ?? 4),
+            'vip' => (int)($tenant['segment_vip'] ?? 10),
+        ];
+
+        $customerModel = new Customer();
+        $kpi = $customerModel->getStats($tenantId, $dateFrom, $dateTo);
+        $topClients = $customerModel->getTopByFrequency($tenantId, $dateFrom, $dateTo);
+        $segments = $customerModel->segmentCounts($tenantId, $thresholds);
+
+        view('dashboard/customers/stats', [
+            'title'      => 'Statistiche Clienti',
+            'activeMenu' => 'customers',
+            'tenant'     => $tenant,
+            'dateFrom'   => $dateFrom,
+            'dateTo'     => $dateTo,
+            'kpi'        => $kpi,
+            'topClients' => $topClients,
+            'segments'   => $segments,
+            'thresholds' => $thresholds,
+        ], 'dashboard');
+    }
+
     public function show(Request $request): void
     {
         $id = (int)$request->param('id');

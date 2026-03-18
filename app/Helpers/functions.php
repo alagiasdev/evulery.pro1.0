@@ -148,6 +148,18 @@ function slugify(string $text): string
 }
 
 /**
+ * Generate or retrieve CSP nonce for this request
+ */
+function csp_nonce(): string
+{
+    static $nonce = null;
+    if ($nonce === null) {
+        $nonce = base64_encode(random_bytes(16));
+    }
+    return $nonce;
+}
+
+/**
  * Log message to storage/logs
  */
 function app_log(string $message, string $level = 'info'): void

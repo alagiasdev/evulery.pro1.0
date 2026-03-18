@@ -93,18 +93,12 @@ Controlli da eseguire quando si pubblica su server di produzione.
 
 ---
 
-## 9. Slot passati visibili nella creazione prenotazione
+## ~~9. Slot passati visibili nella creazione prenotazione~~ → RISOLTO
 
-**Problema riscontrato in dev:** quando si crea una prenotazione per "Oggi", la sidebar "Orario disponibile" mostra anche gli slot gia passati (es. slot pranzo 12:00 visibili alle 18:17). Questo puo confondere il ristoratore.
-
-**Valutare:**
-- Nascondere completamente gli slot passati per la data odierna?
-- Oppure mostrarli disabilitati/grigi (non selezionabili) per dare contesto?
-- La logica va applicata solo quando la data selezionata e "Oggi" (per domani/dopodomani tutti gli slot restano visibili)
-
-**File coinvolti:**
-- `public/assets/js/dashboard-reservation.js` → rendering slot nella sidebar
-- `app/Services/AvailabilityService.php` → eventualmente filtrare lato server
+**Soluzione implementata:**
+- **API**: flag `is_past` su ogni slot quando la data è oggi e l'orario è passato (`AvailabilityService`)
+- **Widget pubblico**: slot passati nascosti completamente (il cliente non li vede)
+- **Dashboard**: slot passati visibili in grigio con bordo tratteggiato e label "Passato", ma selezionabili (per walk-in)
 
 ---
 

@@ -10,6 +10,6 @@
         </p>
     </div>
     <div class="manage-footer">
-        Powered by Evulery
+        &copy; <?= date('Y') ?> Evulery &middot; by alagias. - Soluzioni per il web
     </div>
 </div>

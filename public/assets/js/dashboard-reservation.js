@@ -390,9 +390,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 var available = slot.available_covers;
                 var max = slot.max_covers;
                 var ratio = max > 0 ? available / max : 0;
+                var isPast = !!slot.is_past;
 
                 var colorClass = 'dr-slot-green';
-                if (!slot.is_available || available <= 0) {
+                if (isPast) {
+                    colorClass = 'dr-slot-past';
+                } else if (!slot.is_available || available <= 0) {
                     colorClass = 'dr-slot-red';
                 } else if (ratio <= 0.25) {
                     colorClass = 'dr-slot-yellow';
@@ -400,14 +403,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 var slotTimeShort = slot.time.substring(0, 5);
                 var activeClass = (state.time === slotTimeShort || state.time === slot.time) ? ' active' : '';
-                var disabled = (!slot.is_available) ? ' disabled' : '';
+                var disabled = (!slot.is_available && !isPast) ? ' disabled' : '';
+
+                var coversLabel = isPast ? 'Passato' : available + ' liberi';
 
                 html += '<button type="button" class="dr-slot-btn ' + colorClass + activeClass + '"'
                     + ' data-time="' + slot.time + '"'
                     + disabled + '>'
                     + '<span class="dr-slot-indicator"></span>'
                     + '<span>' + slotTimeShort + '</span>'
-                    + '<span class="dr-slot-covers">' + available + ' liberi</span>'
+                    + '<span class="dr-slot-covers">' + coversLabel + '</span>'
                     + '</button>';
             });
 

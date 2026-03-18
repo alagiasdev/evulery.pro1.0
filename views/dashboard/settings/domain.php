@@ -225,7 +225,7 @@ $isPending = $domainStatus === 'dns_pending';
     </div>
 </div>
 
-<script>
+<script nonce="<?= csp_nonce() ?>">
 // Copy buttons
 document.querySelectorAll('[data-copy-text]').forEach(function(btn) {
     btn.addEventListener('click', function(e) {

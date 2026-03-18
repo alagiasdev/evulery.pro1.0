@@ -154,7 +154,7 @@ for ($i = 0; $i < 3; $i++) {
         <div class="filter-divider"></div>
         <div class="filter-group">
             <label>Stato</label>
-            <select class="filter-input" name="status" onchange="this.form.submit()">
+            <select class="filter-input" name="status" data-autosubmit>
                 <option value="">Tutti</option>
                 <option value="confirmed" <?= $status === 'confirmed' ? 'selected' : '' ?>>Confermate</option>
                 <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>In attesa</option>
@@ -165,7 +165,7 @@ for ($i = 0; $i < 3; $i++) {
         </div>
         <div class="filter-group">
             <label>Fonte</label>
-            <select class="filter-input" name="source" onchange="this.form.submit()">
+            <select class="filter-input" name="source" data-autosubmit>
                 <option value="">Tutte</option>
                 <option value="widget" <?= ($source ?? '') === 'widget' ? 'selected' : '' ?>>Widget</option>
                 <option value="phone" <?= ($source ?? '') === 'phone' ? 'selected' : '' ?>>Telefono</option>
@@ -356,7 +356,7 @@ for ($i = 0; $i < 3; $i++) {
 
 <?php endif; /* close searchResults === null */ ?>
 
-<script>
+<script nonce="<?= csp_nonce() ?>">
 (function() {
     // Skip filter/calendar JS when in search mode
     var toggle = document.getElementById('res-cal-toggle');
