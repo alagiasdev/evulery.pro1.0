@@ -1,0 +1,8 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/$USER/evulery
+    - /bin/cp -R * $DEPLOYPATH/
+    - cd $DEPLOYPATH && /usr/local/bin/composer install --no-dev --optimize-autoloader 2>/dev/null || true
+    - chmod -R 775 $DEPLOYPATH/storage/
+    - chmod -R 775 $DEPLOYPATH/public/uploads/
