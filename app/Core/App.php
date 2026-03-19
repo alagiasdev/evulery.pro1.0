@@ -24,10 +24,18 @@ class App
         // Security headers (CSP with nonce, set via PHP for dynamic nonce)
         $nonce = csp_nonce();
         header("X-Content-Type-Options: nosniff");
-        header("X-Frame-Options: DENY");
         header("Referrer-Policy: strict-origin-when-cross-origin");
         header("Permissions-Policy: geolocation=(), microphone=(), camera=()");
-        header("Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-{$nonce}' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self'");
+
+        // Allow iframe embedding for public booking pages, deny for dashboard/admin
+        $uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+        $isProtected = str_starts_with($uri, '/dashboard') || str_starts_with($uri, '/admin') || str_starts_with($uri, '/auth');
+        if ($isProtected) {
+            header("X-Frame-Options: DENY");
+            header("Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-{$nonce}' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'");
+        } else {
+            header("Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-{$nonce}' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self'; frame-ancestors *");
+        }
 
         // Load routes
         $router = $this->router;
