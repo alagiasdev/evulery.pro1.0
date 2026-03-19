@@ -319,7 +319,7 @@ class Customer
              AND r.reservation_date >= :from
              AND r.reservation_date <= :to
              AND r.status IN ("confirmed", "pending", "arrived")
-             GROUP BY c.id
+             GROUP BY c.id, c.first_name, c.last_name, c.total_bookings, c.total_noshow
              ORDER BY period_bookings DESC
              LIMIT :lim'
         );
