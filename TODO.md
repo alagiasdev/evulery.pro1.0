@@ -1,8 +1,10 @@
 # Evulery.Pro 1.0 - Prossimi Passi
 
 ## Stato Attuale
-Fasi completate: Foundation, Auth, Admin Panel, Multi-Tenant, Slot/Capacita, Booking Widget, Dashboard Ristoratore, Security Audit (25/25), Dashboard UX improvements, Prenotazione Rapida Touch (FASE 16), Design System v3.1, Booking Widget Polish (FASE 17 parziale).
+Fasi completate: Foundation, Auth, Admin Panel, Multi-Tenant, Slot/Capacita, Booking Widget, Dashboard Ristoratore, Security Audit (25/25), Dashboard UX improvements, Prenotazione Rapida Touch (FASE 16), Design System v3.1, Booking Widget Polish (FASE 17 parziale), Promozioni e Badge Sconto (FASE 14).
 Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widget e dashboard.
+
+**Nota architetturale (Marzo 2026):** Il modello commerciale sara basato sui **coperti** (numero di prenotazioni/coperti gestiti), NON sulle feature flags. Tutte le funzionalita sono disponibili per tutti i tenant. La FASE 9 (Feature Flags) e stata abbandonata. I piani commerciali (FASE 18) limiteranno solo il volume di coperti mensili, non l'accesso alle singole feature.
 
 **Completato recentemente (sessione corrente - Marzo 2026):**
 - [x] Slot passati nascosti per "Oggi": widget li nasconde completamente, dashboard li mostra grigi (dashed border, opacity .6) ma cliccabili per walk-in
@@ -123,8 +125,9 @@ Le seguenti migliorie non sono prioritarie per il lancio e vengono rimandate a f
 - [ ] Impostazioni caparra nel dashboard (gia creata la UI, manca il collegamento Stripe)
 - [ ] Testare con carte test Stripe
 
-## FASE 9: Sistema Piani e Feature Flags
-Architettura flessibile per gestire i piani commerciali con feature gating dinamico.
+## FASE 9: Sistema Piani e Feature Flags [ABBANDONATA]
+~~Architettura flessibile per gestire i piani commerciali con feature gating dinamico.~~
+**Decisione (Marzo 2026):** Modello commerciale basato sui coperti, non sulle feature. Tutte le funzionalita disponibili per tutti. I piani differenzieranno solo per volume coperti mensili (vedi FASE 18).
 
 ### Database: 3 nuove tabelle
 - [ ] `plan_definitions` - Piani con prezzo e booking_limit
@@ -200,7 +203,6 @@ Sistema automatico di gestione clienti per il ristoratore + self-service per il 
 
 ### CRM Automatico (senza account cliente)
 Il sistema raggruppa le prenotazioni per email, tenant-scoped. Nessuna azione richiesta dal cliente.
-- [ ] Gate: `PlanService::can('crm')` - richiede piano Starter+
 - [x] Tabella `customers` (tenant_id, first_name, last_name, email UNIQUE per tenant, phone, total_bookings, total_noshow, last_booking_at)
 - [x] Auto-creazione/aggiornamento customer ad ogni prenotazione (match per email + tenant)
 - [x] Dashboard ristoratore: lista clienti con storico visite, no-show rate, party size medio
@@ -214,7 +216,6 @@ Il sistema raggruppa le prenotazioni per email, tenant-scoped. Nessuna azione ri
 
 ### Link Magico - Gestione Prenotazione (self-service cliente)
 Il cliente gestisce la prenotazione tramite un link unico ricevuto via email. Nessuna registrazione.
-- [ ] Gate: `PlanService::can('manage_link')` - richiede piano Starter+
 - [x] Colonna `manage_token` (VARCHAR 64, UNIQUE) sulla tabella `reservations`, generato alla creazione
 - [x] Route: `/manage/{token}` → pagina di gestione (layout minimal standalone)
 - [x] Vista dettagli: data, ora, persone, stato prenotazione (con date in italiano)
@@ -233,7 +234,6 @@ Il cliente gestisce la prenotazione tramite un link unico ricevuto via email. Ne
   - Permettere modifica persone (si/no)
 
 ### Blacklist Clienti → COMPLETATO (senza gate, da integrare con PlanService)
-- [ ] Gate: `PlanService::can('blacklist')` - richiede piano Starter+
 - [x] Flag `is_blocked` + `blocked_at` sulla tabella `customers`
 - [x] Quando cliente bloccato tenta di prenotare (match email) → messaggio "Contatta il ristorante telefonicamente"
 - [x] Bottone blocca/sblocca nella scheda cliente (toggle con flash message)
@@ -248,7 +248,6 @@ Il cliente gestisce la prenotazione tramite un link unico ricevuto via email. Ne
 
 ### Giorni di Chiusura / Orari Speciali
 Gestione chiusure straordinarie, ferie e orari speciali.
-- [ ] Gate: `PlanService::can('closure_days')` - richiede piano Starter+
 - [ ] Tabella `closures` (tenant_id, date_from, date_to, reason, type: 'closed'/'special_hours')
 - [ ] Per type 'special_hours': colonne `special_open_time`, `special_close_time`
 - [ ] Pagina dashboard "Chiusure e Ferie": calendario per selezionare date/range
@@ -260,7 +259,6 @@ Gestione chiusure straordinarie, ferie e orari speciali.
 
 ### Conferma Manuale Prenotazioni
 Alcuni ristoranti vogliono approvare prima di confermare.
-- [ ] Gate: `PlanService::can('manual_confirmation')` - richiede piano Pro+
 - [ ] Impostazione on/off nel dashboard: "Richiedi conferma manuale"
 - [ ] Se attivo: prenotazione arriva come "In attesa di conferma" (nuovo stato)
 - [ ] Dashboard: bottoni Conferma / Rifiuta per ogni prenotazione in attesa
@@ -279,7 +277,6 @@ Alcuni ristoranti vogliono approvare prima di confermare.
 
 ### Reminder Email
 Notifica automatica prima della prenotazione per ridurre i no-show. Include link magico per modificare/cancellare.
-- [ ] Gate: `PlanService::can('reminder')` - richiede piano Starter+
 - [ ] Cron job / task scheduler che controlla prenotazioni in arrivo
 - [ ] Template email reminder con riepilogo + link gestione
 - [ ] Configurazione ristoratore: quando inviare il reminder
@@ -289,34 +286,30 @@ Notifica automatica prima della prenotazione per ridurre i no-show. Include link
   - Disattivato
 - [ ] Colonna `reminder_sent_at` su `reservations` per evitare invii doppi
 
-## FASE 14: Promozioni e Sconti
+## FASE 14: Promozioni e Sconti [COMPLETATA]
 Badge sconto percentuale nel widget (stile TheFork). Il ristoratore gestisce la domanda incentivando le fasce orarie/giorni vuoti.
 
 ### Dashboard Ristoratore - Gestione Promozioni
-- [ ] Gate: `PlanService::can('promotions')` - richiede piano Pro+
-- [ ] Tabella `promotions` (tenant_id, name, discount_percent, type: 'recurring'/'specific_date')
-- [ ] Per type 'recurring': giorni della settimana (bitmask o colonne lun-dom), fascia oraria opzionale
-- [ ] Per type 'specific_date': date_from, date_to
-- [ ] Campi: is_active, valid_from, valid_to (periodo validita della regola)
-- [ ] Pagina dashboard "Promozioni": lista promozioni + form creazione
-  - Giorno ricorrente (es. ogni martedi -20%)
-  - Fascia oraria (es. 18:00-19:00 -15% ogni giorno)
-  - Data specifica (es. 15 marzo -30%)
-  - Combinato (es. ogni lunedi 12:00-14:00 -25%)
-- [ ] Attiva/disattiva promozione con toggle
+- [x] Tabella `promotions` (tenant_id, name, discount_percent, type: recurring/time_slot/specific_date)
+- [x] Per type 'recurring': giorni della settimana (CSV), fascia oraria opzionale
+- [x] Per type 'time_slot': fascia oraria obbligatoria, giorni opzionali
+- [x] Per type 'specific_date': date_from/date_to, fascia oraria opzionale
+- [x] Pagina dashboard "Promozioni" in Settings con KPI (attive, prenotazioni scontate 30gg, % crescita)
+- [x] CRUD completo: creazione, modifica, toggle attiva/disattiva, eliminazione
+- [x] Matching server-side: findApplicable() con priorita specific_date > time_slot > recurring, sconto piu alto vince
 
 ### Widget - Badge Sconto
-- [ ] API availability: includere info promozione per ogni slot (discount_percent se applicabile)
-- [ ] Badge percentuale sotto l'orario nel widget (es. "-20%")
-- [ ] Stile: badge colorato (verde/arancione) come TheFork
-- [ ] CSS: classe `.bw-slot-discount` per il badge
+- [x] API availability: discount_percent per ogni slot (AvailabilityService)
+- [x] Badge inline sotto l'orario nel widget (Variante B, stile compatto)
+- [x] Stile: badge arancione (#E65100) con testo bianco
 
 ### Conferma e Tracking
-- [ ] Conferma prenotazione mostra "Promozione applicata: -X% sul conto"
-- [ ] Email conferma include info sconto
-- [ ] Link magico mostra lo sconto applicato
-- [ ] Lo sconto NON modifica la caparra Stripe (la caparra e un deposito, lo sconto si applica al conto al tavolo)
-- [ ] Statistiche: prenotazioni con promozione vs prezzo pieno, efficacia per promozione
+- [x] Conferma prenotazione mostra sconto applicato
+- [x] Email conferma include riga promozione
+- [x] Link magico mostra lo sconto applicato
+- [x] Lo sconto NON modifica la caparra Stripe (informativo, applicato al conto al tavolo)
+- [x] Colonna discount_percent su reservations, lookup server-side (mai fidarsi del client)
+- [x] Display in dashboard: badge nella lista prenotazioni + dettaglio nella scheda
 
 ## FASE 15: Email Broadcast
 Newsletter semplice per comunicare con i clienti (eventi, nuovo menu, promozioni). Richiede piano Pro+.
@@ -333,7 +326,6 @@ Newsletter semplice per comunicare con i clienti (eventi, nuovo menu, promozioni
 - [ ] Link unsubscribe obbligatorio (GDPR): colonna `unsubscribed` su `customers`
 - [ ] Storico invii: lista email inviate con data, oggetto, numero destinatari
 - [ ] Rate limiting: max 1 broadcast al giorno per evitare spam
-- [ ] Gate: `PlanService::can('email_broadcast')` - richiede piano Pro+
 
 ## FASE 16: Dashboard Prenotazione Rapida (Touch-Friendly) [COMPLETATA]
 Riscrittura completa della pagina "Nuova Prenotazione" per uso su schermi touch e gestione prenotazioni telefoniche.
@@ -399,9 +391,13 @@ Obiettivo: 5 tocchi in 5 secondi per registrare una prenotazione telefonica.
 - [x] Pagine auth redesign v3.1 (login, forgot-password, reset-password)
 
 ## FASE 18: Billing SaaS (Stripe Subscriptions)
-- [ ] Stripe Subscriptions collegato a `plan_definitions`
+Modello basato sui **coperti mensili**: tutte le feature incluse, i piani differenziano solo per volume.
+- [ ] Definizione piani per fasce coperti (es. Free fino a X, Starter fino a Y, Pro illimitati)
+- [ ] Contatore coperti mensili per tenant (somma party_size prenotazioni del mese)
+- [ ] Stripe Subscriptions collegato ai piani
 - [ ] Webhook per `invoice.payment_succeeded`, `invoice.payment_failed`
-- [ ] Disattivazione automatica tenant se pagamento fallisce
+- [ ] Soft limit: avviso quando il tenant si avvicina al limite coperti
+- [ ] Hard limit: blocco nuove prenotazioni widget al superamento (dashboard sempre operativo)
 - [ ] Pannello admin: gestione abbonamenti, storico pagamenti
 - [ ] Pagina pricing pubblica per i ristoratori
 - [ ] Self-service upgrade/downgrade piano dal dashboard
