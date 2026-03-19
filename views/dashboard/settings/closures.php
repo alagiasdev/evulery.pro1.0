@@ -4,6 +4,7 @@ $settingsTabs = [
     ['url' => url('dashboard/settings/slots'),          'icon' => 'bi-clock',        'label' => 'Orari e Coperti',  'key' => 'slots'],
     ['url' => url('dashboard/settings/meal-categories'),'icon' => 'bi-tags',         'label' => 'Categorie Pasto',  'key' => 'meal-categories'],
     ['url' => url('dashboard/settings/closures'),       'icon' => 'bi-calendar-x',   'label' => 'Chiusure',         'key' => 'closures'],
+    ['url' => url('dashboard/settings/promotions'),     'icon' => 'bi-percent',      'label' => 'Promozioni',       'key' => 'promotions'],
     ['url' => url('dashboard/settings/deposit'),        'icon' => 'bi-cash',         'label' => 'Caparra',          'key' => 'deposit'],
     ['url' => url('dashboard/settings/domain'),         'icon' => 'bi-globe',        'label' => 'Dominio',          'key' => 'domain'],
 ];

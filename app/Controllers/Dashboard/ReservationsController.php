@@ -9,6 +9,7 @@ use App\Core\TenantResolver;
 use App\Core\Validator;
 use App\Models\Customer;
 use App\Models\Reservation;
+use App\Models\Promotion;
 use App\Models\ReservationLog;
 use App\Services\AvailabilityService;
 use App\Services\MailService;
@@ -152,6 +153,9 @@ class ReservationsController
             ? $data['source']
             : 'phone';
 
+        // Lookup applicable promotion (server-side)
+        $promo = (new Promotion())->findApplicable($tenantId, $data['reservation_date'], $data['reservation_time']);
+
         // Build reservation data
         $reservationData = [
             'tenant_id'        => $tenantId,
@@ -162,6 +166,10 @@ class ReservationsController
             'status'           => 'confirmed',
             'source'           => $source,
         ];
+
+        if ($promo) {
+            $reservationData['discount_percent'] = (int)$promo['discount_percent'];
+        }
 
         if (!empty($data['customer_notes'])) {
             $reservationData['customer_notes'] = substr($data['customer_notes'], 0, 1000);

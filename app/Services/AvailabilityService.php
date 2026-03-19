@@ -6,6 +6,7 @@ use App\Core\Database;
 use App\Models\TimeSlot;
 use App\Models\Reservation;
 use App\Models\MealCategory;
+use App\Models\Promotion;
 use PDO;
 
 class AvailabilityService
@@ -51,6 +52,7 @@ class AvailabilityService
         }
 
         $reservationModel = new Reservation();
+        $promotionModel = new Promotion();
         $result = [];
 
         foreach ($slots as $slot) {
@@ -81,6 +83,9 @@ class AvailabilityService
             // Flag past slots when date is today
             $isPast = ($date === date('Y-m-d') && $slotTime < date('H:i'));
 
+            // Lookup applicable promotion for this slot
+            $promo = $promotionModel->findApplicable($tenantId, $date, $slotTime);
+
             $result[] = [
                 'time'             => $slotTime,
                 'max_covers'       => $maxCovers,
@@ -88,6 +93,7 @@ class AvailabilityService
                 'available_covers' => max(0, $available),
                 'is_available'     => $available >= $partySize,
                 'is_past'          => $isPast,
+                'discount_percent' => $promo ? (int)$promo['discount_percent'] : 0,
             ];
         }
 

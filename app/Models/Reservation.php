@@ -109,8 +109,8 @@ class Reservation
         $token = bin2hex(random_bytes(32));
 
         $stmt = $this->db->prepare(
-            'INSERT INTO reservations (tenant_id, customer_id, reservation_date, reservation_time, party_size, status, deposit_required, deposit_amount, source, manage_token, customer_notes)
-             VALUES (:tenant_id, :customer_id, :reservation_date, :reservation_time, :party_size, :status, :deposit_required, :deposit_amount, :source, :manage_token, :customer_notes)'
+            'INSERT INTO reservations (tenant_id, customer_id, reservation_date, reservation_time, party_size, status, deposit_required, deposit_amount, source, discount_percent, manage_token, customer_notes)
+             VALUES (:tenant_id, :customer_id, :reservation_date, :reservation_time, :party_size, :status, :deposit_required, :deposit_amount, :source, :discount_percent, :manage_token, :customer_notes)'
         );
         $stmt->execute([
             'tenant_id'        => $data['tenant_id'],
@@ -122,6 +122,7 @@ class Reservation
             'deposit_required' => $data['deposit_required'] ?? 0,
             'deposit_amount'   => $data['deposit_amount'] ?? null,
             'source'           => $data['source'] ?? 'widget',
+            'discount_percent' => $data['discount_percent'] ?? null,
             'manage_token'     => $token,
             'customer_notes'   => $data['customer_notes'] ?? null,
         ]);

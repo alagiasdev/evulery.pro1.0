@@ -67,6 +67,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'promotions' ? 'active' : '' ?>" href="<?= url('dashboard/settings/promotions') ?>">
+                        <i class="bi bi-percent me-2"></i> Promozioni
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link <?= ($activeMenu ?? '') === 'deposit' ? 'active' : '' ?>" href="<?= url('dashboard/settings/deposit') ?>">
                         <i class="bi bi-cash me-2"></i> Caparra
                     </a>

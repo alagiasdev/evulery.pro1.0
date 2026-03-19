@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         todayBookings: 0,
         lastFetchPartySize: 2,
         lastFetchDate: null,
+        selectedDiscount: 0,
         closedDates: {},       // { 'YYYY-MM': ['YYYY-MM-DD', ...] }
         closedDatesLoading: {} // { 'YYYY-MM': true }
     };
@@ -239,7 +240,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 var title = slot.is_available
                     ? slot.available_covers + ' posti disponibili'
                     : 'Non disponibile';
-                html += '<button type="button" class="bw-slot-btn' + active + disabled + '" data-time="' + slot.time + '" title="' + title + '"' + (!slot.is_available ? ' disabled' : '') + '>' + slot.time + '</button>';
+                var promoBadge = (slot.discount_percent && slot.discount_percent > 0)
+                    ? '<span class="bw-promo-badge">-' + slot.discount_percent + '%</span>'
+                    : '';
+                html += '<button type="button" class="bw-slot-btn' + active + disabled + '" data-time="' + slot.time + '" data-discount="' + (slot.discount_percent || 0) + '" title="' + title + '"' + (!slot.is_available ? ' disabled' : '') + '>' + slot.time + promoBadge + '</button>';
             });
             html += '</div></div>';
         });
@@ -257,6 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 slotsContainer.querySelectorAll('.bw-slot-btn').forEach(function(b) { b.classList.remove('bw-slot-active'); });
                 this.classList.add('bw-slot-active');
                 state.selectedTime = this.dataset.time;
+                state.selectedDiscount = parseInt(this.dataset.discount) || 0;
                 updatePill('time', state.selectedTime);
                 setTimeout(function() { goToStep(4); }, 250);
             });
@@ -519,6 +524,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     '<div class="bw-conf-row"><span>Orario</span><strong>' + body.time + '</strong></div>' +
                     '<div class="bw-conf-row"><span>Persone</span><strong>' + body.party_size + '</strong></div>' +
                     '<div class="bw-conf-row"><span>Nome</span><strong>' + escapeHtml(firstName + ' ' + lastName) + '</strong></div>';
+
+                if (state.selectedDiscount > 0) {
+                    confHtml += '<div class="bw-conf-row bw-conf-promo"><span><i class="bi bi-percent"></i> Promozione</span><strong>-' + state.selectedDiscount + '% sconto al tavolo</strong></div>';
+                }
 
                 if (notes) {
                     confHtml += '<div class="bw-conf-row"><span>Note</span><strong>' + escapeHtml(notes) + '</strong></div>';

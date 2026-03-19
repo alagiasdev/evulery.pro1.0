@@ -9,6 +9,7 @@ use App\Models\Customer;
 use App\Models\Reservation;
 use App\Models\ReservationLog;
 use App\Models\Tenant;
+use App\Models\Promotion;
 use App\Services\AvailabilityService;
 use App\Services\MailService;
 
@@ -106,6 +107,9 @@ class ReservationApiController
             $status = 'confirmed';
         }
 
+        // Lookup applicable promotion (server-side, never trust client)
+        $promo = (new Promotion())->findApplicable($tenant['id'], $data['date'], $data['time']);
+
         // Build reservation data
         $reservationData = [
             'tenant_id'        => $tenant['id'],
@@ -118,6 +122,10 @@ class ReservationApiController
             'deposit_amount'   => $depositAmount,
             'source'           => 'widget',
         ];
+
+        if ($promo) {
+            $reservationData['discount_percent'] = (int)$promo['discount_percent'];
+        }
 
         if (!empty($data['notes'])) {
             $reservationData['customer_notes'] = substr($data['notes'], 0, 1000);

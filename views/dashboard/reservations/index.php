@@ -280,6 +280,9 @@ for ($i = 0; $i < 3; $i++) {
             </div>
             <div class="res-right">
                 <span class="res-pax"><i class="bi bi-person-fill me-1"></i><?= (int)$r['party_size'] ?></span>
+                <?php if (!empty($r['discount_percent'])): ?>
+                <span style="background:#FFF3E0;color:#E65100;font-size:.65rem;font-weight:700;padding:1px 5px;border-radius:4px;">-<?= (int)$r['discount_percent'] ?>%</span>
+                <?php endif; ?>
                 <?php if ($r['status'] === 'pending'): ?>
                 <form method="POST" action="<?= url("dashboard/reservations/{$r['id']}/status") ?>" class="d-inline">
                     <?= csrf_field() ?>

@@ -848,20 +848,21 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 
 /* ===== Settings tabs ===== */
 .settings-tabs {
-    display: flex; gap: .25rem; margin-bottom: 1.5rem;
+    display: flex; gap: .15rem; margin-bottom: 1.5rem;
     border-bottom: 2px solid #f0f0f0; padding-bottom: 0;
-    overflow-x: auto;
+    overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
 }
+.settings-tabs::-webkit-scrollbar { display: none; }
 .settings-tab {
-    padding: .55rem 1rem; font-size: .82rem; font-weight: 600;
+    padding: .55rem .75rem; font-size: .8rem; font-weight: 600;
     color: #6c757d; text-decoration: none; cursor: pointer;
     border-bottom: 2px solid transparent; margin-bottom: -2px;
-    white-space: nowrap; display: flex; align-items: center; gap: .35rem;
+    white-space: nowrap; display: flex; align-items: center; gap: .3rem;
     transition: all .15s;
 }
 .settings-tab:hover { color: #495057; }
 .settings-tab.active { color: var(--brand); border-bottom-color: var(--brand); }
-.settings-tab i { font-size: .85rem; }
+.settings-tab i { font-size: .82rem; }
 
 /* ===== Section card (settings) ===== */
 .section-card {
@@ -2143,4 +2144,96 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     .cs-nvr-chart { flex-direction: column; gap: 1rem; padding: 1rem; }
     .cs-filters { flex-direction: column; align-items: stretch; }
     .cs-filters .cs-filter-label { margin-top: .25rem; }
+}
+
+/* ===========================================
+   Promotions Settings
+   =========================================== */
+
+/* KPI Row */
+.promo-kpi-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem;
+    margin-bottom: 1.25rem;
+}
+.promo-kpi-card {
+    background: #fff; border-radius: .75rem; padding: 1rem 1.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); text-align: center;
+}
+.promo-kpi-value { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+.promo-kpi-label { font-size: .72rem; color: #6c757d; margin-top: .15rem; text-transform: uppercase; letter-spacing: .3px; }
+
+/* Form elements */
+.promo-type-selector {
+    display: flex; gap: .5rem;
+}
+.promo-type-option { flex: 1; }
+.promo-type-option input[type="radio"] { display: none; }
+.promo-type-card {
+    display: flex; flex-direction: column; align-items: center; gap: .15rem;
+    padding: .65rem .5rem; border: 2px solid #dee2e6; border-radius: .5rem;
+    cursor: pointer; transition: all .15s; text-align: center;
+    font-size: .78rem;
+}
+.promo-type-card i { font-size: 1.1rem; color: #6c757d; }
+.promo-type-card small { font-size: .65rem; color: #adb5bd; }
+.promo-type-option input:checked + .promo-type-card {
+    border-color: var(--brand); background: #E8F5E9;
+}
+.promo-type-option input:checked + .promo-type-card i { color: var(--brand); }
+
+.promo-days-grid {
+    display: flex; gap: .35rem; flex-wrap: wrap;
+}
+.promo-day-chip { cursor: pointer; }
+.promo-day-chip input { display: none; }
+.promo-day-chip span {
+    display: inline-block; padding: .3rem .6rem; border: 1.5px solid #dee2e6;
+    border-radius: .4rem; font-size: .78rem; font-weight: 500;
+    transition: all .15s; user-select: none;
+}
+.promo-day-chip input:checked + span {
+    background: var(--brand); color: #fff; border-color: var(--brand);
+}
+
+.promo-field-hint { font-size: .72rem; color: #adb5bd; margin-top: .25rem; }
+
+/* Promotion list items */
+.promo-item {
+    display: flex; align-items: center; gap: .75rem;
+    padding: .85rem 1rem; border-bottom: 1px solid #f0f0f0;
+}
+.promo-item:last-child { border-bottom: none; }
+.promo-item-inactive { opacity: .5; }
+.promo-item-badge {
+    background: #E65100; color: #fff; font-weight: 700;
+    font-size: .8rem; padding: .3rem .6rem; border-radius: .4rem;
+    white-space: nowrap; min-width: 42px; text-align: center;
+}
+.promo-item-info { flex: 1; min-width: 0; }
+.promo-item-name { font-weight: 600; font-size: .88rem; }
+.promo-item-meta { font-size: .73rem; color: #6c757d; margin-top: .15rem; }
+.promo-item-meta i { font-size: .68rem; }
+.promo-item-actions { display: flex; gap: .35rem; flex-shrink: 0; align-items: center; }
+
+/* Toggle switch */
+.promo-toggle-btn {
+    background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center;
+}
+.promo-toggle {
+    width: 36px; height: 20px; border-radius: 10px; background: #ccc;
+    position: relative; transition: background .2s;
+}
+.promo-toggle-on { background: var(--brand); }
+.promo-toggle-knob {
+    width: 16px; height: 16px; border-radius: 50%; background: #fff;
+    position: absolute; top: 2px; left: 2px; transition: left .2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.promo-toggle-on .promo-toggle-knob { left: 18px; }
+
+@media (max-width: 576px) {
+    .promo-kpi-row { grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+    .promo-kpi-card { padding: .75rem .5rem; }
+    .promo-kpi-value { font-size: 1.2rem; }
+    .promo-item { flex-wrap: wrap; gap: .5rem; }
 }

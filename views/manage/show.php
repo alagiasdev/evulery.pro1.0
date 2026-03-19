@@ -80,6 +80,16 @@ $time = substr($reservation['reservation_time'], 0, 5);
             </div>
         </div>
 
+        <?php if (!empty($reservation['discount_percent'])): ?>
+        <div class="manage-detail">
+            <div class="manage-detail-icon" style="color:#E65100;"><i class="bi bi-percent"></i></div>
+            <div>
+                <div class="manage-detail-label">Promozione</div>
+                <div class="manage-detail-value" style="color:#E65100;font-weight:700;">-<?= (int)$reservation['discount_percent'] ?>% sconto al tavolo</div>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <?php if (!empty($reservation['customer_notes'])): ?>
         <div class="manage-note">
             <strong>Le tue note:</strong> <?= e($reservation['customer_notes']) ?>
