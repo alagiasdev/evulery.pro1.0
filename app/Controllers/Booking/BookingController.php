@@ -21,7 +21,7 @@ class BookingController
         TenantResolver::setCurrent($tenant);
 
         $isEmbed = $request->isEmbed();
-        $layout = $isEmbed ? null : 'booking';
+        $layout = $isEmbed ? 'embed' : 'booking';
 
         view('booking/widget', [
             'tenant'      => $tenant,
