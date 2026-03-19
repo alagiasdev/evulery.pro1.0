@@ -163,15 +163,6 @@ class HomeController
 
         // Get booked covers per meal
         $stmt = $db->prepare(
-            'SELECT reservation_time, SUM(party_size) as booked, COUNT(*) as cnt
-             FROM reservations
-             WHERE tenant_id = :tenant_id
-             AND reservation_date = :date
-             AND status IN ("confirmed", "pending", "arrived")
-             GROUP BY CASE WHEN HOUR(reservation_time) < 16 THEN "pranzo" ELSE "cena" END'
-        );
-        // Simpler: just get totals split by hour
-        $stmt = $db->prepare(
             'SELECT
                 SUM(CASE WHEN HOUR(reservation_time) < 16 THEN party_size ELSE 0 END) as pranzo_booked,
                 SUM(CASE WHEN HOUR(reservation_time) >= 16 THEN party_size ELSE 0 END) as cena_booked,
