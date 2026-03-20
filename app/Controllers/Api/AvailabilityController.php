@@ -16,6 +16,10 @@ class AvailabilityController
         $date = $request->query('date');
         $partySize = (int)$request->query('party_size', 2);
         $grouped = (bool)$request->query('grouped', false);
+        $source = $request->query('source', 'widget');
+        if (!in_array($source, ['widget', 'dashboard'])) {
+            $source = 'widget';
+        }
 
         if (!$date) {
             Response::error('Il parametro date è obbligatorio.', 'MISSING_DATE', 400);
@@ -36,12 +40,12 @@ class AvailabilityController
 
         if ($grouped) {
             $responseData['grouped_slots'] = $service->getGroupedSlots(
-                $tenant['id'], $date, $partySize
+                $tenant['id'], $date, $partySize, $source
             );
             $responseData['today_bookings'] = $service->getTodayBookingCount($tenant['id']);
         } else {
             $responseData['slots'] = $service->getAvailableSlots(
-                $tenant['id'], $date, $partySize
+                $tenant['id'], $date, $partySize, $source
             );
         }
 

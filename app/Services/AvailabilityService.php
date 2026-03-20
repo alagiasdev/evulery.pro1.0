@@ -18,10 +18,10 @@ class AvailabilityService
         $this->db = Database::getInstance();
     }
 
-    public function getAvailableSlots(int $tenantId, string $date, int $partySize): array
+    public function getAvailableSlots(int $tenantId, string $date, int $partySize, string $source = 'widget'): array
     {
         // Get tenant config
-        $stmt = $this->db->prepare('SELECT table_duration, time_step FROM tenants WHERE id = :id');
+        $stmt = $this->db->prepare('SELECT table_duration, time_step, promo_widget_only FROM tenants WHERE id = :id');
         $stmt->execute(['id' => $tenantId]);
         $tenant = $stmt->fetch();
 
@@ -30,6 +30,7 @@ class AvailabilityService
         }
 
         $tableDuration = (int)$tenant['table_duration'];
+        $promoWidgetOnly = !empty($tenant['promo_widget_only']);
 
         // Get day of week (0=Mon, 6=Sun)
         $dayOfWeek = (int)date('N', strtotime($date)) - 1; // PHP date('N'): 1=Mon, 7=Sun
@@ -93,7 +94,8 @@ class AvailabilityService
                 'available_covers' => max(0, $available),
                 'is_available'     => $available >= $partySize,
                 'is_past'          => $isPast,
-                'discount_percent' => $promo ? (int)$promo['discount_percent'] : 0,
+                'discount_percent' => ($promo && !($promoWidgetOnly && $source !== 'widget'))
+                    ? (int)$promo['discount_percent'] : 0,
             ];
         }
 
@@ -172,9 +174,9 @@ class AvailabilityService
         return (new Reservation())->countTodayByTenant($tenantId);
     }
 
-    public function getGroupedSlots(int $tenantId, string $date, int $partySize): array
+    public function getGroupedSlots(int $tenantId, string $date, int $partySize, string $source = 'widget'): array
     {
-        $flatSlots = $this->getAvailableSlots($tenantId, $date, $partySize);
+        $flatSlots = $this->getAvailableSlots($tenantId, $date, $partySize, $source);
         $categoryModel = new MealCategory();
         $categories = $categoryModel->findActiveByTenant($tenantId);
 

@@ -304,6 +304,16 @@ class MailService
         $time        = substr($reservation['reservation_time'] ?? '', 0, 5);
         $dateFormatted = self::formatDateItalian($date);
         $personeLabel  = $partySize === 1 ? 'persona' : 'persone';
+        $discountPercent = (int)($reservation['discount_percent'] ?? 0);
+        $discountHtml = '';
+        if ($discountPercent > 0) {
+            $discountHtml = <<<HTML
+            <div style="margin:0 32px 24px;background:#FFF3E0;border-radius:10px;padding:14px 16px;font-size:13px;color:#E65100;">
+                <div style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;">&#127942; Promozione</div>
+                <strong>-{$discountPercent}%</strong> di sconto al tavolo &mdash; lo sconto verr&agrave; applicato al conto dal ristorante.
+            </div>
+            HTML;
+        }
 
         $restaurantName    = e($tenant['name'] ?? '');
         $restaurantAddress = e($tenant['address'] ?? '');
@@ -405,6 +415,8 @@ class MailService
                         </tr>
                     </table>
                 </div>
+
+                {$discountHtml}
 
                 <div style="border-top:1px solid #f0f0f0;margin:0 32px;"></div>
 

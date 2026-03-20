@@ -84,6 +84,7 @@ class SettingsController
             'segment_occasionale'  => $segOcc,
             'segment_abituale'     => $segAbi,
             'segment_vip'          => $segVip,
+            'promo_widget_only'    => !empty($data['promo_widget_only']) ? 1 : 0,
         ];
 
         if ($logoUrl !== null) {

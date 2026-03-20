@@ -1872,6 +1872,8 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .dr-slot-btn.dr-slot-past .dr-slot-covers { font-style: italic; }
 .dr-slot-covers { font-size: .65rem; color: #adb5bd; display: block; font-weight: 400; }
 .dr-slot-btn.active .dr-slot-covers { color: rgba(255,255,255,.7); }
+.dr-slot-promo { display: block; font-size: .6rem; font-weight: 700; color: #E65100; background: #FFF3E0; padding: 1px 4px; border-radius: 3px; margin-top: 1px; }
+.dr-slot-btn.active .dr-slot-promo { background: rgba(255,255,255,.25); color: #fff; }
 
 .dr-slots-loading { text-align: center; padding: 1.5rem; color: #6c757d; font-size: .85rem; }
 .dr-slots-empty { text-align: center; padding: 1.5rem; color: #dc3545; font-weight: 500; }

@@ -346,7 +346,7 @@ class ReservationsController
         // Header row
         fputcsv($output, [
             'Data', 'Orario', 'Nome', 'Cognome', 'Email', 'Telefono',
-            'Persone', 'Stato', 'Fonte', 'Note cliente', 'Note interne', 'Creata il'
+            'Persone', 'Sconto', 'Stato', 'Fonte', 'Note cliente', 'Note interne', 'Creata il'
         ], ';');
 
         foreach ($reservations as $r) {
@@ -358,6 +358,7 @@ class ReservationsController
                 $r['email'],
                 $r['phone'],
                 $r['party_size'],
+                !empty($r['discount_percent']) ? '-' . $r['discount_percent'] . '%' : '',
                 $statusLabels[$r['status']] ?? $r['status'],
                 $sourceLabels[$r['source']] ?? $r['source'],
                 $r['customer_notes'] ?? '',

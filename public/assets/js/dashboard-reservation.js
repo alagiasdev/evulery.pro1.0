@@ -353,7 +353,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var url = config.apiUrl + '/tenants/' + config.tenantSlug + '/availability'
             + '?date=' + state.date
             + '&party_size=' + state.partySize
-            + '&grouped=1';
+            + '&grouped=1'
+            + '&source=dashboard';
 
         fetch(url)
             .then(function(r) { return r.json(); })
@@ -406,12 +407,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 var disabled = (!slot.is_available && !isPast) ? ' disabled' : '';
 
                 var coversLabel = isPast ? 'Passato' : available + ' liberi';
+                var promoBadge = (slot.discount_percent && slot.discount_percent > 0)
+                    ? '<span class="dr-slot-promo">-' + slot.discount_percent + '%</span>'
+                    : '';
 
                 html += '<button type="button" class="dr-slot-btn ' + colorClass + activeClass + '"'
                     + ' data-time="' + slot.time + '"'
                     + disabled + '>'
                     + '<span class="dr-slot-indicator"></span>'
                     + '<span>' + slotTimeShort + '</span>'
+                    + promoBadge
                     + '<span class="dr-slot-covers">' + coversLabel + '</span>'
                     + '</button>';
             });

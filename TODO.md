@@ -7,6 +7,7 @@ Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widg
 **Nota architetturale (Marzo 2026):** Il modello commerciale sara basato sui **coperti** (numero di prenotazioni/coperti gestiti), NON sulle feature flags. Tutte le funzionalita sono disponibili per tutti i tenant. La FASE 9 (Feature Flags) e stata abbandonata. I piani commerciali (FASE 18) limiteranno solo il volume di coperti mensili, non l'accesso alle singole feature.
 
 **Completato recentemente (sessione corrente - Marzo 2026):**
+- [x] FASE 20A Menu Digitale v2.1: deploy produzione completato (20/03/2026). Dashboard 3 tab (Piatti/Categorie/Aspetto), pagina pubblica standalone con hero, sticky nav, search, allergeni EU, QR code. Categorie con accordion UI, sottocategorie, icon picker. Fix CSP nonce su script pubblico.
 - [x] Slot passati nascosti per "Oggi": widget li nasconde completamente, dashboard li mostra grigi (dashed border, opacity .6) ma cliccabili per walk-in
 - [x] CSS stati slot passati: `.dr-slot-past` con 3 stati (normal, hover con opacity 1, active con sfondo grigio)
 - [x] Flag `is_past` negli slot availability (AvailabilityService): confronto data/ora corrente

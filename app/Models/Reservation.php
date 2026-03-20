@@ -69,8 +69,8 @@ class Reservation
     public function findForExport(int $tenantId, ?string $dateFrom, ?string $dateTo, ?string $status = null): array
     {
         $sql = 'SELECT r.reservation_date, r.reservation_time, c.first_name, c.last_name,
-                       c.email, c.phone, r.party_size, r.status, r.source, r.customer_notes,
-                       r.internal_notes, r.created_at
+                       c.email, c.phone, r.party_size, r.discount_percent, r.status, r.source,
+                       r.customer_notes, r.internal_notes, r.created_at
                 FROM reservations r
                 JOIN customers c ON r.customer_id = c.id
                 WHERE r.tenant_id = :tenant_id';
