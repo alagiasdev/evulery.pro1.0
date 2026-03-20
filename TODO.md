@@ -7,6 +7,8 @@ Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widg
 **Nota architetturale (Marzo 2026):** Il modello commerciale sara basato sui **coperti** (numero di prenotazioni/coperti gestiti), NON sulle feature flags. Tutte le funzionalita sono disponibili per tutti i tenant. La FASE 9 (Feature Flags) e stata abbandonata. I piani commerciali (FASE 18) limiteranno solo il volume di coperti mensili, non l'accesso alle singole feature.
 
 **Completato recentemente (sessione corrente - Marzo 2026):**
+- [x] Promozioni: badge sconto su slot dashboard, sconto in email reminder, colonna Sconto in CSV export (20/03/2026)
+- [x] Toggle "Promozioni solo da widget" in Impostazioni: quando attivo, sconti visibili solo sul widget online, non da dashboard (20/03/2026)
 - [x] FASE 20A Menu Digitale v2.1: deploy produzione completato (20/03/2026). Dashboard 3 tab (Piatti/Categorie/Aspetto), pagina pubblica standalone con hero, sticky nav, search, allergeni EU, QR code. Categorie con accordion UI, sottocategorie, icon picker. Fix CSP nonce su script pubblico.
 - [x] Slot passati nascosti per "Oggi": widget li nasconde completamente, dashboard li mostra grigi (dashed border, opacity .6) ma cliccabili per walk-in
 - [x] CSS stati slot passati: `.dr-slot-past` con 3 stati (normal, hover con opacity 1, active con sfondo grigio)
@@ -114,6 +116,17 @@ Le seguenti migliorie non sono prioritarie per il lancio e vengono rimandate a f
 - **Dark mode** (Media) — CSS variables, toggle, localStorage
 - **~~PWA~~** — Scartata: icone duplicate per ogni ristorante
 - **Multi-lingua** (Molto alta) — i18n, helper `__()`, IT + EN
+
+### Ottimizzazioni performance (da fare in seguito)
+- [ ] Minificazione CSS/JS (dashboard.css 105KB → ~25KB minificato, tool: csso/terser o build step)
+- [ ] CSS splitting: separare dashboard.css in moduli caricati per pagina (menu, reservations, settings)
+- [ ] OPcache tuning su VPS: verificare `opcache.enable=1`, `opcache.revalidate_freq=60`
+- [ ] CDN per asset statici (Bootstrap, Bootstrap Icons) — da CDN pubblico o Cloudflare
+- [ ] Lazy loading immagini menu (già `loading="lazy"`, verificare su VPS)
+- [ ] Database: query profiling su pagine lente (EXPLAIN su query AvailabilityService)
+
+### Menu digitale — migliorie estetiche (da fare in seguito)
+- [ ] Dashboard menu: sottocategorie allineamento layout (freccia + padding sinistro)
 
 ---
 
