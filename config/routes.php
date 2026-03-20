@@ -19,7 +19,10 @@ use App\Controllers\Dashboard\DomainController;
 use App\Controllers\Dashboard\MealCategoriesController;
 use App\Controllers\Dashboard\ClosuresController;
 use App\Controllers\Dashboard\PromotionsController;
+use App\Controllers\Dashboard\MenuController;
 use App\Controllers\ProfileController;
+use App\Controllers\Menu\MenuPageController;
+use App\Controllers\Api\MenuApiController;
 use App\Controllers\Booking\BookingController;
 use App\Controllers\ManageReservationController;
 use App\Controllers\Api\AvailabilityController;
@@ -76,6 +79,21 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/settings/promotions/{id}/update', [PromotionsController::class, 'update']);
     $r->post('/settings/promotions/{id}/toggle', [PromotionsController::class, 'toggle']);
     $r->post('/settings/promotions/{id}/delete', [PromotionsController::class, 'delete']);
+    $r->get('/menu', [MenuController::class, 'index']);
+    $r->get('/menu/categories', [MenuController::class, 'categoriesIndex']);
+    $r->get('/menu/appearance', [MenuController::class, 'appearanceIndex']);
+    $r->get('/menu/items/create', [MenuController::class, 'createItem']);
+    $r->post('/menu/items', [MenuController::class, 'storeItem']);
+    $r->get('/menu/items/{id}/edit', [MenuController::class, 'editItem']);
+    $r->post('/menu/items/{id}/update', [MenuController::class, 'updateItem']);
+    $r->post('/menu/items/{id}/toggle', [MenuController::class, 'toggleAvailable']);
+    $r->post('/menu/items/{id}/toggle-special', [MenuController::class, 'toggleDailySpecial']);
+    $r->post('/menu/items/{id}/delete', [MenuController::class, 'deleteItem']);
+    $r->post('/menu/categories', [MenuController::class, 'storeCategory']);
+    $r->post('/menu/categories/{id}/update', [MenuController::class, 'updateCategory']);
+    $r->post('/menu/categories/{id}/delete', [MenuController::class, 'deleteCategory']);
+    $r->post('/menu/toggle', [MenuController::class, 'toggleMenu']);
+    $r->post('/menu/settings', [MenuController::class, 'saveSettings']);
     $r->get('/profile', [ProfileController::class, 'show']);
     $r->post('/profile', [ProfileController::class, 'update']);
 });
@@ -102,12 +120,16 @@ $router->group('/api/v1', ['ratelimit'], function ($r) {
     $r->post('/tenants/{slug}/reservations', [ReservationApiController::class, 'store']);
     $r->get('/tenants/{slug}/reservations/{id}', [ReservationApiController::class, 'show']);
     $r->post('/tenants/{slug}/reservations/{id}/cancel', [ReservationApiController::class, 'cancel']);
+    $r->get('/tenants/{slug}/menu', [MenuApiController::class, 'index']);
     $r->post('/stripe/webhook', [WebhookController::class, 'handle']);
 });
 
 // --- MANAGE RESERVATION (magic link, public) ---
 $router->get('/manage/{token}', [ManageReservationController::class, 'show']);
 $router->post('/manage/{token}/cancel', [ManageReservationController::class, 'cancel'], ['csrf']);
+
+// --- PUBLIC MENU (must be before /{slug} catch-all) ---
+$router->get('/{slug}/menu', [MenuPageController::class, 'show']);
 
 // --- PUBLIC BOOKING ROUTES (tenant-scoped, must be last) ---
 $router->get('/{slug}', [BookingController::class, 'show']);

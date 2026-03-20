@@ -117,7 +117,8 @@ class Tenant
             'table_duration', 'time_step',
             'booking_advance_min', 'booking_advance_max',
             'segment_occasionale', 'segment_abituale', 'segment_vip',
-            'timezone', 'is_active',
+            'timezone', 'menu_enabled', 'menu_hero_image', 'menu_tagline',
+            'opening_hours', 'is_active',
         ];
 
         foreach ($allowed as $field) {

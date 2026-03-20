@@ -1,8 +1,8 @@
 # Evulery.Pro 1.0 - Prossimi Passi
 
 ## Stato Attuale
-Fasi completate: Foundation, Auth, Admin Panel, Multi-Tenant, Slot/Capacita, Booking Widget, Dashboard Ristoratore, Security Audit (25/25), Dashboard UX improvements, Prenotazione Rapida Touch (FASE 16), Design System v3.1, Booking Widget Polish (FASE 17 parziale), Promozioni e Badge Sconto (FASE 14).
-Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widget e dashboard.
+Fasi completate: Foundation, Auth, Admin Panel, Multi-Tenant, Slot/Capacita, Booking Widget, Dashboard Ristoratore, Security Audit (25/25), Dashboard UX improvements, Prenotazione Rapida Touch (FASE 16), Design System v3.1, Booking Widget Polish (FASE 17 parziale), Promozioni e Badge Sconto (FASE 14), Menu Digitale Consultivo (FASE 20A v2.1).
+Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widget e dashboard, menu digitale pubblico con QR code.
 
 **Nota architetturale (Marzo 2026):** Il modello commerciale sara basato sui **coperti** (numero di prenotazioni/coperti gestiti), NON sulle feature flags. Tutte le funzionalita sono disponibili per tutti i tenant. La FASE 9 (Feature Flags) e stata abbandonata. I piani commerciali (FASE 18) limiteranno solo il volume di coperti mensili, non l'accesso alle singole feature.
 
@@ -412,6 +412,55 @@ Modello basato sui **coperti mensili**: tutte le feature incluse, i piani differ
 - [ ] QR code per link prenotazione
 - [ ] App PWA per ristoratore
 
+## FASE 20A: Menu Digitale Consultivo [COMPLETATA]
+Menu digitale pubblico per i clienti del ristorante, gestibile dalla dashboard. Design v2.1 con hero, categorie, allergeni EU, QR code.
+
+### Database
+- [x] Migration `012_create_menu_tables.sql`: tabelle `menu_categories` + `menu_items`, ALTER tenants `menu_enabled`
+- [x] Migration `013_menu_enhancements.sql`: campo `icon` su menu_categories, campi `menu_hero_image`/`menu_tagline`/`opening_hours` su tenants
+- [x] 14 allergeni EU obbligatori (JSON su menu_items)
+
+### Backend
+- [x] Model `MenuCategory` (CRUD, ICONS constant ~20 icone Bootstrap, sort_order, getItemCounts)
+- [x] Model `MenuItem` (CRUD, ALLERGENS/ALLERGEN_ICONS/ALLERGEN_COLORS constants, findAvailableGrouped, toggles)
+- [x] Controller `Dashboard/MenuController` (3 tab: index/categoriesIndex/appearanceIndex + CRUD categorie/piatti + toggle/settings)
+- [x] Controller `Menu/MenuPageController` (pagina pubblica standalone, check menu_enabled)
+- [x] Controller `Api/MenuApiController` (GET `/api/v1/tenants/{slug}/menu` JSON)
+- [x] Rotte dashboard: `/menu`, `/menu/categories`, `/menu/appearance` + CRUD items/categories
+- [x] Rotta pubblica: `/{slug}/menu`
+- [x] Upload immagini piatti (2MB, jpg/png/webp) + hero image (5MB)
+
+### Dashboard (3 tab, pattern Settings)
+- [x] Tab **Piatti**: KPI cards, lista piatti raggruppati per categoria, CTA sidebar con preview + QR + link pubblico
+- [x] Tab **Categorie**: lista con icone + conteggio piatti, form nuova categoria con icon picker, modal modifica
+- [x] Tab **Aspetto**: toggle menu pubblico, config tagline/orari/hero image, preview header, QR code
+- [x] Sidebar menu: voce "Menu" con icona `bi-book`
+
+### Pagina Pubblica v2.1 (standalone, no layout)
+- [x] Hero con foto/sfondo scuro, logo, nome, tagline, orari
+- [x] Griglia categorie landing (card con icona + conteggio piatti)
+- [x] Sticky nav con scroll spy + search
+- [x] Sezione "Piatti del Giorno" (card ambrate)
+- [x] Sezioni categoria con icone, piatti con immagine lazy, prezzo, descrizione
+- [x] Allergeni: pill tag colorati per esteso (`.dm-at-{key}`, 14 colori)
+- [x] Legenda allergeni collassabile
+- [x] CTA footer "Prenota un tavolo"
+- [x] Footer branding: "© {anno} Evulery · by alagias. - Soluzioni per il web"
+
+### CSS
+- [x] `public/assets/css/menu.css` (NUOVO): stili pagina pubblica, namespace `.dm-*`, CSS custom properties `--dm-*`
+- [x] `public/assets/css/dashboard.css` (MODIFICA): stili admin `.dm-admin-*`, CTA sidebar, category group headers
+
+### Integrazioni
+- [x] Email conferma prenotazione: link "Consulta il menu" se menu_enabled
+- [x] Pagina conferma booking: link menu se menu_enabled
+- [x] QR code via `api.qrserver.com` (no dipendenze esterne)
+
+### Wireframe
+- [x] `wireframes/menu-dashboard-tabs.html`: layout 3 tab con switch interattivo
+
+---
+
 ## FASE 20: Deploy Produzione
 - [ ] Configurare server (VPS con Apache/Nginx + PHP + MySQL)
 - [ ] Migrare database
@@ -448,3 +497,5 @@ Vedi `check-live.md` per la checklist completa. Punti principali:
 - Booking: http://localhost/evulery.pro1.0/trattoria-da-mario
 - API: http://localhost/evulery.pro1.0/api/v1/tenants/trattoria-da-mario/availability?date=2026-02-28&party_size=2
 - API (grouped): http://localhost/evulery.pro1.0/api/v1/tenants/trattoria-da-mario/availability?date=2026-03-02&party_size=2&grouped=1
+- Menu pubblico: http://localhost/evulery.pro1.0/trattoria-da-mario/menu
+- Menu API: http://localhost/evulery.pro1.0/api/v1/tenants/trattoria-da-mario/menu

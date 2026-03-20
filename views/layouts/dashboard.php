@@ -45,6 +45,11 @@
                         <i class="bi bi-people me-2"></i> Clienti
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'menu' ? 'active' : '' ?>" href="<?= url('dashboard/menu') ?>">
+                        <i class="bi bi-book me-2"></i> Menu
+                    </a>
+                </li>
                 <li class="nav-item"><div class="sidebar-section">Impostazioni</div></li>
                 <li class="nav-item">
                     <a class="nav-link <?= ($activeMenu ?? '') === 'settings' ? 'active' : '' ?>" href="<?= url('dashboard/settings') ?>">
