@@ -44,18 +44,18 @@ class Tenant
 
     public function allPaginated(?string $search, int $limit, int $offset): array
     {
-        $sql = 'SELECT * FROM tenants';
+        $sql = 'SELECT t.*, p.name as plan_name, p.color as plan_color FROM tenants t LEFT JOIN plans p ON p.id = t.plan_id';
         $params = [];
 
         if ($search) {
-            $sql .= ' WHERE (name LIKE :s1 OR slug LIKE :s2 OR email LIKE :s3)';
+            $sql .= ' WHERE (t.name LIKE :s1 OR t.slug LIKE :s2 OR t.email LIKE :s3)';
             $like = "%{$search}%";
             $params['s1'] = $like;
             $params['s2'] = $like;
             $params['s3'] = $like;
         }
 
-        $sql .= ' ORDER BY created_at DESC LIMIT :lim OFFSET :off';
+        $sql .= ' ORDER BY t.created_at DESC LIMIT :lim OFFSET :off';
         $stmt = $this->db->prepare($sql);
         foreach ($params as $k => $v) {
             $stmt->bindValue($k, $v);
@@ -87,8 +87,8 @@ class Tenant
     public function create(array $data): int
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO tenants (slug, name, email, phone, address, plan, plan_price, table_duration, time_step, is_active)
-             VALUES (:slug, :name, :email, :phone, :address, :plan, :plan_price, :table_duration, :time_step, :is_active)'
+            'INSERT INTO tenants (slug, name, email, phone, address, plan, plan_id, plan_price, table_duration, time_step, is_active)
+             VALUES (:slug, :name, :email, :phone, :address, :plan, :plan_id, :plan_price, :table_duration, :time_step, :is_active)'
         );
         $stmt->execute([
             'slug'           => $data['slug'],
@@ -97,6 +97,7 @@ class Tenant
             'phone'          => $data['phone'] ?? null,
             'address'        => $data['address'] ?? null,
             'plan'           => $data['plan'] ?? 'base',
+            'plan_id'        => $data['plan_id'] ?? null,
             'plan_price'     => $data['plan_price'] ?? 49.00,
             'table_duration' => $data['table_duration'] ?? 90,
             'time_step'      => $data['time_step'] ?? 30,
@@ -112,8 +113,8 @@ class Tenant
         $allowed = [
             'slug', 'name', 'email', 'phone', 'address', 'logo_url',
             'custom_domain', 'domain_status', 'cname_target',
-            'plan', 'plan_price', 'deposit_enabled', 'deposit_amount',
-            'cancellation_policy', 'confirmation_mode',
+            'plan', 'plan_id', 'plan_price', 'deposit_enabled', 'deposit_amount', 'deposit_mode',
+            'cancellation_policy', 'booking_instructions', 'confirmation_mode',
             'table_duration', 'time_step',
             'booking_advance_min', 'booking_advance_max',
             'segment_occasionale', 'segment_abituale', 'segment_vip',
@@ -155,5 +156,83 @@ class Tenant
         $stmt = $this->db->prepare('SELECT COUNT(*) FROM tenants WHERE is_active = 1');
         $stmt->execute();
         return (int)$stmt->fetchColumn();
+    }
+
+    /**
+     * Check if a tenant's plan includes a specific service.
+     * Results are cached per-request to avoid repeated queries.
+     */
+    private static array $serviceCache = [];
+
+    public function canUseService(int $tenantId, string $serviceKey): bool
+    {
+        $services = $this->getTenantServiceKeys($tenantId);
+        return in_array($serviceKey, $services, true);
+    }
+
+    /**
+     * Get all service keys included in a tenant's plan.
+     * Cached per-request.
+     */
+    public function getTenantServiceKeys(int $tenantId): array
+    {
+        if (isset(self::$serviceCache[$tenantId])) {
+            return self::$serviceCache[$tenantId];
+        }
+
+        $stmt = $this->db->prepare(
+            'SELECT s.`key`
+             FROM services s
+             JOIN plan_services ps ON ps.service_id = s.id
+             JOIN tenants t ON t.plan_id = ps.plan_id
+             WHERE t.id = :tid AND s.is_active = 1'
+        );
+        $stmt->execute(['tid' => $tenantId]);
+        $keys = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        self::$serviceCache[$tenantId] = $keys;
+        return $keys;
+    }
+
+    /**
+     * Check if a tenant's subscription is expired.
+     * Returns subscription data if expired, null if valid or no subscription.
+     */
+    public function getExpiredSubscription(int $tenantId): ?array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT s.*, p.name as plan_name
+             FROM subscriptions s
+             LEFT JOIN plans p ON p.id = s.plan_id
+             WHERE s.tenant_id = :tid AND s.status IN ("active","trialing")
+             ORDER BY s.current_period_end DESC LIMIT 1'
+        );
+        $stmt->execute(['tid' => $tenantId]);
+        $sub = $stmt->fetch();
+
+        if ($sub && $sub['current_period_end'] && strtotime($sub['current_period_end']) < time()) {
+            return $sub;
+        }
+
+        return null;
+    }
+
+    // --- Email Credits ---
+
+    public function addCredits(int $tenantId, int $amount): void
+    {
+        $this->db->prepare(
+            'UPDATE tenants SET email_credits_balance = email_credits_balance + :amount WHERE id = :id'
+        )->execute(['amount' => $amount, 'id' => $tenantId]);
+    }
+
+    public function deductCredits(int $tenantId, int $amount): bool
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE tenants SET email_credits_balance = email_credits_balance - :amount
+             WHERE id = :id AND email_credits_balance >= :check'
+        );
+        $stmt->execute(['amount' => $amount, 'id' => $tenantId, 'check' => $amount]);
+        return $stmt->rowCount() > 0;
     }
 }

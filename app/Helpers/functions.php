@@ -77,6 +77,32 @@ function tenant(): ?array
 }
 
 /**
+ * Check if current tenant's plan includes a service.
+ */
+function tenant_can(string $serviceKey): bool
+{
+    $t = tenant();
+    if (!$t) {
+        return false;
+    }
+    return (new \App\Models\Tenant())->canUseService((int)$t['id'], $serviceKey);
+}
+
+/**
+ * Gate a service: if tenant can't use it, flash warning and redirect to dashboard.
+ * Returns true if blocked (caller should return immediately).
+ */
+function gate_service(string $serviceKey, ?string $redirectUrl = null): bool
+{
+    if (!tenant_can($serviceKey)) {
+        flash('warning', 'Questa funzionalità non è inclusa nel tuo piano. Contatta il supporto per un upgrade.');
+        \App\Core\Response::redirect($redirectUrl ?? url('dashboard'));
+        return true;
+    }
+    return false;
+}
+
+/**
  * Flash a session message
  */
 function flash(string $type, string $message): void
@@ -90,7 +116,45 @@ function flash(string $type, string $message): void
  */
 function format_date(string $date, string $format = 'd/m/Y'): string
 {
-    return date($format, strtotime($date));
+    $ts = strtotime($date);
+
+    // Fast path: nessun token testuale → niente da tradurre
+    if (!preg_match('/[DlMF]/', $format)) {
+        return date($format, $ts);
+    }
+
+    $dayIdx = (int)date('N', $ts) - 1; // 0=Lun, 6=Dom
+    $monIdx = (int)date('n', $ts) - 1;  // 0=Gen, 11=Dic
+
+    static $days     = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+    static $daysFull = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+    static $months     = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+    static $monthsFull = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+
+    // Sostituisci i token testuali con placeholder sicuri prima di date()
+    // poi rimpiazza i placeholder con i nomi italiani (evita collisioni strtr)
+    $swaps = [];
+    $fmt = $format;
+
+    if (strpos($fmt, 'l') !== false) {
+        $fmt = str_replace('l', '##_1_##', $fmt);
+        $swaps['##_1_##'] = $daysFull[$dayIdx];
+    }
+    if (strpos($fmt, 'D') !== false) {
+        $fmt = str_replace('D', '##_2_##', $fmt);
+        $swaps['##_2_##'] = $days[$dayIdx];
+    }
+    if (strpos($fmt, 'F') !== false) {
+        $fmt = str_replace('F', '##_3_##', $fmt);
+        $swaps['##_3_##'] = $monthsFull[$monIdx];
+    }
+    if (strpos($fmt, 'M') !== false) {
+        $fmt = str_replace('M', '##_4_##', $fmt);
+        $swaps['##_4_##'] = $months[$monIdx];
+    }
+
+    $result = date($fmt, $ts);
+    return strtr($result, $swaps);
 }
 
 /**
@@ -128,6 +192,21 @@ function status_badge(string $status): string
         'noshow'     => 'bg-danger',
         'cancelled'  => 'bg-secondary',
         default      => 'bg-light text-dark',
+    };
+}
+
+/**
+ * Translate user role to Italian
+ */
+function role_label(string $role): string
+{
+    return match (strtolower($role)) {
+        'owner'       => 'Proprietario',
+        'admin'       => 'Amministratore',
+        'superadmin'  => 'Super Admin',
+        'staff'       => 'Staff',
+        'manager'     => 'Manager',
+        default       => ucfirst($role),
     };
 }
 

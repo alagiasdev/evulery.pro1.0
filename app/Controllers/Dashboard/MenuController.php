@@ -11,15 +11,39 @@ use App\Core\Validator;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\Tenant;
+use App\Services\AuditLog;
 
 class MenuController
 {
+    private function gate(): bool
+    {
+        return gate_service('digital_menu');
+    }
+
     // --- Tab: Piatti (default) ---
 
     public function index(Request $request): void
     {
-        $tenantId = Auth::tenantId();
         $tenant = TenantResolver::current();
+        $canUseMenu = tenant_can('digital_menu');
+
+        if (!$canUseMenu) {
+            view('dashboard/menu/index', [
+                'title'           => 'Menù Digitale',
+                'activeMenu'      => 'menu',
+                'tenant'          => $tenant,
+                'canUseMenu'      => false,
+                'hierarchy'       => [],
+                'categories'      => [],
+                'itemsByCategory' => [],
+                'stats'           => ['total' => 0, 'available' => 0, 'specials' => 0],
+                'allergens'       => MenuItem::ALLERGENS,
+                'allergenIcons'   => MenuItem::ALLERGEN_ICONS,
+            ], 'dashboard');
+            return;
+        }
+
+        $tenantId = Auth::tenantId();
 
         $catModel = new MenuCategory();
         $itemModel = new MenuItem();
@@ -39,6 +63,7 @@ class MenuController
         view('dashboard/menu/index', [
             'title'            => 'Menù Digitale',
             'activeMenu'       => 'menu',
+            'canUseMenu'       => true,
             'tenant'           => $tenant,
             'hierarchy'        => $hierarchy,
             'categories'       => $categories,
@@ -54,6 +79,7 @@ class MenuController
 
     public function categoriesIndex(Request $request): void
     {
+        if ($this->gate()) return;
         $tenantId = Auth::tenantId();
         $tenant = TenantResolver::current();
 
@@ -77,6 +103,7 @@ class MenuController
 
     public function appearanceIndex(Request $request): void
     {
+        if ($this->gate()) return;
         $tenant = TenantResolver::current();
 
         view('dashboard/menu/appearance', [
@@ -90,6 +117,7 @@ class MenuController
 
     public function storeCategory(Request $request): void
     {
+        if ($this->gate()) return;
         $tenantId = Auth::tenantId();
         $data = $request->all();
 
@@ -128,6 +156,8 @@ class MenuController
             'sort_order'  => $catModel->getNextSortOrder($tenantId, $parentId),
         ]);
 
+        AuditLog::log(AuditLog::MENU_CATEGORY_CREATED, "Categoria: {$data['name']}", Auth::id(), $tenantId);
+
         $label = $parentId ? 'Sottocategoria' : 'Categoria';
         flash('success', "{$label} \"{$data['name']}\" creata.");
         $redirectUrl = url('dashboard/menu/categories');
@@ -139,6 +169,7 @@ class MenuController
 
     public function updateCategory(Request $request): void
     {
+        if ($this->gate()) return;
         $id = (int)$request->param('id');
         $tenantId = Auth::tenantId();
         $data = $request->all();
@@ -171,12 +202,15 @@ class MenuController
             'is_active'   => isset($data['is_active']) ? 1 : (int)$existing['is_active'],
         ]);
 
+        AuditLog::log(AuditLog::MENU_CATEGORY_UPDATED, "Categoria ID: {$id}", Auth::id(), $tenantId);
+
         flash('success', 'Categoria aggiornata.');
         Response::redirect(url('dashboard/menu/categories'));
     }
 
     public function deleteCategory(Request $request): void
     {
+        if ($this->gate()) return;
         $id = (int)$request->param('id');
         $tenantId = Auth::tenantId();
 
@@ -198,6 +232,7 @@ class MenuController
                 return;
             }
             $catModel->deleteWithChildren($id, $tenantId);
+            AuditLog::log(AuditLog::MENU_CATEGORY_DELETED, "Categoria ID: {$id}", Auth::id(), $tenantId);
             flash('success', 'Categoria e sottocategorie eliminate.');
         } else {
             // Subcategory: check only its own items
@@ -207,6 +242,7 @@ class MenuController
                 return;
             }
             $catModel->delete($id, $tenantId);
+            AuditLog::log(AuditLog::MENU_CATEGORY_DELETED, "Categoria ID: {$id}", Auth::id(), $tenantId);
             flash('success', 'Sottocategoria eliminata.');
         }
         Response::redirect(url('dashboard/menu/categories'));
@@ -216,6 +252,7 @@ class MenuController
 
     public function createItem(Request $request): void
     {
+        if ($this->gate()) return;
         $tenantId = Auth::tenantId();
         $catModel = new MenuCategory();
         $hierarchy = $catModel->findAllHierarchical($tenantId);
@@ -241,6 +278,7 @@ class MenuController
 
     public function storeItem(Request $request): void
     {
+        if ($this->gate()) return;
         $tenantId = Auth::tenantId();
         $data = $request->all();
 
@@ -257,12 +295,15 @@ class MenuController
 
         $itemModel->create($tenantId, $itemData);
 
+        AuditLog::log(AuditLog::MENU_ITEM_CREATED, "Piatto: {$itemData['name']}", Auth::id(), $tenantId);
+
         flash('success', "Piatto \"{$itemData['name']}\" aggiunto al menù.");
         Response::redirect(url('dashboard/menu'));
     }
 
     public function editItem(Request $request): void
     {
+        if ($this->gate()) return;
         $id = (int)$request->param('id');
         $tenantId = Auth::tenantId();
 
@@ -290,6 +331,7 @@ class MenuController
 
     public function updateItem(Request $request): void
     {
+        if ($this->gate()) return;
         $id = (int)$request->param('id');
         $tenantId = Auth::tenantId();
 
@@ -321,12 +363,15 @@ class MenuController
         $itemData['sort_order'] = $existing['sort_order'];
         $itemModel->update($id, $tenantId, $itemData);
 
+        AuditLog::log(AuditLog::MENU_ITEM_UPDATED, "Piatto ID: {$id}", Auth::id(), $tenantId);
+
         flash('success', "Piatto \"{$itemData['name']}\" aggiornato.");
         Response::redirect(url('dashboard/menu'));
     }
 
     public function deleteItem(Request $request): void
     {
+        if ($this->gate()) return;
         $id = (int)$request->param('id');
         $tenantId = Auth::tenantId();
 
@@ -335,6 +380,7 @@ class MenuController
         if ($item) {
             $this->deleteItemImage($item['image_url']);
             $itemModel->delete($id, $tenantId);
+            AuditLog::log(AuditLog::MENU_ITEM_DELETED, "Piatto ID: {$id}", Auth::id(), $tenantId);
             flash('success', 'Piatto eliminato.');
         } else {
             flash('danger', 'Piatto non trovato.');
@@ -344,6 +390,7 @@ class MenuController
 
     public function toggleAvailable(Request $request): void
     {
+        if ($this->gate()) return;
         $id = (int)$request->param('id');
         $tenantId = Auth::tenantId();
         (new MenuItem())->toggleAvailable($id, $tenantId);
@@ -353,6 +400,7 @@ class MenuController
 
     public function toggleDailySpecial(Request $request): void
     {
+        if ($this->gate()) return;
         $id = (int)$request->param('id');
         $tenantId = Auth::tenantId();
         (new MenuItem())->toggleDailySpecial($id, $tenantId);
@@ -362,15 +410,18 @@ class MenuController
 
     public function toggleMenu(Request $request): void
     {
+        if ($this->gate()) return;
         $tenant = TenantResolver::current();
         $newValue = $tenant['menu_enabled'] ? 0 : 1;
         (new Tenant())->update($tenant['id'], ['menu_enabled' => $newValue]);
+        AuditLog::log(AuditLog::MENU_TOGGLED, null, Auth::id(), $tenant['id']);
         flash('success', $newValue ? 'Menù pubblico attivato.' : 'Menù pubblico disattivato.');
         Response::redirect(url('dashboard/menu/appearance'));
     }
 
     public function saveSettings(Request $request): void
     {
+        if ($this->gate()) return;
         $tenant = TenantResolver::current();
         $data = $request->all();
 
@@ -518,7 +569,7 @@ class MenuController
         $parts = explode('uploads/tenants/', $imageUrl);
         if (count($parts) === 2) {
             $dir = defined('BASE_PATH') ? BASE_PATH . '/public/uploads/tenants/' : $_SERVER['DOCUMENT_ROOT'] . '/uploads/tenants/';
-            $filepath = $dir . $parts[1];
+            $filepath = $dir . basename($parts[1]);
             if (file_exists($filepath)) {
                 unlink($filepath);
             }

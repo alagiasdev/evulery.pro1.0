@@ -153,7 +153,7 @@ class Reservation
         $stmt = $this->db->prepare(
             'SELECT r.*, c.first_name, c.last_name, c.email, c.phone,
                     t.name AS tenant_name, t.slug AS tenant_slug, t.phone AS tenant_phone,
-                    t.address AS tenant_address, t.cancellation_policy
+                    t.address AS tenant_address, t.cancellation_policy, t.booking_instructions
              FROM reservations r
              JOIN customers c ON r.customer_id = c.id
              JOIN tenants t ON r.tenant_id = t.id

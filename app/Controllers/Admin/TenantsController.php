@@ -7,9 +7,11 @@ use App\Core\Paginator;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Validator;
+use App\Core\Database;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Models\MealCategory;
+use App\Models\Plan;
 use App\Services\AuditLog;
 
 class TenantsController
@@ -41,9 +43,12 @@ class TenantsController
 
     public function create(Request $request): void
     {
+        $plans = (new Plan())->allActive();
+
         view('admin/tenants/create', [
             'title'      => 'Nuovo Ristorante',
             'activeMenu' => 'tenants',
+            'plans'      => $plans,
         ], 'admin');
     }
 
@@ -77,6 +82,17 @@ class TenantsController
             $slug .= '-' . bin2hex(random_bytes(4));
         }
 
+        // Resolve plan
+        $planId = (int)($data['plan_id'] ?? 0);
+        $planModel = new Plan();
+        $plan = $planModel->findById($planId);
+        if (!$plan) {
+            // Fallback to default plan
+            $plans = $planModel->allActive();
+            $plan = $plans[0] ?? null;
+            $planId = $plan ? (int)$plan['id'] : 0;
+        }
+
         // Create tenant
         $tenantId = $tenantModel->create([
             'slug'      => $slug,
@@ -84,9 +100,24 @@ class TenantsController
             'email'     => $data['email'],
             'phone'     => $data['phone'] ?? null,
             'address'   => $data['address'] ?? null,
-            'plan'      => $data['plan'] ?? 'base',
+            'plan'      => 'base',
+            'plan_id'   => $planId,
             'is_active' => isset($data['is_active']) ? 1 : 0,
         ]);
+
+        // Create subscription
+        if ($plan) {
+            $db = Database::getInstance();
+            $calc = Plan::calculatePrice($plan, 'annual', 0);
+            $db->prepare(
+                "INSERT INTO subscriptions (tenant_id, plan_id, plan, price, billing_cycle, extra_discount, status, current_period_start, current_period_end)
+                 VALUES (:tid, :pid, 'base', :price, 'annual', 0, 'active', CURDATE(), DATE_ADD(CURDATE(), INTERVAL 12 MONTH))"
+            )->execute([
+                'tid'   => $tenantId,
+                'pid'   => $planId,
+                'price' => $calc['total'],
+            ]);
+        }
 
         // Seed default meal categories
         (new MealCategory())->seedDefaults($tenantId);
@@ -119,12 +150,25 @@ class TenantsController
         }
 
         $users = (new User())->findByTenant($id);
+        $plans = (new Plan())->allActive();
+
+        // Credit transactions (last 10)
+        $db = Database::getInstance();
+        $creditTx = $db->prepare(
+            'SELECT ct.*, u.first_name AS assigned_first, u.last_name AS assigned_last
+             FROM email_credit_transactions ct
+             LEFT JOIN users u ON u.id = ct.assigned_by
+             WHERE ct.tenant_id = :tid ORDER BY ct.created_at DESC LIMIT 10'
+        );
+        $creditTx->execute(['tid' => $id]);
 
         view('admin/tenants/edit', [
-            'title'      => 'Modifica Ristorante',
-            'activeMenu' => 'tenants',
-            'tenant'     => $tenant,
-            'users'      => $users,
+            'title'          => 'Modifica Ristorante',
+            'activeMenu'     => 'tenants',
+            'tenant'         => $tenant,
+            'users'          => $users,
+            'plans'          => $plans,
+            'creditHistory'  => $creditTx->fetchAll(),
         ], 'admin');
     }
 
@@ -143,16 +187,46 @@ class TenantsController
             Response::redirect(url("admin/tenants/{$id}/edit"));
         }
 
-        (new Tenant())->update($id, [
+        $planId = (int)($data['plan_id'] ?? 0);
+        $planModel = new Plan();
+        $plan = $planModel->findById($planId);
+
+        $tenantModel = new Tenant();
+        $tenant = $tenantModel->findById($id);
+        $oldPlanId = (int)($tenant['plan_id'] ?? 0);
+
+        $tenantModel->update($id, [
             'name'           => $data['name'],
             'email'          => $data['email'],
             'phone'          => $data['phone'] ?? null,
             'address'        => $data['address'] ?? null,
-            'plan'           => $data['plan'] ?? 'base',
+            'plan_id'        => $planId ?: null,
             'table_duration' => $data['table_duration'] ?? 90,
             'time_step'      => $data['time_step'] ?? 30,
             'is_active'      => isset($data['is_active']) ? 1 : 0,
         ]);
+
+        // Update or create subscription if plan changed
+        if ($plan && $planId !== $oldPlanId) {
+            $db = Database::getInstance();
+            $existing = $db->prepare(
+                "SELECT id FROM subscriptions WHERE tenant_id = :tid ORDER BY created_at DESC LIMIT 1"
+            );
+            $existing->execute(['tid' => $id]);
+            $sub = $existing->fetch();
+
+            if ($sub) {
+                $db->prepare(
+                    "UPDATE subscriptions SET plan_id = :pid, price = :price WHERE id = :sid"
+                )->execute(['pid' => $planId, 'price' => $plan['price'], 'sid' => $sub['id']]);
+            } else {
+                $calc = Plan::calculatePrice($plan, 'annual', 0);
+                $db->prepare(
+                    "INSERT INTO subscriptions (tenant_id, plan_id, plan, price, billing_cycle, extra_discount, status, current_period_start, current_period_end)
+                     VALUES (:tid, :pid, 'base', :price, 'annual', 0, 'active', CURDATE(), DATE_ADD(CURDATE(), INTERVAL 12 MONTH))"
+                )->execute(['tid' => $id, 'pid' => $planId, 'price' => $calc['total']]);
+            }
+        }
 
         flash('success', 'Ristorante aggiornato con successo.');
         Response::redirect(url("admin/tenants/{$id}/edit"));
@@ -206,6 +280,50 @@ class TenantsController
         ]);
 
         flash('success', 'Utente aggiornato.');
+        Response::redirect(url("admin/tenants/{$tenantId}/edit"));
+    }
+
+    public function assignCredits(Request $request): void
+    {
+        $tenantId = (int)$request->param('id');
+        $amount = (int)$request->input('credits_amount', 0);
+
+        if ($amount < 1 || $amount > 10000) {
+            flash('danger', 'Inserisci un numero di crediti valido (1-10000).');
+            Response::redirect(url("admin/tenants/{$tenantId}/edit"));
+            return;
+        }
+
+        $tenantModel = new Tenant();
+        $tenant = $tenantModel->findById($tenantId);
+        if (!$tenant) {
+            flash('danger', 'Ristorante non trovato.');
+            Response::redirect(url('admin/tenants'));
+            return;
+        }
+
+        $tenantModel->addCredits($tenantId, $amount);
+
+        // Log transaction
+        $db = Database::getInstance();
+        $db->prepare(
+            'INSERT INTO email_credit_transactions (tenant_id, amount, type, description, assigned_by, created_at)
+             VALUES (:tid, :amount, :type, :desc, :by, NOW())'
+        )->execute([
+            'tid'    => $tenantId,
+            'amount' => $amount,
+            'type'   => 'assignment',
+            'desc'   => "Assegnazione manuale di {$amount} crediti",
+            'by'     => Auth::id(),
+        ]);
+
+        AuditLog::log(
+            AuditLog::EMAIL_CREDITS_ASSIGNED,
+            "Assegnati {$amount} crediti a {$tenant['name']}",
+            Auth::id()
+        );
+
+        flash('success', "Assegnati {$amount} crediti email a {$tenant['name']}.");
         Response::redirect(url("admin/tenants/{$tenantId}/edit"));
     }
 }

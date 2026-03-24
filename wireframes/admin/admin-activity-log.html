@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Admin Log Attivit&agrave;</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 220px;
+            --admin-accent: #1565C0;
+            --admin-accent-dark: #0D47A1;
+            --brand: #00844A;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        /* ===== Sidebar ===== */
+        .admin-sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w); background: #1a1d23; color: #fff;
+            display: flex; flex-direction: column; z-index: 100;
+        }
+        .sidebar-brand { padding: 1.1rem 1.25rem; border-bottom: 1px solid #2a2d33; }
+        .sidebar-brand-name { font-weight: 700; font-size: 1.1rem; }
+        .sidebar-brand-role { font-size: .68rem; color: #ffc107; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+        .sidebar-nav { padding: .75rem .5rem; flex: 1; }
+        .sidebar-section { font-size: .62rem; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: .8px; padding: .75rem .85rem .35rem; margin-top: .25rem; }
+        .sidebar-link { display: flex; align-items: center; gap: .6rem; padding: .55rem .85rem; border-radius: 8px; color: #adb5bd; font-size: .85rem; font-weight: 500; text-decoration: none; margin-bottom: .15rem; transition: all .15s; cursor: pointer; }
+        .sidebar-link:hover { color: #fff; background: rgba(255,255,255,.06); }
+        .sidebar-link.active { color: #fff; background: var(--admin-accent); }
+        .sidebar-link i { font-size: .95rem; width: 20px; text-align: center; }
+        .sidebar-footer { padding: .75rem 1rem; border-top: 1px solid #2a2d33; }
+        .sidebar-logout { display: flex; align-items: center; justify-content: center; gap: .4rem; width: 100%; padding: .45rem; border-radius: 8px; background: #2a2d33; color: #adb5bd; border: none; font-size: .8rem; font-weight: 500; cursor: pointer; }
+
+        .main-content { margin-left: var(--sidebar-w); }
+        .top-bar { background: #fff; border-bottom: 1px solid #e9ecef; padding: .65rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+        .top-bar-title { font-size: .95rem; font-weight: 700; color: #1a1d23; }
+        .top-bar-user { display: flex; align-items: center; gap: .5rem; font-size: .82rem; color: #6c757d; }
+        .top-bar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--admin-accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 700; }
+        .page-body { padding: 1.25rem 1.5rem; }
+        .page-title { font-size: 1.25rem; font-weight: 700; color: #1a1d23; margin-bottom: .25rem; }
+        .page-subtitle { font-size: .82rem; color: #6c757d; margin-bottom: 1.25rem; }
+
+        /* ===== Card ===== */
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow: hidden; }
+        .card-hdr { padding: .85rem 1.25rem; background: #fafbfc; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
+        .card-hdr-title { font-size: .88rem; font-weight: 700; color: #495057; }
+
+        /* ===== Filters ===== */
+        .filters-row { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.25rem; }
+        .filter-select {
+            padding: .45rem .75rem; border-radius: 8px; border: 1px solid #dee2e6;
+            font-size: .8rem; color: #495057; background: #fff; cursor: pointer;
+        }
+        .filter-input {
+            padding: .45rem .75rem; border-radius: 8px; border: 1px solid #dee2e6;
+            font-size: .8rem; color: #495057; min-width: 200px;
+        }
+        .filter-input:focus { outline: none; border-color: var(--admin-accent); box-shadow: 0 0 0 3px rgba(21,101,192,.08); }
+        .filter-pills { display: flex; gap: .35rem; }
+        .filter-pill {
+            padding: .35rem .75rem; border-radius: 8px; font-size: .75rem; font-weight: 600;
+            cursor: pointer; border: 1px solid #dee2e6; background: #fff; color: #6c757d; transition: all .15s;
+        }
+        .filter-pill.active { background: var(--admin-accent); color: #fff; border-color: var(--admin-accent); }
+
+        /* ===== Timeline ===== */
+        .log-list { padding: 0; }
+        .log-item {
+            display: flex; gap: 1rem; padding: .85rem 1.25rem;
+            border-bottom: 1px solid #f8f9fa; transition: background .1s;
+        }
+        .log-item:hover { background: #fafbfc; }
+        .log-item:last-child { border-bottom: none; }
+
+        .log-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .9rem; flex-shrink: 0; margin-top: .1rem;
+        }
+        .log-body { flex: 1; min-width: 0; }
+        .log-action { font-size: .85rem; color: #1a1d23; font-weight: 600; }
+        .log-detail { font-size: .78rem; color: #6c757d; margin-top: .1rem; line-height: 1.4; }
+        .log-detail code {
+            font-size: .72rem; background: #f8f9fa; padding: 1px 5px;
+            border-radius: 4px; font-family: monospace;
+        }
+        .log-meta {
+            display: flex; align-items: center; gap: .75rem; margin-top: .3rem;
+            font-size: .7rem; color: #adb5bd;
+        }
+        .log-meta-item { display: flex; align-items: center; gap: .25rem; }
+
+        .log-right {
+            text-align: right; flex-shrink: 0; min-width: 100px;
+        }
+        .log-time { font-size: .72rem; color: #adb5bd; font-weight: 500; }
+        .log-ip { font-size: .65rem; color: #dee2e6; font-family: monospace; }
+
+        /* ===== Badge ===== */
+        .log-badge {
+            display: inline-block; padding: 1px 6px; border-radius: 4px;
+            font-size: .65rem; font-weight: 700; text-transform: uppercase;
+        }
+        .log-badge-create { background: #E8F5E9; color: #2E7D32; }
+        .log-badge-update { background: #E3F2FD; color: #1565C0; }
+        .log-badge-delete { background: #FFEBEE; color: #C62828; }
+        .log-badge-login { background: #F3E5F5; color: #7B1FA2; }
+        .log-badge-system { background: #F5F5F5; color: #757575; }
+        .log-badge-export { background: #FFF3E0; color: #E65100; }
+
+        /* ===== Pagination ===== */
+        .pagination-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: .75rem 1.25rem; background: #fafbfc; border-top: 1px solid #f0f0f0;
+        }
+        .pagination-info { font-size: .75rem; color: #6c757d; }
+        .pagination-btns { display: flex; gap: .25rem; }
+        .pagination-btn {
+            width: 32px; height: 32px; border-radius: 8px; border: 1px solid #dee2e6;
+            background: #fff; color: #495057; font-size: .78rem; font-weight: 600;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .pagination-btn.active { background: var(--admin-accent); color: #fff; border-color: var(--admin-accent); }
+        .pagination-btn:hover:not(.active) { border-color: var(--admin-accent); color: var(--admin-accent); }
+
+        .wf-note { background: #E8F5E9; border: 1px dashed var(--brand); border-radius: 8px; padding: .6rem 1rem; margin-bottom: 1rem; font-size: .78rem; color: #1B5E20; }
+        .wf-note b { color: #B71C1C; }
+
+        @media (max-width: 768px) { .admin-sidebar { display: none; } .main-content { margin-left: 0; } }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="admin-sidebar">
+    <div class="sidebar-brand">
+        <div class="sidebar-brand-name">Evulery</div>
+        <div class="sidebar-brand-role">Super Admin</div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="sidebar-section">Principale</div>
+        <a class="sidebar-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a class="sidebar-link"><i class="bi bi-shop"></i> Ristoranti</a>
+        <a class="sidebar-link"><i class="bi bi-people"></i> Utenti</a>
+        <div class="sidebar-section">Business</div>
+        <a class="sidebar-link"><i class="bi bi-credit-card-2-front"></i> Abbonamenti</a>
+        <a class="sidebar-link"><i class="bi bi-envelope"></i> Crediti Email</a>
+        <div class="sidebar-section">Sistema</div>
+        <a class="sidebar-link active"><i class="bi bi-clock-history"></i> Log Attivit&agrave;</a>
+        <a class="sidebar-link"><i class="bi bi-gear"></i> Impostazioni</a>
+        <a class="sidebar-link"><i class="bi bi-download"></i> Export</a>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="sidebar-logout"><i class="bi bi-box-arrow-left"></i> Esci</button>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+    <div class="top-bar">
+        <div class="top-bar-title">Admin Panel</div>
+        <div class="top-bar-user">
+            <span>Stefano Alagias</span>
+            <div class="top-bar-avatar">SA</div>
+        </div>
+    </div>
+
+    <div class="page-body">
+
+        <div class="wf-note">
+            <b>WIREFRAME — Log Attivit&agrave;</b> &mdash;
+            <b>1)</b> Timeline cronologica con icone colorate per tipo (create/update/delete/login/system).
+            <b>2)</b> Filtri: tipo azione, ristorante, utente, ricerca testuale.
+            <b>3)</b> Ogni riga mostra: azione, dettaglio, utente, ristorante, IP, timestamp.
+            <b>4)</b> Paginazione in fondo.
+        </div>
+
+        <h1 class="page-title">Log Attivit&agrave;</h1>
+        <p class="page-subtitle">Cronologia delle azioni nel sistema</p>
+
+        <!-- Filters -->
+        <div class="filters-row">
+            <select class="filter-select">
+                <option>Tutti i tipi</option>
+                <option>Creazione</option>
+                <option>Modifica</option>
+                <option>Eliminazione</option>
+                <option>Login</option>
+                <option>Sistema</option>
+                <option>Export</option>
+            </select>
+            <select class="filter-select">
+                <option>Tutti i ristoranti</option>
+                <option>Trattoria Da Mario</option>
+                <option>Bella Vista</option>
+                <option>La Pergola</option>
+                <option>Osteria del Borgo</option>
+            </select>
+            <input type="text" class="filter-input" placeholder="Cerca per utente, azione, dettaglio...">
+            <select class="filter-select">
+                <option>Oggi</option>
+                <option>Ultimi 7 giorni</option>
+                <option selected>Ultimi 30 giorni</option>
+                <option>Tutto</option>
+            </select>
+        </div>
+
+        <!-- Log entries -->
+        <div class="card">
+            <div class="card-hdr">
+                <span class="card-hdr-title">247 eventi</span>
+                <button style="padding:.4rem .85rem;border-radius:8px;border:1px solid #dee2e6;background:#fff;color:#495057;font-size:.78rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.35rem;">
+                    <i class="bi bi-download"></i> Esporta CSV
+                </button>
+            </div>
+
+            <div class="log-list">
+                <!-- Login -->
+                <div class="log-item">
+                    <div class="log-icon" style="background:#F3E5F5;color:#7B1FA2;"><i class="bi bi-box-arrow-in-right"></i></div>
+                    <div class="log-body">
+                        <div class="log-action">Login effettuato <span class="log-badge log-badge-login">LOGIN</span></div>
+                        <div class="log-detail">Utente <strong>Mario Rossi</strong> ha effettuato l'accesso alla dashboard</div>
+                        <div class="log-meta">
+                            <span class="log-meta-item"><i class="bi bi-person"></i> Mario Rossi</span>
+                            <span class="log-meta-item"><i class="bi bi-shop"></i> Trattoria Da Mario</span>
+                        </div>
+                    </div>
+                    <div class="log-right">
+                        <div class="log-time">10:42</div>
+                        <div class="log-ip">93.45.12.xx</div>
+                    </div>
+                </div>
+
+                <!-- New reservation -->
+                <div class="log-item">
+                    <div class="log-icon" style="background:#E8F5E9;color:#2E7D32;"><i class="bi bi-calendar-plus"></i></div>
+                    <div class="log-body">
+                        <div class="log-action">Nuova prenotazione <span class="log-badge log-badge-create">CREAZIONE</span></div>
+                        <div class="log-detail">Prenotazione #1284 creata &mdash; <strong>Marco Verdi</strong>, 4 coperti, 21/03 ore 20:30. Fonte: <code>widget</code></div>
+                        <div class="log-meta">
+                            <span class="log-meta-item"><i class="bi bi-robot"></i> Sistema (widget)</span>
+                            <span class="log-meta-item"><i class="bi bi-shop"></i> Trattoria Da Mario</span>
+                        </div>
+                    </div>
+                    <div class="log-right">
+                        <div class="log-time">10:38</div>
+                        <div class="log-ip">88.12.45.xx</div>
+                    </div>
+                </div>
+
+                <!-- Cancel reservation -->
+                <div class="log-item">
+                    <div class="log-icon" style="background:#FFEBEE;color:#C62828;"><i class="bi bi-calendar-x"></i></div>
+                    <div class="log-body">
+                        <div class="log-action">Prenotazione cancellata <span class="log-badge log-badge-delete">ELIMINAZIONE</span></div>
+                        <div class="log-detail">Prenotazione #1279 cancellata &mdash; <strong>Anna Bianchi</strong>, 2 coperti. Motivo: richiesta cliente</div>
+                        <div class="log-meta">
+                            <span class="log-meta-item"><i class="bi bi-person"></i> Laura Bianchi (staff)</span>
+                            <span class="log-meta-item"><i class="bi bi-shop"></i> Bella Vista</span>
+                        </div>
+                    </div>
+                    <div class="log-right">
+                        <div class="log-time">10:15</div>
+                        <div class="log-ip">93.45.12.xx</div>
+                    </div>
+                </div>
+
+                <!-- Settings update -->
+                <div class="log-item">
+                    <div class="log-icon" style="background:#E3F2FD;color:#1565C0;"><i class="bi bi-gear"></i></div>
+                    <div class="log-body">
+                        <div class="log-action">Impostazioni aggiornate <span class="log-badge log-badge-update">MODIFICA</span></div>
+                        <div class="log-detail">Modificato: <code>table_duration</code> da 90 a 120 min, <code>promo_widget_only</code> attivato</div>
+                        <div class="log-meta">
+                            <span class="log-meta-item"><i class="bi bi-person"></i> Mario Rossi</span>
+                            <span class="log-meta-item"><i class="bi bi-shop"></i> Trattoria Da Mario</span>
+                        </div>
+                    </div>
+                    <div class="log-right">
+                        <div class="log-time">09:52</div>
+                        <div class="log-ip">93.45.12.xx</div>
+                    </div>
+                </div>
+
+                <!-- Menu update -->
+                <div class="log-item">
+                    <div class="log-icon" style="background:#E3F2FD;color:#1565C0;"><i class="bi bi-book"></i></div>
+                    <div class="log-body">
+                        <div class="log-action">Men&ugrave; aggiornato <span class="log-badge log-badge-update">MODIFICA</span></div>
+                        <div class="log-detail">Aggiunto piatto "Bruschetta al tartufo" nella categoria "Antipasti" &mdash; &euro;12,00</div>
+                        <div class="log-meta">
+                            <span class="log-meta-item"><i class="bi bi-person"></i> Giovanni Verdi</span>
+                            <span class="log-meta-item"><i class="bi bi-shop"></i> La Pergola</span>
+                        </div>
+                    </div>
+                    <div class="log-right">
+                        <div class="log-time">09:30</div>
+                        <div class="log-ip">79.33.21.xx</div>
+                    </div>
+                </div>
+
+                <!-- Export -->
+                <div class="log-item">
+                    <div class="log-icon" style="background:#FFF3E0;color:#E65100;"><i class="bi bi-download"></i></div>
+                    <div class="log-body">
+                        <div class="log-action">Export CSV <span class="log-badge log-badge-export">EXPORT</span></div>
+                        <div class="log-detail">Esportate 142 prenotazioni del periodo 01/03 - 21/03/2026</div>
+                        <div class="log-meta">
+                            <span class="log-meta-item"><i class="bi bi-person"></i> Mario Rossi</span>
+                            <span class="log-meta-item"><i class="bi bi-shop"></i> Trattoria Da Mario</span>
+                        </div>
+                    </div>
+                    <div class="log-right">
+                        <div class="log-time">09:12</div>
+                        <div class="log-ip">93.45.12.xx</div>
+                    </div>
+                </div>
+
+                <!-- System -->
+                <div class="log-item">
+                    <div class="log-icon" style="background:#F5F5F5;color:#757575;"><i class="bi bi-cpu"></i></div>
+                    <div class="log-body">
+                        <div class="log-action">Email reminder inviata <span class="log-badge log-badge-system">SISTEMA</span></div>
+                        <div class="log-detail">Reminder inviato a 8 clienti per prenotazioni di domani (Bella Vista)</div>
+                        <div class="log-meta">
+                            <span class="log-meta-item"><i class="bi bi-robot"></i> Cron job</span>
+                            <span class="log-meta-item"><i class="bi bi-shop"></i> Bella Vista</span>
+                        </div>
+                    </div>
+                    <div class="log-right">
+                        <div class="log-time">08:00</div>
+                        <div class="log-ip">127.0.0.1</div>
+                    </div>
+                </div>
+
+                <!-- New tenant -->
+                <div class="log-item">
+                    <div class="log-icon" style="background:#E8F5E9;color:#2E7D32;"><i class="bi bi-shop"></i></div>
+                    <div class="log-body">
+                        <div class="log-action">Nuovo ristorante creato <span class="log-badge log-badge-create">CREAZIONE</span></div>
+                        <div class="log-detail">Ristorante "Pizzeria San Marco" creato con piano Starter. Owner: <strong>Luca Neri</strong></div>
+                        <div class="log-meta">
+                            <span class="log-meta-item"><i class="bi bi-person-badge"></i> Admin (Stefano)</span>
+                            <span class="log-meta-item"><i class="bi bi-shield"></i> Super Admin</span>
+                        </div>
+                    </div>
+                    <div class="log-right">
+                        <div class="log-time">Ieri 16:45</div>
+                        <div class="log-ip">82.56.78.xx</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-row">
+                <div class="pagination-info">Pagina 1 di 25 &mdash; 247 eventi totali</div>
+                <div class="pagination-btns">
+                    <button class="pagination-btn" style="opacity:.4;cursor:default;"><i class="bi bi-chevron-left"></i></button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                    <button class="pagination-btn">...</button>
+                    <button class="pagination-btn">25</button>
+                    <button class="pagination-btn"><i class="bi bi-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

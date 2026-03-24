@@ -9,6 +9,7 @@ use App\Core\Response;
 use App\Core\TenantResolver;
 use App\Models\Customer;
 use App\Models\Reservation;
+use App\Services\AuditLog;
 
 class CustomersController
 {
@@ -99,8 +100,26 @@ class CustomersController
 
     public function stats(Request $request): void
     {
-        $tenantId = Auth::tenantId();
         $tenant = TenantResolver::current();
+        $canUseStats = tenant_can('statistics');
+
+        if (!$canUseStats) {
+            view('dashboard/customers/stats', [
+                'title'        => 'Statistiche Clienti',
+                'activeMenu'   => 'customers',
+                'tenant'       => $tenant,
+                'canUseStats'  => false,
+                'dateFrom'     => date('Y-m-d', strtotime('-90 days')),
+                'dateTo'       => date('Y-m-d'),
+                'kpi'          => ['total' => 0, 'new_in_period' => 0, 'avg_bookings' => 0, 'return_rate' => 0, 'noshow_rate' => 0],
+                'topClients'   => [],
+                'segments'     => ['nuovo' => 0, 'occasionale' => 0, 'abituale' => 0, 'vip' => 0, 'totale' => 0],
+                'thresholds'   => ['occ' => 2, 'abi' => 4, 'vip' => 10],
+            ], 'dashboard');
+            return;
+        }
+
+        $tenantId = Auth::tenantId();
 
         // Period filter (default: last 90 days)
         $dateTo = $request->query('to', date('Y-m-d'));
@@ -124,6 +143,7 @@ class CustomersController
         view('dashboard/customers/stats', [
             'title'      => 'Statistiche Clienti',
             'activeMenu' => 'customers',
+            'canUseStats' => true,
             'tenant'     => $tenant,
             'dateFrom'   => $dateFrom,
             'dateTo'     => $dateTo,
@@ -168,6 +188,8 @@ class CustomersController
         $notes = substr($request->input('notes', ''), 0, 2000);
         (new Customer())->updateNotes($id, $notes);
 
+        AuditLog::log(AuditLog::CUSTOMER_NOTES_UPDATED, "Cliente ID: {$id}", Auth::id(), Auth::tenantId());
+
         flash('success', 'Note aggiornate.');
         Response::redirect(url("dashboard/customers/{$id}"));
     }
@@ -190,6 +212,8 @@ class CustomersController
             $customerModel->block($id);
             flash('warning', $customer['first_name'] . ' ' . $customer['last_name'] . ' è stato bloccato. Non potrà prenotare.');
         }
+
+        AuditLog::log(AuditLog::CUSTOMER_BLOCKED, "Cliente ID: {$id}", Auth::id(), Auth::tenantId());
 
         Response::redirect(url("dashboard/customers/{$id}"));
     }

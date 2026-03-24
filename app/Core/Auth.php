@@ -86,4 +86,74 @@ class Auth
         }
         return self::tenantId() === $tenantId;
     }
+
+    // ─── Impersonation ───────────────────────────────────────
+
+    public static function startImpersonation(int $targetUserId): void
+    {
+        // Save original admin session
+        Session::set('original_admin_id', Session::get('user_id'));
+        Session::set('original_admin_name', Session::get('user_name'));
+        Session::set('impersonating', true);
+
+        // Load target user
+        $db = Database::getInstance();
+        $stmt = $db->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
+        $stmt->execute(['id' => $targetUserId]);
+        $user = $stmt->fetch();
+
+        if (!$user) {
+            // Target user disappeared — rollback impersonation flags
+            Session::remove('original_admin_id');
+            Session::remove('original_admin_name');
+            Session::remove('impersonating');
+            return;
+        }
+
+        // Overwrite session with target user
+        Session::set('user_id', $user['id']);
+        Session::set('tenant_id', $user['tenant_id']);
+        Session::set('user_role', $user['role']);
+        Session::set('user_email', $user['email']);
+        Session::set('user_name', $user['first_name'] . ' ' . $user['last_name']);
+    }
+
+    public static function stopImpersonation(): void
+    {
+        $adminId = Session::get('original_admin_id');
+
+        // Reload admin from DB
+        $db = Database::getInstance();
+        $stmt = $db->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
+        $stmt->execute(['id' => $adminId]);
+        $admin = $stmt->fetch();
+
+        if (!$admin) {
+            // Original admin was deleted — force full logout
+            Session::destroy();
+            return;
+        }
+
+        // Restore admin session
+        Session::set('user_id', $admin['id']);
+        Session::set('tenant_id', $admin['tenant_id']);
+        Session::set('user_role', $admin['role']);
+        Session::set('user_email', $admin['email']);
+        Session::set('user_name', $admin['first_name'] . ' ' . $admin['last_name']);
+
+        // Clean up impersonation keys
+        Session::remove('original_admin_id');
+        Session::remove('original_admin_name');
+        Session::remove('impersonating');
+    }
+
+    public static function isImpersonating(): bool
+    {
+        return Session::get('impersonating', false) === true;
+    }
+
+    public static function originalAdminId(): ?int
+    {
+        return Session::get('original_admin_id');
+    }
 }

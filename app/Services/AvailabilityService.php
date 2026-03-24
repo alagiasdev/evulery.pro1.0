@@ -54,6 +54,7 @@ class AvailabilityService
 
         $reservationModel = new Reservation();
         $promotionModel = new Promotion();
+        $canUsePromos = (new \App\Models\Tenant())->canUseService($tenantId, 'promotions');
         $result = [];
 
         foreach ($slots as $slot) {
@@ -84,8 +85,10 @@ class AvailabilityService
             // Flag past slots when date is today
             $isPast = ($date === date('Y-m-d') && $slotTime < date('H:i'));
 
-            // Lookup applicable promotion for this slot
-            $promo = $promotionModel->findApplicable($tenantId, $date, $slotTime);
+            // Lookup applicable promotion for this slot (only if plan includes promotions)
+            $promo = $canUsePromos
+                ? $promotionModel->findApplicable($tenantId, $date, $slotTime)
+                : null;
 
             $result[] = [
                 'time'             => $slotTime,

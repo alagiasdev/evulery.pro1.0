@@ -10,6 +10,8 @@ use App\Controllers\Auth\PasswordController;
 use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\TenantsController;
 use App\Controllers\Admin\SubscriptionsController;
+use App\Controllers\Admin\ActivityLogController;
+use App\Controllers\Admin\UsersController;
 use App\Controllers\Dashboard\HomeController;
 use App\Controllers\Dashboard\ReservationsController;
 use App\Controllers\Dashboard\CustomersController;
@@ -20,7 +22,11 @@ use App\Controllers\Dashboard\MealCategoriesController;
 use App\Controllers\Dashboard\ClosuresController;
 use App\Controllers\Dashboard\PromotionsController;
 use App\Controllers\Dashboard\MenuController;
+use App\Controllers\Dashboard\SuspendedController;
+use App\Controllers\Dashboard\ImpersonationController;
+use App\Controllers\Dashboard\CommunicationsController;
 use App\Controllers\ProfileController;
+use App\Controllers\UnsubscribeController;
 use App\Controllers\Menu\MenuPageController;
 use App\Controllers\Api\MenuApiController;
 use App\Controllers\Booking\BookingController;
@@ -42,6 +48,8 @@ $router->group('/auth', ['csrf'], function ($r) {
 
 // --- DASHBOARD ROUTES (restaurant owner) ---
 $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], function ($r) {
+    $r->get('/suspended', [SuspendedController::class, 'index']);
+    $r->post('/stop-impersonation', [ImpersonationController::class, 'stop']);
     $r->get('', [HomeController::class, 'index']);
     $r->get('/reservations', [ReservationsController::class, 'index']);
     $r->get('/reservations/create', [ReservationsController::class, 'create']);
@@ -94,6 +102,13 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/menu/categories/{id}/delete', [MenuController::class, 'deleteCategory']);
     $r->post('/menu/toggle', [MenuController::class, 'toggleMenu']);
     $r->post('/menu/settings', [MenuController::class, 'saveSettings']);
+    // Communications (email broadcast)
+    $r->get('/communications', [CommunicationsController::class, 'index']);
+    $r->get('/communications/create', [CommunicationsController::class, 'create']);
+    $r->get('/communications/preview', [CommunicationsController::class, 'preview']);
+    $r->post('/communications', [CommunicationsController::class, 'store']);
+    $r->get('/communications/{id}', [CommunicationsController::class, 'show']);
+    $r->post('/communications/{id}/delete', [CommunicationsController::class, 'destroy']);
     $r->get('/profile', [ProfileController::class, 'show']);
     $r->post('/profile', [ProfileController::class, 'update']);
 });
@@ -105,10 +120,32 @@ $router->group('/admin', ['auth', 'admin', 'csrf', 'dashboard-ratelimit'], funct
     $r->get('/tenants/create', [TenantsController::class, 'create']);
     $r->post('/tenants', [TenantsController::class, 'store']);
     $r->get('/tenants/{id}/edit', [TenantsController::class, 'edit']);
-    $r->post('/tenants/{id}', [TenantsController::class, 'update']);
     $r->post('/tenants/{id}/toggle', [TenantsController::class, 'toggle']);
     $r->post('/tenants/{id}/users/{userId}', [TenantsController::class, 'updateUser']);
+    $r->post('/tenants/{id}/credits', [TenantsController::class, 'assignCredits']);
+    $r->post('/tenants/{id}', [TenantsController::class, 'update']);
+    // Subscriptions
     $r->get('/subscriptions', [SubscriptionsController::class, 'index']);
+    $r->post('/subscriptions/{id}/change-plan', [SubscriptionsController::class, 'changePlan']);
+    // Plans
+    $r->get('/subscriptions/plans', [SubscriptionsController::class, 'plans']);
+    $r->post('/subscriptions/plans', [SubscriptionsController::class, 'storePlan']);
+    $r->get('/subscriptions/plans/{id}/edit', [SubscriptionsController::class, 'editPlan']);
+    $r->post('/subscriptions/plans/{id}', [SubscriptionsController::class, 'updatePlan']);
+    $r->post('/subscriptions/plans/{id}/duplicate', [SubscriptionsController::class, 'duplicatePlan']);
+    $r->post('/subscriptions/plans/{id}/delete', [SubscriptionsController::class, 'deletePlan']);
+    // Services
+    $r->get('/subscriptions/services', [SubscriptionsController::class, 'services']);
+    $r->post('/subscriptions/services', [SubscriptionsController::class, 'storeService']);
+    $r->post('/subscriptions/services/{id}', [SubscriptionsController::class, 'updateService']);
+    $r->post('/subscriptions/services/{id}/delete', [SubscriptionsController::class, 'deleteService']);
+    // Users
+    $r->get('/users', [UsersController::class, 'index']);
+    $r->post('/impersonate/{id}', [UsersController::class, 'impersonate']);
+    // Activity Log
+    $r->get('/activity-log', [ActivityLogController::class, 'index']);
+    $r->post('/activity-log/purge', [ActivityLogController::class, 'purge']);
+    // Profile
     $r->get('/profile', [ProfileController::class, 'show']);
     $r->post('/profile', [ProfileController::class, 'update']);
 });
@@ -123,6 +160,9 @@ $router->group('/api/v1', ['ratelimit'], function ($r) {
     $r->get('/tenants/{slug}/menu', [MenuApiController::class, 'index']);
     $r->post('/stripe/webhook', [WebhookController::class, 'handle']);
 });
+
+// --- EMAIL UNSUBSCRIBE (public, GDPR) ---
+$router->get('/email/unsubscribe/{token}', [UnsubscribeController::class, 'show'], ['ratelimit']);
 
 // --- MANAGE RESERVATION (magic link, public) ---
 $router->get('/manage/{token}', [ManageReservationController::class, 'show']);

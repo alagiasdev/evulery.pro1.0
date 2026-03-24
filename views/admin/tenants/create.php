@@ -35,9 +35,12 @@
                     </div>
                     <div>
                         <label class="adm-form-label">Piano</label>
-                        <select class="adm-form-select" name="plan">
-                            <option value="base">Base (49&euro;/mese)</option>
-                            <option value="deposit">Deposit (79&euro;/mese)</option>
+                        <select class="adm-form-select" name="plan_id">
+                            <?php foreach ($plans as $p): ?>
+                            <option value="<?= $p['id'] ?>" <?= old('plan_id') == $p['id'] ? 'selected' : '' ?>>
+                                <?= e($p['name']) ?> (&euro;<?= number_format($p['price'], 0, ',', '.') ?>/mese)
+                            </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>

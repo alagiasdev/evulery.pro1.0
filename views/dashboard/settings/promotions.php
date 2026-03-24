@@ -67,6 +67,10 @@ function promoTypeLabel(string $type): string {
     <?php endforeach; ?>
 </div>
 
+<?php if (!($canUsePromotions ?? true)): ?>
+<?php $lockedTitle = 'Le promozioni'; include __DIR__ . '/../../partials/service-locked.php'; ?>
+<?php else: ?>
+
 <!-- KPI Cards -->
 <div class="promo-kpi-row">
     <div class="promo-kpi-card">
@@ -280,3 +284,5 @@ function promoTypeLabel(string $type): string {
     updateFields();
 })();
 </script>
+
+<?php endif; ?>

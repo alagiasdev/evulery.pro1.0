@@ -36,10 +36,12 @@
                         </div>
                         <div>
                             <label class="adm-form-label">Piano</label>
-                            <select class="adm-form-select" name="plan">
-                                <option value="base" <?= $tenant['plan'] === 'base' ? 'selected' : '' ?>>Base</option>
-                                <option value="deposit" <?= $tenant['plan'] === 'deposit' ? 'selected' : '' ?>>Deposit</option>
-                                <option value="custom" <?= $tenant['plan'] === 'custom' ? 'selected' : '' ?>>Custom</option>
+                            <select class="adm-form-select" name="plan_id">
+                                <?php foreach ($plans as $p): ?>
+                                <option value="<?= $p['id'] ?>" <?= (int)($tenant['plan_id'] ?? 0) === (int)$p['id'] ? 'selected' : '' ?>>
+                                    <?= e($p['name']) ?> (&euro;<?= number_format($p['price'], 0, ',', '.') ?>/mese)
+                                </option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
@@ -100,7 +102,7 @@
                         </div>
                         <div style="display:flex;align-items:center;justify-content:space-between;">
                             <span class="adm-badge <?= $u['is_active'] ? 'adm-badge-active' : 'adm-badge-inactive' ?>" style="font-size:.7rem;">
-                                <?= e(ucfirst($u['role'])) ?> &middot; <?= $u['is_active'] ? 'Attivo' : 'Inattivo' ?>
+                                <?= e(role_label($u['role'])) ?> &middot; <?= $u['is_active'] ? 'Attivo' : 'Inattivo' ?>
                             </span>
                             <button type="submit" class="adm-btn adm-btn-primary" style="padding:.3rem .7rem;font-size:.75rem;">
                                 <i class="bi bi-check-lg"></i> Salva
@@ -116,6 +118,41 @@
             <div class="adm-info-hdr"><i class="bi bi-link-45deg me-1"></i> Link prenotazione</div>
             <div class="adm-info-body">
                 <div class="adm-link-box"><?= e(url($tenant['slug'])) ?></div>
+            </div>
+        </div>
+
+        <!-- Crediti Email -->
+        <div class="adm-info-card">
+            <div class="adm-info-hdr"><i class="bi bi-envelope me-1"></i> Crediti Email</div>
+            <div class="adm-info-body">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;">
+                    <span style="font-size:.82rem;color:#6c757d;">Saldo attuale</span>
+                    <span style="font-size:1.1rem;font-weight:700;color:#00844A;"><?= number_format((int)($tenant['email_credits_balance'] ?? 0), 0, ',', '.') ?></span>
+                </div>
+                <form method="POST" action="<?= url("admin/tenants/{$tenant['id']}/credits") ?>" style="display:flex;gap:.5rem;margin-bottom:.75rem;">
+                    <?= csrf_field() ?>
+                    <input type="number" name="credits_amount" min="1" max="10000" placeholder="Quantità" required
+                           style="flex:1;padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                    <button type="submit" class="adm-btn adm-btn-primary" style="padding:.3rem .7rem;font-size:.75rem;white-space:nowrap;">
+                        <i class="bi bi-plus-circle"></i> Assegna
+                    </button>
+                </form>
+                <?php if (!empty($creditHistory)): ?>
+                <div style="border-top:1px solid #eee;padding-top:.5rem;">
+                    <div style="font-size:.72rem;color:#adb5bd;margin-bottom:.4rem;text-transform:uppercase;font-weight:600;">Ultime transazioni</div>
+                    <?php foreach (array_slice($creditHistory, 0, 5) as $tx): ?>
+                    <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:.25rem 0;border-bottom:1px solid #f5f5f5;">
+                        <span style="color:#6c757d;">
+                            <?= $tx['type'] === 'assignment' ? '<i class="bi bi-plus-circle" style="color:#00844A;"></i>' : '<i class="bi bi-dash-circle" style="color:#dc3545;"></i>' ?>
+                            <?= e(substr($tx['description'] ?? $tx['type'], 0, 40)) ?>
+                        </span>
+                        <span style="font-weight:600;color:<?= $tx['amount'] > 0 ? '#00844A' : '#dc3545' ?>;">
+                            <?= $tx['amount'] > 0 ? '+' : '' ?><?= $tx['amount'] ?>
+                        </span>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

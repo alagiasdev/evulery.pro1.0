@@ -38,6 +38,11 @@ class SettingsController
             Response::redirect(url('dashboard/settings'));
         }
 
+        if (isset($data['booking_instructions']) && mb_strlen($data['booking_instructions']) > 1000) {
+            flash('danger', 'Le istruzioni per il cliente non possono superare 1000 caratteri.');
+            Response::redirect(url('dashboard/settings'));
+        }
+
         if ($v->fails()) {
             flash('danger', $v->firstError());
             Response::redirect(url('dashboard/settings'));
@@ -78,6 +83,7 @@ class SettingsController
             'phone'                => $data['phone'] ?? null,
             'address'              => $data['address'] ?? null,
             'cancellation_policy'  => $data['cancellation_policy'] ?? null,
+            'booking_instructions' => $data['booking_instructions'] ?? null,
             'confirmation_mode'    => $confirmationMode,
             'table_duration'       => (int)($data['table_duration'] ?? 90),
             'time_step'            => (int)($data['time_step'] ?? 30),
@@ -161,7 +167,7 @@ class SettingsController
         $baseUrl = url('');
         $relative = str_replace($baseUrl, '', $tenant['logo_url']);
         $relative = ltrim($relative, '/');
-        $oldPath = BASE_PATH . '/public/' . $relative;
+        $oldPath = BASE_PATH . '/public/uploads/tenants/' . basename($relative);
         if (file_exists($oldPath)) {
             @unlink($oldPath);
         }
@@ -169,22 +175,33 @@ class SettingsController
 
     public function deposit(Request $request): void
     {
+        $tenant = TenantResolver::current();
+        $canUseDeposit = tenant_can('deposit');
+
         view('dashboard/settings/deposit', [
-            'title'      => 'Caparra',
-            'activeMenu' => 'deposit',
-            'tenant'     => TenantResolver::current(),
+            'title'         => 'Caparra',
+            'activeMenu'    => 'deposit',
+            'tenant'        => $tenant,
+            'canUseDeposit' => $canUseDeposit,
         ], 'dashboard');
     }
 
     public function updateDeposit(Request $request): void
     {
+        if (gate_service('deposit', url('dashboard/settings'))) return;
+
         $tenantId = Auth::tenantId();
         $data = $request->all();
 
+        $depositMode = in_array($data['deposit_mode'] ?? '', ['per_table', 'per_person']) ? $data['deposit_mode'] : 'per_table';
+
         (new Tenant())->update($tenantId, [
-            'deposit_enabled' => isset($data['deposit_enabled']) ? 1 : 0,
+            'deposit_enabled' => !empty($data['deposit_enabled']) ? 1 : 0,
             'deposit_amount'  => !empty($data['deposit_amount']) ? (float)$data['deposit_amount'] : null,
+            'deposit_mode'    => $depositMode,
         ]);
+
+        AuditLog::log(AuditLog::DEPOSIT_UPDATED, null, Auth::id(), $tenantId);
 
         flash('success', 'Impostazioni caparra aggiornate.');
         Response::redirect(url('dashboard/settings/deposit'));

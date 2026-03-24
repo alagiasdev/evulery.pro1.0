@@ -9,11 +9,33 @@ use App\Core\Session;
 use App\Core\TenantResolver;
 use App\Core\Validator;
 use App\Models\Promotion;
+use App\Services\AuditLog;
 
 class PromotionsController
 {
+    private function gate(): bool
+    {
+        return gate_service('promotions');
+    }
+
     public function index(Request $request): void
     {
+        $canUsePromotions = tenant_can('promotions');
+
+        if (!$canUsePromotions) {
+            view('dashboard/settings/promotions', [
+                'title'             => 'Promozioni',
+                'activeMenu'        => 'promotions',
+                'canUsePromotions'  => false,
+                'active'            => [],
+                'inactive'          => [],
+                'discountedLast30'  => 0,
+                'growthPercent'     => 0,
+                'tenant'            => TenantResolver::current(),
+            ], 'dashboard');
+            return;
+        }
+
         $tenantId = Auth::tenantId();
         $promoModel = new Promotion();
         $promotions = $promoModel->findAllByTenant($tenantId);
@@ -33,18 +55,20 @@ class PromotionsController
         $growthPercent = $promoModel->getPromoGrowthPercent($tenantId);
 
         view('dashboard/settings/promotions', [
-            'title'           => 'Promozioni',
-            'activeMenu'      => 'promotions',
-            'active'          => $active,
-            'inactive'        => $inactive,
+            'title'            => 'Promozioni',
+            'activeMenu'       => 'promotions',
+            'canUsePromotions' => true,
+            'active'           => $active,
+            'inactive'         => $inactive,
             'discountedLast30' => $discountedLast30,
-            'growthPercent'   => $growthPercent,
-            'tenant'          => TenantResolver::current(),
+            'growthPercent'    => $growthPercent,
+            'tenant'           => TenantResolver::current(),
         ], 'dashboard');
     }
 
     public function store(Request $request): void
     {
+        if ($this->gate()) return;
         $tenantId = Auth::tenantId();
         $data = $request->all();
 
@@ -52,12 +76,15 @@ class PromotionsController
 
         (new Promotion())->create($tenantId, $promoData);
 
+        AuditLog::log(AuditLog::PROMOTION_CREATED, "Promo: {$promoData['name']}", Auth::id(), $tenantId);
+
         flash('success', "Promozione \"{$promoData['name']}\" creata con successo.");
         Response::redirect(url('dashboard/settings/promotions'));
     }
 
     public function edit(Request $request): void
     {
+        if ($this->gate()) return;
         $id = (int)$request->param('id');
         $tenantId = Auth::tenantId();
 
@@ -77,6 +104,7 @@ class PromotionsController
 
     public function update(Request $request): void
     {
+        if ($this->gate()) return;
         $id = (int)$request->param('id');
         $tenantId = Auth::tenantId();
         $data = $request->all();
@@ -93,26 +121,32 @@ class PromotionsController
 
         $promoModel->update($id, $tenantId, $promoData);
 
+        AuditLog::log(AuditLog::PROMOTION_UPDATED, "Promo ID: {$id}", Auth::id(), $tenantId);
+
         flash('success', "Promozione \"{$promoData['name']}\" aggiornata.");
         Response::redirect(url('dashboard/settings/promotions'));
     }
 
     public function toggle(Request $request): void
     {
+        if ($this->gate()) return;
         $id = (int)$request->param('id');
         $tenantId = Auth::tenantId();
 
         (new Promotion())->toggleActive($id, $tenantId);
+        AuditLog::log(AuditLog::PROMOTION_UPDATED, "Promo ID: {$id} toggle", Auth::id(), $tenantId);
         flash('success', 'Stato promozione aggiornato.');
         Response::redirect(url('dashboard/settings/promotions'));
     }
 
     public function delete(Request $request): void
     {
+        if ($this->gate()) return;
         $id = (int)$request->param('id');
         $tenantId = Auth::tenantId();
 
         if ((new Promotion())->delete($id, $tenantId)) {
+            AuditLog::log(AuditLog::PROMOTION_DELETED, "Promo ID: {$id}", Auth::id(), $tenantId);
             flash('success', 'Promozione eliminata.');
         } else {
             flash('danger', 'Promozione non trovata.');

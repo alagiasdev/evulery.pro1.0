@@ -198,7 +198,7 @@ class Customer
 
     public function incrementBookings(int $id): void
     {
-        $this->db->prepare('UPDATE customers SET total_bookings = total_bookings + 1 WHERE id = :id')
+        $this->db->prepare('UPDATE customers SET total_bookings = total_bookings + 1, last_booking_at = NOW() WHERE id = :id')
                  ->execute(['id' => $id]);
     }
 

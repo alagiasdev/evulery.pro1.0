@@ -17,14 +17,28 @@
         <div class="sidebar-brand-role">Super Admin</div>
     </div>
     <nav class="sidebar-nav">
+        <div class="sidebar-section">Principale</div>
         <a class="sidebar-link <?= ($activeMenu ?? '') === 'admin-home' ? 'active' : '' ?>" href="<?= url('admin') ?>">
             <i class="bi bi-speedometer2"></i> Dashboard
         </a>
         <a class="sidebar-link <?= ($activeMenu ?? '') === 'tenants' ? 'active' : '' ?>" href="<?= url('admin/tenants') ?>">
             <i class="bi bi-shop"></i> Ristoranti
         </a>
+        <a class="sidebar-link <?= ($activeMenu ?? '') === 'users' ? 'active' : '' ?>" href="<?= url('admin/users') ?>">
+            <i class="bi bi-people"></i> Utenti
+        </a>
+
+        <div class="sidebar-section">Business</div>
         <a class="sidebar-link <?= ($activeMenu ?? '') === 'subscriptions' ? 'active' : '' ?>" href="<?= url('admin/subscriptions') ?>">
             <i class="bi bi-credit-card-2-front"></i> Abbonamenti
+        </a>
+
+        <div class="sidebar-section">Sistema</div>
+        <a class="sidebar-link <?= ($activeMenu ?? '') === 'activity-log' ? 'active' : '' ?>" href="<?= url('admin/activity-log') ?>">
+            <i class="bi bi-clock-history"></i> Log Attivit&agrave;
+        </a>
+        <a class="sidebar-link <?= ($activeMenu ?? '') === 'settings' ? 'active' : '' ?>" href="<?= url('admin') ?>">
+            <i class="bi bi-gear"></i> Impostazioni
         </a>
     </nav>
     <div class="sidebar-footer">

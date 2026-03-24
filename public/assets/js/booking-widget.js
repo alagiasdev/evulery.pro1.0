@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var to = key + '-' + String(lastDay).padStart(2, '0');
 
         fetch(apiUrl + '/tenants/' + slug + '/closures?from=' + from + '&to=' + to)
-            .then(function(r) { return r.json(); })
+            .then(function(r) { return checkApiResponse(r); })
             .then(function(data) {
                 if (data.success && data.data.closed_dates) {
                     state.closedDates[key] = data.data.closed_dates;
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
         slotsContainer.innerHTML = '<div class="bw-loading-inline"><div class="spinner-border spinner-border-sm"></div> Caricamento orari...</div>';
 
         fetch(apiUrl + '/tenants/' + slug + '/availability?date=' + state.selectedDate + '&party_size=' + partySize + '&grouped=1')
-            .then(function(r) { return r.json(); })
+            .then(function(r) { return checkApiResponse(r); })
             .then(function(data) {
                 if (!data.success) {
                     slotsContainer.innerHTML = '<div class="bw-no-slots">Errore nel caricamento.</div>';
@@ -285,6 +285,20 @@ document.addEventListener('DOMContentLoaded', function() {
         bindPartyClicks();
     }
 
+    function updateDepositInfo() {
+        var el = getEl('deposit-text');
+        if (!el || !config.depositEnabled) return;
+        var base = config.depositAmount || 0;
+        var mode = config.depositMode || 'per_table';
+        var party = state.selectedPartySize || 2;
+        if (mode === 'per_person') {
+            var total = (base * party).toFixed(2);
+            el.innerHTML = 'Caparra richiesta: <strong>&euro;' + total + '</strong> (&euro;' + parseFloat(base).toFixed(2) + ' &times; ' + party + ' persone)';
+        } else {
+            el.innerHTML = 'Caparra richiesta: <strong>&euro;' + parseFloat(base).toFixed(2) + '</strong>';
+        }
+    }
+
     function bindPartyClicks() {
         widget.querySelectorAll('.bw-party-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
@@ -294,6 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 state.selectedTime = null;
                 if (pills.time) pills.time.style.display = 'none';
                 updatePill('party', state.selectedPartySize + ' Pers.');
+                updateDepositInfo();
                 setTimeout(function() { goToStep(3); }, 250);
             });
         });
@@ -506,7 +521,7 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
         })
-        .then(function(r) { return r.json(); })
+        .then(function(r) { return checkApiResponse(r); })
         .then(function(data) {
             loadingOverlay.style.display = 'none';
 
@@ -556,7 +571,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 if (data.data && data.data.deposit_required) {
-                    details.innerHTML += '<div class="bw-deposit-info" style="margin-top:12px;">Verrai reindirizzato alla pagina di pagamento per la caparra.</div>';
+                    var depAmt = data.data.deposit_amount ? parseFloat(data.data.deposit_amount).toFixed(2) : '';
+                    var depMsg = depAmt ? 'Verrai reindirizzato al pagamento della caparra di &euro;' + depAmt + '.' : 'Verrai reindirizzato alla pagina di pagamento per la caparra.';
+                    details.innerHTML += '<div class="bw-deposit-info" style="margin-top:12px;">' + depMsg + '</div>';
                 }
 
                 // Hide progress, show confirmation
@@ -630,6 +647,28 @@ document.addEventListener('DOMContentLoaded', function() {
         errorContainer.style.display = 'none';
     }
 
+    // ===== SUBSCRIPTION SUSPENDED =====
+    function showSuspended() {
+        widget.innerHTML =
+            '<div style="text-align:center;padding:3rem 1.5rem;">' +
+            '<i class="bi bi-calendar-x" style="font-size:2.5rem;color:#adb5bd;display:block;margin-bottom:.75rem;"></i>' +
+            '<div style="font-size:1.1rem;font-weight:600;color:#495057;margin-bottom:.5rem;">Prenotazioni non disponibili</div>' +
+            '<p style="font-size:.88rem;color:#6c757d;line-height:1.6;">Il servizio di prenotazione online non è al momento attivo.<br>Contatta direttamente il ristorante.</p>' +
+            '</div>';
+    }
+
+    function checkApiResponse(r) {
+        if (r.status === 403) {
+            return r.json().then(function(data) {
+                if (data.error && data.error.code === 'SUBSCRIPTION_EXPIRED') {
+                    showSuspended();
+                }
+                return Promise.reject('subscription_expired');
+            });
+        }
+        return r.json();
+    }
+
     // ===== UTILITIES =====
     function formatDateISO(d) {
         var y = d.getFullYear();
@@ -655,7 +694,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load social proof count on page load
     fetch(apiUrl + '/tenants/' + slug + '/availability?date=' + formatDateISO(new Date()) + '&party_size=2&grouped=1')
-        .then(function(r) { return r.json(); })
+        .then(function(r) { return checkApiResponse(r); })
         .then(function(data) {
             if (data.success && data.data.today_bookings) {
                 showSocialProof(data.data.today_bookings);

@@ -58,6 +58,15 @@ class LoginController
 
     public function logout(Request $request): void
     {
+        // If impersonating, stop impersonation instead of logging out
+        if (Auth::isImpersonating()) {
+            $impersonatedName = Auth::user()['name'] ?? '';
+            AuditLog::log(AuditLog::IMPERSONATION_END, "Fine impersonation di {$impersonatedName} (via logout)", Auth::originalAdminId());
+            Auth::stopImpersonation();
+            Response::redirect(url('admin/users'));
+            return;
+        }
+
         AuditLog::log(AuditLog::LOGOUT, null, Auth::id(), Auth::tenantId());
         Auth::logout();
         flash('success', 'Logout effettuato con successo.');

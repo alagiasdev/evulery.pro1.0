@@ -25,10 +25,16 @@ class AvailabilityController
             Response::error('Il parametro date è obbligatorio.', 'MISSING_DATE', 400);
         }
 
-        $tenant = (new Tenant())->findBySlug($slug);
+        $tenantModel = new Tenant();
+        $tenant = $tenantModel->findBySlug($slug);
 
         if (!$tenant || !$tenant['is_active']) {
             Response::error('Ristorante non trovato.', 'TENANT_NOT_FOUND', 404);
+        }
+
+        // Block expired subscriptions
+        if ($source === 'widget' && $tenantModel->getExpiredSubscription((int)$tenant['id'])) {
+            Response::error('Il servizio di prenotazione non è al momento disponibile.', 'SUBSCRIPTION_EXPIRED', 403);
         }
 
         $service = new AvailabilityService();
@@ -66,9 +72,15 @@ class AvailabilityController
             Response::error('Parametri from e to obbligatori.', 'MISSING_PARAMS', 400);
         }
 
-        $tenant = (new Tenant())->findBySlug($slug);
+        $tenantModel = new Tenant();
+        $tenant = $tenantModel->findBySlug($slug);
         if (!$tenant || !$tenant['is_active']) {
             Response::error('Ristorante non trovato.', 'TENANT_NOT_FOUND', 404);
+        }
+
+        // Block expired subscriptions
+        if ($tenantModel->getExpiredSubscription((int)$tenant['id'])) {
+            Response::error('Il servizio di prenotazione non è al momento disponibile.', 'SUBSCRIPTION_EXPIRED', 403);
         }
 
         $dates = (new SlotOverride())->getClosedDates($tenant['id'], $from, $to);

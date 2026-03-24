@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Admin Utenti</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 220px;
+            --admin-accent: #1565C0;
+            --admin-accent-dark: #0D47A1;
+            --brand: #00844A;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        .admin-sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: var(--sidebar-w); background: #1a1d23; color: #fff; display: flex; flex-direction: column; z-index: 100; }
+        .sidebar-brand { padding: 1.1rem 1.25rem; border-bottom: 1px solid #2a2d33; }
+        .sidebar-brand-name { font-weight: 700; font-size: 1.1rem; }
+        .sidebar-brand-role { font-size: .68rem; color: #ffc107; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+        .sidebar-nav { padding: .75rem .5rem; flex: 1; }
+        .sidebar-section { font-size: .62rem; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: .8px; padding: .75rem .85rem .35rem; margin-top: .25rem; }
+        .sidebar-link { display: flex; align-items: center; gap: .6rem; padding: .55rem .85rem; border-radius: 8px; color: #adb5bd; font-size: .85rem; font-weight: 500; text-decoration: none; margin-bottom: .15rem; transition: all .15s; cursor: pointer; }
+        .sidebar-link:hover { color: #fff; background: rgba(255,255,255,.06); }
+        .sidebar-link.active { color: #fff; background: var(--admin-accent); }
+        .sidebar-link i { font-size: .95rem; width: 20px; text-align: center; }
+        .sidebar-footer { padding: .75rem 1rem; border-top: 1px solid #2a2d33; }
+        .sidebar-logout { display: flex; align-items: center; justify-content: center; gap: .4rem; width: 100%; padding: .45rem; border-radius: 8px; background: #2a2d33; color: #adb5bd; border: none; font-size: .8rem; font-weight: 500; cursor: pointer; }
+
+        .main-content { margin-left: var(--sidebar-w); }
+        .top-bar { background: #fff; border-bottom: 1px solid #e9ecef; padding: .65rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+        .top-bar-title { font-size: .95rem; font-weight: 700; color: #1a1d23; }
+        .top-bar-user { display: flex; align-items: center; gap: .5rem; font-size: .82rem; color: #6c757d; }
+        .top-bar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--admin-accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 700; }
+        .page-body { padding: 1.25rem 1.5rem; }
+        .page-title { font-size: 1.25rem; font-weight: 700; color: #1a1d23; margin-bottom: .25rem; }
+        .page-subtitle { font-size: .82rem; color: #6c757d; margin-bottom: 1.25rem; }
+
+        /* ===== Stats ===== */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: .75rem; }
+        .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .stat-value { font-size: 1.6rem; font-weight: 700; color: #1a1d23; line-height: 1; }
+        .stat-label { font-size: .72rem; color: #6c757d; font-weight: 500; margin-top: .15rem; }
+
+        /* ===== Card + Table ===== */
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow: hidden; }
+        .card-hdr { padding: .85rem 1.25rem; background: #fafbfc; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
+        .card-hdr-title { font-size: .88rem; font-weight: 700; color: #495057; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { font-size: .72rem; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: .5px; padding: .6rem 1rem; border-bottom: 1px solid #f0f0f0; }
+        .data-table td { padding: .7rem 1rem; font-size: .85rem; color: #495057; border-bottom: 1px solid #f8f9fa; vertical-align: middle; }
+        .data-table tr:last-child td { border-bottom: none; }
+
+        /* ===== User avatar ===== */
+        .user-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .72rem; font-weight: 700; flex-shrink: 0;
+        }
+        .user-info { display: flex; align-items: center; gap: .65rem; }
+        .user-name-cell { font-weight: 600; color: #1a1d23; }
+        .user-email-cell { font-size: .72rem; color: #adb5bd; }
+
+        /* ===== Badges ===== */
+        .badge-role { padding: 2px 8px; border-radius: 6px; font-size: .68rem; font-weight: 600; }
+        .badge-super { background: #FFEBEE; color: #C62828; }
+        .badge-owner { background: #E3F2FD; color: #1565C0; }
+        .badge-staff { background: #F5F5F5; color: #757575; }
+        .badge-status { padding: 2px 8px; border-radius: 6px; font-size: .7rem; font-weight: 600; }
+        .badge-active { background: #E8F5E9; color: #2E7D32; }
+        .badge-inactive { background: #F5F5F5; color: #757575; }
+
+        /* ===== Action buttons ===== */
+        .action-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 28px; height: 28px; border-radius: 6px; border: 1px solid #dee2e6;
+            background: #fff; color: #6c757d; font-size: .78rem; cursor: pointer; transition: all .15s;
+            text-decoration: none;
+        }
+        .action-btn:hover { border-color: var(--admin-accent); color: var(--admin-accent); }
+        .action-btn.impersonate { border-color: #7B1FA2; color: #7B1FA2; }
+        .action-btn.impersonate:hover { background: #7B1FA2; color: #fff; }
+        .action-btn.warn:hover { border-color: #C62828; color: #C62828; }
+
+        /* ===== Filters ===== */
+        .filters-row { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.25rem; }
+        .filter-select { padding: .45rem .75rem; border-radius: 8px; border: 1px solid #dee2e6; font-size: .8rem; color: #495057; background: #fff; cursor: pointer; }
+        .filter-input { padding: .45rem .75rem; border-radius: 8px; border: 1px solid #dee2e6; font-size: .8rem; color: #495057; min-width: 220px; }
+        .filter-input:focus { outline: none; border-color: var(--admin-accent); box-shadow: 0 0 0 3px rgba(21,101,192,.08); }
+
+        /* ===== Tooltip popover ===== */
+        .impersonate-tip {
+            background: #F3E5F5; border-radius: 10px; padding: .85rem 1rem;
+            margin-bottom: 1.25rem; display: flex; align-items: flex-start; gap: .75rem;
+        }
+        .impersonate-tip i { font-size: 1.1rem; color: #7B1FA2; flex-shrink: 0; margin-top: .1rem; }
+        .impersonate-tip-text { font-size: .78rem; color: #4A148C; line-height: 1.5; }
+        .impersonate-tip-text strong { font-weight: 700; }
+
+        .wf-note { background: #E8F5E9; border: 1px dashed var(--brand); border-radius: 8px; padding: .6rem 1rem; margin-bottom: 1rem; font-size: .78rem; color: #1B5E20; }
+        .wf-note b { color: #B71C1C; }
+
+        @media (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .admin-sidebar { display: none; } .main-content { margin-left: 0; } .stats-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="admin-sidebar">
+    <div class="sidebar-brand">
+        <div class="sidebar-brand-name">Evulery</div>
+        <div class="sidebar-brand-role">Super Admin</div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="sidebar-section">Principale</div>
+        <a class="sidebar-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a class="sidebar-link"><i class="bi bi-shop"></i> Ristoranti</a>
+        <a class="sidebar-link active"><i class="bi bi-people"></i> Utenti</a>
+        <div class="sidebar-section">Business</div>
+        <a class="sidebar-link"><i class="bi bi-credit-card-2-front"></i> Abbonamenti</a>
+        <a class="sidebar-link"><i class="bi bi-envelope"></i> Crediti Email</a>
+        <div class="sidebar-section">Sistema</div>
+        <a class="sidebar-link"><i class="bi bi-clock-history"></i> Log Attivit&agrave;</a>
+        <a class="sidebar-link"><i class="bi bi-gear"></i> Impostazioni</a>
+        <a class="sidebar-link"><i class="bi bi-download"></i> Export</a>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="sidebar-logout"><i class="bi bi-box-arrow-left"></i> Esci</button>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+    <div class="top-bar">
+        <div class="top-bar-title">Admin Panel</div>
+        <div class="top-bar-user">
+            <span>Stefano Alagias</span>
+            <div class="top-bar-avatar">SA</div>
+        </div>
+    </div>
+
+    <div class="page-body">
+
+        <div class="wf-note">
+            <b>WIREFRAME — Gestione Utenti</b> &mdash;
+            <b>1)</b> Stat card con totale utenti, per ruolo (super_admin, owner, staff).
+            <b>2)</b> Tabella con avatar, nome, email, ruolo, ristorante, ultimo accesso, azioni.
+            <b>3)</b> Azioni: modifica, reset password, impersona ("accedi come"), disabilita.
+            <b>4)</b> Banner esplicativo per la funzione "Impersona".
+        </div>
+
+        <h1 class="page-title">Utenti</h1>
+        <p class="page-subtitle">Gestisci tutti gli utenti della piattaforma</p>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#E3F2FD;color:#1565C0;"><i class="bi bi-people"></i></div>
+                <div>
+                    <div class="stat-value">22</div>
+                    <div class="stat-label">Utenti totali</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#FFEBEE;color:#C62828;"><i class="bi bi-shield-check"></i></div>
+                <div>
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">Super Admin</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#E8F5E9;color:#2E7D32;"><i class="bi bi-person-badge"></i></div>
+                <div>
+                    <div class="stat-value">14</div>
+                    <div class="stat-label">Proprietari</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#F5F5F5;color:#757575;"><i class="bi bi-person"></i></div>
+                <div>
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">Staff</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Impersonate info -->
+        <div class="impersonate-tip">
+            <i class="bi bi-incognito"></i>
+            <div class="impersonate-tip-text">
+                <strong>Funzione "Accedi come":</strong> Permette di entrare nella dashboard di un ristorante
+                come se fossi il proprietario. Utile per supporto tecnico e debug.
+                L'azione viene registrata nel log attivit&agrave;. Per uscire, clicca "Torna ad Admin" nella barra superiore.
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-row">
+            <select class="filter-select">
+                <option>Tutti i ruoli</option>
+                <option>Super Admin</option>
+                <option>Proprietario</option>
+                <option>Staff</option>
+            </select>
+            <select class="filter-select">
+                <option>Tutti i ristoranti</option>
+                <option>Trattoria Da Mario</option>
+                <option>Bella Vista</option>
+                <option>La Pergola</option>
+            </select>
+            <input type="text" class="filter-input" placeholder="Cerca per nome o email...">
+        </div>
+
+        <!-- Users table -->
+        <div class="card">
+            <div class="card-hdr">
+                <span class="card-hdr-title">Elenco utenti</span>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Utente</th>
+                            <th>Ruolo</th>
+                            <th>Ristorante</th>
+                            <th>Ultimo accesso</th>
+                            <th>Stato</th>
+                            <th style="text-align:right;">Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background:#FFFDE7;">
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar" style="background:#FFEBEE;color:#C62828;">SA</div>
+                                    <div>
+                                        <div class="user-name-cell">Stefano Alagias</div>
+                                        <div class="user-email-cell">admin@evulery.pro</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge-role badge-super"><i class="bi bi-shield-fill me-1"></i>Super Admin</span></td>
+                            <td style="color:#adb5bd;">&mdash;</td>
+                            <td style="font-size:.78rem;color:#2E7D32;">Adesso</td>
+                            <td><span class="badge-status badge-active">Attivo</span></td>
+                            <td style="text-align:right;">
+                                <a class="action-btn" title="Profilo"><i class="bi bi-person-gear"></i></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar" style="background:#E3F2FD;color:#1565C0;">MR</div>
+                                    <div>
+                                        <div class="user-name-cell">Mario Rossi</div>
+                                        <div class="user-email-cell">mario@trattoriadamario.it</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge-role badge-owner">Proprietario</span></td>
+                            <td style="font-weight:500;">Trattoria Da Mario</td>
+                            <td style="font-size:.78rem;">Oggi 10:42</td>
+                            <td><span class="badge-status badge-active">Attivo</span></td>
+                            <td style="text-align:right;">
+                                <a class="action-btn impersonate" title="Accedi come"><i class="bi bi-box-arrow-in-right"></i></a>
+                                <a class="action-btn" title="Modifica"><i class="bi bi-pencil"></i></a>
+                                <a class="action-btn" title="Reset password"><i class="bi bi-key"></i></a>
+                                <a class="action-btn warn" title="Disabilita"><i class="bi bi-slash-circle"></i></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar" style="background:#E3F2FD;color:#1565C0;">LB</div>
+                                    <div>
+                                        <div class="user-name-cell">Laura Bianchi</div>
+                                        <div class="user-email-cell">laura@trattoriadamario.it</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge-role badge-staff">Staff</span></td>
+                            <td style="font-weight:500;">Trattoria Da Mario</td>
+                            <td style="font-size:.78rem;">Ieri 18:30</td>
+                            <td><span class="badge-status badge-active">Attivo</span></td>
+                            <td style="text-align:right;">
+                                <a class="action-btn impersonate" title="Accedi come"><i class="bi bi-box-arrow-in-right"></i></a>
+                                <a class="action-btn" title="Modifica"><i class="bi bi-pencil"></i></a>
+                                <a class="action-btn" title="Reset password"><i class="bi bi-key"></i></a>
+                                <a class="action-btn warn" title="Disabilita"><i class="bi bi-slash-circle"></i></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar" style="background:#F3E5F5;color:#7B1FA2;">GV</div>
+                                    <div>
+                                        <div class="user-name-cell">Giovanni Verdi</div>
+                                        <div class="user-email-cell">g.verdi@lapergola.it</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge-role badge-owner">Proprietario</span></td>
+                            <td style="font-weight:500;">La Pergola</td>
+                            <td style="font-size:.78rem;">20/03 14:15</td>
+                            <td><span class="badge-status badge-active">Attivo</span></td>
+                            <td style="text-align:right;">
+                                <a class="action-btn impersonate" title="Accedi come"><i class="bi bi-box-arrow-in-right"></i></a>
+                                <a class="action-btn" title="Modifica"><i class="bi bi-pencil"></i></a>
+                                <a class="action-btn" title="Reset password"><i class="bi bi-key"></i></a>
+                                <a class="action-btn warn" title="Disabilita"><i class="bi bi-slash-circle"></i></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar" style="background:#F5F5F5;color:#757575;">LN</div>
+                                    <div>
+                                        <div class="user-name-cell">Luca Neri</div>
+                                        <div class="user-email-cell">luca@pizzeriasanmarco.it</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge-role badge-owner">Proprietario</span></td>
+                            <td style="font-weight:500;">Pizzeria San Marco</td>
+                            <td style="font-size:.78rem;color:#adb5bd;">Mai</td>
+                            <td><span class="badge-status badge-active">Attivo</span></td>
+                            <td style="text-align:right;">
+                                <a class="action-btn impersonate" title="Accedi come"><i class="bi bi-box-arrow-in-right"></i></a>
+                                <a class="action-btn" title="Modifica"><i class="bi bi-pencil"></i></a>
+                                <a class="action-btn" title="Reset password"><i class="bi bi-key"></i></a>
+                                <a class="action-btn warn" title="Disabilita"><i class="bi bi-slash-circle"></i></a>
+                            </td>
+                        </tr>
+                        <tr style="opacity:.5;">
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar" style="background:#F5F5F5;color:#bbb;">PR</div>
+                                    <div>
+                                        <div class="user-name-cell">Paolo Russo</div>
+                                        <div class="user-email-cell">paolo@pizzerianapoli.it</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge-role badge-owner">Proprietario</span></td>
+                            <td style="font-weight:500;color:#adb5bd;">Pizzeria Napoli</td>
+                            <td style="font-size:.78rem;color:#adb5bd;">01/03 09:12</td>
+                            <td><span class="badge-status badge-inactive">Disabilitato</span></td>
+                            <td style="text-align:right;">
+                                <a class="action-btn" title="Riabilita" style="border-color:#2E7D32;color:#2E7D32;"><i class="bi bi-play"></i></a>
+                                <a class="action-btn" title="Modifica"><i class="bi bi-pencil"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

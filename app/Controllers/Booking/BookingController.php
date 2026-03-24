@@ -5,6 +5,7 @@ namespace App\Controllers\Booking;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\TenantResolver;
+use App\Models\Reservation;
 use App\Models\Tenant;
 
 class BookingController
@@ -12,13 +13,39 @@ class BookingController
     public function show(Request $request): void
     {
         $slug = $request->param('slug');
-        $tenant = (new Tenant())->findBySlug($slug);
+        $tenantModel = new Tenant();
+        $tenant = $tenantModel->findBySlug($slug);
 
         if (!$tenant || !$tenant['is_active']) {
             Response::notFound();
         }
 
+        // Check subscription expiry — show suspended page
+        $expiredSub = $tenantModel->getExpiredSubscription((int)$tenant['id']);
+        if ($expiredSub) {
+            $isEmbed = $request->isEmbed();
+            if ($isEmbed) {
+                view('booking/suspended-embed', [
+                    'tenantName' => $tenant['name'],
+                ]);
+            } else {
+                view('booking/suspended', [
+                    'tenantName'    => $tenant['name'],
+                    'tenantLogo'    => $tenant['logo_url'],
+                    'tenantPhone'   => $tenant['phone'] ?? '',
+                    'tenantEmail'   => $tenant['email'] ?? '',
+                    'tenantAddress' => $tenant['address'] ?? '',
+                ]);
+            }
+            return;
+        }
+
         TenantResolver::setCurrent($tenant);
+
+        // Disable deposit display if plan doesn't include deposit service
+        if ($tenant['deposit_enabled'] && !$tenantModel->canUseService((int)$tenant['id'], 'deposit')) {
+            $tenant['deposit_enabled'] = 0;
+        }
 
         $isEmbed = $request->isEmbed();
         $layout = $isEmbed ? 'embed' : 'booking';
@@ -41,11 +68,31 @@ class BookingController
             Response::notFound();
         }
 
+        // Try to retrieve reservation details from Stripe session
+        $reservation = null;
+        $depositPaid = false;
+        $sessionId = $request->query('session_id', '');
+
+        if ($sessionId && !empty(env('STRIPE_SECRET_KEY'))) {
+            try {
+                \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+                $session = \Stripe\Checkout\Session::retrieve($sessionId);
+                $reservationId = $session->metadata->reservation_id ?? null;
+                if ($reservationId) {
+                    $reservation = (new Reservation())->findWithCustomer((int)$reservationId);
+                    $depositPaid = ($session->payment_status === 'paid');
+                }
+            } catch (\Exception $e) {
+                // Silent fail — show generic confirmation
+            }
+        }
+
         view('booking/confirmation', [
-            'tenant'     => $tenant,
-            'tenantName' => $tenant['name'],
-            'tenantLogo' => $tenant['logo_url'],
-            'message'    => 'Prenotazione confermata!',
+            'tenant'      => $tenant,
+            'tenantName'  => $tenant['name'],
+            'tenantLogo'  => $tenant['logo_url'],
+            'reservation' => $reservation,
+            'depositPaid' => $depositPaid,
         ], 'booking');
     }
 

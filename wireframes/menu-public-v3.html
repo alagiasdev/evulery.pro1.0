@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Menu Digitale v3 (Editorial)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-dark: #006837;
+            --gold: #C9A96E;
+            --gold-light: #F5EFE0;
+            --amber: #E8A317;
+            --text-dark: #1a1d23;
+            --text-body: #4a4a4a;
+            --text-muted: #8a8a8a;
+            --text-light: #b5b5b5;
+            --bg-cream: #FAF8F5;
+            --bg-card: #ffffff;
+            --border: #EDEBE8;
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg-cream);
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* ========== HERO ========== */
+        .dm-hero {
+            position: relative;
+            height: 380px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+        }
+        .dm-hero-bg {
+            position: absolute;
+            inset: 0;
+            background: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=900&q=80') center/cover;
+            filter: brightness(.35);
+        }
+        .dm-hero-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1.5rem 2.5rem;
+            color: #fff;
+        }
+        .dm-hero-logo {
+            width: 52px; height: 52px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid rgba(255,255,255,.2);
+            margin-bottom: .75rem;
+            backdrop-filter: blur(4px);
+            background: rgba(255,255,255,.1);
+        }
+        .dm-hero-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -.02em;
+            line-height: 1.1;
+            margin-bottom: .3rem;
+        }
+        .dm-hero-tagline {
+            font-size: .88rem;
+            color: rgba(255,255,255,.5);
+            font-weight: 400;
+            font-style: italic;
+            margin-bottom: .75rem;
+        }
+        .dm-hero-meta {
+            display: flex;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+        }
+        .dm-hero-meta-item {
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+            font-size: .76rem;
+            color: rgba(255,255,255,.5);
+        }
+        .dm-hero-meta-item i { font-size: .82rem; color: var(--gold); }
+        .dm-hero-gradient {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 200px;
+            background: linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 100%);
+            z-index: 1;
+        }
+
+        /* ========== FLOATING NAV ========== */
+        .dm-float-nav {
+            position: fixed;
+            bottom: 1.25rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: rgba(26,29,35,.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 50px;
+            padding: .35rem .5rem;
+            display: flex;
+            gap: .2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,.25);
+            max-width: calc(100vw - 2rem);
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .dm-float-nav::-webkit-scrollbar { display: none; }
+        .dm-float-nav a {
+            flex-shrink: 0;
+            padding: .45rem .85rem;
+            font-size: .72rem;
+            font-weight: 600;
+            color: rgba(255,255,255,.55);
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all .2s;
+            white-space: nowrap;
+        }
+        .dm-float-nav a:hover { color: #fff; }
+        .dm-float-nav a.active {
+            background: var(--brand);
+            color: #fff;
+        }
+
+        /* ========== MAIN ========== */
+        .dm-main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1.5rem 6rem;
+        }
+
+        /* ========== SEARCH ========== */
+        .dm-search-wrap {
+            position: relative;
+            margin: -1.5rem 0 0;
+            z-index: 10;
+        }
+        .dm-search-box {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: 0 4px 20px rgba(0,0,0,.06);
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+        .dm-search-icon {
+            padding: 0 0 0 1.15rem;
+            color: var(--text-light);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .dm-search {
+            flex: 1;
+            border: none;
+            padding: 1rem 1rem 1rem .65rem;
+            font-size: .88rem;
+            color: var(--text-dark);
+            outline: none;
+            background: transparent;
+            font-family: inherit;
+        }
+        .dm-search::placeholder { color: var(--text-light); }
+
+        /* ========== DAILY SPECIALS ========== */
+        .dm-specials {
+            margin-top: 2rem;
+        }
+        .dm-section-label {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            margin-bottom: 1rem;
+        }
+        .dm-section-label-line {
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+        .dm-section-label-text {
+            font-family: 'Playfair Display', serif;
+            font-size: .8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+
+        .dm-special-scroll {
+            display: flex;
+            gap: .85rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            padding-bottom: .5rem;
+            margin: 0 -1.5rem;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        .dm-special-scroll::-webkit-scrollbar { display: none; }
+        .dm-special-card {
+            flex: 0 0 280px;
+            scroll-snap-align: start;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,.05);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        .dm-special-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+        .dm-special-badge {
+            position: absolute;
+            top: .75rem;
+            left: .75rem;
+            background: var(--amber);
+            color: #fff;
+            font-size: .6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            padding: .3rem .7rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: .25rem;
+        }
+        .dm-special-body {
+            padding: 1rem 1.1rem 1.1rem;
+        }
+        .dm-special-name {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-dark);
+            margin-bottom: .25rem;
+        }
+        .dm-special-desc {
+            font-size: .78rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: .6rem;
+        }
+        .dm-special-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .dm-special-price {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--brand);
+        }
+
+        /* ========== CATEGORY ========== */
+        .dm-category {
+            margin-top: 2.5rem;
+        }
+        .dm-cat-header {
+            margin-bottom: 1.25rem;
+        }
+        .dm-cat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: .7rem;
+            color: var(--gold);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: .15rem;
+        }
+        .dm-cat-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -.02em;
+            line-height: 1.15;
+        }
+        .dm-cat-desc {
+            font-size: .82rem;
+            color: var(--text-muted);
+            margin-top: .2rem;
+            font-style: italic;
+        }
+
+        /* ========== ITEMS GRID ========== */
+        .dm-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .75rem;
+        }
+        .dm-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: box-shadow .2s, transform .2s;
+        }
+        .dm-card:hover {
+            box-shadow: 0 6px 24px rgba(0,0,0,.06);
+            transform: translateY(-2px);
+        }
+        .dm-card-img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+        }
+        .dm-card-body {
+            padding: .85rem 1rem 1rem;
+        }
+        .dm-card-name {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: .92rem;
+            color: var(--text-dark);
+            line-height: 1.25;
+            margin-bottom: .2rem;
+        }
+        .dm-card-desc {
+            font-size: .75rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .dm-card-footer {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-top: .6rem;
+            gap: .35rem;
+        }
+        .dm-card-price {
+            font-weight: 800;
+            font-size: 1rem;
+            color: var(--brand);
+        }
+
+        /* No-image card */
+        .dm-card--noimg .dm-card-body {
+            padding: 1rem;
+        }
+
+        /* Full-width card (spans 2 cols) */
+        .dm-card--wide {
+            grid-column: 1 / -1;
+            display: flex;
+        }
+        .dm-card--wide .dm-card-img {
+            width: 200px;
+            height: auto;
+            min-height: 140px;
+            flex-shrink: 0;
+        }
+        .dm-card--wide .dm-card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* ========== ALLERGENS (v3: inline text) ========== */
+        .dm-allergens-line {
+            font-size: .68rem;
+            color: var(--text-light);
+            margin-top: .35rem;
+            line-height: 1.4;
+        }
+        .dm-allergens-line strong {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* ========== ALLERGEN ACCORDION ========== */
+        .dm-legend-section {
+            margin-top: 3rem;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .dm-legend-toggle {
+            width: 100%;
+            padding: 1.1rem 1.25rem;
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .dm-legend-toggle-left {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+        .dm-legend-toggle-left i { color: var(--gold); font-size: 1rem; }
+        .dm-legend-toggle-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: .95rem;
+            color: var(--text-dark);
+        }
+        .dm-legend-toggle-arrow {
+            font-size: .85rem;
+            color: var(--text-light);
+            transition: transform .2s;
+        }
+        .dm-legend-toggle[aria-expanded="true"] .dm-legend-toggle-arrow {
+            transform: rotate(180deg);
+        }
+        .dm-legend-body {
+            padding: 0 1.25rem 1.25rem;
+        }
+        .dm-legend-note {
+            font-size: .75rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        .dm-legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: .5rem;
+        }
+        .dm-legend-item {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .4rem .6rem;
+            border-radius: 8px;
+            background: #f8f7f5;
+        }
+        .dm-legend-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dm-legend-label {
+            font-size: .78rem;
+            color: var(--text-body);
+            font-weight: 500;
+        }
+
+        /* ========== CTA ========== */
+        .dm-cta {
+            margin-top: 2.5rem;
+            position: relative;
+            border-radius: var(--radius);
+            overflow: hidden;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .dm-cta-bg {
+            position: absolute;
+            inset: 0;
+            background: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80') center/cover;
+            filter: brightness(.3) saturate(.8);
+        }
+        .dm-cta-inner {
+            position: relative;
+            z-index: 2;
+            padding: 2.5rem 1.5rem;
+            color: #fff;
+        }
+        .dm-cta-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: .3rem;
+        }
+        .dm-cta-sub {
+            font-size: .82rem;
+            color: rgba(255,255,255,.6);
+            margin-bottom: 1.25rem;
+        }
+        .dm-cta-btn {
+            display: inline-block;
+            background: var(--brand);
+            color: #fff;
+            padding: .75rem 2.25rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: .88rem;
+            text-decoration: none;
+            transition: transform .2s, box-shadow .2s;
+            letter-spacing: .3px;
+        }
+        .dm-cta-btn:hover {
+            transform: scale(1.04);
+            box-shadow: 0 6px 20px rgba(0,132,74,.4);
+            color: #fff;
+        }
+
+        /* ========== FOOTER ========== */
+        .dm-footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            font-size: .72rem;
+            color: var(--text-light);
+        }
+
+        /* ========== LIST VARIANT (for beverages) ========== */
+        .dm-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .dm-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .85rem 1.15rem;
+            gap: .75rem;
+            border-bottom: 1px solid #f5f4f2;
+            transition: background .15s;
+        }
+        .dm-list-item:last-child { border-bottom: none; }
+        .dm-list-item:hover { background: #fdfcfb; }
+        .dm-list-left { flex: 1; min-width: 0; }
+        .dm-list-name {
+            font-weight: 600;
+            font-size: .85rem;
+            color: var(--text-dark);
+        }
+        .dm-list-desc {
+            font-size: .74rem;
+            color: var(--text-muted);
+            margin-top: .1rem;
+        }
+        .dm-list-price {
+            font-weight: 800;
+            font-size: .9rem;
+            color: var(--brand);
+            white-space: nowrap;
+        }
+        .dm-list-allergens {
+            font-size: .66rem;
+            color: var(--text-light);
+            margin-top: .15rem;
+        }
+
+        /* ========== ANIMATIONS ========== */
+        .dm-animate {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity .5s ease, transform .5s ease;
+        }
+        .dm-animate.dm-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ========== MOBILE ========== */
+        @media (max-width: 600px) {
+            .dm-hero { height: 320px; }
+            .dm-hero-name { font-size: 1.7rem; }
+            .dm-grid { grid-template-columns: 1fr; }
+            .dm-card--wide { flex-direction: column; }
+            .dm-card--wide .dm-card-img { width: 100%; height: 150px; }
+            .dm-special-card { flex: 0 0 250px; }
+            .dm-cat-title { font-size: 1.35rem; }
+            .dm-float-nav { bottom: 1rem; }
+            .dm-float-nav a { padding: .4rem .7rem; font-size: .68rem; }
+            .dm-legend-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div class="dm-hero">
+    <div class="dm-hero-bg"></div>
+    <div class="dm-hero-gradient"></div>
+    <div class="dm-hero-content">
+        <img src="https://placehold.co/52x52/fff/1a1d23?text=LP" alt="" class="dm-hero-logo">
+        <h1 class="dm-hero-name">La Pergola</h1>
+        <p class="dm-hero-tagline">Cucina italiana d'autore dal 1987</p>
+        <div class="dm-hero-meta">
+            <span class="dm-hero-meta-item"><i class="bi bi-geo-alt-fill"></i> Via Roma 42, Milano</span>
+            <span class="dm-hero-meta-item"><i class="bi bi-telephone-fill"></i> 02 1234567</span>
+            <span class="dm-hero-meta-item"><i class="bi bi-clock-fill"></i> 12:00 - 23:00</span>
+        </div>
+    </div>
+</div>
+
+<div class="dm-main">
+
+    <!-- ===== SEARCH ===== -->
+    <div class="dm-search-wrap">
+        <div class="dm-search-box">
+            <i class="bi bi-search dm-search-icon"></i>
+            <input type="text" class="dm-search" placeholder="Cerca un piatto, un ingrediente...">
+        </div>
+    </div>
+
+    <!-- ===== DAILY SPECIALS ===== -->
+    <div class="dm-specials dm-animate" id="specials">
+        <div class="dm-section-label">
+            <span class="dm-section-label-line"></span>
+            <span class="dm-section-label-text"><i class="bi bi-star-fill" style="color:var(--amber);margin-right:.3rem;"></i> Piatti del Giorno</span>
+            <span class="dm-section-label-line"></span>
+        </div>
+
+        <div class="dm-special-scroll">
+            <div class="dm-special-card">
+                <div class="dm-special-badge"><i class="bi bi-star-fill"></i> Chef's pick</div>
+                <img src="https://images.unsplash.com/photo-1633964913295-ceb43826e7c1?w=600&q=80" alt="" class="dm-special-img">
+                <div class="dm-special-body">
+                    <div class="dm-special-name">Risotto allo Zafferano</div>
+                    <div class="dm-special-desc">Carnaroli mantecato con zafferano DOP, midollo e brodo di carne fatto in casa</div>
+                    <div class="dm-special-bottom">
+                        <span class="dm-special-price">14,00 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Glutine, Latte, Sedano</div>
+                </div>
+            </div>
+
+            <div class="dm-special-card">
+                <div class="dm-special-badge"><i class="bi bi-star-fill"></i> Chef's pick</div>
+                <img src="https://images.unsplash.com/photo-1534604973900-c43ab4c2e0ab?w=600&q=80" alt="" class="dm-special-img">
+                <div class="dm-special-body">
+                    <div class="dm-special-name">Branzino al Forno</div>
+                    <div class="dm-special-desc">Branzino al sale con patate al rosmarino e verdurine di stagione</div>
+                    <div class="dm-special-bottom">
+                        <span class="dm-special-price">22,00 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Pesce, Solfiti</div>
+                </div>
+            </div>
+
+            <div class="dm-special-card">
+                <div class="dm-special-badge"><i class="bi bi-star-fill"></i> Chef's pick</div>
+                <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80" alt="" class="dm-special-img">
+                <div class="dm-special-body">
+                    <div class="dm-special-name">Tagliata Premium</div>
+                    <div class="dm-special-desc">Black Angus alla griglia con riduzione al Porto e verdure croccanti</div>
+                    <div class="dm-special-bottom">
+                        <span class="dm-special-price">28,00 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Solfiti</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ANTIPASTI ===== -->
+    <div class="dm-category dm-animate" id="antipasti">
+        <div class="dm-cat-header">
+            <div class="dm-cat-number">01</div>
+            <h2 class="dm-cat-title">Antipasti</h2>
+            <p class="dm-cat-desc">Antipasti della tradizione e creazioni dello chef</p>
+        </div>
+
+        <div class="dm-grid">
+            <!-- Wide card -->
+            <div class="dm-card dm-card--wide">
+                <img src="https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?w=500&q=80" alt="" class="dm-card-img">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Vitello Tonnato</div>
+                    <div class="dm-card-desc">Fettine di girello con salsa tonnata della casa, capperi e rucola selvatica</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">14,00 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Pesce, Uova, Senape</div>
+                </div>
+            </div>
+
+            <div class="dm-card">
+                <img src="https://images.unsplash.com/photo-1505575967455-40e256f73376?w=400&q=80" alt="" class="dm-card-img">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Bruschetta al Pomodoro</div>
+                    <div class="dm-card-desc">Pane casereccio, pachino, aglio, basilico e olio EVO</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">8,50 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Glutine, Sedano</div>
+                </div>
+            </div>
+
+            <div class="dm-card dm-card--noimg">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Tagliere di Salumi e Formaggi</div>
+                    <div class="dm-card-desc">Selezione artigianale con marmellata di fichi e miele millefiori</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">16,00 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Latte, Frutta a guscio</div>
+                </div>
+            </div>
+
+            <div class="dm-card dm-card--noimg">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Carpaccio di Polpo</div>
+                    <div class="dm-card-desc">Polpo verace a bassa temperatura con sedano, olive taggiasche e limone</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">13,00 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Molluschi, Sedano, Solfiti</div>
+                </div>
+            </div>
+
+            <div class="dm-card dm-card--noimg">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Pinzimonio di Verdure</div>
+                    <div class="dm-card-desc">Verdure fresche di stagione con olio EVO e sale Maldon</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">7,00 &euro;</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dm-card dm-card--noimg">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Insalata di Mare</div>
+                    <div class="dm-card-desc">Misto di gamberi, calamari, cozze e vongole con agrumi</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">15,00 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Crostacei, Pesce, Molluschi</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PRIMI ===== -->
+    <div class="dm-category dm-animate" id="primi">
+        <div class="dm-cat-header">
+            <div class="dm-cat-number">02</div>
+            <h2 class="dm-cat-title">Primi Piatti</h2>
+        </div>
+
+        <div class="dm-grid">
+            <div class="dm-card dm-card--wide">
+                <img src="https://images.unsplash.com/photo-1612874742237-6526221588e3?w=500&q=80" alt="" class="dm-card-img">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Spaghetti alla Carbonara</div>
+                    <div class="dm-card-desc">Guanciale croccante, tuorlo d'uovo, pecorino romano DOP e pepe nero macinato fresco</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">12,00 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Glutine, Uova, Latte</div>
+                </div>
+            </div>
+
+            <div class="dm-card dm-card--noimg">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Pappardelle al Cinghiale</div>
+                    <div class="dm-card-desc">Pasta fatta in casa con ragu di cinghiale cotto 6 ore</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">14,00 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Glutine, Uova, Latte, Sedano</div>
+                </div>
+            </div>
+
+            <div class="dm-card dm-card--noimg">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Gnocchi alla Sorrentina</div>
+                    <div class="dm-card-desc">Gnocchi di patate, San Marzano, fior di latte e basilico</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">11,00 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Glutine, Latte</div>
+                </div>
+            </div>
+
+            <div class="dm-card">
+                <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400&q=80" alt="" class="dm-card-img">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Linguine allo Scoglio</div>
+                    <div class="dm-card-desc">Frutti di mare misti, pomodorini datterini e prezzemolo fresco</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">16,00 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Glutine, Crostacei, Pesce, Molluschi, Solfiti</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SECONDI ===== -->
+    <div class="dm-category dm-animate" id="secondi">
+        <div class="dm-cat-header">
+            <div class="dm-cat-number">03</div>
+            <h2 class="dm-cat-title">Secondi</h2>
+        </div>
+
+        <div class="dm-grid">
+            <div class="dm-card">
+                <img src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?w=400&q=80" alt="" class="dm-card-img">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Tagliata di Manzo</div>
+                    <div class="dm-card-desc">Controfiletto alla griglia, rucola, grana e balsamico di Modena IGP</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">24,00 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Latte, Solfiti</div>
+                </div>
+            </div>
+
+            <div class="dm-card dm-card--noimg">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Pollo Arrosto alle Erbe</div>
+                    <div class="dm-card-desc">Coscia di pollo ruspante, rosmarino, timo, patate al forno</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">16,00 &euro;</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dm-card dm-card--noimg">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Frittura di Calamari e Gamberi</div>
+                    <div class="dm-card-desc">Frittura leggera con maionese agli agrumi e insalatina</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">18,00 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Glutine, Crostacei, Uova, Molluschi</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== DOLCI ===== -->
+    <div class="dm-category dm-animate" id="dolci">
+        <div class="dm-cat-header">
+            <div class="dm-cat-number">04</div>
+            <h2 class="dm-cat-title">Dolci</h2>
+        </div>
+
+        <div class="dm-grid">
+            <div class="dm-card">
+                <img src="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&q=80" alt="" class="dm-card-img">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Tiramisu della Casa</div>
+                    <div class="dm-card-desc">Savoiardi, mascarpone, espresso napoletano e cacao amaro</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">7,00 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Glutine, Uova, Latte</div>
+                </div>
+            </div>
+
+            <div class="dm-card dm-card--noimg">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Panna Cotta ai Frutti di Bosco</div>
+                    <div class="dm-card-desc">Alla vaniglia Bourbon con coulis di lamponi e mirtilli</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">6,50 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Latte</div>
+                </div>
+            </div>
+
+            <div class="dm-card dm-card--noimg">
+                <div class="dm-card-body">
+                    <div class="dm-card-name">Tortino al Cioccolato Fondente</div>
+                    <div class="dm-card-desc">Cuore morbido, gelato alla vaniglia e nocciole tostate piemontesi</div>
+                    <div class="dm-card-footer">
+                        <span class="dm-card-price">7,50 &euro;</span>
+                    </div>
+                    <div class="dm-allergens-line"><strong>Allergeni:</strong> Glutine, Uova, Latte, Frutta a guscio, Soia</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== BEVANDE (list layout) ===== -->
+    <div class="dm-category dm-animate" id="bevande">
+        <div class="dm-cat-header">
+            <div class="dm-cat-number">05</div>
+            <h2 class="dm-cat-title">Bevande</h2>
+        </div>
+
+        <div class="dm-list">
+            <div class="dm-list-item">
+                <div class="dm-list-left">
+                    <div class="dm-list-name">Acqua Naturale / Frizzante</div>
+                    <div class="dm-list-desc">Bottiglia 1L</div>
+                </div>
+                <span class="dm-list-price">3,00 &euro;</span>
+            </div>
+            <div class="dm-list-item">
+                <div class="dm-list-left">
+                    <div class="dm-list-name">Coca-Cola / Fanta / Sprite</div>
+                    <div class="dm-list-desc">Lattina 33cl</div>
+                </div>
+                <span class="dm-list-price">3,50 &euro;</span>
+            </div>
+            <div class="dm-list-item">
+                <div class="dm-list-left">
+                    <div class="dm-list-name">Vino della Casa</div>
+                    <div class="dm-list-desc">Rosso o bianco, caraffa 0.5L</div>
+                    <div class="dm-list-allergens">Contiene: Solfiti</div>
+                </div>
+                <span class="dm-list-price">8,00 &euro;</span>
+            </div>
+            <div class="dm-list-item">
+                <div class="dm-list-left">
+                    <div class="dm-list-name">Birra Artigianale alla Spina</div>
+                    <div class="dm-list-desc">Lager o IPA, 40cl</div>
+                    <div class="dm-list-allergens">Contiene: Glutine</div>
+                </div>
+                <span class="dm-list-price">5,00 &euro;</span>
+            </div>
+            <div class="dm-list-item">
+                <div class="dm-list-left">
+                    <div class="dm-list-name">Caffe Espresso</div>
+                </div>
+                <span class="dm-list-price">1,50 &euro;</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ALLERGEN LEGEND (collapsible) ===== -->
+    <div class="dm-legend-section dm-animate">
+        <button class="dm-legend-toggle" aria-expanded="true" id="legend-toggle">
+            <span class="dm-legend-toggle-left">
+                <i class="bi bi-shield-check"></i>
+                <span class="dm-legend-toggle-title">Informazioni sugli Allergeni</span>
+            </span>
+            <i class="bi bi-chevron-down dm-legend-toggle-arrow"></i>
+        </button>
+        <div class="dm-legend-body" id="legend-body">
+            <p class="dm-legend-note">Ai sensi del Reg. UE 1169/2011. Per ulteriori dettagli rivolgiti al personale di sala.</p>
+            <div class="dm-legend-grid">
+                <div class="dm-legend-item"><span class="dm-legend-dot" style="background:#D84315;"></span><span class="dm-legend-label">Glutine</span></div>
+                <div class="dm-legend-item"><span class="dm-legend-dot" style="background:#E65100;"></span><span class="dm-legend-label">Crostacei</span></div>
+                <div class="dm-legend-item"><span class="dm-legend-dot" style="background:#F9A825;"></span><span class="dm-legend-label">Uova</span></div>
+                <div class="dm-legend-item"><span class="dm-legend-dot" style="background:#0277BD;"></span><span class="dm-legend-label">Pesce</span></div>
+                <div class="dm-legend-item"><span class="dm-legend-dot" style="background:#8D6E63;"></span><span class="dm-legend-label">Arachidi</span></div>
+                <div class="dm-legend-item"><span class="dm-legend-dot" style="background:#558B2F;"></span><span class="dm-legend-label">Soia</span></div>
+                <div class="dm-legend-item"><span class="dm-legend-dot" style="background:#1565C0;"></span><span class="dm-legend-label">Latte</span></div>
+                <div class="dm-legend-item"><span class="dm-legend-dot" style="background:#6D4C41;"></span><span class="dm-legend-label">Frutta a guscio</span></div>
+                <div class="dm-legend-item"><span class="dm-legend-dot" style="background:#2E7D32;"></span><span class="dm-legend-label">Sedano</span></div>
+                <div class="dm-legend-item"><span class="dm-legend-dot" style="background:#F57F17;"></span><span class="dm-legend-label">Senape</span></div>
+                <div class="dm-legend-item"><span class="dm-legend-dot" style="background:#795548;"></span><span class="dm-legend-label">Sesamo</span></div>
+                <div class="dm-legend-item"><span class="dm-legend-dot" style="background:#7B1FA2;"></span><span class="dm-legend-label">Anidride solforosa</span></div>
+                <div class="dm-legend-item"><span class="dm-legend-dot" style="background:#AD1457;"></span><span class="dm-legend-label">Lupini</span></div>
+                <div class="dm-legend-item"><span class="dm-legend-dot" style="background:#00838F;"></span><span class="dm-legend-label">Molluschi</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CTA ===== -->
+    <div class="dm-cta dm-animate">
+        <div class="dm-cta-bg"></div>
+        <div class="dm-cta-inner">
+            <h3 class="dm-cta-title">Ti abbiamo fatto venire fame?</h3>
+            <p class="dm-cta-sub">Prenota il tuo tavolo in pochi secondi</p>
+            <a href="#" class="dm-cta-btn"><i class="bi bi-calendar-check me-1"></i> Prenota ora</a>
+        </div>
+    </div>
+
+    <div class="dm-footer">
+        &copy; 2026 Evulery &middot; by alagias. - Soluzioni per il web
+    </div>
+</div>
+
+<!-- ===== FLOATING NAV ===== -->
+<nav class="dm-float-nav" id="float-nav">
+    <a href="#specials" class="active"><i class="bi bi-star-fill" style="font-size:.65rem;margin-right:.15rem;"></i> Speciali</a>
+    <a href="#antipasti">Antipasti</a>
+    <a href="#primi">Primi</a>
+    <a href="#secondi">Secondi</a>
+    <a href="#dolci">Dolci</a>
+    <a href="#bevande">Bevande</a>
+</nav>
+
+<script>
+// Smooth scroll for nav
+document.querySelectorAll('.dm-float-nav a').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        var target = document.getElementById(this.getAttribute('href').substring(1));
+        if (target) {
+            window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 30, behavior: 'smooth' });
+        }
+        document.querySelectorAll('.dm-float-nav a').forEach(function(l) { l.classList.remove('active'); });
+        this.classList.add('active');
+    });
+});
+
+// Scroll spy
+window.addEventListener('scroll', function() {
+    var sections = document.querySelectorAll('.dm-category, .dm-specials');
+    var current = '';
+    sections.forEach(function(s) {
+        if (s.getBoundingClientRect().top <= 120) current = s.id;
+    });
+    document.querySelectorAll('.dm-float-nav a').forEach(function(l) {
+        l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+    });
+});
+
+// Scroll reveal animations
+var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('dm-visible');
+        }
+    });
+}, { threshold: 0.08 });
+document.querySelectorAll('.dm-animate').forEach(function(el) { observer.observe(el); });
+
+// Legend toggle
+document.getElementById('legend-toggle').addEventListener('click', function() {
+    var body = document.getElementById('legend-body');
+    var expanded = this.getAttribute('aria-expanded') === 'true';
+    this.setAttribute('aria-expanded', !expanded);
+    body.style.display = expanded ? 'none' : '';
+});
+
+// Search
+document.querySelector('.dm-search').addEventListener('input', function() {
+    var q = this.value.toLowerCase().trim();
+    // Grid items
+    document.querySelectorAll('.dm-card').forEach(function(card) {
+        var name = (card.querySelector('.dm-card-name') || {}).textContent || '';
+        var desc = (card.querySelector('.dm-card-desc') || {}).textContent || '';
+        card.style.display = (!q || name.toLowerCase().includes(q) || desc.toLowerCase().includes(q)) ? '' : 'none';
+    });
+    // List items
+    document.querySelectorAll('.dm-list-item').forEach(function(item) {
+        var name = (item.querySelector('.dm-list-name') || {}).textContent || '';
+        var desc = (item.querySelector('.dm-list-desc') || {}).textContent || '';
+        item.style.display = (!q || name.toLowerCase().includes(q) || desc.toLowerCase().includes(q)) ? '' : 'none';
+    });
+    // Special cards
+    document.querySelectorAll('.dm-special-card').forEach(function(card) {
+        var name = (card.querySelector('.dm-special-name') || {}).textContent || '';
+        card.style.display = (!q || name.toLowerCase().includes(q)) ? '' : 'none';
+    });
+});
+</script>
+</body>
+</html>

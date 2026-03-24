@@ -30,9 +30,11 @@ if (file_exists($envFile)) {
 }
 
 use App\Core\Database;
+use App\Models\Tenant;
 use App\Services\MailService;
 
 $db = Database::getInstance();
+$tenantModel = new Tenant();
 $now = date('Y-m-d H:i:s');
 $sent24h = 0;
 $sent2h = 0;
@@ -64,6 +66,12 @@ $reminders24h = $stmt->fetchAll();
 echo "  Found " . count($reminders24h) . " reservations for 24h reminder.\n";
 
 foreach ($reminders24h as $row) {
+    // Service gate: skip tenants without email_reminder service
+    if (!$tenantModel->canUseService((int)$row['tenant_id'], 'email_reminder')) {
+        echo "    [SKIP] 24h reminder — tenant '{$row['tenant_name']}' plan does not include email_reminder\n";
+        continue;
+    }
+
     $tenant = [
         'name'    => $row['tenant_name'],
         'slug'    => $row['slug'],
@@ -109,6 +117,12 @@ $reminders2h = $stmt->fetchAll();
 echo "  Found " . count($reminders2h) . " reservations for 2h reminder.\n";
 
 foreach ($reminders2h as $row) {
+    // Service gate: skip tenants without email_reminder service
+    if (!$tenantModel->canUseService((int)$row['tenant_id'], 'email_reminder')) {
+        echo "    [SKIP] 2h reminder — tenant '{$row['tenant_name']}' plan does not include email_reminder\n";
+        continue;
+    }
+
     $tenant = [
         'name'    => $row['tenant_name'],
         'slug'    => $row['slug'],

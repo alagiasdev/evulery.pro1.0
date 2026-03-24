@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Menu Dashboard con Tabs</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root { --brand: #00844A; }
+        body { background: #f0f2f5; font-family: system-ui, -apple-system, sans-serif; }
+
+        .page-wrap { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+        /* Replicato da dashboard.css */
+        .settings-tabs {
+            display: flex; gap: .25rem;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 1.5rem;
+            overflow-x: auto; scrollbar-width: none;
+        }
+        .settings-tabs::-webkit-scrollbar { display: none; }
+        .settings-tab {
+            padding: .55rem 1rem;
+            font-size: .82rem; font-weight: 600;
+            color: #6c757d; text-decoration: none;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap; transition: all .15s;
+        }
+        .settings-tab:hover { color: #495057; }
+        .settings-tab.active { color: var(--brand); border-bottom-color: var(--brand); }
+        .settings-tab i { font-size: .82rem; }
+
+        .card { background: #fff; border-radius: 12px; border: 1px solid #edebe8; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+        .section-title { font-weight: 700; font-size: .95rem; color: #1a1d23; }
+        .section-subtitle { font-size: .78rem; color: #6c757d; }
+
+        /* KPI row */
+        .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; margin-bottom: 1.25rem; }
+        .kpi-card { background: #fff; border-radius: 12px; border: 1px solid #edebe8; padding: 1rem; text-align: center; }
+        .kpi-value { font-size: 1.5rem; font-weight: 800; }
+        .kpi-label { font-size: .72rem; color: #6c757d; text-transform: uppercase; letter-spacing: .5px; margin-top: .15rem; }
+
+        /* Toggle */
+        .toggle-track { width: 40px; height: 22px; background: #dee2e6; border-radius: 11px; position: relative; cursor: pointer; display: inline-block; }
+        .toggle-track.on { background: var(--brand); }
+        .toggle-knob { width: 18px; height: 18px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: left .15s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+        .toggle-track.on .toggle-knob { left: 20px; }
+
+        /* Items */
+        .item-row { display: flex; align-items: center; gap: .75rem; padding: .65rem 1rem; border-bottom: 1px solid #f0f0f0; }
+        .item-row:last-child { border-bottom: none; }
+        .item-thumb { width: 42px; height: 42px; border-radius: 8px; background: #f0f2f5; display: flex; align-items: center; justify-content: center; color: #adb5bd; flex-shrink: 0; overflow: hidden; }
+        .item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .item-info { flex: 1; min-width: 0; }
+        .item-name { font-weight: 600; font-size: .85rem; color: #1a1d23; }
+        .item-meta { font-size: .75rem; color: var(--brand); font-weight: 700; }
+        .item-actions { display: flex; gap: .35rem; align-items: center; }
+
+        /* Allergen dots */
+        .a-dot { width: 18px; height: 18px; border-radius: 50%; color: #fff; font-size: .52rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+
+        /* Category list */
+        .cat-item { display: flex; align-items: center; gap: .65rem; padding: .55rem 0; border-bottom: 1px solid #f0f0f0; }
+        .cat-item:last-child { border-bottom: none; }
+        .cat-icon { width: 30px; height: 30px; border-radius: 8px; background: #E8F5E9; color: var(--brand); display: flex; align-items: center; justify-content: center; font-size: .85rem; flex-shrink: 0; }
+        .cat-name { font-weight: 600; font-size: .85rem; flex: 1; }
+        .cat-count { font-size: .72rem; color: #adb5bd; }
+
+        /* Icon picker */
+        .icon-grid { display: flex; flex-wrap: wrap; gap: .35rem; }
+        .icon-box { width: 32px; height: 32px; border-radius: 8px; border: 1px solid #edebe8; display: flex; align-items: center; justify-content: center; font-size: .9rem; color: #6c757d; cursor: pointer; transition: all .15s; }
+        .icon-box:hover { border-color: var(--brand); color: var(--brand); }
+        .icon-box.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+        .badge-special { background: #FFF3E0; color: #E65100; font-size: .65rem; font-weight: 600; padding: .15rem .45rem; border-radius: 4px; }
+        .badge-unavail { background: #f8d7da; color: #842029; font-size: .65rem; font-weight: 600; padding: .15rem .45rem; border-radius: 4px; }
+
+        /* Category header in items */
+        .cat-group-header { font-weight: 600; font-size: .8rem; color: #6c757d; text-transform: uppercase; letter-spacing: .5px; padding: .5rem 1rem; background: #fafaf8; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: .5rem; }
+
+        /* Settings card section */
+        .setting-section { margin-bottom: 1.5rem; }
+        .setting-section-title { font-weight: 700; font-size: .9rem; margin-bottom: .85rem; display: flex; align-items: center; gap: .5rem; }
+        .setting-section-title i { color: var(--brand); }
+
+        /* tab content panels (for wireframe only) */
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        @media (max-width: 768px) {
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+    <!-- Page Header -->
+    <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">
+        <i class="bi bi-book me-1" style="color:var(--brand);"></i> Menu Digitale
+    </h2>
+    <p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Gestisci il menu del tuo ristorante</p>
+
+    <!-- ===== TABS ===== -->
+    <div class="settings-tabs">
+        <a href="#" class="settings-tab active" data-tab="piatti">
+            <i class="bi bi-egg-fried"></i> Piatti
+        </a>
+        <a href="#" class="settings-tab" data-tab="categorie">
+            <i class="bi bi-folder"></i> Categorie
+        </a>
+        <a href="#" class="settings-tab" data-tab="aspetto">
+            <i class="bi bi-palette"></i> Aspetto
+        </a>
+    </div>
+
+    <!-- ================================================================
+         TAB 1: PIATTI (default)
+         ================================================================ -->
+    <div class="tab-panel active" id="tab-piatti">
+
+        <!-- KPI -->
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-value" style="color:var(--brand);">8</div>
+                <div class="kpi-label">Piatti totali</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value" style="color:#1a1d23;">7</div>
+                <div class="kpi-label">Disponibili</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value" style="color:#E65100;">2</div>
+                <div class="kpi-label">Piatti del giorno</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value" style="color:#6c757d;">3</div>
+                <div class="kpi-label">Categorie</div>
+            </div>
+        </div>
+
+        <!-- Action bar -->
+        <div class="d-flex align-items-center justify-content-between" style="margin-bottom:.75rem;">
+            <div style="font-weight:600; font-size:.95rem;">
+                <i class="bi bi-list-ul me-1" style="color:var(--brand);"></i> Tutti i piatti
+            </div>
+            <a href="#" class="btn btn-sm" style="background:var(--brand); color:#fff; font-weight:600; font-size:.82rem; border-radius:8px;">
+                <i class="bi bi-plus-circle me-1"></i> Nuovo piatto
+            </a>
+        </div>
+
+        <!-- Items grouped by category -->
+        <div class="card" style="overflow:hidden;">
+            <!-- Antipasti -->
+            <div class="cat-group-header">
+                <i class="bi bi-egg-fried" style="color:var(--brand);"></i> Antipasti
+                <span style="margin-left:auto; font-size:.68rem; color:#adb5bd; text-transform:none; letter-spacing:0;">3 piatti</span>
+            </div>
+
+            <div class="item-row">
+                <div class="item-thumb"><img src="https://placehold.co/84x84/E8DCC8/1a1d23?text=Bru" alt=""></div>
+                <div class="item-info">
+                    <div class="item-name">Bruschetta al Pomodoro <span class="badge-special">Del giorno</span></div>
+                    <div class="item-meta">
+                        8,50 &euro;
+                        <span class="a-dot" style="background:#D84315; margin-left:.35rem;">G</span>
+                        <span class="a-dot" style="background:#2E7D32;">Se</span>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <div class="toggle-track on"><div class="toggle-knob"></div></div>
+                    <button class="btn btn-sm btn-warning" style="font-size:.7rem;"><i class="bi bi-star-fill"></i></button>
+                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                </div>
+            </div>
+
+            <div class="item-row">
+                <div class="item-thumb"><i class="bi bi-image"></i></div>
+                <div class="item-info">
+                    <div class="item-name">Vitello Tonnato</div>
+                    <div class="item-meta">
+                        14,00 &euro;
+                        <span class="a-dot" style="background:#0277BD; margin-left:.35rem;">P</span>
+                        <span class="a-dot" style="background:#F9A825;">U</span>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <div class="toggle-track on"><div class="toggle-knob"></div></div>
+                    <button class="btn btn-sm btn-outline-secondary" style="font-size:.7rem;"><i class="bi bi-star"></i></button>
+                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                </div>
+            </div>
+
+            <div class="item-row">
+                <div class="item-thumb"><i class="bi bi-image"></i></div>
+                <div class="item-info">
+                    <div class="item-name">Carpaccio di Polpo <span class="badge-unavail">Non disponibile</span></div>
+                    <div class="item-meta">
+                        13,00 &euro;
+                        <span class="a-dot" style="background:#00838F; margin-left:.35rem;">Mo</span>
+                        <span class="a-dot" style="background:#2E7D32;">Se</span>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <div class="toggle-track"><div class="toggle-knob"></div></div>
+                    <button class="btn btn-sm btn-outline-secondary" style="font-size:.7rem;"><i class="bi bi-star"></i></button>
+                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                </div>
+            </div>
+
+            <!-- Primi Piatti -->
+            <div class="cat-group-header">
+                <i class="bi bi-cup-hot" style="color:var(--brand);"></i> Primi Piatti
+                <span style="margin-left:auto; font-size:.68rem; color:#adb5bd; text-transform:none; letter-spacing:0;">3 piatti</span>
+            </div>
+
+            <div class="item-row">
+                <div class="item-thumb"><img src="https://placehold.co/84x84/D4C5B0/1a1d23?text=Ris" alt=""></div>
+                <div class="item-info">
+                    <div class="item-name">Risotto allo Zafferano <span class="badge-special">Del giorno</span></div>
+                    <div class="item-meta">
+                        14,00 &euro;
+                        <span class="a-dot" style="background:#D84315; margin-left:.35rem;">G</span>
+                        <span class="a-dot" style="background:#1565C0;">L</span>
+                        <span class="a-dot" style="background:#2E7D32;">Se</span>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <div class="toggle-track on"><div class="toggle-knob"></div></div>
+                    <button class="btn btn-sm btn-warning" style="font-size:.7rem;"><i class="bi bi-star-fill"></i></button>
+                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                </div>
+            </div>
+
+            <div class="item-row">
+                <div class="item-thumb"><i class="bi bi-image"></i></div>
+                <div class="item-info">
+                    <div class="item-name">Spaghetti alla Carbonara</div>
+                    <div class="item-meta">
+                        12,00 &euro;
+                        <span class="a-dot" style="background:#D84315; margin-left:.35rem;">G</span>
+                        <span class="a-dot" style="background:#F9A825;">U</span>
+                        <span class="a-dot" style="background:#1565C0;">L</span>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <div class="toggle-track on"><div class="toggle-knob"></div></div>
+                    <button class="btn btn-sm btn-outline-secondary" style="font-size:.7rem;"><i class="bi bi-star"></i></button>
+                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                </div>
+            </div>
+
+            <div class="item-row">
+                <div class="item-thumb"><i class="bi bi-image"></i></div>
+                <div class="item-info">
+                    <div class="item-name">Pappardelle al Cinghiale</div>
+                    <div class="item-meta">
+                        14,00 &euro;
+                        <span class="a-dot" style="background:#D84315; margin-left:.35rem;">G</span>
+                        <span class="a-dot" style="background:#F9A825;">U</span>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <div class="toggle-track on"><div class="toggle-knob"></div></div>
+                    <button class="btn btn-sm btn-outline-secondary" style="font-size:.7rem;"><i class="bi bi-star"></i></button>
+                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                </div>
+            </div>
+
+            <!-- Dolci -->
+            <div class="cat-group-header">
+                <i class="bi bi-cake2" style="color:var(--brand);"></i> Dolci
+                <span style="margin-left:auto; font-size:.68rem; color:#adb5bd; text-transform:none; letter-spacing:0;">2 piatti</span>
+            </div>
+
+            <div class="item-row">
+                <div class="item-thumb"><img src="https://placehold.co/84x84/E8DCC8/1a1d23?text=Tira" alt=""></div>
+                <div class="item-info">
+                    <div class="item-name">Tiramisu della Casa</div>
+                    <div class="item-meta">
+                        7,00 &euro;
+                        <span class="a-dot" style="background:#D84315; margin-left:.35rem;">G</span>
+                        <span class="a-dot" style="background:#F9A825;">U</span>
+                        <span class="a-dot" style="background:#1565C0;">L</span>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <div class="toggle-track on"><div class="toggle-knob"></div></div>
+                    <button class="btn btn-sm btn-outline-secondary" style="font-size:.7rem;"><i class="bi bi-star"></i></button>
+                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                </div>
+            </div>
+
+            <div class="item-row">
+                <div class="item-thumb"><i class="bi bi-image"></i></div>
+                <div class="item-info">
+                    <div class="item-name">Panna Cotta</div>
+                    <div class="item-meta">
+                        6,50 &euro;
+                        <span class="a-dot" style="background:#1565C0; margin-left:.35rem;">L</span>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <div class="toggle-track on"><div class="toggle-knob"></div></div>
+                    <button class="btn btn-sm btn-outline-secondary" style="font-size:.7rem;"><i class="bi bi-star"></i></button>
+                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================================================================
+         TAB 2: CATEGORIE
+         ================================================================ -->
+    <div class="tab-panel" id="tab-categorie">
+
+        <div class="row g-4">
+            <!-- Left: Category list -->
+            <div class="col-lg-7">
+                <div class="card" style="padding:1.25rem;">
+                    <div class="setting-section-title">
+                        <i class="bi bi-folder"></i> Categorie esistenti
+                        <span style="margin-left:auto; font-size:.72rem; color:#adb5bd; font-weight:500;">3 categorie</span>
+                    </div>
+
+                    <div class="cat-item">
+                        <div class="cat-icon"><i class="bi bi-egg-fried"></i></div>
+                        <div class="cat-name">Antipasti</div>
+                        <div class="cat-count">3 piatti</div>
+                        <div style="display:flex; gap:.35rem;">
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="cat-item">
+                        <div class="cat-icon"><i class="bi bi-cup-hot"></i></div>
+                        <div class="cat-name">Primi Piatti</div>
+                        <div class="cat-count">3 piatti</div>
+                        <div style="display:flex; gap:.35rem;">
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="cat-item">
+                        <div class="cat-icon"><i class="bi bi-cake2"></i></div>
+                        <div class="cat-name">Dolci</div>
+                        <div class="cat-count">2 piatti</div>
+                        <div style="display:flex; gap:.35rem;">
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                        </div>
+                    </div>
+
+                    <div style="color:#6c757d; font-size:.75rem; margin-top:.75rem; font-style:italic;">
+                        <i class="bi bi-info-circle me-1"></i> L'ordine delle categorie nel menu pubblico segue il campo "ordinamento". Le categorie vuote non appaiono nel menu.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Add new category -->
+            <div class="col-lg-5">
+                <div class="card" style="padding:1.25rem;">
+                    <div class="setting-section-title">
+                        <i class="bi bi-plus-circle"></i> Nuova categoria
+                    </div>
+
+                    <div class="mb-3">
+                        <label style="font-size:.82rem; font-weight:600; margin-bottom:.35rem; display:block;">Nome *</label>
+                        <input type="text" class="form-control form-control-sm" placeholder="es. Secondi Piatti">
+                    </div>
+
+                    <div class="mb-3">
+                        <label style="font-size:.82rem; font-weight:600; margin-bottom:.35rem; display:block;">Descrizione</label>
+                        <input type="text" class="form-control form-control-sm" placeholder="es. Piatti principali della tradizione">
+                    </div>
+
+                    <div class="mb-3">
+                        <label style="font-size:.82rem; font-weight:600; margin-bottom:.35rem; display:block;">Icona</label>
+                        <div class="icon-grid">
+                            <div class="icon-box"><i class="bi bi-egg-fried"></i></div>
+                            <div class="icon-box"><i class="bi bi-cup-hot"></i></div>
+                            <div class="icon-box"><i class="bi bi-fire"></i></div>
+                            <div class="icon-box"><i class="bi bi-cake2"></i></div>
+                            <div class="icon-box"><i class="bi bi-cup-straw"></i></div>
+                            <div class="icon-box"><i class="bi bi-cup"></i></div>
+                            <div class="icon-box"><i class="bi bi-droplet"></i></div>
+                            <div class="icon-box"><i class="bi bi-basket"></i></div>
+                            <div class="icon-box"><i class="bi bi-flower1"></i></div>
+                            <div class="icon-box"><i class="bi bi-snow2"></i></div>
+                            <div class="icon-box"><i class="bi bi-star"></i></div>
+                            <div class="icon-box"><i class="bi bi-heart"></i></div>
+                            <div class="icon-box"><i class="bi bi-trophy"></i></div>
+                            <div class="icon-box"><i class="bi bi-fish"></i></div>
+                            <div class="icon-box"><i class="bi bi-book"></i></div>
+                            <div class="icon-box active"><i class="bi bi-list"></i></div>
+                            <div class="icon-box"><i class="bi bi-bag"></i></div>
+                            <div class="icon-box"><i class="bi bi-glass"></i></div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-sm w-100" style="background:var(--brand); color:#fff; font-weight:600; border-radius:8px;">
+                        <i class="bi bi-plus me-1"></i> Aggiungi categoria
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================================================================
+         TAB 3: ASPETTO
+         ================================================================ -->
+    <div class="tab-panel" id="tab-aspetto">
+
+        <!-- Toggle + Link -->
+        <div class="card" style="padding:1rem; margin-bottom:1.25rem;">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="toggle-track on"><div class="toggle-knob"></div></div>
+                    <div>
+                        <div style="font-weight:600; font-size:.88rem;">Menu pubblico attivo</div>
+                        <a href="#" style="font-size:.78rem; color:var(--brand);">
+                            http://localhost/evulery.pro1.0/trattoria-da-mario/menu <i class="bi bi-box-arrow-up-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-clipboard"></i> Copia link</button>
+                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-qr-code"></i> QR Code</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left: Config form -->
+            <div class="col-lg-7">
+                <div class="card" style="padding:1.25rem;">
+                    <div class="setting-section-title">
+                        <i class="bi bi-palette"></i> Personalizzazione
+                    </div>
+
+                    <div class="mb-3">
+                        <label style="font-size:.82rem; font-weight:600; margin-bottom:.35rem; display:block;">Tagline / Descrizione breve</label>
+                        <input type="text" class="form-control form-control-sm" value="Cucina italiana d'autore dal 1987" placeholder="es. Cucina italiana d'autore dal 1987">
+                        <div style="font-size:.72rem; color:#6c757d; margin-top:.2rem;">Appare sotto il nome del ristorante nell'header</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label style="font-size:.82rem; font-weight:600; margin-bottom:.35rem; display:block;">Orari di apertura</label>
+                        <input type="text" class="form-control form-control-sm" value="12:00 – 15:00 / 19:00 – 23:00" placeholder="es. 12:00 – 15:00 / 19:00 – 23:00">
+                        <div style="font-size:.72rem; color:#6c757d; margin-top:.2rem;">Mostrato nell'header della pagina menu</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label style="font-size:.82rem; font-weight:600; margin-bottom:.35rem; display:block;">Immagine hero (sfondo header)</label>
+                        <div style="margin-bottom:.5rem; background:#f0f2f5; border-radius:8px; padding:.5rem; display:flex; align-items:center; gap:.75rem;">
+                            <div style="width:120px; height:50px; border-radius:6px; background:url('https://placehold.co/240x100/1a1d23/666?text=Hero+Image') center/cover;"></div>
+                            <div>
+                                <div style="font-size:.78rem; font-weight:500;">hero_1_a3f2c1.jpg</div>
+                                <label style="font-size:.72rem; color:#dc3545; cursor:pointer;">
+                                    <input type="checkbox"> Rimuovi immagine
+                                </label>
+                            </div>
+                        </div>
+                        <input type="file" class="form-control form-control-sm">
+                        <div style="font-size:.72rem; color:#6c757d; margin-top:.2rem;">JPG, PNG o WebP. Max 5MB. Consigliata: 1200x400px. Senza immagine viene usato uno sfondo scuro.</div>
+                    </div>
+
+                    <button class="btn btn-sm" style="background:var(--brand); color:#fff; font-weight:600; border-radius:8px;">
+                        <i class="bi bi-check-lg me-1"></i> Salva impostazioni
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right: Preview + QR -->
+            <div class="col-lg-5">
+                <div class="card" style="padding:1.25rem; margin-bottom:1rem;">
+                    <div class="setting-section-title">
+                        <i class="bi bi-qr-code"></i> QR Code
+                    </div>
+                    <div style="text-align:center; padding:.5rem;">
+                        <div style="width:160px; height:160px; background:#f0f2f5; border-radius:12px; margin:0 auto .75rem; display:flex; align-items:center; justify-content:center;">
+                            <i class="bi bi-qr-code" style="font-size:3rem; color:#adb5bd;"></i>
+                        </div>
+                        <p style="font-size:.75rem; color:#6c757d; margin-bottom:.75rem;">Stampa o condividi questo QR code per permettere ai clienti di consultare il menu dal tavolo.</p>
+                        <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-download me-1"></i> Scarica QR Code</button>
+                    </div>
+                </div>
+
+                <div class="card" style="padding:1.25rem;">
+                    <div class="setting-section-title">
+                        <i class="bi bi-eye"></i> Anteprima
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="width:100%; height:200px; background: linear-gradient(135deg, #1a1d23 0%, #2d3748 100%); border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; padding:1rem;">
+                            <div style="font-size:.65rem; color:rgba(255,255,255,.5); margin-bottom:.25rem;">ANTEPRIMA HEADER</div>
+                            <div style="width:40px; height:40px; border-radius:10px; background:rgba(255,255,255,.1); margin-bottom:.5rem;"></div>
+                            <div style="font-weight:700; font-size:.9rem;">Trattoria Da Mario</div>
+                            <div style="font-size:.7rem; color:rgba(255,255,255,.5); font-style:italic;">Cucina italiana d'autore dal 1987</div>
+                            <div style="font-size:.62rem; color:rgba(255,255,255,.35); margin-top:.35rem;">
+                                <i class="bi bi-clock"></i> 12:00 – 15:00 / 19:00 – 23:00
+                            </div>
+                        </div>
+                        <a href="#" style="font-size:.78rem; color:var(--brand); display:block; margin-top:.75rem;">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> Apri pagina menu
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+// Simple tab switching for wireframe
+document.querySelectorAll('.settings-tab').forEach(function(tab) {
+    tab.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+    });
+});
+</script>
+
+</body>
+</html>

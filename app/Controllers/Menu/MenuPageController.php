@@ -14,14 +14,38 @@ class MenuPageController
     public function show(Request $request): void
     {
         $slug = $request->param('slug');
-        $tenant = (new Tenant())->findBySlug($slug);
+        $tenantModel = new Tenant();
+        $tenant = $tenantModel->findBySlug($slug);
 
         if (!$tenant || !$tenant['is_active']) {
             Response::notFound();
         }
 
-        if (!$tenant['menu_enabled']) {
-            Response::notFound();
+        if (!$tenant['menu_enabled'] || !$tenantModel->canUseService((int)$tenant['id'], 'digital_menu')) {
+            // Show friendly "menu unavailable" page with restaurant contacts
+            $bookingEnabled = $tenantModel->canUseService((int)$tenant['id'], 'booking_widget');
+            view('menu/unavailable', [
+                'tenantName'    => $tenant['name'],
+                'tenantLogo'    => $tenant['logo_url'] ?? null,
+                'tenantPhone'   => $tenant['phone'] ?? '',
+                'tenantEmail'   => $tenant['email'] ?? '',
+                'tenantAddress' => $tenant['address'] ?? '',
+                'bookingUrl'    => $bookingEnabled ? url($slug) : '',
+            ]);
+            return;
+        }
+
+        // Check subscription expiry — show suspended page
+        $expiredSub = $tenantModel->getExpiredSubscription((int)$tenant['id']);
+        if ($expiredSub) {
+            view('booking/suspended', [
+                'tenantName'    => $tenant['name'],
+                'tenantLogo'    => $tenant['logo_url'],
+                'tenantPhone'   => $tenant['phone'] ?? '',
+                'tenantEmail'   => $tenant['email'] ?? '',
+                'tenantAddress' => $tenant['address'] ?? '',
+            ]);
+            return;
         }
 
         TenantResolver::setCurrent($tenant);

@@ -10,6 +10,7 @@ use App\Models\Reservation;
 use App\Models\ReservationLog;
 use App\Models\Tenant;
 use App\Models\Promotion;
+use App\Services\AuditLog;
 use App\Services\AvailabilityService;
 use App\Services\MailService;
 
@@ -18,10 +19,16 @@ class ReservationApiController
     public function store(Request $request): void
     {
         $slug = $request->param('slug');
-        $tenant = (new Tenant())->findBySlug($slug);
+        $tenantModel = new Tenant();
+        $tenant = $tenantModel->findBySlug($slug);
 
         if (!$tenant || !$tenant['is_active']) {
             Response::error('Ristorante non trovato.', 'TENANT_NOT_FOUND', 404);
+        }
+
+        // Block expired subscriptions
+        if ($tenantModel->getExpiredSubscription((int)$tenant['id'])) {
+            Response::error('Il servizio di prenotazione non è al momento disponibile.', 'SUBSCRIPTION_EXPIRED', 403);
         }
 
         $data = $request->isJson() ? $request->json() : $request->all();
@@ -93,10 +100,20 @@ class ReservationApiController
             }
         }
 
-        // Determine deposit - only require if Stripe is configured
+        // Determine deposit - only require if Stripe is configured AND plan includes deposit service
         $stripeConfigured = !empty(env('STRIPE_SECRET_KEY', '')) && env('STRIPE_SECRET_KEY') !== 'sk_test_xxx';
-        $depositRequired = ($tenant['deposit_enabled'] && $stripeConfigured) ? 1 : 0;
-        $depositAmount = $depositRequired ? $tenant['deposit_amount'] : null;
+        $canUseDeposit = (new \App\Models\Tenant())->canUseService((int)$tenant['id'], 'deposit');
+        $depositRequired = ($tenant['deposit_enabled'] && $stripeConfigured && $canUseDeposit) ? 1 : 0;
+
+        // Calculate deposit based on mode: per_table (fixed) or per_person (× party_size)
+        $depositAmount = null;
+        if ($depositRequired) {
+            $baseAmount = (float)$tenant['deposit_amount'];
+            $depositMode = $tenant['deposit_mode'] ?? 'per_table';
+            $depositAmount = $depositMode === 'per_person'
+                ? $baseAmount * (int)$data['party_size']
+                : $baseAmount;
+        }
 
         // Determine initial status: pending if deposit required OR manual confirmation mode
         if ($depositRequired) {
@@ -164,6 +181,8 @@ class ReservationApiController
             }
         }
 
+        AuditLog::log(AuditLog::RESERVATION_CREATED, "Prenotazione #{$reservationId} (API)", null, (int)$tenant['id']);
+
         $responseData = [
             'reservation_id' => $reservationId,
             'status'         => $status,
@@ -174,10 +193,48 @@ class ReservationApiController
 
         // If deposit required, create Stripe Checkout session
         if ($depositRequired && $depositAmount > 0) {
-            // Stripe integration will be added in Phase 8
-            $responseData['deposit_required'] = true;
-            $responseData['deposit_amount'] = $depositAmount;
-            $responseData['message'] = 'Prenotazione creata. Caparra richiesta.';
+            try {
+                \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+
+                $depositMode = $tenant['deposit_mode'] ?? 'per_table';
+                $description = $depositMode === 'per_person'
+                    ? "Caparra {$tenant['name']} - €" . number_format((float)$tenant['deposit_amount'], 2, ',', '.') . " × {$data['party_size']} persone"
+                    : "Caparra prenotazione {$tenant['name']}";
+
+                $session = \Stripe\Checkout\Session::create([
+                    'payment_method_types' => ['card'],
+                    'line_items' => [[
+                        'price_data' => [
+                            'currency'     => 'eur',
+                            'unit_amount'  => (int)round($depositAmount * 100),
+                            'product_data' => [
+                                'name'        => "Caparra - {$tenant['name']}",
+                                'description' => $description,
+                            ],
+                        ],
+                        'quantity' => 1,
+                    ]],
+                    'mode'        => 'payment',
+                    'success_url' => url("{$slug}/booking/success") . '?session_id={CHECKOUT_SESSION_ID}',
+                    'cancel_url'  => url("{$slug}/booking/cancel"),
+                    'metadata'    => [
+                        'reservation_id' => $reservationId,
+                        'tenant_id'      => $tenant['id'],
+                    ],
+                    'expires_at' => time() + 1800, // 30 minutes
+                ]);
+
+                $responseData['deposit_required'] = true;
+                $responseData['deposit_amount'] = $depositAmount;
+                $responseData['stripe_checkout_url'] = $session->url;
+                $responseData['message'] = 'Prenotazione creata. Verrai reindirizzato al pagamento.';
+            } catch (\Exception $e) {
+                app_log('Stripe Checkout error: ' . $e->getMessage(), 'error');
+                // Reservation created but payment failed — mark as pending, let owner handle
+                $responseData['deposit_required'] = true;
+                $responseData['deposit_amount'] = $depositAmount;
+                $responseData['message'] = 'Prenotazione creata. Contatta il ristorante per il pagamento della caparra.';
+            }
         }
 
         $successMsg = $isManualMode
@@ -240,6 +297,11 @@ class ReservationApiController
 
         $reservationModel->updateStatus($id, 'cancelled');
         (new ReservationLog())->create($id, $reservation['status'], 'cancelled', null, 'Annullata dal cliente');
+
+        // Notify restaurant owner
+        MailService::sendCancellationNotification($reservation, $tenant, 'cliente');
+
+        AuditLog::log(AuditLog::RESERVATION_STATUS, "Prenotazione #{$id}: cancelled (API)", null, (int)$tenant['id']);
 
         Response::success(null, 'Prenotazione annullata con successo.');
     }

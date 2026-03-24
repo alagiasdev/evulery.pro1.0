@@ -9,6 +9,7 @@ use App\Core\Response;
 use App\Core\TenantResolver;
 use App\Models\MealCategory;
 use App\Models\TimeSlot;
+use App\Services\AuditLog;
 
 class SlotsController
 {
@@ -79,6 +80,7 @@ class SlotsController
             }
 
             $db->commit();
+            AuditLog::log(AuditLog::SLOTS_UPDATED, null, Auth::id(), $tenantId);
             flash('success', 'Orari e coperti aggiornati.');
         } catch (\Throwable $e) {
             $db->rollBack();

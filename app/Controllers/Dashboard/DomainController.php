@@ -12,15 +12,21 @@ class DomainController
 {
     public function index(Request $request): void
     {
+        $tenant = TenantResolver::current();
+        $canUseDomain = (new Tenant())->canUseService((int)$tenant['id'], 'custom_domain');
+
         view('dashboard/settings/domain', [
-            'title'      => 'Dominio Personalizzato',
-            'activeMenu' => 'domain',
-            'tenant'     => TenantResolver::current(),
+            'title'         => 'Dominio Personalizzato',
+            'activeMenu'    => 'domain',
+            'tenant'        => $tenant,
+            'canUseDomain'  => $canUseDomain,
         ], 'dashboard');
     }
 
     public function update(Request $request): void
     {
+        if (gate_service('custom_domain', url('dashboard/settings/domain'))) return;
+
         $tenantId = Auth::tenantId();
         $domain = trim($request->input('custom_domain', ''));
 
@@ -46,7 +52,10 @@ class DomainController
 
     public function verify(Request $request): void
     {
+        if (gate_service('custom_domain', url('dashboard/settings/domain'))) return;
+
         $tenantId = Auth::tenantId();
+
         $tenant = TenantResolver::current();
 
         if (!$tenant['custom_domain'] || !$tenant['cname_target']) {

@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Admin Abbonamenti v2 (Piani Dinamici)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 220px;
+            --admin-accent: #1565C0;
+            --admin-accent-dark: #0D47A1;
+            --brand: #00844A;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        .admin-sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: var(--sidebar-w); background: #1a1d23; color: #fff; display: flex; flex-direction: column; z-index: 100; }
+        .sidebar-brand { padding: 1.1rem 1.25rem; border-bottom: 1px solid #2a2d33; }
+        .sidebar-brand-name { font-weight: 700; font-size: 1.1rem; }
+        .sidebar-brand-role { font-size: .68rem; color: #ffc107; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+        .sidebar-nav { padding: .75rem .5rem; flex: 1; }
+        .sidebar-section { font-size: .62rem; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: .8px; padding: .75rem .85rem .35rem; margin-top: .25rem; }
+        .sidebar-link { display: flex; align-items: center; gap: .6rem; padding: .55rem .85rem; border-radius: 8px; color: #adb5bd; font-size: .85rem; font-weight: 500; text-decoration: none; margin-bottom: .15rem; transition: all .15s; cursor: pointer; }
+        .sidebar-link:hover { color: #fff; background: rgba(255,255,255,.06); }
+        .sidebar-link.active { color: #fff; background: var(--admin-accent); }
+        .sidebar-link i { font-size: .95rem; width: 20px; text-align: center; }
+        .sidebar-link .badge-nav { margin-left: auto; font-size: .6rem; padding: 2px 6px; border-radius: 6px; background: #E65100; color: #fff; font-weight: 700; }
+        .sidebar-footer { padding: .75rem 1rem; border-top: 1px solid #2a2d33; }
+        .sidebar-logout { display: flex; align-items: center; justify-content: center; gap: .4rem; width: 100%; padding: .45rem; border-radius: 8px; background: #2a2d33; color: #adb5bd; border: none; font-size: .8rem; font-weight: 500; cursor: pointer; }
+
+        .main-content { margin-left: var(--sidebar-w); }
+        .top-bar { background: #fff; border-bottom: 1px solid #e9ecef; padding: .65rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+        .top-bar-title { font-size: .95rem; font-weight: 700; color: #1a1d23; }
+        .top-bar-user { display: flex; align-items: center; gap: .5rem; font-size: .82rem; color: #6c757d; }
+        .top-bar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--admin-accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 700; }
+
+        .page-body { padding: 1.25rem 1.5rem; }
+        .page-title { font-size: 1.25rem; font-weight: 700; color: #1a1d23; margin-bottom: .25rem; }
+        .page-subtitle { font-size: .82rem; color: #6c757d; margin-bottom: 1.25rem; }
+
+        /* ===== Tabs ===== */
+        .page-tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 2px solid #e9ecef; }
+        .page-tab { padding: .6rem 1.25rem; font-size: .85rem; font-weight: 600; color: #6c757d; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; transition: all .15s; }
+        .page-tab:hover { color: #1a1d23; }
+        .page-tab.active { color: var(--admin-accent); border-bottom-color: var(--admin-accent); }
+
+        /* ===== Stats ===== */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: .75rem; }
+        .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .stat-value { font-size: 1.6rem; font-weight: 700; color: #1a1d23; line-height: 1; }
+        .stat-label { font-size: .72rem; color: #6c757d; font-weight: 500; margin-top: .15rem; }
+
+        /* ===== Card ===== */
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow: hidden; }
+        .card-hdr { padding: .85rem 1.25rem; background: #fafbfc; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
+        .card-hdr-title { font-size: .88rem; font-weight: 700; color: #495057; }
+        .card-inner { padding: 1.25rem; }
+
+        /* ===== Table ===== */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { font-size: .72rem; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: .5px; padding: .6rem 1rem; border-bottom: 1px solid #f0f0f0; }
+        .data-table td { padding: .7rem 1rem; font-size: .85rem; color: #495057; border-bottom: 1px solid #f8f9fa; vertical-align: middle; }
+        .data-table tr:last-child td { border-bottom: none; }
+
+        /* ===== Badges ===== */
+        .badge-status { padding: 2px 8px; border-radius: 6px; font-size: .7rem; font-weight: 600; }
+        .badge-active { background: #E8F5E9; color: #2E7D32; }
+        .badge-trial { background: #E3F2FD; color: #1565C0; }
+        .badge-warning { background: #FFF3E0; color: #E65100; }
+        .badge-expired { background: #FFEBEE; color: #C62828; }
+        .badge-plan-color { padding: 2px 8px; border-radius: 6px; font-size: .72rem; font-weight: 600; }
+
+        /* ===== Filter ===== */
+        .filter-pills { display: flex; gap: .35rem; }
+        .filter-pill { padding: .35rem .75rem; border-radius: 8px; font-size: .75rem; font-weight: 600; cursor: pointer; border: 1px solid #dee2e6; background: #fff; color: #6c757d; transition: all .15s; }
+        .filter-pill.active { background: var(--admin-accent); color: #fff; border-color: var(--admin-accent); }
+
+        /* ===== Action buttons ===== */
+        .action-btn { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; border: 1px solid #dee2e6; background: #fff; color: #6c757d; font-size: .78rem; cursor: pointer; transition: all .15s; text-decoration: none; }
+        .action-btn:hover { border-color: var(--admin-accent); color: var(--admin-accent); }
+        .btn-admin { display: inline-flex; align-items: center; gap: .4rem; padding: .5rem 1rem; border-radius: 10px; font-size: .82rem; font-weight: 600; text-decoration: none; cursor: pointer; transition: all .15s; }
+        .btn-admin-primary { background: var(--admin-accent); color: #fff; border: none; }
+        .btn-admin-primary:hover { background: var(--admin-accent-dark); color: #fff; }
+        .btn-admin-outline { background: #fff; color: #495057; border: 1px solid #dee2e6; }
+
+        /* ===== Plan cards (tab Piani) ===== */
+        .plans-list { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+        .plan-row {
+            background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            padding: 1.25rem; display: grid; grid-template-columns: auto 1fr auto auto;
+            align-items: center; gap: 1.25rem;
+        }
+        .plan-row.inactive { opacity: .5; }
+        .plan-color-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+        .plan-info {}
+        .plan-name { font-size: 1rem; font-weight: 700; color: #1a1d23; }
+        .plan-price-tag { font-size: .82rem; color: var(--admin-accent); font-weight: 600; }
+        .plan-desc { font-size: .75rem; color: #6c757d; margin-top: .15rem; }
+        .plan-services { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .5rem; }
+        .plan-service-tag {
+            padding: 2px 8px; border-radius: 6px; font-size: .68rem; font-weight: 600;
+            background: #f0f0f0; color: #495057;
+        }
+        .plan-service-tag.included { background: #E8F5E9; color: #2E7D32; }
+        .plan-stats { text-align: center; }
+        .plan-stats-num { font-size: 1.25rem; font-weight: 700; color: #1a1d23; }
+        .plan-stats-label { font-size: .65rem; color: #adb5bd; }
+        .plan-actions { display: flex; gap: .35rem; }
+
+        /* ===== Edit plan modal/form ===== */
+        .plan-form { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 1.5rem; overflow: hidden; }
+        .plan-form-hdr { padding: .85rem 1.25rem; background: #fafbfc; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
+        .plan-form-body { padding: 1.25rem; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+        .form-label { font-size: .78rem; font-weight: 600; color: #495057; margin-bottom: .3rem; display: block; }
+        .form-input { width: 100%; border: 1px solid #dee2e6; border-radius: 8px; padding: .5rem .75rem; font-size: .85rem; color: #1a1d23; box-sizing: border-box; }
+        .form-input:focus { outline: none; border-color: var(--admin-accent); box-shadow: 0 0 0 3px rgba(21,101,192,.08); }
+
+        /* ===== Service checklist ===== */
+        .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+        .service-check {
+            display: flex; align-items: center; gap: .5rem; padding: .5rem .75rem;
+            border: 1px solid #f0f0f0; border-radius: 8px; cursor: pointer; transition: all .15s;
+        }
+        .service-check:hover { border-color: #dee2e6; }
+        .service-check.checked { border-color: #2E7D32; background: #F1F8E9; }
+        .service-check input { width: 16px; height: 16px; accent-color: #2E7D32; }
+        .service-check-label { font-size: .8rem; font-weight: 500; color: #1a1d23; }
+        .service-check-desc { font-size: .65rem; color: #adb5bd; }
+
+        /* ===== Services catalog (tab Servizi) ===== */
+        .service-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: .7rem 1.25rem; border-bottom: 1px solid #f8f9fa;
+        }
+        .service-row:last-child { border-bottom: none; }
+        .service-key { font-family: monospace; font-size: .75rem; background: #f8f9fa; padding: 2px 6px; border-radius: 4px; color: #6c757d; }
+        .service-label { font-size: .85rem; font-weight: 600; color: #1a1d23; }
+        .service-desc { font-size: .72rem; color: #adb5bd; }
+        .service-plans { display: flex; gap: .25rem; }
+
+        .wf-note { background: #E8F5E9; border: 1px dashed var(--brand); border-radius: 8px; padding: .6rem 1rem; margin-bottom: 1rem; font-size: .78rem; color: #1B5E20; }
+        .wf-note b { color: #B71C1C; }
+
+        .page-switcher { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 200; display: flex; gap: .35rem; background: #1a1d23; padding: .35rem; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
+        .page-sw-btn { padding: .4rem .75rem; border-radius: 7px; font-size: .72rem; font-weight: 600; cursor: pointer; border: none; color: #adb5bd; background: transparent; transition: all .15s; }
+        .page-sw-btn.active { background: var(--admin-accent); color: #fff; }
+        .page { display: none; }
+        .page.active { display: block; }
+
+        @media (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .plan-row { grid-template-columns: auto 1fr auto; } .services-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .admin-sidebar { display: none; } .main-content { margin-left: 0; } .plan-row { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="admin-sidebar">
+    <div class="sidebar-brand">
+        <div class="sidebar-brand-name">Evulery</div>
+        <div class="sidebar-brand-role">Super Admin</div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="sidebar-section">Principale</div>
+        <a class="sidebar-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a class="sidebar-link"><i class="bi bi-shop"></i> Ristoranti</a>
+        <a class="sidebar-link"><i class="bi bi-people"></i> Utenti</a>
+        <div class="sidebar-section">Business</div>
+        <a class="sidebar-link active"><i class="bi bi-credit-card-2-front"></i> Abbonamenti <span class="badge-nav">2</span></a>
+        <a class="sidebar-link"><i class="bi bi-envelope"></i> Crediti Email</a>
+        <a class="sidebar-link"><i class="bi bi-chat-dots"></i> Crediti SMS</a>
+        <div class="sidebar-section">Sistema</div>
+        <a class="sidebar-link"><i class="bi bi-clock-history"></i> Log Attivit&agrave;</a>
+        <a class="sidebar-link"><i class="bi bi-gear"></i> Impostazioni</a>
+        <a class="sidebar-link"><i class="bi bi-download"></i> Export</a>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="sidebar-logout"><i class="bi bi-box-arrow-left"></i> Esci</button>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+    <div class="top-bar">
+        <div class="top-bar-title">Admin Panel</div>
+        <div class="top-bar-user">
+            <span>Stefano Alagias</span>
+            <div class="top-bar-avatar">SA</div>
+        </div>
+    </div>
+
+    <!-- ========== TAB 1: Abbonamenti ========== -->
+    <div class="page active" id="page-subs">
+        <div class="page-body">
+            <div class="wf-note">
+                <b>WIREFRAME v2 — Abbonamenti</b> &mdash;
+                <b>1)</b> Coperti illimitati &mdash; niente barre limiti.
+                <b>2)</b> Piano assegnato per tenant + stato (attivo/trial/scaduto).
+                <b>3)</b> Azioni: cambia piano, rinnova, sospendi.
+                <b>4)</b> Crediti email/SMS separati (colonne dedicate).
+            </div>
+
+            <h1 class="page-title">Abbonamenti</h1>
+            <p class="page-subtitle">Gestisci abbonamenti, piani e catalogo servizi</p>
+
+            <div class="page-tabs">
+                <div class="page-tab active" data-goto-page="subs">Abbonamenti</div>
+                <div class="page-tab" data-goto-page="plans">Piani</div>
+                <div class="page-tab" data-goto-page="services">Servizi</div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#F3E5F5;color:#7B1FA2;"><i class="bi bi-currency-euro"></i></div>
+                    <div><div class="stat-value">&euro;742</div><div class="stat-label">MRR</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#E8F5E9;color:#2E7D32;"><i class="bi bi-check2-circle"></i></div>
+                    <div><div class="stat-value">12</div><div class="stat-label">Attivi</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#E3F2FD;color:#1565C0;"><i class="bi bi-hourglass-split"></i></div>
+                    <div><div class="stat-value">2</div><div class="stat-label">Trial</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#FFF3E0;color:#E65100;"><i class="bi bi-exclamation-triangle"></i></div>
+                    <div><div class="stat-value">2</div><div class="stat-label">In scadenza (7gg)</div></div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="card">
+                <div class="card-hdr">
+                    <span class="card-hdr-title">Elenco abbonamenti</span>
+                    <div class="filter-pills">
+                        <button class="filter-pill active">Tutti</button>
+                        <button class="filter-pill">Attivi</button>
+                        <button class="filter-pill">Trial</button>
+                        <button class="filter-pill">In scadenza</button>
+                        <button class="filter-pill">Scaduti</button>
+                    </div>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Ristorante</th>
+                                <th>Piano</th>
+                                <th>Prezzo</th>
+                                <th>Crediti Email</th>
+                                <th>Crediti SMS</th>
+                                <th>Stato</th>
+                                <th>Scadenza</th>
+                                <th style="text-align:right;">Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight:600;">Trattoria Da Mario</td>
+                                <td><span class="badge-plan-color" style="background:#E3F2FD;color:#1565C0;">Starter</span></td>
+                                <td>&euro;29/mese</td>
+                                <td><span style="font-weight:600;color:#1a1d23;">340</span> <span style="font-size:.68rem;color:#adb5bd;">rimasti</span></td>
+                                <td><span style="font-weight:600;color:#1a1d23;">85</span> <span style="font-size:.68rem;color:#adb5bd;">rimasti</span></td>
+                                <td><span class="badge-status badge-active">Attivo</span></td>
+                                <td style="color:#6c757d;">31/03/2026</td>
+                                <td style="text-align:right;">
+                                    <a class="action-btn" title="Cambia piano"><i class="bi bi-arrow-up-circle"></i></a>
+                                    <a class="action-btn" title="Storico"><i class="bi bi-clock-history"></i></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600;">Bella Vista</td>
+                                <td><span class="badge-plan-color" style="background:#F3E5F5;color:#7B1FA2;">Professional</span></td>
+                                <td>&euro;59/mese</td>
+                                <td><span style="font-weight:600;color:#E65100;">12</span> <span style="font-size:.68rem;color:#E65100;">quasi esauriti!</span></td>
+                                <td><span style="font-weight:600;color:#1a1d23;">200</span> <span style="font-size:.68rem;color:#adb5bd;">rimasti</span></td>
+                                <td><span class="badge-status badge-active">Attivo</span></td>
+                                <td style="color:#6c757d;">31/03/2026</td>
+                                <td style="text-align:right;">
+                                    <a class="action-btn" title="Cambia piano"><i class="bi bi-arrow-up-circle"></i></a>
+                                    <a class="action-btn" title="Storico"><i class="bi bi-clock-history"></i></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600;">Pizzeria San Marco</td>
+                                <td><span class="badge-plan-color" style="background:#E3F2FD;color:#1565C0;">Starter</span></td>
+                                <td>&euro;0 (trial)</td>
+                                <td><span style="font-weight:600;color:#adb5bd;">50</span> <span style="font-size:.68rem;color:#adb5bd;">trial</span></td>
+                                <td><span style="font-weight:600;color:#adb5bd;">10</span> <span style="font-size:.68rem;color:#adb5bd;">trial</span></td>
+                                <td><span class="badge-status badge-trial">Trial (12gg)</span></td>
+                                <td style="color:#1565C0;">02/04/2026</td>
+                                <td style="text-align:right;">
+                                    <a class="action-btn" title="Converti"><i class="bi bi-arrow-up-circle"></i></a>
+                                    <a class="action-btn" title="Storico"><i class="bi bi-clock-history"></i></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600;">Osteria del Borgo</td>
+                                <td><span class="badge-plan-color" style="background:#E3F2FD;color:#1565C0;">Starter</span></td>
+                                <td>&euro;29/mese</td>
+                                <td><span style="font-weight:600;color:#1a1d23;">0</span> <span style="font-size:.68rem;color:#adb5bd;">esauriti</span></td>
+                                <td><span style="font-weight:600;color:#1a1d23;">0</span> <span style="font-size:.68rem;color:#adb5bd;">esauriti</span></td>
+                                <td><span class="badge-status badge-warning">In scadenza</span></td>
+                                <td style="color:#E65100;font-weight:600;">25/03/2026</td>
+                                <td style="text-align:right;">
+                                    <a class="action-btn" title="Rinnova"><i class="bi bi-arrow-repeat"></i></a>
+                                    <a class="action-btn" title="Storico"><i class="bi bi-clock-history"></i></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600;">Pizzeria Napoli</td>
+                                <td><span class="badge-plan-color" style="background:#F5F5F5;color:#757575;">Starter</span></td>
+                                <td style="color:#adb5bd;">&euro;29/mese</td>
+                                <td><span style="color:#adb5bd;">&mdash;</span></td>
+                                <td><span style="color:#adb5bd;">&mdash;</span></td>
+                                <td><span class="badge-status badge-expired">Scaduto</span></td>
+                                <td style="color:#C62828;font-weight:600;">10/03/2026</td>
+                                <td style="text-align:right;">
+                                    <a class="action-btn" title="Riattiva"><i class="bi bi-play"></i></a>
+                                    <a class="action-btn" title="Storico"><i class="bi bi-clock-history"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TAB 2: Piani ========== -->
+    <div class="page" id="page-plans">
+        <div class="page-body">
+            <div class="wf-note">
+                <b>WIREFRAME v2 — Piani (Gestione Dinamica)</b> &mdash;
+                <b>1)</b> Lista piani con servizi associati come tag.
+                <b>2)</b> Bottone "Nuovo Piano" + form inline con checklist servizi.
+                <b>3)</b> Ogni piano modificabile: nome, prezzo, colore, servizi inclusi.
+                <b>4)</b> Coperti illimitati per tutti &mdash; i piani differenziano solo per servizi.
+            </div>
+
+            <h1 class="page-title">Abbonamenti</h1>
+            <p class="page-subtitle">Gestisci abbonamenti, piani e catalogo servizi</p>
+
+            <div class="page-tabs">
+                <div class="page-tab" data-goto-page="subs">Abbonamenti</div>
+                <div class="page-tab active" data-goto-page="plans">Piani</div>
+                <div class="page-tab" data-goto-page="services">Servizi</div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+                <div style="font-size:.82rem;color:#6c757d;">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Coperti illimitati per tutti i piani. La differenza &egrave; nei <strong>servizi inclusi</strong>.
+                </div>
+                <button class="btn-admin btn-admin-primary"><i class="bi bi-plus-circle"></i> Nuovo Piano</button>
+            </div>
+
+            <!-- Plan list -->
+            <div class="plans-list">
+                <!-- Starter -->
+                <div class="plan-row">
+                    <div class="plan-color-dot" style="background:#1565C0;"></div>
+                    <div class="plan-info">
+                        <div style="display:flex;align-items:center;gap:.75rem;">
+                            <span class="plan-name">Starter</span>
+                            <span class="plan-price-tag">&euro;29/mese</span>
+                        </div>
+                        <div class="plan-desc">Piano base con prenotazioni illimitate e funzionalit&agrave; essenziali</div>
+                        <div class="plan-services">
+                            <span class="plan-service-tag included">Widget prenotazione</span>
+                            <span class="plan-service-tag included">Dashboard</span>
+                            <span class="plan-service-tag included">Email conferma</span>
+                            <span class="plan-service-tag included">Men&ugrave; digitale</span>
+                            <span class="plan-service-tag included">Promozioni</span>
+                        </div>
+                    </div>
+                    <div class="plan-stats">
+                        <div class="plan-stats-num">8</div>
+                        <div class="plan-stats-label">ristoranti</div>
+                    </div>
+                    <div class="plan-actions">
+                        <a class="action-btn" title="Modifica"><i class="bi bi-pencil"></i></a>
+                        <a class="action-btn" title="Duplica"><i class="bi bi-copy"></i></a>
+                    </div>
+                </div>
+
+                <!-- Professional -->
+                <div class="plan-row">
+                    <div class="plan-color-dot" style="background:#7B1FA2;"></div>
+                    <div class="plan-info">
+                        <div style="display:flex;align-items:center;gap:.75rem;">
+                            <span class="plan-name">Professional</span>
+                            <span class="plan-price-tag">&euro;59/mese</span>
+                            <span style="font-size:.6rem;font-weight:700;background:#FFF3E0;color:#E65100;padding:2px 6px;border-radius:4px;">PI&Ugrave; VENDUTO</span>
+                        </div>
+                        <div class="plan-desc">Per ristoranti che vogliono il massimo: reminder, statistiche e supporto prioritario</div>
+                        <div class="plan-services">
+                            <span class="plan-service-tag included">Widget prenotazione</span>
+                            <span class="plan-service-tag included">Dashboard</span>
+                            <span class="plan-service-tag included">Email conferma</span>
+                            <span class="plan-service-tag included">Men&ugrave; digitale</span>
+                            <span class="plan-service-tag included">Promozioni</span>
+                            <span class="plan-service-tag included">Email reminder</span>
+                            <span class="plan-service-tag included">Export CSV</span>
+                            <span class="plan-service-tag included">Statistiche</span>
+                            <span class="plan-service-tag included">Supporto prioritario</span>
+                        </div>
+                    </div>
+                    <div class="plan-stats">
+                        <div class="plan-stats-num">4</div>
+                        <div class="plan-stats-label">ristoranti</div>
+                    </div>
+                    <div class="plan-actions">
+                        <a class="action-btn" title="Modifica"><i class="bi bi-pencil"></i></a>
+                        <a class="action-btn" title="Duplica"><i class="bi bi-copy"></i></a>
+                    </div>
+                </div>
+
+                <!-- Enterprise -->
+                <div class="plan-row">
+                    <div class="plan-color-dot" style="background:#E65100;"></div>
+                    <div class="plan-info">
+                        <div style="display:flex;align-items:center;gap:.75rem;">
+                            <span class="plan-name">Enterprise</span>
+                            <span class="plan-price-tag">&euro;99/mese</span>
+                        </div>
+                        <div class="plan-desc">Soluzione completa per gruppi e catene di ristoranti</div>
+                        <div class="plan-services">
+                            <span class="plan-service-tag included">Widget prenotazione</span>
+                            <span class="plan-service-tag included">Dashboard</span>
+                            <span class="plan-service-tag included">Email conferma</span>
+                            <span class="plan-service-tag included">Men&ugrave; digitale</span>
+                            <span class="plan-service-tag included">Promozioni</span>
+                            <span class="plan-service-tag included">Email reminder</span>
+                            <span class="plan-service-tag included">Export CSV</span>
+                            <span class="plan-service-tag included">Statistiche</span>
+                            <span class="plan-service-tag included">Supporto prioritario</span>
+                            <span class="plan-service-tag included">Multi-sede</span>
+                            <span class="plan-service-tag included">API</span>
+                            <span class="plan-service-tag included">Dominio custom</span>
+                        </div>
+                    </div>
+                    <div class="plan-stats">
+                        <div class="plan-stats-num">2</div>
+                        <div class="plan-stats-label">ristoranti</div>
+                    </div>
+                    <div class="plan-actions">
+                        <a class="action-btn" title="Modifica"><i class="bi bi-pencil"></i></a>
+                        <a class="action-btn" title="Duplica"><i class="bi bi-copy"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit plan form (example) -->
+            <div class="plan-form">
+                <div class="plan-form-hdr">
+                    <span class="card-hdr-title"><i class="bi bi-pencil me-1"></i> Modifica Piano: Professional</span>
+                    <button class="btn-admin btn-admin-outline" style="font-size:.75rem;padding:.35rem .75rem;">Annulla</button>
+                </div>
+                <div class="plan-form-body">
+                    <div class="form-grid">
+                        <div>
+                            <label class="form-label">Nome piano *</label>
+                            <input type="text" class="form-input" value="Professional">
+                        </div>
+                        <div>
+                            <label class="form-label">Prezzo mensile (&euro;) *</label>
+                            <input type="number" class="form-input" value="59">
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div>
+                            <label class="form-label">Colore badge</label>
+                            <div style="display:flex;gap:.5rem;margin-top:.25rem;">
+                                <div style="width:28px;height:28px;border-radius:6px;background:#1565C0;cursor:pointer;border:2px solid transparent;"></div>
+                                <div style="width:28px;height:28px;border-radius:6px;background:#7B1FA2;cursor:pointer;border:2px solid #1a1d23;"></div>
+                                <div style="width:28px;height:28px;border-radius:6px;background:#E65100;cursor:pointer;border:2px solid transparent;"></div>
+                                <div style="width:28px;height:28px;border-radius:6px;background:#2E7D32;cursor:pointer;border:2px solid transparent;"></div>
+                                <div style="width:28px;height:28px;border-radius:6px;background:#C62828;cursor:pointer;border:2px solid transparent;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">Descrizione</label>
+                            <input type="text" class="form-input" value="Per ristoranti che vogliono il massimo">
+                        </div>
+                    </div>
+
+                    <label class="form-label" style="margin-bottom:.5rem;">Servizi inclusi</label>
+                    <div class="services-grid">
+                        <label class="service-check checked">
+                            <input type="checkbox" checked>
+                            <div>
+                                <div class="service-check-label">Widget prenotazione</div>
+                                <div class="service-check-desc">Pagina pubblica di prenotazione</div>
+                            </div>
+                        </label>
+                        <label class="service-check checked">
+                            <input type="checkbox" checked>
+                            <div>
+                                <div class="service-check-label">Dashboard</div>
+                                <div class="service-check-desc">Pannello gestione ristorante</div>
+                            </div>
+                        </label>
+                        <label class="service-check checked">
+                            <input type="checkbox" checked>
+                            <div>
+                                <div class="service-check-label">Email conferma</div>
+                                <div class="service-check-desc">Email automatica alla prenotazione</div>
+                            </div>
+                        </label>
+                        <label class="service-check checked">
+                            <input type="checkbox" checked>
+                            <div>
+                                <div class="service-check-label">Men&ugrave; digitale</div>
+                                <div class="service-check-desc">Pagina men&ugrave; pubblica + QR</div>
+                            </div>
+                        </label>
+                        <label class="service-check checked">
+                            <input type="checkbox" checked>
+                            <div>
+                                <div class="service-check-label">Promozioni</div>
+                                <div class="service-check-desc">Sconti su fasce orarie</div>
+                            </div>
+                        </label>
+                        <label class="service-check checked">
+                            <input type="checkbox" checked>
+                            <div>
+                                <div class="service-check-label">Email reminder</div>
+                                <div class="service-check-desc">Promemoria giorno prima</div>
+                            </div>
+                        </label>
+                        <label class="service-check checked">
+                            <input type="checkbox" checked>
+                            <div>
+                                <div class="service-check-label">Export CSV</div>
+                                <div class="service-check-desc">Esporta prenotazioni</div>
+                            </div>
+                        </label>
+                        <label class="service-check checked">
+                            <input type="checkbox" checked>
+                            <div>
+                                <div class="service-check-label">Statistiche</div>
+                                <div class="service-check-desc">Report e analytics avanzati</div>
+                            </div>
+                        </label>
+                        <label class="service-check">
+                            <input type="checkbox">
+                            <div>
+                                <div class="service-check-label">Multi-sede</div>
+                                <div class="service-check-desc">Gestisci pi&ugrave; sedi</div>
+                            </div>
+                        </label>
+                        <label class="service-check">
+                            <input type="checkbox">
+                            <div>
+                                <div class="service-check-label">API</div>
+                                <div class="service-check-desc">Accesso API REST</div>
+                            </div>
+                        </label>
+                        <label class="service-check">
+                            <input type="checkbox">
+                            <div>
+                                <div class="service-check-label">Dominio personalizzato</div>
+                                <div class="service-check-desc">prenotazioni.tuoristorante.it</div>
+                            </div>
+                        </label>
+                        <label class="service-check checked">
+                            <input type="checkbox" checked>
+                            <div>
+                                <div class="service-check-label">Supporto prioritario</div>
+                                <div class="service-check-desc">Risposta entro 4 ore</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:1.25rem;">
+                        <button class="btn-admin btn-admin-outline">Annulla</button>
+                        <button class="btn-admin btn-admin-primary"><i class="bi bi-check-circle"></i> Salva Piano</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TAB 3: Servizi ========== -->
+    <div class="page" id="page-services">
+        <div class="page-body">
+            <div class="wf-note">
+                <b>WIREFRAME v2 — Catalogo Servizi</b> &mdash;
+                <b>1)</b> Elenco di tutti i servizi disponibili nel sistema.
+                <b>2)</b> Ogni servizio ha: chiave tecnica, nome, descrizione, piani che lo includono.
+                <b>3)</b> Puoi aggiungere nuovi servizi (es. quando sviluppiamo una nuova feature).
+                <b>4)</b> Il codice controlla <code>plan.features</code> per abilitare/disabilitare funzionalit&agrave;.
+            </div>
+
+            <h1 class="page-title">Abbonamenti</h1>
+            <p class="page-subtitle">Gestisci abbonamenti, piani e catalogo servizi</p>
+
+            <div class="page-tabs">
+                <div class="page-tab" data-goto-page="subs">Abbonamenti</div>
+                <div class="page-tab" data-goto-page="plans">Piani</div>
+                <div class="page-tab active" data-goto-page="services">Servizi</div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+                <div style="font-size:.82rem;color:#6c757d;">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Ogni servizio pu&ograve; essere associato a uno o pi&ugrave; piani.
+                </div>
+                <button class="btn-admin btn-admin-primary"><i class="bi bi-plus-circle"></i> Nuovo Servizio</button>
+            </div>
+
+            <div class="card">
+                <div class="card-hdr">
+                    <span class="card-hdr-title">Catalogo servizi (12)</span>
+                </div>
+                <div>
+                    <div class="service-row">
+                        <div style="flex:1;">
+                            <div style="display:flex;align-items:center;gap:.5rem;">
+                                <span class="service-label">Widget prenotazione</span>
+                                <span class="service-key">booking_widget</span>
+                            </div>
+                            <div class="service-desc">Pagina pubblica di prenotazione con calendario e slot</div>
+                        </div>
+                        <div class="service-plans">
+                            <span class="badge-plan-color" style="background:#E3F2FD;color:#1565C0;font-size:.6rem;">Starter</span>
+                            <span class="badge-plan-color" style="background:#F3E5F5;color:#7B1FA2;font-size:.6rem;">Professional</span>
+                            <span class="badge-plan-color" style="background:#FFF3E0;color:#E65100;font-size:.6rem;">Enterprise</span>
+                        </div>
+                        <a class="action-btn" title="Modifica" style="margin-left:.5rem;"><i class="bi bi-pencil"></i></a>
+                    </div>
+                    <div class="service-row">
+                        <div style="flex:1;">
+                            <div style="display:flex;align-items:center;gap:.5rem;">
+                                <span class="service-label">Email conferma</span>
+                                <span class="service-key">email_confirmation</span>
+                            </div>
+                            <div class="service-desc">Email automatica di conferma prenotazione al cliente</div>
+                        </div>
+                        <div class="service-plans">
+                            <span class="badge-plan-color" style="background:#E3F2FD;color:#1565C0;font-size:.6rem;">Starter</span>
+                            <span class="badge-plan-color" style="background:#F3E5F5;color:#7B1FA2;font-size:.6rem;">Professional</span>
+                            <span class="badge-plan-color" style="background:#FFF3E0;color:#E65100;font-size:.6rem;">Enterprise</span>
+                        </div>
+                        <a class="action-btn" title="Modifica" style="margin-left:.5rem;"><i class="bi bi-pencil"></i></a>
+                    </div>
+                    <div class="service-row">
+                        <div style="flex:1;">
+                            <div style="display:flex;align-items:center;gap:.5rem;">
+                                <span class="service-label">Email reminder</span>
+                                <span class="service-key">email_reminder</span>
+                            </div>
+                            <div class="service-desc">Promemoria automatico il giorno prima della prenotazione</div>
+                        </div>
+                        <div class="service-plans">
+                            <span class="badge-plan-color" style="background:#F3E5F5;color:#7B1FA2;font-size:.6rem;">Professional</span>
+                            <span class="badge-plan-color" style="background:#FFF3E0;color:#E65100;font-size:.6rem;">Enterprise</span>
+                        </div>
+                        <a class="action-btn" title="Modifica" style="margin-left:.5rem;"><i class="bi bi-pencil"></i></a>
+                    </div>
+                    <div class="service-row">
+                        <div style="flex:1;">
+                            <div style="display:flex;align-items:center;gap:.5rem;">
+                                <span class="service-label">Export CSV</span>
+                                <span class="service-key">export_csv</span>
+                            </div>
+                            <div class="service-desc">Esportazione prenotazioni in formato CSV</div>
+                        </div>
+                        <div class="service-plans">
+                            <span class="badge-plan-color" style="background:#F3E5F5;color:#7B1FA2;font-size:.6rem;">Professional</span>
+                            <span class="badge-plan-color" style="background:#FFF3E0;color:#E65100;font-size:.6rem;">Enterprise</span>
+                        </div>
+                        <a class="action-btn" title="Modifica" style="margin-left:.5rem;"><i class="bi bi-pencil"></i></a>
+                    </div>
+                    <div class="service-row">
+                        <div style="flex:1;">
+                            <div style="display:flex;align-items:center;gap:.5rem;">
+                                <span class="service-label">Multi-sede</span>
+                                <span class="service-key">multi_location</span>
+                            </div>
+                            <div class="service-desc">Gestione di pi&ugrave; sedi sotto lo stesso account</div>
+                        </div>
+                        <div class="service-plans">
+                            <span class="badge-plan-color" style="background:#FFF3E0;color:#E65100;font-size:.6rem;">Enterprise</span>
+                        </div>
+                        <a class="action-btn" title="Modifica" style="margin-left:.5rem;"><i class="bi bi-pencil"></i></a>
+                    </div>
+                    <div class="service-row">
+                        <div style="flex:1;">
+                            <div style="display:flex;align-items:center;gap:.5rem;">
+                                <span class="service-label">Dominio personalizzato</span>
+                                <span class="service-key">custom_domain</span>
+                            </div>
+                            <div class="service-desc">Il ristorante usa il suo dominio (prenotazioni.mioristorante.it)</div>
+                        </div>
+                        <div class="service-plans">
+                            <span class="badge-plan-color" style="background:#FFF3E0;color:#E65100;font-size:.6rem;">Enterprise</span>
+                        </div>
+                        <a class="action-btn" title="Modifica" style="margin-left:.5rem;"><i class="bi bi-pencil"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Page Switcher -->
+<div class="page-switcher">
+    <button class="page-sw-btn active" data-page="subs">Abbonamenti</button>
+    <button class="page-sw-btn" data-page="plans">Piani</button>
+    <button class="page-sw-btn" data-page="services">Servizi</button>
+</div>
+
+<script>
+document.querySelectorAll('[data-page]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var target = this.getAttribute('data-page');
+        document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+        document.querySelectorAll('.page-sw-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.getElementById('page-' + target).classList.add('active');
+        this.classList.add('active');
+    });
+});
+document.querySelectorAll('[data-goto-page]').forEach(function(el) {
+    el.addEventListener('click', function() {
+        var target = this.getAttribute('data-goto-page');
+        document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+        document.querySelectorAll('.page-sw-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.getElementById('page-' + target).classList.add('active');
+        var swBtn = document.querySelector('.page-sw-btn[data-page="' + target + '"]');
+        if (swBtn) swBtn.classList.add('active');
+        window.scrollTo(0, 0);
+    });
+});
+</script>
+
+</body>
+</html>

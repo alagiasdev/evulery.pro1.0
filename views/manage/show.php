@@ -96,6 +96,13 @@ $time = substr($reservation['reservation_time'], 0, 5);
         </div>
         <?php endif; ?>
 
+        <?php if (!empty($reservation['booking_instructions'])): ?>
+        <div class="manage-policy" style="background:#E3F2FD;border-color:#90CAF9;">
+            <strong><i class="bi bi-megaphone me-1"></i> Informazioni dal ristorante:</strong><br>
+            <?= nl2br(e($reservation['booking_instructions'])) ?>
+        </div>
+        <?php endif; ?>
+
         <?php if (!empty($reservation['cancellation_policy']) && $canCancel): ?>
         <div class="manage-policy">
             <strong>Politica di cancellazione:</strong><br>

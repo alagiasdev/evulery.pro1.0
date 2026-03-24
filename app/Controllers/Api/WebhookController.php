@@ -7,6 +7,8 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Models\Reservation;
 use App\Models\ReservationLog;
+use App\Models\Tenant;
+use App\Services\MailService;
 
 class WebhookController
 {
@@ -47,6 +49,16 @@ class WebhookController
                             'id'         => $reservationId,
                         ]);
                         $logModel->create((int)$reservationId, 'pending', 'confirmed', null, 'Caparra pagata via Stripe');
+
+                        // Send confirmation email to customer
+                        $full = $reservationModel->findWithCustomer((int)$reservationId);
+                        $tenantId = $session->metadata->tenant_id ?? ($reservation['tenant_id'] ?? null);
+                        if ($full && $tenantId) {
+                            $tenant = (new Tenant())->findById((int)$tenantId);
+                            if ($tenant) {
+                                MailService::sendReservationConfirmation($full, $tenant);
+                            }
+                        }
                     }
                 }
                 break;

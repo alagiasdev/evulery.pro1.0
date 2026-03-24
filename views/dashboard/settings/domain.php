@@ -29,6 +29,10 @@ $isPending = $domainStatus === 'dns_pending';
     <?php endforeach; ?>
 </div>
 
+<?php if (!($canUseDomain ?? true)): ?>
+<?php $lockedTitle = 'Il dominio personalizzato'; include __DIR__ . '/../../partials/service-locked.php'; ?>
+<?php else: ?>
+
 <div class="row g-4">
     <!-- Left column -->
     <div class="col-lg-7">
@@ -240,3 +244,5 @@ document.querySelectorAll('[data-copy-text]').forEach(function(btn) {
     });
 });
 </script>
+
+<?php endif; ?>

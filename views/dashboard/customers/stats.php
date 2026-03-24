@@ -40,6 +40,20 @@ foreach ($presets as $days => $label) {
 }
 ?>
 
+<?php if (!($canUseStats ?? true)): ?>
+<!-- Page header (locked) -->
+<div class="cs-header">
+    <div>
+        <h1 class="cs-title"><i class="bi bi-graph-up-arrow"></i> Statistiche Clienti</h1>
+        <p class="cs-subtitle">Analisi della clientela e delle tendenze di prenotazione</p>
+    </div>
+    <a href="<?= url('dashboard/customers') ?>" class="cs-back-btn">
+        <i class="bi bi-arrow-left"></i> Torna a Clienti
+    </a>
+</div>
+<?php $lockedTitle = 'Le statistiche clienti'; include __DIR__ . '/../../partials/service-locked.php'; ?>
+<?php else: ?>
+
 <!-- Page header -->
 <div class="cs-header">
     <div>
@@ -211,3 +225,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<?php endif; ?>

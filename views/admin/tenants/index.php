@@ -47,7 +47,15 @@
                 <td class="cell-name"><?= e($t['name']) ?></td>
                 <td><span class="slug-code"><?= e($t['slug']) ?></span></td>
                 <td><?= e($t['email']) ?></td>
-                <td><span class="adm-badge <?= $t['plan'] === 'deposit' ? 'adm-badge-deposit' : 'adm-badge-plan' ?>"><?= e(ucfirst($t['plan'])) ?></span></td>
+                <td>
+                    <?php if (!empty($t['plan_name'])): ?>
+                    <span class="adm-badge-plan" style="background:<?= e($t['plan_color']) ?>15;color:<?= e($t['plan_color']) ?>;">
+                        <?= e($t['plan_name']) ?>
+                    </span>
+                    <?php else: ?>
+                    <span class="adm-badge adm-badge-inactive"><?= e(ucfirst($t['plan'])) ?></span>
+                    <?php endif; ?>
+                </td>
                 <td>
                     <?php if ($t['is_active']): ?>
                         <span class="adm-badge adm-badge-active">Attivo</span>

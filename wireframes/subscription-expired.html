@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe: Gestione Abbonamento Scaduto</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1d23; }
+
+        .wireframe-nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: #1a1d23; color: #fff; padding: .75rem 1.5rem;
+            display: flex; align-items: center; gap: 1rem;
+            font-size: .85rem;
+        }
+        .wireframe-nav strong { font-size: 1rem; margin-right: 1rem; }
+        .wireframe-nav a {
+            color: #90CAF9; text-decoration: none; padding: .4rem .8rem;
+            border-radius: 6px; transition: .2s;
+        }
+        .wireframe-nav a:hover, .wireframe-nav a.active { background: #1565C0; color: #fff; }
+        .wireframe-content { margin-top: 52px; }
+
+        .scenario { display: none; }
+        .scenario.active { display: block; }
+
+        .scenario-header {
+            background: #fff; border-bottom: 1px solid #e0e0e0;
+            padding: 1.25rem 2rem;
+        }
+        .scenario-header h2 { font-size: 1.1rem; color: #1a1d23; margin-bottom: .25rem; }
+        .scenario-header p { font-size: .82rem; color: #6c757d; }
+
+        /* ═══════════════════════════════════════════════════
+           SCENARIO 1: Dashboard Suspended Page
+           ═══════════════════════════════════════════════════ */
+        .dash-layout { display: flex; min-height: calc(100vh - 52px); }
+
+        .dash-sidebar {
+            width: 220px; background: #1a1d23; color: #fff; padding: 1.25rem 0;
+            flex-shrink: 0;
+        }
+        .dash-sidebar .logo { padding: 0 1.25rem .75rem; font-weight: 700; font-size: 1.1rem; }
+        .dash-sidebar .logo span { color: #C62828; font-size: .7rem; display: block; margin-top: .15rem; }
+        .dash-sidebar .nav-item {
+            padding: .6rem 1.25rem; font-size: .82rem; color: #adb5bd;
+            display: flex; align-items: center; gap: .5rem;
+            opacity: 0.4; pointer-events: none;
+        }
+
+        .dash-main { flex: 1; padding: 2rem; display: flex; align-items: center; justify-content: center; }
+
+        .suspended-card {
+            background: #fff; border-radius: 16px; padding: 3rem;
+            max-width: 560px; width: 100%; text-align: center;
+            box-shadow: 0 4px 24px rgba(0,0,0,.08);
+        }
+        .suspended-icon {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: #FFEBEE; color: #C62828;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.5rem; font-size: 2rem;
+        }
+        .suspended-card h1 { font-size: 1.4rem; margin-bottom: .5rem; }
+        .suspended-card .subtitle { color: #6c757d; font-size: .9rem; margin-bottom: 1.75rem; line-height: 1.5; }
+
+        .suspended-info {
+            background: #FFF3E0; border-radius: 10px; padding: 1rem 1.25rem;
+            text-align: left; margin-bottom: 1.5rem;
+        }
+        .suspended-info-title { font-weight: 700; font-size: .82rem; color: #E65100; margin-bottom: .5rem; }
+        .suspended-info-row {
+            display: flex; justify-content: space-between;
+            font-size: .82rem; padding: .25rem 0; color: #495057;
+        }
+        .suspended-info-row strong { color: #1a1d23; }
+
+        .suspended-actions { display: flex; flex-direction: column; gap: .75rem; margin-bottom: 1.25rem; }
+        .sus-btn {
+            padding: .75rem 1.5rem; border-radius: 10px; font-size: .9rem;
+            font-weight: 600; text-decoration: none; display: flex;
+            align-items: center; justify-content: center; gap: .5rem;
+            border: none; cursor: pointer;
+        }
+        .sus-btn-primary { background: #1565C0; color: #fff; }
+        .sus-btn-outline { background: #fff; color: #1565C0; border: 1.5px solid #1565C0; }
+        .sus-btn-whatsapp { background: #25D366; color: #fff; }
+
+        .suspended-footer { font-size: .75rem; color: #adb5bd; }
+        .suspended-footer a { color: #1565C0; text-decoration: none; }
+
+        .data-safe {
+            display: flex; align-items: center; gap: .5rem;
+            background: #E8F5E9; border-radius: 8px; padding: .6rem 1rem;
+            margin-bottom: 1.5rem; font-size: .8rem; color: #2E7D32;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           SCENARIO 2: Public Page - Booking Suspended
+           ═══════════════════════════════════════════════════ */
+        .public-suspended {
+            min-height: calc(100vh - 52px);
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8eaed 100%);
+            padding: 2rem;
+        }
+        .public-card {
+            background: #fff; border-radius: 20px; padding: 3rem 2.5rem;
+            max-width: 480px; width: 100%; text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,.08);
+        }
+        .public-card .restaurant-name {
+            font-size: .85rem; color: #6c757d; text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 1rem;
+        }
+        .public-icon {
+            width: 72px; height: 72px; border-radius: 50%;
+            background: #F5F5F5; color: #9E9E9E;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.5rem; font-size: 1.8rem;
+        }
+        .public-card h1 { font-size: 1.25rem; margin-bottom: .5rem; color: #1a1d23; }
+        .public-card .msg { color: #6c757d; font-size: .88rem; line-height: 1.5; margin-bottom: 2rem; }
+
+        .contact-box {
+            background: #f8f9fa; border-radius: 12px; padding: 1.25rem;
+            text-align: left; margin-bottom: 1.5rem;
+        }
+        .contact-box-title { font-weight: 700; font-size: .8rem; color: #495057; margin-bottom: .5rem; }
+        .contact-row {
+            display: flex; align-items: center; gap: .5rem;
+            font-size: .85rem; color: #1a1d23; padding: .3rem 0;
+        }
+        .contact-row i { color: #6c757d; width: 18px; }
+
+        .public-footer {
+            font-size: .72rem; color: #adb5bd; margin-top: 1.5rem;
+            border-top: 1px solid #eee; padding-top: 1rem;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           SCENARIO 3: Booking Widget Embed - Suspended
+           ═══════════════════════════════════════════════════ */
+        .embed-container {
+            min-height: calc(100vh - 52px);
+            display: flex; align-items: center; justify-content: center;
+            background: #fff; padding: 2rem;
+        }
+        .embed-suspended {
+            max-width: 400px; width: 100%; text-align: center;
+            padding: 2rem;
+        }
+        .embed-suspended .embed-icon {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: #F5F5F5; color: #BDBDBD;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1rem; font-size: 1.5rem;
+        }
+        .embed-suspended h2 { font-size: 1rem; margin-bottom: .35rem; }
+        .embed-suspended p { font-size: .82rem; color: #6c757d; line-height: 1.4; }
+        .embed-suspended .embed-contact {
+            margin-top: 1rem; font-size: .8rem; color: #1565C0;
+            text-decoration: none; display: inline-flex; align-items: center; gap: .25rem;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           SCENARIO 4: Login page with flash message
+           ═══════════════════════════════════════════════════ */
+        .login-container {
+            min-height: calc(100vh - 52px);
+            display: flex; align-items: center; justify-content: center;
+            background: #f0f2f5; padding: 2rem;
+        }
+        .login-card {
+            background: #fff; border-radius: 16px; padding: 2.5rem;
+            max-width: 400px; width: 100%;
+            box-shadow: 0 4px 24px rgba(0,0,0,.06);
+        }
+        .login-logo { font-size: 1.5rem; font-weight: 800; text-align: center; margin-bottom: 1.5rem; }
+        .login-flash {
+            background: #FFEBEE; border: 1px solid #FFCDD2; border-radius: 10px;
+            padding: .75rem 1rem; margin-bottom: 1.25rem;
+            display: flex; align-items: flex-start; gap: .5rem;
+            font-size: .82rem; color: #C62828;
+        }
+        .login-flash i { font-size: 1rem; margin-top: .1rem; }
+        .login-field { margin-bottom: 1rem; }
+        .login-field label { display: block; font-size: .8rem; font-weight: 600; color: #495057; margin-bottom: .35rem; }
+        .login-field input {
+            width: 100%; padding: .6rem .75rem; border: 1.5px solid #dee2e6;
+            border-radius: 8px; font-size: .85rem;
+        }
+        .login-btn {
+            width: 100%; padding: .7rem; background: #1565C0; color: #fff;
+            border: none; border-radius: 10px; font-size: .9rem; font-weight: 600;
+            cursor: pointer; margin-top: .5rem;
+        }
+
+        /* Notes section */
+        .notes {
+            max-width: 800px; margin: 2rem auto; padding: 0 2rem;
+        }
+        .note-card {
+            background: #fff; border-radius: 12px; padding: 1.5rem;
+            margin-bottom: 1rem; border-left: 4px solid #1565C0;
+        }
+        .note-card h3 { font-size: .9rem; margin-bottom: .5rem; color: #1565C0; }
+        .note-card p, .note-card li { font-size: .82rem; color: #495057; line-height: 1.5; }
+        .note-card ul { padding-left: 1.25rem; margin-top: .35rem; }
+    </style>
+</head>
+<body>
+
+<div class="wireframe-nav">
+    <strong>Wireframe: Abbonamento Scaduto</strong>
+    <a href="#" class="active" data-tab="dashboard">1. Dashboard Owner</a>
+    <a href="#" data-tab="public">2. Pagina Pubblica</a>
+    <a href="#" data-tab="embed">3. Widget Embed</a>
+    <a href="#" data-tab="login">4. Flash Login</a>
+    <a href="#" data-tab="notes">Note tecniche</a>
+</div>
+
+<div class="wireframe-content">
+
+    <!-- ═══ SCENARIO 1: Dashboard Suspended ═══ -->
+    <div class="scenario active" id="tab-dashboard">
+        <div class="scenario-header">
+            <h2>Scenario 1: Owner accede alla dashboard con abbonamento scaduto</h2>
+            <p>L'utente resta loggato ma vede solo questa pagina. La sidebar e' visibile ma disabilitata. I dati sono al sicuro.</p>
+        </div>
+        <div class="dash-layout">
+            <div class="dash-sidebar">
+                <div class="logo">
+                    Evulery
+                    <span>ABBONAMENTO SCADUTO</span>
+                </div>
+                <div class="nav-item"><i class="bi bi-house"></i> Dashboard</div>
+                <div class="nav-item"><i class="bi bi-calendar3"></i> Prenotazioni</div>
+                <div class="nav-item"><i class="bi bi-people"></i> Clienti</div>
+                <div class="nav-item"><i class="bi bi-book"></i> Menu</div>
+                <div class="nav-item"><i class="bi bi-gear"></i> Impostazioni</div>
+            </div>
+            <div class="dash-main">
+                <div class="suspended-card">
+                    <div class="suspended-icon">
+                        <i class="bi bi-credit-card-2-front"></i>
+                    </div>
+                    <h1>Abbonamento scaduto</h1>
+                    <p class="subtitle">
+                        Il tuo abbonamento e' scaduto e i servizi sono temporaneamente sospesi.
+                        I tuoi dati sono al sicuro e verranno ripristinati al rinnovo.
+                    </p>
+
+                    <div class="data-safe">
+                        <i class="bi bi-shield-check"></i>
+                        <span>I tuoi dati (prenotazioni, clienti, menu) sono conservati in sicurezza</span>
+                    </div>
+
+                    <div class="suspended-info">
+                        <div class="suspended-info-title"><i class="bi bi-info-circle"></i> Dettagli abbonamento</div>
+                        <div class="suspended-info-row">
+                            <span>Piano</span>
+                            <strong>Starter</strong>
+                        </div>
+                        <div class="suspended-info-row">
+                            <span>Scaduto il</span>
+                            <strong style="color:#C62828;">10/03/2026</strong>
+                        </div>
+                        <div class="suspended-info-row">
+                            <span>Giorni trascorsi</span>
+                            <strong style="color:#C62828;">11 giorni</strong>
+                        </div>
+                    </div>
+
+                    <div class="suspended-actions">
+                        <button class="sus-btn sus-btn-primary">
+                            <i class="bi bi-envelope"></i> Richiedi rinnovo via email
+                        </button>
+                        <a href="#" class="sus-btn sus-btn-whatsapp">
+                            <i class="bi bi-whatsapp"></i> Contattaci su WhatsApp
+                        </a>
+                        <a href="#" class="sus-btn sus-btn-outline">
+                            <i class="bi bi-telephone"></i> Chiama il supporto
+                        </a>
+                    </div>
+
+                    <div class="suspended-footer">
+                        <p>Hai bisogno di aiuto? <a href="#">support@evulery.it</a></p>
+                        <p style="margin-top:.35rem;"><a href="#">Logout</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ SCENARIO 2: Public Page Suspended ═══ -->
+    <div class="scenario" id="tab-public">
+        <div class="scenario-header">
+            <h2>Scenario 2: Visitatore apre /{slug} o /{slug}/menu</h2>
+            <p>Pagina pulita, messaggio neutro. Non espone dettagli sull'abbonamento. Mostra contatti del ristorante se disponibili.</p>
+        </div>
+        <div class="public-suspended">
+            <div class="public-card">
+                <div class="restaurant-name">Trattoria Da Mario</div>
+
+                <div class="public-icon">
+                    <i class="bi bi-calendar-x"></i>
+                </div>
+
+                <h1>Prenotazioni non disponibili</h1>
+                <p class="msg">
+                    Il servizio di prenotazione online per questo ristorante
+                    non e' al momento attivo. Per prenotare, contatta direttamente il ristorante.
+                </p>
+
+                <div class="contact-box">
+                    <div class="contact-box-title">Contatta il ristorante</div>
+                    <div class="contact-row">
+                        <i class="bi bi-telephone"></i>
+                        <span>+39 012 345 6789</span>
+                    </div>
+                    <div class="contact-row">
+                        <i class="bi bi-envelope"></i>
+                        <span>info@trattoriadamario.it</span>
+                    </div>
+                    <div class="contact-row">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>Via Roma 42, Milano</span>
+                    </div>
+                </div>
+
+                <div class="public-footer">
+                    &copy; 2026 Evulery &middot; by alagias. - Soluzioni per il web
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ SCENARIO 3: Embed Widget Suspended ═══ -->
+    <div class="scenario" id="tab-embed">
+        <div class="scenario-header">
+            <h2>Scenario 3: Widget di prenotazione embed su sito esterno</h2>
+            <p>Messaggio minimale nell'iframe. Non deve rompere il layout del sito ospitante.</p>
+        </div>
+        <div class="embed-container">
+            <div style="border:2px dashed #dee2e6;border-radius:16px;padding:1rem;max-width:440px;width:100%;">
+                <div style="font-size:.7rem;color:#adb5bd;text-align:center;margin-bottom:.5rem;">iframe embed</div>
+                <div class="embed-suspended">
+                    <div class="embed-icon">
+                        <i class="bi bi-calendar-x"></i>
+                    </div>
+                    <h2>Prenotazione non disponibile</h2>
+                    <p>Il servizio di prenotazione online non e' al momento attivo. Contatta direttamente il ristorante.</p>
+                    <a href="#" class="embed-contact">
+                        <i class="bi bi-telephone"></i> Chiama il ristorante
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ SCENARIO 4: Login Flash ═══ -->
+    <div class="scenario" id="tab-login">
+        <div class="scenario-header">
+            <h2>Scenario 4: Alternativa - Redirect al login con flash message</h2>
+            <p>Se si preferisce non mostrare la dashboard sospesa, si puo' fare logout + redirect. Meno elegante ma piu' semplice.</p>
+        </div>
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-logo">Evulery</div>
+
+                <div class="login-flash">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div>
+                        <strong>Abbonamento scaduto</strong><br>
+                        Il tuo abbonamento e' scaduto il 10/03/2026. Per rinnovarlo,
+                        contatta il supporto a <strong>support@evulery.it</strong> o
+                        chiama il <strong>+39 012 345 6789</strong>.
+                    </div>
+                </div>
+
+                <div class="login-field">
+                    <label>Email</label>
+                    <input type="email" placeholder="nome@esempio.it" value="mario@trattoria.it">
+                </div>
+                <div class="login-field">
+                    <label>Password</label>
+                    <input type="password" placeholder="La tua password">
+                </div>
+                <button class="login-btn">Accedi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ NOTE TECNICHE ═══ -->
+    <div class="scenario" id="tab-notes">
+        <div class="scenario-header">
+            <h2>Note tecniche di implementazione</h2>
+            <p>Decisioni architetturali e flusso di gestione abbonamento scaduto</p>
+        </div>
+        <div class="notes">
+            <div class="note-card">
+                <h3>Approccio consigliato: Scenario 1 (Dashboard Suspended)</h3>
+                <p>Piu' professionale del semplice redirect al login. L'utente capisce che:</p>
+                <ul>
+                    <li>Il suo account esiste ancora</li>
+                    <li>I dati sono al sicuro</li>
+                    <li>Sa esattamente cosa fare per risolvere</li>
+                    <li>Non pensa che sia un errore tecnico</li>
+                </ul>
+            </div>
+
+            <div class="note-card">
+                <h3>Implementazione TenantMiddleware</h3>
+                <p>Invece di fare logout, il middleware controlla l'abbonamento e:</p>
+                <ul>
+                    <li>Se scaduto: redirect a <code>/dashboard/suspended</code></li>
+                    <li>La rotta <code>/dashboard/suspended</code> e' l'unica accessibile</li>
+                    <li>Tutte le altre rotte <code>/dashboard/*</code> rimandano li'</li>
+                    <li>Il logout resta funzionante</li>
+                </ul>
+            </div>
+
+            <div class="note-card">
+                <h3>Implementazione pagine pubbliche</h3>
+                <p>BookingController e MenuPageController gia' controllano <code>is_active</code> del tenant.
+                   Aggiungere il check subscription nella stessa logica:</p>
+                <ul>
+                    <li>Se tenant attivo MA abbonamento scaduto: mostra pagina sospensione</li>
+                    <li>Se tenant disattivato: 404 come prima</li>
+                    <li>La pagina pubblica mostra i contatti del ristorante (phone, email, address dal tenant)</li>
+                    <li>Messaggio neutro, nessun riferimento a "abbonamento"</li>
+                </ul>
+            </div>
+
+            <div class="note-card">
+                <h3>API Endpoints</h3>
+                <ul>
+                    <li><code>GET /api/v1/tenants/{slug}/availability</code> &rarr; JSON <code>{"error": "service_suspended", "message": "..."}</code> con status 403</li>
+                    <li><code>GET /api/v1/tenants/{slug}/menu</code> &rarr; stessa risposta</li>
+                    <li>Il widget JS deve gestire il caso 403 e mostrare il messaggio embed (Scenario 3)</li>
+                </ul>
+            </div>
+
+            <div class="note-card">
+                <h3>File coinvolti</h3>
+                <ul>
+                    <li><code>app/Middleware/TenantMiddleware.php</code> &mdash; check subscription, redirect a /dashboard/suspended</li>
+                    <li><code>app/Controllers/Dashboard/SuspendedController.php</code> &mdash; NUOVO, mostra la pagina sospensione</li>
+                    <li><code>views/dashboard/suspended.php</code> &mdash; NUOVO, pagina sospensione dashboard</li>
+                    <li><code>views/booking/suspended.php</code> &mdash; NUOVO, pagina pubblica sospensione</li>
+                    <li><code>app/Controllers/BookingController.php</code> &mdash; MODIFICA, check subscription</li>
+                    <li><code>app/Controllers/Menu/MenuPageController.php</code> &mdash; MODIFICA, check subscription</li>
+                    <li><code>app/Controllers/Api/*</code> &mdash; MODIFICA, return 403 JSON</li>
+                    <li><code>public/assets/js/booking-widget.js</code> &mdash; MODIFICA, gestire 403</li>
+                    <li><code>config/routes.php</code> &mdash; MODIFICA, aggiungere rotta /dashboard/suspended</li>
+                </ul>
+            </div>
+
+            <div class="note-card">
+                <h3>Possibili evoluzioni future</h3>
+                <ul>
+                    <li><strong>Grace period</strong>: 3-7 giorni dopo scadenza, il servizio funziona ancora con banner di avviso</li>
+                    <li><strong>Pagamento online</strong>: bottone "Rinnova ora" con Stripe/PayPal</li>
+                    <li><strong>Email automatiche</strong>: reminder 30gg, 7gg, 1gg prima della scadenza + notifica post-scadenza</li>
+                    <li><strong>Downgrade automatico</strong>: invece di sospendere, passare a piano free limitato</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+document.querySelectorAll('.wireframe-nav a').forEach(link => {
+    link.addEventListener('click', e => {
+        e.preventDefault();
+        const tab = link.dataset.tab;
+        document.querySelectorAll('.wireframe-nav a').forEach(l => l.classList.remove('active'));
+        document.querySelectorAll('.scenario').forEach(s => s.classList.remove('active'));
+        link.classList.add('active');
+        document.getElementById('tab-' + tab).classList.add('active');
+    });
+});
+</script>
+
+</body>
+</html>

@@ -107,9 +107,9 @@
             <?php endif; ?>
 
             <?php if ($tenant['deposit_enabled'] && $tenant['deposit_amount']): ?>
-            <div class="bw-deposit-info">
+            <div class="bw-deposit-info" id="deposit-info">
                 <i class="bi bi-credit-card"></i>
-                Caparra richiesta: <strong>&euro;<?= number_format($tenant['deposit_amount'], 2) ?></strong>
+                <span id="deposit-text">Caparra richiesta: <strong>&euro;<?= number_format($tenant['deposit_amount'], 2) ?></strong><?= ($tenant['deposit_mode'] ?? 'per_table') === 'per_person' ? ' a persona' : '' ?></span>
             </div>
             <?php endif; ?>
 
@@ -163,6 +163,7 @@ window.BOOKING_CONFIG = {
     apiUrl: '<?= url('api/v1') ?>',
     depositEnabled: <?= $tenant['deposit_enabled'] ? 'true' : 'false' ?>,
     depositAmount: <?= $tenant['deposit_amount'] ? number_format($tenant['deposit_amount'], 2, '.', '') : '0' ?>,
+    depositMode: '<?= e($tenant['deposit_mode'] ?? 'per_table') ?>',
     advanceMin: <?= (int)($tenant['booking_advance_min'] ?? 0) ?>,
     advanceMax: <?= (int)($tenant['booking_advance_max'] ?? 60) ?>,
     confirmationMode: '<?= e($tenant['confirmation_mode'] ?? 'auto') ?>'

@@ -140,6 +140,7 @@ a.sidebar-user:hover { color: #adb5bd; }
 .res-time { font-weight: 700; font-size: .9rem; color: #212529; min-width: 48px; }
 .res-info { flex: 1; min-width: 0; }
 .res-name { font-weight: 600; font-size: .88rem; color: #212529; }
+.res-id { font-size: .7rem; font-weight: 500; color: #adb5bd; margin-left: .25rem; }
 .res-meta { font-size: .75rem; color: #6c757d; }
 .res-right { display: flex; align-items: center; gap: .5rem; }
 .res-pax {
@@ -1295,6 +1296,16 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 .ap-label { font-size: .82rem; color: var(--brand); font-weight: 600; }
 .ap-desc { font-size: .72rem; color: #6c757d; }
 
+/* ===== Mode option (deposit) ===== */
+.mode-option {
+    flex: 1; padding: .75rem 1rem; border: 2px solid #dee2e6; border-radius: 10px;
+    cursor: pointer; transition: all .2s; text-align: center; font-size: .82rem; font-weight: 600; color: #495057;
+}
+.mode-option:hover { border-color: var(--brand); background: var(--brand-light); }
+.mode-option.active { border-color: var(--brand); background: var(--brand-light); color: var(--brand); }
+.mode-hint { display: block; font-size: .72rem; font-weight: 400; color: #adb5bd; margin-top: .25rem; }
+.mode-option.active .mode-hint { color: var(--brand); opacity: .7; }
+
 /* ===== Flow card (deposit) ===== */
 .flow-card {
     background: #fff; border-radius: 12px;
@@ -1654,7 +1665,7 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     .date-strip { gap: .4rem; }
     .date-chip { padding: .4rem .75rem; min-width: 75px; }
     .date-chip .chip-label { font-size: .8rem; }
-    .home-cal-dropdown { left: auto; right: 0; width: 280px; }
+    .home-cal-dropdown { left: auto; right: 0; width: min(300px, calc(100vw - 32px)); }
     .capacity-banner { flex-wrap: wrap; gap: .75rem; padding: .7rem 1rem; }
     .cap-divider { display: none; }
     .cap-bar-wrap { width: 100%; flex-basis: 100%; }
@@ -2428,4 +2439,93 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     .dm-allergen-grid { grid-template-columns: repeat(2, 1fr); }
     .dm-cat-actions, .dm-subcat-actions { opacity: 1; }
     .dm-subcat-row, .dm-subcat-add-trigger, .dm-subcat-add-form, .dm-subcat-empty { padding-left: 2rem; }
+}
+
+/* ===========================================
+   Suspended Subscription Page (.susp-*)
+   =========================================== */
+.susp-container {
+    display: flex; align-items: center; justify-content: center;
+    min-height: calc(100vh - 120px); padding: 2rem 1rem;
+}
+.susp-card {
+    max-width: 520px; width: 100%; text-align: center;
+    background: #fff; border-radius: 16px; padding: 2.5rem 2rem;
+    box-shadow: 0 2px 16px rgba(0,0,0,.06);
+}
+.susp-icon {
+    font-size: 3rem; color: #E65100; margin-bottom: .75rem;
+}
+.susp-title {
+    font-size: 1.35rem; font-weight: 700; color: #1a1d23; margin-bottom: .5rem;
+}
+.susp-subtitle {
+    font-size: .9rem; color: #6c757d; line-height: 1.6; margin-bottom: 1.5rem;
+}
+.susp-info-box {
+    background: #f8f9fa; border-radius: 12px; padding: 1.25rem;
+    margin-bottom: 1.5rem; text-align: left;
+}
+.susp-info-row {
+    display: flex; gap: .75rem; align-items: flex-start;
+    padding: .5rem 0;
+}
+.susp-info-row:not(:last-child) {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: .75rem; margin-bottom: .25rem;
+}
+.susp-info-row i {
+    font-size: 1.25rem; color: #00844A; margin-top: .1rem; flex-shrink: 0;
+}
+.susp-info-row strong {
+    display: block; font-size: .85rem; color: #1a1d23; margin-bottom: .15rem;
+}
+.susp-info-row p {
+    font-size: .8rem; color: #6c757d; line-height: 1.5; margin: 0;
+}
+.susp-section-title {
+    font-size: .82rem; font-weight: 700; color: #495057;
+    text-transform: uppercase; letter-spacing: .5px;
+    margin-bottom: .75rem;
+}
+.susp-actions {
+    display: flex; flex-direction: column; gap: .5rem;
+    margin-bottom: 1.5rem;
+}
+.susp-btn {
+    display: flex; align-items: center; justify-content: center; gap: .5rem;
+    padding: .7rem 1rem; border-radius: 10px; font-size: .88rem; font-weight: 600;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: background .15s, transform .1s;
+}
+.susp-btn:active { transform: scale(.98); }
+.susp-btn-primary {
+    background: #00844A; color: #fff;
+}
+.susp-btn-primary:hover { background: #006d3c; color: #fff; }
+.susp-btn-whatsapp {
+    background: #25D366; color: #fff;
+}
+.susp-btn-whatsapp:hover { background: #1da851; color: #fff; }
+.susp-btn-outline {
+    background: #f8f9fa; color: #1a1d23; border: 1px solid #dee2e6;
+}
+.susp-btn-outline:hover { background: #e9ecef; color: #1a1d23; }
+.susp-btn-disabled {
+    background: #f8f9fa; color: #adb5bd; cursor: not-allowed; position: relative;
+}
+.susp-badge-soon {
+    font-size: .65rem; background: #E3F2FD; color: #1565C0;
+    padding: .15rem .5rem; border-radius: 20px; font-weight: 600;
+}
+.susp-footer {
+    font-size: .78rem; color: #adb5bd;
+}
+.susp-footer a { color: #00844A; text-decoration: none; }
+.susp-footer a:hover { text-decoration: underline; }
+
+@media (max-width: 576px) {
+    .susp-card { padding: 1.5rem 1.25rem; }
+    .susp-icon { font-size: 2.5rem; }
+    .susp-title { font-size: 1.15rem; }
 }

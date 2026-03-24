@@ -84,7 +84,7 @@ for ($i = 0; $i < 3; $i++) {
             <div class="res-time" style="color:#6c757d;"><?= format_time($sr['reservation_time']) ?></div>
             <div class="status-dot <?= e($sr['status']) ?>" title="<?= status_label($sr['status']) ?>"></div>
             <div class="res-info">
-                <div class="res-name"><?= e($sr['first_name'] . ' ' . $sr['last_name']) ?> <?= getSegmentBadge((int)$sr['total_bookings']) ?></div>
+                <div class="res-name"><?= e($sr['first_name'] . ' ' . $sr['last_name']) ?> <?= getSegmentBadge((int)$sr['total_bookings']) ?> <span class="res-id">#<?= (int)$sr['id'] ?></span></div>
                 <div class="res-meta">
                     <i class="bi bi-telephone me-1"></i><?= e($sr['phone']) ?>
                     <?php if ($sr['email']): ?> &middot; <?= e($sr['email']) ?><?php endif; ?>
@@ -135,9 +135,15 @@ for ($i = 0; $i < 3; $i++) {
             </div>
         </div>
         <div class="filter-actions">
+            <?php if (tenant_can('export_csv')): ?>
             <button type="button" class="btn-filter btn-filter-outline" id="export-toggle" title="Esporta CSV">
                 <i class="bi bi-download me-1"></i>CSV
             </button>
+            <?php else: ?>
+            <button type="button" class="btn-filter btn-filter-outline" disabled title="Esportazione CSV non inclusa nel tuo piano" style="opacity:.5;cursor:not-allowed;">
+                <i class="bi bi-download me-1"></i>CSV <i class="bi bi-lock-fill" style="font-size:.65rem;"></i>
+            </button>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -271,7 +277,7 @@ for ($i = 0; $i < 3; $i++) {
             <span class="res-time"><?= format_time($r['reservation_time']) ?></span>
             <span class="status-dot <?= e($r['status']) ?>"></span>
             <div class="res-info">
-                <div class="res-name"><?= e($r['first_name'] . ' ' . $r['last_name']) ?> <?= getSegmentBadge((int)($r['total_bookings'] ?? 0)) ?></div>
+                <div class="res-name"><?= e($r['first_name'] . ' ' . $r['last_name']) ?> <?= getSegmentBadge((int)($r['total_bookings'] ?? 0)) ?> <span class="res-id">#<?= (int)$r['id'] ?></span></div>
                 <div class="res-contact">
                     <i class="bi bi-telephone me-1"></i><?= e($r['phone']) ?>
                     &nbsp;&middot;&nbsp;
@@ -320,7 +326,7 @@ for ($i = 0; $i < 3; $i++) {
         ?>
         <div class="meal-divider">
             <i class="bi bi-calendar3"></i>
-            <span><?= format_date($d, 'D d/m/Y') ?></span>
+            <span><?= format_date($d, 'l d/m/Y') ?></span>
             <span class="meal-count"><?= count($rows) ?> pren. &middot; <?= $dayCovers ?> coperti</span>
         </div>
         <?php foreach ($rows as $r) { renderResRow($r, $redirectBack, false); } ?>

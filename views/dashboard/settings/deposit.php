@@ -12,6 +12,7 @@ $settingsTabs = [
 $depositEnabled = (bool)$tenant['deposit_enabled'];
 $depositAmount = $tenant['deposit_amount'] ? number_format((float)$tenant['deposit_amount'], 2, ',', '.') : '0,00';
 $depositAmountRaw = $tenant['deposit_amount'] ? number_format((float)$tenant['deposit_amount'], 2, '.', '') : '';
+$depositMode = $tenant['deposit_mode'] ?? 'per_table';
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
@@ -25,6 +26,10 @@ $depositAmountRaw = $tenant['deposit_amount'] ? number_format((float)$tenant['de
     </a>
     <?php endforeach; ?>
 </div>
+
+<?php if (!($canUseDeposit ?? true)): ?>
+<?php $lockedTitle = 'La caparra'; include __DIR__ . '/../../partials/service-locked.php'; ?>
+<?php else: ?>
 
 <form method="POST" action="<?= url('dashboard/settings/deposit') ?>">
     <?= csrf_field() ?>
@@ -68,15 +73,35 @@ $depositAmountRaw = $tenant['deposit_amount'] ? number_format((float)$tenant['de
                         <div class="field-hint">Minimo &euro;1.00 &middot; Incrementi di &euro;0.50</div>
                     </div>
 
+                    <!-- Deposit mode selector -->
+                    <div style="margin-top:1.25rem;">
+                        <label class="field-label">Modalit&agrave; calcolo</label>
+                        <div style="display:flex;gap:.5rem;margin-top:.35rem;">
+                            <label class="mode-option <?= $depositMode === 'per_table' ? 'active' : '' ?>">
+                                <input type="radio" name="deposit_mode" value="per_table" <?= $depositMode === 'per_table' ? 'checked' : '' ?> style="display:none;">
+                                <i class="bi bi-table me-1"></i> Per tavolo
+                                <span class="mode-hint">Importo fisso indipendentemente dal numero di persone</span>
+                            </label>
+                            <label class="mode-option <?= $depositMode === 'per_person' ? 'active' : '' ?>">
+                                <input type="radio" name="deposit_mode" value="per_person" <?= $depositMode === 'per_person' ? 'checked' : '' ?> style="display:none;">
+                                <i class="bi bi-people me-1"></i> Per persona
+                                <span class="mode-hint">Importo moltiplicato per il numero di coperti</span>
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="amount-preview" id="amount-preview">
                         <div>
                             <div class="ap-amount" id="ap-value">&euro; <?= $depositAmount ?></div>
-                            <div class="ap-label">per prenotazione</div>
+                            <div class="ap-label" id="ap-label"><?= $depositMode === 'per_person' ? 'per persona' : 'per tavolo (fisso)' ?></div>
                         </div>
                         <div>
-                            <div class="ap-desc">
-                                Il cliente paga l'importo al momento della prenotazione online.
-                                L'importo viene scalato dal conto finale o rimborsato in caso di cancellazione nei tempi previsti.
+                            <div class="ap-desc" id="ap-desc">
+                                <?php if ($depositMode === 'per_person'): ?>
+                                    Esempio: con 4 coperti il cliente paga &euro;<?= $depositAmountRaw ? number_format((float)$depositAmountRaw * 4, 2, ',', '.') : '0,00' ?>
+                                <?php else: ?>
+                                    Il cliente paga l'importo fisso al momento della prenotazione online.
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -186,10 +211,33 @@ document.getElementById('main-toggle').addEventListener('click', function() {
     document.getElementById('config-section').classList.toggle('disabled-look', !enabled);
     document.getElementById('deposit-enabled-input').value = enabled ? '1' : '';
 });
-// Amount preview update
-document.getElementById('amount-input').addEventListener('input', function() {
-    var val = parseFloat(this.value) || 0;
-    var formatted = val.toFixed(2).replace('.', ',');
-    document.getElementById('ap-value').textContent = '\u20AC ' + formatted;
+
+// Mode toggle
+document.querySelectorAll('.mode-option').forEach(function(el) {
+    el.addEventListener('click', function() {
+        document.querySelectorAll('.mode-option').forEach(function(o) { o.classList.remove('active'); });
+        this.classList.add('active');
+        this.querySelector('input[type="radio"]').checked = true;
+        updatePreview();
+    });
 });
+
+// Amount preview update
+function updatePreview() {
+    var val = parseFloat(document.getElementById('amount-input').value) || 0;
+    var formatted = val.toFixed(2).replace('.', ',');
+    var mode = document.querySelector('input[name="deposit_mode"]:checked').value;
+    document.getElementById('ap-value').textContent = '\u20AC ' + formatted;
+    if (mode === 'per_person') {
+        document.getElementById('ap-label').textContent = 'per persona';
+        var example = (val * 4).toFixed(2).replace('.', ',');
+        document.getElementById('ap-desc').textContent = 'Esempio: con 4 coperti il cliente paga \u20AC' + example;
+    } else {
+        document.getElementById('ap-label').textContent = 'per tavolo (fisso)';
+        document.getElementById('ap-desc').textContent = 'Il cliente paga l\'importo fisso al momento della prenotazione online.';
+    }
+}
+document.getElementById('amount-input').addEventListener('input', updatePreview);
 </script>
+
+<?php endif; ?>

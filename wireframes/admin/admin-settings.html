@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Admin Impostazioni</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 220px;
+            --admin-accent: #1565C0;
+            --admin-accent-dark: #0D47A1;
+            --brand: #00844A;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        .admin-sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: var(--sidebar-w); background: #1a1d23; color: #fff; display: flex; flex-direction: column; z-index: 100; }
+        .sidebar-brand { padding: 1.1rem 1.25rem; border-bottom: 1px solid #2a2d33; }
+        .sidebar-brand-name { font-weight: 700; font-size: 1.1rem; }
+        .sidebar-brand-role { font-size: .68rem; color: #ffc107; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+        .sidebar-nav { padding: .75rem .5rem; flex: 1; }
+        .sidebar-section { font-size: .62rem; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: .8px; padding: .75rem .85rem .35rem; margin-top: .25rem; }
+        .sidebar-link { display: flex; align-items: center; gap: .6rem; padding: .55rem .85rem; border-radius: 8px; color: #adb5bd; font-size: .85rem; font-weight: 500; text-decoration: none; margin-bottom: .15rem; transition: all .15s; cursor: pointer; }
+        .sidebar-link:hover { color: #fff; background: rgba(255,255,255,.06); }
+        .sidebar-link.active { color: #fff; background: var(--admin-accent); }
+        .sidebar-link i { font-size: .95rem; width: 20px; text-align: center; }
+        .sidebar-footer { padding: .75rem 1rem; border-top: 1px solid #2a2d33; }
+        .sidebar-logout { display: flex; align-items: center; justify-content: center; gap: .4rem; width: 100%; padding: .45rem; border-radius: 8px; background: #2a2d33; color: #adb5bd; border: none; font-size: .8rem; font-weight: 500; cursor: pointer; }
+
+        .main-content { margin-left: var(--sidebar-w); }
+        .top-bar { background: #fff; border-bottom: 1px solid #e9ecef; padding: .65rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+        .top-bar-title { font-size: .95rem; font-weight: 700; color: #1a1d23; }
+        .top-bar-user { display: flex; align-items: center; gap: .5rem; font-size: .82rem; color: #6c757d; }
+        .top-bar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--admin-accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 700; }
+        .page-body { padding: 1.25rem 1.5rem; max-width: 800px; }
+        .page-title { font-size: 1.25rem; font-weight: 700; color: #1a1d23; margin-bottom: .25rem; }
+        .page-subtitle { font-size: .82rem; color: #6c757d; margin-bottom: 1.25rem; }
+
+        /* ===== Card ===== */
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow: hidden; margin-bottom: 1.25rem; }
+        .card-hdr { padding: .85rem 1.25rem; background: #fafbfc; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: .5rem; }
+        .card-hdr-title { font-size: .88rem; font-weight: 700; color: #495057; }
+        .card-hdr-icon { font-size: .95rem; color: var(--admin-accent); }
+        .card-inner { padding: 1.25rem; }
+
+        /* ===== Form ===== */
+        .field-row { margin-bottom: 1.1rem; }
+        .field-row:last-child { margin-bottom: 0; }
+        .field-label { display: block; font-size: .8rem; font-weight: 600; color: #495057; margin-bottom: .35rem; }
+        .field-input {
+            width: 100%; border: 1px solid #dee2e6; border-radius: 8px;
+            padding: .55rem .75rem; font-size: .85rem; color: #1a1d23;
+            transition: border-color .15s, box-shadow .15s; box-sizing: border-box;
+        }
+        .field-input:focus { outline: none; border-color: var(--admin-accent); box-shadow: 0 0 0 3px rgba(21,101,192,.08); }
+        .field-hint { font-size: .72rem; color: #adb5bd; margin-top: .2rem; }
+        .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        .toggle-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: .65rem 0; border-bottom: 1px solid #f8f9fa;
+        }
+        .toggle-row:last-child { border-bottom: none; }
+        .toggle-label { font-size: .85rem; font-weight: 500; color: #1a1d23; }
+        .toggle-hint { font-size: .72rem; color: #adb5bd; margin-top: .1rem; }
+
+        /* ===== Toggle switch (CSS only) ===== */
+        .switch { position: relative; display: inline-block; width: 42px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .switch-slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background: #dee2e6; border-radius: 24px; transition: .2s;
+        }
+        .switch-slider:before {
+            content: ""; position: absolute; height: 18px; width: 18px;
+            left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .2s;
+        }
+        .switch input:checked + .switch-slider { background: var(--admin-accent); }
+        .switch input:checked + .switch-slider:before { transform: translateX(18px); }
+
+        /* ===== Danger zone ===== */
+        .danger-zone {
+            border: 1px solid #FFCDD2; border-radius: 12px; overflow: hidden;
+        }
+        .danger-zone .card-hdr { background: #FFEBEE; border-color: #FFCDD2; }
+        .danger-zone .card-hdr-title { color: #C62828; }
+        .danger-action {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: .75rem 1.25rem; border-bottom: 1px solid #f8f9fa;
+        }
+        .danger-action:last-child { border-bottom: none; }
+        .danger-btn {
+            padding: .4rem .85rem; border-radius: 8px; border: 1px solid #C62828;
+            background: #fff; color: #C62828; font-size: .78rem; font-weight: 600;
+            cursor: pointer; transition: all .15s;
+        }
+        .danger-btn:hover { background: #C62828; color: #fff; }
+
+        /* ===== Save bar ===== */
+        .save-bar {
+            position: sticky; bottom: 0; background: #fff;
+            border-top: 1px solid #e9ecef; padding: .75rem 1.25rem;
+            display: flex; align-items: center; justify-content: flex-end; gap: .5rem;
+        }
+        .btn-save {
+            padding: .55rem 1.5rem; border-radius: 10px; font-size: .85rem; font-weight: 600;
+            border: none; cursor: pointer; transition: all .15s;
+        }
+        .btn-save-primary { background: var(--admin-accent); color: #fff; }
+        .btn-save-primary:hover { background: var(--admin-accent-dark); }
+        .btn-save-outline { background: #fff; color: #495057; border: 1px solid #dee2e6; }
+
+        .wf-note { background: #E8F5E9; border: 1px dashed var(--brand); border-radius: 8px; padding: .6rem 1rem; margin-bottom: 1rem; font-size: .78rem; color: #1B5E20; }
+        .wf-note b { color: #B71C1C; }
+
+        @media (max-width: 768px) {
+            .admin-sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .field-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="admin-sidebar">
+    <div class="sidebar-brand">
+        <div class="sidebar-brand-name">Evulery</div>
+        <div class="sidebar-brand-role">Super Admin</div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="sidebar-section">Principale</div>
+        <a class="sidebar-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a class="sidebar-link"><i class="bi bi-shop"></i> Ristoranti</a>
+        <a class="sidebar-link"><i class="bi bi-people"></i> Utenti</a>
+        <div class="sidebar-section">Business</div>
+        <a class="sidebar-link"><i class="bi bi-credit-card-2-front"></i> Abbonamenti</a>
+        <a class="sidebar-link"><i class="bi bi-envelope"></i> Crediti Email</a>
+        <div class="sidebar-section">Sistema</div>
+        <a class="sidebar-link"><i class="bi bi-clock-history"></i> Log Attivit&agrave;</a>
+        <a class="sidebar-link active"><i class="bi bi-gear"></i> Impostazioni</a>
+        <a class="sidebar-link"><i class="bi bi-download"></i> Export</a>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="sidebar-logout"><i class="bi bi-box-arrow-left"></i> Esci</button>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+    <div class="top-bar">
+        <div class="top-bar-title">Admin Panel</div>
+        <div class="top-bar-user">
+            <span>Stefano Alagias</span>
+            <div class="top-bar-avatar">SA</div>
+        </div>
+    </div>
+
+    <div class="page-body">
+
+        <div class="wf-note">
+            <b>WIREFRAME — Impostazioni Globali</b> &mdash;
+            <b>1)</b> Sezioni raggruppate: Email/SMTP, Default nuovi tenant, Manutenzione, Danger zone.
+            <b>2)</b> Toggle per funzionalit&agrave; on/off.
+            <b>3)</b> Valori default per nuovi ristoranti.
+            <b>4)</b> Modalit&agrave; manutenzione con banner personalizzabile.
+            <b>5)</b> Danger zone per azioni irreversibili.
+        </div>
+
+        <h1 class="page-title">Impostazioni</h1>
+        <p class="page-subtitle">Configurazione globale del sistema</p>
+
+        <!-- Email / SMTP -->
+        <div class="card">
+            <div class="card-hdr">
+                <i class="card-hdr-icon bi bi-envelope"></i>
+                <span class="card-hdr-title">Email &amp; SMTP</span>
+            </div>
+            <div class="card-inner">
+                <div class="field-grid">
+                    <div class="field-row">
+                        <label class="field-label">Server SMTP</label>
+                        <input type="text" class="field-input" value="smtp.gmail.com">
+                    </div>
+                    <div class="field-row">
+                        <label class="field-label">Porta</label>
+                        <input type="number" class="field-input" value="587">
+                    </div>
+                </div>
+                <div class="field-grid">
+                    <div class="field-row">
+                        <label class="field-label">Username</label>
+                        <input type="text" class="field-input" value="noreply@evulery.pro">
+                    </div>
+                    <div class="field-row">
+                        <label class="field-label">Password</label>
+                        <input type="password" class="field-input" value="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
+                    </div>
+                </div>
+                <div class="field-grid">
+                    <div class="field-row">
+                        <label class="field-label">Nome mittente</label>
+                        <input type="text" class="field-input" value="Evulery">
+                    </div>
+                    <div class="field-row">
+                        <label class="field-label">Email mittente</label>
+                        <input type="text" class="field-input" value="noreply@evulery.pro">
+                    </div>
+                </div>
+                <div class="field-row" style="margin-top:.75rem;">
+                    <button style="padding:.45rem .85rem;border-radius:8px;border:1px solid #dee2e6;background:#fff;color:#495057;font-size:.78rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.35rem;">
+                        <i class="bi bi-send"></i> Invia email di test
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Default nuovi tenant -->
+        <div class="card">
+            <div class="card-hdr">
+                <i class="card-hdr-icon bi bi-sliders"></i>
+                <span class="card-hdr-title">Default nuovi ristoranti</span>
+            </div>
+            <div class="card-inner">
+                <div class="field-hint" style="margin-bottom:1rem;">Questi valori vengono applicati automaticamente quando crei un nuovo ristorante.</div>
+                <div class="field-grid">
+                    <div class="field-row">
+                        <label class="field-label">Durata tavolo (minuti)</label>
+                        <input type="number" class="field-input" value="90">
+                    </div>
+                    <div class="field-row">
+                        <label class="field-label">Step orari (minuti)</label>
+                        <input type="number" class="field-input" value="15">
+                    </div>
+                </div>
+                <div class="field-grid">
+                    <div class="field-row">
+                        <label class="field-label">Piano predefinito</label>
+                        <select class="field-input" style="cursor:pointer;">
+                            <option selected>Starter (&euro;29/mese)</option>
+                            <option>Professional (&euro;59/mese)</option>
+                            <option>Enterprise (&euro;99/mese)</option>
+                        </select>
+                    </div>
+                    <div class="field-row">
+                        <label class="field-label">Durata trial (giorni)</label>
+                        <input type="number" class="field-input" value="14">
+                        <div class="field-hint">0 = nessun trial</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Funzionalit&agrave; -->
+        <div class="card">
+            <div class="card-hdr">
+                <i class="card-hdr-icon bi bi-toggles"></i>
+                <span class="card-hdr-title">Funzionalit&agrave;</span>
+            </div>
+            <div class="card-inner" style="padding:.5rem 1.25rem;">
+                <div class="toggle-row">
+                    <div>
+                        <div class="toggle-label">Registrazione self-service</div>
+                        <div class="toggle-hint">Permetti ai ristoranti di registrarsi autonomamente (futura)</div>
+                    </div>
+                    <label class="switch"><input type="checkbox"><span class="switch-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                    <div>
+                        <div class="toggle-label">Email reminder automatici</div>
+                        <div class="toggle-hint">Invia reminder via cron il giorno prima della prenotazione</div>
+                    </div>
+                    <label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                    <div>
+                        <div class="toggle-label">Men&ugrave; digitale</div>
+                        <div class="toggle-hint">Abilita la sezione men&ugrave; per tutti i ristoranti</div>
+                    </div>
+                    <label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                    <div>
+                        <div class="toggle-label">Crediti email (marketing)</div>
+                        <div class="toggle-hint">Abilita la sezione email marketing nella dashboard ristoratore</div>
+                    </div>
+                    <label class="switch"><input type="checkbox"><span class="switch-slider"></span></label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manutenzione -->
+        <div class="card">
+            <div class="card-hdr">
+                <i class="card-hdr-icon bi bi-tools"></i>
+                <span class="card-hdr-title">Modalit&agrave; manutenzione</span>
+            </div>
+            <div class="card-inner">
+                <div class="toggle-row" style="border:none;padding-top:0;">
+                    <div>
+                        <div class="toggle-label">Attiva manutenzione</div>
+                        <div class="toggle-hint">Blocca l'accesso a tutte le dashboard. Solo il super admin pu&ograve; accedere.</div>
+                    </div>
+                    <label class="switch"><input type="checkbox"><span class="switch-slider"></span></label>
+                </div>
+                <div class="field-row" style="margin-top:.75rem;">
+                    <label class="field-label">Messaggio manutenzione</label>
+                    <textarea class="field-input" rows="2" style="resize:vertical;">Il sistema &egrave; in manutenzione. Torneremo operativi a breve.</textarea>
+                    <div class="field-hint">Mostrato ai ristoratori che tentano di accedere durante la manutenzione</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Danger zone -->
+        <div class="danger-zone" style="margin-bottom:1.25rem;">
+            <div class="card-hdr">
+                <i class="bi bi-exclamation-triangle" style="color:#C62828;"></i>
+                <span class="card-hdr-title">Zona pericolosa</span>
+            </div>
+            <div class="danger-action">
+                <div>
+                    <div style="font-size:.85rem;font-weight:600;color:#1a1d23;">Svuota log attivit&agrave;</div>
+                    <div style="font-size:.72rem;color:#adb5bd;">Elimina tutti i log pi&ugrave; vecchi di 90 giorni</div>
+                </div>
+                <button class="danger-btn">Svuota log</button>
+            </div>
+            <div class="danger-action">
+                <div>
+                    <div style="font-size:.85rem;font-weight:600;color:#1a1d23;">Invalida tutte le sessioni</div>
+                    <div style="font-size:.72rem;color:#adb5bd;">Disconnette tutti gli utenti da tutte le dashboard</div>
+                </div>
+                <button class="danger-btn">Invalida sessioni</button>
+            </div>
+            <div class="danger-action">
+                <div>
+                    <div style="font-size:.85rem;font-weight:600;color:#1a1d23;">Rigenera cache</div>
+                    <div style="font-size:.72rem;color:#adb5bd;">Svuota tutte le cache del sistema (route, config, view)</div>
+                </div>
+                <button class="danger-btn">Rigenera</button>
+            </div>
+        </div>
+
+        <!-- Save bar -->
+        <div style="display:flex;gap:.5rem;justify-content:flex-end;padding-bottom:2rem;">
+            <button class="btn-save btn-save-outline">Annulla</button>
+            <button class="btn-save btn-save-primary"><i class="bi bi-check-circle me-1"></i> Salva impostazioni</button>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

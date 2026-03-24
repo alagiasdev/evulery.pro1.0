@@ -13,10 +13,17 @@ class MenuApiController
     {
         $slug = $request->param('slug');
 
-        $tenant = (new Tenant())->findBySlug($slug);
+        $tenantModel = new Tenant();
+        $tenant = $tenantModel->findBySlug($slug);
 
-        if (!$tenant || !$tenant['is_active'] || !$tenant['menu_enabled']) {
+        if (!$tenant || !$tenant['is_active'] || !$tenant['menu_enabled']
+            || !$tenantModel->canUseService((int)$tenant['id'], 'digital_menu')) {
             Response::error('Menù non disponibile.', 'MENU_NOT_AVAILABLE', 404);
+        }
+
+        // Block expired subscriptions
+        if ($tenantModel->getExpiredSubscription((int)$tenant['id'])) {
+            Response::error('Menù non disponibile.', 'SUBSCRIPTION_EXPIRED', 403);
         }
 
         $menuItem = new MenuItem();

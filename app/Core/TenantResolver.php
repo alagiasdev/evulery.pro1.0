@@ -75,4 +75,20 @@ class TenantResolver
     {
         return self::$currentTenant['id'] ?? null;
     }
+
+    /**
+     * Reload current tenant data from DB (e.g. after credits change).
+     */
+    public static function refreshCurrent(): void
+    {
+        if (!self::$currentTenant) return;
+
+        $db = Database::getInstance();
+        $stmt = $db->prepare('SELECT * FROM tenants WHERE id = :id LIMIT 1');
+        $stmt->execute(['id' => self::$currentTenant['id']]);
+        $tenant = $stmt->fetch();
+        if ($tenant) {
+            self::$currentTenant = $tenant;
+        }
+    }
 }

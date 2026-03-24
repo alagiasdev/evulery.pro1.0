@@ -1,10 +1,10 @@
 # Evulery.Pro 1.0 - Prossimi Passi
 
 ## Stato Attuale
-Fasi completate: Foundation, Auth, Admin Panel, Multi-Tenant, Slot/Capacita, Booking Widget, Dashboard Ristoratore, Security Audit (25/25), Dashboard UX improvements, Prenotazione Rapida Touch (FASE 16), Design System v3.1, Booking Widget Polish (FASE 17 parziale), Promozioni e Badge Sconto (FASE 14), Menu Digitale Consultivo (FASE 20A v2.1).
-Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widget e dashboard, menu digitale pubblico con QR code.
+Fasi completate: Foundation, Auth, Admin Panel, Multi-Tenant, Slot/Capacita, Booking Widget, Dashboard Ristoratore, Security Audit (25/25), Dashboard UX improvements, Prenotazione Rapida Touch (FASE 16), Design System v3.1, Booking Widget Polish (FASE 17 parziale), Promozioni e Badge Sconto (FASE 14), Menu Digitale Consultivo (FASE 20A v2.1), Chiusure e Conferma Manuale (FASE 12), Email (FASE 13 parziale), Service Gating, Admin Backend (Activity Log, Gestione Utenti, Impersonation), **Email Broadcast con Crediti (FASE 15)**.
+Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widget e dashboard, menu digitale pubblico con QR code, super admin con gestione piani/abbonamenti/utenti/impersonation/activity log, email marketing broadcast con crediti e TurboSMTP.
 
-**Nota architetturale (Marzo 2026):** Il modello commerciale sara basato sui **coperti** (numero di prenotazioni/coperti gestiti), NON sulle feature flags. Tutte le funzionalita sono disponibili per tutti i tenant. La FASE 9 (Feature Flags) e stata abbandonata. I piani commerciali (FASE 18) limiteranno solo il volume di coperti mensili, non l'accesso alle singole feature.
+**Nota architetturale (Marzo 2026 - aggiornata):** Il modello commerciale e basato su **coperti illimitati** e **piani differenziati per servizi**. I piani sono gestiti dinamicamente dall'admin panel (tabelle `plans`, `services`, `plan_services`). Il service gating e implementato via `tenant_can()` / `gate_service()` / `Tenant::canUseService()` con lock card UI uniforme (`views/partials/service-locked.php`). La FASE 9 originale (feature flags con PlanService) e stata superata da un approccio piu snello.
 
 **Completato recentemente (sessione corrente - Marzo 2026):**
 - [x] Promozioni: badge sconto su slot dashboard, sconto in email reminder, colonna Sconto in CSV export (20/03/2026)
@@ -20,6 +20,19 @@ Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widg
 - [x] Fix filter-bar clienti: wrappato in `.filter-row` per layout flex corretto
 - [x] Footer branding: "© {anno} Evulery · by alagias. - Soluzioni per il web" su tutte le pagine
 - [x] Wireframe creati: `customers-stats.html`, `booking-widget-validation.html`, `plans-feature-flags.html`
+- [x] Super admin backend: gestione piani (CRUD), servizi (catalogo), abbonamenti tenant, scadenze (22/03/2026)
+- [x] Service gating completo: 7 servizi gatati (digital_menu, promotions, custom_domain, export_csv, email_reminder, deposit, statistics) con lock card UI, sidebar lucchetti, controller gate, pagine pubbliche friendly (22/03/2026)
+- [x] Partial riutilizzabile `views/partials/service-locked.php` per lock card uniforme su tutte le pagine gatate
+- [x] Servizio `deposit` (Caparra) aggiunto al catalogo servizi, gatato su dashboard + widget + API (migration 017)
+- [x] Servizio `statistics` rinominato "Statistiche Clienti", gatato con lock card (migration 018)
+- [x] Servizio `analytics` (Analytics) aggiunto al catalogo come placeholder futuro (migration 018)
+- [x] Subscription expiry: TenantMiddleware redirect, pagine pubbliche sospese, API 403, widget embed bloccato
+- [x] Pagina pubblica "Menu non disponibile" (`views/menu/unavailable.php`) se piano non include digital_menu
+- [x] Activity Log: pagina `/admin/activity-log` con 34 tipi evento, filtri, KPI, paginazione, purge vecchi log (23/03/2026)
+- [x] Gestione Utenti: pagina `/admin/users` con filtri (ricerca, ruolo, tenant, stato), paginazione 25/pag (23/03/2026)
+- [x] Impersonation: super admin entra nella dashboard di qualsiasi ristorante con full access, banner giallo, audit log, bypass subscription expiry, logout safety (23/03/2026)
+- [x] FASE 15 Email Broadcast con Crediti: area Comunicazioni dashboard, BroadcastService, cron batch TurboSMTP, crediti email, GDPR unsubscribe, URL auto-linking, sicurezza (XSS, rate limit, SMTP log sanitizzati) (23/03/2026)
+- [x] Fix bug last_booking_at: aggiunta colonna + migration 021, popolamento da dati esistenti, aggiornamento su incrementBookings() (23/03/2026)
 
 **Completato in sessioni precedenti:**
 - [x] Paginazione server-side liste: clienti (25/pag con filtro segmento + ricerca), admin tenants (25/pag con ricerca)
@@ -66,7 +79,7 @@ Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widg
 - [x] Hook in `ReservationsController::store()` (prenotazione da dashboard)
 - [x] Hook in `ReservationsController::update()` (modifica da dashboard)
 - [x] Sender dinamico: FromName = nome ristorante, Reply-To = email tenant
-- [ ] Link di cancellazione nell'email (richiede link magico, FASE 11)
+- [x] Link di gestione/cancellazione nell'email (link magico implementato in FASE 11)
 
 ### ~~2. Esportazione CSV prenotazioni~~ → COMPLETATO
 ~~**Complessita: Bassa** | File: 3 | Priorita: MEDIA~~
@@ -139,78 +152,29 @@ Le seguenti migliorie non sono prioritarie per il lancio e vengono rimandate a f
 - [ ] Impostazioni caparra nel dashboard (gia creata la UI, manca il collegamento Stripe)
 - [ ] Testare con carte test Stripe
 
-## FASE 9: Sistema Piani e Feature Flags [ABBANDONATA]
-~~Architettura flessibile per gestire i piani commerciali con feature gating dinamico.~~
-**Decisione (Marzo 2026):** Modello commerciale basato sui coperti, non sulle feature. Tutte le funzionalita disponibili per tutti. I piani differenzieranno solo per volume coperti mensili (vedi FASE 18).
+## FASE 9: Service Gating [COMPLETATA - approccio semplificato]
+~~Architettura originale con PlanService e feature_definitions abbandonata.~~
+**Implementazione (Marzo 2026):** Approccio semplificato con tabelle `plans`, `services`, `plan_services`.
+- [x] Tabella `plans` (id, name, slug, price_monthly, description, features JSON, sort_order, is_active)
+- [x] Tabella `services` (id, key, name, description, sort_order, is_active) — catalogo 14 servizi
+- [x] Tabella `plan_services` (plan_id, service_id) — associazione piano-servizi
+- [x] `Tenant::canUseService()` con cache per-request
+- [x] Helper `tenant_can()` per view, `gate_service()` per controller
+- [x] Lock card UI uniforme via partial `views/partials/service-locked.php`
+- [x] Sidebar lucchetti per servizi non inclusi nel piano
+- [x] Pagine pubbliche friendly (menu/unavailable.php) per servizi non disponibili
+- [x] Admin panel: gestione piani CRUD, catalogo servizi, associazione piano-servizi
+- [x] Piani gestiti dinamicamente dall'admin (Starter €29, Professional €59, Enterprise €99)
+- [x] Coperti illimitati per tutti i piani — differenziazione solo per servizi inclusi
 
-### Database: 3 nuove tabelle
-- [ ] `plan_definitions` - Piani con prezzo e booking_limit
-  - Campi: id, name (key), display_name, description, price, booking_limit (NULL=illimitate), sort_order, is_active
-  - Piani default: Free (0€, 50 pren/mese), Starter (29€, 500), Pro (59€, illimitate), Business (99€, illimitate)
-- [ ] `feature_definitions` - Registro funzionalita
-  - Campi: id, key, display_name, description, type (boolean/limit), category, sort_order
-  - Features iniziali: deposit, custom_domain, white_label, custom_meal_categories, export_csv, email_notifications, sms_notifications, analytics, api_access, multi_user, priority_support, promotions, email_broadcast, blacklist, customer_notes, manual_confirmation, closure_days
-- [ ] `plan_features` - Matrice piano/feature (tabella ponte)
-  - Campi: id, plan_id, feature_id, is_enabled, limit_value (per type=limit)
-- [ ] Migrare colonna `tenants.plan` da ENUM('base','deposit','custom') a VARCHAR che referenzia `plan_definitions.name`
-- [ ] (Futuro) `tenant_feature_overrides` - Override per eccezioni su singolo tenant
+Servizi gatati: `digital_menu`, `promotions`, `custom_domain`, `export_csv`, `email_reminder`, `deposit`, `statistics`, `email_broadcast`
+Servizi futuri: `analytics` (placeholder in catalogo)
 
-### Backend
-- [ ] `PlanService.php` - Servizio centralizzato feature gating
-  - `can('deposit')` → true/false
-  - `can('custom_domain')` → true/false
-  - `limit('multi_user')` → numero o null (illimitato)
-  - `bookingsRemaining()` → conteggio rimanente o null
-  - `isAtBookingLimit()` → true/false
-  - `getPlanDetails()` → info piano corrente
-- [ ] Integrare PlanService nei controller esistenti (deposit, domain, meal-categories, ecc.)
-- [ ] Upgrade prompts: quando il ristoratore accede a feature bloccata, mostrare messaggio con link upgrade
-
-### Admin Panel
-- [ ] Pagina gestione piani: matrice interattiva feature x piano
-  - Checkbox per boolean, input numerico per limit, prezzo e booking_limit editabili
-- [ ] Pagina gestione features: aggiungere/modificare feature definitions
-- [ ] Nella scheda tenant: assegnazione piano + visualizzazione features attive
-
-### Matrice Default Piani/Features
-```
-                        Free    Starter   Pro      Business
-────────────────────────────────────────────────────────────
-Prezzo                  0€      29€       59€      99€
-Prenotazioni/mese       50      500       ∞        ∞
-────────────────────────────────────────────────────────────
-Caparra (Stripe)        [ ]     [ ]       [✓]      [✓]
-Dominio personalizzato  [ ]     [ ]       [ ]      [✓]
-White-label             [ ]     [ ]       [ ]      [✓]
-Categorie pasto custom  [ ]     [ ]       [✓]      [✓]
-Export CSV              [ ]     [✓]       [✓]      [✓]
-Email avanzate          [ ]     [✓]       [✓]      [✓]
-SMS                     [ ]     [ ]       [ ]      [✓]
-Analytics/Report        [ ]     [ ]       [✓]      [✓]
-Accesso API             [ ]     [ ]       [✓]      [✓]
-Multi-user (staff)      1       2         5        ∞
-CRM Clienti             [ ]     [✓]       [✓]      [✓]
-Link gestione prenot.   [ ]     [✓]       [✓]      [✓]
-Reminder email          [ ]     [✓]       [✓]      [✓]
-Promozioni/Sconti       [ ]     [ ]       [✓]      [✓]
-Email broadcast         [ ]     [ ]       [✓]      [✓]
-Blacklist clienti       [ ]     [✓]       [✓]      [✓]
-Note clienti            [ ]     [✓]       [✓]      [✓]
-Conferma manuale        [ ]     [ ]       [✓]      [✓]
-Giorni chiusura         [ ]     [✓]       [✓]      [✓]
-Prenot. rapida touch    [✓]     [✓]       [✓]      [✓]
-Supporto prioritario    [ ]     [ ]       [✓]      [✓]
-```
-
-**Nota:** Tutte le feature sono flag booleani controllabili dall'admin nella matrice.
-Il piano Free include solo il widget di prenotazione base (calendario, orari, form).
-L'admin puo modificare qualsiasi flag per qualsiasi piano in qualsiasi momento.
-
-## FASE 10: Gestione Domini Personalizzati (richiede piano Business)
+## FASE 10: Gestione Domini Personalizzati (richiede piano con `custom_domain`)
 - [ ] Testare flusso CNAME + verifica DNS (logica gia scritta)
 - [ ] Configurare virtual host XAMPP per test locale con dominio custom
 - [ ] Gestione SSL automatico (Let's Encrypt) per produzione
-- [ ] Gate: verificare `PlanService::can('custom_domain')` prima di permettere configurazione
+- [x] Gate: `tenant_can('custom_domain')` implementato — lock card su pagina dominio, sidebar lucchetto
 
 ## FASE 11: CRM Clienti e Gestione Prenotazione
 Sistema automatico di gestione clienti per il ristoratore + self-service per il cliente finale.
@@ -247,7 +211,7 @@ Il cliente gestisce la prenotazione tramite un link unico ricevuto via email. Ne
   - Permettere modifica data (si/no)
   - Permettere modifica persone (si/no)
 
-### Blacklist Clienti → COMPLETATO (senza gate, da integrare con PlanService)
+### Blacklist Clienti → COMPLETATO
 - [x] Flag `is_blocked` + `blocked_at` sulla tabella `customers`
 - [x] Quando cliente bloccato tenta di prenotare (match email) → messaggio "Contatta il ristorante telefonicamente"
 - [x] Bottone blocca/sblocca nella scheda cliente (toggle con flash message)
@@ -258,47 +222,45 @@ Il cliente gestisce la prenotazione tramite un link unico ricevuto via email. Ne
 - [x] Textarea nella scheda cliente per aggiungere/modificare note
 - [x] Note visibili nella vista prenotazione (customer_notes_persistent in show.php)
 
-## FASE 12: Giorni di Chiusura e Conferma Manuale
+## FASE 12: Giorni di Chiusura e Conferma Manuale [COMPLETATA]
 
 ### Giorni di Chiusura / Orari Speciali
 Gestione chiusure straordinarie, ferie e orari speciali.
-- [ ] Tabella `closures` (tenant_id, date_from, date_to, reason, type: 'closed'/'special_hours')
-- [ ] Per type 'special_hours': colonne `special_open_time`, `special_close_time`
-- [ ] Pagina dashboard "Chiusure e Ferie": calendario per selezionare date/range
+- [x] Model `SlotOverride` con metodi CRUD per chiusure (singole e range)
+- [x] Controller `ClosuresController` (index, store, delete) con validazione max 90 giorni
+- [x] Pagina dashboard "Chiusure" in Settings: calendario interattivo con selezione range
   - Chiusura singola giornata (es. festivo)
   - Ferie (range date, es. 10-25 agosto)
-  - Orari speciali per giorno specifico (es. vigilia Natale solo pranzo)
-- [ ] Integrazione con AvailabilityService: giorni chiusi → zero slot nel widget
-- [ ] Integrazione con calendario widget: giorni chiusi mostrati come non disponibili (grigi)
+  - Preset rapidi (Oggi, Domani, Natale, Agosto, ecc.)
+  - Motivo chiusura opzionale
+- [x] Integrazione con AvailabilityService: giorni chiusi → zero slot nel widget
+- [x] API pubblica: `GET /api/v1/tenants/{slug}/closures` per calendario widget
+- [x] Lista chiusure prossime raggruppate per mese + storico chiusure passate
 
 ### Conferma Manuale Prenotazioni
-Alcuni ristoranti vogliono approvare prima di confermare.
-- [ ] Impostazione on/off nel dashboard: "Richiedi conferma manuale"
-- [ ] Se attivo: prenotazione arriva come "In attesa di conferma" (nuovo stato)
-- [ ] Dashboard: bottoni Conferma / Rifiuta per ogni prenotazione in attesa
-- [ ] Il cliente vede "In attesa di conferma" nella pagina link magico
-- [ ] Email automatica al cliente quando il ristoratore conferma o rifiuta
-- [ ] Timeout opzionale: se non confermata entro X ore, notifica al ristoratore
+- [x] Colonna `confirmation_mode` ENUM('auto','manual') su tenants (migration 007)
+- [x] Toggle auto/manuale in Impostazioni Generali (radio buttons)
+- [x] Se manuale: prenotazione arriva come `status = 'pending'`
+- [x] Dashboard: bottone conferma rapida nella lista prenotazioni
+- [x] Email conferma inviata solo quando stato passa a `confirmed`
+- [ ] Timeout opzionale: se non confermata entro X ore, notifica al ristoratore (futuro)
 
-## FASE 13: Notifiche Email
-- [ ] Implementare `NotificationService.php`
-- [ ] Configurare SMTP nel `.env` (o usare servizio come Mailgun/SendGrid)
-- [ ] Template email: conferma prenotazione (con link magico di gestione)
-- [ ] Template email: modifica prenotazione (conferma nuovi dettagli + link gestione)
-- [ ] Template email: cancellazione prenotazione
-- [ ] Template email: ricevuta caparra
-- [ ] Template email: reset password (attualmente logga il token)
+## FASE 13: Notifiche Email [PARZIALMENTE COMPLETATA]
+- [x] `MailService.php` con PHPMailer — invio SMTP configurabile da `.env`
+- [x] SMTP configurato: `MAIL_HOST`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_PORT`, `MAIL_ENCRYPTION`
+- [x] Template email: conferma prenotazione (con link magico di gestione, sconto se applicato, link menu)
+- [x] Template email: aggiornamento prenotazione (variante blu)
+- [x] Template email: reset password (funzionante)
+- [ ] Template email: cancellazione prenotazione (notifica al ristoratore)
+- [ ] Template email: ricevuta caparra (richiede integrazione Stripe, FASE 8)
 
-### Reminder Email
-Notifica automatica prima della prenotazione per ridurre i no-show. Include link magico per modificare/cancellare.
-- [ ] Cron job / task scheduler che controlla prenotazioni in arrivo
-- [ ] Template email reminder con riepilogo + link gestione
-- [ ] Configurazione ristoratore: quando inviare il reminder
-  - 24 ore prima (default)
-  - 2 ore prima
-  - Entrambi (doppio reminder)
-  - Disattivato
-- [ ] Colonna `reminder_sent_at` su `reservations` per evitare invii doppi
+### Reminder Email → COMPLETATO
+- [x] Script cron `scripts/send-reminders.php` (24h + 2h prima)
+- [x] Template HTML reminder (blu 24h, arancione 2h) con riepilogo + link gestione
+- [x] Doppio reminder: 24h + 2h prima della prenotazione
+- [x] Colonne `reminder_24h_sent_at` e `reminder_2h_sent_at` per evitare invii doppi
+- [x] Service gating: skip tenant senza servizio `email_reminder` nel piano
+- [ ] Setup cron sul server di produzione (ogni 15 min) — da configurare al deploy
 
 ## FASE 14: Promozioni e Sconti [COMPLETATA]
 Badge sconto percentuale nel widget (stile TheFork). Il ristoratore gestisce la domanda incentivando le fasce orarie/giorni vuoti.
@@ -325,21 +287,28 @@ Badge sconto percentuale nel widget (stile TheFork). Il ristoratore gestisce la 
 - [x] Colonna discount_percent su reservations, lookup server-side (mai fidarsi del client)
 - [x] Display in dashboard: badge nella lista prenotazioni + dettaglio nella scheda
 
-## FASE 15: Email Broadcast
-Newsletter semplice per comunicare con i clienti (eventi, nuovo menu, promozioni). Richiede piano Pro+.
+## FASE 15: Email Broadcast con Crediti [COMPLETATA]
+Email marketing per comunicare con i clienti del ristorante. Invio batch via TurboSMTP, crediti prepagati, GDPR compliant.
 
-- [ ] Pagina dashboard "Comunicazioni": form invio email
-  - Oggetto
-  - Testo libero (textarea, niente editor drag&drop)
-  - Possibilita di aggiungere link nel testo
-- [ ] Selezione destinatari:
-  - Tutti i clienti
-  - Per segmento (VIP, Abituali, Occasionali, Nuovi)
-  - Chi non viene da X giorni (es. 30+ giorni)
-- [ ] Template email fisso: logo ristorante in header, testo al centro, footer con indirizzo + link disiscrizione
-- [ ] Link unsubscribe obbligatorio (GDPR): colonna `unsubscribed` su `customers`
-- [ ] Storico invii: lista email inviate con data, oggetto, numero destinatari
-- [ ] Rate limiting: max 1 broadcast al giorno per evitare spam
+- [x] Pagina dashboard "Comunicazioni" con KPI (crediti, campagne inviate, destinatari raggiunti)
+- [x] Form creazione campagna: oggetto, corpo testo con URL auto-linking, selezione segmento (6 filtri)
+- [x] Preview conteggio destinatari live (fetch JS)
+- [x] Dettaglio campagna con statistiche invio
+- [x] Selezione destinatari: Tutti / Nuovi / Occasionali / Abituali / VIP / Inattivi da X giorni
+- [x] Template email HTML: header verde con nome ristorante, corpo, info ristorante, footer GDPR
+- [x] Link unsubscribe obbligatorio (GDPR): token 64 char, pagina pubblica standalone, flag irreversibile
+- [x] Storico invii: lista campagne con stato (badge colorato), segmento, conteggi, paginazione
+- [x] Rate limiting: max 1 broadcast/giorno per tenant
+- [x] Sistema crediti: saldo su `tenants.email_credits_balance`, assegnazione da admin, decremento atomico
+- [x] Transazioni crediti: storico completo in `email_credit_transactions`
+- [x] Cron batch: `scripts/send-broadcasts.php` ogni 5 min, batch 50 recipient, 100ms delay, TurboSMTP
+- [x] SMTP broadcast separato: `BROADCAST_SMTP_*` in .env (TurboSMTP), fallback su `MAIL_*`
+- [x] Service gating: `email_broadcast` (Professional/Enterprise)
+- [x] Sidebar dashboard: voce "Comunicazioni" con lucchetto se non nel piano
+- [x] AuditLog: 4 eventi (broadcast created/sent/deleted, credits assigned)
+- [x] Sicurezza: XSS prevention su URL, rate limit endpoint unsubscribe, SMTP password sanitizzate nei log
+- [x] Migration 020: tabelle email_campaigns, email_campaign_recipients, email_credit_transactions, email_unsubscribes
+- [x] Migration 021: colonna `last_booking_at` su customers per segmento "Inattivi"
 
 ## FASE 16: Dashboard Prenotazione Rapida (Touch-Friendly) [COMPLETATA]
 Riscrittura completa della pagina "Nuova Prenotazione" per uso su schermi touch e gestione prenotazioni telefoniche.
@@ -394,7 +363,7 @@ Obiettivo: 5 tocchi in 5 secondi per registrare una prenotazione telefonica.
 - [ ] Filtri avanzati prenotazioni (range date, stato multiplo)
 - [x] Upload logo ristorante (form settings, MIME validation, preview, rimozione, visibile solo su widget)
 - [x] Responsive mobile per sidebar dashboard (toggle hamburger in app.js)
-- [ ] Export prenotazioni in CSV → vedi Miglioria #2
+- [x] Export prenotazioni in CSV (vedi Miglioria #2)
 - [x] Validazione frontend inline booking widget (per-campo on-blur, auto-clear, no alert() nativi)
 - [x] Slot passati nascosti per "Oggi" (widget: hidden, dashboard: grigi cliccabili)
 - [x] Statistiche clienti (pagina dedicata con KPI, top frequenza, nuovi vs ritorno, segmentazione)
@@ -404,27 +373,31 @@ Obiettivo: 5 tocchi in 5 secondi per registrare una prenotazione telefonica.
 - [x] Brute force protection (LoginThrottle)
 - [x] Pagine auth redesign v3.1 (login, forgot-password, reset-password)
 
-## FASE 18: Billing SaaS (Stripe Subscriptions)
-Modello basato sui **coperti mensili**: tutte le feature incluse, i piani differenziano solo per volume.
-- [ ] Definizione piani per fasce coperti (es. Free fino a X, Starter fino a Y, Pro illimitati)
-- [ ] Contatore coperti mensili per tenant (somma party_size prenotazioni del mese)
+## FASE 18: Piani e Abbonamenti [PARZIALMENTE COMPLETATA]
+Modello basato su **coperti illimitati** e **piani differenziati per servizi**.
+- [x] Piani dinamici gestiti da admin (tabella `plans`: nome, prezzo, servizi associati)
+- [x] Catalogo servizi (tabella `services`: 14 servizi con key univoca)
+- [x] Associazione piano-servizi (tabella `plan_services`)
+- [x] Admin panel: CRUD piani, gestione servizi, assegnazione piano a tenant
+- [x] Admin panel: gestione abbonamenti (data inizio/fine, stato attivo/scaduto)
+- [x] Gestione scadenze: TenantMiddleware redirect, pagine pubbliche sospese, API 403
+- [x] Service gating runtime completo (7 servizi gatati, lock card UI)
 - [ ] Stripe Subscriptions collegato ai piani
 - [ ] Webhook per `invoice.payment_succeeded`, `invoice.payment_failed`
-- [ ] Soft limit: avviso quando il tenant si avvicina al limite coperti
-- [ ] Hard limit: blocco nuove prenotazioni widget al superamento (dashboard sempre operativo)
-- [ ] Pannello admin: gestione abbonamenti, storico pagamenti
 - [ ] Pagina pricing pubblica per i ristoratori
 - [ ] Self-service upgrade/downgrade piano dal dashboard
+- [ ] Trial migliorato: form creation con opzione trial, banner countdown, auto-email prima della scadenza
 
 ## FASE 19: Funzionalita Avanzate (Future)
-- [ ] Notifiche SMS (Twilio o simile) - richiede piano Business
+- [ ] Notifiche SMS (Twilio o simile) — crediti pay-per-use
 - [ ] Calendario visuale prenotazioni (vista settimanale/mensile)
-- [ ] Report e statistiche (grafici coperti, no-show rate, trend) - richiede piano Pro+
+- [ ] Analytics avanzati (servizio `analytics`): trend prenotazioni, heatmap orari, performance promo, revenue caparre — richiede piano Professional+
 - [ ] Multi-lingua (i18n)
 - [ ] Integrazione Google Calendar
 - [ ] Waitlist (lista d'attesa quando pieno)
-- [ ] QR code per link prenotazione
-- [ ] App PWA per ristoratore
+- [ ] Multi-sede (servizio `multi_location` gia nel catalogo)
+- [ ] Accesso API (servizio `api_access` gia nel catalogo)
+- [x] Email marketing con crediti (area comunicazioni + pacchetti email) → FASE 15 completata
 
 ## FASE 20A: Menu Digitale Consultivo [COMPLETATA]
 Menu digitale pubblico per i clienti del ristorante, gestibile dalla dashboard. Design v2.1 con hero, categorie, allergeni EU, QR code.

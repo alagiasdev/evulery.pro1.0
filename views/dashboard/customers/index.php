@@ -41,6 +41,7 @@ $segTabs = [
         </div>
     </a>
     <?php endforeach; ?>
+    <?php if (tenant_can('statistics')): ?>
     <a href="<?= url('dashboard/customers/stats') ?>" class="seg-tab seg-tab-stats" style="--seg-color:#00844A;">
         <i class="bi bi-graph-up-arrow"></i>
         <div>
@@ -48,6 +49,15 @@ $segTabs = [
             <div class="seg-label">analisi</div>
         </div>
     </a>
+    <?php else: ?>
+    <a href="<?= url('dashboard/customers/stats') ?>" class="seg-tab seg-tab-stats" style="--seg-color:#adb5bd;opacity:.6;">
+        <i class="bi bi-graph-up-arrow"></i>
+        <div>
+            <div class="seg-count" style="font-size:.85rem;">Statistiche <i class="bi bi-lock-fill" style="font-size:.6rem;"></i></div>
+            <div class="seg-label">analisi</div>
+        </div>
+    </a>
+    <?php endif; ?>
 </div>
 
 <!-- Filter bar -->

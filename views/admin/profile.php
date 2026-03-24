@@ -76,7 +76,7 @@
             <div style="padding:1.25rem;">
                 <div style="font-weight:600;font-size:.9rem;margin-bottom:.75rem;">Info account</div>
                 <div style="font-size:.82rem;color:#495057;line-height:1.8;">
-                    <strong>Ruolo:</strong> <?= e(ucfirst($user['role'] ?? '')) ?><br>
+                    <strong>Ruolo:</strong> <?= e(role_label($user['role'] ?? '')) ?><br>
                     <strong>Ultimo accesso:</strong> <?= !empty($user['last_login_at']) ? format_date($user['last_login_at'], 'd/m/Y H:i') : 'Mai' ?><br>
                     <strong>Registrato il:</strong> <?= format_date($user['created_at'], 'd/m/Y') ?>
                 </div>

@@ -11,6 +11,7 @@ use App\Models\Customer;
 use App\Models\Reservation;
 use App\Models\Promotion;
 use App\Models\ReservationLog;
+use App\Services\AuditLog;
 use App\Services\AvailabilityService;
 use App\Services\MailService;
 
@@ -204,6 +205,8 @@ class ReservationsController
             MailService::sendReservationConfirmation($full, $tenant);
         }
 
+        AuditLog::log(AuditLog::RESERVATION_CREATED, "Prenotazione #{$reservationId}", Auth::id(), $tenantId);
+
         flash('success', 'Prenotazione creata con successo.');
         Response::redirect(url("dashboard/reservations/{$reservationId}"));
     }
@@ -245,6 +248,17 @@ class ReservationsController
                 MailService::sendReservationConfirmation($full, $tenant);
             }
         }
+
+        // Notify restaurant owner when reservation is cancelled
+        if ($newStatus === 'cancelled') {
+            $full = $reservationModel->findWithCustomer($id);
+            if ($full) {
+                $tenant = TenantResolver::current();
+                MailService::sendCancellationNotification($full, $tenant, 'staff');
+            }
+        }
+
+        AuditLog::log(AuditLog::RESERVATION_STATUS, "Prenotazione #{$id}: {$newStatus}", Auth::id(), (int)$reservation['tenant_id']);
 
         flash('success', 'Stato aggiornato a: ' . status_label($newStatus));
 
@@ -303,12 +317,16 @@ class ReservationsController
         // Delete the reservation
         $reservationModel->delete($id);
 
+        AuditLog::log(AuditLog::RESERVATION_DELETED, "Prenotazione #{$id}", Auth::id(), (int)$reservation['tenant_id']);
+
         flash('success', 'Prenotazione #' . $id . ' eliminata definitivamente.');
         Response::redirect(url('dashboard/reservations'));
     }
 
     public function export(Request $request): void
     {
+        if (gate_service('export_csv', url('dashboard/reservations'))) return;
+
         $tenantId = Auth::tenantId();
         $dateFrom = $request->query('date_from', date('Y-m-d'));
         $dateTo = $request->query('date_to', $dateFrom);
@@ -474,6 +492,8 @@ class ReservationsController
                 MailService::sendReservationConfirmation($updated, $tenant, 'updated');
             }
         }
+
+        AuditLog::log(AuditLog::RESERVATION_UPDATED, "Prenotazione #{$id}", Auth::id(), $tenantId);
 
         flash('success', 'Prenotazione modificata con successo.');
         Response::redirect(url("dashboard/reservations/{$id}"));

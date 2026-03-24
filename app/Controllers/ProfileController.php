@@ -7,7 +7,11 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
 use App\Core\Validator;
+use App\Core\Database;
+use App\Core\TenantResolver;
+use App\Models\Plan;
 use App\Models\User;
+use App\Services\AuditLog;
 
 class ProfileController
 {
@@ -18,11 +22,50 @@ class ProfileController
         $layout = Auth::isSuperAdmin() ? 'admin' : 'dashboard';
         $view = Auth::isSuperAdmin() ? 'admin/profile' : 'dashboard/profile';
 
-        view($view, [
+        $viewData = [
             'title'      => 'Profilo',
             'activeMenu' => 'profile',
             'user'       => $user,
-        ], $layout);
+        ];
+
+        // Per i ristoratori: carica dati piano e abbonamento
+        if (!Auth::isSuperAdmin()) {
+            $tenant = TenantResolver::current();
+            $db = Database::getInstance();
+
+            $subscription = null;
+            $plan = null;
+            $planServices = [];
+
+            if ($tenant && $tenant['plan_id']) {
+                $plan = (new Plan())->findById((int)$tenant['plan_id']);
+
+                $stmt = $db->prepare(
+                    "SELECT * FROM subscriptions WHERE tenant_id = :tid ORDER BY id DESC LIMIT 1"
+                );
+                $stmt->execute(['tid' => $tenant['id']]);
+                $subscription = $stmt->fetch() ?: null;
+
+                $svcStmt = $db->prepare(
+                    "SELECT s.`key`, s.name FROM plan_services ps
+                     JOIN services s ON s.id = ps.service_id
+                     WHERE ps.plan_id = :pid ORDER BY s.sort_order"
+                );
+                $svcStmt->execute(['pid' => $tenant['plan_id']]);
+                $planServices = $svcStmt->fetchAll();
+            }
+
+            // Tutti i servizi disponibili (per mostrare inclusi + non inclusi)
+            $allSvcStmt = $db->query("SELECT `key`, name FROM services WHERE is_active = 1 ORDER BY sort_order");
+            $allServices = $allSvcStmt->fetchAll();
+
+            $viewData['plan'] = $plan;
+            $viewData['subscription'] = $subscription;
+            $viewData['planServices'] = $planServices;
+            $viewData['allServices'] = $allServices;
+        }
+
+        view($view, $viewData, $layout);
     }
 
     public function update(Request $request): void
@@ -81,6 +124,8 @@ class ProfileController
         }
 
         (new User())->update($userId, $updateData);
+
+        AuditLog::log(AuditLog::PROFILE_UPDATED, null, Auth::id());
 
         // Refresh session data
         Session::set('user_name', $updateData['first_name'] . ' ' . $updateData['last_name']);

@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Menu Digitale v2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-dark: #006837;
+            --brand-light: #E8F5E9;
+            --amber: #F59E0B;
+            --amber-light: #FFFBEB;
+            --amber-border: #FDE68A;
+            --text-dark: #1a1d23;
+            --text-body: #374151;
+            --text-muted: #6c757d;
+            --text-light: #adb5bd;
+            --bg-page: #FAFAF8;
+            --bg-card: #ffffff;
+            --border-light: #f0f0f0;
+            --radius: 14px;
+            --radius-sm: 10px;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            background: var(--bg-page);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ========== HERO ========== */
+        .dm-hero {
+            background: linear-gradient(135deg, #1a1d23 0%, #2d3748 100%);
+            color: #fff;
+            text-align: center;
+            padding: 2.5rem 1.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .dm-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 30% 70%, rgba(0,132,74,.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .dm-hero-logo {
+            width: 72px; height: 72px;
+            border-radius: 16px;
+            object-fit: cover;
+            border: 3px solid rgba(255,255,255,.15);
+            margin-bottom: 1rem;
+            background: rgba(255,255,255,.1);
+        }
+        .dm-hero-name {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -.02em;
+            margin: 0 0 .25rem;
+        }
+        .dm-hero-sub {
+            font-size: .85rem;
+            color: rgba(255,255,255,.6);
+            margin: 0;
+        }
+        .dm-info-bar {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            padding: .6rem 1rem;
+            background: rgba(255,255,255,.06);
+            margin-top: 1rem;
+            border-radius: 10px;
+        }
+        .dm-info-chip {
+            display: flex;
+            align-items: center;
+            gap: .3rem;
+            font-size: .75rem;
+            color: rgba(255,255,255,.55);
+        }
+
+        /* ========== STICKY NAV ========== */
+        .dm-cat-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            overflow-x: auto;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        .dm-cat-nav::-webkit-scrollbar { display: none; }
+        .dm-cat-nav-inner {
+            display: flex;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .dm-cat-nav-item {
+            flex-shrink: 0;
+            padding: .75rem 1rem;
+            font-size: .82rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            transition: all .15s;
+            white-space: nowrap;
+        }
+        .dm-cat-nav-item:hover { color: var(--text-dark); }
+        .dm-cat-nav-item.active {
+            color: var(--brand);
+            border-bottom-color: var(--brand);
+        }
+
+        /* ========== MAIN ========== */
+        .dm-main {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 1rem 2rem;
+        }
+
+        /* ========== SEARCH ========== */
+        .dm-search-wrap { padding: 1rem 0 .25rem; }
+        .dm-search {
+            width: 100%;
+            border: 1px solid var(--border-light);
+            background: var(--bg-card);
+            border-radius: var(--radius-sm);
+            padding: .6rem 1rem .6rem 2.5rem;
+            font-size: .85rem;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color .15s;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23adb5bd' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: .85rem center;
+        }
+        .dm-search::placeholder { color: var(--text-light); }
+        .dm-search:focus { border-color: var(--brand); }
+
+        /* ========== DAILY SPECIALS ========== */
+        .dm-specials { margin: 1.25rem 0 .5rem; }
+        .dm-specials-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            background: var(--amber);
+            color: #fff;
+            font-size: .72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            padding: .35rem .85rem;
+            border-radius: 20px;
+            margin-bottom: .85rem;
+        }
+        .dm-special-card {
+            background: var(--bg-card);
+            border: 1px solid var(--amber-border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: .65rem;
+            box-shadow: 0 1px 4px rgba(245,158,11,.08);
+        }
+        .dm-special-inner { display: flex; }
+        .dm-special-img {
+            width: 110px;
+            min-height: 110px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .dm-special-body {
+            padding: .85rem 1rem;
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .dm-special-label {
+            display: inline-flex;
+            align-items: center;
+            gap: .25rem;
+            font-size: .65rem;
+            font-weight: 700;
+            color: var(--amber);
+            text-transform: uppercase;
+            letter-spacing: .3px;
+            margin-bottom: .3rem;
+        }
+        .dm-special-name {
+            font-weight: 700;
+            font-size: .95rem;
+            color: var(--text-dark);
+            margin-bottom: .2rem;
+        }
+        .dm-special-desc {
+            font-size: .78rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: .4rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .dm-special-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .5rem;
+        }
+        .dm-special-price {
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--brand);
+        }
+
+        /* ========== CATEGORY SECTION ========== */
+        .dm-section { margin-top: 1.75rem; }
+        .dm-section-header {
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+            margin-bottom: .25rem;
+            padding-bottom: .5rem;
+        }
+        .dm-section-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: var(--brand-light);
+            color: var(--brand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .dm-section-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin: 0;
+        }
+        .dm-section-desc {
+            font-size: .78rem;
+            color: var(--text-muted);
+            margin: 0 0 .85rem;
+            padding-left: calc(36px + .65rem);
+        }
+        .dm-section-count {
+            font-size: .7rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-left: auto;
+        }
+
+        /* ========== ITEM CARD ========== */
+        .dm-items-grid {
+            display: flex;
+            flex-direction: column;
+            gap: .35rem;
+        }
+        .dm-item {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: .85rem 1rem;
+            display: flex;
+            gap: .85rem;
+            border: 1px solid var(--border-light);
+            transition: box-shadow .15s, border-color .15s;
+        }
+        .dm-item:hover {
+            border-color: #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,.04);
+        }
+        .dm-item-img-wrap {
+            width: 80px; height: 80px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .dm-item-img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+        .dm-item-content {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .dm-item-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: .5rem;
+        }
+        .dm-item-name {
+            font-weight: 700;
+            font-size: .9rem;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+        .dm-item-price {
+            font-weight: 800;
+            font-size: .95rem;
+            color: var(--brand);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .dm-item-desc {
+            font-size: .78rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+            margin-top: .2rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .dm-item-meta {
+            margin-top: auto;
+            padding-top: .35rem;
+        }
+
+        /* ========== ALLERGEN TAGS (v2: per esteso) ========== */
+        .dm-allergen-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: .3rem;
+        }
+        .dm-allergen-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: .3rem;
+            padding: .2rem .55rem;
+            border-radius: 20px;
+            font-size: .65rem;
+            font-weight: 600;
+            line-height: 1.3;
+            white-space: nowrap;
+            transition: transform .1s;
+        }
+        .dm-allergen-tag:hover {
+            transform: scale(1.05);
+        }
+        .dm-allergen-tag-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* Variant: light pill (colored bg + text) */
+        .dm-at-gluten      { background: #FFEBE6; color: #C62828; }
+        .dm-at-gluten .dm-allergen-tag-dot { background: #D84315; }
+        .dm-at-crustaceans  { background: #FFF3E0; color: #BF360C; }
+        .dm-at-crustaceans .dm-allergen-tag-dot { background: #E65100; }
+        .dm-at-eggs         { background: #FFFDE7; color: #F57F17; }
+        .dm-at-eggs .dm-allergen-tag-dot { background: #F9A825; }
+        .dm-at-fish         { background: #E3F2FD; color: #0D47A1; }
+        .dm-at-fish .dm-allergen-tag-dot { background: #0277BD; }
+        .dm-at-peanuts      { background: #EFEBE9; color: #4E342E; }
+        .dm-at-peanuts .dm-allergen-tag-dot { background: #8D6E63; }
+        .dm-at-soy          { background: #F1F8E9; color: #33691E; }
+        .dm-at-soy .dm-allergen-tag-dot { background: #558B2F; }
+        .dm-at-milk         { background: #E3F2FD; color: #0D47A1; }
+        .dm-at-milk .dm-allergen-tag-dot { background: #1565C0; }
+        .dm-at-nuts         { background: #EFEBE9; color: #3E2723; }
+        .dm-at-nuts .dm-allergen-tag-dot { background: #6D4C41; }
+        .dm-at-celery       { background: #E8F5E9; color: #1B5E20; }
+        .dm-at-celery .dm-allergen-tag-dot { background: #2E7D32; }
+        .dm-at-mustard      { background: #FFF8E1; color: #E65100; }
+        .dm-at-mustard .dm-allergen-tag-dot { background: #F57F17; }
+        .dm-at-sesame       { background: #EFEBE9; color: #4E342E; }
+        .dm-at-sesame .dm-allergen-tag-dot { background: #795548; }
+        .dm-at-sulphites    { background: #F3E5F5; color: #6A1B9A; }
+        .dm-at-sulphites .dm-allergen-tag-dot { background: #7B1FA2; }
+        .dm-at-lupin        { background: #FCE4EC; color: #880E4F; }
+        .dm-at-lupin .dm-allergen-tag-dot { background: #AD1457; }
+        .dm-at-molluscs     { background: #E0F7FA; color: #006064; }
+        .dm-at-molluscs .dm-allergen-tag-dot { background: #00838F; }
+
+        /* Allergens on special cards */
+        .dm-special-allergens {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        /* ========== TEXT-ONLY ITEM ========== */
+        .dm-item.dm-item--text-only {
+            padding: .75rem 1rem;
+        }
+
+        /* ========== ALLERGEN LEGEND ========== */
+        .dm-legend-section {
+            margin-top: 2.5rem;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-light);
+            padding: 1.25rem;
+        }
+        .dm-legend-header {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            margin-bottom: 1rem;
+        }
+        .dm-legend-header i {
+            font-size: 1rem;
+            color: var(--brand);
+        }
+        .dm-legend-title {
+            font-weight: 700;
+            font-size: .9rem;
+            color: var(--text-dark);
+        }
+        .dm-legend-note {
+            font-size: .75rem;
+            color: var(--text-muted);
+            margin: -.5rem 0 1rem;
+            line-height: 1.4;
+        }
+        .dm-legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: .5rem .75rem;
+        }
+        .dm-legend-item {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+        .dm-legend-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: .3rem;
+            padding: .25rem .6rem;
+            border-radius: 20px;
+            font-size: .7rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* ========== CTA ========== */
+        .dm-cta {
+            margin-top: 2rem;
+            background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+            border-radius: var(--radius);
+            padding: 1.75rem 1.5rem;
+            text-align: center;
+            color: #fff;
+        }
+        .dm-cta-icon {
+            width: 48px; height: 48px;
+            background: rgba(255,255,255,.15);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: .75rem;
+        }
+        .dm-cta-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0 0 .35rem;
+        }
+        .dm-cta-sub {
+            font-size: .82rem;
+            color: rgba(255,255,255,.7);
+            margin: 0 0 1rem;
+        }
+        .dm-cta-btn {
+            display: inline-block;
+            background: #fff;
+            color: var(--brand);
+            padding: .7rem 2rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: .9rem;
+            text-decoration: none;
+            transition: transform .15s, box-shadow .15s;
+        }
+        .dm-cta-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,.15);
+            color: var(--brand-dark);
+        }
+
+        /* ========== FOOTER ========== */
+        .dm-footer {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            font-size: .72rem;
+            color: var(--text-light);
+        }
+
+        /* ========== MOBILE ========== */
+        @media (max-width: 480px) {
+            .dm-hero { padding: 2rem 1rem 1.5rem; }
+            .dm-hero-name { font-size: 1.35rem; }
+            .dm-hero-logo { width: 56px; height: 56px; border-radius: 14px; }
+            .dm-special-img { width: 90px; min-height: 90px; }
+            .dm-item-img-wrap { width: 68px; height: 68px; }
+            .dm-legend-grid { grid-template-columns: 1fr; }
+            .dm-info-bar { flex-direction: column; gap: .35rem; align-items: center; }
+            .dm-section-desc { padding-left: 0; }
+            .dm-allergen-tag { font-size: .6rem; padding: .18rem .45rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div class="dm-hero">
+    <img src="https://placehold.co/72x72/333/fff?text=L" alt="" class="dm-hero-logo">
+    <h1 class="dm-hero-name">La Pergola</h1>
+    <p class="dm-hero-sub">Il nostro menu</p>
+    <div class="dm-info-bar">
+        <span class="dm-info-chip"><i class="bi bi-geo-alt-fill"></i> Via Roma 42, Milano</span>
+        <span class="dm-info-chip"><i class="bi bi-telephone-fill"></i> 02 1234567</span>
+    </div>
+</div>
+
+<!-- ===== STICKY NAV ===== -->
+<nav class="dm-cat-nav">
+    <div class="dm-cat-nav-inner">
+        <a href="#specials" class="dm-cat-nav-item active"><i class="bi bi-star-fill" style="font-size:.7rem;margin-right:.2rem;color:#F59E0B;"></i> Del giorno</a>
+        <a href="#antipasti" class="dm-cat-nav-item">Antipasti</a>
+        <a href="#primi" class="dm-cat-nav-item">Primi Piatti</a>
+        <a href="#secondi" class="dm-cat-nav-item">Secondi</a>
+        <a href="#dolci" class="dm-cat-nav-item">Dolci</a>
+        <a href="#bevande" class="dm-cat-nav-item">Bevande</a>
+    </div>
+</nav>
+
+<div class="dm-main">
+
+    <!-- ===== SEARCH ===== -->
+    <div class="dm-search-wrap">
+        <input type="text" class="dm-search" placeholder="Cerca nel menu...">
+    </div>
+
+    <!-- ===== DAILY SPECIALS ===== -->
+    <div class="dm-specials" id="specials">
+        <div class="dm-specials-badge"><i class="bi bi-star-fill"></i> Piatti del giorno</div>
+
+        <div class="dm-special-card">
+            <div class="dm-special-inner">
+                <img src="https://placehold.co/220x220/E8DCC8/1a1d23?text=Risotto" alt="" class="dm-special-img">
+                <div class="dm-special-body">
+                    <div class="dm-special-label"><i class="bi bi-star-fill"></i> Speciale del giorno</div>
+                    <div class="dm-special-name">Risotto allo Zafferano</div>
+                    <div class="dm-special-desc">Riso Carnaroli mantecato con zafferano DOP, midollo e brodo di carne</div>
+                    <div class="dm-special-footer">
+                        <span class="dm-special-price">14,00 &euro;</span>
+                        <span class="dm-special-allergens">
+                            <span class="dm-allergen-tag dm-at-gluten"><span class="dm-allergen-tag-dot"></span>Glutine</span>
+                            <span class="dm-allergen-tag dm-at-milk"><span class="dm-allergen-tag-dot"></span>Latte</span>
+                            <span class="dm-allergen-tag dm-at-celery"><span class="dm-allergen-tag-dot"></span>Sedano</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dm-special-card">
+            <div class="dm-special-inner">
+                <img src="https://placehold.co/220x220/D4C5B0/1a1d23?text=Pesce" alt="" class="dm-special-img">
+                <div class="dm-special-body">
+                    <div class="dm-special-label"><i class="bi bi-star-fill"></i> Speciale del giorno</div>
+                    <div class="dm-special-name">Branzino al Forno</div>
+                    <div class="dm-special-desc">Branzino al sale con patate al rosmarino e verdurine di stagione</div>
+                    <div class="dm-special-footer">
+                        <span class="dm-special-price">22,00 &euro;</span>
+                        <span class="dm-special-allergens">
+                            <span class="dm-allergen-tag dm-at-fish"><span class="dm-allergen-tag-dot"></span>Pesce</span>
+                            <span class="dm-allergen-tag dm-at-sulphites"><span class="dm-allergen-tag-dot"></span>Solfiti</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ANTIPASTI ===== -->
+    <div class="dm-section" id="antipasti">
+        <div class="dm-section-header">
+            <div class="dm-section-icon"><i class="bi bi-egg-fried"></i></div>
+            <h2 class="dm-section-title">Antipasti</h2>
+            <span class="dm-section-count">5 piatti</span>
+        </div>
+        <p class="dm-section-desc">Antipasti della tradizione e creazioni dello chef</p>
+
+        <div class="dm-items-grid">
+            <div class="dm-item">
+                <div class="dm-item-img-wrap">
+                    <img src="https://placehold.co/160x160/E8DCC8/1a1d23?text=Bru" alt="" class="dm-item-img">
+                </div>
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Bruschetta al Pomodoro</span>
+                        <span class="dm-item-price">8,50 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Pane casereccio tostato con pomodorini pachino, aglio, basilico fresco e olio EVO</div>
+                    <div class="dm-item-meta">
+                        <div class="dm-allergen-tags">
+                            <span class="dm-allergen-tag dm-at-gluten"><span class="dm-allergen-tag-dot"></span>Glutine</span>
+                            <span class="dm-allergen-tag dm-at-celery"><span class="dm-allergen-tag-dot"></span>Sedano</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dm-item">
+                <div class="dm-item-img-wrap">
+                    <img src="https://placehold.co/160x160/D4C5B0/1a1d23?text=Vit" alt="" class="dm-item-img">
+                </div>
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Vitello Tonnato</span>
+                        <span class="dm-item-price">14,00 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Fettine di girello con salsa tonnata della casa, capperi e rucola</div>
+                    <div class="dm-item-meta">
+                        <div class="dm-allergen-tags">
+                            <span class="dm-allergen-tag dm-at-fish"><span class="dm-allergen-tag-dot"></span>Pesce</span>
+                            <span class="dm-allergen-tag dm-at-eggs"><span class="dm-allergen-tag-dot"></span>Uova</span>
+                            <span class="dm-allergen-tag dm-at-mustard"><span class="dm-allergen-tag-dot"></span>Senape</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dm-item dm-item--text-only">
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Tagliere di Salumi e Formaggi</span>
+                        <span class="dm-item-price">16,00 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Selezione di salumi artigianali e formaggi stagionati con marmellata di fichi e miele</div>
+                    <div class="dm-item-meta">
+                        <div class="dm-allergen-tags">
+                            <span class="dm-allergen-tag dm-at-milk"><span class="dm-allergen-tag-dot"></span>Latte</span>
+                            <span class="dm-allergen-tag dm-at-nuts"><span class="dm-allergen-tag-dot"></span>Frutta a guscio</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dm-item dm-item--text-only">
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Carpaccio di Polpo</span>
+                        <span class="dm-item-price">13,00 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Polpo verace cotto a bassa temperatura con sedano, olive taggiasche e limone</div>
+                    <div class="dm-item-meta">
+                        <div class="dm-allergen-tags">
+                            <span class="dm-allergen-tag dm-at-molluscs"><span class="dm-allergen-tag-dot"></span>Molluschi</span>
+                            <span class="dm-allergen-tag dm-at-celery"><span class="dm-allergen-tag-dot"></span>Sedano</span>
+                            <span class="dm-allergen-tag dm-at-sulphites"><span class="dm-allergen-tag-dot"></span>Solfiti</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Piatto senza allergeni -->
+            <div class="dm-item dm-item--text-only">
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Pinzimonio di Verdure</span>
+                        <span class="dm-item-price">7,00 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Verdure fresche di stagione con olio EVO e sale Maldon</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PRIMI ===== -->
+    <div class="dm-section" id="primi">
+        <div class="dm-section-header">
+            <div class="dm-section-icon"><i class="bi bi-cup-hot"></i></div>
+            <h2 class="dm-section-title">Primi Piatti</h2>
+            <span class="dm-section-count">4 piatti</span>
+        </div>
+
+        <div class="dm-items-grid">
+            <div class="dm-item">
+                <div class="dm-item-img-wrap">
+                    <img src="https://placehold.co/160x160/E8DCC8/1a1d23?text=Carb" alt="" class="dm-item-img">
+                </div>
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Spaghetti alla Carbonara</span>
+                        <span class="dm-item-price">12,00 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Spaghetti con guanciale croccante, tuorlo d'uovo, pecorino romano DOP e pepe nero</div>
+                    <div class="dm-item-meta">
+                        <div class="dm-allergen-tags">
+                            <span class="dm-allergen-tag dm-at-gluten"><span class="dm-allergen-tag-dot"></span>Glutine</span>
+                            <span class="dm-allergen-tag dm-at-eggs"><span class="dm-allergen-tag-dot"></span>Uova</span>
+                            <span class="dm-allergen-tag dm-at-milk"><span class="dm-allergen-tag-dot"></span>Latte</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dm-item dm-item--text-only">
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Pappardelle al Cinghiale</span>
+                        <span class="dm-item-price">14,00 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Pappardelle fatte in casa con ragu di cinghiale cotto 6 ore e pecorino toscano</div>
+                    <div class="dm-item-meta">
+                        <div class="dm-allergen-tags">
+                            <span class="dm-allergen-tag dm-at-gluten"><span class="dm-allergen-tag-dot"></span>Glutine</span>
+                            <span class="dm-allergen-tag dm-at-eggs"><span class="dm-allergen-tag-dot"></span>Uova</span>
+                            <span class="dm-allergen-tag dm-at-milk"><span class="dm-allergen-tag-dot"></span>Latte</span>
+                            <span class="dm-allergen-tag dm-at-celery"><span class="dm-allergen-tag-dot"></span>Sedano</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dm-item dm-item--text-only">
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Gnocchi Sorrentina</span>
+                        <span class="dm-item-price">11,00 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Gnocchi di patate con pomodoro San Marzano, mozzarella fior di latte e basilico</div>
+                    <div class="dm-item-meta">
+                        <div class="dm-allergen-tags">
+                            <span class="dm-allergen-tag dm-at-gluten"><span class="dm-allergen-tag-dot"></span>Glutine</span>
+                            <span class="dm-allergen-tag dm-at-milk"><span class="dm-allergen-tag-dot"></span>Latte</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dm-item dm-item--text-only">
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Linguine allo Scoglio</span>
+                        <span class="dm-item-price">16,00 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Linguine con frutti di mare misti, pomodorini e prezzemolo</div>
+                    <div class="dm-item-meta">
+                        <div class="dm-allergen-tags">
+                            <span class="dm-allergen-tag dm-at-gluten"><span class="dm-allergen-tag-dot"></span>Glutine</span>
+                            <span class="dm-allergen-tag dm-at-crustaceans"><span class="dm-allergen-tag-dot"></span>Crostacei</span>
+                            <span class="dm-allergen-tag dm-at-fish"><span class="dm-allergen-tag-dot"></span>Pesce</span>
+                            <span class="dm-allergen-tag dm-at-molluscs"><span class="dm-allergen-tag-dot"></span>Molluschi</span>
+                            <span class="dm-allergen-tag dm-at-sulphites"><span class="dm-allergen-tag-dot"></span>Solfiti</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SECONDI ===== -->
+    <div class="dm-section" id="secondi">
+        <div class="dm-section-header">
+            <div class="dm-section-icon"><i class="bi bi-fire"></i></div>
+            <h2 class="dm-section-title">Secondi</h2>
+            <span class="dm-section-count">3 piatti</span>
+        </div>
+
+        <div class="dm-items-grid">
+            <div class="dm-item">
+                <div class="dm-item-img-wrap">
+                    <img src="https://placehold.co/160x160/D4C5B0/1a1d23?text=Tag" alt="" class="dm-item-img">
+                </div>
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Tagliata di Manzo</span>
+                        <span class="dm-item-price">24,00 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Controfiletto alla griglia con rucola, scaglie di grana e aceto balsamico di Modena IGP</div>
+                    <div class="dm-item-meta">
+                        <div class="dm-allergen-tags">
+                            <span class="dm-allergen-tag dm-at-milk"><span class="dm-allergen-tag-dot"></span>Latte</span>
+                            <span class="dm-allergen-tag dm-at-sulphites"><span class="dm-allergen-tag-dot"></span>Solfiti</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dm-item dm-item--text-only">
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Pollo Arrosto alle Erbe</span>
+                        <span class="dm-item-price">16,00 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Coscia di pollo ruspante con rosmarino, timo, patate al forno</div>
+                </div>
+            </div>
+
+            <div class="dm-item dm-item--text-only">
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Frittura di Calamari e Gamberi</span>
+                        <span class="dm-item-price">18,00 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Frittura leggera con maionese agli agrumi e insalatina mista</div>
+                    <div class="dm-item-meta">
+                        <div class="dm-allergen-tags">
+                            <span class="dm-allergen-tag dm-at-gluten"><span class="dm-allergen-tag-dot"></span>Glutine</span>
+                            <span class="dm-allergen-tag dm-at-crustaceans"><span class="dm-allergen-tag-dot"></span>Crostacei</span>
+                            <span class="dm-allergen-tag dm-at-eggs"><span class="dm-allergen-tag-dot"></span>Uova</span>
+                            <span class="dm-allergen-tag dm-at-molluscs"><span class="dm-allergen-tag-dot"></span>Molluschi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== DOLCI ===== -->
+    <div class="dm-section" id="dolci">
+        <div class="dm-section-header">
+            <div class="dm-section-icon"><i class="bi bi-cake2"></i></div>
+            <h2 class="dm-section-title">Dolci</h2>
+            <span class="dm-section-count">3 piatti</span>
+        </div>
+
+        <div class="dm-items-grid">
+            <div class="dm-item">
+                <div class="dm-item-img-wrap">
+                    <img src="https://placehold.co/160x160/E8DCC8/1a1d23?text=Tira" alt="" class="dm-item-img">
+                </div>
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Tiramisu della Casa</span>
+                        <span class="dm-item-price">7,00 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Savoiardi, mascarpone, caffe espresso e cacao amaro</div>
+                    <div class="dm-item-meta">
+                        <div class="dm-allergen-tags">
+                            <span class="dm-allergen-tag dm-at-gluten"><span class="dm-allergen-tag-dot"></span>Glutine</span>
+                            <span class="dm-allergen-tag dm-at-eggs"><span class="dm-allergen-tag-dot"></span>Uova</span>
+                            <span class="dm-allergen-tag dm-at-milk"><span class="dm-allergen-tag-dot"></span>Latte</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dm-item dm-item--text-only">
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Panna Cotta ai Frutti di Bosco</span>
+                        <span class="dm-item-price">6,50 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Panna cotta alla vaniglia con coulis di lamponi e mirtilli freschi</div>
+                    <div class="dm-item-meta">
+                        <div class="dm-allergen-tags">
+                            <span class="dm-allergen-tag dm-at-milk"><span class="dm-allergen-tag-dot"></span>Latte</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dm-item dm-item--text-only">
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Torta al Cioccolato Fondente</span>
+                        <span class="dm-item-price">7,50 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Tortino dal cuore morbido con gelato alla vaniglia e nocciole tostate</div>
+                    <div class="dm-item-meta">
+                        <div class="dm-allergen-tags">
+                            <span class="dm-allergen-tag dm-at-gluten"><span class="dm-allergen-tag-dot"></span>Glutine</span>
+                            <span class="dm-allergen-tag dm-at-eggs"><span class="dm-allergen-tag-dot"></span>Uova</span>
+                            <span class="dm-allergen-tag dm-at-milk"><span class="dm-allergen-tag-dot"></span>Latte</span>
+                            <span class="dm-allergen-tag dm-at-nuts"><span class="dm-allergen-tag-dot"></span>Frutta a guscio</span>
+                            <span class="dm-allergen-tag dm-at-soy"><span class="dm-allergen-tag-dot"></span>Soia</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== BEVANDE ===== -->
+    <div class="dm-section" id="bevande">
+        <div class="dm-section-header">
+            <div class="dm-section-icon"><i class="bi bi-cup-straw"></i></div>
+            <h2 class="dm-section-title">Bevande</h2>
+            <span class="dm-section-count">4 articoli</span>
+        </div>
+
+        <div class="dm-items-grid">
+            <div class="dm-item dm-item--text-only">
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Acqua Naturale / Frizzante (1L)</span>
+                        <span class="dm-item-price">3,00 &euro;</span>
+                    </div>
+                </div>
+            </div>
+            <div class="dm-item dm-item--text-only">
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Coca-Cola / Fanta / Sprite</span>
+                        <span class="dm-item-price">3,50 &euro;</span>
+                    </div>
+                </div>
+            </div>
+            <div class="dm-item dm-item--text-only">
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Vino della Casa (0.5L)</span>
+                        <span class="dm-item-price">8,00 &euro;</span>
+                    </div>
+                    <div class="dm-item-desc">Rosso o bianco, selezione settimanale della cantina</div>
+                    <div class="dm-item-meta">
+                        <div class="dm-allergen-tags">
+                            <span class="dm-allergen-tag dm-at-sulphites"><span class="dm-allergen-tag-dot"></span>Solfiti</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dm-item dm-item--text-only">
+                <div class="dm-item-content">
+                    <div class="dm-item-top">
+                        <span class="dm-item-name">Caffe Espresso</span>
+                        <span class="dm-item-price">1,50 &euro;</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ALLERGEN LEGEND ===== -->
+    <div class="dm-legend-section">
+        <div class="dm-legend-header">
+            <i class="bi bi-info-circle-fill"></i>
+            <span class="dm-legend-title">Informazioni sugli Allergeni</span>
+        </div>
+        <p class="dm-legend-note">Ai sensi del Reg. UE 1169/2011. Per ulteriori informazioni rivolgiti al personale di sala.</p>
+        <div class="dm-legend-grid">
+            <div class="dm-legend-item">
+                <span class="dm-legend-tag dm-at-gluten"><span class="dm-allergen-tag-dot"></span>Glutine</span>
+            </div>
+            <div class="dm-legend-item">
+                <span class="dm-legend-tag dm-at-crustaceans"><span class="dm-allergen-tag-dot"></span>Crostacei</span>
+            </div>
+            <div class="dm-legend-item">
+                <span class="dm-legend-tag dm-at-eggs"><span class="dm-allergen-tag-dot"></span>Uova</span>
+            </div>
+            <div class="dm-legend-item">
+                <span class="dm-legend-tag dm-at-fish"><span class="dm-allergen-tag-dot"></span>Pesce</span>
+            </div>
+            <div class="dm-legend-item">
+                <span class="dm-legend-tag dm-at-peanuts"><span class="dm-allergen-tag-dot"></span>Arachidi</span>
+            </div>
+            <div class="dm-legend-item">
+                <span class="dm-legend-tag dm-at-soy"><span class="dm-allergen-tag-dot"></span>Soia</span>
+            </div>
+            <div class="dm-legend-item">
+                <span class="dm-legend-tag dm-at-milk"><span class="dm-allergen-tag-dot"></span>Latte</span>
+            </div>
+            <div class="dm-legend-item">
+                <span class="dm-legend-tag dm-at-nuts"><span class="dm-allergen-tag-dot"></span>Frutta a guscio</span>
+            </div>
+            <div class="dm-legend-item">
+                <span class="dm-legend-tag dm-at-celery"><span class="dm-allergen-tag-dot"></span>Sedano</span>
+            </div>
+            <div class="dm-legend-item">
+                <span class="dm-legend-tag dm-at-mustard"><span class="dm-allergen-tag-dot"></span>Senape</span>
+            </div>
+            <div class="dm-legend-item">
+                <span class="dm-legend-tag dm-at-sesame"><span class="dm-allergen-tag-dot"></span>Sesamo</span>
+            </div>
+            <div class="dm-legend-item">
+                <span class="dm-legend-tag dm-at-sulphites"><span class="dm-allergen-tag-dot"></span>Anidride solforosa</span>
+            </div>
+            <div class="dm-legend-item">
+                <span class="dm-legend-tag dm-at-lupin"><span class="dm-allergen-tag-dot"></span>Lupini</span>
+            </div>
+            <div class="dm-legend-item">
+                <span class="dm-legend-tag dm-at-molluscs"><span class="dm-allergen-tag-dot"></span>Molluschi</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CTA ===== -->
+    <div class="dm-cta">
+        <div class="dm-cta-icon"><i class="bi bi-calendar-check"></i></div>
+        <h3 class="dm-cta-title">Vuoi prenotare un tavolo?</h3>
+        <p class="dm-cta-sub">Prenota online in pochi secondi, scegli data e orario</p>
+        <a href="#" class="dm-cta-btn"><i class="bi bi-calendar-check me-1"></i> Prenota ora</a>
+    </div>
+
+    <div class="dm-footer">
+        &copy; 2026 Evulery &middot; by alagias. - Soluzioni per il web
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.dm-cat-nav-item').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        var targetId = this.getAttribute('href').substring(1);
+        var target = document.getElementById(targetId);
+        if (target) {
+            var navHeight = document.querySelector('.dm-cat-nav').offsetHeight;
+            window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - navHeight - 10, behavior: 'smooth' });
+        }
+        document.querySelectorAll('.dm-cat-nav-item').forEach(function(l) { l.classList.remove('active'); });
+        this.classList.add('active');
+    });
+});
+window.addEventListener('scroll', function() {
+    var navHeight = document.querySelector('.dm-cat-nav').offsetHeight + 20;
+    var sections = document.querySelectorAll('.dm-section, .dm-specials');
+    var current = '';
+    sections.forEach(function(section) {
+        if (section.getBoundingClientRect().top <= navHeight + 50) current = section.id;
+    });
+    document.querySelectorAll('.dm-cat-nav-item').forEach(function(link) {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+    });
+});
+document.querySelector('.dm-search').addEventListener('input', function() {
+    var q = this.value.toLowerCase().trim();
+    document.querySelectorAll('.dm-item').forEach(function(item) {
+        var name = (item.querySelector('.dm-item-name') || {}).textContent || '';
+        var desc = (item.querySelector('.dm-item-desc') || {}).textContent || '';
+        item.style.display = (!q || name.toLowerCase().includes(q) || desc.toLowerCase().includes(q)) ? '' : 'none';
+    });
+});
+</script>
+</body>
+</html>

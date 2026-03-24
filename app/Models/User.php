@@ -78,4 +78,72 @@ class User
         $stmt = $this->db->prepare($sql);
         return $stmt->execute($params);
     }
+
+    public function countFiltered(?string $search = null, ?string $role = null, ?int $tenantId = null, ?int $isActive = null): int
+    {
+        $where = [];
+        $params = [];
+
+        if ($search !== null && $search !== '') {
+            $where[] = '(u.first_name LIKE :s OR u.last_name LIKE :s OR u.email LIKE :s)';
+            $params['s'] = '%' . $search . '%';
+        }
+        if ($role !== null && $role !== '') {
+            $where[] = 'u.role = :role';
+            $params['role'] = $role;
+        }
+        if ($tenantId !== null) {
+            $where[] = 'u.tenant_id = :tid';
+            $params['tid'] = $tenantId;
+        }
+        if ($isActive !== null) {
+            $where[] = 'u.is_active = :active';
+            $params['active'] = $isActive;
+        }
+
+        $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM users u {$whereSql}");
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn();
+    }
+
+    public function allPaginated(?string $search = null, ?string $role = null, ?int $tenantId = null, ?int $isActive = null, int $limit = 25, int $offset = 0): array
+    {
+        $where = [];
+        $params = [];
+
+        if ($search !== null && $search !== '') {
+            $where[] = '(u.first_name LIKE :s OR u.last_name LIKE :s OR u.email LIKE :s)';
+            $params['s'] = '%' . $search . '%';
+        }
+        if ($role !== null && $role !== '') {
+            $where[] = 'u.role = :role';
+            $params['role'] = $role;
+        }
+        if ($tenantId !== null) {
+            $where[] = 'u.tenant_id = :tid';
+            $params['tid'] = $tenantId;
+        }
+        if ($isActive !== null) {
+            $where[] = 'u.is_active = :active';
+            $params['active'] = $isActive;
+        }
+
+        $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+        $stmt = $this->db->prepare(
+            "SELECT u.*, t.name AS tenant_name, t.slug AS tenant_slug
+             FROM users u
+             LEFT JOIN tenants t ON t.id = u.tenant_id
+             {$whereSql}
+             ORDER BY u.created_at DESC
+             LIMIT :lim OFFSET :off"
+        );
+        foreach ($params as $k => $v) {
+            $stmt->bindValue($k, $v);
+        }
+        $stmt->bindValue('lim', $limit, PDO::PARAM_INT);
+        $stmt->bindValue('off', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }

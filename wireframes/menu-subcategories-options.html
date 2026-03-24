@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Sottocategorie Menu: 3 Opzioni a Confronto</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root { --brand: #00844A; }
+        body { background: #f0f2f5; font-family: system-ui, -apple-system, sans-serif; }
+
+        .page-wrap { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+        /* Option selector */
+        .option-selector { display: flex; gap: .5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .option-btn {
+            padding: .65rem 1.25rem; border-radius: 10px; border: 2px solid #dee2e6;
+            background: #fff; font-size: .85rem; font-weight: 600; color: #495057;
+            cursor: pointer; transition: all .15s; flex: 1; min-width: 200px; text-align: center;
+        }
+        .option-btn:hover { border-color: var(--brand); color: var(--brand); }
+        .option-btn.active { border-color: var(--brand); background: #E8F5E9; color: var(--brand); }
+        .option-btn small { display: block; font-weight: 400; font-size: .72rem; color: #6c757d; margin-top: .2rem; }
+        .option-btn.active small { color: var(--brand); opacity: .7; }
+
+        .option-panel { display: none; }
+        .option-panel.active { display: block; }
+
+        /* Shared styles */
+        .card { background: #fff; border-radius: 12px; border: 1px solid #edebe8; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+        .section-label { font-weight: 700; font-size: .95rem; margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
+        .section-label i { color: var(--brand); }
+        .view-label {
+            font-weight: 800; font-size: .7rem; text-transform: uppercase; letter-spacing: 1px;
+            color: #fff; background: var(--brand); display: inline-block;
+            padding: .3rem .75rem; border-radius: 6px; margin-bottom: .75rem;
+        }
+        .view-label.public { background: #5C6BC0; }
+        .pro-con { font-size: .78rem; line-height: 1.6; }
+        .pro-con .pro { color: var(--brand); font-weight: 600; }
+        .pro-con .con { color: #dc3545; font-weight: 600; }
+
+        /* Category items */
+        .cat-item { display: flex; align-items: center; gap: .65rem; padding: .6rem 0; border-bottom: 1px solid #f0f0f0; }
+        .cat-item:last-child { border-bottom: none; }
+        .cat-icon { width: 32px; height: 32px; border-radius: 8px; background: #E8F5E9; color: var(--brand); display: flex; align-items: center; justify-content: center; font-size: .9rem; flex-shrink: 0; }
+        .cat-name { font-weight: 600; font-size: .85rem; flex: 1; }
+        .cat-count { font-size: .72rem; color: #adb5bd; margin-right: .5rem; }
+        .cat-actions { display: flex; gap: .3rem; }
+        .cat-actions .btn { padding: .2rem .45rem; font-size: .72rem; }
+
+        /* Subcategory indented */
+        .subcat-item { padding-left: 2.5rem; }
+        .subcat-item .cat-icon { width: 26px; height: 26px; font-size: .75rem; background: #f0f2f5; color: #6c757d; }
+        .subcat-item .cat-name { font-size: .8rem; font-weight: 500; color: #495057; }
+
+        /* Add subcat button */
+        .add-subcat-btn { font-size: .72rem; color: var(--brand); cursor: pointer; padding: .3rem .5rem .3rem 2.5rem; display: flex; align-items: center; gap: .3rem; }
+        .add-subcat-btn:hover { text-decoration: underline; }
+
+        /* Public menu mock */
+        .pub-menu { background: #1a1d23; border-radius: 12px; overflow: hidden; color: #fff; }
+        .pub-header { padding: 1.5rem 1.25rem; text-align: center; }
+        .pub-header h3 { font-size: 1rem; font-weight: 700; margin: 0; }
+        .pub-header p { font-size: .72rem; color: rgba(255,255,255,.5); margin: .2rem 0 0; }
+
+        .pub-cat-header {
+            padding: .75rem 1.25rem; font-weight: 700; font-size: .9rem;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+            display: flex; align-items: center; gap: .5rem;
+        }
+        .pub-cat-header i { color: var(--brand); }
+
+        .pub-subcat-header {
+            padding: .5rem 1.25rem .5rem 2rem; font-weight: 600; font-size: .78rem;
+            color: rgba(255,255,255,.5); border-bottom: 1px solid rgba(255,255,255,.05);
+            display: flex; align-items: center; gap: .4rem;
+        }
+        .pub-subcat-header i { font-size: .65rem; }
+
+        .pub-item {
+            padding: .6rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,.05);
+            display: flex; align-items: center; gap: .75rem;
+        }
+        .pub-item:last-child { border-bottom: none; }
+        .pub-item-thumb { width: 40px; height: 40px; border-radius: 8px; background: rgba(255,255,255,.08); flex-shrink: 0; }
+        .pub-item-info { flex: 1; }
+        .pub-item-name { font-weight: 600; font-size: .82rem; }
+        .pub-item-desc { font-size: .68rem; color: rgba(255,255,255,.4); }
+        .pub-item-price { font-weight: 700; font-size: .85rem; color: var(--brand); }
+
+        /* Section divider in pub menu (Option C) */
+        .pub-section-divider {
+            padding: .45rem 1.25rem; font-size: .7rem; font-weight: 600;
+            color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .5px;
+            display: flex; align-items: center; gap: .5rem;
+        }
+        .pub-section-divider::after {
+            content: ''; flex: 1; height: 1px; background: rgba(255,255,255,.08);
+        }
+
+        /* Form elements */
+        .form-label { font-size: .82rem; font-weight: 600; }
+        .form-control-sm { font-size: .82rem; }
+        .btn-save { background: var(--brand); color: #fff; border: none; font-size: .82rem; font-weight: 600; }
+        .btn-save:hover { background: #006d3e; color: #fff; }
+
+        /* Sticky nav mock */
+        .pub-sticky-nav {
+            display: flex; gap: .25rem; padding: .5rem 1rem;
+            background: rgba(26,29,35,.95); border-bottom: 1px solid rgba(255,255,255,.08);
+            overflow-x: auto; scrollbar-width: none;
+        }
+        .pub-sticky-nav::-webkit-scrollbar { display: none; }
+        .pub-nav-item {
+            padding: .35rem .75rem; font-size: .72rem; font-weight: 600;
+            color: rgba(255,255,255,.5); white-space: nowrap; border-radius: 6px;
+            cursor: pointer; transition: all .15s;
+        }
+        .pub-nav-item.active { color: #fff; background: rgba(255,255,255,.1); }
+
+        /* Dashboard item with section field */
+        .section-field-row {
+            display: flex; align-items: center; gap: .5rem; padding: .4rem 1rem;
+            background: #fafaf8; border-bottom: 1px solid #f0f0f0;
+        }
+        .section-field-label { font-size: .72rem; color: #6c757d; font-weight: 500; }
+
+        /* Item row */
+        .item-row { display: flex; align-items: center; gap: .75rem; padding: .55rem 1rem; border-bottom: 1px solid #f0f0f0; }
+        .item-row:last-child { border-bottom: none; }
+        .item-thumb { width: 38px; height: 38px; border-radius: 8px; background: #f0f2f5; flex-shrink: 0; }
+        .item-info { flex: 1; }
+        .item-name { font-weight: 600; font-size: .82rem; }
+        .item-price { font-size: .78rem; color: var(--brand); font-weight: 700; }
+        .item-section-tag { font-size: .65rem; color: #6c757d; font-style: italic; }
+
+        /* Comparison table */
+        .cmp-table { font-size: .78rem; }
+        .cmp-table th { font-weight: 600; font-size: .72rem; text-transform: uppercase; color: #6c757d; letter-spacing: .5px; }
+        .cmp-table td { vertical-align: middle; }
+        .cmp-check { color: var(--brand); font-size: 1rem; }
+        .cmp-x { color: #dc3545; font-size: 1rem; }
+        .cmp-mid { color: #E65100; font-size: 1rem; }
+
+        @media (max-width: 768px) {
+            .option-btn { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+    <!-- Title -->
+    <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">
+        <i class="bi bi-diagram-3 me-1" style="color:var(--brand);"></i> Sottocategorie Menu — Confronto Opzioni
+    </h2>
+    <p style="font-size:.82rem; color:#6c757d; margin-bottom:1.25rem;">Clicca su un'opzione per vedere come funzionerebbe nella dashboard e nella pagina pubblica</p>
+
+    <!-- Option selector -->
+    <div class="option-selector">
+        <div class="option-btn active" data-option="a">
+            <i class="bi bi-diagram-3"></i> Opzione A
+            <small>Parent → Child (nesting illimitato)</small>
+        </div>
+        <div class="option-btn" data-option="b">
+            <i class="bi bi-list-nested"></i> Opzione B
+            <small>Parent → Sub (max 1 livello)</small>
+        </div>
+        <div class="option-btn" data-option="c">
+            <i class="bi bi-text-indent-left"></i> Opzione C
+            <small>Sezioni/divisori dentro la categoria</small>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         OPZIONE A: Nesting illimitato (parent_id, albero)
+         ================================================================ -->
+    <div class="option-panel active" id="option-a">
+
+        <!-- Pro/Con -->
+        <div class="card" style="padding:1rem; margin-bottom:1.25rem; background:#FFFDE7;">
+            <div style="font-weight:700; font-size:.85rem; margin-bottom:.5rem;"><i class="bi bi-diagram-3 me-1" style="color:var(--brand);"></i> Opzione A — Albero gerarchico</div>
+            <div class="pro-con">
+                <span class="pro">+ Massima flessibilità</span> — nesting illimitato (Antipasti → Di Mare → Crudi → ...)<br>
+                <span class="con">− Overkill</span> — i menu ristorante raramente vanno oltre 2 livelli<br>
+                <span class="con">− Complessità alta</span> — query ricorsive, sort_order multi-livello, UI drag&drop nested<br>
+                <span class="con">− UX confusa</span> — il ristoratore può creare gerarchie troppo profonde, l'utente si perde
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Dashboard -->
+            <div class="col-lg-6">
+                <div class="view-label">Dashboard — Tab Categorie</div>
+                <div class="card" style="padding:1rem;">
+                    <div class="section-label"><i class="bi bi-folder"></i> Categorie</div>
+
+                    <!-- Antipasti (parent) -->
+                    <div class="cat-item">
+                        <span class="cat-icon"><i class="bi bi-cup-hot"></i></span>
+                        <span class="cat-name">Antipasti</span>
+                        <span class="cat-count">8 piatti</span>
+                        <div class="cat-actions">
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-plus-circle"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                        </div>
+                    </div>
+                    <!-- Sub: Di Mare -->
+                    <div class="cat-item subcat-item">
+                        <span class="cat-icon"><i class="bi bi-water"></i></span>
+                        <span class="cat-name">Di Mare</span>
+                        <span class="cat-count">4 piatti</span>
+                        <div class="cat-actions">
+                            <button class="btn btn-sm btn-outline-secondary" style="font-size:.65rem;"><i class="bi bi-plus-circle"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary" style="font-size:.65rem;"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" style="font-size:.65rem;"><i class="bi bi-trash3"></i></button>
+                        </div>
+                    </div>
+                    <!-- Sub-sub: Crudi (livello 3!) -->
+                    <div class="cat-item" style="padding-left:4.5rem;">
+                        <span class="cat-icon" style="width:22px;height:22px;font-size:.65rem;background:#fef3f3;color:#dc3545;"><i class="bi bi-question"></i></span>
+                        <span class="cat-name" style="font-size:.75rem; color:#adb5bd;">Crudi <span style="font-size:.6rem; color:#dc3545;">(livello 3!)</span></span>
+                        <span class="cat-count" style="font-size:.65rem;">2 piatti</span>
+                    </div>
+                    <!-- Sub: Di Terra -->
+                    <div class="cat-item subcat-item">
+                        <span class="cat-icon"><i class="bi bi-flower1"></i></span>
+                        <span class="cat-name">Di Terra</span>
+                        <span class="cat-count">4 piatti</span>
+                        <div class="cat-actions">
+                            <button class="btn btn-sm btn-outline-secondary" style="font-size:.65rem;"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" style="font-size:.65rem;"><i class="bi bi-trash3"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Primi (parent) -->
+                    <div class="cat-item" style="margin-top:.5rem;">
+                        <span class="cat-icon"><i class="bi bi-egg-fried"></i></span>
+                        <span class="cat-name">Primi Piatti</span>
+                        <span class="cat-count">6 piatti</span>
+                        <div class="cat-actions">
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-plus-circle"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:.75rem; padding:.5rem; background:#fef3f3; border-radius:8px; font-size:.72rem; color:#dc3545;">
+                        <i class="bi bi-exclamation-triangle me-1"></i> <strong>Problema:</strong> Senza limiti, il ristoratore può creare strutture troppo profonde. Servono guard clauses, breadcrumb, e UI complessa per drag&drop multi-livello.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Public -->
+            <div class="col-lg-6">
+                <div class="view-label public">Pagina Pubblica</div>
+                <div class="pub-menu">
+                    <div class="pub-header">
+                        <h3>Trattoria da Mario</h3>
+                        <p>Menu del ristorante</p>
+                    </div>
+                    <div class="pub-sticky-nav">
+                        <div class="pub-nav-item active">Antipasti</div>
+                        <div class="pub-nav-item">Primi</div>
+                        <div class="pub-nav-item">Secondi</div>
+                    </div>
+
+                    <div class="pub-cat-header"><i class="bi bi-cup-hot"></i> Antipasti</div>
+                    <div class="pub-subcat-header"><i class="bi bi-chevron-right"></i> Di Mare</div>
+                    <div style="padding-left:.75rem; font-size:.6rem; color:rgba(255,255,255,.25); padding:.2rem 1.25rem .2rem 2.5rem;">Crudi</div>
+                    <div class="pub-item" style="padding-left:2.5rem;">
+                        <div class="pub-item-thumb"></div>
+                        <div class="pub-item-info">
+                            <div class="pub-item-name">Tartare di tonno</div>
+                            <div class="pub-item-desc">Con avocado e sesamo</div>
+                        </div>
+                        <div class="pub-item-price">€14.00</div>
+                    </div>
+                    <div class="pub-item" style="padding-left:2.5rem;">
+                        <div class="pub-item-thumb"></div>
+                        <div class="pub-item-info">
+                            <div class="pub-item-name">Carpaccio di spada</div>
+                        </div>
+                        <div class="pub-item-price">€12.00</div>
+                    </div>
+                    <div class="pub-subcat-header"><i class="bi bi-chevron-right"></i> Di Terra</div>
+                    <div class="pub-item">
+                        <div class="pub-item-thumb"></div>
+                        <div class="pub-item-info">
+                            <div class="pub-item-name">Bruschetta al pomodoro</div>
+                        </div>
+                        <div class="pub-item-price">€6.00</div>
+                    </div>
+
+                    <div style="padding:.5rem 1rem; font-size:.65rem; color:rgba(255,255,255,.2); text-align:center; border-top:1px solid rgba(255,255,255,.05);">
+                        ⚠ Con nesting profondo la navigazione diventa confusa per il cliente
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         OPZIONE B: Max 1 livello (parent_id, depth ≤ 1)
+         ================================================================ -->
+    <div class="option-panel" id="option-b">
+
+        <!-- Pro/Con -->
+        <div class="card" style="padding:1rem; margin-bottom:1.25rem; background:#E8F5E9;">
+            <div style="font-weight:700; font-size:.85rem; margin-bottom:.5rem;"><i class="bi bi-list-nested me-1" style="color:var(--brand);"></i> Opzione B — Sottocategorie a 1 livello <span style="font-size:.7rem; font-weight:500; color:var(--brand);">★ Consigliata</span></div>
+            <div class="pro-con">
+                <span class="pro">+ Copre il 99% dei casi</span> — Antipasti → Di Mare / Di Terra è il massimo necessario<br>
+                <span class="pro">+ UI pulita</span> — indentazione chiara, bottone "+ Sottocategoria" per ogni parent<br>
+                <span class="pro">+ Sticky nav pulita</span> — mostra solo le categorie principali<br>
+                <span class="con">− 1 colonna + 1 check</span> — migration `parent_id` + enforce depth = 1 nel controller<br>
+                <span class="pro">+ Pattern standard</span> — è come funzionano TheFork, Deliveroo, Glovo
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Dashboard -->
+            <div class="col-lg-6">
+                <div class="view-label">Dashboard — Tab Categorie</div>
+                <div class="card" style="padding:1rem;">
+                    <div class="section-label"><i class="bi bi-folder"></i> Categorie</div>
+
+                    <!-- Antipasti (parent) -->
+                    <div class="cat-item">
+                        <span class="cat-icon"><i class="bi bi-cup-hot"></i></span>
+                        <span class="cat-name">Antipasti</span>
+                        <span class="cat-count">8 piatti</span>
+                        <div class="cat-actions">
+                            <button class="btn btn-sm btn-outline-secondary" title="Aggiungi sottocategoria"><i class="bi bi-plus-circle"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                        </div>
+                    </div>
+                    <!-- Sub: Di Mare -->
+                    <div class="cat-item subcat-item">
+                        <span class="cat-icon"><i class="bi bi-water"></i></span>
+                        <span class="cat-name">Di Mare</span>
+                        <span class="cat-count">4 piatti</span>
+                        <div class="cat-actions">
+                            <button class="btn btn-sm btn-outline-secondary" style="font-size:.65rem;"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" style="font-size:.65rem;"><i class="bi bi-trash3"></i></button>
+                        </div>
+                    </div>
+                    <!-- Sub: Di Terra -->
+                    <div class="cat-item subcat-item">
+                        <span class="cat-icon"><i class="bi bi-flower1"></i></span>
+                        <span class="cat-name">Di Terra</span>
+                        <span class="cat-count">4 piatti</span>
+                        <div class="cat-actions">
+                            <button class="btn btn-sm btn-outline-secondary" style="font-size:.65rem;"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" style="font-size:.65rem;"><i class="bi bi-trash3"></i></button>
+                        </div>
+                    </div>
+                    <div class="add-subcat-btn"><i class="bi bi-plus-circle"></i> Aggiungi sottocategoria ad "Antipasti"</div>
+
+                    <!-- Primi (parent, no sub) -->
+                    <div class="cat-item" style="margin-top:.25rem;">
+                        <span class="cat-icon"><i class="bi bi-egg-fried"></i></span>
+                        <span class="cat-name">Primi Piatti</span>
+                        <span class="cat-count">6 piatti</span>
+                        <div class="cat-actions">
+                            <button class="btn btn-sm btn-outline-secondary" title="Aggiungi sottocategoria"><i class="bi bi-plus-circle"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Secondi (parent con sub) -->
+                    <div class="cat-item" style="margin-top:.25rem;">
+                        <span class="cat-icon"><i class="bi bi-fire"></i></span>
+                        <span class="cat-name">Secondi Piatti</span>
+                        <span class="cat-count">10 piatti</span>
+                        <div class="cat-actions">
+                            <button class="btn btn-sm btn-outline-secondary" title="Aggiungi sottocategoria"><i class="bi bi-plus-circle"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                        </div>
+                    </div>
+                    <div class="cat-item subcat-item">
+                        <span class="cat-icon"><i class="bi bi-water"></i></span>
+                        <span class="cat-name">Pesce</span>
+                        <span class="cat-count">5 piatti</span>
+                        <div class="cat-actions">
+                            <button class="btn btn-sm btn-outline-secondary" style="font-size:.65rem;"><i class="bi bi-pencil"></i></button>
+                        </div>
+                    </div>
+                    <div class="cat-item subcat-item">
+                        <span class="cat-icon"><i class="bi bi-flower1"></i></span>
+                        <span class="cat-name">Carne</span>
+                        <span class="cat-count">5 piatti</span>
+                        <div class="cat-actions">
+                            <button class="btn btn-sm btn-outline-secondary" style="font-size:.65rem;"><i class="bi bi-pencil"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Dolci (no sub) -->
+                    <div class="cat-item" style="margin-top:.25rem;">
+                        <span class="cat-icon"><i class="bi bi-cake2"></i></span>
+                        <span class="cat-name">Dolci</span>
+                        <span class="cat-count">4 piatti</span>
+                        <div class="cat-actions">
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-plus-circle"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:.75rem; font-size:.72rem; color:#6c757d; font-style:italic;">
+                        <i class="bi bi-info-circle me-1"></i> Le sottocategorie sono opzionali. Le categorie senza sottocategorie funzionano come prima.
+                    </div>
+                </div>
+
+                <!-- Form nuova sottocategoria -->
+                <div class="card" style="padding:1rem; margin-top:1rem;">
+                    <div class="section-label"><i class="bi bi-plus-circle"></i> Nuova sottocategoria</div>
+                    <div class="mb-2">
+                        <label class="form-label">Categoria padre *</label>
+                        <select class="form-select form-select-sm">
+                            <option>Antipasti</option>
+                            <option>Primi Piatti</option>
+                            <option selected>Secondi Piatti</option>
+                            <option>Dolci</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Nome sottocategoria *</label>
+                        <input type="text" class="form-control form-control-sm" placeholder="es. Di Mare" value="Alla Griglia">
+                    </div>
+                    <button class="btn btn-sm btn-save w-100"><i class="bi bi-plus me-1"></i> Aggiungi</button>
+                </div>
+            </div>
+
+            <!-- Public -->
+            <div class="col-lg-6">
+                <div class="view-label public">Pagina Pubblica</div>
+                <div class="pub-menu">
+                    <div class="pub-header">
+                        <h3>Trattoria da Mario</h3>
+                        <p>Cucina italiana d'autore dal 1987</p>
+                    </div>
+                    <div class="pub-sticky-nav">
+                        <div class="pub-nav-item active">Antipasti</div>
+                        <div class="pub-nav-item">Primi</div>
+                        <div class="pub-nav-item">Secondi</div>
+                        <div class="pub-nav-item">Dolci</div>
+                    </div>
+
+                    <!-- Antipasti con sottocategorie -->
+                    <div class="pub-cat-header"><i class="bi bi-cup-hot"></i> Antipasti</div>
+
+                    <div class="pub-subcat-header"><i class="bi bi-water"></i> Di Mare</div>
+                    <div class="pub-item">
+                        <div class="pub-item-thumb"></div>
+                        <div class="pub-item-info">
+                            <div class="pub-item-name">Tartare di tonno</div>
+                            <div class="pub-item-desc">Con avocado e sesamo</div>
+                        </div>
+                        <div class="pub-item-price">€14.00</div>
+                    </div>
+                    <div class="pub-item">
+                        <div class="pub-item-thumb"></div>
+                        <div class="pub-item-info">
+                            <div class="pub-item-name">Polpo alla griglia</div>
+                            <div class="pub-item-desc">Su crema di patate</div>
+                        </div>
+                        <div class="pub-item-price">€16.00</div>
+                    </div>
+
+                    <div class="pub-subcat-header"><i class="bi bi-flower1"></i> Di Terra</div>
+                    <div class="pub-item">
+                        <div class="pub-item-thumb"></div>
+                        <div class="pub-item-info">
+                            <div class="pub-item-name">Bruschetta al pomodoro</div>
+                            <div class="pub-item-desc">Pane tostato, pomodorini e basilico</div>
+                        </div>
+                        <div class="pub-item-price">€6.00</div>
+                    </div>
+                    <div class="pub-item">
+                        <div class="pub-item-thumb"></div>
+                        <div class="pub-item-info">
+                            <div class="pub-item-name">Tagliere di salumi</div>
+                            <div class="pub-item-desc">Selezione di salumi toscani</div>
+                        </div>
+                        <div class="pub-item-price">€12.00</div>
+                    </div>
+
+                    <!-- Primi senza sottocategorie -->
+                    <div class="pub-cat-header"><i class="bi bi-egg-fried"></i> Primi Piatti</div>
+                    <div class="pub-item">
+                        <div class="pub-item-thumb"></div>
+                        <div class="pub-item-info">
+                            <div class="pub-item-name">Spaghetti alle vongole</div>
+                        </div>
+                        <div class="pub-item-price">€14.00</div>
+                    </div>
+                    <div class="pub-item">
+                        <div class="pub-item-thumb"></div>
+                        <div class="pub-item-info">
+                            <div class="pub-item-name">Risotto ai funghi porcini</div>
+                        </div>
+                        <div class="pub-item-price">€13.00</div>
+                    </div>
+
+                    <div style="padding:.75rem 1rem; text-align:center;">
+                        <div style="font-size:.72rem; color:rgba(255,255,255,.35);">
+                            ✓ Navigazione pulita — sticky nav con solo categorie principali<br>
+                            ✓ Sottocategorie come sotto-header leggeri
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         OPZIONE C: Sezioni/divisori (campo section su item)
+         ================================================================ -->
+    <div class="option-panel" id="option-c">
+
+        <!-- Pro/Con -->
+        <div class="card" style="padding:1rem; margin-bottom:1.25rem; background:#FFF3E0;">
+            <div style="font-weight:700; font-size:.85rem; margin-bottom:.5rem;"><i class="bi bi-text-indent-left me-1" style="color:#E65100;"></i> Opzione C — Sezioni/divisori dentro la categoria</div>
+            <div class="pro-con">
+                <span class="pro">+ Semplicissima da implementare</span> — 1 colonna VARCHAR su menu_items, nessuna migration complessa<br>
+                <span class="pro">+ Zero nuova UI</span> — solo un campo testo in più nel form piatto<br>
+                <span class="con">− Raggruppamento "soft"</span> — la sezione è una stringa libera (errori typo: "di mare" vs "Di Mare")<br>
+                <span class="con">− Nessun CRUD dedicato</span> — non puoi rinominare una sezione in blocco, devi modificare ogni piatto<br>
+                <span class="con">− Meno strutturato</span> — il ristoratore deve ricordare i nomi esatti delle sezioni
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Dashboard -->
+            <div class="col-lg-6">
+                <div class="view-label">Dashboard — Tab Piatti</div>
+                <div class="card" style="padding:0; overflow:hidden;">
+                    <div style="padding:1rem 1rem .5rem;">
+                        <div class="section-label"><i class="bi bi-egg-fried"></i> Piatti</div>
+                    </div>
+
+                    <!-- Category header -->
+                    <div style="font-weight:600; font-size:.8rem; color:#6c757d; text-transform:uppercase; letter-spacing:.5px; padding:.5rem 1rem; background:#fafaf8; border-bottom:1px solid #f0f0f0; border-top:1px solid #f0f0f0; display:flex; align-items:center; gap:.5rem;">
+                        <i class="bi bi-cup-hot" style="color:var(--brand);"></i> Antipasti <span style="margin-left:auto; font-size:.68rem; font-weight:400; color:#adb5bd;">8 piatti</span>
+                    </div>
+
+                    <!-- Section header (visual only) -->
+                    <div class="section-field-row">
+                        <span class="section-field-label"><i class="bi bi-text-indent-left me-1"></i> Di Mare</span>
+                    </div>
+                    <div class="item-row">
+                        <div class="item-thumb"></div>
+                        <div class="item-info">
+                            <div class="item-name">Tartare di tonno</div>
+                            <div class="item-price">€14.00</div>
+                        </div>
+                    </div>
+                    <div class="item-row">
+                        <div class="item-thumb"></div>
+                        <div class="item-info">
+                            <div class="item-name">Polpo alla griglia</div>
+                            <div class="item-price">€16.00</div>
+                        </div>
+                    </div>
+
+                    <div class="section-field-row">
+                        <span class="section-field-label"><i class="bi bi-text-indent-left me-1"></i> Di Terra</span>
+                    </div>
+                    <div class="item-row">
+                        <div class="item-thumb"></div>
+                        <div class="item-info">
+                            <div class="item-name">Bruschetta al pomodoro</div>
+                            <div class="item-price">€6.00</div>
+                        </div>
+                    </div>
+                    <div class="item-row">
+                        <div class="item-thumb"></div>
+                        <div class="item-info">
+                            <div class="item-name">Tagliere di salumi</div>
+                            <div class="item-price">€12.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form piatto con campo sezione -->
+                <div class="card" style="padding:1rem; margin-top:1rem;">
+                    <div class="section-label"><i class="bi bi-plus-circle"></i> Nuovo piatto — campo "Sezione"</div>
+                    <div class="mb-2">
+                        <label class="form-label">Categoria *</label>
+                        <select class="form-select form-select-sm"><option selected>Antipasti</option></select>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Nome *</label>
+                        <input type="text" class="form-control form-control-sm" value="Carpaccio di spada">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Sezione <span style="font-size:.7rem; color:#6c757d; font-weight:400;">(opzionale)</span></label>
+                        <input type="text" class="form-control form-control-sm" placeholder="es. Di Mare, Di Terra..." value="Di Mare">
+                        <div style="font-size:.68rem; color:#6c757d; margin-top:.15rem;">I piatti con la stessa sezione verranno raggruppati nel menu</div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Prezzo *</label>
+                        <input type="text" class="form-control form-control-sm" value="12.00">
+                    </div>
+                    <button class="btn btn-sm btn-save w-100"><i class="bi bi-check-lg me-1"></i> Salva piatto</button>
+
+                    <div style="margin-top:.75rem; padding:.5rem; background:#FFF3E0; border-radius:8px; font-size:.72rem; color:#E65100;">
+                        <i class="bi bi-exclamation-triangle me-1"></i> <strong>Attenzione:</strong> Il ristoratore deve digitare "Di Mare" esattamente uguale per ogni piatto. Un typo ("di mare" vs "Di Mare") crea due sezioni separate.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Public -->
+            <div class="col-lg-6">
+                <div class="view-label public">Pagina Pubblica</div>
+                <div class="pub-menu">
+                    <div class="pub-header">
+                        <h3>Trattoria da Mario</h3>
+                        <p>Cucina italiana d'autore dal 1987</p>
+                    </div>
+                    <div class="pub-sticky-nav">
+                        <div class="pub-nav-item active">Antipasti</div>
+                        <div class="pub-nav-item">Primi</div>
+                        <div class="pub-nav-item">Secondi</div>
+                        <div class="pub-nav-item">Dolci</div>
+                    </div>
+
+                    <div class="pub-cat-header"><i class="bi bi-cup-hot"></i> Antipasti</div>
+
+                    <!-- Section divider (visual line) -->
+                    <div class="pub-section-divider">Di Mare</div>
+                    <div class="pub-item">
+                        <div class="pub-item-thumb"></div>
+                        <div class="pub-item-info">
+                            <div class="pub-item-name">Tartare di tonno</div>
+                            <div class="pub-item-desc">Con avocado e sesamo</div>
+                        </div>
+                        <div class="pub-item-price">€14.00</div>
+                    </div>
+                    <div class="pub-item">
+                        <div class="pub-item-thumb"></div>
+                        <div class="pub-item-info">
+                            <div class="pub-item-name">Polpo alla griglia</div>
+                            <div class="pub-item-desc">Su crema di patate</div>
+                        </div>
+                        <div class="pub-item-price">€16.00</div>
+                    </div>
+
+                    <div class="pub-section-divider">Di Terra</div>
+                    <div class="pub-item">
+                        <div class="pub-item-thumb"></div>
+                        <div class="pub-item-info">
+                            <div class="pub-item-name">Bruschetta al pomodoro</div>
+                            <div class="pub-item-desc">Pane tostato, pomodorini e basilico</div>
+                        </div>
+                        <div class="pub-item-price">€6.00</div>
+                    </div>
+                    <div class="pub-item">
+                        <div class="pub-item-thumb"></div>
+                        <div class="pub-item-info">
+                            <div class="pub-item-name">Tagliere di salumi</div>
+                            <div class="pub-item-desc">Selezione di salumi toscani</div>
+                        </div>
+                        <div class="pub-item-price">€12.00</div>
+                    </div>
+
+                    <!-- Primi senza sezioni -->
+                    <div class="pub-cat-header"><i class="bi bi-egg-fried"></i> Primi Piatti</div>
+                    <div class="pub-item">
+                        <div class="pub-item-thumb"></div>
+                        <div class="pub-item-info">
+                            <div class="pub-item-name">Spaghetti alle vongole</div>
+                        </div>
+                        <div class="pub-item-price">€14.00</div>
+                    </div>
+
+                    <div style="padding:.75rem 1rem; text-align:center;">
+                        <div style="font-size:.72rem; color:rgba(255,255,255,.35);">
+                            ✓ Visivamente simile all'opzione B<br>
+                            ⚠ Ma i divisori sono stringhe libere, non entità gestibili
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         TABELLA COMPARATIVA
+         ================================================================ -->
+    <div class="card" style="padding:1.25rem; margin-top:2rem;">
+        <div class="section-label"><i class="bi bi-table"></i> Confronto rapido</div>
+        <div class="table-responsive">
+            <table class="table table-sm cmp-table mb-0">
+                <thead>
+                    <tr>
+                        <th style="width:35%;">Criterio</th>
+                        <th class="text-center">A — Albero</th>
+                        <th class="text-center" style="background:#E8F5E9;">B — 1 livello ★</th>
+                        <th class="text-center">C — Sezioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Copre i casi reali ristorazione</td>
+                        <td class="text-center"><span class="cmp-check"><i class="bi bi-check-circle-fill"></i></span></td>
+                        <td class="text-center" style="background:#E8F5E9;"><span class="cmp-check"><i class="bi bi-check-circle-fill"></i></span></td>
+                        <td class="text-center"><span class="cmp-check"><i class="bi bi-check-circle-fill"></i></span></td>
+                    </tr>
+                    <tr>
+                        <td>Semplicità implementazione</td>
+                        <td class="text-center"><span class="cmp-x"><i class="bi bi-x-circle-fill"></i></span></td>
+                        <td class="text-center" style="background:#E8F5E9;"><span class="cmp-mid"><i class="bi bi-dash-circle-fill"></i></span></td>
+                        <td class="text-center"><span class="cmp-check"><i class="bi bi-check-circle-fill"></i></span></td>
+                    </tr>
+                    <tr>
+                        <td>UX ristoratore (dashboard)</td>
+                        <td class="text-center"><span class="cmp-x"><i class="bi bi-x-circle-fill"></i></span></td>
+                        <td class="text-center" style="background:#E8F5E9;"><span class="cmp-check"><i class="bi bi-check-circle-fill"></i></span></td>
+                        <td class="text-center"><span class="cmp-mid"><i class="bi bi-dash-circle-fill"></i></span></td>
+                    </tr>
+                    <tr>
+                        <td>UX cliente (pagina pubblica)</td>
+                        <td class="text-center"><span class="cmp-x"><i class="bi bi-x-circle-fill"></i></span></td>
+                        <td class="text-center" style="background:#E8F5E9;"><span class="cmp-check"><i class="bi bi-check-circle-fill"></i></span></td>
+                        <td class="text-center"><span class="cmp-check"><i class="bi bi-check-circle-fill"></i></span></td>
+                    </tr>
+                    <tr>
+                        <td>CRUD dedicato (rinomina in blocco)</td>
+                        <td class="text-center"><span class="cmp-check"><i class="bi bi-check-circle-fill"></i></span></td>
+                        <td class="text-center" style="background:#E8F5E9;"><span class="cmp-check"><i class="bi bi-check-circle-fill"></i></span></td>
+                        <td class="text-center"><span class="cmp-x"><i class="bi bi-x-circle-fill"></i></span></td>
+                    </tr>
+                    <tr>
+                        <td>Resistente a errori utente</td>
+                        <td class="text-center"><span class="cmp-x"><i class="bi bi-x-circle-fill"></i></span></td>
+                        <td class="text-center" style="background:#E8F5E9;"><span class="cmp-check"><i class="bi bi-check-circle-fill"></i></span></td>
+                        <td class="text-center"><span class="cmp-x"><i class="bi bi-x-circle-fill"></i></span></td>
+                    </tr>
+                    <tr>
+                        <td>Migration DB</td>
+                        <td class="text-center" style="font-size:.72rem;">parent_id + ricorsive</td>
+                        <td class="text-center" style="background:#E8F5E9; font-size:.72rem;">parent_id (1 colonna)</td>
+                        <td class="text-center" style="font-size:.72rem;">section (1 colonna)</td>
+                    </tr>
+                    <tr>
+                        <td>Compatibilità futura (ordinazioni)</td>
+                        <td class="text-center"><span class="cmp-check"><i class="bi bi-check-circle-fill"></i></span></td>
+                        <td class="text-center" style="background:#E8F5E9;"><span class="cmp-check"><i class="bi bi-check-circle-fill"></i></span></td>
+                        <td class="text-center"><span class="cmp-mid"><i class="bi bi-dash-circle-fill"></i></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// Tab switching
+document.querySelectorAll('.option-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.option-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.querySelectorAll('.option-panel').forEach(function(p) { p.classList.remove('active'); });
+        btn.classList.add('active');
+        document.getElementById('option-' + btn.dataset.option).classList.add('active');
+    });
+});
+</script>
+
+</body>
+</html>

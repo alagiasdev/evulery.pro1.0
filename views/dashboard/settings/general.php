@@ -153,6 +153,11 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                             <textarea class="field-input field-textarea" name="cancellation_policy" rows="3"><?= e($tenant['cancellation_policy'] ?? '') ?></textarea>
                             <div class="field-hint">Visibile al cliente nella pagina di prenotazione</div>
                         </div>
+                        <div class="col-12 field-row">
+                            <label class="field-label">Istruzioni per il cliente</label>
+                            <textarea class="field-input field-textarea" name="booking_instructions" rows="3" maxlength="1000" placeholder="Es. Il tavolo resta riservato per 15 minuti dall'orario di prenotazione. Dress code: smart casual."><?= e($tenant['booking_instructions'] ?? '') ?></textarea>
+                            <div class="field-hint">Mostrate nella conferma prenotazione e nell'email al cliente (max 1000 caratteri)</div>
+                        </div>
                     </div>
                 </div>
             </div>

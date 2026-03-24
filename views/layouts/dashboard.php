@@ -9,6 +9,20 @@
     <link href="<?= asset('css/dashboard.css') ?>" rel="stylesheet">
 </head>
 <body>
+    <?php if (\App\Core\Auth::isImpersonating()): ?>
+    <div style="position:sticky;top:0;z-index:9999;background:#ffc107;color:#000;padding:.5rem 1rem;text-align:center;font-size:.85rem;font-weight:600;box-shadow:0 2px 4px rgba(0,0,0,.15);">
+        <i class="bi bi-person-badge"></i>
+        Stai accedendo come <strong><?= e(auth()['name'] ?? '') ?></strong>
+        <?php if (tenant()): ?>(<?= e(tenant()['name'] ?? '') ?>)<?php endif; ?>
+        &mdash;
+        <form method="POST" action="<?= url('dashboard/stop-impersonation') ?>" style="display:inline;">
+            <?= csrf_field() ?>
+            <button type="submit" style="background:none;border:none;color:#000;text-decoration:underline;cursor:pointer;font-size:.85rem;font-weight:700;">
+                <i class="bi bi-box-arrow-left"></i> Torna ad Admin
+            </button>
+        </form>
+    </div>
+    <?php endif; ?>
     <!-- Mobile Header -->
     <div class="mobile-header d-md-none" id="mobile-header">
         <button class="mobile-header-toggle" id="sidebar-toggle" type="button">
@@ -46,9 +60,26 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <?php if (tenant_can('digital_menu')): ?>
                     <a class="nav-link <?= ($activeMenu ?? '') === 'menu' ? 'active' : '' ?>" href="<?= url('dashboard/menu') ?>">
                         <i class="bi bi-book me-2"></i> Menu
                     </a>
+                    <?php else: ?>
+                    <a class="nav-link text-muted" href="<?= url('dashboard/menu') ?>" style="opacity:.6;">
+                        <i class="bi bi-book me-2"></i> Menu <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
+                    </a>
+                    <?php endif; ?>
+                </li>
+                <li class="nav-item">
+                    <?php if (tenant_can('email_broadcast')): ?>
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'communications' ? 'active' : '' ?>" href="<?= url('dashboard/communications') ?>">
+                        <i class="bi bi-envelope me-2"></i> Comunicazioni
+                    </a>
+                    <?php else: ?>
+                    <a class="nav-link text-muted" href="<?= url('dashboard/communications') ?>" style="opacity:.6;">
+                        <i class="bi bi-envelope me-2"></i> Comunicazioni <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
+                    </a>
+                    <?php endif; ?>
                 </li>
                 <li class="nav-item"><div class="sidebar-section">Impostazioni</div></li>
                 <li class="nav-item">
@@ -72,19 +103,37 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <?php if (tenant_can('promotions')): ?>
                     <a class="nav-link <?= ($activeMenu ?? '') === 'promotions' ? 'active' : '' ?>" href="<?= url('dashboard/settings/promotions') ?>">
                         <i class="bi bi-percent me-2"></i> Promozioni
                     </a>
+                    <?php else: ?>
+                    <a class="nav-link text-muted" href="<?= url('dashboard/settings/promotions') ?>" style="opacity:.6;">
+                        <i class="bi bi-percent me-2"></i> Promozioni <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
+                    </a>
+                    <?php endif; ?>
                 </li>
                 <li class="nav-item">
+                    <?php if (tenant_can('deposit')): ?>
                     <a class="nav-link <?= ($activeMenu ?? '') === 'deposit' ? 'active' : '' ?>" href="<?= url('dashboard/settings/deposit') ?>">
                         <i class="bi bi-cash me-2"></i> Caparra
                     </a>
+                    <?php else: ?>
+                    <a class="nav-link text-muted" href="<?= url('dashboard/settings/deposit') ?>" style="opacity:.6;">
+                        <i class="bi bi-cash me-2"></i> Caparra <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
+                    </a>
+                    <?php endif; ?>
                 </li>
                 <li class="nav-item">
+                    <?php if (tenant_can('custom_domain')): ?>
                     <a class="nav-link <?= ($activeMenu ?? '') === 'domain' ? 'active' : '' ?>" href="<?= url('dashboard/settings/domain') ?>">
                         <i class="bi bi-globe me-2"></i> Dominio
                     </a>
+                    <?php else: ?>
+                    <a class="nav-link text-muted" href="<?= url('dashboard/settings/domain') ?>" style="opacity:.6;">
+                        <i class="bi bi-globe me-2"></i> Dominio <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
+                    </a>
+                    <?php endif; ?>
                 </li>
             </ul>
         </nav>
@@ -106,7 +155,7 @@
         <!-- Top Bar (desktop) -->
         <div class="top-bar d-none d-md-flex">
             <span class="top-bar-date">
-                <i class="bi bi-calendar3 me-1"></i> <?= format_date(date('Y-m-d'), 'D d/m/Y') ?>
+                <i class="bi bi-calendar3 me-1"></i> <?= format_date(date('Y-m-d'), 'l d/m/Y') ?>
             </span>
             <div class="d-flex align-items-center gap-2">
                 <a href="<?= url('dashboard/reservations/create') ?>" class="btn btn-brand btn-sm btn-nuova-desktop">

@@ -6,6 +6,8 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Models\Reservation;
 use App\Models\ReservationLog;
+use App\Models\Tenant;
+use App\Services\MailService;
 
 class ManageReservationController
 {
@@ -52,6 +54,12 @@ class ManageReservationController
             null,
             'Annullata dal cliente via link'
         );
+
+        // Notify restaurant owner
+        $tenant = (new Tenant())->findById((int)$reservation['tenant_id']);
+        if ($tenant) {
+            MailService::sendCancellationNotification($reservation, $tenant, 'cliente');
+        }
 
         flash('success', 'La tua prenotazione è stata annullata.');
         Response::redirect(url("manage/{$token}"));

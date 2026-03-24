@@ -23,6 +23,10 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
     <?php endforeach; ?>
 </div>
 
+<?php if (!($canUseMenu ?? true)): ?>
+<?php $lockedTitle = 'Il menu digitale'; include __DIR__ . '/../../partials/service-locked.php'; ?>
+<?php else: ?>
+
 <!-- KPI Cards -->
 <div class="dh-stat-cards" style="grid-template-columns: repeat(4, 1fr);">
     <div class="dh-stat-card">
@@ -211,3 +215,5 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
     });
 })();
 </script>
+
+<?php endif; ?>

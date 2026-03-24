@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Conferma Prenotazione</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root { --brand: #00844A; --brand-light: #E8F5EE; --brand-dark: #006838; }
+        body { background: #f8f9fa; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+
+        .conf-card {
+            background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,.08);
+            overflow: hidden; max-width: 420px; margin: 2rem auto;
+        }
+
+        /* Success header with animation */
+        .conf-header {
+            background: linear-gradient(135deg, var(--brand) 0%, #00a65a 100%);
+            padding: 2rem 1.5rem 1.75rem; text-align: center; color: #fff;
+            position: relative;
+        }
+        .conf-header::after {
+            content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 20px;
+            background: #fff; border-radius: 20px 20px 0 0;
+        }
+        .conf-check {
+            width: 64px; height: 64px; border-radius: 50%;
+            background: rgba(255,255,255,.2); display: inline-flex;
+            align-items: center; justify-content: center; margin-bottom: .75rem;
+            animation: scaleIn .5s ease;
+        }
+        .conf-check i { font-size: 2rem; }
+        @keyframes scaleIn { 0% { transform: scale(0); } 60% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        .conf-title { font-size: 1.25rem; font-weight: 700; margin-bottom: .25rem; }
+        .conf-subtitle { font-size: .82rem; opacity: .85; }
+
+        /* Reservation details */
+        .conf-body { padding: 1.25rem 1.5rem; }
+
+        .conf-detail-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: .75rem;
+            margin-bottom: 1rem;
+        }
+        .conf-detail {
+            background: #f8f9fa; border-radius: 10px; padding: .75rem;
+            text-align: center;
+        }
+        .conf-detail-icon { font-size: 1.1rem; color: var(--brand); margin-bottom: .25rem; }
+        .conf-detail-value { font-size: .92rem; font-weight: 700; color: #212529; }
+        .conf-detail-label { font-size: .7rem; color: #6c757d; text-transform: uppercase; letter-spacing: .5px; }
+
+        /* Deposit paid badge */
+        .conf-deposit {
+            display: flex; align-items: center; gap: .75rem;
+            background: var(--brand-light); border-radius: 10px; padding: .75rem 1rem;
+            margin-bottom: 1rem;
+        }
+        .conf-deposit-icon {
+            width: 36px; height: 36px; border-radius: 50%; background: var(--brand);
+            display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0;
+        }
+        .conf-deposit-text { font-size: .82rem; color: #495057; }
+        .conf-deposit-text strong { color: var(--brand-dark); }
+
+        /* Info note */
+        .conf-note {
+            display: flex; align-items: flex-start; gap: .5rem;
+            background: #FFF8E1; border-radius: 8px; padding: .75rem;
+            font-size: .78rem; color: #795548; margin-bottom: 1rem;
+        }
+        .conf-note i { color: #FFC107; margin-top: .1rem; flex-shrink: 0; }
+
+        /* Actions */
+        .conf-actions { display: flex; flex-direction: column; gap: .5rem; }
+        .btn-conf-primary {
+            display: flex; align-items: center; justify-content: center; gap: .5rem;
+            padding: .7rem 1rem; border-radius: 10px;
+            background: var(--brand); color: #fff; border: none;
+            font-size: .85rem; font-weight: 600; text-decoration: none;
+            transition: background .2s;
+        }
+        .btn-conf-primary:hover { background: var(--brand-dark); color: #fff; }
+        .btn-conf-secondary {
+            display: flex; align-items: center; justify-content: center; gap: .5rem;
+            padding: .6rem 1rem; border-radius: 10px;
+            background: transparent; color: var(--brand); border: 1.5px solid var(--brand);
+            font-size: .82rem; font-weight: 500; text-decoration: none;
+            transition: all .2s;
+        }
+        .btn-conf-secondary:hover { background: var(--brand-light); color: var(--brand); }
+
+        /* Footer */
+        .conf-footer {
+            padding: .75rem 1.5rem; border-top: 1px solid #f0f0f0;
+            text-align: center; font-size: .7rem; color: #adb5bd;
+        }
+
+        /* Confetti animation (subtle) */
+        .confetti-dot {
+            position: absolute; width: 6px; height: 6px; border-radius: 50%;
+            animation: confettiFall 2s ease forwards; opacity: 0;
+        }
+        @keyframes confettiFall {
+            0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+            100% { opacity: 0; transform: translateY(80px) rotate(360deg); }
+        }
+
+        /* === CANCELLED PAGE === */
+        .conf-header.cancelled {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+        }
+        .conf-header.cancelled .conf-check { background: rgba(255,255,255,.2); }
+    </style>
+</head>
+<body>
+
+<!-- ===================== -->
+<!-- PAGE 1: CONFERMA OK   -->
+<!-- ===================== -->
+<div class="container py-3">
+    <div class="text-center mb-3">
+        <img src="https://placehold.co/120x50/00844A/white?text=LOGO" alt="Logo" style="max-height:50px;">
+    </div>
+
+    <div class="conf-card">
+        <div class="conf-header" id="conf-header">
+            <div class="conf-check">
+                <i class="bi bi-check-lg"></i>
+            </div>
+            <div class="conf-title">Prenotazione Confermata!</div>
+            <div class="conf-subtitle">Riceverai una conferma via email</div>
+        </div>
+
+        <div class="conf-body">
+            <!-- Riepilogo 2x2 grid -->
+            <div class="conf-detail-grid">
+                <div class="conf-detail">
+                    <div class="conf-detail-icon"><i class="bi bi-calendar3"></i></div>
+                    <div class="conf-detail-value">Mar 25 Marzo</div>
+                    <div class="conf-detail-label">Data</div>
+                </div>
+                <div class="conf-detail">
+                    <div class="conf-detail-icon"><i class="bi bi-clock"></i></div>
+                    <div class="conf-detail-value">20:30</div>
+                    <div class="conf-detail-label">Orario</div>
+                </div>
+                <div class="conf-detail">
+                    <div class="conf-detail-icon"><i class="bi bi-people"></i></div>
+                    <div class="conf-detail-value">4 persone</div>
+                    <div class="conf-detail-label">Coperti</div>
+                </div>
+                <div class="conf-detail">
+                    <div class="conf-detail-icon"><i class="bi bi-hash"></i></div>
+                    <div class="conf-detail-value">#1042</div>
+                    <div class="conf-detail-label">Prenotazione</div>
+                </div>
+            </div>
+
+            <!-- Caparra pagata (solo se deposit) -->
+            <div class="conf-deposit">
+                <div class="conf-deposit-icon"><i class="bi bi-shield-check"></i></div>
+                <div class="conf-deposit-text">
+                    Caparra di <strong>&euro;20,00</strong> pagata con successo
+                </div>
+            </div>
+
+            <!-- Nota -->
+            <div class="conf-note">
+                <i class="bi bi-info-circle"></i>
+                <span>Controlla la tua email per il riepilogo completo con il link per gestire la prenotazione.</span>
+            </div>
+
+            <!-- Azioni -->
+            <div class="conf-actions">
+                <a href="#" class="btn-conf-primary">
+                    <i class="bi bi-book"></i> Consulta il menu
+                </a>
+                <a href="#" class="btn-conf-secondary">
+                    <i class="bi bi-plus-circle"></i> Prenota un altro tavolo
+                </a>
+            </div>
+        </div>
+
+        <div class="conf-footer">
+            &copy; 2026 Evulery &middot; by alagias. - Soluzioni per il web
+        </div>
+    </div>
+</div>
+
+<hr style="margin:3rem 0; border-color:#dee2e6;">
+
+<!-- ============================ -->
+<!-- PAGE 2: PAGAMENTO ANNULLATO  -->
+<!-- ============================ -->
+<div class="container py-3">
+    <div class="text-center mb-3">
+        <img src="https://placehold.co/120x50/FF9800/white?text=LOGO" alt="Logo" style="max-height:50px;">
+    </div>
+
+    <div class="conf-card">
+        <div class="conf-header cancelled">
+            <div class="conf-check">
+                <i class="bi bi-x-lg"></i>
+            </div>
+            <div class="conf-title">Pagamento non completato</div>
+            <div class="conf-subtitle">La prenotazione non è stata confermata</div>
+        </div>
+
+        <div class="conf-body">
+            <div class="conf-note" style="background:#FFF3E0;">
+                <i class="bi bi-exclamation-triangle" style="color:#FF9800;"></i>
+                <span>Il pagamento della caparra non è stato completato. La prenotazione verrà annullata automaticamente se il pagamento non viene effettuato entro 30 minuti.</span>
+            </div>
+
+            <div class="conf-actions">
+                <a href="#" class="btn-conf-primary" style="background:#FF9800;">
+                    <i class="bi bi-arrow-repeat"></i> Riprova la prenotazione
+                </a>
+                <a href="#" class="btn-conf-secondary" style="color:#6c757d; border-color:#dee2e6;">
+                    <i class="bi bi-telephone"></i> Contatta il ristorante
+                </a>
+            </div>
+        </div>
+
+        <div class="conf-footer">
+            &copy; 2026 Evulery &middot; by alagias. - Soluzioni per il web
+        </div>
+    </div>
+</div>
+
+<!-- Confetti script (subtle, only for success) -->
+<script>
+(function() {
+    var header = document.getElementById('conf-header');
+    var colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
+    for (var i = 0; i < 12; i++) {
+        var dot = document.createElement('div');
+        dot.className = 'confetti-dot';
+        dot.style.left = (10 + Math.random() * 80) + '%';
+        dot.style.top = (20 + Math.random() * 40) + '%';
+        dot.style.background = colors[Math.floor(Math.random() * colors.length)];
+        dot.style.animationDelay = (Math.random() * .5) + 's';
+        dot.style.width = dot.style.height = (4 + Math.random() * 4) + 'px';
+        header.appendChild(dot);
+    }
+})();
+</script>
+
+</body>
+</html>
