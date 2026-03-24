@@ -72,6 +72,7 @@ class ReservationsController
             'title'       => 'Dettaglio Prenotazione',
             'activeMenu'  => 'reservations',
             'reservation' => $reservation,
+            'tenant'      => TenantResolver::current(),
             'logs'        => $logs,
             'history'     => $customerHistory,
         ], 'dashboard');
@@ -266,6 +267,31 @@ class ReservationsController
         if ($redirectBack) {
             Response::redirect(url($redirectBack));
         }
+        Response::redirect(url("dashboard/reservations/{$id}"));
+    }
+
+    public function markDepositPaid(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $reservationModel = new Reservation();
+        $reservation = $reservationModel->findById($id);
+
+        if (!$reservation || (int)$reservation['tenant_id'] !== (int)Auth::tenantId()) {
+            flash('danger', 'Prenotazione non trovata.');
+            Response::redirect(url('dashboard/reservations'));
+        }
+
+        if (!$reservation['deposit_required'] || $reservation['deposit_paid']) {
+            flash('info', 'Caparra già segnata come pagata.');
+            Response::redirect(url("dashboard/reservations/{$id}"));
+        }
+
+        $reservationModel->markDepositPaid($id);
+        (new ReservationLog())->create($id, $reservation['status'], $reservation['status'], Auth::id(), 'Caparra segnata come ricevuta');
+
+        AuditLog::log(AuditLog::RESERVATION_UPDATED, "Caparra ricevuta per prenotazione #{$id}", Auth::id(), (int)$reservation['tenant_id']);
+
+        flash('success', 'Caparra segnata come ricevuta.');
         Response::redirect(url("dashboard/reservations/{$id}"));
     }
 

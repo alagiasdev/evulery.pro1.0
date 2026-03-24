@@ -159,10 +159,10 @@ $paymentLink = $tenant['deposit_payment_link'] ?? '';
                     <!-- Config per tipo: Link -->
                     <div class="deposit-type-config" id="config-link" style="<?= $depositType === 'link' ? '' : 'display:none;' ?>margin-top:1rem;">
                         <label class="field-label">URL pagamento</label>
-                        <input type="url" class="field-input" name="deposit_payment_link"
+                        <input type="text" class="field-input" name="deposit_payment_link"
                                value="<?= e($paymentLink) ?>"
                                placeholder="https://paypal.me/tuoristorante">
-                        <div class="field-hint">PayPal.me, SumUp, Satispay o qualsiasi link di pagamento</div>
+                        <div class="field-hint">PayPal.me, SumUp, Satispay o qualsiasi link/email di pagamento</div>
                     </div>
 
                     <!-- Config per tipo: Stripe -->

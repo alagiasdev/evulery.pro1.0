@@ -177,6 +177,12 @@ class Reservation
         return $stmt->execute($data);
     }
 
+    public function markDepositPaid(int $id): bool
+    {
+        $stmt = $this->db->prepare('UPDATE reservations SET deposit_paid = 1 WHERE id = :id');
+        return $stmt->execute(['id' => $id]);
+    }
+
     public function updateNotes(int $id, string $notes): bool
     {
         $stmt = $this->db->prepare('UPDATE reservations SET internal_notes = :notes WHERE id = :id');

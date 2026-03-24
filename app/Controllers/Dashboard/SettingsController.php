@@ -241,8 +241,8 @@ class SettingsController
             'deposit_payment_link' => trim($data['deposit_payment_link'] ?? ''),
         ];
 
-        // Handle Stripe keys — don't overwrite if masked/empty
-        if (!empty($data['stripe_sk']) && !str_contains($data['stripe_sk'], '...')) {
+        // Handle Stripe keys — only when type is stripe, don't overwrite if masked/empty
+        if ($depositType === 'stripe' && !empty($data['stripe_sk']) && !str_contains($data['stripe_sk'], '...')) {
             $sk = trim($data['stripe_sk']);
             if (!preg_match('/^sk_(live|test)_/', $sk)) {
                 flash('danger', 'La Secret Key deve iniziare con sk_live_ o sk_test_');
@@ -251,7 +251,7 @@ class SettingsController
             $updateData['stripe_sk'] = encrypt_value($sk);
         }
 
-        if (!empty($data['stripe_pk']) && !str_contains($data['stripe_pk'], '...')) {
+        if ($depositType === 'stripe' && !empty($data['stripe_pk']) && !str_contains($data['stripe_pk'], '...')) {
             $pk = trim($data['stripe_pk']);
             if (!preg_match('/^pk_(live|test)_/', $pk)) {
                 flash('danger', 'La Publishable Key deve iniziare con pk_live_ o pk_test_');
@@ -260,7 +260,7 @@ class SettingsController
             $updateData['stripe_pk'] = $pk; // Not encrypted (public key)
         }
 
-        if (!empty($data['stripe_wh_secret']) && !str_contains($data['stripe_wh_secret'], '...')) {
+        if ($depositType === 'stripe' && !empty($data['stripe_wh_secret']) && !str_contains($data['stripe_wh_secret'], '...')) {
             $wh = trim($data['stripe_wh_secret']);
             if (!str_starts_with($wh, 'whsec_')) {
                 flash('danger', 'Il Webhook Secret deve iniziare con whsec_');

@@ -84,6 +84,15 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
                 <?php endif; ?>
             </div>
         </div>
+        <?php
+            $depTypeLabels = ['info' => 'Bonifico', 'link' => 'Link esterno', 'stripe' => 'Stripe'];
+            $depTypeIcons = ['info' => 'bi-bank', 'link' => 'bi-link-45deg', 'stripe' => 'bi-credit-card'];
+            $depType = $tenant['deposit_type'] ?? 'info';
+        ?>
+        <div>
+            <div class="detail-label"><i class="bi <?= $depTypeIcons[$depType] ?? 'bi-wallet2' ?> me-1"></i>Metodo</div>
+            <div class="detail-value"><?= $depTypeLabels[$depType] ?? ucfirst($depType) ?></div>
+        </div>
         <?php endif; ?>
     </div>
 
@@ -115,6 +124,13 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
             <?= csrf_field() ?>
             <input type="hidden" name="status" value="confirmed">
             <button type="submit" class="btn-action btn-act-confirm"><i class="bi bi-check-circle"></i> Conferma</button>
+        </form>
+        <?php endif; ?>
+
+        <?php if ($reservation['deposit_required'] && !$reservation['deposit_paid']): ?>
+        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/deposit-paid") ?>" class="d-inline">
+            <?= csrf_field() ?>
+            <button type="submit" class="btn-action" style="background:#E8F5E9;color:#2E7D32;border:1px solid #C8E6C9;"><i class="bi bi-cash-coin"></i> Segna caparra ricevuta</button>
         </form>
         <?php endif; ?>
 

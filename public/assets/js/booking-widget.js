@@ -550,20 +550,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 confHtml += '</div>';
 
-                if (data.data && data.data.status === 'pending' && !data.data.deposit_required) {
-                    confHtml += '<p style="color:#E65100;"><i class="bi bi-hourglass-split"></i> La tua prenotazione è <strong>in attesa di conferma</strong> dal ristorante. Riceverai un\'email quando sarà confermata.</p>';
+                var resId = (data.data && data.data.reservation_id) ? data.data.reservation_id : '';
+                var depType = (data.data && data.data.deposit_type) ? data.data.deposit_type : '';
+                var isPendingDeposit = data.data && data.data.deposit_required && depType !== 'stripe';
+                var isPendingManual = data.data && data.data.status === 'pending' && !data.data.deposit_required;
+
+                if (isPendingDeposit) {
+                    confHtml += '<p style="color:#E65100;"><i class="bi bi-hourglass-split"></i> Prenotazione <strong>n. ' + resId + '</strong> in attesa di pagamento caparra. Riceverai un\'email di conferma dopo la verifica.</p>';
+                } else if (isPendingManual) {
+                    confHtml += '<p style="color:#E65100;"><i class="bi bi-hourglass-split"></i> Prenotazione <strong>n. ' + resId + '</strong> in attesa di conferma dal ristorante. Riceverai un\'email quando sarà confermata.</p>';
                 } else {
-                    confHtml += '<p>Riceverai una conferma via email a <strong>' + escapeHtml(email) + '</strong></p>';
+                    confHtml += '<p>Prenotazione <strong>n. ' + resId + '</strong> &mdash; riceverai una conferma via email a <strong>' + escapeHtml(email) + '</strong></p>';
                 }
 
                 details.innerHTML = confHtml;
 
-                // Update heading/icon for pending (manual confirmation) vs confirmed
+                // Update heading/icon
                 var confirmStep = steps.confirm;
                 var headingEl = confirmStep.querySelector('h3');
                 var iconEl = confirmStep.querySelector('.bw-confirm-icon i');
-                if (data.data && data.data.status === 'pending' && !data.data.deposit_required) {
-                    if (headingEl) headingEl.textContent = 'Prenotazione Ricevuta!';
+                if (isPendingDeposit || isPendingManual) {
+                    if (headingEl) headingEl.textContent = isPendingDeposit ? 'Prenotazione in Attesa' : 'Prenotazione Ricevuta!';
                     if (iconEl) { iconEl.className = 'bi bi-hourglass-split'; iconEl.style.color = '#E65100'; }
                 } else {
                     if (headingEl) headingEl.textContent = 'Prenotazione Confermata!';
@@ -578,17 +585,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         details.innerHTML += '<div class="bw-deposit-info" style="margin-top:12px;">Reindirizzamento al pagamento della caparra di &euro;' + depAmt + '...</div>';
                     } else if (depType === 'link' && data.data.deposit_payment_link) {
                         details.innerHTML += '<div class="bw-deposit-info" style="margin-top:12px;">' +
-                            '<p style="margin:0 0 8px;">Caparra richiesta: <strong>&euro;' + depAmt + '</strong></p>' +
+                            '<p style="margin:0 0 8px;">Caparra richiesta: <strong>&euro;' + depAmt + '</strong> (prenotazione n. ' + resId + ')</p>' +
                             '<a href="' + data.data.deposit_payment_link.replace(/"/g, '&quot;') + '" target="_blank" rel="noopener" ' +
                             'style="display:inline-block;background:var(--bw-brand,#2E7D32);color:#fff;padding:8px 20px;border-radius:8px;text-decoration:none;font-size:.85rem;font-weight:600;">' +
                             '<i class="bi bi-link-45deg" style="margin-right:4px;"></i>Paga la caparra</a>' +
-                            '<p style="margin:8px 0 0;font-size:.75rem;color:#6c757d;">Dopo il pagamento, il ristorante confermer&agrave; la prenotazione.</p>' +
+                            '<p style="margin:8px 0 0;font-size:.75rem;color:#6c757d;">Indica nella causale: <strong>Prenotazione n. ' + resId + '</strong>. Il ristorante confermer&agrave; dopo il pagamento.</p>' +
                             '</div>';
                     } else if (depType === 'info') {
                         var bankInfo = data.data.deposit_bank_info || '';
                         details.innerHTML += '<div class="bw-deposit-info" style="margin-top:12px;">' +
                             '<p style="margin:0 0 8px;">Caparra richiesta: <strong>&euro;' + depAmt + '</strong></p>' +
                             (bankInfo ? '<div style="background:#f8f9fa;border:1px solid #e9ecef;border-radius:8px;padding:10px;font-size:.8rem;white-space:pre-line;">' + bankInfo.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div>' : '') +
+                            '<div style="background:#fff3e0;border:1px solid #ffe0b2;border-radius:8px;padding:10px;font-size:.8rem;margin-top:8px;">' +
+                            '<strong>Causale:</strong> Caparra prenotazione n. ' + resId + '</div>' +
                             '<p style="margin:8px 0 0;font-size:.75rem;color:#6c757d;">Effettua il bonifico e il ristorante confermer&agrave; la prenotazione.</p>' +
                             '</div>';
                     }

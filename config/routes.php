@@ -59,6 +59,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('/reservations/{id}/edit', [ReservationsController::class, 'edit']);
     $r->post('/reservations/{id}/edit', [ReservationsController::class, 'update']);
     $r->post('/reservations/{id}/status', [ReservationsController::class, 'updateStatus']);
+    $r->post('/reservations/{id}/deposit-paid', [ReservationsController::class, 'markDepositPaid']);
     $r->post('/reservations/{id}/notes', [ReservationsController::class, 'updateNotes']);
     $r->post('/reservations/{id}/delete', [ReservationsController::class, 'destroy']);
     $r->get('/customers', [CustomersController::class, 'index']);
