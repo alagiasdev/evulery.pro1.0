@@ -177,15 +177,36 @@ class SettingsController
     {
         $tenant = TenantResolver::current();
         $canUseDeposit = tenant_can('deposit');
-        $stripeConnected = !empty($tenant['stripe_account_id']) && ($tenant['stripe_connect_status'] ?? 'none') === 'active';
+
+        // Mask Stripe keys for display
+        $stripeSkMasked = '';
+        if (!empty($tenant['stripe_sk'])) {
+            $decrypted = decrypt_value($tenant['stripe_sk']);
+            if ($decrypted) {
+                $stripeSkMasked = substr($decrypted, 0, 8) . '...' . substr($decrypted, -4);
+            }
+        }
+        $stripePkMasked = '';
+        if (!empty($tenant['stripe_pk'])) {
+            $pk = $tenant['stripe_pk'];
+            $stripePkMasked = substr($pk, 0, 8) . '...' . substr($pk, -4);
+        }
+        $stripeWhMasked = '';
+        if (!empty($tenant['stripe_wh_secret'])) {
+            $decrypted = decrypt_value($tenant['stripe_wh_secret']);
+            if ($decrypted) {
+                $stripeWhMasked = substr($decrypted, 0, 8) . '...' . substr($decrypted, -4);
+            }
+        }
 
         view('dashboard/settings/deposit', [
-            'title'            => 'Caparra',
-            'activeMenu'       => 'deposit',
-            'tenant'           => $tenant,
-            'canUseDeposit'    => $canUseDeposit,
-            'stripeConnected'  => $stripeConnected,
-            'connectConfigured' => !empty(env('STRIPE_CONNECT_CLIENT_ID', '')),
+            'title'           => 'Caparra',
+            'activeMenu'      => 'deposit',
+            'tenant'          => $tenant,
+            'canUseDeposit'   => $canUseDeposit,
+            'stripeSkMasked'  => $stripeSkMasked,
+            'stripePkMasked'  => $stripePkMasked,
+            'stripeWhMasked'  => $stripeWhMasked,
         ], 'dashboard');
     }
 
@@ -197,24 +218,60 @@ class SettingsController
         $tenant = TenantResolver::current();
         $data = $request->all();
 
-        // Prevent enabling deposit without Stripe connection
         $wantsEnabled = !empty($data['deposit_enabled']);
-        $stripeConnected = !empty($tenant['stripe_account_id']) && ($tenant['stripe_connect_status'] ?? 'none') === 'active';
+        $depositMode = in_array($data['deposit_mode'] ?? '', ['per_table', 'per_person']) ? $data['deposit_mode'] : 'per_table';
+        $depositType = in_array($data['deposit_type'] ?? '', ['info', 'link', 'stripe']) ? $data['deposit_type'] : 'info';
 
-        if ($wantsEnabled && !$stripeConnected) {
-            flash('danger', 'Devi prima collegare il tuo account Stripe per attivare la caparra.');
-            Response::redirect(url('dashboard/settings/deposit'));
+        // Guard: if stripe type and enabling, keys must exist
+        if ($wantsEnabled && $depositType === 'stripe') {
+            $hasKeys = !empty($data['stripe_sk']) && !str_contains($data['stripe_sk'], '...');
+            $hasExisting = !empty($tenant['stripe_sk']);
+            if (!$hasKeys && !$hasExisting) {
+                flash('danger', 'Inserisci le chiavi Stripe per attivare la caparra con pagamento automatico.');
+                Response::redirect(url('dashboard/settings/deposit'));
+            }
         }
 
-        $depositMode = in_array($data['deposit_mode'] ?? '', ['per_table', 'per_person']) ? $data['deposit_mode'] : 'per_table';
-
-        (new Tenant())->update($tenantId, [
+        $updateData = [
             'deposit_enabled' => $wantsEnabled ? 1 : 0,
             'deposit_amount'  => !empty($data['deposit_amount']) ? (float)$data['deposit_amount'] : null,
             'deposit_mode'    => $depositMode,
-        ]);
+            'deposit_type'    => $depositType,
+            'deposit_bank_info'    => trim($data['deposit_bank_info'] ?? ''),
+            'deposit_payment_link' => trim($data['deposit_payment_link'] ?? ''),
+        ];
 
-        AuditLog::log(AuditLog::DEPOSIT_UPDATED, null, Auth::id(), $tenantId);
+        // Handle Stripe keys — don't overwrite if masked/empty
+        if (!empty($data['stripe_sk']) && !str_contains($data['stripe_sk'], '...')) {
+            $sk = trim($data['stripe_sk']);
+            if (!preg_match('/^sk_(live|test)_/', $sk)) {
+                flash('danger', 'La Secret Key deve iniziare con sk_live_ o sk_test_');
+                Response::redirect(url('dashboard/settings/deposit'));
+            }
+            $updateData['stripe_sk'] = encrypt_value($sk);
+        }
+
+        if (!empty($data['stripe_pk']) && !str_contains($data['stripe_pk'], '...')) {
+            $pk = trim($data['stripe_pk']);
+            if (!preg_match('/^pk_(live|test)_/', $pk)) {
+                flash('danger', 'La Publishable Key deve iniziare con pk_live_ o pk_test_');
+                Response::redirect(url('dashboard/settings/deposit'));
+            }
+            $updateData['stripe_pk'] = $pk; // Not encrypted (public key)
+        }
+
+        if (!empty($data['stripe_wh_secret']) && !str_contains($data['stripe_wh_secret'], '...')) {
+            $wh = trim($data['stripe_wh_secret']);
+            if (!str_starts_with($wh, 'whsec_')) {
+                flash('danger', 'Il Webhook Secret deve iniziare con whsec_');
+                Response::redirect(url('dashboard/settings/deposit'));
+            }
+            $updateData['stripe_wh_secret'] = encrypt_value($wh);
+        }
+
+        (new Tenant())->update($tenantId, $updateData);
+
+        AuditLog::log(AuditLog::DEPOSIT_UPDATED, "Tipo: {$depositType}", Auth::id(), $tenantId);
 
         flash('success', 'Impostazioni caparra aggiornate.');
         Response::redirect(url('dashboard/settings/deposit'));

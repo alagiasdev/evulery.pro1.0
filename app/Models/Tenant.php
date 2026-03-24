@@ -119,6 +119,8 @@ class Tenant
             'booking_advance_min', 'booking_advance_max',
             'segment_occasionale', 'segment_abituale', 'segment_vip',
             'stripe_account_id', 'stripe_connect_status', 'stripe_connect_at',
+            'deposit_type', 'deposit_bank_info', 'deposit_payment_link',
+            'stripe_sk', 'stripe_pk', 'stripe_wh_secret',
             'timezone', 'menu_enabled', 'promo_widget_only', 'menu_hero_image', 'menu_tagline',
             'opening_hours', 'is_active',
         ];

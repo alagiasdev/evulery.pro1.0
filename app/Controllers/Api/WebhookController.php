@@ -16,9 +16,29 @@ class WebhookController
     {
         $payload = file_get_contents('php://input');
         $sig = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
-        $webhookSecret = env('STRIPE_WEBHOOK_SECRET', '');
 
-        if (!$webhookSecret || !$sig) {
+        if (!$sig) {
+            Response::error('Webhook non configurato.', 'WEBHOOK_ERROR', 400);
+        }
+
+        // Try to determine tenant for webhook secret lookup
+        $webhookSecret = '';
+        $payloadData = json_decode($payload, true);
+        $tenantId = $payloadData['data']['object']['metadata']['tenant_id'] ?? null;
+
+        if ($tenantId) {
+            $tenantRecord = (new Tenant())->findById((int)$tenantId);
+            if ($tenantRecord && !empty($tenantRecord['stripe_wh_secret'])) {
+                $webhookSecret = decrypt_value($tenantRecord['stripe_wh_secret']) ?: '';
+            }
+        }
+
+        // Fallback to platform webhook secret
+        if (!$webhookSecret) {
+            $webhookSecret = env('STRIPE_WEBHOOK_SECRET', '');
+        }
+
+        if (!$webhookSecret) {
             Response::error('Webhook non configurato.', 'WEBHOOK_ERROR', 400);
         }
 
@@ -27,12 +47,6 @@ class WebhookController
         } catch (\Exception $e) {
             app_log('Stripe webhook error: ' . $e->getMessage(), 'error');
             Response::error('Firma non valida.', 'INVALID_SIGNATURE', 400);
-        }
-
-        // Log connected account for Stripe Connect events
-        $connectedAccount = $event->account ?? null;
-        if ($connectedAccount) {
-            app_log("Stripe Connect event for account: {$connectedAccount}", 'info');
         }
 
         $reservationModel = new Reservation();

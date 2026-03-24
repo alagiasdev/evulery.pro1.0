@@ -100,10 +100,10 @@ class ReservationApiController
             }
         }
 
-        // Determine deposit - require if tenant has connected Stripe account AND plan includes deposit service
-        $stripeConnected = !empty($tenant['stripe_account_id']) && ($tenant['stripe_connect_status'] ?? 'none') === 'active';
+        // Determine deposit - require if tenant has deposit enabled AND plan includes deposit service
         $canUseDeposit = (new \App\Models\Tenant())->canUseService((int)$tenant['id'], 'deposit');
-        $depositRequired = ($tenant['deposit_enabled'] && $stripeConnected && $canUseDeposit) ? 1 : 0;
+        $depositRequired = ($tenant['deposit_enabled'] && $canUseDeposit) ? 1 : 0;
+        $depositType = $tenant['deposit_type'] ?? 'info';
 
         // Calculate deposit based on mode: per_table (fixed) or per_person (× party_size)
         $depositAmount = null;
@@ -191,63 +191,63 @@ class ReservationApiController
             'party_size'     => (int)$data['party_size'],
         ];
 
-        // If deposit required, create Stripe Checkout session
+        // If deposit required, handle based on deposit_type
         if ($depositRequired && $depositAmount > 0) {
-            try {
-                \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+            $responseData['deposit_required'] = true;
+            $responseData['deposit_amount'] = $depositAmount;
+            $responseData['deposit_type'] = $depositType;
 
-                $depositMode = $tenant['deposit_mode'] ?? 'per_table';
-                $description = $depositMode === 'per_person'
-                    ? "Caparra {$tenant['name']} - €" . number_format((float)$tenant['deposit_amount'], 2, ',', '.') . " × {$data['party_size']} persone"
-                    : "Caparra prenotazione {$tenant['name']}";
+            if ($depositType === 'stripe' && !empty($tenant['stripe_sk'])) {
+                // Stripe integrated: create Checkout session with tenant's own keys
+                try {
+                    $tenantStripeKey = decrypt_value($tenant['stripe_sk']);
+                    if (!$tenantStripeKey) {
+                        throw new \RuntimeException('Chiave Stripe non valida');
+                    }
+                    \Stripe\Stripe::setApiKey($tenantStripeKey);
 
-                $sessionParams = [
-                    'payment_method_types' => ['card'],
-                    'line_items' => [[
-                        'price_data' => [
-                            'currency'     => 'eur',
-                            'unit_amount'  => (int)round($depositAmount * 100),
-                            'product_data' => [
-                                'name'        => "Caparra - {$tenant['name']}",
-                                'description' => $description,
+                    $depositMode = $tenant['deposit_mode'] ?? 'per_table';
+                    $description = $depositMode === 'per_person'
+                        ? "Caparra {$tenant['name']} - €" . number_format((float)$tenant['deposit_amount'], 2, ',', '.') . " × {$data['party_size']} persone"
+                        : "Caparra prenotazione {$tenant['name']}";
+
+                    $session = \Stripe\Checkout\Session::create([
+                        'payment_method_types' => ['card'],
+                        'line_items' => [[
+                            'price_data' => [
+                                'currency'     => 'eur',
+                                'unit_amount'  => (int)round($depositAmount * 100),
+                                'product_data' => [
+                                    'name'        => "Caparra - {$tenant['name']}",
+                                    'description' => $description,
+                                ],
                             ],
+                            'quantity' => 1,
+                        ]],
+                        'mode'        => 'payment',
+                        'success_url' => url("{$slug}/booking/success") . '?session_id={CHECKOUT_SESSION_ID}',
+                        'cancel_url'  => url("{$slug}/booking/cancel"),
+                        'metadata'    => [
+                            'reservation_id' => $reservationId,
+                            'tenant_id'      => $tenant['id'],
                         ],
-                        'quantity' => 1,
-                    ]],
-                    'mode'        => 'payment',
-                    'success_url' => url("{$slug}/booking/success") . '?session_id={CHECKOUT_SESSION_ID}',
-                    'cancel_url'  => url("{$slug}/booking/cancel"),
-                    'metadata'    => [
-                        'reservation_id' => $reservationId,
-                        'tenant_id'      => $tenant['id'],
-                    ],
-                    'expires_at' => time() + 1800, // 30 minutes
-                ];
+                        'expires_at' => time() + 1800,
+                    ]);
 
-                // Platform commission (optional)
-                $feePct = (float) env('STRIPE_PLATFORM_FEE_PERCENT', 0);
-                if ($feePct > 0) {
-                    $feeAmount = (int) round($depositAmount * 100 * $feePct / 100);
-                    $sessionParams['payment_intent_data'] = [
-                        'application_fee_amount' => $feeAmount,
-                    ];
+                    $responseData['stripe_checkout_url'] = $session->url;
+                    $responseData['message'] = 'Prenotazione creata. Verrai reindirizzato al pagamento.';
+                } catch (\Exception $e) {
+                    app_log('Stripe Checkout error: ' . $e->getMessage(), 'error');
+                    $responseData['message'] = 'Prenotazione creata. Contatta il ristorante per il pagamento della caparra.';
                 }
-
-                $session = \Stripe\Checkout\Session::create(
-                    $sessionParams,
-                    ['stripe_account' => $tenant['stripe_account_id']]
-                );
-
-                $responseData['deposit_required'] = true;
-                $responseData['deposit_amount'] = $depositAmount;
-                $responseData['stripe_checkout_url'] = $session->url;
-                $responseData['message'] = 'Prenotazione creata. Verrai reindirizzato al pagamento.';
-            } catch (\Exception $e) {
-                app_log('Stripe Checkout error: ' . $e->getMessage(), 'error');
-                // Reservation created but payment failed — mark as pending, let owner handle
-                $responseData['deposit_required'] = true;
-                $responseData['deposit_amount'] = $depositAmount;
-                $responseData['message'] = 'Prenotazione creata. Contatta il ristorante per il pagamento della caparra.';
+            } elseif ($depositType === 'link' && !empty($tenant['deposit_payment_link'])) {
+                // External payment link
+                $responseData['deposit_payment_link'] = $tenant['deposit_payment_link'];
+                $responseData['message'] = 'Prenotazione creata. Effettua il pagamento della caparra tramite il link.';
+            } else {
+                // Bank info (default)
+                $responseData['deposit_bank_info'] = $tenant['deposit_bank_info'] ?? '';
+                $responseData['message'] = 'Prenotazione creata. Effettua il bonifico per confermare.';
             }
         }
 

@@ -1306,6 +1306,18 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 .mode-hint { display: block; font-size: .72rem; font-weight: 400; color: #adb5bd; margin-top: .25rem; }
 .mode-option.active .mode-hint { color: var(--brand); opacity: .7; }
 
+/* ===== Deposit type option ===== */
+.deposit-type-option {
+    display: block; padding: .75rem 1rem; border: 2px solid #dee2e6; border-radius: 10px;
+    cursor: pointer; transition: all .2s;
+}
+.deposit-type-option:hover { border-color: var(--brand); background: var(--brand-light); }
+.deposit-type-option.active { border-color: var(--brand); background: var(--brand-light); }
+.dto-header { display: flex; align-items: center; font-size: .85rem; font-weight: 600; color: #495057; }
+.deposit-type-option.active .dto-header { color: var(--brand); }
+.dto-desc { display: block; font-size: .72rem; color: #adb5bd; margin-top: .2rem; padding-left: 1.75rem; }
+.deposit-type-option.active .dto-desc { color: var(--brand); opacity: .7; }
+
 /* ===== Flow card (deposit) ===== */
 .flow-card {
     background: #fff; border-radius: 12px;

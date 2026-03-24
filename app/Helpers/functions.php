@@ -248,3 +248,43 @@ function app_log(string $message, string $level = 'info'): void
     $line = "[{$timestamp}] [{$level}] {$message}" . PHP_EOL;
     file_put_contents($logFile, $line, FILE_APPEND | LOCK_EX);
 }
+
+/**
+ * Encrypt a value using AES-256-GCM.
+ * Returns base64-encoded string: iv:tag:ciphertext
+ */
+function encrypt_value(string $plaintext): string
+{
+    $key = base64_decode(env('APP_ENCRYPTION_KEY', ''));
+    if (strlen($key) < 16) {
+        throw new \RuntimeException('APP_ENCRYPTION_KEY non configurata o troppo corta.');
+    }
+    $iv = random_bytes(12);
+    $tag = '';
+    $ciphertext = openssl_encrypt($plaintext, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag, '', 16);
+    if ($ciphertext === false) {
+        throw new \RuntimeException('Errore crittografia.');
+    }
+    return base64_encode($iv . $tag . $ciphertext);
+}
+
+/**
+ * Decrypt a value encrypted with encrypt_value().
+ * Returns null on failure.
+ */
+function decrypt_value(string $encrypted): ?string
+{
+    $key = base64_decode(env('APP_ENCRYPTION_KEY', ''));
+    if (strlen($key) < 16) {
+        return null;
+    }
+    $data = base64_decode($encrypted, true);
+    if ($data === false || strlen($data) < 28) { // 12 iv + 16 tag + min 1 byte
+        return null;
+    }
+    $iv = substr($data, 0, 12);
+    $tag = substr($data, 12, 16);
+    $ciphertext = substr($data, 28);
+    $result = openssl_decrypt($ciphertext, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag);
+    return $result === false ? null : $result;
+}

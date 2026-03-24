@@ -13,10 +13,9 @@ $depositEnabled = (bool)$tenant['deposit_enabled'];
 $depositAmount = $tenant['deposit_amount'] ? number_format((float)$tenant['deposit_amount'], 2, ',', '.') : '0,00';
 $depositAmountRaw = $tenant['deposit_amount'] ? number_format((float)$tenant['deposit_amount'], 2, '.', '') : '';
 $depositMode = $tenant['deposit_mode'] ?? 'per_table';
-$stripeConnected = $stripeConnected ?? false;
-$connectConfigured = $connectConfigured ?? false;
-$stripeAccountId = $tenant['stripe_account_id'] ?? null;
-$stripeConnectAt = $tenant['stripe_connect_at'] ?? null;
+$depositType = $tenant['deposit_type'] ?? 'info';
+$bankInfo = $tenant['deposit_bank_info'] ?? '';
+$paymentLink = $tenant['deposit_payment_link'] ?? '';
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
@@ -42,23 +41,17 @@ $stripeConnectAt = $tenant['stripe_connect_at'] ?? null;
         <div class="col-lg-7">
 
             <!-- Master toggle -->
-            <div class="master-toggle <?= $depositEnabled ? 'enabled' : 'disabled' ?> <?= !$stripeConnected ? 'disabled-look' : '' ?>" id="master-toggle">
+            <div class="master-toggle <?= $depositEnabled ? 'enabled' : 'disabled' ?>" id="master-toggle">
                 <div class="mt-left">
                     <div class="mt-icon" style="background:var(--brand-light);color:var(--brand);">
                         <i class="bi bi-shield-check"></i>
                     </div>
                     <div>
                         <div class="mt-title">Richiedi caparra</div>
-                        <div class="mt-desc">
-                            <?php if (!$stripeConnected): ?>
-                                <span style="color:#E65100;">Collega prima il tuo account Stripe per attivare la caparra</span>
-                            <?php else: ?>
-                                I clienti dovranno versare una caparra per confermare la prenotazione online
-                            <?php endif; ?>
-                        </div>
+                        <div class="mt-desc">I clienti dovranno versare una caparra per confermare la prenotazione online</div>
                     </div>
                 </div>
-                <div class="toggle-big <?= $depositEnabled ? 'on' : 'off' ?>" id="main-toggle" <?= !$stripeConnected ? 'style="pointer-events:none;opacity:.4;"' : '' ?>></div>
+                <div class="toggle-big <?= $depositEnabled ? 'on' : 'off' ?>" id="main-toggle"></div>
                 <input type="hidden" name="deposit_enabled" id="deposit-enabled-input" value="<?= $depositEnabled ? '1' : '' ?>">
             </div>
 
@@ -118,6 +111,108 @@ $stripeConnectAt = $tenant['stripe_connect_at'] ?? null;
                 </div>
             </div>
 
+            <!-- Deposit type selector -->
+            <div class="config-section <?= $depositEnabled ? '' : 'disabled-look' ?>" id="type-section">
+                <div class="section-header">
+                    <div class="section-icon" style="background:#635BFF;"><i class="bi bi-wallet2"></i></div>
+                    <div>
+                        <div class="section-title">Metodo di pagamento</div>
+                        <div class="section-subtitle">Come il cliente versa la caparra</div>
+                    </div>
+                </div>
+                <div class="config-body">
+                    <div style="display:flex;flex-direction:column;gap:.5rem;">
+                        <label class="deposit-type-option <?= $depositType === 'info' ? 'active' : '' ?>">
+                            <input type="radio" name="deposit_type" value="info" <?= $depositType === 'info' ? 'checked' : '' ?> style="display:none;">
+                            <div class="dto-header">
+                                <i class="bi bi-bank me-2"></i>
+                                <span class="dto-title">Bonifico bancario</span>
+                            </div>
+                            <span class="dto-desc">Mostra IBAN e coordinate al cliente. Conferma manuale.</span>
+                        </label>
+                        <label class="deposit-type-option <?= $depositType === 'link' ? 'active' : '' ?>">
+                            <input type="radio" name="deposit_type" value="link" <?= $depositType === 'link' ? 'checked' : '' ?> style="display:none;">
+                            <div class="dto-header">
+                                <i class="bi bi-link-45deg me-2"></i>
+                                <span class="dto-title">Link di pagamento</span>
+                            </div>
+                            <span class="dto-desc">PayPal, SumUp, Satispay... Il cliente clicca il link. Conferma manuale.</span>
+                        </label>
+                        <label class="deposit-type-option <?= $depositType === 'stripe' ? 'active' : '' ?>">
+                            <input type="radio" name="deposit_type" value="stripe" <?= $depositType === 'stripe' ? 'checked' : '' ?> style="display:none;">
+                            <div class="dto-header">
+                                <i class="bi bi-credit-card me-2"></i>
+                                <span class="dto-title">Stripe integrato</span>
+                            </div>
+                            <span class="dto-desc">Pagamento con carta, Apple Pay, Google Pay. Conferma automatica.</span>
+                        </label>
+                    </div>
+
+                    <!-- Config per tipo: Info -->
+                    <div class="deposit-type-config" id="config-info" style="<?= $depositType === 'info' ? '' : 'display:none;' ?>margin-top:1rem;">
+                        <label class="field-label">Coordinate bancarie</label>
+                        <textarea class="field-input" name="deposit_bank_info" rows="3"
+                                  placeholder="Es: IBAN: IT60X0542811101000000123456&#10;Intestatario: Ristorante Da Mario&#10;Causale: Caparra prenotazione"><?= e($bankInfo) ?></textarea>
+                        <div class="field-hint">Queste informazioni saranno mostrate al cliente dopo la prenotazione</div>
+                    </div>
+
+                    <!-- Config per tipo: Link -->
+                    <div class="deposit-type-config" id="config-link" style="<?= $depositType === 'link' ? '' : 'display:none;' ?>margin-top:1rem;">
+                        <label class="field-label">URL pagamento</label>
+                        <input type="url" class="field-input" name="deposit_payment_link"
+                               value="<?= e($paymentLink) ?>"
+                               placeholder="https://paypal.me/tuoristorante">
+                        <div class="field-hint">PayPal.me, SumUp, Satispay o qualsiasi link di pagamento</div>
+                    </div>
+
+                    <!-- Config per tipo: Stripe -->
+                    <div class="deposit-type-config" id="config-stripe" style="<?= $depositType === 'stripe' ? '' : 'display:none;' ?>margin-top:1rem;">
+                        <div style="background:#f8f6ff;border:1px solid #e8e5f0;border-radius:8px;padding:.75rem;margin-bottom:.75rem;">
+                            <div style="font-size:.78rem;color:#635BFF;font-weight:600;margin-bottom:.25rem;">
+                                <i class="bi bi-info-circle me-1"></i> Come ottenere le chiavi
+                            </div>
+                            <div style="font-size:.73rem;color:#6c757d;">
+                                Vai su <strong>dashboard.stripe.com</strong> &rarr; Sviluppatori &rarr; Chiavi API.<br>
+                                Per il Webhook Secret: Sviluppatori &rarr; Webhook &rarr; Aggiungi endpoint.
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom:.75rem;">
+                            <label class="field-label">Secret Key</label>
+                            <input type="password" class="field-input" name="stripe_sk"
+                                   value="<?= $stripeSkMasked ? e($stripeSkMasked) : '' ?>"
+                                   placeholder="sk_live_..." autocomplete="off">
+                            <?php if ($stripeSkMasked): ?>
+                            <div class="field-hint" style="color:var(--brand);"><i class="bi bi-check-circle me-1"></i>Chiave configurata: <?= e($stripeSkMasked) ?></div>
+                            <?php endif; ?>
+                        </div>
+
+                        <div style="margin-bottom:.75rem;">
+                            <label class="field-label">Publishable Key</label>
+                            <input type="text" class="field-input" name="stripe_pk"
+                                   value="<?= $stripePkMasked ? e($stripePkMasked) : '' ?>"
+                                   placeholder="pk_live_..." autocomplete="off">
+                            <?php if ($stripePkMasked): ?>
+                            <div class="field-hint" style="color:var(--brand);"><i class="bi bi-check-circle me-1"></i>Chiave configurata: <?= e($stripePkMasked) ?></div>
+                            <?php endif; ?>
+                        </div>
+
+                        <div>
+                            <label class="field-label">Webhook Secret</label>
+                            <input type="password" class="field-input" name="stripe_wh_secret"
+                                   value="<?= $stripeWhMasked ? e($stripeWhMasked) : '' ?>"
+                                   placeholder="whsec_..." autocomplete="off">
+                            <?php if ($stripeWhMasked): ?>
+                            <div class="field-hint" style="color:var(--brand);"><i class="bi bi-check-circle me-1"></i>Secret configurato: <?= e($stripeWhMasked) ?></div>
+                            <?php endif; ?>
+                            <div class="field-hint">
+                                Endpoint webhook: <code style="font-size:.7rem;"><?= url('api/v1/stripe/webhook') ?></code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Save bar -->
             <div class="save-bar">
                 <span class="save-hint"><i class="bi bi-info-circle me-1"></i>Le modifiche si applicano alle nuove prenotazioni</span>
@@ -132,7 +227,42 @@ $stripeConnectAt = $tenant['stripe_connect_at'] ?? null;
             <!-- Payment flow -->
             <div class="flow-card">
                 <div class="flow-title"><i class="bi bi-diagram-3 me-1"></i> Flusso pagamento</div>
-                <div class="flow-steps">
+
+                <!-- Flow for info/link -->
+                <div class="flow-steps" id="flow-manual" style="<?= $depositType === 'stripe' ? 'display:none;' : '' ?>">
+                    <div class="flow-step">
+                        <div class="flow-step-line">
+                            <div class="flow-dot" style="background:var(--brand);">1</div>
+                            <div class="flow-connector"></div>
+                        </div>
+                        <div class="flow-content">
+                            <div class="flow-step-title">Il cliente compila il form</div>
+                            <div class="flow-step-desc">Sceglie data, orario, coperti e inserisce i dati</div>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-line">
+                            <div class="flow-dot" style="background:#FF9800;">2</div>
+                            <div class="flow-connector"></div>
+                        </div>
+                        <div class="flow-content">
+                            <div class="flow-step-title" id="flow-manual-step2-title"><?= $depositType === 'link' ? 'Link di pagamento' : 'Coordinate bancarie' ?></div>
+                            <div class="flow-step-desc" id="flow-manual-step2-desc"><?= $depositType === 'link' ? 'Il cliente viene indirizzato alla piattaforma di pagamento' : 'Il cliente vede IBAN e istruzioni per il bonifico' ?></div>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-line">
+                            <div class="flow-dot" style="background:var(--brand);"><i class="bi bi-check-lg" style="font-size:.7rem;"></i></div>
+                        </div>
+                        <div class="flow-content">
+                            <div class="flow-step-title">Conferma manuale</div>
+                            <div class="flow-step-desc">Verifichi il pagamento e confermi la prenotazione dalla dashboard</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flow for stripe -->
+                <div class="flow-steps" id="flow-stripe" style="<?= $depositType === 'stripe' ? '' : 'display:none;' ?>">
                     <div class="flow-step">
                         <div class="flow-step-line">
                             <div class="flow-dot" style="background:var(--brand);">1</div>
@@ -150,7 +280,7 @@ $stripeConnectAt = $tenant['stripe_connect_at'] ?? null;
                         </div>
                         <div class="flow-content">
                             <div class="flow-step-title">Redirect a Stripe Checkout</div>
-                            <div class="flow-step-desc">Pagamento sicuro su pagina Stripe con carta/Apple Pay/Google Pay</div>
+                            <div class="flow-step-desc">Pagamento sicuro con carta, Apple Pay, Google Pay</div>
                         </div>
                     </div>
                     <div class="flow-step">
@@ -174,63 +304,6 @@ $stripeConnectAt = $tenant['stripe_connect_at'] ?? null;
                     </div>
                 </div>
             </div>
-
-            <!-- Stripe Connect -->
-            <?php if ($stripeConnected): ?>
-            <div class="card" style="margin-top:.75rem;border-left:4px solid var(--brand);border-radius:0 12px 12px 0;">
-                <div style="padding:1rem 1.25rem;">
-                    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem;">
-                        <i class="bi bi-check-circle-fill" style="color:var(--brand);font-size:1.1rem;"></i>
-                        <span style="font-size:.88rem;font-weight:700;color:var(--brand);">Account Stripe collegato</span>
-                    </div>
-                    <div style="font-size:.78rem;color:#6c757d;margin-bottom:.5rem;">
-                        <div>Account: <code style="font-size:.75rem;"><?= e(substr($stripeAccountId, 0, 8)) ?>...<?= e(substr($stripeAccountId, -4)) ?></code></div>
-                        <?php if ($stripeConnectAt): ?>
-                        <div>Collegato il: <?= date('d/m/Y H:i', strtotime($stripeConnectAt)) ?></div>
-                        <?php endif; ?>
-                    </div>
-                    <div style="font-size:.78rem;color:#6c757d;margin-bottom:.75rem;">
-                        I pagamenti delle caparre vengono accreditati direttamente sul tuo conto Stripe.
-                    </div>
-                    <form method="POST" action="<?= url('dashboard/settings/stripe/disconnect') ?>" style="margin:0;" id="stripe-disconnect-form">
-                        <?= csrf_field() ?>
-                        <button type="submit" class="btn btn-outline-danger btn-sm" style="font-size:.75rem;">
-                            <i class="bi bi-x-circle me-1"></i> Disconnetti Stripe
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <?php elseif ($connectConfigured): ?>
-            <div class="card" style="margin-top:.75rem;border:2px dashed var(--brand);border-radius:12px;">
-                <div style="padding:1.25rem;text-align:center;">
-                    <div style="font-size:2rem;color:#635BFF;margin-bottom:.5rem;">
-                        <i class="bi bi-credit-card-2-front"></i>
-                    </div>
-                    <div style="font-size:.88rem;font-weight:700;color:#495057;margin-bottom:.35rem;">Collega il tuo account Stripe</div>
-                    <div style="font-size:.78rem;color:#6c757d;margin-bottom:1rem;">
-                        Per ricevere i pagamenti delle caparre direttamente sul tuo conto, collega il tuo account Stripe.
-                    </div>
-                    <a href="<?= url('dashboard/settings/stripe/connect') ?>" class="btn btn-success btn-sm" style="font-size:.82rem;">
-                        <i class="bi bi-link-45deg me-1"></i> Collega Stripe
-                    </a>
-                    <div style="font-size:.7rem;color:#adb5bd;margin-top:.75rem;">
-                        Verrai reindirizzato a Stripe per autorizzare la connessione. <br>I tuoi dati bancari non vengono mai condivisi con noi.
-                    </div>
-                </div>
-            </div>
-            <?php else: ?>
-            <div class="card" style="margin-top:.75rem;">
-                <div style="padding:1rem 1.25rem;">
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;">
-                        <span style="font-size:.82rem;font-weight:600;color:#495057;">Pagamento gestito da</span>
-                        <span class="stripe-badge"><i class="bi bi-credit-card-2-front"></i> Stripe</span>
-                    </div>
-                    <div style="font-size:.78rem;color:#6c757d;">
-                        Stripe Connect non &egrave; ancora configurato sulla piattaforma. Contatta il supporto.
-                    </div>
-                </div>
-            </div>
-            <?php endif; ?>
 
             <!-- Tip -->
             <div class="card" style="margin-top:.75rem;border-left:4px solid #FFC107;border-radius:0 12px 12px 0;">
@@ -260,16 +333,50 @@ document.getElementById('main-toggle').addEventListener('click', function() {
     mt.classList.toggle('enabled', enabled);
     mt.classList.toggle('disabled', !enabled);
     document.getElementById('config-section').classList.toggle('disabled-look', !enabled);
+    document.getElementById('type-section').classList.toggle('disabled-look', !enabled);
     document.getElementById('deposit-enabled-input').value = enabled ? '1' : '';
 });
 
-// Mode toggle
+// Mode toggle (per_table/per_person)
 document.querySelectorAll('.mode-option').forEach(function(el) {
     el.addEventListener('click', function() {
         document.querySelectorAll('.mode-option').forEach(function(o) { o.classList.remove('active'); });
         this.classList.add('active');
         this.querySelector('input[type="radio"]').checked = true;
         updatePreview();
+    });
+});
+
+// Deposit type toggle
+document.querySelectorAll('.deposit-type-option').forEach(function(el) {
+    el.addEventListener('click', function() {
+        document.querySelectorAll('.deposit-type-option').forEach(function(o) { o.classList.remove('active'); });
+        this.classList.add('active');
+        this.querySelector('input[type="radio"]').checked = true;
+        var type = this.querySelector('input[type="radio"]').value;
+
+        // Show/hide config sections
+        document.querySelectorAll('.deposit-type-config').forEach(function(c) { c.style.display = 'none'; });
+        var target = document.getElementById('config-' + type);
+        if (target) target.style.display = '';
+
+        // Show/hide flow diagrams
+        if (type === 'stripe') {
+            document.getElementById('flow-stripe').style.display = '';
+            document.getElementById('flow-manual').style.display = 'none';
+        } else {
+            document.getElementById('flow-stripe').style.display = 'none';
+            document.getElementById('flow-manual').style.display = '';
+            var step2Title = document.getElementById('flow-manual-step2-title');
+            var step2Desc = document.getElementById('flow-manual-step2-desc');
+            if (type === 'link') {
+                step2Title.textContent = 'Link di pagamento';
+                step2Desc.textContent = 'Il cliente viene indirizzato alla piattaforma di pagamento';
+            } else {
+                step2Title.textContent = 'Coordinate bancarie';
+                step2Desc.textContent = 'Il cliente vede IBAN e istruzioni per il bonifico';
+            }
+        }
     });
 });
 
@@ -289,16 +396,6 @@ function updatePreview() {
     }
 }
 document.getElementById('amount-input').addEventListener('input', updatePreview);
-
-// Stripe disconnect confirmation
-var disconnectForm = document.getElementById('stripe-disconnect-form');
-if (disconnectForm) {
-    disconnectForm.addEventListener('submit', function(e) {
-        if (!confirm('Sei sicuro di voler disconnettere il tuo account Stripe?\n\nLa caparra verrà disattivata automaticamente.')) {
-            e.preventDefault();
-        }
-    });
-}
 </script>
 
 <?php endif; ?>

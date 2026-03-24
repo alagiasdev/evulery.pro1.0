@@ -73,14 +73,12 @@ class BookingController
         $depositPaid = false;
         $sessionId = $request->query('session_id', '');
 
-        if ($sessionId && !empty(env('STRIPE_SECRET_KEY'))) {
+        if ($sessionId && ($tenant['deposit_type'] ?? '') === 'stripe' && !empty($tenant['stripe_sk'])) {
             try {
-                \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
-                $retrieveOpts = [];
-                if (!empty($tenant['stripe_account_id'])) {
-                    $retrieveOpts['stripe_account'] = $tenant['stripe_account_id'];
-                }
-                $session = \Stripe\Checkout\Session::retrieve($sessionId, $retrieveOpts);
+                $tenantKey = decrypt_value($tenant['stripe_sk']);
+                if (!$tenantKey) throw new \RuntimeException('Invalid stripe key');
+                \Stripe\Stripe::setApiKey($tenantKey);
+                $session = \Stripe\Checkout\Session::retrieve($sessionId);
                 $reservationId = $session->metadata->reservation_id ?? null;
                 if ($reservationId) {
                     $reservation = (new Reservation())->findWithCustomer((int)$reservationId);
