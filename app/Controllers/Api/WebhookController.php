@@ -29,6 +29,12 @@ class WebhookController
             Response::error('Firma non valida.', 'INVALID_SIGNATURE', 400);
         }
 
+        // Log connected account for Stripe Connect events
+        $connectedAccount = $event->account ?? null;
+        if ($connectedAccount) {
+            app_log("Stripe Connect event for account: {$connectedAccount}", 'info');
+        }
+
         $reservationModel = new Reservation();
         $logModel = new ReservationLog();
 

@@ -100,10 +100,10 @@ class ReservationApiController
             }
         }
 
-        // Determine deposit - only require if Stripe is configured AND plan includes deposit service
-        $stripeConfigured = !empty(env('STRIPE_SECRET_KEY', '')) && env('STRIPE_SECRET_KEY') !== 'sk_test_xxx';
+        // Determine deposit - require if tenant has connected Stripe account AND plan includes deposit service
+        $stripeConnected = !empty($tenant['stripe_account_id']) && ($tenant['stripe_connect_status'] ?? 'none') === 'active';
         $canUseDeposit = (new \App\Models\Tenant())->canUseService((int)$tenant['id'], 'deposit');
-        $depositRequired = ($tenant['deposit_enabled'] && $stripeConfigured && $canUseDeposit) ? 1 : 0;
+        $depositRequired = ($tenant['deposit_enabled'] && $stripeConnected && $canUseDeposit) ? 1 : 0;
 
         // Calculate deposit based on mode: per_table (fixed) or per_person (× party_size)
         $depositAmount = null;
@@ -201,7 +201,7 @@ class ReservationApiController
                     ? "Caparra {$tenant['name']} - €" . number_format((float)$tenant['deposit_amount'], 2, ',', '.') . " × {$data['party_size']} persone"
                     : "Caparra prenotazione {$tenant['name']}";
 
-                $session = \Stripe\Checkout\Session::create([
+                $sessionParams = [
                     'payment_method_types' => ['card'],
                     'line_items' => [[
                         'price_data' => [
@@ -222,7 +222,21 @@ class ReservationApiController
                         'tenant_id'      => $tenant['id'],
                     ],
                     'expires_at' => time() + 1800, // 30 minutes
-                ]);
+                ];
+
+                // Platform commission (optional)
+                $feePct = (float) env('STRIPE_PLATFORM_FEE_PERCENT', 0);
+                if ($feePct > 0) {
+                    $feeAmount = (int) round($depositAmount * 100 * $feePct / 100);
+                    $sessionParams['payment_intent_data'] = [
+                        'application_fee_amount' => $feeAmount,
+                    ];
+                }
+
+                $session = \Stripe\Checkout\Session::create(
+                    $sessionParams,
+                    ['stripe_account' => $tenant['stripe_account_id']]
+                );
 
                 $responseData['deposit_required'] = true;
                 $responseData['deposit_amount'] = $depositAmount;

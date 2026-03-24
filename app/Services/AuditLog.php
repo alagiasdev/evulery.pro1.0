@@ -63,6 +63,10 @@ class AuditLog
     public const IMPERSONATION_START = 'impersonation_start';
     public const IMPERSONATION_END   = 'impersonation_end';
 
+    // Stripe Connect
+    public const STRIPE_CONNECTED    = 'stripe_connected';
+    public const STRIPE_DISCONNECTED = 'stripe_disconnected';
+
     // Email Broadcast
     public const EMAIL_BROADCAST_CREATED = 'email_broadcast_created';
     public const EMAIL_BROADCAST_SENT    = 'email_broadcast_sent';
@@ -111,6 +115,8 @@ class AuditLog
             self::PROFILE_UPDATED        => 'Profilo aggiornato',
             self::IMPERSONATION_START    => 'Impersonation avviata',
             self::IMPERSONATION_END      => 'Impersonation terminata',
+            self::STRIPE_CONNECTED        => 'Stripe collegato',
+            self::STRIPE_DISCONNECTED     => 'Stripe disconnesso',
             self::EMAIL_BROADCAST_CREATED => 'Comunicazione email creata',
             self::EMAIL_BROADCAST_SENT    => 'Comunicazione email inviata',
             self::EMAIL_BROADCAST_DELETED => 'Comunicazione email eliminata',

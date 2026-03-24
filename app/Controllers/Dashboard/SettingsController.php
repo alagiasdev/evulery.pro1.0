@@ -177,12 +177,15 @@ class SettingsController
     {
         $tenant = TenantResolver::current();
         $canUseDeposit = tenant_can('deposit');
+        $stripeConnected = !empty($tenant['stripe_account_id']) && ($tenant['stripe_connect_status'] ?? 'none') === 'active';
 
         view('dashboard/settings/deposit', [
-            'title'         => 'Caparra',
-            'activeMenu'    => 'deposit',
-            'tenant'        => $tenant,
-            'canUseDeposit' => $canUseDeposit,
+            'title'            => 'Caparra',
+            'activeMenu'       => 'deposit',
+            'tenant'           => $tenant,
+            'canUseDeposit'    => $canUseDeposit,
+            'stripeConnected'  => $stripeConnected,
+            'connectConfigured' => !empty(env('STRIPE_CONNECT_CLIENT_ID', '')),
         ], 'dashboard');
     }
 
@@ -191,12 +194,22 @@ class SettingsController
         if (gate_service('deposit', url('dashboard/settings'))) return;
 
         $tenantId = Auth::tenantId();
+        $tenant = TenantResolver::current();
         $data = $request->all();
+
+        // Prevent enabling deposit without Stripe connection
+        $wantsEnabled = !empty($data['deposit_enabled']);
+        $stripeConnected = !empty($tenant['stripe_account_id']) && ($tenant['stripe_connect_status'] ?? 'none') === 'active';
+
+        if ($wantsEnabled && !$stripeConnected) {
+            flash('danger', 'Devi prima collegare il tuo account Stripe per attivare la caparra.');
+            Response::redirect(url('dashboard/settings/deposit'));
+        }
 
         $depositMode = in_array($data['deposit_mode'] ?? '', ['per_table', 'per_person']) ? $data['deposit_mode'] : 'per_table';
 
         (new Tenant())->update($tenantId, [
-            'deposit_enabled' => !empty($data['deposit_enabled']) ? 1 : 0,
+            'deposit_enabled' => $wantsEnabled ? 1 : 0,
             'deposit_amount'  => !empty($data['deposit_amount']) ? (float)$data['deposit_amount'] : null,
             'deposit_mode'    => $depositMode,
         ]);

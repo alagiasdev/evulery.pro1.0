@@ -76,7 +76,11 @@ class BookingController
         if ($sessionId && !empty(env('STRIPE_SECRET_KEY'))) {
             try {
                 \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
-                $session = \Stripe\Checkout\Session::retrieve($sessionId);
+                $retrieveOpts = [];
+                if (!empty($tenant['stripe_account_id'])) {
+                    $retrieveOpts['stripe_account'] = $tenant['stripe_account_id'];
+                }
+                $session = \Stripe\Checkout\Session::retrieve($sessionId, $retrieveOpts);
                 $reservationId = $session->metadata->reservation_id ?? null;
                 if ($reservationId) {
                     $reservation = (new Reservation())->findWithCustomer((int)$reservationId);

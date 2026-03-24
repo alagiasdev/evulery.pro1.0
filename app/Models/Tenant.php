@@ -118,6 +118,7 @@ class Tenant
             'table_duration', 'time_step',
             'booking_advance_min', 'booking_advance_max',
             'segment_occasionale', 'segment_abituale', 'segment_vip',
+            'stripe_account_id', 'stripe_connect_status', 'stripe_connect_at',
             'timezone', 'menu_enabled', 'promo_widget_only', 'menu_hero_image', 'menu_tagline',
             'opening_hours', 'is_active',
         ];

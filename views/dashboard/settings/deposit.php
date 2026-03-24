@@ -13,6 +13,10 @@ $depositEnabled = (bool)$tenant['deposit_enabled'];
 $depositAmount = $tenant['deposit_amount'] ? number_format((float)$tenant['deposit_amount'], 2, ',', '.') : '0,00';
 $depositAmountRaw = $tenant['deposit_amount'] ? number_format((float)$tenant['deposit_amount'], 2, '.', '') : '';
 $depositMode = $tenant['deposit_mode'] ?? 'per_table';
+$stripeConnected = $stripeConnected ?? false;
+$connectConfigured = $connectConfigured ?? false;
+$stripeAccountId = $tenant['stripe_account_id'] ?? null;
+$stripeConnectAt = $tenant['stripe_connect_at'] ?? null;
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
@@ -38,17 +42,23 @@ $depositMode = $tenant['deposit_mode'] ?? 'per_table';
         <div class="col-lg-7">
 
             <!-- Master toggle -->
-            <div class="master-toggle <?= $depositEnabled ? 'enabled' : 'disabled' ?>" id="master-toggle">
+            <div class="master-toggle <?= $depositEnabled ? 'enabled' : 'disabled' ?> <?= !$stripeConnected ? 'disabled-look' : '' ?>" id="master-toggle">
                 <div class="mt-left">
                     <div class="mt-icon" style="background:var(--brand-light);color:var(--brand);">
                         <i class="bi bi-shield-check"></i>
                     </div>
                     <div>
                         <div class="mt-title">Richiedi caparra</div>
-                        <div class="mt-desc">I clienti dovranno versare una caparra per confermare la prenotazione online</div>
+                        <div class="mt-desc">
+                            <?php if (!$stripeConnected): ?>
+                                <span style="color:#E65100;">Collega prima il tuo account Stripe per attivare la caparra</span>
+                            <?php else: ?>
+                                I clienti dovranno versare una caparra per confermare la prenotazione online
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
-                <div class="toggle-big <?= $depositEnabled ? 'on' : 'off' ?>" id="main-toggle"></div>
+                <div class="toggle-big <?= $depositEnabled ? 'on' : 'off' ?>" id="main-toggle" <?= !$stripeConnected ? 'style="pointer-events:none;opacity:.4;"' : '' ?>></div>
                 <input type="hidden" name="deposit_enabled" id="deposit-enabled-input" value="<?= $depositEnabled ? '1' : '' ?>">
             </div>
 
@@ -165,21 +175,62 @@ $depositMode = $tenant['deposit_mode'] ?? 'per_table';
                 </div>
             </div>
 
-            <!-- Stripe info -->
+            <!-- Stripe Connect -->
+            <?php if ($stripeConnected): ?>
+            <div class="card" style="margin-top:.75rem;border-left:4px solid var(--brand);border-radius:0 12px 12px 0;">
+                <div style="padding:1rem 1.25rem;">
+                    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem;">
+                        <i class="bi bi-check-circle-fill" style="color:var(--brand);font-size:1.1rem;"></i>
+                        <span style="font-size:.88rem;font-weight:700;color:var(--brand);">Account Stripe collegato</span>
+                    </div>
+                    <div style="font-size:.78rem;color:#6c757d;margin-bottom:.5rem;">
+                        <div>Account: <code style="font-size:.75rem;"><?= e(substr($stripeAccountId, 0, 8)) ?>...<?= e(substr($stripeAccountId, -4)) ?></code></div>
+                        <?php if ($stripeConnectAt): ?>
+                        <div>Collegato il: <?= date('d/m/Y H:i', strtotime($stripeConnectAt)) ?></div>
+                        <?php endif; ?>
+                    </div>
+                    <div style="font-size:.78rem;color:#6c757d;margin-bottom:.75rem;">
+                        I pagamenti delle caparre vengono accreditati direttamente sul tuo conto Stripe.
+                    </div>
+                    <form method="POST" action="<?= url('dashboard/settings/stripe/disconnect') ?>" style="margin:0;" id="stripe-disconnect-form">
+                        <?= csrf_field() ?>
+                        <button type="submit" class="btn btn-outline-danger btn-sm" style="font-size:.75rem;">
+                            <i class="bi bi-x-circle me-1"></i> Disconnetti Stripe
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <?php elseif ($connectConfigured): ?>
+            <div class="card" style="margin-top:.75rem;border:2px dashed var(--brand);border-radius:12px;">
+                <div style="padding:1.25rem;text-align:center;">
+                    <div style="font-size:2rem;color:#635BFF;margin-bottom:.5rem;">
+                        <i class="bi bi-credit-card-2-front"></i>
+                    </div>
+                    <div style="font-size:.88rem;font-weight:700;color:#495057;margin-bottom:.35rem;">Collega il tuo account Stripe</div>
+                    <div style="font-size:.78rem;color:#6c757d;margin-bottom:1rem;">
+                        Per ricevere i pagamenti delle caparre direttamente sul tuo conto, collega il tuo account Stripe.
+                    </div>
+                    <a href="<?= url('dashboard/settings/stripe/connect') ?>" class="btn btn-success btn-sm" style="font-size:.82rem;">
+                        <i class="bi bi-link-45deg me-1"></i> Collega Stripe
+                    </a>
+                    <div style="font-size:.7rem;color:#adb5bd;margin-top:.75rem;">
+                        Verrai reindirizzato a Stripe per autorizzare la connessione. <br>I tuoi dati bancari non vengono mai condivisi con noi.
+                    </div>
+                </div>
+            </div>
+            <?php else: ?>
             <div class="card" style="margin-top:.75rem;">
                 <div style="padding:1rem 1.25rem;">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;">
                         <span style="font-size:.82rem;font-weight:600;color:#495057;">Pagamento gestito da</span>
                         <span class="stripe-badge"><i class="bi bi-credit-card-2-front"></i> Stripe</span>
                     </div>
-                    <ul style="font-size:.78rem;color:#6c757d;line-height:1.6;padding-left:1rem;margin:0;">
-                        <li>Pagamenti PCI-DSS compliant</li>
-                        <li>Supporta Visa, Mastercard, AMEX, Apple Pay, Google Pay</li>
-                        <li>I dati della carta non transitano mai dal tuo server</li>
-                        <li>Rimborsi gestibili dalla dashboard Stripe</li>
-                    </ul>
+                    <div style="font-size:.78rem;color:#6c757d;">
+                        Stripe Connect non &egrave; ancora configurato sulla piattaforma. Contatta il supporto.
+                    </div>
                 </div>
             </div>
+            <?php endif; ?>
 
             <!-- Tip -->
             <div class="card" style="margin-top:.75rem;border-left:4px solid #FFC107;border-radius:0 12px 12px 0;">
@@ -238,6 +289,16 @@ function updatePreview() {
     }
 }
 document.getElementById('amount-input').addEventListener('input', updatePreview);
+
+// Stripe disconnect confirmation
+var disconnectForm = document.getElementById('stripe-disconnect-form');
+if (disconnectForm) {
+    disconnectForm.addEventListener('submit', function(e) {
+        if (!confirm('Sei sicuro di voler disconnettere il tuo account Stripe?\n\nLa caparra verrà disattivata automaticamente.')) {
+            e.preventDefault();
+        }
+    });
+}
 </script>
 
 <?php endif; ?>

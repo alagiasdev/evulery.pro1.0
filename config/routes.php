@@ -25,6 +25,7 @@ use App\Controllers\Dashboard\MenuController;
 use App\Controllers\Dashboard\SuspendedController;
 use App\Controllers\Dashboard\ImpersonationController;
 use App\Controllers\Dashboard\CommunicationsController;
+use App\Controllers\Dashboard\StripeConnectController;
 use App\Controllers\ProfileController;
 use App\Controllers\UnsubscribeController;
 use App\Controllers\Menu\MenuPageController;
@@ -73,6 +74,9 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/settings/slots', [SlotsController::class, 'update']);
     $r->get('/settings/deposit', [SettingsController::class, 'deposit']);
     $r->post('/settings/deposit', [SettingsController::class, 'updateDeposit']);
+    $r->get('/settings/stripe/connect', [StripeConnectController::class, 'redirect']);
+    $r->get('/settings/stripe/callback', [StripeConnectController::class, 'callback']);
+    $r->post('/settings/stripe/disconnect', [StripeConnectController::class, 'disconnect']);
     $r->get('/settings/meal-categories', [MealCategoriesController::class, 'index']);
     $r->post('/settings/meal-categories', [MealCategoriesController::class, 'update']);
     $r->get('/settings/domain', [DomainController::class, 'index']);
