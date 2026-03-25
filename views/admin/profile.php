@@ -5,8 +5,8 @@
     </div>
 </div>
 
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:900px;">
-    <div style="grid-column:1/2;">
+<div class="adm-profile-grid">
+    <div>
         <form method="POST" action="<?= url('admin/profile') ?>">
             <?= csrf_field() ?>
 
@@ -71,7 +71,7 @@
         </form>
     </div>
 
-    <div style="grid-column:2/3;">
+    <div>
         <div class="adm-card">
             <div style="padding:1.25rem;">
                 <div style="font-weight:600;font-size:.9rem;margin-bottom:.75rem;">Info account</div>
