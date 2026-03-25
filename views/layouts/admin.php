@@ -10,9 +10,28 @@
 </head>
 <body>
 
+<!-- Mobile Header (same pattern as restaurant dashboard) -->
+<div class="admin-mobile-header d-md-none" id="admin-mobile-header">
+    <button class="admin-mobile-toggle" id="admin-sidebar-toggle" type="button">
+        <i class="bi bi-list"></i>
+    </button>
+    <span class="admin-mobile-title">Admin Panel</span>
+    <a href="<?= url('admin/profile') ?>" class="admin-mobile-avatar" style="text-decoration:none;">
+        <div class="topbar-avatar"><?= strtoupper(substr(auth()['name'] ?? 'A', 0, 1)) ?></div>
+    </a>
+</div>
+
 <!-- Sidebar -->
-<div class="admin-sidebar">
-    <div class="sidebar-brand">
+<div class="admin-sidebar" id="admin-sidebar">
+    <!-- Mobile: close button -->
+    <div class="d-md-none d-flex align-items-center justify-content-between" style="padding:.85rem 1.25rem;border-bottom:1px solid #333;">
+        <span style="font-weight:700;font-size:1.05rem;">Admin Panel</span>
+        <button class="btn btn-sm" id="admin-sidebar-close" type="button" style="color:#adb5bd;border:none;">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    <!-- Desktop: brand -->
+    <div class="sidebar-brand d-none d-md-block">
         <div class="sidebar-brand-name"><?= e(env('APP_NAME', 'Evulery')) ?></div>
         <div class="sidebar-brand-role">Super Admin</div>
     </div>
@@ -51,15 +70,12 @@
     </div>
 </div>
 
-<!-- Mobile overlay -->
-<div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
+<!-- Sidebar Overlay (mobile) -->
+<div class="admin-sidebar-overlay" id="admin-sidebar-overlay"></div>
 
 <!-- Main -->
 <div class="admin-main">
-    <div class="admin-topbar">
-        <button class="admin-hamburger" id="adminHamburger" aria-label="Menu">
-            <i class="bi bi-list"></i>
-        </button>
+    <div class="admin-topbar d-none d-md-flex">
         <div class="topbar-title">Admin Panel</div>
         <a href="<?= url('admin/profile') ?>" class="topbar-user" style="text-decoration:none;color:inherit;">
             <span><?= e(auth()['name'] ?? 'Admin') ?></span>
@@ -76,16 +92,31 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script>
 (function() {
-    var btn = document.getElementById('adminHamburger');
-    var sidebar = document.querySelector('.admin-sidebar');
-    var overlay = document.getElementById('sidebarOverlay');
-    if (!btn || !sidebar) return;
-    function toggle() {
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('open');
+    var sidebar = document.getElementById('admin-sidebar');
+    var overlay = document.getElementById('admin-sidebar-overlay');
+    var toggleBtn = document.getElementById('admin-sidebar-toggle');
+    var closeBtn = document.getElementById('admin-sidebar-close');
+
+    function openSidebar() {
+        if (sidebar) sidebar.classList.add('show');
+        if (overlay) overlay.classList.add('show');
     }
-    btn.addEventListener('click', toggle);
-    overlay.addEventListener('click', toggle);
+
+    function closeSidebar() {
+        if (sidebar) sidebar.classList.remove('show');
+        if (overlay) overlay.classList.remove('show');
+    }
+
+    if (toggleBtn) toggleBtn.addEventListener('click', openSidebar);
+    if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+    if (overlay) overlay.addEventListener('click', closeSidebar);
+
+    // Close sidebar on nav link click (mobile)
+    if (sidebar) {
+        sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+            link.addEventListener('click', closeSidebar);
+        });
+    }
 })();
 </script>
 </body>

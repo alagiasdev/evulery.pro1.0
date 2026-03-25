@@ -526,18 +526,29 @@ body {
 /* ===== Profile grid ===== */
 .adm-profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 900px; }
 
-/* ===== Hamburger button (mobile only) ===== */
-.admin-hamburger {
-    display: none; background: none; border: none; cursor: pointer;
-    font-size: 1.4rem; color: #1a1d23; padding: .2rem; margin-right: .5rem;
+/* ===== Mobile header (same pattern as restaurant dashboard) ===== */
+.admin-mobile-header {
+    position: fixed; top: 0; left: 0; right: 0; height: 56px;
+    background: #1a1d23; color: #fff;
+    display: flex; align-items: center; padding: 0 16px; gap: 12px;
+    z-index: 90; box-shadow: 0 2px 8px rgba(0,0,0,.15);
 }
+.admin-mobile-toggle {
+    background: none; border: none; color: #fff;
+    font-size: 1.5rem; padding: 4px; display: flex; align-items: center; cursor: pointer;
+}
+.admin-mobile-title {
+    font-weight: 700; font-size: 1.05rem; flex: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.admin-mobile-avatar { margin-left: auto; }
 
 /* ===== Mobile sidebar overlay ===== */
 .admin-sidebar-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.4); z-index: 99;
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,.5); z-index: 99;
 }
-.admin-sidebar-overlay.open { display: block; }
+.admin-sidebar-overlay.show { display: block; }
 
 /* ===== Table responsive wrapper ===== */
 .adm-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -551,16 +562,11 @@ body {
     .adm-svc-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 768px) {
-    .admin-hamburger { display: block; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
     .adm-profile-grid { grid-template-columns: 1fr; }
     .adm-profile-grid div[style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
-    .admin-sidebar {
-        left: calc(var(--sidebar-w) * -1);
-        transition: left .25s ease;
-    }
-    .admin-sidebar.open { left: 0; }
-    .admin-main { margin-left: 0; }
-    .admin-topbar { padding: .65rem 1rem; }
+    .admin-sidebar { margin-left: calc(var(--sidebar-w) * -1); }
+    .admin-sidebar.show { margin-left: 0; }
+    .admin-main { margin-left: 0; padding-top: 56px; }
     .admin-page { padding: 1rem; }
     .admin-stats { grid-template-columns: 1fr; }
     .admin-page-header { flex-direction: column; align-items: flex-start; gap: .75rem; }
