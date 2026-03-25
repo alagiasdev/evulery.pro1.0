@@ -91,7 +91,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script>
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
     var sidebar = document.getElementById('admin-sidebar');
     var overlay = document.getElementById('admin-sidebar-overlay');
     var toggleBtn = document.getElementById('admin-sidebar-toggle');
@@ -107,8 +107,14 @@
         if (overlay) overlay.classList.remove('show');
     }
 
-    if (toggleBtn) toggleBtn.addEventListener('click', openSidebar);
-    if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', openSidebar);
+        toggleBtn.addEventListener('touchend', function(e) { e.preventDefault(); openSidebar(); });
+    }
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeSidebar);
+        closeBtn.addEventListener('touchend', function(e) { e.preventDefault(); closeSidebar(); });
+    }
     if (overlay) overlay.addEventListener('click', closeSidebar);
 
     // Close sidebar on nav link click (mobile)
@@ -117,7 +123,7 @@
             link.addEventListener('click', closeSidebar);
         });
     }
-})();
+});
 </script>
 </body>
 </html>
