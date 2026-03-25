@@ -8,9 +8,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
     <link href="<?= asset('css/dashboard.css') ?>" rel="stylesheet">
 </head>
-<body>
+<body<?php if (\App\Core\Auth::isImpersonating()): ?> class="is-impersonating"<?php endif; ?>>
     <?php if (\App\Core\Auth::isImpersonating()): ?>
-    <div style="position:sticky;top:0;z-index:9999;background:#ffc107;color:#000;padding:.5rem 1rem;text-align:center;font-size:.85rem;font-weight:600;box-shadow:0 2px 4px rgba(0,0,0,.15);">
+    <div class="impersonation-bar">
         <i class="bi bi-person-badge"></i>
         Stai accedendo come <strong><?= e(auth()['name'] ?? '') ?></strong>
         <?php if (tenant()): ?>(<?= e(tenant()['name'] ?? '') ?>)<?php endif; ?>
