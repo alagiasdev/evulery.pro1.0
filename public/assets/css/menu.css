@@ -439,18 +439,18 @@ body {
 .dm-legend-toggle-title { font-weight: 700; font-size: .9rem; color: var(--dm-text-dark); }
 .dm-legend-toggle-arrow { font-size: .85rem; color: var(--dm-text-light); transition: transform .2s; }
 .dm-legend-toggle[aria-expanded="true"] .dm-legend-toggle-arrow { transform: rotate(180deg); }
-.dm-legend-body { padding: 0 1.25rem 1.25rem; }
-.dm-legend-note { font-size: .75rem; color: var(--dm-text-muted); font-style: italic; margin-bottom: 1rem; line-height: 1.5; }
+.dm-legend-body { padding: 0 1rem 1rem; }
+.dm-legend-note { font-size: .72rem; color: var(--dm-text-muted); font-style: italic; margin-bottom: .65rem; line-height: 1.4; }
 .dm-legend-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: .5rem .75rem;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: .3rem .5rem;
 }
-.dm-legend-item { display: flex; align-items: center; gap: .5rem; }
+.dm-legend-item { display: flex; align-items: center; }
 .dm-legend-tag {
-    display: inline-flex; align-items: center; gap: .3rem;
-    padding: .25rem .6rem; border-radius: 20px;
-    font-size: .7rem; font-weight: 600; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: .25rem;
+    padding: .2rem .5rem; border-radius: 20px;
+    font-size: .68rem; font-weight: 600; white-space: nowrap;
 }
 
 /* ============================================================
@@ -534,7 +534,7 @@ body {
     .dm-landing-grid { grid-template-columns: repeat(2, 1fr); }
     .dm-special-img { width: 90px; min-height: 90px; }
     .dm-item-img-wrap { width: 68px; height: 68px; }
-    .dm-legend-grid { grid-template-columns: 1fr; }
+    .dm-legend-grid { grid-template-columns: 1fr 1fr; gap: .35rem .5rem; }
     .dm-hero-info { gap: .4rem 1rem; }
     .dm-section-desc { padding-left: 0; }
     .dm-allergen-tag { font-size: .6rem; padding: .18rem .45rem; }
