@@ -249,6 +249,7 @@ body {
 .dm-search-wrap { padding: 1.25rem 0 .25rem; }
 .dm-search {
     width: 100%;
+    box-sizing: border-box;
     border: 1px solid var(--dm-border-light);
     background: var(--dm-bg-card);
     border-radius: var(--dm-radius-sm);
