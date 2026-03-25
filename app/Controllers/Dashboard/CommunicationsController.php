@@ -337,4 +337,84 @@ class CommunicationsController
         flash('success', 'Comunicazione archiviata.');
         Response::redirect(url('dashboard/communications'));
     }
+
+    public function sendNow(Request $request): void
+    {
+        if ($this->gate()) return;
+
+        $id = (int)$request->param('id');
+        $tenantId = Auth::tenantId();
+
+        $model = new EmailCampaign();
+        $campaign = $model->findById($id);
+
+        if (!$campaign || (int)$campaign['tenant_id'] !== $tenantId) {
+            flash('danger', 'Comunicazione non trovata.');
+            Response::redirect(url('dashboard/communications'));
+            return;
+        }
+
+        if ($campaign['status'] !== 'queued') {
+            flash('danger', 'Solo le campagne in coda possono essere inviate.');
+            Response::redirect(url("dashboard/communications/{$id}"));
+            return;
+        }
+
+        // Extend timeout for sending
+        set_time_limit(300);
+
+        $tenant = TenantResolver::current();
+        $db = Database::getInstance();
+
+        // Mark as sending
+        $model->updateStatus($id, 'sending');
+
+        $mailer = BroadcastService::createBroadcastMailer();
+        $sent = 0;
+        $failed = 0;
+
+        while (true) {
+            $recipients = $model->getPendingRecipients($id, 50);
+            if (empty($recipients)) break;
+
+            foreach ($recipients as $recipient) {
+                $token = BroadcastService::generateUnsubscribeToken($tenantId, $recipient['email']);
+                $unsubscribeUrl = rtrim(env('APP_URL', ''), '/') . '/email/unsubscribe/' . $token;
+                $html = BroadcastService::buildEmailHtml($campaign['body_text'], $tenant, $unsubscribeUrl);
+
+                $ok = BroadcastService::sendOne(
+                    $mailer,
+                    $recipient['email'],
+                    $campaign['subject'],
+                    $html,
+                    $tenant['name'],
+                    $tenant['email'] ?? null
+                );
+
+                if ($ok) {
+                    $model->updateRecipientStatus((int)$recipient['id'], 'sent');
+                    $sent++;
+                } else {
+                    $model->updateRecipientStatus((int)$recipient['id'], 'failed');
+                    $failed++;
+                }
+
+                usleep(100000); // 100ms rate limit
+            }
+        }
+
+        $model->updateCounts($id, $sent, $failed);
+        $db->prepare('UPDATE email_campaigns SET status = :status, sent_at = NOW() WHERE id = :id')
+           ->execute(['status' => 'sent', 'id' => $id]);
+
+        AuditLog::log(
+            AuditLog::EMAIL_BROADCAST_CREATED,
+            "Campagna \"{$campaign['subject']}\" inviata manualmente — {$sent} inviate, {$failed} fallite",
+            Auth::id(),
+            $tenantId
+        );
+
+        flash('success', "Comunicazione inviata! {$sent} email inviate" . ($failed > 0 ? ", {$failed} fallite" : '') . '.');
+        Response::redirect(url("dashboard/communications/{$id}"));
+    }
 }

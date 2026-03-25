@@ -42,7 +42,15 @@ $segLabels = [
         </div>
 
         <?php if (in_array($campaign['status'], ['draft', 'queued'])): ?>
-        <div style="margin-top:1rem;">
+        <div style="margin-top:1rem;display:flex;gap:.5rem;align-items:center;">
+            <?php if ($campaign['status'] === 'queued'): ?>
+            <form method="POST" action="<?= url("dashboard/communications/{$campaign['id']}/send-now") ?>" style="display:inline;">
+                <?= csrf_field() ?>
+                <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Inviare subito questa comunicazione?');">
+                    <i class="bi bi-send me-1"></i> Invia ora
+                </button>
+            </form>
+            <?php endif; ?>
             <form method="POST" action="<?= url("dashboard/communications/{$campaign['id']}/delete") ?>" style="display:inline;">
                 <?= csrf_field() ?>
                 <?php

@@ -112,6 +112,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('/communications/{id}', [CommunicationsController::class, 'show']);
     $r->post('/communications/{id}/delete', [CommunicationsController::class, 'destroy']);
     $r->post('/communications/{id}/archive', [CommunicationsController::class, 'archive']);
+    $r->post('/communications/{id}/send-now', [CommunicationsController::class, 'sendNow']);
     $r->get('/profile', [ProfileController::class, 'show']);
     $r->post('/profile', [ProfileController::class, 'update']);
 });
