@@ -68,21 +68,16 @@ foreach ($tenants as $t) {
     echo "   Tenant #{$t['id']} ({$t['name']}): email_broadcast = " . ($canBroadcast ? 'YES' : 'NO') . "\n";
 }
 
-// 5. Try sending a test email
-echo "\n5. SMTP CONNECTION TEST:\n";
+// 5. Mailer creation test (no connection attempt — avoids timeout)
+echo "\n5. MAILER TEST:\n";
 try {
     $mailer = App\Services\BroadcastService::createBroadcastMailer();
     echo "   Mailer created OK.\n";
-
-    // Try connecting
-    $smtp = $mailer->getSMTPInstance();
-    $connected = $smtp->connect(env('BROADCAST_SMTP_HOST'), (int)env('BROADCAST_SMTP_PORT'));
-    if ($connected) {
-        echo "   SMTP connection OK.\n";
-        $smtp->quit();
-    } else {
-        echo "   SMTP connection FAILED.\n";
-    }
+    echo "   Host: " . $mailer->Host . "\n";
+    echo "   Port: " . $mailer->Port . "\n";
+    echo "   SMTPSecure: " . $mailer->SMTPSecure . "\n";
+    echo "   Username: " . $mailer->Username . "\n";
+    echo "   From: " . $mailer->From . "\n";
 } catch (\Throwable $e) {
     echo "   ERROR: " . $e->getMessage() . "\n";
 }
