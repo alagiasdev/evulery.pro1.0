@@ -185,74 +185,76 @@ $tabs = [
                 </tr>
                 <!-- Inline edit subscription row -->
                 <tr class="collapse" id="changePlan<?= $s['id'] ?>">
-                    <td colspan="8" style="background:#fafbfc;padding:.75rem 1.25rem;">
-                        <form method="POST" action="<?= url("admin/subscriptions/{$s['id']}/change-plan") ?>">
-                            <?= csrf_field() ?>
-                            <div style="font-size:.82rem;font-weight:700;color:#495057;margin-bottom:.5rem;">
-                                Modifica abbonamento: <?= e($s['tenant_name']) ?>
-                            </div>
-                            <div style="display:flex;align-items:flex-end;gap:.75rem;flex-wrap:wrap;">
-                                <div>
-                                    <label class="adm-form-label">Piano</label>
-                                    <select name="plan_id" class="adm-form-input" style="min-width:180px;">
-                                        <?php foreach ($plans as $p): ?>
-                                        <option value="<?= $p['id'] ?>" <?= (int)($s['plan_id'] ?? 0) === (int)$p['id'] ? 'selected' : '' ?>>
-                                            <?= e($p['name']) ?> (&euro;<?= number_format($p['price'], 0, ',', '.') ?>/mese)
-                                        </option>
-                                        <?php endforeach; ?>
-                                    </select>
+                    <td colspan="8" style="padding:0;">
+                        <div class="adm-sub-edit">
+                            <form method="POST" action="<?= url("admin/subscriptions/{$s['id']}/change-plan") ?>">
+                                <?= csrf_field() ?>
+                                <div class="adm-sub-edit-title">
+                                    <i class="bi bi-pencil-square"></i> Modifica: <?= e($s['tenant_name']) ?>
                                 </div>
-                                <div>
-                                    <label class="adm-form-label">Ciclo</label>
-                                    <?php $sCycle = $s['billing_cycle'] ?? 'annual'; ?>
-                                    <select name="billing_cycle" class="adm-form-input" style="min-width:120px;">
-                                        <option value="semiannual" <?= $sCycle === 'semiannual' ? 'selected' : '' ?>>Semestrale</option>
-                                        <option value="annual" <?= $sCycle === 'annual' ? 'selected' : '' ?>>Annuale</option>
-                                    </select>
+                                <div class="adm-sub-edit-grid">
+                                    <div>
+                                        <label class="adm-form-label">Piano</label>
+                                        <select name="plan_id" class="adm-form-input">
+                                            <?php foreach ($plans as $p): ?>
+                                            <option value="<?= $p['id'] ?>" <?= (int)($s['plan_id'] ?? 0) === (int)$p['id'] ? 'selected' : '' ?>>
+                                                <?= e($p['name']) ?> (&euro;<?= number_format($p['price'], 0, ',', '.') ?>/mese)
+                                            </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="adm-form-label">Ciclo</label>
+                                        <?php $sCycle = $s['billing_cycle'] ?? 'annual'; ?>
+                                        <select name="billing_cycle" class="adm-form-input">
+                                            <option value="semiannual" <?= $sCycle === 'semiannual' ? 'selected' : '' ?>>Semestrale</option>
+                                            <option value="annual" <?= $sCycle === 'annual' ? 'selected' : '' ?>>Annuale</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="adm-form-label">Stato</label>
+                                        <select name="status" class="adm-form-input">
+                                            <option value="active" <?= $s['status'] === 'active' ? 'selected' : '' ?>>Attivo</option>
+                                            <option value="trialing" <?= $s['status'] === 'trialing' ? 'selected' : '' ?>>Trial</option>
+                                            <option value="past_due" <?= $s['status'] === 'past_due' ? 'selected' : '' ?>>Non pagato</option>
+                                            <option value="cancelled" <?= $s['status'] === 'cancelled' ? 'selected' : '' ?>>Cancellato</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="adm-form-label">Sconto extra %</label>
+                                        <input type="number" name="extra_discount" class="adm-form-input" min="0" max="100" step="0.5"
+                                               value="<?= number_format((float)($s['extra_discount'] ?? 0), 1, '.', '') ?>">
+                                    </div>
+                                    <div>
+                                        <label class="adm-form-label">Inizio periodo</label>
+                                        <input type="date" name="period_start" class="adm-form-input"
+                                               value="<?= $s['current_period_start'] ? date('Y-m-d', strtotime($s['current_period_start'])) : '' ?>">
+                                    </div>
+                                    <div>
+                                        <label class="adm-form-label">Scadenza</label>
+                                        <input type="date" name="period_end" class="adm-form-input"
+                                               value="<?= $s['current_period_end'] ? date('Y-m-d', strtotime($s['current_period_end'])) : '' ?>">
+                                    </div>
+                                    <div>
+                                        <label class="adm-form-label">Crediti Email</label>
+                                        <input type="number" name="email_credits" class="adm-form-input" min="0"
+                                               value="<?= (int)$s['email_credits'] ?>">
+                                    </div>
+                                    <div>
+                                        <label class="adm-form-label">Crediti SMS</label>
+                                        <input type="number" name="sms_credits" class="adm-form-input" min="0"
+                                               value="<?= (int)$s['sms_credits'] ?>">
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="adm-form-label">Sconto extra %</label>
-                                    <input type="number" name="extra_discount" class="adm-form-input" style="width:80px;" min="0" max="100" step="0.5"
-                                           value="<?= number_format((float)($s['extra_discount'] ?? 0), 1, '.', '') ?>">
-                                </div>
-                                <div>
-                                    <label class="adm-form-label">Stato</label>
-                                    <select name="status" class="adm-form-input" style="min-width:130px;">
-                                        <option value="active" <?= $s['status'] === 'active' ? 'selected' : '' ?>>Attivo</option>
-                                        <option value="trialing" <?= $s['status'] === 'trialing' ? 'selected' : '' ?>>Trial</option>
-                                        <option value="past_due" <?= $s['status'] === 'past_due' ? 'selected' : '' ?>>Non pagato</option>
-                                        <option value="cancelled" <?= $s['status'] === 'cancelled' ? 'selected' : '' ?>>Cancellato</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="adm-form-label">Inizio periodo</label>
-                                    <input type="date" name="period_start" class="adm-form-input" style="min-width:140px;"
-                                           value="<?= $s['current_period_start'] ? date('Y-m-d', strtotime($s['current_period_start'])) : '' ?>">
-                                </div>
-                                <div>
-                                    <label class="adm-form-label">Scadenza</label>
-                                    <input type="date" name="period_end" class="adm-form-input" style="min-width:140px;"
-                                           value="<?= $s['current_period_end'] ? date('Y-m-d', strtotime($s['current_period_end'])) : '' ?>">
-                                </div>
-                                <div>
-                                    <label class="adm-form-label">Crediti Email</label>
-                                    <input type="number" name="email_credits" class="adm-form-input" style="width:90px;" min="0"
-                                           value="<?= (int)$s['email_credits'] ?>">
-                                </div>
-                                <div>
-                                    <label class="adm-form-label">Crediti SMS</label>
-                                    <input type="number" name="sms_credits" class="adm-form-input" style="width:90px;" min="0"
-                                           value="<?= (int)$s['sms_credits'] ?>">
-                                </div>
-                                <div style="display:flex;gap:.35rem;">
-                                    <button type="submit" class="admin-qa admin-qa-primary" style="font-size:.78rem;padding:.45rem .75rem;">
+                                <div class="adm-sub-edit-actions">
+                                    <button type="submit" class="adm-btn adm-btn-primary">
                                         <i class="bi bi-check-circle"></i> Salva
                                     </button>
-                                    <button type="button" class="admin-qa admin-qa-outline" style="font-size:.78rem;padding:.45rem .75rem;"
+                                    <button type="button" class="adm-btn" style="background:#f0f0f0;color:#495057;"
                                             data-bs-toggle="collapse" data-bs-target="#changePlan<?= $s['id'] ?>">Annulla</button>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 <?php endforeach; ?>

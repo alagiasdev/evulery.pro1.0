@@ -523,6 +523,23 @@ body {
 .adm-svc-row-plans { display: flex; gap: .25rem; flex-wrap: wrap; flex-shrink: 0; }
 .adm-svc-row-actions { display: flex; gap: .35rem; flex-shrink: 0; }
 
+/* ===== Subscription inline edit ===== */
+.adm-sub-edit {
+    background: #f8f9fb; border-top: 2px solid var(--admin-accent);
+    padding: 1.25rem;
+}
+.adm-sub-edit-title {
+    font-size: .88rem; font-weight: 700; color: #1a1d23;
+    margin-bottom: 1rem; display: flex; align-items: center; gap: .4rem;
+}
+.adm-sub-edit-title i { color: var(--admin-accent); }
+.adm-sub-edit-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: .75rem; margin-bottom: 1rem;
+}
+.adm-sub-edit-grid .adm-form-input { width: 100%; }
+.adm-sub-edit-actions { display: flex; gap: .5rem; }
+
 /* ===== Profile grid ===== */
 .adm-profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 900px; }
 
@@ -560,6 +577,7 @@ body {
     .adm-grid-2-1, .adm-grid-1-1 { grid-template-columns: 1fr; }
     .adm-plan-row { grid-template-columns: auto 1fr auto; }
     .adm-svc-grid { grid-template-columns: 1fr; }
+    .adm-sub-edit-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 768px) {
     .adm-profile-grid { grid-template-columns: 1fr; }
@@ -589,6 +607,8 @@ body {
     .admin-topbar { padding: .5rem .75rem; }
     /* Phase C: table font */
     .adm-table th, .adm-table td { font-size: .78rem; padding: .5rem .6rem; }
+    .adm-sub-edit-grid { grid-template-columns: 1fr; }
+    .adm-sub-edit { padding: 1rem; }
 }
 @media (max-width: 576px) {
     .admin-stats { gap: .5rem; }
