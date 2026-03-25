@@ -8,21 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
     <link href="<?= asset('css/dashboard.css') ?>" rel="stylesheet">
 </head>
-<body<?php if (\App\Core\Auth::isImpersonating()): ?> class="is-impersonating"<?php endif; ?>>
-    <?php if (\App\Core\Auth::isImpersonating()): ?>
-    <div class="impersonation-bar">
-        <i class="bi bi-person-badge"></i>
-        Stai accedendo come <strong><?= e(auth()['name'] ?? '') ?></strong>
-        <?php if (tenant()): ?>(<?= e(tenant()['name'] ?? '') ?>)<?php endif; ?>
-        &mdash;
-        <form method="POST" action="<?= url('dashboard/stop-impersonation') ?>" style="display:inline;">
-            <?= csrf_field() ?>
-            <button type="submit" style="background:none;border:none;color:#000;text-decoration:underline;cursor:pointer;font-size:.85rem;font-weight:700;">
-                <i class="bi bi-box-arrow-left"></i> Torna ad Admin
-            </button>
-        </form>
-    </div>
-    <?php endif; ?>
+<body>
     <!-- Mobile Header -->
     <div class="mobile-header d-md-none" id="mobile-header">
         <button class="mobile-header-toggle" id="sidebar-toggle" type="button">
@@ -152,6 +138,20 @@
 
     <!-- Main Content -->
     <div id="main-content">
+        <?php if (\App\Core\Auth::isImpersonating()): ?>
+        <div class="impersonation-bar">
+            <i class="bi bi-person-badge"></i>
+            Stai accedendo come <strong><?= e(auth()['name'] ?? '') ?></strong>
+            <?php if (tenant()): ?>(<?= e(tenant()['name'] ?? '') ?>)<?php endif; ?>
+            &mdash;
+            <form method="POST" action="<?= url('dashboard/stop-impersonation') ?>" style="display:inline;">
+                <?= csrf_field() ?>
+                <button type="submit" style="background:none;border:none;color:#000;text-decoration:underline;cursor:pointer;font-size:.85rem;font-weight:700;">
+                    <i class="bi bi-box-arrow-left"></i> Torna ad Admin
+                </button>
+            </form>
+        </div>
+        <?php endif; ?>
         <!-- Top Bar (desktop) -->
         <div class="top-bar d-none d-md-flex">
             <span class="top-bar-date">
