@@ -66,7 +66,73 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
     <?php if (empty($users)): ?>
     <div class="adm-card-body adm-empty">Nessun utente trovato.</div>
     <?php else: ?>
-    <div class="adm-table-wrap">
+
+    <?php
+    // Pre-compute shared data
+    foreach ($users as &$u) {
+        $u['_name'] = e($u['first_name'] . ' ' . $u['last_name']);
+        $u['_roleLbl'] = $roleLabels[$u['role']] ?? ucfirst($u['role']);
+        $u['_roleClr'] = $roleColors[$u['role']] ?? '#616161';
+        $u['_statusBadge'] = $u['is_active']
+            ? '<span class="adm-badge adm-badge-active" style="font-size:.68rem;">Attivo</span>'
+            : '<span class="adm-badge adm-badge-inactive" style="font-size:.68rem;">Inattivo</span>';
+        $u['_lastLogin'] = $u['last_login_at']
+            ? format_date($u['last_login_at'], 'd/m/Y H:i')
+            : '<span style="font-style:italic;color:#adb5bd;">Mai</span>';
+        $u['_canImpersonate'] = $u['role'] !== 'super_admin' && $u['tenant_id'];
+    }
+    unset($u);
+    ?>
+
+    <!-- Mobile: card list -->
+    <div class="adm-user-mobile d-md-none">
+        <?php foreach ($users as $u): ?>
+        <div class="adm-sub-card">
+            <div class="adm-sub-card-top">
+                <div>
+                    <div class="adm-sub-card-name"><?= $u['_name'] ?></div>
+                    <div class="adm-sub-card-plan">
+                        <span style="font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:4px;background:<?= $u['_roleClr'] ?>15;color:<?= $u['_roleClr'] ?>;">
+                            <?= e($u['_roleLbl']) ?>
+                        </span>
+                        <?= $u['_statusBadge'] ?>
+                    </div>
+                </div>
+                <?php if ($u['_canImpersonate']): ?>
+                <form method="POST" action="<?= url("admin/impersonate/{$u['id']}") ?>">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="adm-action-btn" title="Accedi come questo utente">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                    </button>
+                </form>
+                <?php endif; ?>
+            </div>
+            <div class="adm-sub-card-details">
+                <div class="adm-sub-card-detail" style="grid-column:1/-1;">
+                    <span class="adm-sub-card-label">Email</span>
+                    <span class="adm-sub-card-value" style="font-size:.78rem;word-break:break-all;"><?= e($u['email']) ?></span>
+                </div>
+                <div class="adm-sub-card-detail">
+                    <span class="adm-sub-card-label">Ristorante</span>
+                    <span class="adm-sub-card-value">
+                        <?php if ($u['tenant_name'] ?? ''): ?>
+                            <a href="<?= url("admin/tenants/{$u['tenant_id']}/edit") ?>" style="color:var(--admin-accent);text-decoration:none;font-size:.82rem;"><?= e($u['tenant_name']) ?></a>
+                        <?php else: ?>
+                            <span style="color:#adb5bd;">&mdash;</span>
+                        <?php endif; ?>
+                    </span>
+                </div>
+                <div class="adm-sub-card-detail">
+                    <span class="adm-sub-card-label">Ultimo login</span>
+                    <span class="adm-sub-card-value" style="font-size:.78rem;"><?= $u['_lastLogin'] ?></span>
+                </div>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+
+    <!-- Desktop: table -->
+    <div class="adm-table-wrap d-none d-md-block">
     <table class="adm-table">
         <thead>
             <tr>
@@ -80,18 +146,13 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($users as $u):
-                $roleLbl = $roleLabels[$u['role']] ?? ucfirst($u['role']);
-                $roleClr = $roleColors[$u['role']] ?? '#616161';
-            ?>
+            <?php foreach ($users as $u): ?>
             <tr>
-                <td style="font-weight:600;font-size:.85rem;">
-                    <?= e($u['first_name'] . ' ' . $u['last_name']) ?>
-                </td>
+                <td style="font-weight:600;font-size:.85rem;"><?= $u['_name'] ?></td>
                 <td style="font-size:.82rem;"><?= e($u['email']) ?></td>
                 <td>
-                    <span style="font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:4px;background:<?= $roleClr ?>15;color:<?= $roleClr ?>;">
-                        <?= e($roleLbl) ?>
+                    <span style="font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:4px;background:<?= $u['_roleClr'] ?>15;color:<?= $u['_roleClr'] ?>;">
+                        <?= e($u['_roleLbl']) ?>
                     </span>
                 </td>
                 <td style="font-size:.82rem;">
@@ -103,18 +164,10 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
                         <span style="color:#adb5bd;">&mdash;</span>
                     <?php endif; ?>
                 </td>
+                <td><?= $u['_statusBadge'] ?></td>
+                <td style="font-size:.78rem;color:#6c757d;"><?= $u['_lastLogin'] ?></td>
                 <td>
-                    <?php if ($u['is_active']): ?>
-                    <span class="adm-badge adm-badge-active" style="font-size:.68rem;">Attivo</span>
-                    <?php else: ?>
-                    <span class="adm-badge adm-badge-inactive" style="font-size:.68rem;">Inattivo</span>
-                    <?php endif; ?>
-                </td>
-                <td style="font-size:.78rem;color:#6c757d;">
-                    <?= $u['last_login_at'] ? format_date($u['last_login_at'], 'd/m/Y H:i') : '<span style="font-style:italic;">Mai</span>' ?>
-                </td>
-                <td>
-                    <?php if ($u['role'] !== 'super_admin' && $u['tenant_id']): ?>
+                    <?php if ($u['_canImpersonate']): ?>
                     <form method="POST" action="<?= url("admin/impersonate/{$u['id']}") ?>" style="display:inline;">
                         <?= csrf_field() ?>
                         <button type="submit" class="adm-action-btn" title="Accedi come questo utente" style="font-size:.78rem;">
