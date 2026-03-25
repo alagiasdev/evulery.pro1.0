@@ -58,8 +58,8 @@ $tabs = [
     </div>
 </div>
 
-<!-- Filter pills + Table -->
-<div class="adm-card">
+<!-- Filter pills -->
+<div class="adm-card" style="margin-bottom:0;">
     <div class="adm-card-hdr">
         <span class="adm-card-hdr-title">Elenco abbonamenti</span>
         <div class="adm-filter-pills">
@@ -70,7 +70,99 @@ $tabs = [
             <a class="adm-pill <?= $filter === 'cancelled' ? 'active' : '' ?>" href="<?= url('admin/subscriptions?filter=cancelled') ?>">Scaduti</a>
         </div>
     </div>
-    <div class="adm-table-wrap">
+
+<?php if (empty($subscriptions)): ?>
+    <div class="adm-card-body adm-empty">Nessun abbonamento trovato.</div>
+<?php else: ?>
+
+    <?php
+    // Pre-compute shared data for each subscription
+    foreach ($subscriptions as &$s) {
+        $s['_cycle'] = $s['billing_cycle'] ?? 'annual';
+        $s['_extraDisc'] = (float)($s['extra_discount'] ?? 0);
+        $planForCalc = array_merge($s, ['price' => $s['plan_price'] ?? $s['price']]);
+        $s['_calcPrice'] = \App\Models\Plan::calculatePrice($planForCalc, $s['_cycle'], $s['_extraDisc']);
+        $s['_cycleLabel'] = $s['_cycle'] === 'semiannual' ? '6 mesi' : '12 mesi';
+        $s['_ec'] = (int)$s['email_credits'];
+        $s['_sc'] = (int)$s['sms_credits'];
+        // Status badge
+        if ($s['status'] === 'active') {
+            $endTs2 = $s['current_period_end'] ? strtotime($s['current_period_end']) : null;
+            $isExpired2  = $endTs2 && $endTs2 < time();
+            $isExpiring2 = $endTs2 && !$isExpired2 && $endTs2 <= strtotime('+30 days');
+            if ($isExpired2) { $s['_statusBadge'] = '<span class="adm-badge adm-badge-inactive">Scaduto</span>'; }
+            elseif ($isExpiring2) { $s['_statusBadge'] = '<span class="adm-badge adm-badge-warning">In scadenza</span>'; }
+            else { $s['_statusBadge'] = '<span class="adm-badge adm-badge-active">Attivo</span>'; }
+        } elseif ($s['status'] === 'trialing') {
+            $daysLeft = $s['current_period_end'] ? max(0, (int)ceil((strtotime($s['current_period_end']) - time()) / 86400)) : 0;
+            $s['_statusBadge'] = '<span class="adm-badge adm-badge-trial">Trial (' . $daysLeft . 'gg)</span>';
+        } elseif ($s['status'] === 'past_due') {
+            $s['_statusBadge'] = '<span class="adm-badge adm-badge-warning">Non pagato</span>';
+        } else {
+            $s['_statusBadge'] = '<span class="adm-badge adm-badge-inactive">' . e(ucfirst($s['status'])) . '</span>';
+        }
+        // Expiry display
+        if ($s['current_period_end']) {
+            $endTs = strtotime($s['current_period_end']);
+            $isExpiring = $endTs <= strtotime('+7 days');
+            $isExpired  = $endTs < time();
+            $style = $isExpired ? 'color:#C62828;font-weight:600;' : ($isExpiring ? 'color:#E65100;font-weight:600;' : 'color:#6c757d;');
+            $s['_expiryHtml'] = '<span style="' . $style . '">' . date('d/m/Y', $endTs) . '</span>';
+        } else {
+            $s['_expiryHtml'] = '&mdash;';
+        }
+    }
+    unset($s);
+    ?>
+
+    <!-- Mobile: card list -->
+    <div class="adm-sub-mobile d-md-none">
+        <?php foreach ($subscriptions as $s): ?>
+        <div class="adm-sub-card">
+            <div class="adm-sub-card-top">
+                <div>
+                    <div class="adm-sub-card-name"><?= e($s['tenant_name']) ?></div>
+                    <div class="adm-sub-card-plan">
+                        <?php if ($s['plan_name']): ?>
+                        <span class="adm-badge-plan" style="background:<?= e($s['plan_color']) ?>15;color:<?= e($s['plan_color']) ?>;"><?= e($s['plan_name']) ?></span>
+                        <?php else: ?>
+                        <span class="adm-badge adm-badge-inactive"><?= e(ucfirst($s['plan'])) ?></span>
+                        <?php endif; ?>
+                        <?= $s['_statusBadge'] ?>
+                    </div>
+                </div>
+                <button type="button" class="adm-action-btn" data-bs-toggle="collapse" data-bs-target="#changePlanM<?= $s['id'] ?>">
+                    <i class="bi bi-pencil"></i>
+                </button>
+            </div>
+            <div class="adm-sub-card-details">
+                <div class="adm-sub-card-detail">
+                    <span class="adm-sub-card-label">Prezzo</span>
+                    <span class="adm-sub-card-value">&euro;<?= number_format($s['_calcPrice']['total'], 2, ',', '.') ?> / <?= $s['_cycleLabel'] ?></span>
+                </div>
+                <div class="adm-sub-card-detail">
+                    <span class="adm-sub-card-label">Mensile</span>
+                    <span class="adm-sub-card-value">&euro;<?= number_format($s['_calcPrice']['monthly'], 2, ',', '.') ?>/mese</span>
+                </div>
+                <div class="adm-sub-card-detail">
+                    <span class="adm-sub-card-label">Email</span>
+                    <span class="adm-sub-card-value" style="font-weight:600;color:<?= $s['_ec'] <= 0 ? '#adb5bd' : ($s['_ec'] < 50 ? '#E65100' : '#1a1d23') ?>;"><?= $s['_ec'] ?></span>
+                </div>
+                <div class="adm-sub-card-detail">
+                    <span class="adm-sub-card-label">Scadenza</span>
+                    <span class="adm-sub-card-value"><?= $s['_expiryHtml'] ?></span>
+                </div>
+            </div>
+            <!-- Mobile edit form -->
+            <div class="collapse" id="changePlanM<?= $s['id'] ?>">
+                <?php $editCollapseId = "changePlanM{$s['id']}"; include __DIR__ . '/_edit-form.php'; ?>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+
+    <!-- Desktop: table -->
+    <div class="adm-table-wrap d-none d-md-block">
         <table class="adm-table">
             <thead>
                 <tr>
@@ -85,181 +177,49 @@ $tabs = [
                 </tr>
             </thead>
             <tbody>
-                <?php if (empty($subscriptions)): ?>
-                <tr>
-                    <td colspan="8" class="adm-empty">Nessun abbonamento trovato.</td>
-                </tr>
-                <?php else: ?>
                 <?php foreach ($subscriptions as $s): ?>
                 <tr>
                     <td class="cell-name"><?= e($s['tenant_name']) ?></td>
                     <td>
                         <?php if ($s['plan_name']): ?>
-                        <span class="adm-badge-plan" style="background:<?= e($s['plan_color']) ?>15;color:<?= e($s['plan_color']) ?>;">
-                            <?= e($s['plan_name']) ?>
-                        </span>
+                        <span class="adm-badge-plan" style="background:<?= e($s['plan_color']) ?>15;color:<?= e($s['plan_color']) ?>;"><?= e($s['plan_name']) ?></span>
                         <?php else: ?>
                         <span class="adm-badge adm-badge-inactive"><?= e(ucfirst($s['plan'])) ?></span>
                         <?php endif; ?>
                     </td>
-                    <?php
-                    $cycle = $s['billing_cycle'] ?? 'annual';
-                    $extraDisc = (float)($s['extra_discount'] ?? 0);
-                    $planForCalc = array_merge($s, ['price' => $s['plan_price'] ?? $s['price']]);
-                    $calcPrice = \App\Models\Plan::calculatePrice($planForCalc, $cycle, $extraDisc);
-                    $cycleLabel = $cycle === 'semiannual' ? '6 mesi' : '12 mesi';
-                    ?>
                     <td>
-                        <div style="font-weight:600;">&euro;<?= number_format($calcPrice['total'], 2, ',', '.') ?></div>
-                        <div style="font-size:.68rem;color:#6c757d;">
-                            <?= $cycleLabel ?>
-                            <?php if ($extraDisc > 0): ?>
-                            &middot; <span style="color:#2E7D32;">-<?= number_format($extraDisc, 0) ?>%</span>
-                            <?php endif; ?>
-                        </div>
-                        <div style="font-size:.65rem;color:#adb5bd;">&euro;<?= number_format($calcPrice['monthly'], 2, ',', '.') ?>/mese</div>
+                        <div style="font-weight:600;">&euro;<?= number_format($s['_calcPrice']['total'], 2, ',', '.') ?></div>
+                        <div style="font-size:.68rem;color:#6c757d;"><?= $s['_cycleLabel'] ?><?php if ($s['_extraDisc'] > 0): ?> &middot; <span style="color:#2E7D32;">-<?= number_format($s['_extraDisc'], 0) ?>%</span><?php endif; ?></div>
+                        <div style="font-size:.65rem;color:#adb5bd;">&euro;<?= number_format($s['_calcPrice']['monthly'], 2, ',', '.') ?>/mese</div>
                     </td>
                     <td>
-                        <?php
-                        $ec = (int)$s['email_credits'];
-                        $ecColor = $ec <= 0 ? '#adb5bd' : ($ec < 50 ? '#E65100' : '#1a1d23');
-                        $ecLabel = $ec <= 0 ? 'esauriti' : ($ec < 50 ? 'quasi esauriti!' : 'rimasti');
-                        ?>
-                        <span style="font-weight:600;color:<?= $ecColor ?>;"><?= $ec ?></span>
-                        <span style="font-size:.68rem;color:<?= $ec < 50 && $ec > 0 ? '#E65100' : '#adb5bd' ?>;"><?= $ecLabel ?></span>
+                        <?php $ecColor = $s['_ec'] <= 0 ? '#adb5bd' : ($s['_ec'] < 50 ? '#E65100' : '#1a1d23'); ?>
+                        <span style="font-weight:600;color:<?= $ecColor ?>;"><?= $s['_ec'] ?></span>
+                        <span style="font-size:.68rem;color:<?= $s['_ec'] < 50 && $s['_ec'] > 0 ? '#E65100' : '#adb5bd' ?>;"><?= $s['_ec'] <= 0 ? 'esauriti' : ($s['_ec'] < 50 ? 'quasi esauriti!' : 'rimasti') ?></span>
                     </td>
                     <td>
-                        <?php
-                        $sc = (int)$s['sms_credits'];
-                        $scColor = $sc <= 0 ? '#adb5bd' : ($sc < 20 ? '#E65100' : '#1a1d23');
-                        $scLabel = $sc <= 0 ? 'esauriti' : ($sc < 20 ? 'quasi esauriti!' : 'rimasti');
-                        ?>
-                        <span style="font-weight:600;color:<?= $scColor ?>;"><?= $sc ?></span>
-                        <span style="font-size:.68rem;color:<?= $sc < 20 && $sc > 0 ? '#E65100' : '#adb5bd' ?>;"><?= $scLabel ?></span>
+                        <?php $scColor = $s['_sc'] <= 0 ? '#adb5bd' : ($s['_sc'] < 20 ? '#E65100' : '#1a1d23'); ?>
+                        <span style="font-weight:600;color:<?= $scColor ?>;"><?= $s['_sc'] ?></span>
+                        <span style="font-size:.68rem;color:<?= $s['_sc'] < 20 && $s['_sc'] > 0 ? '#E65100' : '#adb5bd' ?>;"><?= $s['_sc'] <= 0 ? 'esauriti' : ($s['_sc'] < 20 ? 'quasi esauriti!' : 'rimasti') ?></span>
                     </td>
-                    <td>
-                        <?php if ($s['status'] === 'active'): ?>
-                            <?php
-                            $endTs2 = $s['current_period_end'] ? strtotime($s['current_period_end']) : null;
-                            $isExpired2  = $endTs2 && $endTs2 < time();
-                            $isExpiring2 = $endTs2 && !$isExpired2 && $endTs2 <= strtotime('+30 days');
-                            ?>
-                            <?php if ($isExpired2): ?>
-                                <span class="adm-badge adm-badge-inactive">Scaduto</span>
-                            <?php elseif ($isExpiring2): ?>
-                                <span class="adm-badge adm-badge-warning">In scadenza</span>
-                            <?php else: ?>
-                                <span class="adm-badge adm-badge-active">Attivo</span>
-                            <?php endif; ?>
-                        <?php elseif ($s['status'] === 'trialing'): ?>
-                            <?php
-                            $daysLeft = $s['current_period_end'] ? max(0, (int)ceil((strtotime($s['current_period_end']) - time()) / 86400)) : 0;
-                            ?>
-                            <span class="adm-badge adm-badge-trial">Trial (<?= $daysLeft ?>gg)</span>
-                        <?php elseif ($s['status'] === 'past_due'): ?>
-                            <span class="adm-badge adm-badge-warning">Non pagato</span>
-                        <?php else: ?>
-                            <span class="adm-badge adm-badge-inactive"><?= e(ucfirst($s['status'])) ?></span>
-                        <?php endif; ?>
-                    </td>
-                    <td class="cell-date">
-                        <?php if ($s['current_period_end']): ?>
-                            <?php
-                            $endTs = strtotime($s['current_period_end']);
-                            $isExpiring = $endTs <= strtotime('+7 days');
-                            $isExpired  = $endTs < time();
-                            ?>
-                            <span style="<?= $isExpired ? 'color:#C62828;font-weight:600;' : ($isExpiring ? 'color:#E65100;font-weight:600;' : 'color:#6c757d;') ?>">
-                                <?= date('d/m/Y', $endTs) ?>
-                            </span>
-                        <?php else: ?>
-                            &mdash;
-                        <?php endif; ?>
-                    </td>
+                    <td><?= $s['_statusBadge'] ?></td>
+                    <td class="cell-date"><?= $s['_expiryHtml'] ?></td>
                     <td class="cell-actions">
                         <button type="button" class="adm-action-btn" title="Cambia piano"
-                                data-bs-toggle="collapse" data-bs-target="#changePlan<?= $s['id'] ?>">
+                                data-bs-toggle="collapse" data-bs-target="#changePlanD<?= $s['id'] ?>">
                             <i class="bi bi-arrow-up-circle"></i>
                         </button>
                     </td>
                 </tr>
-                <!-- Inline edit subscription row -->
-                <tr class="collapse" id="changePlan<?= $s['id'] ?>">
+                <tr class="collapse" id="changePlanD<?= $s['id'] ?>">
                     <td colspan="8" style="padding:0;">
-                        <div class="adm-sub-edit">
-                            <form method="POST" action="<?= url("admin/subscriptions/{$s['id']}/change-plan") ?>">
-                                <?= csrf_field() ?>
-                                <div class="adm-sub-edit-title">
-                                    <i class="bi bi-pencil-square"></i> Modifica: <?= e($s['tenant_name']) ?>
-                                </div>
-                                <div class="adm-sub-edit-grid">
-                                    <div>
-                                        <label class="adm-form-label">Piano</label>
-                                        <select name="plan_id" class="adm-form-input">
-                                            <?php foreach ($plans as $p): ?>
-                                            <option value="<?= $p['id'] ?>" <?= (int)($s['plan_id'] ?? 0) === (int)$p['id'] ? 'selected' : '' ?>>
-                                                <?= e($p['name']) ?> (&euro;<?= number_format($p['price'], 0, ',', '.') ?>/mese)
-                                            </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="adm-form-label">Ciclo</label>
-                                        <?php $sCycle = $s['billing_cycle'] ?? 'annual'; ?>
-                                        <select name="billing_cycle" class="adm-form-input">
-                                            <option value="semiannual" <?= $sCycle === 'semiannual' ? 'selected' : '' ?>>Semestrale</option>
-                                            <option value="annual" <?= $sCycle === 'annual' ? 'selected' : '' ?>>Annuale</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="adm-form-label">Stato</label>
-                                        <select name="status" class="adm-form-input">
-                                            <option value="active" <?= $s['status'] === 'active' ? 'selected' : '' ?>>Attivo</option>
-                                            <option value="trialing" <?= $s['status'] === 'trialing' ? 'selected' : '' ?>>Trial</option>
-                                            <option value="past_due" <?= $s['status'] === 'past_due' ? 'selected' : '' ?>>Non pagato</option>
-                                            <option value="cancelled" <?= $s['status'] === 'cancelled' ? 'selected' : '' ?>>Cancellato</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="adm-form-label">Sconto extra %</label>
-                                        <input type="number" name="extra_discount" class="adm-form-input" min="0" max="100" step="0.5"
-                                               value="<?= number_format((float)($s['extra_discount'] ?? 0), 1, '.', '') ?>">
-                                    </div>
-                                    <div>
-                                        <label class="adm-form-label">Inizio periodo</label>
-                                        <input type="date" name="period_start" class="adm-form-input"
-                                               value="<?= $s['current_period_start'] ? date('Y-m-d', strtotime($s['current_period_start'])) : '' ?>">
-                                    </div>
-                                    <div>
-                                        <label class="adm-form-label">Scadenza</label>
-                                        <input type="date" name="period_end" class="adm-form-input"
-                                               value="<?= $s['current_period_end'] ? date('Y-m-d', strtotime($s['current_period_end'])) : '' ?>">
-                                    </div>
-                                    <div>
-                                        <label class="adm-form-label">Crediti Email</label>
-                                        <input type="number" name="email_credits" class="adm-form-input" min="0"
-                                               value="<?= (int)$s['email_credits'] ?>">
-                                    </div>
-                                    <div>
-                                        <label class="adm-form-label">Crediti SMS</label>
-                                        <input type="number" name="sms_credits" class="adm-form-input" min="0"
-                                               value="<?= (int)$s['sms_credits'] ?>">
-                                    </div>
-                                </div>
-                                <div class="adm-sub-edit-actions">
-                                    <button type="submit" class="adm-btn adm-btn-primary">
-                                        <i class="bi bi-check-circle"></i> Salva
-                                    </button>
-                                    <button type="button" class="adm-btn" style="background:#f0f0f0;color:#495057;"
-                                            data-bs-toggle="collapse" data-bs-target="#changePlan<?= $s['id'] ?>">Annulla</button>
-                                </div>
-                            </form>
-                        </div>
+                        <?php $editCollapseId = "changePlanD{$s['id']}"; include __DIR__ . '/_edit-form.php'; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
-                <?php endif; ?>
             </tbody>
         </table>
     </div>
+
+<?php endif; ?>
 </div>

@@ -540,6 +540,40 @@ body {
 .adm-sub-edit-grid .adm-form-input { width: 100%; }
 .adm-sub-edit-actions { display: flex; gap: .5rem; }
 
+/* ===== Subscription mobile cards ===== */
+.adm-sub-mobile { padding: .5rem 1rem 1rem; }
+.adm-sub-card {
+    background: #fff; border: 1px solid #eee; border-radius: 10px;
+    padding: 0; margin-bottom: .75rem; overflow: hidden;
+}
+.adm-sub-card:last-child { margin-bottom: 0; }
+.adm-sub-card-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    padding: .85rem 1rem; gap: .75rem;
+}
+.adm-sub-card-name {
+    font-size: .88rem; font-weight: 700; color: #1a1d23;
+    margin-bottom: .35rem;
+}
+.adm-sub-card-plan { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
+.adm-sub-card-details {
+    display: grid; grid-template-columns: 1fr 1fr;
+    border-top: 1px solid #f0f0f0; padding: 0;
+}
+.adm-sub-card-detail {
+    padding: .6rem .85rem;
+    border-bottom: 1px solid #f8f9fa;
+}
+.adm-sub-card-detail:nth-child(odd) { border-right: 1px solid #f8f9fa; }
+.adm-sub-card-label {
+    font-size: .65rem; font-weight: 600; color: #adb5bd;
+    text-transform: uppercase; letter-spacing: .3px;
+    margin-bottom: .15rem; display: block;
+}
+.adm-sub-card-value {
+    font-size: .82rem; font-weight: 600; color: #1a1d23;
+}
+
 /* ===== Profile grid ===== */
 .adm-profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 900px; }
 
