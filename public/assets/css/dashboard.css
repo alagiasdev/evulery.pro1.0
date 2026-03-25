@@ -1719,6 +1719,48 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     .mt-left { flex-direction: column; }
     .amount-preview { flex-direction: column; text-align: center; }
     .dns-record-row { flex-direction: column; gap: .15rem; }
+    /* Phase B: date strip horizontal scroll */
+    .date-strip { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
+    .date-strip::-webkit-scrollbar { display: none; }
+    /* Phase B: filter bar stacking */
+    .filter-row { flex-direction: column; align-items: stretch; }
+    .filter-group { width: 100%; }
+    .filter-group label { min-width: 30px; }
+    .filter-group select.filter-input, .filter-group input.filter-input { flex: 1; }
+    .date-chips { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; }
+    /* Phase B: stat pills wrapping */
+    .stats-mini { flex-wrap: wrap; }
+    .stat-pill { flex: 1; min-width: 100px; justify-content: center; }
+    /* Phase B: pagination compact */
+    .pagination-bar { flex-direction: column; gap: .5rem; align-items: center; }
+    .pagination-info { font-size: .75rem; }
+    .pg-btn { min-width: 28px; height: 28px; font-size: .75rem; }
+}
+@media (max-width: 576px) {
+    /* Phase B/C: stat cards single column */
+    .dh-stat-cards { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .dh-stat-card { padding: 10px; }
+    .dh-stat-value { font-size: 1.3rem; }
+    /* Phase B: hero details full width */
+    .hero-details { grid-template-columns: 1fr; }
+    /* Phase B: quick actions */
+    .dh-qa-grid { grid-template-columns: 1fr; }
+    /* Phase C: reservation row compact */
+    .res-row { gap: .4rem; padding: .5rem .75rem; }
+    .res-time { font-size: .8rem; min-width: 40px; }
+    .res-name { font-size: .82rem; }
+    .res-pax { font-size: .72rem; padding: 2px 6px; }
+    /* Phase C: page body tighter */
+    .page-body { padding: .75rem; }
+    /* Phase C: card header compact */
+    .card-header h6 { font-size: .82rem; }
+    /* Phase C: date chip minimal */
+    .date-chip { padding: .35rem .5rem; min-width: 65px; }
+    .date-chip .chip-label { font-size: .75rem; }
+    .date-chip .chip-sub { font-size: .65rem; }
+    /* Phase C: settings tabs scroll */
+    .settings-tabs { flex-wrap: nowrap; overflow-x: auto; }
+    .settings-tab { flex-shrink: 0; }
 }
 
 /* ===========================================

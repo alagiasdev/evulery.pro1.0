@@ -70,7 +70,7 @@ $tabs = [
             <a class="adm-pill <?= $filter === 'cancelled' ? 'active' : '' ?>" href="<?= url('admin/subscriptions?filter=cancelled') ?>">Scaduti</a>
         </div>
     </div>
-    <div style="overflow-x:auto;">
+    <div class="adm-table-wrap">
         <table class="adm-table">
             <thead>
                 <tr>

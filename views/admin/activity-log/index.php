@@ -78,7 +78,7 @@ $defaultStyle = ['icon' => 'bi-circle', 'bg' => '#F5F5F5', 'color' => '#757575']
 <!-- Filters -->
 <div class="adm-card" style="margin-bottom:1.25rem;">
     <div class="adm-card-body" style="padding:.85rem 1.25rem;">
-        <form method="GET" action="<?= url('admin/activity-log') ?>" style="display:flex;gap:.65rem;align-items:flex-end;flex-wrap:wrap;">
+        <form method="GET" action="<?= url('admin/activity-log') ?>" class="adm-filter-form" style="display:flex;gap:.65rem;align-items:flex-end;flex-wrap:wrap;">
             <div style="flex:1;min-width:160px;">
                 <label class="adm-form-label" style="margin-bottom:.25rem;">Evento</label>
                 <select name="event" class="adm-form-input" style="font-size:.82rem;">
@@ -164,6 +164,7 @@ document.querySelector('[data-confirm-purge]').addEventListener('submit', functi
     <?php if (empty($logs)): ?>
     <div class="adm-card-body adm-empty">Nessun evento trovato con i filtri selezionati.</div>
     <?php else: ?>
+    <div class="adm-table-wrap">
     <table class="adm-table">
         <thead>
             <tr>
@@ -218,6 +219,7 @@ document.querySelector('[data-confirm-purge]').addEventListener('submit', functi
             <?php endforeach; ?>
         </tbody>
     </table>
+    </div><!-- /adm-table-wrap -->
 
     <?php if (!empty($pagination)): ?>
     <div class="pagination-bar" style="padding:.75rem 1rem;border-top:1px solid #eee;">

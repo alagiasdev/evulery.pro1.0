@@ -24,6 +24,7 @@
 </form>
 
 <div class="adm-card">
+    <div class="adm-table-wrap">
     <table class="adm-table">
         <thead>
             <tr>
@@ -89,6 +90,7 @@
             <?php endif; ?>
         </tbody>
     </table>
+    </div><!-- /adm-table-wrap -->
 
     <?php if (!empty($pagination)): ?>
     <div class="pagination-bar" style="padding:.75rem 1rem;border-top:1px solid #eee;">

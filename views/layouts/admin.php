@@ -51,9 +51,15 @@
     </div>
 </div>
 
+<!-- Mobile overlay -->
+<div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
+
 <!-- Main -->
 <div class="admin-main">
     <div class="admin-topbar">
+        <button class="admin-hamburger" id="adminHamburger" aria-label="Menu">
+            <i class="bi bi-list"></i>
+        </button>
         <div class="topbar-title">Admin Panel</div>
         <a href="<?= url('admin/profile') ?>" class="topbar-user" style="text-decoration:none;color:inherit;">
             <span><?= e(auth()['name'] ?? 'Admin') ?></span>
@@ -68,5 +74,19 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script>
+(function() {
+    var btn = document.getElementById('adminHamburger');
+    var sidebar = document.querySelector('.admin-sidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    if (!btn || !sidebar) return;
+    function toggle() {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+    }
+    btn.addEventListener('click', toggle);
+    overlay.addEventListener('click', toggle);
+})();
+</script>
 </body>
 </html>

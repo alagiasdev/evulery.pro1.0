@@ -9,7 +9,7 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
 <!-- Filters -->
 <div class="adm-card" style="margin-bottom:1.25rem;">
     <div class="adm-card-body" style="padding:.85rem 1.25rem;">
-        <form method="GET" action="<?= url('admin/users') ?>" style="display:flex;gap:.65rem;align-items:flex-end;flex-wrap:wrap;">
+        <form method="GET" action="<?= url('admin/users') ?>" class="adm-filter-form" style="display:flex;gap:.65rem;align-items:flex-end;flex-wrap:wrap;">
             <div style="flex:1.5;min-width:180px;">
                 <label class="adm-form-label" style="margin-bottom:.25rem;">Cerca</label>
                 <input type="text" name="q" class="adm-form-input" style="font-size:.82rem;" placeholder="Nome o email..." value="<?= e($filter['q'] ?? '') ?>">
@@ -66,6 +66,7 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
     <?php if (empty($users)): ?>
     <div class="adm-card-body adm-empty">Nessun utente trovato.</div>
     <?php else: ?>
+    <div class="adm-table-wrap">
     <table class="adm-table">
         <thead>
             <tr>
@@ -126,6 +127,7 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
             <?php endforeach; ?>
         </tbody>
     </table>
+    </div><!-- /adm-table-wrap -->
 
     <?php if (!empty($pagination)): ?>
     <div class="pagination-bar" style="padding:.75rem 1rem;border-top:1px solid #eee;">
