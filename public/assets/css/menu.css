@@ -73,6 +73,7 @@ body {
     width: 100%; max-width: 720px;
     margin: 0 auto;
     padding: 2rem 1.5rem 2.25rem;
+    box-sizing: border-box;
 }
 .dm-hero-logo {
     width: 64px; height: 64px;
