@@ -183,6 +183,12 @@ class Reservation
         return $stmt->execute(['id' => $id]);
     }
 
+    public function markDepositRefunded(int $id): bool
+    {
+        $stmt = $this->db->prepare('UPDATE reservations SET deposit_refunded = 1 WHERE id = :id');
+        return $stmt->execute(['id' => $id]);
+    }
+
     public function updateNotes(int $id, string $notes): bool
     {
         $stmt = $this->db->prepare('UPDATE reservations SET internal_notes = :notes WHERE id = :id');

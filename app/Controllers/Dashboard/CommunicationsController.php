@@ -49,25 +49,30 @@ class CommunicationsController
         $tenantId = Auth::tenantId();
         $page = max(1, (int)$request->query('page', 1));
         $perPage = 15;
+        $showArchived = $request->query('archived') === '1';
 
         $model = new EmailCampaign();
-        $total = $model->countByTenant($tenantId);
+        $baseUrl = url('dashboard/communications') . ($showArchived ? '?archived=1' : '');
+        $total = $model->countByTenant($tenantId, $showArchived);
 
-        $paginator = new Paginator($total, $perPage, $page, url('dashboard/communications'));
-        $campaigns = $model->findByTenant($tenantId, $paginator->limit(), $paginator->offset());
+        $paginator = new Paginator($total, $perPage, $page, $baseUrl);
+        $campaigns = $model->findByTenant($tenantId, $paginator->limit(), $paginator->offset(), $showArchived);
         $kpi = $model->getKpi($tenantId);
 
         $tenant = TenantResolver::current();
         $credits = (int)($tenant['email_credits_balance'] ?? 0);
+        $archivedCount = $showArchived ? 0 : $model->countByTenant($tenantId, true);
 
         view('dashboard/communications/index', [
-            'title'      => 'Comunicazioni',
-            'activeMenu' => 'communications',
-            'canUse'     => true,
-            'campaigns'  => $campaigns,
-            'pagination' => $paginator->links(),
-            'kpi'        => $kpi,
-            'credits'    => $credits,
+            'title'         => 'Comunicazioni',
+            'activeMenu'    => 'communications',
+            'canUse'        => true,
+            'campaigns'     => $campaigns,
+            'pagination'    => $paginator->links(),
+            'kpi'           => $kpi,
+            'credits'       => $credits,
+            'showArchived'  => $showArchived,
+            'archivedCount' => $archivedCount,
         ], 'dashboard');
     }
 
@@ -257,22 +262,79 @@ class CommunicationsController
             return;
         }
 
-        if ($campaign['status'] !== 'draft') {
-            flash('danger', 'Solo le bozze possono essere eliminate.');
+        if (!in_array($campaign['status'], ['draft', 'queued'])) {
+            flash('danger', 'Solo le bozze e le campagne in coda possono essere eliminate.');
             Response::redirect(url('dashboard/communications'));
             return;
+        }
+
+        // Refund unused credits for queued campaigns
+        $refunded = 0;
+        if ($campaign['status'] === 'queued') {
+            $refunded = $model->countPendingRecipients($id);
+            if ($refunded > 0) {
+                $tenantModel = new Tenant();
+                $tenantModel->addCredits($tenantId, $refunded);
+
+                $db = Database::getInstance();
+                $db->prepare(
+                    'INSERT INTO email_credit_transactions (tenant_id, amount, type, description, campaign_id, created_at)
+                     VALUES (:tid, :amount, :type, :desc, :cid, NOW())'
+                )->execute([
+                    'tid'    => $tenantId,
+                    'amount' => $refunded,
+                    'type'   => 'refund',
+                    'desc'   => "Annullamento campagna: \"{$campaign['subject']}\" ({$refunded} crediti rimborsati)",
+                    'cid'    => $id,
+                ]);
+            }
         }
 
         $model->delete($id);
 
         AuditLog::log(
             AuditLog::EMAIL_BROADCAST_DELETED,
-            "Campagna \"{$campaign['subject']}\" eliminata",
+            "Campagna \"{$campaign['subject']}\" eliminata" . ($refunded > 0 ? " ({$refunded} crediti rimborsati)" : ''),
             Auth::id(),
             $tenantId
         );
 
-        flash('success', 'Comunicazione eliminata.');
+        // Refresh tenant cache for updated credits
+        TenantResolver::refreshCurrent();
+
+        $msg = 'Comunicazione eliminata.';
+        if ($refunded > 0) {
+            $msg .= " {$refunded} crediti rimborsati.";
+        }
+        flash('success', $msg);
+        Response::redirect(url('dashboard/communications'));
+    }
+
+    public function archive(Request $request): void
+    {
+        if ($this->gate()) return;
+
+        $id = (int)$request->param('id');
+        $tenantId = Auth::tenantId();
+
+        $model = new EmailCampaign();
+        $campaign = $model->findById($id);
+
+        if (!$campaign || (int)$campaign['tenant_id'] !== $tenantId) {
+            flash('danger', 'Comunicazione non trovata.');
+            Response::redirect(url('dashboard/communications'));
+            return;
+        }
+
+        if (!in_array($campaign['status'], ['sent', 'failed'])) {
+            flash('danger', 'Solo le campagne inviate o fallite possono essere archiviate.');
+            Response::redirect(url('dashboard/communications'));
+            return;
+        }
+
+        $model->archive($id);
+
+        flash('success', 'Comunicazione archiviata.');
         Response::redirect(url('dashboard/communications'));
     }
 }

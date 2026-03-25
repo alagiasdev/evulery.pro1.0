@@ -295,6 +295,33 @@ class ReservationsController
         Response::redirect(url("dashboard/reservations/{$id}"));
     }
 
+    public function markDepositRefunded(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $reservationModel = new Reservation();
+        $reservation = $reservationModel->findById($id);
+
+        if (!$reservation || (int)$reservation['tenant_id'] !== (int)Auth::tenantId()) {
+            flash('danger', 'Prenotazione non trovata.');
+            Response::redirect(url('dashboard/reservations'));
+            return;
+        }
+
+        if (!$reservation['deposit_required'] || !$reservation['deposit_paid'] || $reservation['deposit_refunded']) {
+            flash('info', 'Caparra già rimborsata o non applicabile.');
+            Response::redirect(url("dashboard/reservations/{$id}"));
+            return;
+        }
+
+        $reservationModel->markDepositRefunded($id);
+        (new ReservationLog())->create($id, $reservation['status'], $reservation['status'], Auth::id(), 'Caparra segnata come rimborsata');
+
+        AuditLog::log(AuditLog::RESERVATION_UPDATED, "Caparra rimborsata per prenotazione #{$id}", Auth::id(), (int)$reservation['tenant_id']);
+
+        flash('success', 'Caparra segnata come rimborsata.');
+        Response::redirect(url("dashboard/reservations/{$id}"));
+    }
+
     public function updateNotes(Request $request): void
     {
         $id = (int)$request->param('id');

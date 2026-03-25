@@ -21,15 +21,16 @@ class EmailCampaign
         return $stmt->fetch() ?: null;
     }
 
-    public function findByTenant(int $tenantId, int $limit = 15, int $offset = 0): array
+    public function findByTenant(int $tenantId, int $limit = 15, int $offset = 0, bool $archived = false): array
     {
+        $arc = $archived ? 1 : 0;
         $stmt = $this->db->prepare(
-            'SELECT ec.*, u.first_name AS creator_first, u.last_name AS creator_last
+            "SELECT ec.*, u.first_name AS creator_first, u.last_name AS creator_last
              FROM email_campaigns ec
              LEFT JOIN users u ON u.id = ec.created_by
-             WHERE ec.tenant_id = :tid
+             WHERE ec.tenant_id = :tid AND ec.is_archived = {$arc}
              ORDER BY ec.created_at DESC
-             LIMIT :lim OFFSET :off'
+             LIMIT :lim OFFSET :off"
         );
         $stmt->bindValue('tid', $tenantId, PDO::PARAM_INT);
         $stmt->bindValue('lim', $limit, PDO::PARAM_INT);
@@ -38,9 +39,10 @@ class EmailCampaign
         return $stmt->fetchAll();
     }
 
-    public function countByTenant(int $tenantId): int
+    public function countByTenant(int $tenantId, bool $archived = false): int
     {
-        $stmt = $this->db->prepare('SELECT COUNT(*) FROM email_campaigns WHERE tenant_id = :tid');
+        $arc = $archived ? 1 : 0;
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM email_campaigns WHERE tenant_id = :tid AND is_archived = {$arc}");
         $stmt->execute(['tid' => $tenantId]);
         return (int) $stmt->fetchColumn();
     }
@@ -110,8 +112,22 @@ class EmailCampaign
 
     public function delete(int $id): void
     {
-        $this->db->prepare("DELETE FROM email_campaigns WHERE id = :id AND status = 'draft'")
+        $this->db->prepare("DELETE FROM email_campaign_recipients WHERE campaign_id = :id")
             ->execute(['id' => $id]);
+        $this->db->prepare("DELETE FROM email_campaigns WHERE id = :id AND status IN ('draft','queued')")
+            ->execute(['id' => $id]);
+    }
+
+    /**
+     * Count unsent (pending) recipients for a campaign.
+     */
+    public function countPendingRecipients(int $campaignId): int
+    {
+        $stmt = $this->db->prepare(
+            "SELECT COUNT(*) FROM email_campaign_recipients WHERE campaign_id = :cid AND status = 'pending'"
+        );
+        $stmt->execute(['cid' => $campaignId]);
+        return (int) $stmt->fetchColumn();
     }
 
     // --- Recipients ---
@@ -151,6 +167,12 @@ class EmailCampaign
         $sent = $status === 'sent' ? ', sent_at = NOW()' : '';
         $this->db->prepare("UPDATE email_campaign_recipients SET status = :status{$sent} WHERE id = :id")
             ->execute(['status' => $status, 'id' => $recipientId]);
+    }
+
+    public function archive(int $id): void
+    {
+        $this->db->prepare('UPDATE email_campaigns SET is_archived = 1 WHERE id = :id')
+            ->execute(['id' => $id]);
     }
 
     // --- KPI ---

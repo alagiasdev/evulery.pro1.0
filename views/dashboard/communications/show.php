@@ -41,12 +41,29 @@ $segLabels = [
             <div style="font-size:.9rem;line-height:1.7;white-space:pre-wrap;color:#1a1d23;"><?= e($campaign['body_text']) ?></div>
         </div>
 
-        <?php if ($campaign['status'] === 'draft'): ?>
+        <?php if (in_array($campaign['status'], ['draft', 'queued'])): ?>
         <div style="margin-top:1rem;">
             <form method="POST" action="<?= url("dashboard/communications/{$campaign['id']}/delete") ?>" style="display:inline;">
                 <?= csrf_field() ?>
-                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Eliminare questa bozza?');">
-                    <i class="bi bi-trash me-1"></i> Elimina bozza
+                <?php
+                    $btnLabel = $campaign['status'] === 'draft' ? 'Elimina bozza' : 'Annulla e elimina';
+                    $confirmMsg = $campaign['status'] === 'queued'
+                        ? 'Annullare questa campagna? I crediti non utilizzati verranno rimborsati.'
+                        : 'Eliminare questa bozza?';
+                ?>
+                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('<?= e($confirmMsg) ?>');">
+                    <i class="bi bi-trash me-1"></i> <?= $btnLabel ?>
+                </button>
+            </form>
+        </div>
+        <?php endif; ?>
+
+        <?php if (in_array($campaign['status'], ['sent', 'failed'])): ?>
+        <div style="margin-top:1rem;">
+            <form method="POST" action="<?= url("dashboard/communications/{$campaign['id']}/archive") ?>" style="display:inline;">
+                <?= csrf_field() ?>
+                <button type="submit" class="btn btn-outline-secondary btn-sm" onclick="return confirm('Archiviare questa comunicazione? Non sarà più visibile nella lista.');">
+                    <i class="bi bi-archive me-1"></i> Archivia
                 </button>
             </form>
         </div>

@@ -161,6 +161,28 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
         <?php endif; ?>
     </div>
     <?php endif; ?>
+
+    <?php if ($reservation['status'] === 'cancelled' && $reservation['deposit_required'] && $reservation['deposit_paid']): ?>
+    <div class="deposit-refund-alert" style="margin-top:1rem;padding:.85rem 1rem;border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:1rem;<?= $reservation['deposit_refunded'] ? 'background:#E8F5E9;border:1px solid #C8E6C9;' : 'background:#FFF3E0;border:1px solid #FFE0B2;' ?>">
+        <?php if ($reservation['deposit_refunded']): ?>
+            <div style="font-size:.85rem;color:#2E7D32;">
+                <i class="bi bi-check-circle-fill me-1"></i>
+                Caparra di <strong>&euro;<?= number_format($reservation['deposit_amount'], 2) ?></strong> rimborsata
+            </div>
+        <?php else: ?>
+            <div style="font-size:.85rem;color:#E65100;">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                Caparra di <strong>&euro;<?= number_format($reservation['deposit_amount'], 2) ?></strong> da rimborsare
+            </div>
+            <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/deposit-refunded") ?>" class="d-inline">
+                <?= csrf_field() ?>
+                <button type="submit" class="btn btn-sm" style="background:#2E7D32;color:#fff;font-size:.78rem;" onclick="return confirm('Confermi di aver rimborsato la caparra?');">
+                    <i class="bi bi-check2 me-1"></i> Segna come rimborsata
+                </button>
+            </form>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
 </div>
 
 <!-- Detail grid -->
