@@ -82,4 +82,44 @@ try {
     echo "   ERROR: " . $e->getMessage() . "\n";
 }
 
+// 6. ACTUAL SEND TEST
+echo "\n6. SEND TEST:\n";
+$testTo = $_GET['to'] ?? '';
+if ($testTo && filter_var($testTo, FILTER_VALIDATE_EMAIL)) {
+    try {
+        $mailer = App\Services\BroadcastService::createBroadcastMailer();
+        $mailer->SMTPDebug = 2; // Verbose debug output
+        $mailer->Debugoutput = function($str, $level) {
+            echo "   [SMTP] " . trim($str) . "\n";
+        };
+        $mailer->clearAddresses();
+        $mailer->addAddress($testTo);
+        $mailer->Subject = 'Test Broadcast Evulery ' . date('H:i:s');
+        $mailer->Body = '<h3>Test broadcast</h3><p>Se ricevi questa email, TurboSMTP funziona.</p>';
+        $mailer->AltBody = 'Test broadcast - TurboSMTP funziona.';
+        $mailer->send();
+        echo "   RESULT: OK - Email inviata!\n";
+    } catch (\Throwable $e) {
+        echo "   RESULT: FAILED - " . $e->getMessage() . "\n";
+        echo "   ErrorInfo: " . ($mailer->ErrorInfo ?? 'N/A') . "\n";
+    }
+} else {
+    echo "   Aggiungi &to=tua@email.com per testare l'invio reale.\n";
+}
+
+// 7. CHECK APP LOGS
+echo "\n7. RECENT LOGS:\n";
+$logFile = BASE_PATH . '/storage/logs/' . date('Y-m-d') . '.log';
+if (file_exists($logFile)) {
+    $lines = file($logFile);
+    $recent = array_slice($lines, -20);
+    foreach ($recent as $line) {
+        echo "   " . trim($line) . "\n";
+    }
+} else {
+    echo "   Log file non trovato: {$logFile}\n";
+    // Check if directory exists
+    echo "   storage/logs/ exists: " . (is_dir(BASE_PATH . '/storage/logs') ? 'YES' : 'NO') . "\n";
+}
+
 echo "\n=== END ===\n";
