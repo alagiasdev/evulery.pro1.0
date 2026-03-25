@@ -103,10 +103,10 @@ $tabs = [
                         <?php endif; ?>
                     </td>
                     <?php
-                    $planPrice = $s['plan_price'] ?? $s['price'];
                     $cycle = $s['billing_cycle'] ?? 'annual';
                     $extraDisc = (float)($s['extra_discount'] ?? 0);
-                    $calcPrice = \App\Models\Plan::calculatePrice($s, $cycle, $extraDisc);
+                    $planForCalc = array_merge($s, ['price' => $s['plan_price'] ?? $s['price']]);
+                    $calcPrice = \App\Models\Plan::calculatePrice($planForCalc, $cycle, $extraDisc);
                     $cycleLabel = $cycle === 'semiannual' ? '6 mesi' : '12 mesi';
                     ?>
                     <td>
