@@ -59,7 +59,7 @@ body {
 }
 .dm-hero--plain {
     background: linear-gradient(135deg, #1a1d23 0%, #2d3748 100%);
-    padding: 2.5rem 1.5rem 2rem;
+    padding: 2.5rem 0 2rem;
 }
 .dm-hero--plain::before {
     content: '';
