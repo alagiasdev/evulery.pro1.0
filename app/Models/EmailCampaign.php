@@ -169,6 +169,24 @@ class EmailCampaign
             ->execute(['status' => $status, 'id' => $recipientId]);
     }
 
+    public function countFailedRecipients(int $campaignId): int
+    {
+        $stmt = $this->db->prepare(
+            "SELECT COUNT(*) FROM email_campaign_recipients WHERE campaign_id = :cid AND status = 'failed'"
+        );
+        $stmt->execute(['cid' => $campaignId]);
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function resetFailedToPending(int $campaignId): int
+    {
+        $stmt = $this->db->prepare(
+            "UPDATE email_campaign_recipients SET status = 'pending', sent_at = NULL WHERE campaign_id = :cid AND status = 'failed'"
+        );
+        $stmt->execute(['cid' => $campaignId]);
+        return $stmt->rowCount();
+    }
+
     public function archive(int $id): void
     {
         $this->db->prepare('UPDATE email_campaigns SET is_archived = 1 WHERE id = :id')

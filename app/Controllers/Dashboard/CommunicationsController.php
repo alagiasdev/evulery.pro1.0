@@ -338,6 +338,96 @@ class CommunicationsController
         Response::redirect(url('dashboard/communications'));
     }
 
+    public function retryFailed(Request $request): void
+    {
+        if ($this->gate()) return;
+
+        $id = (int)$request->param('id');
+        $tenantId = Auth::tenantId();
+
+        $model = new EmailCampaign();
+        $campaign = $model->findById($id);
+
+        if (!$campaign || (int)$campaign['tenant_id'] !== $tenantId) {
+            flash('danger', 'Comunicazione non trovata.');
+            Response::redirect(url('dashboard/communications'));
+            return;
+        }
+
+        if ($campaign['status'] !== 'sent') {
+            flash('danger', 'Solo le campagne inviate possono essere ritentate.');
+            Response::redirect(url("dashboard/communications/{$id}"));
+            return;
+        }
+
+        $failedCount = $model->countFailedRecipients($id);
+        if ($failedCount === 0) {
+            flash('info', 'Nessun destinatario fallito da ritentare.');
+            Response::redirect(url("dashboard/communications/{$id}"));
+            return;
+        }
+
+        // Reset failed recipients to pending
+        $model->resetFailedToPending($id);
+
+        // Extend timeout
+        set_time_limit(300);
+
+        $tenant = TenantResolver::current();
+        $db = Database::getInstance();
+
+        $model->updateStatus($id, 'sending');
+
+        $mailer = BroadcastService::createBroadcastMailer();
+        $sent = 0;
+        $failed = 0;
+
+        while (true) {
+            $recipients = $model->getPendingRecipients($id, 50);
+            if (empty($recipients)) break;
+
+            foreach ($recipients as $recipient) {
+                $token = BroadcastService::generateUnsubscribeToken($tenantId, $recipient['email']);
+                $unsubscribeUrl = rtrim(env('APP_URL', ''), '/') . '/email/unsubscribe/' . $token;
+                $html = BroadcastService::buildEmailHtml($campaign['body_text'], $tenant, $unsubscribeUrl);
+
+                $ok = BroadcastService::sendOne(
+                    $mailer,
+                    $recipient['email'],
+                    $campaign['subject'],
+                    $html,
+                    $tenant['name'],
+                    $tenant['email'] ?? null
+                );
+
+                if ($ok) {
+                    $model->updateRecipientStatus((int)$recipient['id'], 'sent');
+                    $sent++;
+                } else {
+                    $model->updateRecipientStatus((int)$recipient['id'], 'failed');
+                    $failed++;
+                }
+
+                usleep(100000);
+            }
+        }
+
+        $newSentTotal = (int)$campaign['sent_count'] + $sent;
+        $model->updateCounts($id, $newSentTotal, $failed);
+        $db->prepare('UPDATE email_campaigns SET status = :status WHERE id = :id')
+           ->execute(['status' => 'sent', 'id' => $id]);
+
+        AuditLog::log(
+            AuditLog::EMAIL_BROADCAST_CREATED,
+            "Campagna \"{$campaign['subject']}\" — ritentati {$failedCount} falliti: {$sent} OK, {$failed} ancora falliti",
+            Auth::id(),
+            $tenantId
+        );
+
+        flash('success', "Ritentato invio: {$sent} email inviate" . ($failed > 0 ? ", {$failed} ancora fallite" : '') . '.');
+        Response::redirect(url("dashboard/communications/{$id}"));
+    }
+
     public function sendNow(Request $request): void
     {
         if ($this->gate()) return;

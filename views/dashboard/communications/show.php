@@ -67,7 +67,15 @@ $segLabels = [
         <?php endif; ?>
 
         <?php if (in_array($campaign['status'], ['sent', 'failed'])): ?>
-        <div style="margin-top:1rem;">
+        <div style="margin-top:1rem;display:flex;gap:.5rem;align-items:center;">
+            <?php if ($campaign['status'] === 'sent' && (int)$campaign['failed_count'] > 0): ?>
+            <form method="POST" action="<?= url("dashboard/communications/{$campaign['id']}/retry") ?>" style="display:inline;">
+                <?= csrf_field() ?>
+                <button type="submit" class="btn btn-outline-warning btn-sm" onclick="return confirm('Ritentare l\'invio a <?= (int)$campaign['failed_count'] ?> destinatari falliti?');">
+                    <i class="bi bi-arrow-repeat me-1"></i> Riprova fallite (<?= (int)$campaign['failed_count'] ?>)
+                </button>
+            </form>
+            <?php endif; ?>
             <form method="POST" action="<?= url("dashboard/communications/{$campaign['id']}/archive") ?>" style="display:inline;">
                 <?= csrf_field() ?>
                 <button type="submit" class="btn btn-outline-secondary btn-sm" onclick="return confirm('Archiviare questa comunicazione? Non sarà più visibile nella lista.');">
