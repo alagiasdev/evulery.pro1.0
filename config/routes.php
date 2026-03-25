@@ -107,6 +107,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     // Communications (email broadcast)
     $r->get('/communications', [CommunicationsController::class, 'index']);
     $r->get('/communications/create', [CommunicationsController::class, 'create']);
+    $r->get('/communications/credits', [CommunicationsController::class, 'credits']);
     $r->get('/communications/preview', [CommunicationsController::class, 'preview']);
     $r->post('/communications', [CommunicationsController::class, 'store']);
     $r->get('/communications/{id}', [CommunicationsController::class, 'show']);

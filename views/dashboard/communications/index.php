@@ -4,11 +4,11 @@
 
 <!-- KPI cards -->
 <div class="stats-mini" style="margin-bottom:1.25rem;">
-    <div class="stat-pill">
+    <a href="<?= url('dashboard/communications/credits') ?>" class="stat-pill" style="text-decoration:none;color:inherit;">
         <div class="sp-dot" style="background:#00844A;"></div>
         <span class="sp-num" style="color:#00844A;"><?= number_format($credits, 0, ',', '.') ?></span>
-        <span class="sp-label">Crediti disponibili</span>
-    </div>
+        <span class="sp-label">Crediti disponibili <i class="bi bi-chevron-right" style="font-size:.6rem;"></i></span>
+    </a>
     <div class="stat-pill">
         <div class="sp-dot" style="background:#0d6efd;"></div>
         <span class="sp-num" style="color:#0d6efd;"><?= (int)$kpi['sent_campaigns'] ?></span>

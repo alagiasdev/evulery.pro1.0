@@ -76,6 +76,52 @@ class CommunicationsController
         ], 'dashboard');
     }
 
+    public function credits(Request $request): void
+    {
+        if ($this->gate()) return;
+
+        $tenantId = Auth::tenantId();
+        $page = max(1, (int)$request->query('page', 1));
+        $perPage = 20;
+
+        $db = Database::getInstance();
+
+        // Count total
+        $stmt = $db->prepare('SELECT COUNT(*) FROM email_credit_transactions WHERE tenant_id = :tid');
+        $stmt->execute(['tid' => $tenantId]);
+        $total = (int)$stmt->fetchColumn();
+
+        $baseUrl = url('dashboard/communications/credits');
+        $paginator = new Paginator($total, $perPage, $page, $baseUrl);
+
+        // Fetch transactions
+        $stmt = $db->prepare(
+            'SELECT t.*, ec.subject AS campaign_subject
+             FROM email_credit_transactions t
+             LEFT JOIN email_campaigns ec ON ec.id = t.campaign_id
+             WHERE t.tenant_id = :tid
+             ORDER BY t.created_at DESC
+             LIMIT :lim OFFSET :off'
+        );
+        $stmt->bindValue('tid', $tenantId, \PDO::PARAM_INT);
+        $stmt->bindValue('lim', $paginator->limit(), \PDO::PARAM_INT);
+        $stmt->bindValue('off', $paginator->offset(), \PDO::PARAM_INT);
+        $stmt->execute();
+        $transactions = $stmt->fetchAll();
+
+        $tenant = TenantResolver::current();
+        $credits = (int)($tenant['email_credits_balance'] ?? 0);
+
+        view('dashboard/communications/credits', [
+            'title'        => 'Storico Crediti',
+            'activeMenu'   => 'communications',
+            'transactions' => $transactions,
+            'pagination'   => $paginator->links(),
+            'credits'      => $credits,
+            'total'        => $total,
+        ], 'dashboard');
+    }
+
     public function create(Request $request): void
     {
         if ($this->gate()) return;
