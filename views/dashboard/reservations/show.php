@@ -54,17 +54,16 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
         </div>
         <div>
             <div class="detail-label"><i class="bi bi-telephone me-1"></i>Telefono</div>
-            <div class="detail-value">
-                <a href="tel:<?= e($reservation['phone']) ?>"><?= e($reservation['phone']) ?></a>
-            </div>
+            <div class="detail-value"><a href="tel:<?= e($reservation['phone']) ?>"><?= e($reservation['phone']) ?></a></div>
+        </div>
+        <div>
             <?php
                 $waNum = preg_replace('/[^0-9]/', '', $reservation['phone']);
                 if (str_starts_with($waNum, '0')) $waNum = '39' . substr($waNum, 1);
                 elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . $waNum;
             ?>
-            <a href="https://wa.me/<?= e($waNum) ?>" target="_blank" rel="noopener" class="dr-wa-btn" title="Contatta su WhatsApp">
-                <i class="bi bi-whatsapp"></i>
-            </a>
+            <div class="detail-label"><i class="bi bi-whatsapp me-1" style="color:#25D366;"></i>WhatsApp</div>
+            <div class="detail-value"><a href="https://wa.me/<?= e($waNum) ?>" target="_blank" rel="noopener" style="color:#25D366;">Inizia a Chattare</a></div>
         </div>
         <div>
             <div class="detail-label"><i class="bi bi-envelope me-1"></i>Email</div>
