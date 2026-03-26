@@ -237,7 +237,7 @@ class ReservationApiController
                         ]],
                         'mode'        => 'payment',
                         'success_url' => url("{$slug}/booking/success") . '?session_id={CHECKOUT_SESSION_ID}',
-                        'cancel_url'  => url("{$slug}/booking/cancel"),
+                        'cancel_url'  => url("{$slug}/booking/cancel") . "?reservation_id={$reservationId}",
                         'metadata'    => [
                             'reservation_id' => $reservationId,
                             'tenant_id'      => $tenant['id'],
@@ -333,5 +333,82 @@ class ReservationApiController
         AuditLog::log(AuditLog::RESERVATION_STATUS, "Prenotazione #{$id}: cancelled (API)", null, (int)$tenant['id']);
 
         Response::success(null, 'Prenotazione annullata con successo.');
+    }
+
+    /**
+     * Create a new Stripe Checkout session for an existing pending reservation.
+     * POST /api/v1/tenants/{slug}/reservations/{id}/retry-payment
+     */
+    public function retryPayment(Request $request): void
+    {
+        $slug = $request->param('slug');
+        $tenant = (new Tenant())->findBySlug($slug);
+
+        if (!$tenant || !$tenant['is_active']) {
+            Response::error('Ristorante non trovato.', 'TENANT_NOT_FOUND', 404);
+        }
+
+        $id = (int)$request->param('id');
+        $reservation = (new Reservation())->findWithCustomer($id);
+
+        if (!$reservation || (int)$reservation['tenant_id'] !== (int)$tenant['id']) {
+            Response::error('Prenotazione non trovata.', 'NOT_FOUND', 404);
+        }
+
+        if ($reservation['status'] !== 'pending') {
+            Response::error('La prenotazione non è in attesa di pagamento.', 'INVALID_STATUS', 400);
+        }
+
+        if (($tenant['deposit_type'] ?? '') !== 'stripe' || empty($tenant['stripe_sk'])) {
+            Response::error('Pagamento Stripe non configurato.', 'STRIPE_NOT_CONFIGURED', 400);
+        }
+
+        $depositAmount = (float)($reservation['deposit_amount'] ?? 0);
+        if ($depositAmount <= 0) {
+            Response::error('Nessuna caparra da pagare.', 'NO_DEPOSIT', 400);
+        }
+
+        try {
+            $tenantStripeKey = decrypt_value($tenant['stripe_sk']);
+            if (!$tenantStripeKey) {
+                throw new \RuntimeException('Chiave Stripe non valida');
+            }
+            \Stripe\Stripe::setApiKey($tenantStripeKey);
+
+            $depositMode = $tenant['deposit_mode'] ?? 'per_table';
+            $description = $depositMode === 'per_person'
+                ? "Caparra {$tenant['name']} - €" . number_format((float)$tenant['deposit_amount'], 2, ',', '.') . " × {$reservation['party_size']} persone"
+                : "Caparra prenotazione {$tenant['name']}";
+
+            $session = \Stripe\Checkout\Session::create([
+                'payment_method_types' => ['card'],
+                'line_items' => [[
+                    'price_data' => [
+                        'currency'     => 'eur',
+                        'unit_amount'  => (int)round($depositAmount * 100),
+                        'product_data' => [
+                            'name'        => "Caparra - {$tenant['name']}",
+                            'description' => $description,
+                        ],
+                    ],
+                    'quantity' => 1,
+                ]],
+                'mode'        => 'payment',
+                'success_url' => url("{$slug}/booking/success") . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url'  => url("{$slug}/booking/cancel") . "?reservation_id={$id}",
+                'metadata'    => [
+                    'reservation_id' => $id,
+                    'tenant_id'      => $tenant['id'],
+                ],
+                'expires_at' => time() + 1800,
+            ]);
+
+            Response::success([
+                'stripe_checkout_url' => $session->url,
+            ], 'Sessione di pagamento creata.');
+        } catch (\Exception $e) {
+            app_log('Stripe retry-payment error: ' . $e->getMessage(), 'error');
+            Response::error('Errore nella creazione del pagamento. Riprova.', 'STRIPE_ERROR', 500);
+        }
     }
 }

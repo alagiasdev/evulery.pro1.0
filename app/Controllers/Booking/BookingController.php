@@ -107,10 +107,25 @@ class BookingController
             Response::notFound();
         }
 
+        // Try to retrieve the reservation for retry-payment
+        $reservation = null;
+        $canRetry = false;
+        $reservationId = (int)$request->query('reservation_id', 0);
+
+        if ($reservationId > 0) {
+            $res = (new Reservation())->findWithCustomer($reservationId);
+            if ($res && (int)$res['tenant_id'] === (int)$tenant['id'] && $res['status'] === 'pending') {
+                $reservation = $res;
+                $canRetry = ($tenant['deposit_type'] ?? '') === 'stripe' && !empty($tenant['stripe_sk']);
+            }
+        }
+
         view('booking/cancelled', [
-            'tenant'     => $tenant,
-            'tenantName' => $tenant['name'],
-            'tenantLogo' => $tenant['logo_url'],
+            'tenant'      => $tenant,
+            'tenantName'  => $tenant['name'],
+            'tenantLogo'  => $tenant['logo_url'],
+            'reservation' => $reservation,
+            'canRetry'    => $canRetry,
         ], 'booking');
     }
 }

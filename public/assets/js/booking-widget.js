@@ -582,7 +582,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     var depType = data.data.deposit_type || 'info';
 
                     if (depType === 'stripe' && data.data.stripe_checkout_url) {
-                        details.innerHTML += '<div class="bw-deposit-info" style="margin-top:12px;">Reindirizzamento al pagamento della caparra di &euro;' + depAmt + '...</div>';
+                        details.innerHTML += '<div class="bw-deposit-info" style="margin-top:12px;">' +
+                            '<p style="margin:0 0 10px;font-size:.88rem;">Caparra richiesta: <strong>&euro;' + depAmt + '</strong></p>' +
+                            '<a href="' + data.data.stripe_checkout_url.replace(/"/g, '&quot;') + '" id="bw-stripe-pay-btn" ' +
+                            'style="display:inline-block;background:var(--bw-brand,#2E7D32);color:#fff;padding:10px 24px;border-radius:8px;text-decoration:none;font-size:.9rem;font-weight:600;">' +
+                            '<i class="bi bi-credit-card" style="margin-right:6px;"></i>Paga la caparra</a>' +
+                            '<p id="bw-stripe-countdown" style="margin:10px 0 0;font-size:.78rem;color:#6c757d;">Reindirizzamento automatico tra <strong>5</strong> secondi...</p>' +
+                            '</div>';
                     } else if (depType === 'link' && data.data.deposit_payment_link) {
                         details.innerHTML += '<div class="bw-deposit-info" style="margin-top:12px;">' +
                             '<p style="margin:0 0 8px;">Caparra richiesta: <strong>&euro;' + depAmt + '</strong> (prenotazione n. ' + resId + ')</p>' +
@@ -611,7 +617,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 steps.confirm.style.display = 'block';
 
                 if (data.data && data.data.deposit_type === 'stripe' && data.data.stripe_checkout_url) {
-                    setTimeout(function() { window.location.href = data.data.stripe_checkout_url; }, 1500);
+                    var stripeUrl = data.data.stripe_checkout_url;
+                    var countdown = 5;
+                    var countdownEl = getEl('bw-stripe-countdown');
+                    var countdownTimer = setInterval(function() {
+                        countdown--;
+                        if (countdownEl) {
+                            var strong = countdownEl.querySelector('strong');
+                            if (strong) strong.textContent = countdown;
+                        }
+                        if (countdown <= 0) {
+                            clearInterval(countdownTimer);
+                            window.location.href = stripeUrl;
+                        }
+                    }, 1000);
                 }
             } else {
                 var msg = data.error ? data.error.message : 'Errore nella prenotazione.';
