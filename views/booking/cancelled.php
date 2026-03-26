@@ -68,11 +68,24 @@
             <a href="<?= url($tenant['slug'] ?? '') ?>" class="bw-conf-btn-primary bw-conf-btn--orange">
                 <i class="bi bi-arrow-repeat"></i> Riprova la prenotazione
             </a>
-            <?php if (!empty($tenant['phone'])): ?>
-            <a href="tel:<?= e($tenant['phone']) ?>" class="bw-conf-btn-secondary bw-conf-btn--muted">
-                <i class="bi bi-telephone"></i> Contatta il ristorante
-            </a>
-            <?php endif; ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($tenant['phone']) || !empty($tenant['email'])): ?>
+        <div style="background:#f8f9fa;border:1px solid #e9ecef;border-radius:10px;padding:14px;margin-top:16px;font-size:.85rem;text-align:center;">
+            <div style="font-weight:600;margin-bottom:6px;">Hai bisogno di assistenza?</div>
+            <div style="display:flex;flex-direction:column;gap:8px;align-items:center;">
+                <?php if (!empty($tenant['phone'])): ?>
+                <a href="tel:<?= e($tenant['phone']) ?>" style="color:#2E7D32;text-decoration:none;font-weight:500;">
+                    <i class="bi bi-telephone"></i> <?= e($tenant['phone']) ?>
+                </a>
+                <?php endif; ?>
+                <?php if (!empty($tenant['email'])): ?>
+                <a href="mailto:<?= e($tenant['email']) ?>" style="color:#2E7D32;text-decoration:none;font-weight:500;">
+                    <i class="bi bi-envelope"></i> <?= e($tenant['email']) ?>
+                </a>
+                <?php endif; ?>
+            </div>
         </div>
         <?php endif; ?>
     </div>
