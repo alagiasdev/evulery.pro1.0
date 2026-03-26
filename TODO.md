@@ -131,7 +131,7 @@ Le seguenti migliorie non sono prioritarie per il lancio e vengono rimandate a f
 - **Multi-lingua** (Molto alta) — i18n, helper `__()`, IT + EN
 
 ### Ottimizzazioni performance (da fare in seguito)
-- [ ] Minificazione CSS/JS (dashboard.css 105KB → ~25KB minificato, tool: csso/terser o build step)
+- [ ] Minificazione CSS/JS (dashboard.css 105KB → ~25KB minificato, tool: csso/terser o build step) — rimandato a quando ci saranno 10+ utenti attivi
 - [ ] CSS splitting: separare dashboard.css in moduli caricati per pagina (menu, reservations, settings)
 - [ ] OPcache tuning su VPS: verificare `opcache.enable=1`, `opcache.revalidate_freq=60`
 - [ ] CDN per asset statici (Bootstrap, Bootstrap Icons) — da CDN pubblico o Cloudflare

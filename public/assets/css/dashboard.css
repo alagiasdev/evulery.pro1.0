@@ -2265,8 +2265,27 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     background: #fff; border-radius: .75rem; padding: 1rem 1.25rem;
     box-shadow: 0 1px 3px rgba(0,0,0,.06); text-align: center;
 }
-.promo-kpi-value { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
-.promo-kpi-label { font-size: .72rem; color: #6c757d; margin-top: .15rem; text-transform: uppercase; letter-spacing: .3px; }
+.promo-kpi-value { font-size: 1.75rem; font-weight: 800; line-height: 1.2; }
+.promo-kpi-label { font-size: .72rem; color: #6c757d; margin-top: .15rem; }
+
+/* Section card (list + form wrapper) */
+.promo-section-card {
+    background: #fff; border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    overflow: hidden;
+}
+.promo-section-header {
+    display: flex; align-items: center; gap: .75rem;
+    padding: 1rem 1.25rem; border-bottom: 1px solid #f0f0f0;
+}
+.promo-section-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1rem; flex-shrink: 0;
+}
+.promo-section-title { font-size: .92rem; font-weight: 700; }
+.promo-section-subtitle { font-size: .72rem; color: #6c757d; margin-top: .1rem; }
+.promo-form-body { padding: 1.25rem; }
 
 /* Form elements */
 .promo-type-selector {
@@ -2276,16 +2295,17 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .promo-type-option input[type="radio"] { display: none; }
 .promo-type-card {
     display: flex; flex-direction: column; align-items: center; gap: .15rem;
-    padding: .65rem .5rem; border: 2px solid #dee2e6; border-radius: .5rem;
+    padding: .75rem .5rem; border: 2px solid #dee2e6; border-radius: 10px;
     cursor: pointer; transition: all .15s; text-align: center;
     font-size: .78rem;
 }
-.promo-type-card i { font-size: 1.1rem; color: #6c757d; }
+.promo-type-card i { font-size: 1.3rem; color: var(--brand); margin-bottom: .15rem; }
+.promo-type-card span { font-weight: 600; color: #495057; }
 .promo-type-card small { font-size: .65rem; color: #adb5bd; }
+.promo-type-card:hover { border-color: var(--brand); }
 .promo-type-option input:checked + .promo-type-card {
     border-color: var(--brand); background: #E8F5E9;
 }
-.promo-type-option input:checked + .promo-type-card i { color: var(--brand); }
 
 .promo-days-grid {
     display: flex; gap: .35rem; flex-wrap: wrap;
@@ -2293,10 +2313,13 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .promo-day-chip { cursor: pointer; }
 .promo-day-chip input { display: none; }
 .promo-day-chip span {
-    display: inline-block; padding: .3rem .6rem; border: 1.5px solid #dee2e6;
-    border-radius: .4rem; font-size: .78rem; font-weight: 500;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 36px;
+    border: 2px solid #dee2e6; border-radius: 8px;
+    font-size: .75rem; font-weight: 600; color: #495057;
     transition: all .15s; user-select: none;
 }
+.promo-day-chip span:hover { border-color: var(--brand); }
 .promo-day-chip input:checked + span {
     background: var(--brand); color: #fff; border-color: var(--brand);
 }
@@ -2305,43 +2328,108 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 
 /* Promotion list items */
 .promo-item {
-    display: flex; align-items: center; gap: .75rem;
-    padding: .85rem 1rem; border-bottom: 1px solid #f0f0f0;
+    display: flex; align-items: center; gap: 1rem;
+    padding: .85rem 1.25rem; border-bottom: 1px solid #f5f5f5;
+    transition: background .15s;
 }
 .promo-item:last-child { border-bottom: none; }
+.promo-item:hover { background: #fafbfc; }
 .promo-item-inactive { opacity: .5; }
+
+/* Badge gradient per tipo */
 .promo-item-badge {
-    background: #E65100; color: #fff; font-weight: 700;
-    font-size: .8rem; padding: .3rem .6rem; border-radius: .4rem;
-    white-space: nowrap; min-width: 42px; text-align: center;
+    color: #fff; font-weight: 800; font-size: 1rem;
+    min-width: 56px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; flex-shrink: 0;
 }
+.promo-badge--orange { background: linear-gradient(135deg, #FF6D00, #FF9100); }
+.promo-badge--green { background: linear-gradient(135deg, #00844A, #43A047); }
+.promo-badge--blue { background: linear-gradient(135deg, #1565C0, #42A5F5); }
+
 .promo-item-info { flex: 1; min-width: 0; }
-.promo-item-name { font-weight: 600; font-size: .88rem; }
-.promo-item-meta { font-size: .73rem; color: #6c757d; margin-top: .15rem; }
-.promo-item-meta i { font-size: .68rem; }
-.promo-item-actions { display: flex; gap: .35rem; flex-shrink: 0; align-items: center; }
+.promo-item-name { font-weight: 700; font-size: .88rem; }
+.promo-item-meta {
+    font-size: .75rem; color: #6c757d; margin-top: .15rem;
+    display: flex; flex-wrap: wrap; gap: .5rem;
+}
+.promo-meta-item { display: flex; align-items: center; gap: .2rem; }
+.promo-meta-item i { font-size: .7rem; }
+
+/* Per-promo stats */
+.promo-item-stats { text-align: right; flex-shrink: 0; }
+.promo-stats-val { font-size: .95rem; font-weight: 700; color: #212529; }
+.promo-stats-label { font-size: .65rem; color: #adb5bd; }
+
+.promo-item-actions { display: flex; gap: .75rem; flex-shrink: 0; align-items: center; }
+
+/* Action buttons (wireframe style) */
+.promo-action-btns { display: flex; gap: .35rem; }
+.promo-action-btn {
+    width: 32px; height: 32px; border-radius: 8px; border: 1px solid #e9ecef;
+    background: #fff; color: #6c757d; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: .85rem; transition: all .15s;
+}
+.promo-action-btn:hover { border-color: var(--brand); color: var(--brand); }
+.promo-action-btn--del:hover { border-color: #dc3545; color: #dc3545; }
 
 /* Toggle switch */
 .promo-toggle-btn {
     background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center;
 }
 .promo-toggle {
-    width: 36px; height: 20px; border-radius: 10px; background: #ccc;
+    width: 42px; height: 24px; border-radius: 12px; background: #dee2e6;
     position: relative; transition: background .2s;
 }
 .promo-toggle-on { background: var(--brand); }
 .promo-toggle-knob {
-    width: 16px; height: 16px; border-radius: 50%; background: #fff;
+    width: 20px; height: 20px; border-radius: 50%; background: #fff;
     position: absolute; top: 2px; left: 2px; transition: left .2s;
-    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    box-shadow: 0 1px 3px rgba(0,0,0,.15);
 }
-.promo-toggle-on .promo-toggle-knob { left: 18px; }
+.promo-toggle-on .promo-toggle-knob { left: 20px; }
+
+/* Preview panel (light — matches real widget) */
+.promo-preview-panel {
+    background: #fff; border-radius: 12px; padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); border: 1px solid #e9ecef;
+}
+.promo-preview-title {
+    font-size: .75rem; color: #6c757d; margin-bottom: 1rem;
+    text-transform: uppercase; letter-spacing: .5px; font-weight: 600;
+}
+.promo-preview-label { font-size: .75rem; color: #6c757d; margin-bottom: .35rem; }
+.promo-preview-group-label { font-size: .78rem; font-weight: 700; color: #6c757d; margin-bottom: .5rem; text-transform: uppercase; letter-spacing: .3px; }
+.promo-preview-slots { display: flex; flex-wrap: wrap; gap: .5rem; }
+.promo-preview-slot {
+    min-width: 80px; padding: 10px 16px;
+    border: 2px solid #e9ecef; border-radius: 10px;
+    background: #fff; color: #212529;
+    font-size: .9rem; font-weight: 700;
+    text-align: center;
+}
+.promo-preview-slot--discount {
+    border-color: #FF9100; background: #FFFAF5;
+}
+.promo-preview-discount {
+    display: block; font-size: .65rem; font-weight: 800;
+    color: #FF6D00; margin-top: 2px;
+}
+.promo-preview-note {
+    margin-top: 1.25rem; padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+    font-size: .72rem; color: #6c757d;
+}
 
 @media (max-width: 576px) {
     .promo-kpi-row { grid-template-columns: repeat(3, 1fr); gap: .5rem; }
     .promo-kpi-card { padding: .75rem .5rem; }
     .promo-kpi-value { font-size: 1.2rem; }
     .promo-item { flex-wrap: wrap; gap: .5rem; }
+    .promo-item-stats { display: none; }
+    .promo-section-header { flex-wrap: wrap; }
+    .promo-preview-panel { margin-top: 1rem; }
 }
 
 /* ===========================================

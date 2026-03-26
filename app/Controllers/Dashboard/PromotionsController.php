@@ -53,16 +53,18 @@ class PromotionsController
         // KPI data
         $discountedLast30 = $promoModel->getDiscountedBookings($tenantId, 30);
         $growthPercent = $promoModel->getPromoGrowthPercent($tenantId);
+        $bookingsPerPromo = $promoModel->getBookingsPerPromo($tenantId, 30);
 
         view('dashboard/settings/promotions', [
-            'title'            => 'Promozioni',
-            'activeMenu'       => 'promotions',
-            'canUsePromotions' => true,
-            'active'           => $active,
-            'inactive'         => $inactive,
-            'discountedLast30' => $discountedLast30,
-            'growthPercent'    => $growthPercent,
-            'tenant'           => TenantResolver::current(),
+            'title'             => 'Promozioni',
+            'activeMenu'        => 'promotions',
+            'canUsePromotions'  => true,
+            'active'            => $active,
+            'inactive'          => $inactive,
+            'discountedLast30'  => $discountedLast30,
+            'growthPercent'     => $growthPercent,
+            'bookingsPerPromo'  => $bookingsPerPromo,
+            'tenant'            => TenantResolver::current(),
         ], 'dashboard');
     }
 
