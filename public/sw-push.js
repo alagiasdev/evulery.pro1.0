@@ -11,8 +11,8 @@ self.addEventListener('push', function (event) {
 
     var options = {
         body: data.body || '',
-        icon: '/assets/img/logo-icon.png',
-        badge: '/assets/img/badge-72.png',
+        icon: '/assets/img/icon-192.png',
+        badge: '/assets/img/icon-192.png',
         data: { url: data.url || '/dashboard' },
         tag: data.tag || 'evulery-notification',
         renotify: true
