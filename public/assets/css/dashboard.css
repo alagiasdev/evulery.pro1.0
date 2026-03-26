@@ -89,7 +89,7 @@ a.sidebar-user:hover { color: #adb5bd; }
 .date-chip .chip-label { font-weight: 600; font-size: .9rem; }
 .date-chip .chip-sub { font-size: .72rem; opacity: .65; margin-top: 1px; }
 .date-chip.active .chip-sub { opacity: .85; }
-.date-chip-cal { position: relative; display: inline-block; }
+.date-chip-cal { position: relative; }
 
 /* ===== Capacity banner ===== */
 .capacity-banner {
@@ -1697,7 +1697,7 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     .date-strip { gap: .4rem; }
     .date-chip { padding: .4rem .75rem; min-width: 75px; }
     .date-chip .chip-label { font-size: .8rem; }
-    .home-cal-dropdown { position: relative; top: auto; left: auto; margin-top: -4px; width: 100%; }
+    .home-cal-dropdown { position: relative; top: auto; left: auto; right: auto; margin-top: -4px; width: 100%; }
     .capacity-banner { flex-wrap: wrap; gap: .75rem; padding: .7rem 1rem; }
     .cap-divider { display: none; }
     .cap-bar-wrap { width: 100%; flex-basis: 100%; }
@@ -1906,7 +1906,7 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 
 /* --- Home Calendar Dropdown (reservations index) --- */
 .home-cal-dropdown {
-    position: absolute; top: 100%; left: 0; z-index: 1050;
+    position: absolute; top: 100%; right: 0; z-index: 1050;
     margin-top: 6px; border: 1px solid #dee2e6; border-radius: 10px;
     padding: 1rem; background: #fff; width: 300px;
     box-shadow: 0 4px 12px rgba(0,0,0,.1);

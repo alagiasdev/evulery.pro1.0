@@ -1,7 +1,8 @@
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="page-title mb-0">Notifiche</h1>
-    <?php if ($total > 0): ?>
-    <div class="d-flex gap-2">
+<h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Notifiche</h2>
+<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Cronologia delle notifiche ricevute</p>
+
+<?php if ($total > 0): ?>
+<div class="d-flex justify-content-end gap-2 mb-3">
         <form method="POST" action="<?= url('dashboard/notifications/read-all') ?>" style="display:inline;">
             <?= csrf_field() ?>
             <button type="submit" class="btn btn-outline-success btn-sm">
@@ -15,9 +16,8 @@
                 <i class="bi bi-trash me-1"></i> Elimina tutte
             </button>
         </form>
-    </div>
-    <?php endif; ?>
 </div>
+<?php endif; ?>
 
 <?php if (empty($notifications)): ?>
     <div class="card" style="padding:3rem 2rem;text-align:center;">

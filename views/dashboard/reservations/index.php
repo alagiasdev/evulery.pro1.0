@@ -114,7 +114,26 @@ for ($i = 0; $i < 3; $i++) {
             </a>
             <?php endforeach; ?>
         </div>
-        <a href="#" class="date-chip-sm" id="res-cal-toggle"><i class="bi bi-calendar3"></i></a>
+        <div class="date-chip-cal">
+            <a href="#" class="date-chip-sm" id="res-cal-toggle"><i class="bi bi-calendar3"></i></a>
+            <div class="home-cal-dropdown" id="res-cal-dropdown" style="display:none;">
+                <div class="dr-cal-header">
+                    <button type="button" class="dr-cal-nav" id="res-cal-prev"><i class="bi bi-chevron-left"></i></button>
+                    <span class="dr-cal-month" id="res-cal-month"></span>
+                    <button type="button" class="dr-cal-nav" id="res-cal-next"><i class="bi bi-chevron-right"></i></button>
+                </div>
+                <div class="dr-cal-days-header">
+                    <div class="dr-cal-day-name">lun</div>
+                    <div class="dr-cal-day-name">mar</div>
+                    <div class="dr-cal-day-name">mer</div>
+                    <div class="dr-cal-day-name">gio</div>
+                    <div class="dr-cal-day-name">ven</div>
+                    <div class="dr-cal-day-name">sab</div>
+                    <div class="dr-cal-day-name">dom</div>
+                </div>
+                <div class="dr-cal-grid" id="res-cal-grid"></div>
+            </div>
+        </div>
         <div class="filter-actions">
             <?php if (tenant_can('export_csv')): ?>
             <button type="button" class="btn-filter btn-filter-outline" id="export-toggle" title="Esporta CSV">
@@ -125,27 +144,6 @@ for ($i = 0; $i < 3; $i++) {
                 <i class="bi bi-download me-1"></i>CSV <i class="bi bi-lock-fill" style="font-size:.65rem;"></i>
             </button>
             <?php endif; ?>
-        </div>
-    </div>
-
-    <!-- Calendar dropdown (outside overflow container) -->
-    <div class="date-chip-cal">
-        <div class="home-cal-dropdown" id="res-cal-dropdown" style="display:none;">
-            <div class="dr-cal-header">
-                <button type="button" class="dr-cal-nav" id="res-cal-prev"><i class="bi bi-chevron-left"></i></button>
-                <span class="dr-cal-month" id="res-cal-month"></span>
-                <button type="button" class="dr-cal-nav" id="res-cal-next"><i class="bi bi-chevron-right"></i></button>
-            </div>
-            <div class="dr-cal-days-header">
-                <div class="dr-cal-day-name">lun</div>
-                <div class="dr-cal-day-name">mar</div>
-                <div class="dr-cal-day-name">mer</div>
-                <div class="dr-cal-day-name">gio</div>
-                <div class="dr-cal-day-name">ven</div>
-                <div class="dr-cal-day-name">sab</div>
-                <div class="dr-cal-day-name">dom</div>
-            </div>
-            <div class="dr-cal-grid" id="res-cal-grid"></div>
         </div>
     </div>
 
