@@ -213,7 +213,7 @@ a.sidebar-user:hover { color: #adb5bd; }
     display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
 }
 .filter-row + .filter-row {
-    margin-top: .6rem; padding-top: .6rem;
+    margin-top: 1.1rem; padding-top: 1.1rem;
     border-top: 1px solid #f0f0f0;
 }
 .filter-group { display: flex; align-items: center; gap: .4rem; }
@@ -226,6 +226,7 @@ a.sidebar-user:hover { color: #adb5bd; }
     padding: .35rem .6rem; font-size: .82rem;
     background: #fff; color: #495057;
     outline: none; transition: border-color .15s;
+    margin: .35rem 0;
 }
 .filter-input:focus { border-color: var(--brand); }
 select.filter-input { cursor: pointer; padding-right: 1.5rem; }
