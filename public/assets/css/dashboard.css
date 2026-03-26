@@ -435,6 +435,15 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 .detail-value a { color: var(--brand); text-decoration: none; }
 .detail-value a:hover { text-decoration: underline; }
 
+.dr-wa-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: #25D366; color: #fff !important; font-size: .82rem;
+    text-decoration: none !important; margin-top: 4px;
+    transition: background .15s, transform .15s;
+}
+.dr-wa-btn:hover { background: #1da851; transform: scale(1.1); }
+
 .customer-note {
     margin: 0 1.25rem 1rem; padding: .6rem .85rem;
     background: #FFF8E1; border-left: 3px solid #FFB300;

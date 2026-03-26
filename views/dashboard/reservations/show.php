@@ -56,15 +56,15 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
             <div class="detail-label"><i class="bi bi-telephone me-1"></i>Telefono</div>
             <div class="detail-value">
                 <a href="tel:<?= e($reservation['phone']) ?>"><?= e($reservation['phone']) ?></a>
-                <?php
-                    $waNum = preg_replace('/[^0-9]/', '', $reservation['phone']);
-                    if (str_starts_with($waNum, '0')) $waNum = '39' . substr($waNum, 1);
-                    elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . $waNum;
-                ?>
-                <a href="https://wa.me/<?= e($waNum) ?>" target="_blank" rel="noopener" style="margin-left:8px;color:#25D366;font-size:.78rem;font-weight:500;text-decoration:none;" title="Apri WhatsApp">
-                    <i class="bi bi-whatsapp"></i> WhatsApp
-                </a>
             </div>
+            <?php
+                $waNum = preg_replace('/[^0-9]/', '', $reservation['phone']);
+                if (str_starts_with($waNum, '0')) $waNum = '39' . substr($waNum, 1);
+                elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . $waNum;
+            ?>
+            <a href="https://wa.me/<?= e($waNum) ?>" target="_blank" rel="noopener" class="dr-wa-btn" title="Contatta su WhatsApp">
+                <i class="bi bi-whatsapp"></i>
+            </a>
         </div>
         <div>
             <div class="detail-label"><i class="bi bi-envelope me-1"></i>Email</div>
