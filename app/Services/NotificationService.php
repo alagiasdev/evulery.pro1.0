@@ -33,8 +33,14 @@ class NotificationService
             $time      = substr($reservation['reservation_time'] ?? '', 0, 5);
             $partySize = (int)($reservation['party_size'] ?? 0);
 
-            $title = 'Nuova prenotazione';
-            $body  = "{$firstName} {$lastName} — {$date} ore {$time}, {$partySize} persone";
+            $placeholders = [
+                '{nome}' => "{$firstName} {$lastName}",
+                '{data}' => $date,
+                '{ora}'  => $time,
+                '{coperti}' => $partySize,
+            ];
+            $title = $this->resolveTemplate($tenant['notif_title_new_reservation'] ?? '', 'Nuova prenotazione', $placeholders);
+            $body  = $this->resolveTemplate($tenant['notif_body_new_reservation'] ?? '', "{$firstName} {$lastName} — {$date} ore {$time}, {$partySize} persone", $placeholders);
 
             $data = [
                 'reservation_id' => (int)($reservation['id'] ?? 0),
@@ -74,8 +80,14 @@ class NotificationService
             $time      = substr($reservation['reservation_time'] ?? '', 0, 5);
 
             $cancelLabel = $cancelledBy === 'cliente' ? 'dal cliente' : 'dallo staff';
-            $title = 'Prenotazione cancellata';
-            $body  = "{$firstName} {$lastName} ({$date} ore {$time}) — annullata {$cancelLabel}";
+            $placeholders = [
+                '{nome}' => "{$firstName} {$lastName}",
+                '{data}' => $date,
+                '{ora}'  => $time,
+                '{da}'   => $cancelLabel,
+            ];
+            $title = $this->resolveTemplate($tenant['notif_title_cancellation'] ?? '', 'Prenotazione cancellata', $placeholders);
+            $body  = $this->resolveTemplate($tenant['notif_body_cancellation'] ?? '', "{$firstName} {$lastName} ({$date} ore {$time}) — annullata {$cancelLabel}", $placeholders);
 
             $data = [
                 'reservation_id' => (int)($reservation['id'] ?? 0),
@@ -100,8 +112,12 @@ class NotificationService
             $lastName  = $reservation['last_name'] ?? '';
             $amount    = number_format((float)($reservation['deposit_amount'] ?? 0), 2, ',', '.');
 
-            $title = 'Caparra ricevuta';
-            $body  = "{$firstName} {$lastName} — €{$amount}";
+            $placeholders = [
+                '{nome}'    => "{$firstName} {$lastName}",
+                '{importo}' => $amount,
+            ];
+            $title = $this->resolveTemplate($tenant['notif_title_deposit'] ?? '', 'Caparra ricevuta', $placeholders);
+            $body  = $this->resolveTemplate($tenant['notif_body_deposit'] ?? '', "{$firstName} {$lastName} — €{$amount}", $placeholders);
 
             $data = [
                 'reservation_id' => (int)($reservation['id'] ?? 0),
@@ -173,6 +189,15 @@ class NotificationService
         } catch (\Throwable $e) {
             error_log("NotificationService: push failed for tenant {$tenantId}: " . $e->getMessage());
         }
+    }
+
+    /**
+     * Resolve a notification template with placeholders, falling back to default.
+     */
+    private function resolveTemplate(?string $custom, string $default, array $placeholders): string
+    {
+        $template = (!empty($custom)) ? $custom : $default;
+        return strtr($template, $placeholders);
     }
 
     /**

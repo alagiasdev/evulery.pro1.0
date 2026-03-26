@@ -124,6 +124,17 @@
                     <?php endif; ?>
                 </li>
                 <li class="nav-item">
+                    <?php if (tenant_can('push_notifications')): ?>
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'settings-notifications' ? 'active' : '' ?>" href="<?= url('dashboard/settings/notifications') ?>">
+                        <i class="bi bi-bell me-2"></i> Notifiche
+                    </a>
+                    <?php else: ?>
+                    <a class="nav-link text-muted" href="<?= url('dashboard/settings/notifications') ?>" style="opacity:.6;">
+                        <i class="bi bi-bell me-2"></i> Notifiche <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
+                    </a>
+                    <?php endif; ?>
+                </li>
+                <li class="nav-item">
                     <?php if (tenant_can('deposit')): ?>
                     <a class="nav-link <?= ($activeMenu ?? '') === 'deposit' ? 'active' : '' ?>" href="<?= url('dashboard/settings/deposit') ?>">
                         <i class="bi bi-cash me-2"></i> Caparra

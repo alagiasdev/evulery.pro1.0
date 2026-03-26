@@ -75,6 +75,8 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/settings', [SettingsController::class, 'updateGeneral']);
     $r->get('/settings/slots', [SlotsController::class, 'index']);
     $r->post('/settings/slots', [SlotsController::class, 'update']);
+    $r->get('/settings/notifications', [SettingsController::class, 'notifications']);
+    $r->post('/settings/notifications', [SettingsController::class, 'updateNotifications']);
     $r->get('/settings/deposit', [SettingsController::class, 'deposit']);
     $r->post('/settings/deposit', [SettingsController::class, 'updateDeposit']);
     $r->get('/settings/meal-categories', [MealCategoriesController::class, 'index']);

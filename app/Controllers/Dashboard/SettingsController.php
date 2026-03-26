@@ -91,8 +91,6 @@ class SettingsController
             'segment_abituale'     => $segAbi,
             'segment_vip'          => $segVip,
             'promo_widget_only'         => !empty($data['promo_widget_only']) ? 1 : 0,
-            'notify_new_reservation'    => !empty($data['notify_new_reservation']) ? 1 : 0,
-            'notify_cancellation'       => !empty($data['notify_cancellation']) ? 1 : 0,
         ];
 
         if ($logoUrl !== null) {
@@ -173,6 +171,45 @@ class SettingsController
         if (file_exists($oldPath)) {
             @unlink($oldPath);
         }
+    }
+
+    public function notifications(Request $request): void
+    {
+        view('dashboard/settings/notifications', [
+            'title'      => 'Notifiche',
+            'activeMenu' => 'settings-notifications',
+            'tenant'     => TenantResolver::current(),
+            'canPush'    => tenant_can('push_notifications'),
+        ], 'dashboard');
+    }
+
+    public function updateNotifications(Request $request): void
+    {
+        if (gate_service('push_notifications', url('dashboard/settings/notifications'))) return;
+
+        $tenantId = Auth::tenantId();
+        $data = $request->all();
+
+        $updateData = [
+            'notify_new_reservation'    => !empty($data['notify_new_reservation']) ? 1 : 0,
+            'notify_cancellation'       => !empty($data['notify_cancellation']) ? 1 : 0,
+            'notif_title_new_reservation' => trim($data['notif_title_new_reservation'] ?? '') ?: null,
+            'notif_body_new_reservation'  => trim($data['notif_body_new_reservation'] ?? '') ?: null,
+            'notif_title_cancellation'    => trim($data['notif_title_cancellation'] ?? '') ?: null,
+            'notif_body_cancellation'     => trim($data['notif_body_cancellation'] ?? '') ?: null,
+            'notif_title_deposit'         => trim($data['notif_title_deposit'] ?? '') ?: null,
+            'notif_body_deposit'          => trim($data['notif_body_deposit'] ?? '') ?: null,
+        ];
+
+        (new Tenant())->update($tenantId, $updateData);
+
+        AuditLog::log(AuditLog::SETTINGS_UPDATED, 'Template notifiche aggiornati', Auth::id(), $tenantId);
+
+        $tenant = (new Tenant())->findById($tenantId);
+        TenantResolver::setCurrent($tenant);
+
+        flash('success', 'Impostazioni notifiche aggiornate.');
+        Response::redirect(url('dashboard/settings/notifications'));
     }
 
     public function deposit(Request $request): void

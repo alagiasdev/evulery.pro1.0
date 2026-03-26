@@ -123,6 +123,9 @@ class Tenant
             'stripe_sk', 'stripe_pk', 'stripe_wh_secret',
             'timezone', 'menu_enabled', 'promo_widget_only',
             'notify_new_reservation', 'notify_cancellation',
+            'notif_title_new_reservation', 'notif_body_new_reservation',
+            'notif_title_cancellation', 'notif_body_cancellation',
+            'notif_title_deposit', 'notif_body_deposit',
             'menu_hero_image', 'menu_tagline',
             'opening_hours', 'is_active',
         ];

@@ -5,6 +5,7 @@ $settingsTabs = [
     ['url' => url('dashboard/settings/meal-categories'),'icon' => 'bi-tags',       'label' => 'Categorie Pasto',  'key' => 'meal-categories'],
     ['url' => url('dashboard/settings/closures'),       'icon' => 'bi-calendar-x', 'label' => 'Chiusure',         'key' => 'closures'],
     ['url' => url('dashboard/settings/promotions'),     'icon' => 'bi-percent',    'label' => 'Promozioni',       'key' => 'promotions'],
+    ['url' => url('dashboard/settings/notifications'),  'icon' => 'bi-bell',       'label' => 'Notifiche',        'key' => 'settings-notifications'],
     ['url' => url('dashboard/settings/deposit'),        'icon' => 'bi-cash',       'label' => 'Caparra',          'key' => 'deposit'],
     ['url' => url('dashboard/settings/domain'),         'icon' => 'bi-globe',      'label' => 'Dominio',          'key' => 'domain'],
 ];
@@ -147,26 +148,6 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                                 </div>
                             </div>
                             <div class="field-hint">Se attivo, gli sconti delle promozioni vengono applicati <strong>solo</strong> alle prenotazioni dal widget online. Le prenotazioni create dalla dashboard (telefono, walk-in) non mostrano lo sconto.</div>
-                        </div>
-                        <div class="col-12 field-row">
-                            <label class="field-label">Notifiche email al ristoratore</label>
-                            <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.25rem;">
-                                <div class="form-check form-switch" style="padding-left:2.5em;">
-                                    <input class="form-check-input" type="checkbox" name="notify_new_reservation" value="1"
-                                           id="notify-new-res" <?= !empty($tenant['notify_new_reservation']) ? 'checked' : '' ?>>
-                                    <label class="form-check-label" for="notify-new-res" style="font-size:.82rem;font-weight:500;">
-                                        Nuova prenotazione
-                                    </label>
-                                </div>
-                                <div class="form-check form-switch" style="padding-left:2.5em;">
-                                    <input class="form-check-input" type="checkbox" name="notify_cancellation" value="1"
-                                           id="notify-cancel" <?= !empty($tenant['notify_cancellation']) ? 'checked' : '' ?>>
-                                    <label class="form-check-label" for="notify-cancel" style="font-size:.82rem;font-weight:500;">
-                                        Cancellazione prenotazione
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="field-hint">Ricevi un'email quando arriva una nuova prenotazione o quando un cliente cancella.</div>
                         </div>
                         <div class="col-12 field-row">
                             <label class="field-label">Politica di cancellazione</label>
