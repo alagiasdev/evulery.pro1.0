@@ -99,4 +99,36 @@ class NotificationController
         flash('success', 'Tutte le notifiche segnate come lette.');
         Response::redirect(url('dashboard/notifications'));
     }
+
+    /**
+     * Delete single notification.
+     */
+    public function destroy(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $tenantId = Auth::tenantId();
+        (new Notification())->delete($id, $tenantId);
+
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) || str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
+            Response::json(['ok' => true]);
+        }
+
+        Response::redirect(url('dashboard/notifications'));
+    }
+
+    /**
+     * Delete all notifications.
+     */
+    public function destroyAll(Request $request): void
+    {
+        $tenantId = Auth::tenantId();
+        (new Notification())->deleteAll($tenantId);
+
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) || str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
+            Response::json(['ok' => true]);
+        }
+
+        flash('success', 'Tutte le notifiche eliminate.');
+        Response::redirect(url('dashboard/notifications'));
+    }
 }

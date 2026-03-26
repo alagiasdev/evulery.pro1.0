@@ -122,7 +122,9 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('/notifications/unread', [NotificationController::class, 'apiUnread']);
     $r->get('/notifications/recent', [NotificationController::class, 'apiRecent']);
     $r->post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
+    $r->post('/notifications/delete-all', [NotificationController::class, 'destroyAll']);
     $r->post('/notifications/{id}/read', [NotificationController::class, 'markRead']);
+    $r->post('/notifications/{id}/delete', [NotificationController::class, 'destroy']);
     // Push
     $r->post('/push/subscribe', [PushController::class, 'subscribe']);
     $r->post('/push/unsubscribe', [PushController::class, 'unsubscribe']);

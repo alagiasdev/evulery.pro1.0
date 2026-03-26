@@ -230,6 +230,7 @@
             data-recent-url="<?= url('dashboard/notifications/recent') ?>"
             data-mark-read-url="<?= url('dashboard/notifications') ?>"
             data-mark-all-url="<?= url('dashboard/notifications/read-all') ?>"
+            data-delete-all-url="<?= url('dashboard/notifications/delete-all') ?>"
             data-vapid-url="<?= url('dashboard/push/vapid-key') ?>"
             data-subscribe-url="<?= url('dashboard/push/subscribe') ?>"
             data-csrf="<?= csrf_token() ?>"
@@ -240,6 +241,12 @@
         var row = e.target.closest('[data-url]');
         if (row && !e.target.closest('a, button, form')) {
             window.location = row.getAttribute('data-url');
+        }
+    });
+    document.addEventListener('submit', function(e) {
+        var form = e.target.closest('[data-confirm]');
+        if (form && !confirm(form.getAttribute('data-confirm'))) {
+            e.preventDefault();
         }
     });
     </script>

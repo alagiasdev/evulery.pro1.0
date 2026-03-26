@@ -9,12 +9,21 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="page-title mb-0">Notifiche</h1>
     <?php if ($total > 0): ?>
-    <form method="POST" action="<?= url('dashboard/notifications/read-all') ?>" style="display:inline;">
-        <?= csrf_field() ?>
-        <button type="submit" class="btn btn-outline-success btn-sm">
-            <i class="bi bi-check2-all me-1"></i> Segna tutte lette
-        </button>
-    </form>
+    <div class="d-flex gap-2">
+        <form method="POST" action="<?= url('dashboard/notifications/read-all') ?>" style="display:inline;">
+            <?= csrf_field() ?>
+            <button type="submit" class="btn btn-outline-success btn-sm">
+                <i class="bi bi-check2-all me-1"></i> Segna tutte lette
+            </button>
+        </form>
+        <form method="POST" action="<?= url('dashboard/notifications/delete-all') ?>" style="display:inline;"
+              data-confirm="Eliminare tutte le notifiche? Questa azione non è reversibile.">
+            <?= csrf_field() ?>
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-trash me-1"></i> Elimina tutte
+            </button>
+        </form>
+    </div>
     <?php endif; ?>
 </div>
 
@@ -69,14 +78,22 @@
                 <?php endif; ?>
                 <div class="notif-page-item-time"><?= e($ago) ?></div>
             </a>
-            <?php if ($isUnread): ?>
-            <form method="POST" action="<?= url('dashboard/notifications/' . $n['id'] . '/read') ?>" class="notif-page-mark-form">
-                <?= csrf_field() ?>
-                <button type="submit" class="notif-page-mark-btn" title="Segna come letta">
-                    <i class="bi bi-check2"></i>
-                </button>
-            </form>
-            <?php endif; ?>
+            <div class="notif-page-actions">
+                <?php if ($isUnread): ?>
+                <form method="POST" action="<?= url('dashboard/notifications/' . $n['id'] . '/read') ?>" class="notif-page-mark-form">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="notif-page-mark-btn" title="Segna come letta">
+                        <i class="bi bi-check2"></i>
+                    </button>
+                </form>
+                <?php endif; ?>
+                <form method="POST" action="<?= url('dashboard/notifications/' . $n['id'] . '/delete') ?>" class="notif-page-mark-form">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="notif-page-delete-btn" title="Elimina">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </form>
+            </div>
         </div>
         <?php endforeach; ?>
     </div>

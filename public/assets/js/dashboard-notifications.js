@@ -13,6 +13,7 @@
         recentUrl:    script.getAttribute('data-recent-url'),
         markReadUrl:  script.getAttribute('data-mark-read-url'),  // base: .../notifications
         markAllUrl:   script.getAttribute('data-mark-all-url'),
+        deleteAllUrl: script.getAttribute('data-delete-all-url'),
         vapidUrl:     script.getAttribute('data-vapid-url'),
         subscribeUrl: script.getAttribute('data-subscribe-url'),
         csrf:         script.getAttribute('data-csrf')
@@ -89,6 +90,7 @@
             var markBtn = !n.read_at
                 ? '<button class="notif-item-mark" data-mark-id="' + n.id + '" title="Segna come letta"><i class="bi bi-check2"></i></button>'
                 : '';
+            var deleteBtn = '<button class="notif-item-delete" data-delete-id="' + n.id + '" title="Elimina"><i class="bi bi-x-lg"></i></button>';
             html += '<div class="notif-item' + unread + '" data-id="' + n.id + '" data-url="' + escHtml(url) + '">'
                 + '<div class="notif-item-icon ' + ico.cls + '"><i class="bi ' + ico.icon + '"></i></div>'
                 + '<div class="notif-item-content">'
@@ -96,7 +98,7 @@
                 + '<div class="notif-item-body">' + escHtml(n.body || '') + '</div>'
                 + '<div class="notif-item-time">' + timeAgo(n.created_at) + '</div>'
                 + '</div>'
-                + markBtn
+                + '<div class="notif-item-actions">' + markBtn + deleteBtn + '</div>'
                 + '</div>';
         });
         notifList.innerHTML = html;
@@ -110,10 +112,19 @@
             });
         });
 
+        // Click on delete button (single)
+        notifList.querySelectorAll('.notif-item-delete').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                var id = btn.getAttribute('data-delete-id');
+                deleteNotification(id, function () { fetchRecent(); pollUnread(); });
+            });
+        });
+
         // Click on item → navigate
         notifList.querySelectorAll('.notif-item').forEach(function (el) {
             el.addEventListener('click', function (e) {
-                if (e.target.closest('.notif-item-mark')) return;
+                if (e.target.closest('.notif-item-actions')) return;
                 var id = el.getAttribute('data-id');
                 var url = el.getAttribute('data-url');
                 markRead(id, function () {
@@ -147,6 +158,17 @@
         }).then(function () {
             if (cb) cb();
             pollUnread();
+        }).catch(function () { if (cb) cb(); });
+    }
+
+    function deleteNotification(id, cb) {
+        fetch(cfg.markReadUrl + '/' + id + '/delete', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: '_csrf=' + encodeURIComponent(cfg.csrf)
+        }).then(function () {
+            if (cb) cb();
         }).catch(function () { if (cb) cb(); });
     }
 

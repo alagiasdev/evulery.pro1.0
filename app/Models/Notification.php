@@ -103,6 +103,21 @@ class Notification
         return $stmt->execute(['tid' => $tenantId]);
     }
 
+    public function delete(int $id, int $tenantId): bool
+    {
+        $stmt = $this->db->prepare(
+            'DELETE FROM notifications WHERE id = :id AND tenant_id = :tid'
+        );
+        return $stmt->execute(['id' => $id, 'tid' => $tenantId]);
+    }
+
+    public function deleteAll(int $tenantId): int
+    {
+        $stmt = $this->db->prepare('DELETE FROM notifications WHERE tenant_id = :tid');
+        $stmt->execute(['tid' => $tenantId]);
+        return $stmt->rowCount();
+    }
+
     public function purgeOld(int $days = 90): int
     {
         $stmt = $this->db->prepare(

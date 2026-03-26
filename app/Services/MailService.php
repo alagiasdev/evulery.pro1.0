@@ -66,7 +66,10 @@ class MailService
             $this->mailer->send();
             return true;
         } catch (Exception $e) {
-            app_log("Mail send error: " . $e->getMessage());
+            app_log("Mail send error to {$to}: " . $e->getMessage(), 'error');
+            return false;
+        } catch (\Throwable $e) {
+            app_log("Mail send unexpected error to {$to}: " . $e->getMessage(), 'error');
             return false;
         }
     }

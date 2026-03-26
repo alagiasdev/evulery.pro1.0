@@ -2710,6 +2710,23 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     transition: all .15s;
 }
 .notif-page-mark-btn:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
+.notif-page-delete-btn {
+    background: none; border: 1px solid #dee2e6; border-radius: 50%;
+    width: 32px; height: 32px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #adb5bd; font-size: .75rem;
+    transition: all .15s;
+}
+.notif-page-delete-btn:hover { background: #dc3545; color: #fff; border-color: #dc3545; }
+.notif-page-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+/* Dropdown delete button */
+.notif-item-actions { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
+.notif-item-delete {
+    background: none; border: none; cursor: pointer;
+    color: #adb5bd; font-size: .7rem; padding: 4px;
+    border-radius: 50%; transition: all .15s;
+}
+.notif-item-delete:hover { color: #dc3545; background: #f8d7da; }
 
 @media (max-width: 767.98px) {
     .notif-dropdown {
