@@ -62,8 +62,8 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
                 if (str_starts_with($waNum, '0')) $waNum = '39' . substr($waNum, 1);
                 elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . $waNum;
             ?>
-            <div class="detail-label"><i class="bi bi-whatsapp me-1" style="color:#25D366;"></i>WhatsApp</div>
-            <div class="detail-value"><a href="https://wa.me/<?= e($waNum) ?>" target="_blank" rel="noopener" style="color:#25D366;">Inizia a Chattare</a></div>
+            <div class="detail-label"><i class="bi bi-whatsapp me-1"></i>WhatsApp</div>
+            <div class="detail-value"><a href="https://wa.me/<?= e($waNum) ?>" target="_blank" rel="noopener">Inizia a Chattare</a></div>
         </div>
         <div>
             <div class="detail-label"><i class="bi bi-envelope me-1"></i>Email</div>

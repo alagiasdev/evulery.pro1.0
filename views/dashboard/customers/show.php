@@ -112,8 +112,8 @@ $sourceLabels = ['phone' => 'Telefono', 'walkin' => 'Walk-in', 'widget' => 'Widg
                     if (str_starts_with($waNum, '0')) $waNum = '39' . substr($waNum, 1);
                     elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . $waNum;
                 ?>
-                <i class="bi bi-whatsapp" style="color:#25D366;"></i>
-                <a href="https://wa.me/<?= e($waNum) ?>" target="_blank" rel="noopener" style="color:#25D366;">Inizia a Chattare</a>
+                <i class="bi bi-whatsapp"></i>
+                <a href="https://wa.me/<?= e($waNum) ?>" target="_blank" rel="noopener">Inizia a Chattare</a>
             </div>
             <div class="hero-contact">
                 <i class="bi bi-envelope-fill"></i>
