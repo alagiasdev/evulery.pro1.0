@@ -133,10 +133,18 @@
 
                 <!-- Servizi -->
                 <?php if (!empty($allServices)): ?>
-                <?php $includedKeys = array_column($planServices ?? [], 'key'); ?>
+                <?php
+                    $includedKeys = array_column($planServices ?? [], 'key');
+                    $sortedServices = $allServices;
+                    usort($sortedServices, function ($a, $b) use ($includedKeys) {
+                        $aIn = in_array($a['key'], $includedKeys) ? 0 : 1;
+                        $bIn = in_array($b['key'], $includedKeys) ? 0 : 1;
+                        return $aIn !== $bIn ? $aIn - $bIn : ($a['sort_order'] ?? 0) - ($b['sort_order'] ?? 0);
+                    });
+                ?>
                 <div style="font-weight:600;font-size:.82rem;margin-bottom:.5rem;color:#495057;">Servizi</div>
                 <div style="display:flex;flex-direction:column;gap:.35rem;margin-bottom:1rem;">
-                    <?php foreach ($allServices as $svc): ?>
+                    <?php foreach ($sortedServices as $svc): ?>
                     <?php $included = in_array($svc['key'], $includedKeys); ?>
                     <div style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;<?= $included ? '' : 'opacity:.5;' ?>">
                         <?php if ($included): ?>
