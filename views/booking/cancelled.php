@@ -31,7 +31,7 @@
             </a>
         </div>
 
-        <script>
+        <script nonce="<?= csp_nonce() ?>">
         document.getElementById('btn-retry-payment').addEventListener('click', function() {
             var btn = this;
             var apiUrl = btn.getAttribute('data-api');
