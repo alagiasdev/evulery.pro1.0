@@ -1,11 +1,3 @@
-<?php if (empty($canPush)): ?>
-    <?php
-    $lockedTitle = 'Notifiche in tempo reale';
-    $lockedDesc = 'Campanella dashboard e notifiche push nel browser. Contatta il supporto per effettuare un upgrade.';
-    partial('service-locked', compact('lockedTitle', 'lockedDesc'));
-    ?>
-<?php else: ?>
-
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="page-title mb-0">Notifiche</h1>
     <?php if ($total > 0): ?>
@@ -109,6 +101,4 @@
         </ul>
     </nav>
     <?php endif; ?>
-<?php endif; ?>
-
 <?php endif; ?>

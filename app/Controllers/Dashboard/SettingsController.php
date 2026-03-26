@@ -179,14 +179,11 @@ class SettingsController
             'title'      => 'Notifiche',
             'activeMenu' => 'settings-notifications',
             'tenant'     => TenantResolver::current(),
-            'canPush'    => tenant_can('push_notifications'),
         ], 'dashboard');
     }
 
     public function updateNotifications(Request $request): void
     {
-        if (gate_service('push_notifications', url('dashboard/settings/notifications'))) return;
-
         $tenantId = Auth::tenantId();
         $data = $request->all();
 

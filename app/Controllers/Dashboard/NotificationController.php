@@ -15,22 +15,20 @@ class NotificationController
     public function index(Request $request): void
     {
         $tenantId = Auth::tenantId();
-        $canPush = tenant_can('push_notifications');
 
         $page = max(1, (int)($request->query('page', 1)));
         $limit = 30;
         $offset = ($page - 1) * $limit;
 
         $model = new Notification();
-        $notifications = $canPush ? $model->getAllPaginated($tenantId, $limit, $offset) : [];
-        $total = $canPush ? $model->countAll($tenantId) : 0;
+        $notifications = $model->getAllPaginated($tenantId, $limit, $offset);
+        $total = $model->countAll($tenantId);
         $totalPages = max(1, (int)ceil($total / $limit));
 
         view('dashboard/notifications/index', [
             'title'         => 'Notifiche',
             'activeMenu'    => 'notifications',
             'notifications' => $notifications,
-            'canPush'       => $canPush,
             'page'          => $page,
             'totalPages'    => $totalPages,
             'total'         => $total,
@@ -43,11 +41,6 @@ class NotificationController
     public function apiUnread(Request $request): void
     {
         $tenantId = Auth::tenantId();
-
-        if (!tenant_can('push_notifications')) {
-            Response::json(['count' => 0]);
-        }
-
         $count = (new Notification())->getUnreadCount($tenantId);
         Response::json(['count' => $count]);
     }
@@ -58,11 +51,6 @@ class NotificationController
     public function apiRecent(Request $request): void
     {
         $tenantId = Auth::tenantId();
-
-        if (!tenant_can('push_notifications')) {
-            Response::json(['notifications' => []]);
-        }
-
         $items = (new Notification())->getRecent($tenantId, 15);
         Response::json(['notifications' => $items]);
     }

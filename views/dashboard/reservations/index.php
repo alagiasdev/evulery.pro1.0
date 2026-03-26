@@ -104,7 +104,7 @@ for ($i = 0; $i < 3; $i++) {
 <!-- Filter bar -->
 <form method="GET" action="<?= url('dashboard/reservations') ?>" id="res-filter-form">
 <div class="filter-bar">
-    <!-- Row 1: Quick date navigation -->
+    <!-- Row 1: Quick date chips + actions -->
     <div class="filter-row">
         <div class="date-chips">
             <?php foreach ($chipDates as $chip): ?>
@@ -113,27 +113,8 @@ for ($i = 0; $i < 3; $i++) {
                 <?= $chip['label'] ?> <span class="chip-day"><?= $chip['sub'] ?></span>
             </a>
             <?php endforeach; ?>
-            <div class="position-relative">
-                <a href="#" class="date-chip-sm" id="res-cal-toggle"><i class="bi bi-calendar3"></i></a>
-                <div class="home-cal-dropdown" id="res-cal-dropdown" style="display:none;">
-                    <div class="dr-cal-header">
-                        <button type="button" class="dr-cal-nav" id="res-cal-prev"><i class="bi bi-chevron-left"></i></button>
-                        <span class="dr-cal-month" id="res-cal-month"></span>
-                        <button type="button" class="dr-cal-nav" id="res-cal-next"><i class="bi bi-chevron-right"></i></button>
-                    </div>
-                    <div class="dr-cal-days-header">
-                        <div class="dr-cal-day-name">lun</div>
-                        <div class="dr-cal-day-name">mar</div>
-                        <div class="dr-cal-day-name">mer</div>
-                        <div class="dr-cal-day-name">gio</div>
-                        <div class="dr-cal-day-name">ven</div>
-                        <div class="dr-cal-day-name">sab</div>
-                        <div class="dr-cal-day-name">dom</div>
-                    </div>
-                    <div class="dr-cal-grid" id="res-cal-grid"></div>
-                </div>
-            </div>
         </div>
+        <a href="#" class="date-chip-sm" id="res-cal-toggle"><i class="bi bi-calendar3"></i></a>
         <div class="filter-actions">
             <?php if (tenant_can('export_csv')): ?>
             <button type="button" class="btn-filter btn-filter-outline" id="export-toggle" title="Esporta CSV">
@@ -147,8 +128,45 @@ for ($i = 0; $i < 3; $i++) {
         </div>
     </div>
 
+    <!-- Calendar dropdown (outside overflow container) -->
+    <div class="date-chip-cal">
+        <div class="home-cal-dropdown" id="res-cal-dropdown" style="display:none;">
+            <div class="dr-cal-header">
+                <button type="button" class="dr-cal-nav" id="res-cal-prev"><i class="bi bi-chevron-left"></i></button>
+                <span class="dr-cal-month" id="res-cal-month"></span>
+                <button type="button" class="dr-cal-nav" id="res-cal-next"><i class="bi bi-chevron-right"></i></button>
+            </div>
+            <div class="dr-cal-days-header">
+                <div class="dr-cal-day-name">lun</div>
+                <div class="dr-cal-day-name">mar</div>
+                <div class="dr-cal-day-name">mer</div>
+                <div class="dr-cal-day-name">gio</div>
+                <div class="dr-cal-day-name">ven</div>
+                <div class="dr-cal-day-name">sab</div>
+                <div class="dr-cal-day-name">dom</div>
+            </div>
+            <div class="dr-cal-grid" id="res-cal-grid"></div>
+        </div>
+    </div>
+
+    <!-- Mobile: Filtri + CSV row -->
+    <div class="filter-toolbar-mobile d-md-none">
+        <button type="button" class="btn-filter btn-filter-outline" id="filter-toggle-btn">
+            <i class="bi bi-funnel me-1"></i>Filtri<?php if ($status || $source): ?> <span class="filter-active-dot"></span><?php endif; ?>
+        </button>
+        <?php if (tenant_can('export_csv')): ?>
+        <button type="button" class="btn-filter btn-filter-outline" id="export-toggle-mobile" title="Esporta CSV">
+            <i class="bi bi-download me-1"></i>CSV
+        </button>
+        <?php else: ?>
+        <button type="button" class="btn-filter btn-filter-outline" disabled style="opacity:.5;cursor:not-allowed;">
+            <i class="bi bi-download me-1"></i>CSV <i class="bi bi-lock-fill" style="font-size:.65rem;"></i>
+        </button>
+        <?php endif; ?>
+    </div>
+
     <!-- Row 2: Advanced filters -->
-    <div class="filter-row">
+    <div class="filter-row filter-advanced<?= ($status || $source) ? ' show' : '' ?>" id="filter-advanced">
         <div class="filter-group">
             <label>Da</label>
             <input type="date" class="filter-input" name="date" value="<?= e($date) ?>" id="filter-date-from" style="width:auto;">
@@ -367,6 +385,16 @@ for ($i = 0; $i < 3; $i++) {
 
 <script nonce="<?= csp_nonce() ?>">
 (function() {
+    // Mobile: toggle advanced filters
+    var filterBtn = document.getElementById('filter-toggle-btn');
+    var filterPanel = document.getElementById('filter-advanced');
+    if (filterBtn && filterPanel) {
+        filterBtn.addEventListener('click', function() {
+            filterPanel.classList.toggle('show');
+            this.classList.toggle('active');
+        });
+    }
+
     // Skip filter/calendar JS when in search mode
     var toggle = document.getElementById('res-cal-toggle');
     if (!toggle) return;
@@ -458,6 +486,12 @@ for ($i = 0; $i < 3; $i++) {
     toggleBtn.addEventListener('click', function() {
         panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
     });
+    var toggleMobile = document.getElementById('export-toggle-mobile');
+    if (toggleMobile) {
+        toggleMobile.addEventListener('click', function() {
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        });
+    }
     closeBtn.addEventListener('click', function() { panel.style.display = 'none'; });
 
     function updateLink() {

@@ -27,13 +27,13 @@ if (isset($old['days'])) {
 <p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <!-- Settings tabs -->
-<div class="settings-tabs">
+<div class="settings-tabs-wrap"><div class="scroll-hint"><i class="bi bi-arrows"></i></div><div class="settings-tabs">
     <?php foreach ($settingsTabs as $tab): ?>
     <a href="<?= $tab['url'] ?>" class="settings-tab <?= $tab['key'] === 'promotions' ? 'active' : '' ?>">
-        <i class="bi <?= $tab['icon'] ?>"></i> <?= $tab['label'] ?>
+        <i class="bi <?= $tab['icon'] ?>"></i> <span class="tab-label"><?= $tab['label'] ?></span>
     </a>
     <?php endforeach; ?>
-</div>
+</div></div>
 
 <!-- Back link -->
 <div class="page-back" style="margin-bottom:1rem;">
@@ -47,9 +47,9 @@ if (isset($old['days'])) {
         <div class="card" style="padding:1.25rem;">
             <div style="font-weight:600; font-size:.95rem; margin-bottom:1rem;">
                 <i class="bi bi-pencil me-1" style="color:var(--brand);"></i> Modifica promozione
-            </div>
+            </div></div>
 
-            <form method="POST" action="<?= url("dashboard/settings/promotions/{$promo['id']}/update") ?>" id="promo-form">
+<form method="POST" action="<?= url("dashboard/settings/promotions/{$promo['id']}/update") ?>" id="promo-form">
                 <?= csrf_field() ?>
 
                 <div class="mb-3">

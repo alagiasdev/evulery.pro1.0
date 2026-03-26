@@ -24,13 +24,13 @@ foreach (array_merge($upcoming, $past) as $c) {
 <p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <!-- Settings tabs -->
-<div class="settings-tabs">
+<div class="settings-tabs-wrap"><div class="scroll-hint"><i class="bi bi-arrows"></i></div><div class="settings-tabs">
     <?php foreach ($settingsTabs as $tab): ?>
     <a href="<?= $tab['url'] ?>" class="settings-tab <?= $tab['key'] === 'closures' ? 'active' : '' ?>">
-        <i class="bi <?= $tab['icon'] ?>"></i> <?= $tab['label'] ?>
+        <i class="bi <?= $tab['icon'] ?>"></i> <span class="tab-label"><?= $tab['label'] ?></span>
     </a>
     <?php endforeach; ?>
-</div>
+</div></div>
 
 <!-- Info banner -->
 <div class="info-banner">
@@ -123,7 +123,7 @@ foreach (array_merge($upcoming, $past) as $c) {
             <?php endif; ?>
         </div>
 
-        <?php if (empty($upcoming)): ?>
+        <?php if (empty($upcomingGroups)): ?>
         <div class="card" style="padding:2rem; text-align:center;">
             <i class="bi bi-calendar-check" style="font-size:2rem; color:#adb5bd;"></i>
             <p style="color:#6c757d; margin-top:.5rem; font-size:.88rem;">Nessuna chiusura programmata.</p>
@@ -131,11 +131,11 @@ foreach (array_merge($upcoming, $past) as $c) {
         <?php else: ?>
         <div class="card" style="padding:0;">
             <?php
-            // Group by month
+            // Group by month (using date_from of each group)
             $byMonth = [];
-            foreach ($upcoming as $c) {
-                $m = date('Y-m', strtotime($c['override_date']));
-                $byMonth[$m][] = $c;
+            foreach ($upcomingGroups as $g) {
+                $m = date('Y-m', strtotime($g['date_from']));
+                $byMonth[$m][] = $g;
             }
             ?>
             <?php foreach ($byMonth as $monthKey => $items):
@@ -143,30 +143,56 @@ foreach (array_merge($upcoming, $past) as $c) {
                 $monthLabel = $MONTHS_IT[(int)date('n', $monthTs) - 1] . ' ' . date('Y', $monthTs);
             ?>
             <div class="cl-month-header"><?= $monthLabel ?></div>
-            <?php foreach ($items as $c):
-                $d = strtotime($c['override_date']);
-                $dayName = $DAYS_IT[(int)date('N', $d) - 1];
-                $dayNum = date('d', $d);
+            <?php foreach ($items as $g):
+                $dFrom = strtotime($g['date_from']);
+                $dTo = strtotime($g['date_to']);
+                $isRange = $g['count'] > 1;
+                $dayNameFrom = $DAYS_IT[(int)date('N', $dFrom) - 1];
             ?>
             <div class="cl-item">
-                <div class="cl-date-box">
-                    <div class="cl-day-name"><?= $dayName ?></div>
-                    <div class="cl-day-num"><?= $dayNum ?></div>
+                <?php if ($isRange): ?>
+                <div class="cl-date-box cl-date-box--range">
+                    <div class="cl-day-num"><?= date('d', $dFrom) ?>-<?= date('d', $dTo) ?></div>
                 </div>
+                <?php else: ?>
+                <div class="cl-date-box">
+                    <div class="cl-day-name"><?= $dayNameFrom ?></div>
+                    <div class="cl-day-num"><?= date('d', $dFrom) ?></div>
+                </div>
+                <?php endif; ?>
                 <div class="cl-info">
-                    <div class="cl-date-full"><?= date('d', $d) ?> <?= $MONTHS_IT[(int)date('n', $d) - 1] ?> <?= date('Y', $d) ?></div>
-                    <?php if ($c['note']): ?>
-                    <div class="cl-note"><?= e($c['note']) ?></div>
+                    <?php if ($isRange): ?>
+                    <div class="cl-date-full">
+                        <?= date('d', $dFrom) ?> <?= $MONTHS_IT[(int)date('n', $dFrom) - 1] ?> &rarr; <?= date('d', $dTo) ?> <?= $MONTHS_IT[(int)date('n', $dTo) - 1] ?> <?= date('Y', $dTo) ?>
+                        <span class="cl-days-badge"><?= $g['count'] ?> giorni</span>
+                    </div>
+                    <?php else: ?>
+                    <div class="cl-date-full"><?= date('d', $dFrom) ?> <?= $MONTHS_IT[(int)date('n', $dFrom) - 1] ?> <?= date('Y', $dFrom) ?></div>
+                    <?php endif; ?>
+                    <?php if (!empty($g['note'])): ?>
+                    <div class="cl-note"><?= e($g['note']) ?></div>
                     <?php else: ?>
                     <div class="cl-note" style="color:#ccc;">Chiusura giornaliera</div>
                     <?php endif; ?>
                 </div>
-                <form method="POST" action="<?= url("dashboard/settings/closures/{$c['id']}/delete") ?>" style="margin:0;">
+                <?php if ($isRange): ?>
+                <form method="POST" action="<?= url('dashboard/settings/closures/delete-group') ?>" style="margin:0;"
+                      data-confirm="Eliminare tutte le <?= $g['count'] ?> chiusure di questo periodo?">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="date_from" value="<?= $g['date_from'] ?>">
+                    <input type="hidden" name="date_to" value="<?= $g['date_to'] ?>">
+                    <button type="submit" class="cl-delete-btn" title="Rimuovi gruppo (<?= $g['count'] ?> giorni)">
+                        <i class="bi bi-trash3"></i>
+                    </button>
+                </form>
+                <?php else: ?>
+                <form method="POST" action="<?= url("dashboard/settings/closures/{$g['ids'][0]}/delete") ?>" style="margin:0;">
                     <?= csrf_field() ?>
                     <button type="submit" class="cl-delete-btn" title="Rimuovi chiusura">
                         <i class="bi bi-trash3"></i>
                     </button>
                 </form>
+                <?php endif; ?>
             </div>
             <?php endforeach; ?>
             <?php endforeach; ?>
@@ -174,7 +200,7 @@ foreach (array_merge($upcoming, $past) as $c) {
         <?php endif; ?>
 
         <!-- Past closures (collapsed) -->
-        <?php if (!empty($past)): ?>
+        <?php if (!empty($pastGroups)): ?>
         <div style="margin-top:1rem;">
             <button type="button" class="cl-toggle-past" id="cl-toggle-past">
                 <i class="bi bi-clock-history me-1"></i> Chiusure passate (<?= count($past) ?>)
@@ -182,19 +208,34 @@ foreach (array_merge($upcoming, $past) as $c) {
             </button>
             <div id="cl-past-list" style="display:none;">
                 <div class="card" style="padding:0; opacity:.6;">
-                    <?php foreach (array_slice($past, 0, 20) as $c):
-                        $d = strtotime($c['override_date']);
-                        $dayName = $DAYS_IT[(int)date('N', $d) - 1];
+                    <?php foreach (array_slice($pastGroups, 0, 20) as $g):
+                        $dFrom = strtotime($g['date_from']);
+                        $dTo = strtotime($g['date_to']);
+                        $isRange = $g['count'] > 1;
+                        $dayNameFrom = $DAYS_IT[(int)date('N', $dFrom) - 1];
                     ?>
                     <div class="cl-item cl-past">
-                        <div class="cl-date-box">
-                            <div class="cl-day-name"><?= $dayName ?></div>
-                            <div class="cl-day-num"><?= date('d', $d) ?></div>
+                        <?php if ($isRange): ?>
+                        <div class="cl-date-box cl-date-box--range">
+                            <div class="cl-day-num"><?= date('d', $dFrom) ?>-<?= date('d', $dTo) ?></div>
                         </div>
+                        <?php else: ?>
+                        <div class="cl-date-box">
+                            <div class="cl-day-name"><?= $dayNameFrom ?></div>
+                            <div class="cl-day-num"><?= date('d', $dFrom) ?></div>
+                        </div>
+                        <?php endif; ?>
                         <div class="cl-info">
-                            <div class="cl-date-full"><?= date('d', $d) ?> <?= $MONTHS_IT[(int)date('n', $d) - 1] ?> <?= date('Y', $d) ?></div>
-                            <?php if ($c['note']): ?>
-                            <div class="cl-note"><?= e($c['note']) ?></div>
+                            <?php if ($isRange): ?>
+                            <div class="cl-date-full">
+                                <?= date('d', $dFrom) ?> <?= $MONTHS_IT[(int)date('n', $dFrom) - 1] ?> &rarr; <?= date('d', $dTo) ?> <?= $MONTHS_IT[(int)date('n', $dTo) - 1] ?> <?= date('Y', $dTo) ?>
+                                <span class="cl-days-badge"><?= $g['count'] ?> giorni</span>
+                            </div>
+                            <?php else: ?>
+                            <div class="cl-date-full"><?= date('d', $dFrom) ?> <?= $MONTHS_IT[(int)date('n', $dFrom) - 1] ?> <?= date('Y', $dFrom) ?></div>
+                            <?php endif; ?>
+                            <?php if (!empty($g['note'])): ?>
+                            <div class="cl-note"><?= e($g['note']) ?></div>
                             <?php endif; ?>
                         </div>
                     </div>

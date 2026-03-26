@@ -86,6 +86,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/settings/domain/verify', [DomainController::class, 'verify']);
     $r->get('/settings/closures', [ClosuresController::class, 'index']);
     $r->post('/settings/closures', [ClosuresController::class, 'store']);
+    $r->post('/settings/closures/delete-group', [ClosuresController::class, 'deleteGroup']);
     $r->post('/settings/closures/{id}/delete', [ClosuresController::class, 'delete']);
     $r->get('/settings/promotions', [PromotionsController::class, 'index']);
     $r->post('/settings/promotions', [PromotionsController::class, 'store']);

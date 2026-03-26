@@ -24,22 +24,18 @@ $defaults = [
 <p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <!-- Settings tabs -->
-<div class="settings-tabs">
+<div class="settings-tabs-wrap"><div class="scroll-hint"><i class="bi bi-arrows"></i></div><div class="settings-tabs">
     <?php foreach ($settingsTabs as $tab): ?>
     <a href="<?= $tab['url'] ?>" class="settings-tab <?= $tab['key'] === 'settings-notifications' ? 'active' : '' ?>">
-        <i class="bi <?= $tab['icon'] ?>"></i> <?= $tab['label'] ?>
+        <i class="bi <?= $tab['icon'] ?>"></i> <span class="tab-label"><?= $tab['label'] ?></span>
     </a>
     <?php endforeach; ?>
-</div>
-
-<?php if (empty($canPush)): ?>
-<?php include BASE_PATH . '/views/partials/service-locked.php'; ?>
-<?php else: ?>
+</div></div>
 
 <form method="POST" action="<?= url('dashboard/settings/notifications') ?>">
     <?= csrf_field() ?>
 
-    <!-- Email toggles -->
+    <!-- Email toggles (available for all plans) -->
     <div class="card section-card">
         <div class="section-header">
             <div class="section-icon" style="background:var(--brand);"><i class="bi bi-envelope"></i></div>
@@ -160,5 +156,3 @@ $defaults = [
         <button type="submit" class="btn btn-success"><i class="bi bi-check-lg me-1"></i>Salva impostazioni</button>
     </div>
 </form>
-
-<?php endif; ?>

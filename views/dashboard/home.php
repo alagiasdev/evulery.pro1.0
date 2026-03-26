@@ -59,25 +59,25 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
         <span class="chip-label">Dopodomani</span>
         <span class="chip-sub" id="home-chip-2"></span>
     </a>
-    <div class="date-chip-cal">
-        <a href="#" class="date-chip" id="home-cal-toggle">
-            <i class="bi bi-calendar3"></i>
-            <span class="chip-label">Altra data</span>
-            <span class="chip-sub" id="home-chip-other"></span>
-        </a>
-        <div class="home-cal-dropdown" id="home-cal-dropdown" style="display:none;">
-            <div class="dr-cal-header">
-                <button type="button" class="dr-cal-nav" id="home-cal-prev"><i class="bi bi-chevron-left"></i></button>
-                <span class="dr-cal-month" id="home-cal-month"></span>
-                <button type="button" class="dr-cal-nav" id="home-cal-next"><i class="bi bi-chevron-right"></i></button>
-            </div>
-            <div class="dr-cal-days-header">
-                <div class="dr-cal-day-name">lun</div><div class="dr-cal-day-name">mar</div><div class="dr-cal-day-name">mer</div>
-                <div class="dr-cal-day-name">gio</div><div class="dr-cal-day-name">ven</div><div class="dr-cal-day-name">sab</div>
-                <div class="dr-cal-day-name">dom</div>
-            </div>
-            <div class="dr-cal-grid" id="home-cal-grid"></div>
+    <a href="#" class="date-chip" id="home-cal-toggle">
+        <i class="bi bi-calendar3"></i>
+        <span class="chip-label">Altra data</span>
+        <span class="chip-sub" id="home-chip-other"></span>
+    </a>
+</div>
+<div class="date-chip-cal">
+    <div class="home-cal-dropdown" id="home-cal-dropdown" style="display:none;">
+        <div class="dr-cal-header">
+            <button type="button" class="dr-cal-nav" id="home-cal-prev"><i class="bi bi-chevron-left"></i></button>
+            <span class="dr-cal-month" id="home-cal-month"></span>
+            <button type="button" class="dr-cal-nav" id="home-cal-next"><i class="bi bi-chevron-right"></i></button>
         </div>
+        <div class="dr-cal-days-header">
+            <div class="dr-cal-day-name">lun</div><div class="dr-cal-day-name">mar</div><div class="dr-cal-day-name">mer</div>
+            <div class="dr-cal-day-name">gio</div><div class="dr-cal-day-name">ven</div><div class="dr-cal-day-name">sab</div>
+            <div class="dr-cal-day-name">dom</div>
+        </div>
+        <div class="dr-cal-grid" id="home-cal-grid"></div>
     </div>
 </div>
 

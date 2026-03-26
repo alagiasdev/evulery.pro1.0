@@ -64,7 +64,7 @@
                         <i class="bi bi-book me-2"></i> Menu
                     </a>
                     <?php else: ?>
-                    <a class="nav-link text-muted" href="<?= url('dashboard/menu') ?>" style="opacity:.6;">
+                    <a class="nav-link" href="<?= url('dashboard/menu') ?>" style="opacity:.5;">
                         <i class="bi bi-book me-2"></i> Menu <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
                     </a>
                     <?php endif; ?>
@@ -75,86 +75,21 @@
                         <i class="bi bi-envelope me-2"></i> Comunicazioni
                     </a>
                     <?php else: ?>
-                    <a class="nav-link text-muted" href="<?= url('dashboard/communications') ?>" style="opacity:.6;">
+                    <a class="nav-link" href="<?= url('dashboard/communications') ?>" style="opacity:.5;">
                         <i class="bi bi-envelope me-2"></i> Comunicazioni <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
                     </a>
                     <?php endif; ?>
                 </li>
                 <li class="nav-item">
-                    <?php if (tenant_can('push_notifications')): ?>
                     <a class="nav-link <?= ($activeMenu ?? '') === 'notifications' ? 'active' : '' ?>" href="<?= url('dashboard/notifications') ?>">
                         <i class="bi bi-bell me-2"></i> Notifiche
                     </a>
-                    <?php else: ?>
-                    <a class="nav-link text-muted" href="<?= url('dashboard/notifications') ?>" style="opacity:.6;">
-                        <i class="bi bi-bell me-2"></i> Notifiche <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
-                    </a>
-                    <?php endif; ?>
                 </li>
-                <li class="nav-item"><div class="sidebar-section">Impostazioni</div></li>
+                <?php $settingsKeys = ['settings','slots','meal-categories','closures','promotions','settings-notifications','deposit','domain']; ?>
                 <li class="nav-item">
-                    <a class="nav-link <?= ($activeMenu ?? '') === 'settings' ? 'active' : '' ?>" href="<?= url('dashboard/settings') ?>">
-                        <i class="bi bi-gear me-2"></i> Generali
+                    <a class="nav-link <?= in_array($activeMenu ?? '', $settingsKeys) ? 'active' : '' ?>" href="<?= url('dashboard/settings') ?>">
+                        <i class="bi bi-gear me-2"></i> Impostazioni
                     </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= ($activeMenu ?? '') === 'slots' ? 'active' : '' ?>" href="<?= url('dashboard/settings/slots') ?>">
-                        <i class="bi bi-clock me-2"></i> Orari e Coperti
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= ($activeMenu ?? '') === 'meal-categories' ? 'active' : '' ?>" href="<?= url('dashboard/settings/meal-categories') ?>">
-                        <i class="bi bi-tags me-2"></i> Categorie Pasto
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= ($activeMenu ?? '') === 'closures' ? 'active' : '' ?>" href="<?= url('dashboard/settings/closures') ?>">
-                        <i class="bi bi-calendar-x me-2"></i> Chiusure
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <?php if (tenant_can('promotions')): ?>
-                    <a class="nav-link <?= ($activeMenu ?? '') === 'promotions' ? 'active' : '' ?>" href="<?= url('dashboard/settings/promotions') ?>">
-                        <i class="bi bi-percent me-2"></i> Promozioni
-                    </a>
-                    <?php else: ?>
-                    <a class="nav-link text-muted" href="<?= url('dashboard/settings/promotions') ?>" style="opacity:.6;">
-                        <i class="bi bi-percent me-2"></i> Promozioni <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
-                    </a>
-                    <?php endif; ?>
-                </li>
-                <li class="nav-item">
-                    <?php if (tenant_can('push_notifications')): ?>
-                    <a class="nav-link <?= ($activeMenu ?? '') === 'settings-notifications' ? 'active' : '' ?>" href="<?= url('dashboard/settings/notifications') ?>">
-                        <i class="bi bi-bell me-2"></i> Notifiche
-                    </a>
-                    <?php else: ?>
-                    <a class="nav-link text-muted" href="<?= url('dashboard/settings/notifications') ?>" style="opacity:.6;">
-                        <i class="bi bi-bell me-2"></i> Notifiche <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
-                    </a>
-                    <?php endif; ?>
-                </li>
-                <li class="nav-item">
-                    <?php if (tenant_can('deposit')): ?>
-                    <a class="nav-link <?= ($activeMenu ?? '') === 'deposit' ? 'active' : '' ?>" href="<?= url('dashboard/settings/deposit') ?>">
-                        <i class="bi bi-cash me-2"></i> Caparra
-                    </a>
-                    <?php else: ?>
-                    <a class="nav-link text-muted" href="<?= url('dashboard/settings/deposit') ?>" style="opacity:.6;">
-                        <i class="bi bi-cash me-2"></i> Caparra <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
-                    </a>
-                    <?php endif; ?>
-                </li>
-                <li class="nav-item">
-                    <?php if (tenant_can('custom_domain')): ?>
-                    <a class="nav-link <?= ($activeMenu ?? '') === 'domain' ? 'active' : '' ?>" href="<?= url('dashboard/settings/domain') ?>">
-                        <i class="bi bi-globe me-2"></i> Dominio
-                    </a>
-                    <?php else: ?>
-                    <a class="nav-link text-muted" href="<?= url('dashboard/settings/domain') ?>" style="opacity:.6;">
-                        <i class="bi bi-globe me-2"></i> Dominio <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
-                    </a>
-                    <?php endif; ?>
                 </li>
             </ul>
         </nav>
