@@ -121,7 +121,7 @@ class Tenant
             'stripe_account_id', 'stripe_connect_status', 'stripe_connect_at',
             'deposit_type', 'deposit_bank_info', 'deposit_payment_link',
             'stripe_sk', 'stripe_pk', 'stripe_wh_secret',
-            'timezone', 'menu_enabled', 'promo_widget_only',
+            'timezone', 'menu_enabled', 'promo_widget_only', 'pet_friendly', 'kids_friendly',
             'notify_new_reservation', 'notify_cancellation',
             'notif_title_new_reservation', 'notif_body_new_reservation',
             'notif_title_cancellation', 'notif_body_cancellation',

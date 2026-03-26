@@ -150,6 +150,26 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                             <div class="field-hint">Se attivo, gli sconti delle promozioni vengono applicati <strong>solo</strong> alle prenotazioni dal widget online. Le prenotazioni create dalla dashboard (telefono, walk-in) non mostrano lo sconto.</div>
                         </div>
                         <div class="col-12 field-row">
+                            <label class="field-label">Badge nel widget di prenotazione</label>
+                            <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.25rem;">
+                                <div class="form-check form-switch" style="padding-left:2.5em;">
+                                    <input class="form-check-input" type="checkbox" name="pet_friendly" value="1"
+                                           id="pet-friendly" <?= !empty($tenant['pet_friendly']) ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="pet-friendly" style="font-size:.82rem;font-weight:500;">
+                                        <i class="bi bi-emoji-heart-eyes" style="color:#E65100;"></i> Pet Friendly
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch" style="padding-left:2.5em;">
+                                    <input class="form-check-input" type="checkbox" name="kids_friendly" value="1"
+                                           id="kids-friendly" <?= !empty($tenant['kids_friendly']) ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="kids-friendly" style="font-size:.82rem;font-weight:500;">
+                                        <i class="bi bi-balloon" style="color:#1565C0;"></i> Kids Friendly
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="field-hint">I badge vengono mostrati nella pagina di prenotazione per informare i clienti.</div>
+                        </div>
+                        <div class="col-12 field-row">
                             <label class="field-label">Politica di cancellazione</label>
                             <textarea class="field-input field-textarea" name="cancellation_policy" rows="3"><?= e($tenant['cancellation_policy'] ?? '') ?></textarea>
                             <div class="field-hint">Visibile al cliente nella pagina di prenotazione</div>

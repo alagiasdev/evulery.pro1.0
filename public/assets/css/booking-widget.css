@@ -21,6 +21,39 @@
     --bw-orange-bg: #FFF3E0;
 }
 
+/* ---- Friendly Badges ---- */
+.bw-badges {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.bw-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+.bw-badge--pet {
+    background: #FFF3E0;
+    color: #E65100;
+}
+
+.bw-badge--kids {
+    background: #E3F2FD;
+    color: #1565C0;
+}
+
+.bw-badge i { font-size: 0.85rem; }
+
 /* ---- Widget Container ---- */
 .bw-widget {
     font-family: var(--bw-font);

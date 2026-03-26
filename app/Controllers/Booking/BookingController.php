@@ -51,11 +51,13 @@ class BookingController
         $layout = $isEmbed ? 'embed' : 'booking';
 
         view('booking/widget', [
-            'tenant'      => $tenant,
-            'tenantName'  => $tenant['name'],
-            'tenantLogo'  => $tenant['logo_url'],
-            'slug'        => $slug,
-            'isEmbed'     => $isEmbed,
+            'tenant'       => $tenant,
+            'tenantName'   => $tenant['name'],
+            'tenantLogo'   => $tenant['logo_url'],
+            'slug'         => $slug,
+            'isEmbed'      => $isEmbed,
+            'petFriendly'  => !empty($tenant['pet_friendly']),
+            'kidsFriendly' => !empty($tenant['kids_friendly']),
         ], $layout);
     }
 
@@ -90,11 +92,13 @@ class BookingController
         }
 
         view('booking/confirmation', [
-            'tenant'      => $tenant,
-            'tenantName'  => $tenant['name'],
-            'tenantLogo'  => $tenant['logo_url'],
-            'reservation' => $reservation,
-            'depositPaid' => $depositPaid,
+            'tenant'       => $tenant,
+            'tenantName'   => $tenant['name'],
+            'tenantLogo'   => $tenant['logo_url'],
+            'reservation'  => $reservation,
+            'depositPaid'  => $depositPaid,
+            'petFriendly'  => !empty($tenant['pet_friendly']),
+            'kidsFriendly' => !empty($tenant['kids_friendly']),
         ], 'booking');
     }
 
@@ -121,11 +125,13 @@ class BookingController
         }
 
         view('booking/cancelled', [
-            'tenant'      => $tenant,
-            'tenantName'  => $tenant['name'],
-            'tenantLogo'  => $tenant['logo_url'],
-            'reservation' => $reservation,
-            'canRetry'    => $canRetry,
+            'tenant'       => $tenant,
+            'tenantName'   => $tenant['name'],
+            'tenantLogo'   => $tenant['logo_url'],
+            'reservation'  => $reservation,
+            'canRetry'     => $canRetry,
+            'petFriendly'  => !empty($tenant['pet_friendly']),
+            'kidsFriendly' => !empty($tenant['kids_friendly']),
         ], 'booking');
     }
 }

@@ -20,6 +20,16 @@
                     <?php endif; ?>
                     <h2 class="fw-bold"><?= e($tenantName ?? 'Ristorante') ?></h2>
                     <p class="text-muted mb-0">Prenota un tavolo</p>
+                    <?php if (!empty($petFriendly) || !empty($kidsFriendly)): ?>
+                    <div class="bw-badges">
+                        <?php if (!empty($petFriendly)): ?>
+                        <span class="bw-badge bw-badge--pet"><i class="bi bi-emoji-heart-eyes"></i> Pet Friendly</span>
+                        <?php endif; ?>
+                        <?php if (!empty($kidsFriendly)): ?>
+                        <span class="bw-badge bw-badge--kids"><i class="bi bi-balloon"></i> Kids Friendly</span>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
                 </div>
 
                 <?php partial('flash-messages'); ?>
