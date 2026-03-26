@@ -183,12 +183,16 @@
         bellBtn.addEventListener('click', function (e) {
             e.stopPropagation();
             toggleDropdown();
+            // Trigger push permission on first click (requires user gesture)
+            subscribeToPush();
         });
     }
 
     // Mobile bell — navigate to notifications page
     if (bellBtnMobile) {
         bellBtnMobile.addEventListener('click', function () {
+            // Trigger push permission on first click (requires user gesture)
+            subscribeToPush();
             window.location = cfg.markReadUrl; // -> /dashboard/notifications
         });
     }
@@ -209,32 +213,48 @@
     });
 
     // ========== Push Subscription ==========
-    function initPush() {
+    var swRegistration = null;
+
+    function registerServiceWorker() {
         if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
 
         navigator.serviceWorker.register('/sw-push.js').then(function (reg) {
-            // Check if already subscribed
+            swRegistration = reg;
+            // If already subscribed, nothing more to do
             reg.pushManager.getSubscription().then(function (sub) {
-                if (sub) return; // already subscribed
-
-                // Get VAPID key
-                fetch(cfg.vapidUrl, { credentials: 'same-origin' })
-                    .then(function (r) { return r.json(); })
-                    .then(function (data) {
-                        if (!data.key) return;
-                        var vapidKey = urlBase64ToUint8Array(data.key);
-                        reg.pushManager.subscribe({
-                            userVisibleOnly: true,
-                            applicationServerKey: vapidKey
-                        }).then(function (subscription) {
-                            sendSubscriptionToServer(subscription);
-                        }).catch(function (err) {
-                            console.warn('Push subscription failed:', err);
-                        });
-                    });
+                if (sub) return;
+                // Not subscribed yet — will subscribe on first bell click
             });
         }).catch(function (err) {
             console.warn('Service worker registration failed:', err);
+        });
+    }
+
+    function subscribeToPush() {
+        if (!swRegistration) return;
+
+        // Check if already subscribed
+        swRegistration.pushManager.getSubscription().then(function (sub) {
+            if (sub) return; // already done
+
+            // Check permission status
+            if (Notification.permission === 'denied') return;
+
+            // Get VAPID key and subscribe (triggered by user gesture)
+            fetch(cfg.vapidUrl, { credentials: 'same-origin' })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (!data.key) return;
+                    var vapidKey = urlBase64ToUint8Array(data.key);
+                    swRegistration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: vapidKey
+                    }).then(function (subscription) {
+                        sendSubscriptionToServer(subscription);
+                    }).catch(function (err) {
+                        console.warn('Push subscription failed:', err);
+                    });
+                });
         });
     }
 
@@ -282,6 +302,6 @@
         }
     });
 
-    // Init push subscription (auto-prompt on first visit)
-    initPush();
+    // Register service worker (permission asked on first bell click)
+    registerServiceWorker();
 })();
