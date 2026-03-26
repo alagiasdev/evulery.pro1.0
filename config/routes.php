@@ -25,6 +25,8 @@ use App\Controllers\Dashboard\MenuController;
 use App\Controllers\Dashboard\SuspendedController;
 use App\Controllers\Dashboard\ImpersonationController;
 use App\Controllers\Dashboard\CommunicationsController;
+use App\Controllers\Dashboard\NotificationController;
+use App\Controllers\Dashboard\PushController;
 use App\Controllers\ProfileController;
 use App\Controllers\UnsubscribeController;
 use App\Controllers\Menu\MenuPageController;
@@ -115,6 +117,16 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/communications/{id}/archive', [CommunicationsController::class, 'archive']);
     $r->post('/communications/{id}/send-now', [CommunicationsController::class, 'sendNow']);
     $r->post('/communications/{id}/retry', [CommunicationsController::class, 'retryFailed']);
+    // Notifications
+    $r->get('/notifications', [NotificationController::class, 'index']);
+    $r->get('/notifications/unread', [NotificationController::class, 'apiUnread']);
+    $r->get('/notifications/recent', [NotificationController::class, 'apiRecent']);
+    $r->post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
+    $r->post('/notifications/{id}/read', [NotificationController::class, 'markRead']);
+    // Push
+    $r->post('/push/subscribe', [PushController::class, 'subscribe']);
+    $r->post('/push/unsubscribe', [PushController::class, 'unsubscribe']);
+    $r->get('/push/vapid-key', [PushController::class, 'vapidKey']);
     $r->get('/profile', [ProfileController::class, 'show']);
     $r->post('/profile', [ProfileController::class, 'update']);
 });

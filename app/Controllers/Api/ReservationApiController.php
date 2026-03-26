@@ -13,6 +13,7 @@ use App\Models\Promotion;
 use App\Services\AuditLog;
 use App\Services\AvailabilityService;
 use App\Services\MailService;
+use App\Services\NotificationService;
 
 class ReservationApiController
 {
@@ -183,6 +184,16 @@ class ReservationApiController
 
         AuditLog::log(AuditLog::RESERVATION_CREATED, "Prenotazione #{$reservationId} (API)", null, (int)$tenant['id']);
 
+        // Notify restaurant owner (email + campanella + push) — non-blocking
+        try {
+            $fullRes = $full ?? (new Reservation())->findWithCustomer($reservationId);
+            if ($fullRes) {
+                (new NotificationService())->notifyNewReservation($fullRes, $tenant);
+            }
+        } catch (\Throwable $e) {
+            error_log('Notification failed: ' . $e->getMessage());
+        }
+
         $responseData = [
             'reservation_id' => $reservationId,
             'status'         => $status,
@@ -312,8 +323,12 @@ class ReservationApiController
         $reservationModel->updateStatus($id, 'cancelled');
         (new ReservationLog())->create($id, $reservation['status'], 'cancelled', null, 'Annullata dal cliente');
 
-        // Notify restaurant owner
-        MailService::sendCancellationNotification($reservation, $tenant, 'cliente');
+        // Notify restaurant owner (email + campanella + push)
+        try {
+            (new NotificationService())->notifyCancellation($reservation, $tenant, 'cliente');
+        } catch (\Throwable $e) {
+            error_log('Cancellation notification failed: ' . $e->getMessage());
+        }
 
         AuditLog::log(AuditLog::RESERVATION_STATUS, "Prenotazione #{$id}: cancelled (API)", null, (int)$tenant['id']);
 

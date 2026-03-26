@@ -15,6 +15,12 @@
             <i class="bi bi-list"></i>
         </button>
         <span class="mobile-header-title"><?= e(tenant()['name'] ?? env('APP_NAME', 'Evulery')) ?></span>
+        <?php if (tenant_can('push_notifications')): ?>
+        <button class="notif-bell-btn notif-bell-btn--mobile" id="notif-bell-btn-mobile" type="button" title="Notifiche">
+            <i class="bi bi-bell"></i>
+            <span class="notif-badge" id="notif-badge-mobile" style="display:none;">0</span>
+        </button>
+        <?php endif; ?>
     </div>
 
     <!-- Sidebar -->
@@ -64,6 +70,17 @@
                     <?php else: ?>
                     <a class="nav-link text-muted" href="<?= url('dashboard/communications') ?>" style="opacity:.6;">
                         <i class="bi bi-envelope me-2"></i> Comunicazioni <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
+                    </a>
+                    <?php endif; ?>
+                </li>
+                <li class="nav-item">
+                    <?php if (tenant_can('push_notifications')): ?>
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'notifications' ? 'active' : '' ?>" href="<?= url('dashboard/notifications') ?>">
+                        <i class="bi bi-bell me-2"></i> Notifiche
+                    </a>
+                    <?php else: ?>
+                    <a class="nav-link text-muted" href="<?= url('dashboard/notifications') ?>" style="opacity:.6;">
+                        <i class="bi bi-bell me-2"></i> Notifiche <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
                     </a>
                     <?php endif; ?>
                 </li>
@@ -158,6 +175,26 @@
                 <i class="bi bi-calendar3 me-1"></i> <?= format_date(date('Y-m-d'), 'l d/m/Y') ?>
             </span>
             <div class="d-flex align-items-center gap-2">
+                <?php if (tenant_can('push_notifications')): ?>
+                <div class="notif-bell" id="notif-bell">
+                    <button class="notif-bell-btn" id="notif-bell-btn" type="button" title="Notifiche">
+                        <i class="bi bi-bell"></i>
+                        <span class="notif-badge" id="notif-badge" style="display:none;">0</span>
+                    </button>
+                    <div class="notif-dropdown" id="notif-dropdown">
+                        <div class="notif-dropdown-header">
+                            <span>Notifiche</span>
+                            <button type="button" id="notif-mark-all" class="notif-mark-all">Segna tutte lette</button>
+                        </div>
+                        <div class="notif-dropdown-body" id="notif-list">
+                            <div class="notif-empty">Nessuna notifica</div>
+                        </div>
+                        <a href="<?= url('dashboard/notifications') ?>" class="notif-dropdown-footer">
+                            Vedi tutte le notifiche
+                        </a>
+                    </div>
+                </div>
+                <?php endif; ?>
                 <a href="<?= url('dashboard/reservations/create') ?>" class="btn btn-brand btn-sm btn-nuova-desktop">
                     <i class="bi bi-plus-circle me-1"></i> Nuova Prenotazione
                 </a>
@@ -180,6 +217,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="<?= asset('js/app.js') ?>"></script>
+    <?php if (tenant_can('push_notifications')): ?>
+    <script src="<?= asset('js/dashboard-notifications.js') ?>" defer
+            data-unread-url="<?= url('dashboard/notifications/unread') ?>"
+            data-recent-url="<?= url('dashboard/notifications/recent') ?>"
+            data-mark-read-url="<?= url('dashboard/notifications') ?>"
+            data-mark-all-url="<?= url('dashboard/notifications/read-all') ?>"
+            data-vapid-url="<?= url('dashboard/push/vapid-key') ?>"
+            data-subscribe-url="<?= url('dashboard/push/subscribe') ?>"
+            data-csrf="<?= csrf_token() ?>"
+    ></script>
+    <?php endif; ?>
     <script nonce="<?= csp_nonce() ?>">
     document.addEventListener('click', function(e) {
         var row = e.target.closest('[data-url]');

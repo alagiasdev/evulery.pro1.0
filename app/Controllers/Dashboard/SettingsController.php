@@ -90,7 +90,9 @@ class SettingsController
             'segment_occasionale'  => $segOcc,
             'segment_abituale'     => $segAbi,
             'segment_vip'          => $segVip,
-            'promo_widget_only'    => !empty($data['promo_widget_only']) ? 1 : 0,
+            'promo_widget_only'         => !empty($data['promo_widget_only']) ? 1 : 0,
+            'notify_new_reservation'    => !empty($data['notify_new_reservation']) ? 1 : 0,
+            'notify_cancellation'       => !empty($data['notify_cancellation']) ? 1 : 0,
         ];
 
         if ($logoUrl !== null) {

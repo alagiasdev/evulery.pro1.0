@@ -610,6 +610,169 @@ class MailService
         return $service->send($ownerEmail, $subjectLine, $html);
     }
 
+    /**
+     * Send new reservation notification to the restaurant owner.
+     */
+    public static function sendNewReservationNotification(array $reservation, array $tenant): bool
+    {
+        $ownerEmail = $tenant['email'] ?? '';
+        if (!$ownerEmail) {
+            return false;
+        }
+
+        $firstName     = e($reservation['first_name'] ?? '');
+        $lastName      = e($reservation['last_name'] ?? '');
+        $customerEmail = e($reservation['email'] ?? '');
+        $customerPhone = e($reservation['phone'] ?? '');
+        $partySize     = (int)($reservation['party_size'] ?? 0);
+        $date          = $reservation['reservation_date'] ?? '';
+        $time          = substr($reservation['reservation_time'] ?? '', 0, 5);
+        $dateFormatted = self::formatDateItalian($date);
+        $personeLabel  = $partySize === 1 ? 'persona' : 'persone';
+        $notes         = $reservation['customer_notes'] ?? '';
+        $source        = ($reservation['source'] ?? 'widget') === 'dashboard' ? 'Dashboard' : 'Widget online';
+        $status        = ($reservation['status'] ?? 'confirmed') === 'pending' ? 'In attesa di conferma' : 'Confermata';
+        $statusColor   = ($reservation['status'] ?? 'confirmed') === 'pending' ? '#E65100' : '#00844A';
+
+        $restaurantName = e($tenant['name'] ?? '');
+        $reservationId  = (int)($reservation['id'] ?? 0);
+        $dashboardUrl   = url("dashboard/reservations/{$reservationId}");
+
+        $subjectLine = "Nuova prenotazione - {$firstName} {$lastName} ({$dateFormatted}, {$time})";
+
+        // Notes section
+        $notesHtml = '';
+        if (!empty($notes)) {
+            $notesEscaped = e($notes);
+            $notesHtml = <<<HTML
+            <div style="margin:0 32px 24px;background:#FFF3E0;border-radius:10px;padding:14px 16px;font-size:13px;color:#E65100;">
+                <div style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;">Note del cliente</div>
+                {$notesEscaped}
+            </div>
+            HTML;
+        }
+
+        // Deposit info
+        $depositHtml = '';
+        if (!empty($reservation['deposit_required']) && !empty($reservation['deposit_amount'])) {
+            $depositAmount = number_format((float)$reservation['deposit_amount'], 2, ',', '.');
+            $depositType = $reservation['deposit_type'] ?? 'info';
+            $depositLabel = match($depositType) {
+                'stripe' => 'Stripe',
+                'link'   => 'Link pagamento',
+                default  => 'Bonifico bancario',
+            };
+            $depositHtml = <<<HTML
+            <div style="margin:0 32px 24px;background:#E3F2FD;border-radius:10px;padding:14px 16px;font-size:13px;color:#1565C0;">
+                <div style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;">Caparra richiesta</div>
+                &euro;{$depositAmount} via {$depositLabel}
+            </div>
+            HTML;
+        }
+
+        $html = <<<HTML
+        <!DOCTYPE html>
+        <html lang="it">
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+        <body style="margin:0;padding:0;background:#f5f6f8;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;">
+        <div style="max-width:600px;margin:0 auto;padding:24px 16px;">
+            <div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08);">
+
+                <!-- Header -->
+                <div style="background:#00844A;padding:32px 32px 28px;text-align:center;">
+                    <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.2);color:#fff;display:inline-block;line-height:48px;font-size:22px;margin-bottom:12px;">&#128276;</div>
+                    <h1 style="font-size:22px;font-weight:700;color:#fff;margin:0 0 4px;">Nuova prenotazione!</h1>
+                    <p style="font-size:13px;color:rgba(255,255,255,.8);margin:0;">{$restaurantName}</p>
+                </div>
+
+                <!-- Status -->
+                <div style="padding:24px 32px 8px;text-align:center;">
+                    <div style="display:inline-block;padding:6px 16px;border-radius:20px;background:{$statusColor}15;color:{$statusColor};font-size:13px;font-weight:700;">{$status}</div>
+                    <p style="font-size:14px;color:#6c757d;margin:8px 0 0;">Origine: {$source}</p>
+                </div>
+
+                <!-- Details card -->
+                <div style="margin:20px 32px 24px;background:#f8f9fa;border-radius:12px;padding:20px;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td style="padding:10px 0;">
+                                <table cellpadding="0" cellspacing="0" border="0"><tr>
+                                    <td style="width:36px;height:36px;border-radius:10px;background:#fff;color:#00844A;text-align:center;font-size:15px;line-height:36px;" width="36">&#128197;</td>
+                                    <td style="padding-left:12px;">
+                                        <div style="font-size:11px;color:#6c757d;font-weight:500;text-transform:uppercase;letter-spacing:.3px;">Data</div>
+                                        <div style="font-size:15px;font-weight:600;color:#1a1d23;">{$dateFormatted}</div>
+                                    </td>
+                                </tr></table>
+                            </td>
+                        </tr>
+                        <tr><td style="border-top:1px solid #e9ecef;"></td></tr>
+                        <tr>
+                            <td style="padding:10px 0;">
+                                <table cellpadding="0" cellspacing="0" border="0"><tr>
+                                    <td style="width:36px;height:36px;border-radius:10px;background:#fff;color:#00844A;text-align:center;font-size:15px;line-height:36px;" width="36">&#128336;</td>
+                                    <td style="padding-left:12px;">
+                                        <div style="font-size:11px;color:#6c757d;font-weight:500;text-transform:uppercase;letter-spacing:.3px;">Orario</div>
+                                        <div style="font-size:15px;font-weight:600;color:#1a1d23;">{$time}</div>
+                                    </td>
+                                </tr></table>
+                            </td>
+                        </tr>
+                        <tr><td style="border-top:1px solid #e9ecef;"></td></tr>
+                        <tr>
+                            <td style="padding:10px 0;">
+                                <table cellpadding="0" cellspacing="0" border="0"><tr>
+                                    <td style="width:36px;height:36px;border-radius:10px;background:#fff;color:#00844A;text-align:center;font-size:15px;line-height:36px;" width="36">&#128101;</td>
+                                    <td style="padding-left:12px;">
+                                        <div style="font-size:11px;color:#6c757d;font-weight:500;text-transform:uppercase;letter-spacing:.3px;">Persone</div>
+                                        <div style="font-size:15px;font-weight:600;color:#1a1d23;">{$partySize} {$personeLabel}</div>
+                                    </td>
+                                </tr></table>
+                            </td>
+                        </tr>
+                        <tr><td style="border-top:1px solid #e9ecef;"></td></tr>
+                        <tr>
+                            <td style="padding:10px 0;">
+                                <table cellpadding="0" cellspacing="0" border="0"><tr>
+                                    <td style="width:36px;height:36px;border-radius:10px;background:#fff;color:#00844A;text-align:center;font-size:15px;line-height:36px;" width="36">&#128100;</td>
+                                    <td style="padding-left:12px;">
+                                        <div style="font-size:11px;color:#6c757d;font-weight:500;text-transform:uppercase;letter-spacing:.3px;">Cliente</div>
+                                        <div style="font-size:15px;font-weight:600;color:#1a1d23;">{$firstName} {$lastName}</div>
+                                        <div style="font-size:12px;color:#6c757d;">{$customerEmail} &middot; {$customerPhone}</div>
+                                    </td>
+                                </tr></table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                {$notesHtml}
+                {$depositHtml}
+
+                <!-- CTA -->
+                <div style="text-align:center;padding:0 32px 24px;">
+                    <a href="{$dashboardUrl}" style="display:inline-block;background:#00844A;color:#ffffff;padding:12px 32px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;">Vedi dettagli</a>
+                </div>
+
+                <!-- Footer -->
+                <div style="background:#f8f9fa;padding:20px 32px;text-align:center;border-top:1px solid #f0f0f0;">
+                    <div style="font-size:11px;color:#adb5bd;line-height:1.5;">
+                        Notifica automatica di nuova prenotazione. Puoi disattivare queste email dalle impostazioni della dashboard.
+                    </div>
+                    <div style="font-size:10px;color:#ced4da;margin-top:12px;">
+                        Powered by Evulery &middot; by alagias. - Soluzioni per il web
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </body>
+        </html>
+        HTML;
+
+        $service = new self();
+        return $service->send($ownerEmail, $subjectLine, $html);
+    }
+
     public static function sendPasswordReset(string $email, string $token, string $appName = 'Evulery'): bool
     {
         $resetUrl = url("auth/reset-password/{$token}");

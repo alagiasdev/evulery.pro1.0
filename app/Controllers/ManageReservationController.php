@@ -8,6 +8,7 @@ use App\Models\Reservation;
 use App\Models\ReservationLog;
 use App\Models\Tenant;
 use App\Services\MailService;
+use App\Services\NotificationService;
 
 class ManageReservationController
 {
@@ -55,10 +56,14 @@ class ManageReservationController
             'Annullata dal cliente via link'
         );
 
-        // Notify restaurant owner
+        // Notify restaurant owner (email + campanella + push)
         $tenant = (new Tenant())->findById((int)$reservation['tenant_id']);
         if ($tenant) {
-            MailService::sendCancellationNotification($reservation, $tenant, 'cliente');
+            try {
+                (new NotificationService())->notifyCancellation($reservation, $tenant, 'cliente');
+            } catch (\Throwable $e) {
+                error_log('Cancellation notification failed: ' . $e->getMessage());
+            }
         }
 
         flash('success', 'La tua prenotazione è stata annullata.');

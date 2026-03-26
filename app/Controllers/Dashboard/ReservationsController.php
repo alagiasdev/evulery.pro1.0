@@ -14,6 +14,7 @@ use App\Models\ReservationLog;
 use App\Services\AuditLog;
 use App\Services\AvailabilityService;
 use App\Services\MailService;
+use App\Services\NotificationService;
 
 class ReservationsController
 {
@@ -255,7 +256,11 @@ class ReservationsController
             $full = $reservationModel->findWithCustomer($id);
             if ($full) {
                 $tenant = TenantResolver::current();
-                MailService::sendCancellationNotification($full, $tenant, 'staff');
+                try {
+                    (new NotificationService())->notifyCancellation($full, $tenant, 'staff');
+                } catch (\Throwable $e) {
+                    error_log('Cancellation notification failed: ' . $e->getMessage());
+                }
             }
         }
 
