@@ -31,8 +31,8 @@ class PushSubscription
             'tid'      => $tenantId,
             'uid'      => $userId,
             'endpoint' => $subscription['endpoint'],
-            'p256dh'   => $subscription['keys']['p256dh'] ?? '',
-            'auth'     => $subscription['keys']['auth'] ?? '',
+            'p256dh'   => $subscription['p256dh'] ?? '',
+            'auth'     => $subscription['auth'] ?? '',
             'ua'       => $subscription['user_agent'] ?? null,
         ]);
     }
@@ -59,6 +59,12 @@ class PushSubscription
         );
         $stmt->execute(['tid' => $tenantId, 'uid' => $userId]);
         return $stmt->fetchAll();
+    }
+
+    public function unsubscribeByTenant(string $endpoint, int $tenantId): bool
+    {
+        $stmt = $this->db->prepare('DELETE FROM push_subscriptions WHERE endpoint = :endpoint AND tenant_id = :tid');
+        return $stmt->execute(['endpoint' => $endpoint, 'tid' => $tenantId]);
     }
 
     public function deleteByEndpoint(string $endpoint): void

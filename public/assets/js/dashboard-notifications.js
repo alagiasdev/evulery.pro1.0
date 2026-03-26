@@ -271,6 +271,17 @@
     pollUnread();
     pollTimer = setInterval(pollUnread, POLL_INTERVAL);
 
+    // Pause polling when tab is hidden, resume when visible
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+            clearInterval(pollTimer);
+            pollTimer = null;
+        } else {
+            pollUnread();
+            pollTimer = setInterval(pollUnread, POLL_INTERVAL);
+        }
+    });
+
     // Init push subscription (auto-prompt on first visit)
     initPush();
 })();

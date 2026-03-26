@@ -14,6 +14,10 @@ class PushController
      */
     public function subscribe(Request $request): void
     {
+        if (!tenant_can('push_notifications')) {
+            Response::json(['error' => 'Servizio non disponibile.'], 403);
+        }
+
         $tenantId = Auth::tenantId();
         $userId = Auth::id();
         $data = $request->all();
@@ -47,10 +51,11 @@ class PushController
      */
     public function unsubscribe(Request $request): void
     {
+        $tenantId = Auth::tenantId();
         $endpoint = trim($request->all()['endpoint'] ?? '');
 
         if ($endpoint) {
-            (new PushSubscription())->unsubscribe($endpoint);
+            (new PushSubscription())->unsubscribeByTenant($endpoint, $tenantId);
         }
 
         Response::json(['ok' => true]);
@@ -61,6 +66,10 @@ class PushController
      */
     public function vapidKey(Request $request): void
     {
+        if (!tenant_can('push_notifications')) {
+            Response::json(['error' => 'Servizio non disponibile.'], 403);
+        }
+
         $key = env('VAPID_PUBLIC_KEY', '');
         Response::json(['key' => $key]);
     }
