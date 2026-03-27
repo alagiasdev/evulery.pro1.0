@@ -20,6 +20,7 @@ function getSegmentBadge(int $bookings): string {
 $totalCount = count($reservations);
 $confirmedCount = 0;
 $pendingCount = 0;
+$cancelledCount = 0;
 $totalCovers = 0;
 $pranzo = [];
 $cena = [];
@@ -28,6 +29,7 @@ foreach ($reservations as $r) {
     $totalCovers += (int)$r['party_size'];
     if ($r['status'] === 'confirmed') $confirmedCount++;
     if ($r['status'] === 'pending') $pendingCount++;
+    if ($r['status'] === 'cancelled') $cancelledCount++;
 
     $hour = (int)substr($r['reservation_time'], 0, 2);
     if ($hour < 16) {
@@ -257,6 +259,11 @@ for ($i = 0; $i < 3; $i++) {
         <div class="sp-dot" style="background:#ffc107;"></div>
         <span class="sp-num" style="color:#ffc107;"><?= $pendingCount ?></span>
         <span class="sp-label">In Attesa</span>
+    </div>
+    <div class="stat-pill">
+        <div class="sp-dot" style="background:#dc3545;"></div>
+        <span class="sp-num" style="color:#dc3545;"><?= $cancelledCount ?></span>
+        <span class="sp-label">Annullate</span>
     </div>
     <div class="stat-pill">
         <div class="sp-dot" style="background:#0d6efd;"></div>
