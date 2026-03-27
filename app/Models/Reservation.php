@@ -224,8 +224,8 @@ class Reservation
              FROM reservations
              WHERE tenant_id = :tenant_id
              AND reservation_date = :date
-             AND reservation_time >= :time_start
-             AND reservation_time < :time_end
+             AND reservation_time >= CAST(:time_start AS TIME)
+             AND reservation_time < CAST(:time_end AS TIME)
              AND status IN ("confirmed", "pending")'
         );
         $stmt->execute([
@@ -294,8 +294,8 @@ class Reservation
              FROM reservations
              WHERE tenant_id = :tenant_id
              AND reservation_date = :date
-             AND reservation_time <= :slot_time
-             AND ADDTIME(reservation_time, SEC_TO_TIME(:duration * 60)) > :slot_time2
+             AND reservation_time <= CAST(:slot_time AS TIME)
+             AND ADDTIME(reservation_time, SEC_TO_TIME(:duration * 60)) > CAST(:slot_time2 AS TIME)
              AND status IN ("confirmed", "pending")'
         );
         $stmt->execute([
