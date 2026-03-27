@@ -18,11 +18,16 @@ class NotificationService
 
         // 1. Email (if toggle enabled)
         if (!empty($tenant['notify_new_reservation'])) {
+            $ownerEmail = $tenant['email'] ?? '(vuoto)';
+            app_log("NotificationService: sending restaurant email to {$ownerEmail} for tenant {$tenantId}", 'info');
             try {
-                MailService::sendNewReservationNotification($reservation, $tenant);
+                $sent = MailService::sendNewReservationNotification($reservation, $tenant);
+                app_log("NotificationService: restaurant email result=" . ($sent ? 'OK' : 'FAILED') . " for tenant {$tenantId}", 'info');
             } catch (\Throwable $e) {
-                error_log("NotificationService: email failed for tenant {$tenantId}: " . $e->getMessage());
+                app_log("NotificationService: email exception for tenant {$tenantId}: " . $e->getMessage(), 'error');
             }
+        } else {
+            app_log("NotificationService: restaurant email SKIPPED — notify_new_reservation is OFF for tenant {$tenantId}", 'info');
         }
 
         // 2. Campanella + Push (if service enabled)
@@ -65,11 +70,16 @@ class NotificationService
 
         // 1. Email (if toggle enabled)
         if (!empty($tenant['notify_cancellation'])) {
+            $ownerEmail = $tenant['email'] ?? '(vuoto)';
+            app_log("NotificationService: sending cancellation email to {$ownerEmail} for tenant {$tenantId}", 'info');
             try {
-                MailService::sendCancellationNotification($reservation, $tenant, $cancelledBy);
+                $sent = MailService::sendCancellationNotification($reservation, $tenant, $cancelledBy);
+                app_log("NotificationService: cancellation email result=" . ($sent ? 'OK' : 'FAILED') . " for tenant {$tenantId}", 'info');
             } catch (\Throwable $e) {
-                error_log("NotificationService: cancellation email failed for tenant {$tenantId}: " . $e->getMessage());
+                app_log("NotificationService: cancellation email exception for tenant {$tenantId}: " . $e->getMessage(), 'error');
             }
+        } else {
+            app_log("NotificationService: cancellation email SKIPPED — notify_cancellation is OFF for tenant {$tenantId}", 'info');
         }
 
         // 2. Campanella + Push
