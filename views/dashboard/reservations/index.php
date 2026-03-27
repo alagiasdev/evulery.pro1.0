@@ -26,7 +26,7 @@ $pranzo = [];
 $cena = [];
 
 foreach ($reservations as $r) {
-    $totalCovers += (int)$r['party_size'];
+    if (!in_array($r['status'], ['cancelled', 'noshow'])) $totalCovers += (int)$r['party_size'];
     if ($r['status'] === 'confirmed') $confirmedCount++;
     if ($r['status'] === 'pending') $pendingCount++;
     if ($r['status'] === 'cancelled') $cancelledCount++;
@@ -268,7 +268,7 @@ for ($i = 0; $i < 3; $i++) {
     <div class="stat-pill">
         <div class="sp-dot" style="background:#0d6efd;"></div>
         <span class="sp-num" style="color:#0d6efd;"><?= $totalCovers ?></span>
-        <span class="sp-label">Coperti</span>
+        <span class="sp-label">Coperti attesi</span>
     </div>
 </div>
 
