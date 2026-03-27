@@ -399,6 +399,27 @@ Modello basato su **coperti illimitati** e **piani differenziati per servizi**.
 - [ ] Accesso API (servizio `api_access` gia nel catalogo)
 - [x] Email marketing con crediti (area comunicazioni + pacchetti email) → FASE 15 completata
 
+## FASE 21: Lead Management & Onboarding (Future)
+Gestione lead da landing page evulery.it + onboarding ristoratori.
+
+### Lead Management (CRM ristoratori)
+- [ ] Tabella `demo_requests` (name, restaurant, email, phone, message, status, notes, created_at)
+- [ ] API pubblica `POST /api/v1/demo-request` (rate limit, CORS per evulery.it)
+- [ ] Form landing invia a API backend (JS fetch)
+- [ ] Pagina admin `/admin/demo-requests` con lista, filtri (stato, data), KPI
+- [ ] Stati lead: nuovo → contattato → demo fissata → convertito → perso
+- [ ] Note interne per ogni lead + storico contatti
+- [ ] Reminder follow-up (es. "Richiamare tra 3 giorni")
+
+### Onboarding rapido
+- [ ] Da lead "convertito" → bottone "Crea ristorante" che pre-compila tenant + utente
+- [ ] Email di benvenuto automatica con credenziali
+- [ ] Assegnazione piano + periodo trial
+
+### Statistiche landing (futuro)
+- [ ] KPI: richieste/mese, tasso conversione lead → cliente
+- [ ] UTM tracking (fonte lead: Google, social, referral)
+
 ## FASE 20A: Menu Digitale Consultivo [COMPLETATA]
 Menu digitale pubblico per i clienti del ristorante, gestibile dalla dashboard. Design v2.1 con hero, categorie, allergeni EU, QR code.
 
