@@ -39,26 +39,23 @@ function describePromotion(array $p, array $daysIt): string {
 
 function promoTypeIcon(string $type): string {
     return match($type) {
-        'recurring'     => 'bi-arrow-repeat',
-        'time_slot'     => 'bi-clock',
-        'specific_date' => 'bi-calendar-event',
-        default         => 'bi-percent',
+        'recurring', 'time_slot' => 'bi-arrow-repeat',
+        'specific_date'          => 'bi-calendar-event',
+        default                  => 'bi-percent',
     };
 }
 function promoTypeLabel(string $type): string {
     return match($type) {
-        'recurring'     => 'Ricorrente',
-        'time_slot'     => 'Fascia oraria',
-        'specific_date' => 'Data specifica',
-        default         => $type,
+        'recurring', 'time_slot' => 'Ricorrente',
+        'specific_date'          => 'Data specifica',
+        default                  => $type,
     };
 }
 function promoBadgeColor(string $type): string {
     return match($type) {
-        'recurring'     => 'promo-badge--orange',
-        'time_slot'     => 'promo-badge--green',
-        'specific_date' => 'promo-badge--blue',
-        default         => 'promo-badge--orange',
+        'recurring', 'time_slot' => 'promo-badge--orange',
+        'specific_date'          => 'promo-badge--blue',
+        default                  => 'promo-badge--orange',
     };
 }
 ?>
@@ -192,15 +189,7 @@ function promoBadgeColor(string $type): string {
                                 <span class="promo-type-card">
                                     <i class="bi bi-arrow-repeat"></i>
                                     <span>Ricorrente</span>
-                                    <small>Ogni settimana</small>
-                                </span>
-                            </label>
-                            <label class="promo-type-option">
-                                <input type="radio" name="type" value="time_slot" <?= ($old['type'] ?? '') === 'time_slot' ? 'checked' : '' ?>>
-                                <span class="promo-type-card">
-                                    <i class="bi bi-clock"></i>
-                                    <span>Fascia oraria</span>
-                                    <small>Ore specifiche</small>
+                                    <small>Giorni e/o fascia oraria</small>
                                 </span>
                             </label>
                             <label class="promo-type-option">
@@ -234,9 +223,9 @@ function promoBadgeColor(string $type): string {
                         <div class="promo-field-hint">Lo sconto si applica al conto al tavolo (non alla caparra)</div>
                     </div>
 
-                    <!-- Giorni (recurring + time_slot) -->
+                    <!-- Giorni (recurring) -->
                     <div class="mb-3 promo-field" id="field-days">
-                        <label class="form-label fw-semibold" style="font-size:.82rem;">Giorni della settimana *</label>
+                        <label class="form-label fw-semibold" style="font-size:.82rem;">Giorni della settimana</label>
                         <div class="promo-days-grid">
                             <?php foreach ($DAYS_IT as $i => $dayLabel): ?>
                             <label class="promo-day-chip">
@@ -249,7 +238,7 @@ function promoBadgeColor(string $type): string {
                     </div>
 
                     <!-- Fascia oraria -->
-                    <div class="mb-3 promo-field" id="field-time" style="display:none;">
+                    <div class="mb-3 promo-field" id="field-time">
                         <label class="form-label fw-semibold" style="font-size:.82rem;">Fascia oraria</label>
                         <div class="d-flex align-items-center gap-2">
                             <input type="time" name="time_from" class="form-control form-control-sm" value="<?= e($old['time_from'] ?? '') ?>">
@@ -330,19 +319,9 @@ function promoBadgeColor(string $type): string {
         if (!type) return;
         var val = type.value;
 
-        fieldDays.style.display = (val === 'recurring' || val === 'time_slot') ? 'block' : 'none';
-        fieldTime.style.display = (val === 'time_slot' || val === 'recurring' || val === 'specific_date') ? 'block' : 'none';
+        fieldDays.style.display = (val === 'recurring') ? 'block' : 'none';
+        fieldTime.style.display = (val === 'recurring' || val === 'specific_date') ? 'block' : 'none';
         fieldDates.style.display = (val === 'specific_date') ? 'block' : 'none';
-
-        var timeHint = fieldTime.querySelector('.promo-field-hint');
-        if (timeHint) {
-            timeHint.textContent = (val === 'time_slot') ? 'Obbligatorio per fascia oraria' : 'Lascia vuoto per tutto il giorno';
-        }
-
-        var daysLabel = fieldDays.querySelector('.form-label');
-        if (daysLabel) {
-            daysLabel.textContent = (val === 'recurring') ? 'Giorni della settimana *' : 'Giorni della settimana (opzionale)';
-        }
     }
 
     typeRadios.forEach(function(r) { r.addEventListener('change', updateFields); });

@@ -171,7 +171,7 @@ class Promotion
     /**
      * Find the best applicable promotion for a given date+time.
      * Returns the promotion with the highest discount, or null.
-     * Priority on tie: specific_date > time_slot > recurring.
+     * Priority on tie: specific_date > recurring.
      */
     public function findApplicable(int $tenantId, string $date, string $time): ?array
     {
@@ -184,7 +184,7 @@ class Promotion
         $dow = (int)date('N', strtotime($date)) - 1;
         $timeMinutes = $this->timeToMinutes($time);
 
-        $typePriority = ['specific_date' => 3, 'time_slot' => 2, 'recurring' => 1];
+        $typePriority = ['specific_date' => 3, 'recurring' => 2, 'time_slot' => 2];
         $best = null;
         $bestScore = 0;
 
@@ -207,6 +207,7 @@ class Promotion
     {
         switch ($promo['type']) {
             case 'recurring':
+            case 'time_slot': // legacy — treated as recurring
                 if ($promo['days_of_week'] !== null) {
                     $days = array_map('intval', explode(',', $promo['days_of_week']));
                     if (!in_array($dow, $days)) {
@@ -217,23 +218,6 @@ class Promotion
                     $from = $this->timeToMinutes($promo['time_from']);
                     $to = $this->timeToMinutes($promo['time_to']);
                     if ($timeMinutes < $from || $timeMinutes >= $to) {
-                        return false;
-                    }
-                }
-                return true;
-
-            case 'time_slot':
-                if (!$promo['time_from'] || !$promo['time_to']) {
-                    return false;
-                }
-                $from = $this->timeToMinutes($promo['time_from']);
-                $to = $this->timeToMinutes($promo['time_to']);
-                if ($timeMinutes < $from || $timeMinutes >= $to) {
-                    return false;
-                }
-                if ($promo['days_of_week'] !== null) {
-                    $days = array_map('intval', explode(',', $promo['days_of_week']));
-                    if (!in_array($dow, $days)) {
                         return false;
                     }
                 }

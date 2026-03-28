@@ -72,19 +72,11 @@ if (isset($old['days'])) {
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Tipo *</label>
                     <div class="promo-type-selector">
                         <label class="promo-type-option">
-                            <input type="radio" name="type" value="recurring" <?= ($old['type'] ?? '') === 'recurring' ? 'checked' : '' ?>>
+                            <input type="radio" name="type" value="recurring" <?= in_array($old['type'] ?? '', ['recurring', 'time_slot']) ? 'checked' : '' ?>>
                             <span class="promo-type-card">
                                 <i class="bi bi-arrow-repeat"></i>
                                 <span>Ricorrente</span>
-                                <small>Ogni settimana</small>
-                            </span>
-                        </label>
-                        <label class="promo-type-option">
-                            <input type="radio" name="type" value="time_slot" <?= ($old['type'] ?? '') === 'time_slot' ? 'checked' : '' ?>>
-                            <span class="promo-type-card">
-                                <i class="bi bi-clock"></i>
-                                <span>Fascia oraria</span>
-                                <small>Ore specifiche</small>
+                                <small>Giorni e/o fascia oraria</small>
                             </span>
                         </label>
                         <label class="promo-type-option">
@@ -157,19 +149,9 @@ if (isset($old['days'])) {
         if (!type) return;
         var val = type.value;
 
-        fieldDays.style.display = (val === 'recurring' || val === 'time_slot') ? 'block' : 'none';
-        fieldTime.style.display = (val === 'time_slot' || val === 'recurring' || val === 'specific_date') ? 'block' : 'none';
+        fieldDays.style.display = (val === 'recurring') ? 'block' : 'none';
+        fieldTime.style.display = (val === 'recurring' || val === 'specific_date') ? 'block' : 'none';
         fieldDates.style.display = (val === 'specific_date') ? 'block' : 'none';
-
-        var timeHint = fieldTime.querySelector('.promo-field-hint');
-        if (timeHint) {
-            timeHint.textContent = (val === 'time_slot') ? 'Obbligatorio per fascia oraria' : 'Lascia vuoto per tutto il giorno';
-        }
-
-        var daysLabel = fieldDays.querySelector('.form-label');
-        if (daysLabel) {
-            daysLabel.textContent = (val === 'recurring') ? 'Giorni della settimana *' : 'Giorni della settimana (opzionale)';
-        }
     }
 
     typeRadios.forEach(function(r) { r.addEventListener('change', updateFields); });

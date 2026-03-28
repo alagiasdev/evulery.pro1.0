@@ -182,7 +182,7 @@ class PromotionsController
         }
 
         $type = $data['type'];
-        if (!in_array($type, ['recurring', 'time_slot', 'specific_date'])) {
+        if (!in_array($type, ['recurring', 'specific_date'])) {
             flash('danger', 'Tipo promozione non valido.');
             Response::redirect($redirectUrl);
         }
@@ -199,26 +199,12 @@ class PromotionsController
         ];
 
         if ($type === 'recurring') {
-            if (empty($data['days'])) {
-                flash('danger', 'Seleziona almeno un giorno della settimana.');
-                Session::flash('old_input', $data);
-                Response::redirect($redirectUrl);
+            if (!empty($data['days'])) {
+                $promoData['days_of_week'] = implode(',', array_map('intval', $data['days']));
             }
-            $promoData['days_of_week'] = implode(',', array_map('intval', $data['days']));
             if (!empty($data['time_from']) && !empty($data['time_to'])) {
                 $promoData['time_from'] = $data['time_from'];
                 $promoData['time_to'] = $data['time_to'];
-            }
-        } elseif ($type === 'time_slot') {
-            if (empty($data['time_from']) || empty($data['time_to'])) {
-                flash('danger', 'Inserisci orario inizio e fine.');
-                Session::flash('old_input', $data);
-                Response::redirect($redirectUrl);
-            }
-            $promoData['time_from'] = $data['time_from'];
-            $promoData['time_to'] = $data['time_to'];
-            if (!empty($data['days'])) {
-                $promoData['days_of_week'] = implode(',', array_map('intval', $data['days']));
             }
         } elseif ($type === 'specific_date') {
             if (empty($data['date_from'])) {
