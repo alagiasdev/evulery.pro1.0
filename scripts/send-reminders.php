@@ -29,17 +29,30 @@ if (file_exists($envFile)) {
     }
 }
 
+// Set timezone (must match web app)
+date_default_timezone_set($_ENV['APP_TIMEZONE'] ?? 'Europe/Rome');
+
+// Load helpers for app_log()
+require_once BASE_PATH . '/app/Helpers/functions.php';
+require_once BASE_PATH . '/app/Helpers/view.php';
+
 use App\Core\Database;
 use App\Models\Tenant;
 use App\Services\MailService;
 
 $db = Database::getInstance();
+
+// Sync MySQL timezone with PHP timezone
+$phpTz = date('P'); // e.g. "+02:00"
+$db->exec("SET time_zone = '{$phpTz}'");
+
 $tenantModel = new Tenant();
 $now = date('Y-m-d H:i:s');
 $sent24h = 0;
 $sent2h = 0;
 $errors = 0;
 
+app_log("Cron reminder: starting at {$now}", 'info');
 echo "[" . $now . "] Starting reminder send...\n";
 
 // ============================================================
@@ -63,11 +76,13 @@ $stmt = $db->prepare(
 $stmt->execute();
 $reminders24h = $stmt->fetchAll();
 
+app_log("Cron reminder: found " . count($reminders24h) . " reservations for 24h reminder", 'info');
 echo "  Found " . count($reminders24h) . " reservations for 24h reminder.\n";
 
 foreach ($reminders24h as $row) {
     // Service gate: skip tenants without email_reminder service
     if (!$tenantModel->canUseService((int)$row['tenant_id'], 'email_reminder')) {
+        app_log("Cron reminder: [SKIP] 24h — tenant '{$row['tenant_name']}' no email_reminder service", 'info');
         echo "    [SKIP] 24h reminder — tenant '{$row['tenant_name']}' plan does not include email_reminder\n";
         continue;
     }
@@ -86,9 +101,11 @@ foreach ($reminders24h as $row) {
         $update = $db->prepare('UPDATE reservations SET reminder_24h_sent_at = NOW() WHERE id = :id');
         $update->execute(['id' => $row['id']]);
         $sent24h++;
+        app_log("Cron reminder: [OK] 24h → {$row['email']} - res #{$row['id']} ({$row['reservation_date']} {$row['reservation_time']})", 'info');
         echo "    [OK] 24h reminder → {$row['first_name']} {$row['last_name']} ({$row['email']}) - {$row['reservation_date']} {$row['reservation_time']}\n";
     } else {
         $errors++;
+        app_log("Cron reminder: [ERR] 24h FAILED → {$row['email']} - res #{$row['id']}", 'error');
         echo "    [ERR] 24h reminder FAILED → {$row['email']} - reservation #{$row['id']}\n";
     }
 }
@@ -114,11 +131,13 @@ $stmt = $db->prepare(
 $stmt->execute();
 $reminders2h = $stmt->fetchAll();
 
+app_log("Cron reminder: found " . count($reminders2h) . " reservations for 2h reminder", 'info');
 echo "  Found " . count($reminders2h) . " reservations for 2h reminder.\n";
 
 foreach ($reminders2h as $row) {
     // Service gate: skip tenants without email_reminder service
     if (!$tenantModel->canUseService((int)$row['tenant_id'], 'email_reminder')) {
+        app_log("Cron reminder: [SKIP] 2h — tenant '{$row['tenant_name']}' no email_reminder service", 'info');
         echo "    [SKIP] 2h reminder — tenant '{$row['tenant_name']}' plan does not include email_reminder\n";
         continue;
     }
@@ -137,9 +156,11 @@ foreach ($reminders2h as $row) {
         $update = $db->prepare('UPDATE reservations SET reminder_2h_sent_at = NOW() WHERE id = :id');
         $update->execute(['id' => $row['id']]);
         $sent2h++;
+        app_log("Cron reminder: [OK] 2h → {$row['email']} - res #{$row['id']} ({$row['reservation_date']} {$row['reservation_time']})", 'info');
         echo "    [OK] 2h reminder → {$row['first_name']} {$row['last_name']} ({$row['email']}) - {$row['reservation_date']} {$row['reservation_time']}\n";
     } else {
         $errors++;
+        app_log("Cron reminder: [ERR] 2h FAILED → {$row['email']} - res #{$row['id']}", 'error');
         echo "    [ERR] 2h reminder FAILED → {$row['email']} - reservation #{$row['id']}\n";
     }
 }
@@ -147,4 +168,6 @@ foreach ($reminders2h as $row) {
 // ============================================================
 // Summary
 // ============================================================
-echo "\n[DONE] 24h sent: {$sent24h}, 2h sent: {$sent2h}, errors: {$errors}\n";
+$summary = "24h sent: {$sent24h}, 2h sent: {$sent2h}, errors: {$errors}";
+app_log("Cron reminder: DONE — {$summary}", 'info');
+echo "\n[DONE] {$summary}\n";

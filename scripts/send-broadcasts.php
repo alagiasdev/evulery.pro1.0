@@ -30,18 +30,31 @@ if (file_exists($envFile)) {
     }
 }
 
+// Set timezone (must match web app)
+date_default_timezone_set($_ENV['APP_TIMEZONE'] ?? 'Europe/Rome');
+
+// Load helpers for app_log()
+require_once BASE_PATH . '/app/Helpers/functions.php';
+require_once BASE_PATH . '/app/Helpers/view.php';
+
 use App\Core\Database;
 use App\Models\EmailCampaign;
 use App\Models\Tenant;
 use App\Services\BroadcastService;
 
 $db = Database::getInstance();
+
+// Sync MySQL timezone with PHP timezone
+$phpTz = date('P');
+$db->exec("SET time_zone = '{$phpTz}'");
+
 $campaignModel = new EmailCampaign();
 $tenantModel = new Tenant();
 $now = date('Y-m-d H:i:s');
 $totalSent = 0;
 $totalFailed = 0;
 
+app_log("Cron broadcast: starting at {$now}", 'info');
 echo "[{$now}] Starting broadcast send...\n";
 
 // Find queued campaigns
