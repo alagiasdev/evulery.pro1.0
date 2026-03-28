@@ -1698,7 +1698,7 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     .date-strip { gap: .4rem; }
     .date-chip { padding: .4rem .75rem; min-width: 75px; }
     .date-chip .chip-label { font-size: .8rem; }
-    .home-cal-dropdown { position: relative; top: auto; left: auto; right: auto; margin-top: -4px; width: 100%; }
+    /* calendar modal handled by .cal-modal-overlay on mobile */
     .capacity-banner { flex-wrap: wrap; gap: .75rem; padding: .7rem 1rem; }
     .cap-divider { display: none; }
     .cap-bar-wrap { width: 100%; flex-basis: 100%; }
@@ -1716,7 +1716,7 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     .filter-divider { display: none; }
     .filter-actions { margin-left: 0; width: 100%; justify-content: flex-end; }
     .date-chips { flex-wrap: wrap; }
-    .stats-mini { gap: .5rem; }
+    .stats-mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: .4rem; }
     .btn-action-sm { display: none; }
     .hero-details { grid-template-columns: repeat(2, 1fr); }
     .actions-bar .btn-action { flex: 1; justify-content: center; }
@@ -1763,11 +1763,11 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
         display: inline-block; width: 6px; height: 6px; border-radius: 50%;
         background: var(--brand); margin-left: 4px; vertical-align: middle;
     }
-    /* Phase B: stat pills wrapping */
-    .stats-mini { flex-wrap: wrap; gap: .25rem; }
-    .stat-pill { flex: 1; min-width: 70px; justify-content: center; padding: .3rem .4rem; }
+    /* Phase B: stat pills — 3-col grid on mobile */
+    .stats-mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: .35rem; }
+    .stat-pill { justify-content: center; padding: .4rem .5rem; }
     .sp-label { font-size: .68rem; }
-    .sp-num { font-size: .78rem; }
+    .sp-num { font-size: .82rem; }
     /* Phase B: pagination compact */
     .pagination-bar { flex-direction: column; gap: .5rem; align-items: center; }
     .pagination-info { font-size: .75rem; }
@@ -1911,6 +1911,22 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     margin-top: 6px; border: 1px solid #dee2e6; border-radius: 10px;
     padding: 1rem; background: #fff; width: 300px;
     box-shadow: 0 4px 12px rgba(0,0,0,.1);
+}
+/* --- Calendar Mobile Modal (appended to body) --- */
+.cal-modal-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,.4);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem;
+}
+.cal-modal-overlay .cal-modal-box {
+    background: #fff; border-radius: 14px; padding: 1.25rem;
+    width: 100%; max-width: 320px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.25);
+}
+.cal-modal-overlay .home-cal-dropdown {
+    position: static; width: 100%; margin-top: 0;
+    border: none; box-shadow: none; padding: 0;
 }
 
 /* --- Slots Grid: Inactive Category Rows --- */

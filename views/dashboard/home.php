@@ -429,6 +429,8 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
     var selDate = new Date(selectedDate + 'T00:00:00');
     var calMonth = selDate.getMonth();
     var calYear = selDate.getFullYear();
+    var isMobile = window.matchMedia('(max-width: 768px)').matches;
+    var modalOverlay = null;
 
     function renderCal() {
         monthLabel.textContent = MONTHS[calMonth] + ' ' + calYear;
@@ -451,10 +453,37 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
         });
     }
 
+    function openCal() {
+        if (isMobile) {
+            // Move dropdown into a body-level modal overlay
+            if (!modalOverlay) {
+                modalOverlay = document.createElement('div');
+                modalOverlay.className = 'cal-modal-overlay';
+                var box = document.createElement('div');
+                box.className = 'cal-modal-box';
+                modalOverlay.appendChild(box);
+                modalOverlay.addEventListener('click', function(e) {
+                    if (e.target === modalOverlay) closeCal();
+                });
+            }
+            modalOverlay.querySelector('.cal-modal-box').appendChild(dropdown);
+            document.body.appendChild(modalOverlay);
+        }
+        dropdown.style.display = 'block';
+        renderCal();
+    }
+    function closeCal() {
+        dropdown.style.display = 'none';
+        if (isMobile && modalOverlay && modalOverlay.parentNode) {
+            // Move dropdown back to original parent
+            document.getElementById('home-cal-toggle').parentNode.appendChild(dropdown);
+            modalOverlay.remove();
+        }
+    }
+
     toggle.addEventListener('click', function(e) {
         e.preventDefault(); e.stopPropagation();
-        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-        if (dropdown.style.display === 'block') renderCal();
+        dropdown.style.display === 'none' ? openCal() : closeCal();
     });
     document.getElementById('home-cal-prev').addEventListener('click', function(e) {
         e.stopPropagation(); calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCal();
@@ -463,8 +492,8 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
         e.stopPropagation(); calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCal();
     });
     document.addEventListener('click', function(e) {
-        if (!e.target.closest('#home-cal-dropdown') && !e.target.closest('#home-cal-toggle'))
-            dropdown.style.display = 'none';
+        if (!isMobile && !e.target.closest('#home-cal-dropdown') && !e.target.closest('#home-cal-toggle'))
+            closeCal();
     });
 
     // Mini calendar (sidebar)

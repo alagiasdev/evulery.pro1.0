@@ -448,11 +448,39 @@ for ($i = 0; $i < 3; $i++) {
         });
     }
 
+    var isMobile = window.matchMedia('(max-width: 768px)').matches;
+    var modalOverlay = null;
+
+    function openCal() {
+        if (isMobile) {
+            if (!modalOverlay) {
+                modalOverlay = document.createElement('div');
+                modalOverlay.className = 'cal-modal-overlay';
+                var box = document.createElement('div');
+                box.className = 'cal-modal-box';
+                modalOverlay.appendChild(box);
+                modalOverlay.addEventListener('click', function(e) {
+                    if (e.target === modalOverlay) closeCal();
+                });
+            }
+            modalOverlay.querySelector('.cal-modal-box').appendChild(dropdown);
+            document.body.appendChild(modalOverlay);
+        }
+        dropdown.style.display = 'block';
+        render();
+    }
+    function closeCal() {
+        dropdown.style.display = 'none';
+        if (isMobile && modalOverlay && modalOverlay.parentNode) {
+            toggle.parentNode.appendChild(dropdown);
+            modalOverlay.remove();
+        }
+    }
+
     toggle.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-        if (dropdown.style.display === 'block') render();
+        dropdown.style.display === 'none' ? openCal() : closeCal();
     });
 
     document.getElementById('res-cal-prev').addEventListener('click', function(e) {
@@ -470,8 +498,8 @@ for ($i = 0; $i < 3; $i++) {
     });
 
     document.addEventListener('click', function(e) {
-        if (!e.target.closest('#res-cal-dropdown') && !e.target.closest('#res-cal-toggle')) {
-            dropdown.style.display = 'none';
+        if (!isMobile && !e.target.closest('#res-cal-dropdown') && !e.target.closest('#res-cal-toggle')) {
+            closeCal();
         }
     });
 })();
