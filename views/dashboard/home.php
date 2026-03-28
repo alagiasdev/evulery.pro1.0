@@ -124,6 +124,13 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
         </div>
     </div>
     <div class="dh-stat-card">
+        <div class="dh-stat-icon red"><i class="bi bi-x-circle-fill"></i></div>
+        <div>
+            <div class="dh-stat-value"><?= (int)$stats['cancelled'] ?></div>
+            <div class="dh-stat-label">Annullate</div>
+        </div>
+    </div>
+    <div class="dh-stat-card">
         <div class="dh-stat-icon red"><i class="bi bi-person-x-fill"></i></div>
         <div>
             <div class="dh-stat-value"><?= (int)$stats['noshow'] ?></div>
