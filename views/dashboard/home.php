@@ -87,7 +87,7 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
         <div class="dh-stat-icon blue"><i class="bi bi-people-fill"></i></div>
         <div>
             <div class="dh-stat-value"><?= (int)$stats['covers'] ?></div>
-            <div class="dh-stat-label">Coperti totali</div>
+            <div class="dh-stat-label">Coperti attesi</div>
             <?php if ($coversDiff !== 0): ?>
             <div class="dh-stat-trend <?= $coversDiff > 0 ? 'up' : 'down' ?>">
                 <i class="bi bi-arrow-<?= $coversDiff > 0 ? 'up' : 'down' ?>"></i>

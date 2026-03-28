@@ -93,7 +93,7 @@ class HomeController
         $db = Database::getInstance();
         $stmt = $db->prepare(
             'SELECT COUNT(*) as total,
-                    COALESCE(SUM(party_size), 0) as covers,
+                    COALESCE(SUM(CASE WHEN status NOT IN ("cancelled","noshow") THEN party_size ELSE 0 END), 0) as covers,
                     SUM(CASE WHEN status = "confirmed" THEN 1 ELSE 0 END) as confirmed,
                     SUM(CASE WHEN status = "pending" THEN 1 ELSE 0 END) as pending,
                     SUM(CASE WHEN status = "arrived" THEN 1 ELSE 0 END) as arrived,
