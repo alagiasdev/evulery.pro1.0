@@ -287,10 +287,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateDepositInfo() {
         var el = getEl('deposit-text');
+        var wrap = getEl('deposit-info');
         if (!el || !config.depositEnabled) return;
         var base = config.depositAmount || 0;
         var mode = config.depositMode || 'per_table';
         var party = state.selectedPartySize || 2;
+        var minParty = config.depositMinParty || 0;
+
+        // Hide deposit info if below threshold
+        if (wrap && minParty > 0 && party < minParty) {
+            wrap.style.display = 'none';
+            return;
+        }
+        if (wrap) wrap.style.display = '';
+
         if (mode === 'per_person') {
             var total = (base * party).toFixed(2);
             el.innerHTML = 'Caparra richiesta: <strong>&euro;' + total + '</strong> (&euro;' + parseFloat(base).toFixed(2) + ' &times; ' + party + ' persone)';

@@ -7,6 +7,7 @@ $settingsTabs = [
     ['url' => url('dashboard/settings/promotions'),     'icon' => 'bi-percent',      'label' => 'Promozioni',       'key' => 'promotions'],
     ['url' => url('dashboard/settings/notifications'),  'icon' => 'bi-bell',       'label' => 'Notifiche',        'key' => 'settings-notifications'],
     ['url' => url('dashboard/settings/deposit'),        'icon' => 'bi-cash',         'label' => 'Caparra',          'key' => 'deposit'],
+    ['url' => url('dashboard/settings/ordering'),       'icon' => 'bi-bag-check',   'label' => 'Ordini online',    'key' => 'settings-ordering'],
     ['url' => url('dashboard/settings/domain'),         'icon' => 'bi-globe',        'label' => 'Dominio',          'key' => 'domain'],
 ];
 
@@ -129,6 +130,12 @@ function promoBadgeColor(string $type): string {
                 <?php $desc = describePromotion($p, $DAYS_IT); if ($desc): ?>
                 <span class="promo-meta-item"><i class="bi bi-calendar-range"></i> <?= e($desc) ?></span>
                 <?php endif; ?>
+                <?php $at = $p['applies_to'] ?? 'all'; if ($at !== 'all'): ?>
+                <span class="promo-meta-item" style="color:<?= $at === 'orders' ? '#E65100' : '#1565C0' ?>;">
+                    <i class="bi <?= $at === 'orders' ? 'bi-bag' : 'bi-calendar-check' ?>"></i>
+                    <?= $at === 'orders' ? 'Solo ordini' : 'Solo prenotazioni' ?>
+                </span>
+                <?php endif; ?>
             </div>
         </div>
         <div class="promo-item-stats">
@@ -220,7 +227,35 @@ function promoBadgeColor(string $type): string {
                             <option value="<?= $pct ?>" <?= ($old['discount_percent'] ?? '') == $pct ? 'selected' : '' ?>>-<?= $pct ?>%</option>
                             <?php endforeach; ?>
                         </select>
-                        <div class="promo-field-hint">Lo sconto si applica al conto al tavolo (non alla caparra)</div>
+                        <div class="promo-field-hint">Lo sconto si applica al conto (prenotazioni) o ai prezzi (ordini online)</div>
+                    </div>
+
+                    <!-- Si applica a -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="font-size:.82rem;">Si applica a</label>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <?php
+                            $hasOrdering = tenant_can('online_ordering');
+                            $appliesToOptions = [
+                                'all'          => ['icon' => 'bi-grid', 'label' => 'Tutto', 'desc' => 'Prenotazioni + Ordini'],
+                                'reservations' => ['icon' => 'bi-calendar-check', 'label' => 'Prenotazioni', 'desc' => 'Solo widget prenotazione'],
+                                'orders'       => ['icon' => 'bi-bag', 'label' => 'Ordini online', 'desc' => 'Solo store ordini'],
+                            ];
+                            if (!$hasOrdering) {
+                                unset($appliesToOptions['all'], $appliesToOptions['orders']);
+                            }
+                            foreach ($appliesToOptions as $val => $opt):
+                            ?>
+                            <label class="promo-type-option" style="flex:1; min-width:120px;">
+                                <input type="radio" name="applies_to" value="<?= $val ?>" <?= ($old['applies_to'] ?? ($hasOrdering ? 'all' : 'reservations')) === $val ? 'checked' : '' ?>>
+                                <span class="promo-type-card" style="padding:.5rem .6rem;">
+                                    <i class="bi <?= $opt['icon'] ?>"></i>
+                                    <span style="font-size:.78rem;"><?= $opt['label'] ?></span>
+                                    <small><?= $opt['desc'] ?></small>
+                                </span>
+                            </label>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
 
                     <!-- Giorni (recurring) -->

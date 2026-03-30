@@ -101,9 +101,13 @@ class ReservationApiController
             }
         }
 
-        // Determine deposit - require if tenant has deposit enabled AND plan includes deposit service
+        // Determine deposit - require if tenant has deposit enabled AND plan includes deposit service AND party size meets threshold
         $canUseDeposit = (new \App\Models\Tenant())->canUseService((int)$tenant['id'], 'deposit');
         $depositRequired = ($tenant['deposit_enabled'] && $canUseDeposit) ? 1 : 0;
+        $minParty = (int)($tenant['deposit_min_party_size'] ?? 0);
+        if ($depositRequired && $minParty > 0 && (int)$data['party_size'] < $minParty) {
+            $depositRequired = 0;
+        }
         $depositType = $tenant['deposit_type'] ?? 'info';
 
         // Calculate deposit based on mode: per_table (fixed) or per_person (× party_size)

@@ -7,6 +7,7 @@ $settingsTabs = [
     ['url' => url('dashboard/settings/promotions'),     'icon' => 'bi-percent',    'label' => 'Promozioni',       'key' => 'promotions'],
     ['url' => url('dashboard/settings/notifications'),  'icon' => 'bi-bell',       'label' => 'Notifiche',        'key' => 'settings-notifications'],
     ['url' => url('dashboard/settings/deposit'),        'icon' => 'bi-cash',       'label' => 'Caparra',          'key' => 'deposit'],
+    ['url' => url('dashboard/settings/ordering'),       'icon' => 'bi-bag-check',  'label' => 'Ordini online',    'key' => 'settings-ordering'],
     ['url' => url('dashboard/settings/domain'),         'icon' => 'bi-globe',      'label' => 'Dominio',          'key' => 'domain'],
 ];
 

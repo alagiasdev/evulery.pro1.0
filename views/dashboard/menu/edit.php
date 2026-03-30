@@ -94,6 +94,30 @@ if (is_string($existingAllergens)) {
                     </label>
                 </div>
 
+                <?php if (tenant_can('online_ordering')): ?>
+                <div class="card mb-3" style="background:#f8f9fa; border:1px solid #dee2e6; padding:.75rem;">
+                    <label class="form-label fw-semibold" style="font-size:.82rem;"><i class="bi bi-bag-check me-1"></i> Ordini online</label>
+                    <div class="mb-2">
+                        <label class="d-flex align-items-center gap-2" style="font-size:.82rem; cursor:pointer;">
+                            <input type="checkbox" name="is_orderable" value="1" <?= ($old['is_orderable'] ?? 0) ? 'checked' : '' ?>>
+                            <span class="fw-semibold">Ordinabile online</span>
+                        </label>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label style="font-size:.75rem; color:#6c757d;">Tempo preparazione (min)</label>
+                            <input type="number" name="prep_minutes" class="form-control form-control-sm" min="1" max="180"
+                                   value="<?= e($old['prep_minutes'] ?? '') ?>" placeholder="Default tenant">
+                        </div>
+                        <div class="col-6">
+                            <label style="font-size:.75rem; color:#6c757d;">Max ordini giornalieri</label>
+                            <input type="number" name="max_daily_qty" class="form-control form-control-sm" min="1"
+                                   value="<?= e($old['max_daily_qty'] ?? '') ?>" placeholder="Illimitato">
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
                 <div class="d-flex gap-2">
                     <a href="<?= url('dashboard/menu') ?>" class="btn btn-outline-secondary" style="flex:1;">Annulla</a>
                     <button type="submit" class="btn-save" style="flex:2;">

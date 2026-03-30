@@ -7,6 +7,7 @@ $settingsTabs = [
     ['url' => url('dashboard/settings/promotions'),     'icon' => 'bi-percent',      'label' => 'Promozioni',       'key' => 'promotions'],
     ['url' => url('dashboard/settings/notifications'),  'icon' => 'bi-bell',       'label' => 'Notifiche',        'key' => 'settings-notifications'],
     ['url' => url('dashboard/settings/deposit'),        'icon' => 'bi-cash',         'label' => 'Caparra',          'key' => 'deposit'],
+    ['url' => url('dashboard/settings/ordering'),       'icon' => 'bi-bag-check',   'label' => 'Ordini online',    'key' => 'settings-ordering'],
     ['url' => url('dashboard/settings/domain'),         'icon' => 'bi-globe',        'label' => 'Dominio',          'key' => 'domain'],
 ];
 
@@ -66,6 +67,37 @@ if (isset($old['days'])) {
                         <option value="<?= $pct ?>" <?= ($old['discount_percent'] ?? '') == $pct ? 'selected' : '' ?>>-<?= $pct ?>%</option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+
+                <!-- Si applica a -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold" style="font-size:.82rem;">Si applica a</label>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <?php
+                        $hasOrdering = tenant_can('online_ordering');
+                        $appliesToOptions = [
+                            'all'          => ['icon' => 'bi-grid', 'label' => 'Tutto'],
+                            'reservations' => ['icon' => 'bi-calendar-check', 'label' => 'Solo prenotazioni'],
+                            'orders'       => ['icon' => 'bi-bag', 'label' => 'Solo ordini'],
+                        ];
+                        if (!$hasOrdering) {
+                            unset($appliesToOptions['all'], $appliesToOptions['orders']);
+                        }
+                        $currentApplies = $old['applies_to'] ?? 'all';
+                        if (!$hasOrdering && ($currentApplies === 'all' || $currentApplies === 'orders')) {
+                            $currentApplies = 'reservations';
+                        }
+                        foreach ($appliesToOptions as $val => $opt):
+                        ?>
+                        <label class="promo-type-option" style="flex:1; min-width:100px;">
+                            <input type="radio" name="applies_to" value="<?= $val ?>" <?= $currentApplies === $val ? 'checked' : '' ?>>
+                            <span class="promo-type-card" style="padding:.45rem .5rem;">
+                                <i class="bi <?= $opt['icon'] ?>"></i>
+                                <span style="font-size:.75rem;"><?= $opt['label'] ?></span>
+                            </span>
+                        </label>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
 
                 <div class="mb-3">

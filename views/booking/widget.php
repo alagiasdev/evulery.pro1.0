@@ -165,6 +165,7 @@ window.BOOKING_CONFIG = {
     depositEnabled: <?= $tenant['deposit_enabled'] ? 'true' : 'false' ?>,
     depositAmount: <?= $tenant['deposit_amount'] ? number_format($tenant['deposit_amount'], 2, '.', '') : '0' ?>,
     depositMode: '<?= e($tenant['deposit_mode'] ?? 'per_table') ?>',
+    depositMinParty: <?= (int)($tenant['deposit_min_party_size'] ?? 0) ?>,
     depositType: '<?= e($tenant['deposit_type'] ?? 'info') ?>',
     advanceMin: <?= (int)($tenant['booking_advance_min'] ?? 0) ?>,
     advanceMax: <?= (int)($tenant['booking_advance_max'] ?? 60) ?>,

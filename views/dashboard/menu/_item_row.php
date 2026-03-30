@@ -7,6 +7,9 @@
     <div class="dm-admin-item-info">
         <div class="dm-admin-item-name">
             <?= e($item['name']) ?>
+            <?php if (!empty($item['is_orderable']) && tenant_can('online_ordering')): ?>
+            <span class="badge" style="background:#e8f5e9; color:#00844A; font-size:.65rem; font-weight:600;"><i class="bi bi-bag-check" style="font-size:.6rem;"></i> Ordinabile</span>
+            <?php endif; ?>
             <?php if ($item['is_daily_special']): ?>
             <span class="badge" style="background:#FFF3E0; color:#E65100; font-size:.65rem; font-weight:600;">Del giorno</span>
             <?php endif; ?>

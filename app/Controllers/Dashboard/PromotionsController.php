@@ -187,10 +187,16 @@ class PromotionsController
             Response::redirect($redirectUrl);
         }
 
+        $appliesTo = $data['applies_to'] ?? 'all';
+        if (!in_array($appliesTo, ['all', 'reservations', 'orders'])) {
+            $appliesTo = 'all';
+        }
+
         $promoData = [
             'name'             => trim($data['name']),
             'discount_percent' => $discount,
             'type'             => $type,
+            'applies_to'       => $appliesTo,
             'days_of_week'     => null,
             'time_from'        => null,
             'time_to'          => null,

@@ -7,6 +7,7 @@ $settingsTabs = [
     ['url' => url('dashboard/settings/promotions'),     'icon' => 'bi-percent',    'label' => 'Promozioni',       'key' => 'promotions'],
     ['url' => url('dashboard/settings/notifications'),  'icon' => 'bi-bell',       'label' => 'Notifiche',        'key' => 'settings-notifications'],
     ['url' => url('dashboard/settings/deposit'),        'icon' => 'bi-cash',       'label' => 'Caparra',          'key' => 'deposit'],
+    ['url' => url('dashboard/settings/ordering'),       'icon' => 'bi-bag-check',  'label' => 'Ordini online',    'key' => 'settings-ordering'],
     ['url' => url('dashboard/settings/domain'),         'icon' => 'bi-globe',      'label' => 'Dominio',          'key' => 'domain'],
 ];
 
@@ -92,6 +93,20 @@ $paymentLink = $tenant['deposit_payment_link'] ?? '';
                                 <span class="mode-hint">Importo moltiplicato per il numero di coperti</span>
                             </label>
                         </div>
+                    </div>
+
+                    <!-- Min party size threshold -->
+                    <div style="margin-top:1.25rem;">
+                        <label class="field-label">Soglia minima coperti</label>
+                        <div style="display:flex;align-items:center;gap:.5rem;margin-top:.35rem;">
+                            <select name="deposit_min_party_size" class="form-select form-select-sm" style="max-width:180px;" id="min-party-select">
+                                <option value="" <?= empty($tenant['deposit_min_party_size']) ? 'selected' : '' ?>>Sempre (tutti)</option>
+                                <?php for ($i = 2; $i <= 20; $i++): ?>
+                                <option value="<?= $i ?>" <?= ((int)($tenant['deposit_min_party_size'] ?? 0)) === $i ? 'selected' : '' ?>>Da <?= $i ?> persone in su</option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+                        <div class="field-hint">La caparra viene richiesta solo quando il numero di coperti raggiunge la soglia</div>
                     </div>
 
                     <div class="amount-preview" id="amount-preview">

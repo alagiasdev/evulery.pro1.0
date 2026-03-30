@@ -50,8 +50,8 @@ class Promotion
     public function create(int $tenantId, array $data): int
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO promotions (tenant_id, name, discount_percent, type, days_of_week, time_from, time_to, date_from, date_to, is_active)
-             VALUES (:tenant_id, :name, :discount_percent, :type, :days_of_week, :time_from, :time_to, :date_from, :date_to, :is_active)'
+            'INSERT INTO promotions (tenant_id, name, discount_percent, type, days_of_week, time_from, time_to, date_from, date_to, is_active, applies_to)
+             VALUES (:tenant_id, :name, :discount_percent, :type, :days_of_week, :time_from, :time_to, :date_from, :date_to, :is_active, :applies_to)'
         );
         $stmt->execute([
             'tenant_id'        => $tenantId,
@@ -64,6 +64,7 @@ class Promotion
             'date_from'        => $data['date_from'] ?? null,
             'date_to'          => $data['date_to'] ?? null,
             'is_active'        => $data['is_active'] ?? 1,
+            'applies_to'       => $data['applies_to'] ?? 'all',
         ]);
         return (int)$this->db->lastInsertId();
     }
@@ -73,7 +74,7 @@ class Promotion
         $stmt = $this->db->prepare(
             'UPDATE promotions SET name = :name, discount_percent = :discount_percent, type = :type,
                     days_of_week = :days_of_week, time_from = :time_from, time_to = :time_to,
-                    date_from = :date_from, date_to = :date_to
+                    date_from = :date_from, date_to = :date_to, applies_to = :applies_to
              WHERE id = :id AND tenant_id = :tenant_id'
         );
         return $stmt->execute([
@@ -87,6 +88,7 @@ class Promotion
             'time_to'          => $data['time_to'] ?? null,
             'date_from'        => $data['date_from'] ?? null,
             'date_to'          => $data['date_to'] ?? null,
+            'applies_to'       => $data['applies_to'] ?? 'all',
         ]);
     }
 
@@ -172,8 +174,10 @@ class Promotion
      * Find the best applicable promotion for a given date+time.
      * Returns the promotion with the highest discount, or null.
      * Priority on tie: specific_date > recurring.
+     *
+     * @param string $context 'reservations' or 'orders' — filters by applies_to field
      */
-    public function findApplicable(int $tenantId, string $date, string $time): ?array
+    public function findApplicable(int $tenantId, string $date, string $time, string $context = 'reservations'): ?array
     {
         $promos = $this->findActiveByTenant($tenantId);
         if (empty($promos)) {
@@ -189,6 +193,12 @@ class Promotion
         $bestScore = 0;
 
         foreach ($promos as $promo) {
+            // Filter by context (applies_to)
+            $appliesTo = $promo['applies_to'] ?? 'all';
+            if ($appliesTo !== 'all' && $appliesTo !== $context) {
+                continue;
+            }
+
             if (!$this->matchesPromotion($promo, $date, $dow, $timeMinutes)) {
                 continue;
             }
