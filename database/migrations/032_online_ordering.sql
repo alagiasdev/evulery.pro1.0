@@ -51,8 +51,8 @@ CREATE TABLE IF NOT EXISTS order_items (
 
 -- 1C. Campi aggiuntivi menu_items (is_orderable esiste già da migration 012)
 ALTER TABLE menu_items
-    ADD COLUMN IF NOT EXISTS prep_minutes SMALLINT UNSIGNED DEFAULT NULL AFTER is_orderable,
-    ADD COLUMN IF NOT EXISTS max_daily_qty INT UNSIGNED DEFAULT NULL AFTER prep_minutes;
+    ADD COLUMN prep_minutes SMALLINT UNSIGNED DEFAULT NULL AFTER is_orderable,
+    ADD COLUMN max_daily_qty INT UNSIGNED DEFAULT NULL AFTER prep_minutes;
 
 -- 1D. Zone di consegna (delivery)
 CREATE TABLE IF NOT EXISTS delivery_zones (
@@ -70,19 +70,19 @@ CREATE TABLE IF NOT EXISTS delivery_zones (
 
 -- 1E. Impostazioni ordering su tenants
 ALTER TABLE tenants
-    ADD COLUMN IF NOT EXISTS ordering_enabled TINYINT(1) NOT NULL DEFAULT 0 AFTER menu_enabled,
-    ADD COLUMN IF NOT EXISTS ordering_mode ENUM('takeaway','delivery','both') NOT NULL DEFAULT 'takeaway' AFTER ordering_enabled,
-    ADD COLUMN IF NOT EXISTS ordering_prep_minutes SMALLINT UNSIGNED NOT NULL DEFAULT 30 AFTER ordering_mode,
-    ADD COLUMN IF NOT EXISTS ordering_min_amount DECIMAL(8,2) NOT NULL DEFAULT 0.00 AFTER ordering_prep_minutes,
-    ADD COLUMN IF NOT EXISTS ordering_max_per_slot SMALLINT UNSIGNED NOT NULL DEFAULT 10 AFTER ordering_min_amount,
-    ADD COLUMN IF NOT EXISTS ordering_hours JSON DEFAULT NULL AFTER ordering_max_per_slot,
-    ADD COLUMN IF NOT EXISTS ordering_payment_methods VARCHAR(50) NOT NULL DEFAULT 'cash' AFTER ordering_hours,
-    ADD COLUMN IF NOT EXISTS ordering_pickup_interval SMALLINT UNSIGNED NOT NULL DEFAULT 15 AFTER ordering_payment_methods,
-    ADD COLUMN IF NOT EXISTS ordering_auto_accept TINYINT(1) NOT NULL DEFAULT 0 AFTER ordering_pickup_interval,
-    ADD COLUMN IF NOT EXISTS delivery_mode ENUM('simple','zones') NOT NULL DEFAULT 'simple' AFTER ordering_auto_accept,
-    ADD COLUMN IF NOT EXISTS delivery_fee DECIMAL(6,2) NOT NULL DEFAULT 0.00 AFTER delivery_mode,
-    ADD COLUMN IF NOT EXISTS delivery_min_amount DECIMAL(8,2) NOT NULL DEFAULT 0.00 AFTER delivery_fee,
-    ADD COLUMN IF NOT EXISTS delivery_description VARCHAR(500) DEFAULT NULL AFTER delivery_min_amount;
+    ADD COLUMN ordering_enabled TINYINT(1) NOT NULL DEFAULT 0 AFTER menu_enabled,
+    ADD COLUMN ordering_mode ENUM('takeaway','delivery','both') NOT NULL DEFAULT 'takeaway' AFTER ordering_enabled,
+    ADD COLUMN ordering_prep_minutes SMALLINT UNSIGNED NOT NULL DEFAULT 30 AFTER ordering_mode,
+    ADD COLUMN ordering_min_amount DECIMAL(8,2) NOT NULL DEFAULT 0.00 AFTER ordering_prep_minutes,
+    ADD COLUMN ordering_max_per_slot SMALLINT UNSIGNED NOT NULL DEFAULT 10 AFTER ordering_min_amount,
+    ADD COLUMN ordering_hours JSON DEFAULT NULL AFTER ordering_max_per_slot,
+    ADD COLUMN ordering_payment_methods VARCHAR(50) NOT NULL DEFAULT 'cash' AFTER ordering_hours,
+    ADD COLUMN ordering_pickup_interval SMALLINT UNSIGNED NOT NULL DEFAULT 15 AFTER ordering_payment_methods,
+    ADD COLUMN ordering_auto_accept TINYINT(1) NOT NULL DEFAULT 0 AFTER ordering_pickup_interval,
+    ADD COLUMN delivery_mode ENUM('simple','zones') NOT NULL DEFAULT 'simple' AFTER ordering_auto_accept,
+    ADD COLUMN delivery_fee DECIMAL(6,2) NOT NULL DEFAULT 0.00 AFTER delivery_mode,
+    ADD COLUMN delivery_min_amount DECIMAL(8,2) NOT NULL DEFAULT 0.00 AFTER delivery_fee,
+    ADD COLUMN delivery_description VARCHAR(500) DEFAULT NULL AFTER delivery_min_amount;
 
 -- 1F. Servizio online_ordering
 INSERT INTO services (`key`, name, description, sort_order, is_active)
