@@ -27,6 +27,7 @@ use App\Controllers\Dashboard\ImpersonationController;
 use App\Controllers\Dashboard\CommunicationsController;
 use App\Controllers\Dashboard\NotificationController;
 use App\Controllers\Dashboard\PushController;
+use App\Controllers\Dashboard\OrderController;
 use App\Controllers\ProfileController;
 use App\Controllers\UnsubscribeController;
 use App\Controllers\Menu\MenuPageController;
@@ -36,6 +37,9 @@ use App\Controllers\ManageReservationController;
 use App\Controllers\Api\AvailabilityController;
 use App\Controllers\Api\ReservationApiController;
 use App\Controllers\Api\WebhookController;
+use App\Controllers\Api\OrderApiController;
+use App\Controllers\Ordering\OrderStoreController;
+use App\Controllers\Delivery\DeliveryBoardController;
 
 // --- AUTH ROUTES ---
 $router->group('/auth', ['csrf'], function ($r) {
@@ -68,6 +72,8 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('/customers', [CustomersController::class, 'index']);
     $r->get('/customers/stats', [CustomersController::class, 'stats']);
     $r->get('/customers/search/json', [CustomersController::class, 'searchJson']);
+    $r->get('/customers/import', [CustomersController::class, 'import']);
+    $r->post('/customers/import', [CustomersController::class, 'processImport']);
     $r->get('/customers/{id}', [CustomersController::class, 'show']);
     $r->post('/customers/{id}/notes', [CustomersController::class, 'updateNotes']);
     $r->post('/customers/{id}/toggle-block', [CustomersController::class, 'toggleBlock']);
@@ -132,6 +138,19 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/push/subscribe', [PushController::class, 'subscribe']);
     $r->post('/push/unsubscribe', [PushController::class, 'unsubscribe']);
     $r->get('/push/vapid-key', [PushController::class, 'vapidKey']);
+    // Orders (online ordering)
+    $r->get('/orders', [OrderController::class, 'index']);
+    $r->get('/orders/history', [OrderController::class, 'history']);
+    $r->get('/orders/api/kanban', [OrderController::class, 'apiKanban']);
+    $r->get('/orders/api/stats', [OrderController::class, 'apiStats']);
+    $r->get('/orders/{id}', [OrderController::class, 'show']);
+    $r->post('/orders/{id}/status', [OrderController::class, 'updateStatus']);
+    // Settings ordering
+    $r->get('/settings/ordering', [SettingsController::class, 'ordering']);
+    $r->post('/settings/ordering', [SettingsController::class, 'updateOrdering']);
+    $r->post('/settings/ordering/zones', [SettingsController::class, 'storeDeliveryZone']);
+    $r->post('/settings/ordering/zones/{id}/update', [SettingsController::class, 'updateDeliveryZone']);
+    $r->post('/settings/ordering/zones/{id}/delete', [SettingsController::class, 'deleteDeliveryZone']);
     $r->get('/profile', [ProfileController::class, 'show']);
     $r->post('/profile', [ProfileController::class, 'update']);
 });
@@ -182,6 +201,8 @@ $router->group('/api/v1', ['ratelimit'], function ($r) {
     $r->post('/tenants/{slug}/reservations/{id}/cancel', [ReservationApiController::class, 'cancel']);
     $r->post('/tenants/{slug}/reservations/{id}/retry-payment', [ReservationApiController::class, 'retryPayment']);
     $r->get('/tenants/{slug}/menu', [MenuApiController::class, 'index']);
+    $r->get('/tenants/{slug}/order-menu', [OrderApiController::class, 'menu']);
+    $r->post('/tenants/{slug}/orders', [OrderApiController::class, 'store']);
     $r->post('/stripe/webhook', [WebhookController::class, 'handle']);
 });
 
@@ -192,8 +213,18 @@ $router->get('/email/unsubscribe/{token}', [UnsubscribeController::class, 'show'
 $router->get('/manage/{token}', [ManageReservationController::class, 'show']);
 $router->post('/manage/{token}/cancel', [ManageReservationController::class, 'cancel'], ['csrf']);
 
+// --- DELIVERY BOARD (public, token-based) ---
+$router->get('/delivery/{token}', [DeliveryBoardController::class, 'show']);
+$router->post('/delivery/{token}/auth', [DeliveryBoardController::class, 'auth'], ['csrf']);
+$router->get('/delivery/{token}/board', [DeliveryBoardController::class, 'board']);
+$router->post('/delivery/{token}/complete/{id}', [DeliveryBoardController::class, 'complete'], ['csrf']);
+
 // --- PUBLIC MENU (must be before /{slug} catch-all) ---
 $router->get('/{slug}/menu', [MenuPageController::class, 'show']);
+
+// --- PUBLIC ORDERING (must be before /{slug} catch-all) ---
+$router->get('/{slug}/order', [OrderStoreController::class, 'show']);
+$router->get('/{slug}/order/success', [OrderStoreController::class, 'success']);
 
 // --- PUBLIC BOOKING ROUTES (tenant-scoped, must be last) ---
 $router->get('/{slug}', [BookingController::class, 'show']);

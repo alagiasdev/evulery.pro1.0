@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Checkout Ordine</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-dark: #006837;
+            --brand-light: #e8f5ee;
+            --text-dark: #1a1d23;
+            --text-body: #4a4a4a;
+            --text-muted: #8a8a8a;
+            --bg: #FAF8F5;
+            --bg-card: #ffffff;
+            --border: #EDEBE8;
+            --radius: 14px;
+            --orange: #E8A317;
+            --red: #dc3545;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+
+        /* ===== HEADER ===== */
+        .checkout-header {
+            background: var(--bg-card);
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .back-btn {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--text-dark);
+        }
+        .checkout-header h1 {
+            font-size: .95rem;
+            font-weight: 700;
+        }
+
+        /* ===== SECTIONS ===== */
+        .section {
+            margin: 1rem 1.25rem;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .section-header {
+            padding: .85rem 1rem;
+            font-size: .82rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-header i {
+            color: var(--brand);
+            font-size: .95rem;
+        }
+        .section-body {
+            padding: .85rem 1rem;
+        }
+
+        /* ===== MODE SELECTOR ===== */
+        .mode-selector {
+            display: flex;
+            gap: .5rem;
+            margin-bottom: .85rem;
+        }
+        .mode-card {
+            flex: 1;
+            padding: .75rem;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s;
+        }
+        .mode-card.selected {
+            border-color: var(--brand);
+            background: var(--brand-light);
+        }
+        .mode-card i {
+            font-size: 1.25rem;
+            display: block;
+            margin-bottom: .25rem;
+            color: var(--text-muted);
+        }
+        .mode-card.selected i { color: var(--brand); }
+        .mode-card span {
+            font-size: .78rem;
+            font-weight: 600;
+        }
+        .mode-card small {
+            display: block;
+            font-size: .65rem;
+            color: var(--text-muted);
+            margin-top: .15rem;
+        }
+
+        /* ===== CART ITEMS ===== */
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+            padding: .6rem 0;
+        }
+        .cart-item + .cart-item {
+            border-top: 1px solid var(--border);
+        }
+        .cart-item-qty {
+            width: 26px; height: 26px;
+            border-radius: 7px;
+            background: var(--brand-light);
+            color: var(--brand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .72rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .cart-item-name {
+            flex: 1;
+            font-size: .8rem;
+            font-weight: 500;
+        }
+        .cart-item-name small {
+            display: block;
+            font-size: .68rem;
+            color: var(--text-muted);
+        }
+        .cart-item-price {
+            font-size: .82rem;
+            font-weight: 600;
+        }
+        .cart-item-edit {
+            color: var(--text-muted);
+            font-size: .85rem;
+            cursor: pointer;
+            padding: .25rem;
+        }
+
+        /* ===== FORM INPUTS ===== */
+        .form-group {
+            margin-bottom: .85rem;
+        }
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        .form-label {
+            display: block;
+            font-size: .72rem;
+            font-weight: 600;
+            color: var(--text-body);
+            margin-bottom: .3rem;
+        }
+        .form-input {
+            width: 100%;
+            padding: .6rem .75rem;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            font-size: .82rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color .2s;
+        }
+        .form-input:focus {
+            border-color: var(--brand);
+        }
+        .form-input::placeholder {
+            color: #c0c0c0;
+        }
+        .form-row {
+            display: flex;
+            gap: .5rem;
+        }
+        .form-row .form-group { flex: 1; }
+        textarea.form-input {
+            resize: none;
+            min-height: 70px;
+        }
+        .form-hint {
+            font-size: .65rem;
+            color: var(--text-muted);
+            margin-top: .2rem;
+        }
+
+        /* ===== TIME SLOTS ===== */
+        .time-slots {
+            display: flex;
+            gap: .4rem;
+            flex-wrap: wrap;
+        }
+        .time-slot {
+            padding: .45rem .7rem;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            font-size: .72rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .15s;
+        }
+        .time-slot.selected {
+            border-color: var(--brand);
+            background: var(--brand-light);
+            color: var(--brand-dark);
+        }
+        .time-slot.disabled {
+            opacity: .4;
+            pointer-events: none;
+        }
+        .time-label {
+            font-size: .72rem;
+            color: var(--text-muted);
+            margin-bottom: .4rem;
+        }
+
+        /* ===== PAYMENT ===== */
+        .pay-option {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            padding: .7rem;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            cursor: pointer;
+            transition: all .2s;
+            margin-bottom: .5rem;
+        }
+        .pay-option:last-child { margin-bottom: 0; }
+        .pay-option.selected {
+            border-color: var(--brand);
+            background: var(--brand-light);
+        }
+        .pay-radio {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pay-option.selected .pay-radio {
+            border-color: var(--brand);
+        }
+        .pay-option.selected .pay-radio::after {
+            content: '';
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            background: var(--brand);
+        }
+        .pay-icon {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+        .pay-option.selected .pay-icon {
+            color: var(--brand);
+        }
+        .pay-label {
+            font-size: .82rem;
+            font-weight: 600;
+        }
+        .pay-label small {
+            display: block;
+            font-size: .68rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        /* ===== TOTALS ===== */
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: .4rem 0;
+            font-size: .8rem;
+        }
+        .total-row.subtotal {
+            color: var(--text-muted);
+        }
+        .total-row.discount {
+            color: var(--brand);
+        }
+        .total-row.delivery-fee {
+            color: var(--text-body);
+        }
+        .total-row.grand-total {
+            font-size: .95rem;
+            font-weight: 700;
+            border-top: 2px solid var(--text-dark);
+            margin-top: .4rem;
+            padding-top: .6rem;
+        }
+
+        /* ===== CTA ===== */
+        .checkout-cta {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            padding: .75rem 1.25rem;
+            padding-bottom: calc(.75rem + env(safe-area-inset-bottom, 0));
+            background: rgba(255,255,255,.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border);
+            z-index: 200;
+        }
+        .cta-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            width: 100%;
+            padding: .9rem 1rem;
+            border-radius: 12px;
+            border: none;
+            background: var(--brand);
+            color: #fff;
+            font-size: .9rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .cta-btn:hover {
+            background: var(--brand-dark);
+        }
+        .cta-note {
+            text-align: center;
+            font-size: .65rem;
+            color: var(--text-muted);
+            margin-top: .35rem;
+        }
+
+        /* ===== DELIVERY ADDRESS ===== */
+        .address-saved {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            padding: .65rem;
+            border-radius: 10px;
+            background: var(--brand-light);
+            margin-bottom: .75rem;
+        }
+        .address-saved i {
+            color: var(--brand);
+            font-size: 1.1rem;
+        }
+        .address-saved-text {
+            flex: 1;
+            font-size: .78rem;
+            font-weight: 500;
+        }
+        .address-saved-edit {
+            font-size: .72rem;
+            color: var(--brand);
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<div class="checkout-header">
+    <button class="back-btn"><i class="bi bi-arrow-left"></i></button>
+    <h1>Completa ordine</h1>
+</div>
+
+<!-- ===== MODALITA ORDINE ===== -->
+<div class="section">
+    <div class="section-header">
+        <i class="bi bi-truck"></i> Modalità
+    </div>
+    <div class="section-body">
+        <div class="mode-selector">
+            <div class="mode-card selected">
+                <i class="bi bi-bag"></i>
+                <span>Asporto</span>
+                <small>Ritiro in loco</small>
+            </div>
+            <div class="mode-card">
+                <i class="bi bi-bicycle"></i>
+                <span>Consegna</span>
+                <small>A domicilio</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== RIEPILOGO CARRELLO ===== -->
+<div class="section">
+    <div class="section-header">
+        <i class="bi bi-cart3"></i> Il tuo ordine
+        <span style="margin-left:auto;font-size:.7rem;color:var(--brand);cursor:pointer;">Modifica</span>
+    </div>
+    <div class="section-body">
+        <div class="cart-item">
+            <span class="cart-item-qty">2</span>
+            <div class="cart-item-name">
+                Caprese di bufala DOP
+                <small>-15% applicato</small>
+            </div>
+            <span class="cart-item-price">€16.15</span>
+            <i class="bi bi-pencil cart-item-edit"></i>
+        </div>
+        <div class="cart-item">
+            <span class="cart-item-qty">1</span>
+            <div class="cart-item-name">
+                Risotto alla pescatora
+            </div>
+            <span class="cart-item-price">€16.00</span>
+            <i class="bi bi-pencil cart-item-edit"></i>
+        </div>
+        <div class="cart-item">
+            <span class="cart-item-qty">1</span>
+            <div class="cart-item-name">
+                Tiramisù classico
+                <small>-15% applicato</small>
+            </div>
+            <span class="cart-item-price">€5.53</span>
+            <i class="bi bi-pencil cart-item-edit"></i>
+        </div>
+    </div>
+</div>
+
+<!-- ===== ORARIO RITIRO ===== -->
+<div class="section">
+    <div class="section-header">
+        <i class="bi bi-clock"></i> Quando vuoi ritirare?
+    </div>
+    <div class="section-body">
+        <div class="time-label">Oggi · Pranzo</div>
+        <div class="time-slots">
+            <span class="time-slot disabled">12:00</span>
+            <span class="time-slot disabled">12:15</span>
+            <span class="time-slot">12:30</span>
+            <span class="time-slot selected">12:45</span>
+            <span class="time-slot">13:00</span>
+            <span class="time-slot">13:15</span>
+            <span class="time-slot">13:30</span>
+            <span class="time-slot">13:45</span>
+        </div>
+        <div class="form-hint" style="margin-top:.5rem;">
+            <i class="bi bi-info-circle"></i> Tempo di preparazione: ~25 min
+        </div>
+    </div>
+</div>
+
+<!-- ===== DATI CLIENTE ===== -->
+<div class="section">
+    <div class="section-header">
+        <i class="bi bi-person"></i> I tuoi dati
+    </div>
+    <div class="section-body">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Nome *</label>
+                <input class="form-input" type="text" placeholder="Mario">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Cognome *</label>
+                <input class="form-input" type="text" placeholder="Rossi">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Telefono *</label>
+            <input class="form-input" type="tel" placeholder="+39 333 1234567">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-input" type="email" placeholder="mario@email.it">
+            <div class="form-hint">Per ricevere la conferma dell'ordine</div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Note per la cucina</label>
+            <textarea class="form-input" placeholder="Es. senza cipolla, allergie..."></textarea>
+        </div>
+    </div>
+</div>
+
+<!-- ===== INDIRIZZO (visibile solo per Delivery) ===== -->
+<div class="section" style="border: 1.5px dashed var(--border); opacity:.6;">
+    <div class="section-header">
+        <i class="bi bi-geo-alt"></i> Indirizzo consegna
+        <span style="margin-left:auto;font-size:.65rem;background:#f0f0f0;padding:.15rem .4rem;border-radius:5px;">Solo delivery</span>
+    </div>
+    <div class="section-body">
+        <div class="form-group">
+            <label class="form-label">Indirizzo *</label>
+            <input class="form-input" type="text" placeholder="Via Roma 42, Milano" disabled>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Citofono</label>
+                <input class="form-input" type="text" placeholder="Rossi" disabled>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Piano / Scala</label>
+                <input class="form-input" type="text" placeholder="3° piano" disabled>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Istruzioni per il rider</label>
+            <textarea class="form-input" placeholder="Es. cancello nero, secondo cortile..." disabled></textarea>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PAGAMENTO ===== -->
+<div class="section">
+    <div class="section-header">
+        <i class="bi bi-credit-card"></i> Pagamento
+    </div>
+    <div class="section-body">
+        <div class="pay-option selected">
+            <span class="pay-radio"></span>
+            <i class="bi bi-cash-stack pay-icon"></i>
+            <div class="pay-label">
+                Pago al ritiro
+                <small>Contanti o carta al locale</small>
+            </div>
+        </div>
+        <div class="pay-option">
+            <span class="pay-radio"></span>
+            <i class="bi bi-credit-card-2-back pay-icon"></i>
+            <div class="pay-label">
+                Paga ora con carta
+                <small>Visa, Mastercard, Apple Pay</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== RIEPILOGO TOTALI ===== -->
+<div class="section">
+    <div class="section-header">
+        <i class="bi bi-receipt"></i> Riepilogo
+    </div>
+    <div class="section-body">
+        <div class="total-row subtotal">
+            <span>Subtotale (4 articoli)</span>
+            <span>€44.00</span>
+        </div>
+        <div class="total-row discount">
+            <span>Sconto pranzo -15%</span>
+            <span>-€6.32</span>
+        </div>
+        <div class="total-row delivery-fee" style="opacity:.5;">
+            <span>Spedizione</span>
+            <span>—</span>
+        </div>
+        <div class="total-row grand-total">
+            <span>Totale</span>
+            <span>€37.68</span>
+        </div>
+    </div>
+</div>
+
+<!-- ===== CTA ===== -->
+<div class="checkout-cta">
+    <button class="cta-btn">
+        <i class="bi bi-check-circle"></i>
+        Conferma ordine · €37.68
+    </button>
+    <div class="cta-note">Riceverai una conferma via SMS/email</div>
+</div>
+
+</body>
+</html>

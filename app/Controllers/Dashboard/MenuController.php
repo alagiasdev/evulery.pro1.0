@@ -513,7 +513,7 @@ class MenuController
         $allergens = $data['allergens'] ?? [];
         $validAllergens = array_intersect($allergens, array_keys(MenuItem::ALLERGENS));
 
-        return [
+        $result = [
             'category_id'      => (int)$data['category_id'],
             'name'             => trim($data['name']),
             'description'      => trim($data['description'] ?? ''),
@@ -522,6 +522,15 @@ class MenuController
             'is_available'     => isset($data['is_available']) ? 1 : 0,
             'is_daily_special' => isset($data['is_daily_special']) ? 1 : 0,
         ];
+
+        // Ordering fields (only if service available)
+        if (tenant_can('online_ordering')) {
+            $result['is_orderable']  = isset($data['is_orderable']) ? 1 : 0;
+            $result['prep_minutes']  = !empty($data['prep_minutes']) ? (int)$data['prep_minutes'] : null;
+            $result['max_daily_qty'] = !empty($data['max_daily_qty']) ? (int)$data['max_daily_qty'] : null;
+        }
+
+        return $result;
     }
 
     private function handleItemImageUpload(int $tenantId): ?string

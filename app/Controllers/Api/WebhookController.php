@@ -5,6 +5,7 @@ namespace App\Controllers\Api;
 use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
+use App\Models\Order;
 use App\Models\Reservation;
 use App\Models\ReservationLog;
 use App\Models\Tenant;
@@ -56,6 +57,7 @@ class WebhookController
             case 'checkout.session.completed':
                 $session = $event->data->object;
                 $reservationId = $session->metadata->reservation_id ?? null;
+                $orderId = $session->metadata->order_id ?? null;
 
                 if ($reservationId) {
                     $reservation = $reservationModel->findById((int)$reservationId);
@@ -79,6 +81,14 @@ class WebhookController
                                 MailService::sendReservationConfirmation($full, $tenant);
                             }
                         }
+                    }
+                } elseif ($orderId) {
+                    // Online ordering payment
+                    $orderModel = new Order();
+                    $order = $orderModel->findByStripeSession($session->id);
+                    if ($order && $order['payment_status'] !== 'paid') {
+                        $orderModel->updatePaymentStatus((int)$order['id'], 'paid');
+                        app_log("Order #{$order['order_number']} payment confirmed via Stripe", 'info');
                     }
                 }
                 break;

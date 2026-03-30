@@ -172,6 +172,76 @@ class MenuItem
         return array_values($parents);
     }
 
+    /**
+     * Per store ordini: piatti ordinabili + disponibili, raggruppati come findAvailableGrouped.
+     */
+    public function findOrderableGrouped(int $tenantId): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT mi.*,
+                    mc.name as category_name, mc.id as cat_id, mc.description as category_description,
+                    mc.icon as category_icon, mc.parent_id as cat_parent_id,
+                    COALESCE(parent.sort_order, mc.sort_order) as parent_sort,
+                    CASE WHEN mc.parent_id IS NULL THEN 0 ELSE mc.sort_order END as sub_sort
+             FROM menu_items mi
+             JOIN menu_categories mc ON mc.id = mi.category_id AND mc.tenant_id = mi.tenant_id
+             LEFT JOIN menu_categories parent ON parent.id = mc.parent_id AND parent.tenant_id = mi.tenant_id
+             WHERE mi.tenant_id = :tenant_id AND mi.is_available = 1 AND mi.is_orderable = 1 AND mc.is_active = 1
+                   AND (mc.parent_id IS NULL OR parent.is_active = 1)
+             ORDER BY parent_sort ASC, sub_sort ASC, mi.sort_order ASC, mi.name ASC'
+        );
+        $stmt->execute(['tenant_id' => $tenantId]);
+        $rows = $stmt->fetchAll();
+
+        $parents = [];
+        foreach ($rows as $row) {
+            $row['allergens'] = $this->decodeAllergens($row['allergens']);
+            $catId = (int)$row['cat_id'];
+            $parentId = $row['cat_parent_id'] !== null ? (int)$row['cat_parent_id'] : null;
+
+            if ($parentId === null) {
+                if (!isset($parents[$catId])) {
+                    $parents[$catId] = [
+                        'id'            => $catId,
+                        'name'          => $row['category_name'],
+                        'description'   => $row['category_description'],
+                        'icon'          => $row['category_icon'] ?? 'bi-list',
+                        'items'         => [],
+                        'subcategories' => [],
+                    ];
+                }
+                $parents[$catId]['items'][] = $row;
+            } else {
+                if (!isset($parents[$parentId])) {
+                    $parentCat = (new MenuCategory())->findById($parentId, $tenantId);
+                    $parents[$parentId] = [
+                        'id'            => $parentId,
+                        'name'          => $parentCat['name'] ?? '',
+                        'description'   => $parentCat['description'] ?? '',
+                        'icon'          => $parentCat['icon'] ?? 'bi-list',
+                        'items'         => [],
+                        'subcategories' => [],
+                    ];
+                }
+                if (!isset($parents[$parentId]['subcategories'][$catId])) {
+                    $parents[$parentId]['subcategories'][$catId] = [
+                        'id'    => $catId,
+                        'name'  => $row['category_name'],
+                        'icon'  => $row['category_icon'] ?? 'bi-list',
+                        'items' => [],
+                    ];
+                }
+                $parents[$parentId]['subcategories'][$catId]['items'][] = $row;
+            }
+        }
+
+        foreach ($parents as &$p) {
+            $p['subcategories'] = array_values($p['subcategories']);
+        }
+
+        return array_values($parents);
+    }
+
     public function findById(int $id, int $tenantId): ?array
     {
         $stmt = $this->db->prepare(
@@ -206,9 +276,9 @@ class MenuItem
     {
         $stmt = $this->db->prepare(
             'INSERT INTO menu_items (tenant_id, category_id, name, description, price, image_url, allergens,
-                                     is_available, is_daily_special, sort_order)
+                                     is_available, is_daily_special, is_orderable, prep_minutes, max_daily_qty, sort_order)
              VALUES (:tenant_id, :category_id, :name, :description, :price, :image_url, :allergens,
-                     :is_available, :is_daily_special, :sort_order)'
+                     :is_available, :is_daily_special, :is_orderable, :prep_minutes, :max_daily_qty, :sort_order)'
         );
         $stmt->execute([
             'tenant_id'        => $tenantId,
@@ -220,6 +290,9 @@ class MenuItem
             'allergens'        => $this->encodeAllergens($data['allergens'] ?? []),
             'is_available'     => $data['is_available'] ?? 1,
             'is_daily_special' => $data['is_daily_special'] ?? 0,
+            'is_orderable'     => $data['is_orderable'] ?? 0,
+            'prep_minutes'     => !empty($data['prep_minutes']) ? (int)$data['prep_minutes'] : null,
+            'max_daily_qty'    => !empty($data['max_daily_qty']) ? (int)$data['max_daily_qty'] : null,
             'sort_order'       => $data['sort_order'] ?? 0,
         ]);
         return (int)$this->db->lastInsertId();
@@ -230,7 +303,9 @@ class MenuItem
         $stmt = $this->db->prepare(
             'UPDATE menu_items SET category_id = :category_id, name = :name, description = :description,
                     price = :price, image_url = :image_url, allergens = :allergens,
-                    is_available = :is_available, is_daily_special = :is_daily_special, sort_order = :sort_order
+                    is_available = :is_available, is_daily_special = :is_daily_special,
+                    is_orderable = :is_orderable, prep_minutes = :prep_minutes, max_daily_qty = :max_daily_qty,
+                    sort_order = :sort_order
              WHERE id = :id AND tenant_id = :tenant_id'
         );
         return $stmt->execute([
@@ -244,6 +319,9 @@ class MenuItem
             'allergens'        => $this->encodeAllergens($data['allergens'] ?? []),
             'is_available'     => $data['is_available'] ?? 1,
             'is_daily_special' => $data['is_daily_special'] ?? 0,
+            'is_orderable'     => $data['is_orderable'] ?? 0,
+            'prep_minutes'     => !empty($data['prep_minutes']) ? (int)$data['prep_minutes'] : null,
+            'max_daily_qty'    => !empty($data['max_daily_qty']) ? (int)$data['max_daily_qty'] : null,
             'sort_order'       => $data['sort_order'] ?? 0,
         ]);
     }

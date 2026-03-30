@@ -211,6 +211,55 @@ class NotificationService
     }
 
     /**
+     * Notify restaurant owner about a new order.
+     */
+    public function notifyNewOrder(array $order, array $tenant): void
+    {
+        $tenantId = (int)$tenant['id'];
+
+        // 1. Email
+        if (!empty($tenant['notify_new_reservation'])) {
+            try {
+                MailService::sendNewOrderNotification($order, $tenant);
+            } catch (\Throwable $e) {
+                app_log("NotificationService: order email exception for tenant {$tenantId}: " . $e->getMessage(), 'error');
+            }
+        }
+
+        // 2. Campanella + Push
+        if ($this->canPush($tenantId)) {
+            $typeLabel = ($order['order_type'] ?? 'takeaway') === 'delivery' ? 'Consegna' : 'Asporto';
+            $title = "Nuovo ordine #{$order['order_number']}";
+            $body = "{$order['customer_name']} — {$typeLabel} · € " . number_format((float)$order['total'], 2, ',', '.');
+
+            $data = [
+                'order_id'      => (int)$order['id'],
+                'customer_name' => $order['customer_name'],
+                'url'           => url("dashboard/orders/{$order['id']}"),
+            ];
+
+            (new \App\Models\Notification())->create($tenantId, 'new_order', $title, $body, $data);
+            $this->sendPush($tenantId, $title, $body, $data);
+        }
+    }
+
+    /**
+     * Notify customer about order status change (email only).
+     */
+    public function notifyOrderStatusChange(array $order, array $tenant, string $newStatus): void
+    {
+        if (empty($order['customer_email'])) {
+            return;
+        }
+
+        try {
+            MailService::sendOrderStatusUpdate($order, $tenant, $newStatus);
+        } catch (\Throwable $e) {
+            app_log("NotificationService: order status email exception: " . $e->getMessage(), 'error');
+        }
+    }
+
+    /**
      * Check if tenant has push_notifications service enabled.
      */
     private function canPush(int $tenantId): bool

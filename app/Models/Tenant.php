@@ -113,7 +113,7 @@ class Tenant
         $allowed = [
             'slug', 'name', 'email', 'phone', 'address', 'logo_url',
             'custom_domain', 'domain_status', 'cname_target',
-            'plan', 'plan_id', 'plan_price', 'deposit_enabled', 'deposit_amount', 'deposit_mode',
+            'plan', 'plan_id', 'plan_price', 'deposit_enabled', 'deposit_amount', 'deposit_mode', 'deposit_min_party_size',
             'cancellation_policy', 'booking_instructions', 'confirmation_mode',
             'table_duration', 'time_step',
             'booking_advance_min', 'booking_advance_max',
@@ -128,6 +128,11 @@ class Tenant
             'notif_title_deposit', 'notif_body_deposit',
             'menu_hero_image', 'menu_tagline',
             'opening_hours', 'is_active',
+            'ordering_enabled', 'ordering_mode', 'ordering_prep_minutes',
+            'ordering_min_amount', 'ordering_max_per_slot', 'ordering_hours',
+            'ordering_payment_methods', 'ordering_pickup_interval', 'ordering_auto_accept',
+            'delivery_mode', 'delivery_fee', 'delivery_min_amount', 'delivery_description',
+            'delivery_board_enabled', 'delivery_board_token', 'delivery_board_pin',
         ];
 
         foreach ($allowed as $field) {
@@ -242,5 +247,30 @@ class Tenant
         );
         $stmt->execute(['amount' => $amount, 'id' => $tenantId, 'check' => $amount]);
         return $stmt->rowCount() > 0;
+    }
+
+    // --- Delivery Board ---
+
+    public function findByDeliveryToken(string $token): ?array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT * FROM tenants WHERE delivery_board_token = :token AND delivery_board_enabled = 1 AND is_active = 1 LIMIT 1'
+        );
+        $stmt->execute(['token' => $token]);
+        return $stmt->fetch() ?: null;
+    }
+
+    public function generateDeliveryToken(): string
+    {
+        for ($i = 0; $i < 10; $i++) {
+            $token = bin2hex(random_bytes(5)); // 10 char hex
+            $stmt = $this->db->prepare('SELECT COUNT(*) FROM tenants WHERE delivery_board_token = :token');
+            $stmt->execute(['token' => $token]);
+            if ((int)$stmt->fetchColumn() === 0) {
+                return $token;
+            }
+        }
+        // Fallback: longer token to guarantee uniqueness
+        return bin2hex(random_bytes(10));
     }
 }

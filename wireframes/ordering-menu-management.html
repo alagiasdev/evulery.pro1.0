@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Gestione Menu Ordini (Dashboard Ristoratore)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-dark: #006837;
+            --brand-light: #e8f5ee;
+            --text-dark: #1a1d23;
+            --text-body: #4a4a4a;
+            --text-muted: #8a8a8a;
+            --bg: #f4f6f8;
+            --bg-card: #ffffff;
+            --border: #e5e7eb;
+            --radius: 12px;
+            --orange: #f59e0b;
+            --red: #ef4444;
+            --blue: #3b82f6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+            padding: 1.5rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+            gap: .75rem;
+        }
+        .page-title { font-size: 1.25rem; font-weight: 700; }
+        .page-subtitle { font-size: .78rem; color: var(--text-muted); }
+        .header-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+        .btn {
+            padding: .5rem .85rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            font-size: .78rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            font-family: inherit;
+            transition: all .15s;
+        }
+        .btn:hover { border-color: var(--brand); }
+        .btn.primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+        .btn.primary:hover { background: var(--brand-dark); }
+        .btn.danger { color: var(--red); border-color: #fecaca; background: #fef2f2; }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 1.25rem;
+            overflow-x: auto;
+        }
+        .tab {
+            padding: .65rem 1.25rem;
+            font-size: .82rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            white-space: nowrap;
+            transition: all .15s;
+        }
+        .tab.active {
+            color: var(--brand);
+            border-bottom-color: var(--brand);
+        }
+        .tab i { margin-right: .3rem; }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            display: flex;
+            gap: .75rem;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+        }
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .45rem .75rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: .75rem;
+            font-weight: 600;
+        }
+        .stat-pill .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+        }
+        .stat-pill .dot.green { background: var(--brand); }
+        .stat-pill .dot.red { background: var(--red); }
+        .stat-pill .dot.gray { background: var(--text-muted); }
+        .stat-pill .dot.orange { background: var(--orange); }
+
+        /* ===== TOOLBAR ===== */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: .55rem .85rem .55rem 2.2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            font-size: .82rem;
+            font-family: inherit;
+            outline: none;
+        }
+        .search-box input:focus { border-color: var(--brand); }
+        .search-box i {
+            position: absolute; left: .75rem; top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted); font-size: .85rem;
+        }
+        .filter-select {
+            padding: .55rem .75rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            font-size: .78rem;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        /* ===== CATEGORY SECTION ===== */
+        .cat-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .cat-header {
+            display: flex;
+            align-items: center;
+            padding: .75rem 1rem;
+            background: #fafbfc;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+        }
+        .cat-drag {
+            color: var(--text-muted);
+            margin-right: .5rem;
+            cursor: grab;
+            font-size: .9rem;
+        }
+        .cat-name {
+            font-size: .88rem;
+            font-weight: 700;
+            flex: 1;
+        }
+        .cat-count {
+            font-size: .68rem;
+            background: var(--border);
+            padding: .15rem .5rem;
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-right: .5rem;
+        }
+        .cat-toggle {
+            font-size: .85rem;
+            color: var(--text-muted);
+            transition: transform .2s;
+        }
+        .cat-actions {
+            display: flex;
+            gap: .25rem;
+            margin-right: .5rem;
+        }
+        .cat-action-btn {
+            width: 28px; height: 28px;
+            border-radius: 6px;
+            border: none;
+            background: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .8rem;
+            transition: all .15s;
+        }
+        .cat-action-btn:hover { background: var(--border); color: var(--text-dark); }
+
+        /* ===== DISH ROW ===== */
+        .dish-list { padding: 0; }
+        .dish-row {
+            display: flex;
+            align-items: center;
+            padding: .65rem 1rem;
+            gap: .75rem;
+            border-bottom: 1px solid #f3f4f6;
+            transition: background .1s;
+        }
+        .dish-row:last-child { border-bottom: none; }
+        .dish-row:hover { background: #fafbfc; }
+        .dish-row.unavailable { opacity: .5; }
+        .dish-row.highlight { background: #fffbeb; }
+
+        .dish-drag {
+            color: #d1d5db;
+            cursor: grab;
+            font-size: .85rem;
+            flex-shrink: 0;
+        }
+        .dish-thumb {
+            width: 44px; height: 44px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #f0ece6, #e8e4de);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            overflow: hidden;
+        }
+        .dish-thumb img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .dish-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .dish-info-name {
+            font-size: .82rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+        }
+        .dish-info-desc {
+            font-size: .7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 350px;
+        }
+        .dish-badges {
+            display: flex;
+            gap: .25rem;
+            margin-top: .2rem;
+        }
+        .dish-badge {
+            font-size: .58rem;
+            font-weight: 600;
+            padding: .1rem .35rem;
+            border-radius: 4px;
+            background: #f3f4f6;
+            color: var(--text-muted);
+        }
+        .dish-badge.veg { background: #dcfce7; color: #166534; }
+        .dish-badge.vegan { background: #d1fae5; color: #065f46; }
+        .dish-badge.spicy { background: #fef2f2; color: #991b1b; }
+        .dish-badge.gluten-free { background: #fef9c3; color: #854d0e; }
+        .dish-badge.new { background: #dbeafe; color: #1e40af; }
+        .dish-badge.promo { background: #fff7ed; color: #9a3412; }
+
+        .dish-price {
+            font-size: .88rem;
+            font-weight: 700;
+            min-width: 60px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .dish-price-promo {
+            font-size: .68rem;
+            color: var(--red);
+            text-decoration: line-through;
+        }
+
+        /* ===== AVAILABILITY TOGGLE ===== */
+        .avail-toggle {
+            position: relative;
+            width: 40px; height: 22px;
+            flex-shrink: 0;
+        }
+        .avail-toggle input { display: none; }
+        .avail-toggle .slider {
+            position: absolute; inset: 0;
+            background: #d1d5db;
+            border-radius: 11px;
+            cursor: pointer;
+            transition: background .2s;
+        }
+        .avail-toggle .slider::after {
+            content: '';
+            position: absolute;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            top: 3px; left: 3px;
+            transition: transform .2s;
+        }
+        .avail-toggle input:checked + .slider {
+            background: var(--brand);
+        }
+        .avail-toggle input:checked + .slider::after {
+            transform: translateX(18px);
+        }
+
+        /* ===== DISH ACTIONS ===== */
+        .dish-actions {
+            display: flex;
+            gap: .25rem;
+            flex-shrink: 0;
+        }
+        .dish-action-btn {
+            width: 30px; height: 30px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .78rem;
+            transition: all .15s;
+        }
+        .dish-action-btn:hover {
+            border-color: var(--brand);
+            color: var(--brand);
+        }
+        .dish-action-btn.del:hover {
+            border-color: var(--red);
+            color: var(--red);
+            background: #fef2f2;
+        }
+
+        /* ===== ADD DISH ROW ===== */
+        .add-dish-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: .65rem 1rem;
+            color: var(--brand);
+            font-size: .78rem;
+            font-weight: 600;
+            cursor: pointer;
+            gap: .35rem;
+            transition: background .15s;
+        }
+        .add-dish-row:hover { background: var(--brand-light); }
+
+        /* ===== QUICK EDIT MODAL ===== */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+        .modal-box {
+            background: var(--bg-card);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 520px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,.2);
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .modal-title {
+            font-size: .95rem;
+            font-weight: 700;
+        }
+        .modal-close {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+        .modal-close:hover { background: var(--border); }
+        .modal-body { padding: 1.25rem; }
+        .modal-footer {
+            padding: .85rem 1.25rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: .5rem;
+            justify-content: flex-end;
+        }
+
+        /* ===== FORM ===== */
+        .form-group { margin-bottom: .85rem; }
+        .form-label {
+            display: block;
+            font-size: .72rem;
+            font-weight: 600;
+            color: var(--text-body);
+            margin-bottom: .3rem;
+        }
+        .form-input {
+            width: 100%;
+            padding: .55rem .75rem;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            font-size: .82rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color .2s;
+        }
+        .form-input:focus { border-color: var(--brand); }
+        .form-row { display: flex; gap: .65rem; }
+        .form-row .form-group { flex: 1; }
+        textarea.form-input { resize: vertical; min-height: 60px; }
+        .form-hint { font-size: .65rem; color: var(--text-muted); margin-top: .2rem; }
+        .form-check-row {
+            display: flex; align-items: center; gap: .5rem;
+            padding: .35rem 0;
+        }
+        .form-check-row input[type="checkbox"] {
+            width: 16px; height: 16px; accent-color: var(--brand);
+        }
+        .form-check-row label {
+            font-size: .78rem; font-weight: 500;
+        }
+
+        /* ===== IMAGE UPLOAD ===== */
+        .img-upload {
+            width: 100%;
+            height: 120px;
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: .35rem;
+            cursor: pointer;
+            transition: all .15s;
+            color: var(--text-muted);
+        }
+        .img-upload:hover {
+            border-color: var(--brand);
+            background: var(--brand-light);
+        }
+        .img-upload i { font-size: 1.5rem; }
+        .img-upload span { font-size: .75rem; font-weight: 600; }
+        .img-upload small { font-size: .65rem; }
+
+        /* ===== ALLERGEN SELECTOR ===== */
+        .allergen-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .35rem;
+        }
+        .allergen-chip {
+            padding: .3rem .6rem;
+            border-radius: 6px;
+            border: 1.5px solid var(--border);
+            font-size: .7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .15s;
+            display: flex;
+            align-items: center;
+            gap: .25rem;
+        }
+        .allergen-chip.selected {
+            border-color: var(--orange);
+            background: #fff7ed;
+            color: #9a3412;
+        }
+        .allergen-chip .check { display: none; font-size: .6rem; }
+        .allergen-chip.selected .check { display: inline; }
+
+        /* ===== BULK ACTIONS BAR ===== */
+        .bulk-bar {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-dark);
+            color: #fff;
+            padding: .65rem 1.25rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: .82rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,.25);
+            z-index: 500;
+        }
+        .bulk-bar-count {
+            font-weight: 700;
+        }
+        .bulk-bar-btn {
+            padding: .4rem .75rem;
+            border-radius: 7px;
+            border: none;
+            font-size: .75rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .bulk-bar-btn.avail { background: var(--brand); color: #fff; }
+        .bulk-bar-btn.unavail { background: #374151; color: #d1d5db; }
+        .bulk-bar-btn.del { background: var(--red); color: #fff; }
+        .bulk-bar-close {
+            background: none; border: none; color: #9ca3af;
+            cursor: pointer; font-size: 1rem;
+            margin-left: .5rem;
+        }
+
+        /* ===== ORDERING TOGGLE ===== */
+        .ordering-toggle-bar {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            padding: .75rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+        }
+        .ordering-status {
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+            font-size: .82rem;
+            font-weight: 600;
+        }
+        .ordering-status .live-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--brand);
+            animation: blink 1.5s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .3; }
+        }
+        .ordering-meta {
+            margin-left: auto;
+            font-size: .72rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== NOTES ===== */
+        .wf-notes {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #fff8e1;
+            border-radius: 10px;
+            border: 1px solid #ffe082;
+        }
+        .wf-notes-title {
+            font-size: .78rem;
+            font-weight: 700;
+            color: #6d4c00;
+            margin-bottom: .5rem;
+        }
+        .wf-notes ul {
+            font-size: .72rem;
+            color: #8b6914;
+            line-height: 1.6;
+            padding-left: 1.25rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body { padding: .75rem; }
+            .dish-info-desc { max-width: 150px; }
+            .dish-price { min-width: 45px; }
+            .dish-thumb { width: 36px; height: 36px; font-size: 1rem; }
+            .stats-bar { gap: .4rem; }
+            .stat-pill { padding: .35rem .55rem; font-size: .68rem; }
+            .form-row { flex-direction: column; gap: .5rem; }
+            .modal-box { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="page-header">
+    <div>
+        <div class="page-title">Menu Ordini</div>
+        <div class="page-subtitle">Gestisci i piatti disponibili per asporto e delivery</div>
+    </div>
+    <div class="header-actions">
+        <button class="btn"><i class="bi bi-arrow-left-right"></i> Sincronizza da menu</button>
+        <button class="btn"><i class="bi bi-download"></i> Esporta</button>
+        <button class="btn primary"><i class="bi bi-plus-lg"></i> Nuovo piatto</button>
+    </div>
+</div>
+
+<!-- ===== TABS ===== -->
+<div class="tabs">
+    <div class="tab active"><i class="bi bi-list-ul"></i> Piatti</div>
+    <div class="tab"><i class="bi bi-tags"></i> Categorie</div>
+    <div class="tab"><i class="bi bi-gear"></i> Impostazioni ordini</div>
+    <div class="tab"><i class="bi bi-clock-history"></i> Storico ordini</div>
+</div>
+
+<!-- ===== ORDERING ACTIVE / PAUSE ===== -->
+<div class="ordering-toggle-bar">
+    <label class="avail-toggle" style="margin:0;">
+        <input type="checkbox" checked>
+        <span class="slider"></span>
+    </label>
+    <div class="ordering-status">
+        <span class="live-dot"></span>
+        Ordini attivi
+    </div>
+    <div class="ordering-meta">
+        Prossima fascia: 19:00 – 22:00 · 42 piatti disponibili
+    </div>
+</div>
+
+<!-- ===== STATS BAR ===== -->
+<div class="stats-bar">
+    <div class="stat-pill"><span class="dot green"></span> 38 Disponibili</div>
+    <div class="stat-pill"><span class="dot red"></span> 4 Esauriti</div>
+    <div class="stat-pill"><span class="dot gray"></span> 6 Nascosti</div>
+    <div class="stat-pill"><span class="dot orange"></span> 3 Con promo attiva</div>
+</div>
+
+<!-- ===== TOOLBAR ===== -->
+<div class="toolbar">
+    <div class="search-box">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Cerca piatto per nome...">
+    </div>
+    <select class="filter-select">
+        <option>Tutte le categorie</option>
+        <option>Antipasti</option>
+        <option>Primi</option>
+        <option>Secondi</option>
+        <option>Contorni</option>
+        <option>Dolci</option>
+        <option>Bevande</option>
+    </select>
+    <select class="filter-select">
+        <option>Tutti gli stati</option>
+        <option>Disponibili</option>
+        <option>Esauriti</option>
+        <option>Nascosti</option>
+    </select>
+</div>
+
+<!-- ===== CATEGORY: ANTIPASTI ===== -->
+<div class="cat-section">
+    <div class="cat-header">
+        <i class="bi bi-grip-vertical cat-drag"></i>
+        <span class="cat-name">Antipasti</span>
+        <span class="cat-count">4 piatti</span>
+        <div class="cat-actions">
+            <button class="cat-action-btn" title="Modifica categoria"><i class="bi bi-pencil"></i></button>
+            <button class="cat-action-btn" title="Aggiungi piatto"><i class="bi bi-plus"></i></button>
+        </div>
+        <i class="bi bi-chevron-down cat-toggle"></i>
+    </div>
+    <div class="dish-list">
+        <!-- Dish row: available, with promo -->
+        <div class="dish-row highlight">
+            <i class="bi bi-grip-vertical dish-drag"></i>
+            <div class="dish-thumb">🥗</div>
+            <div class="dish-info">
+                <div class="dish-info-name">
+                    Caprese di bufala DOP
+                </div>
+                <div class="dish-info-desc">Mozzarella di bufala campana, pomodoro cuore di bue, basilico fresco</div>
+                <div class="dish-badges">
+                    <span class="dish-badge veg">Vegetariano</span>
+                    <span class="dish-badge promo"><i class="bi bi-tag"></i> -15%</span>
+                </div>
+            </div>
+            <div class="dish-price">
+                €8.08
+                <div class="dish-price-promo">€9.50</div>
+            </div>
+            <label class="avail-toggle">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+            <div class="dish-actions">
+                <button class="dish-action-btn" title="Modifica"><i class="bi bi-pencil"></i></button>
+                <button class="dish-action-btn" title="Duplica"><i class="bi bi-copy"></i></button>
+                <button class="dish-action-btn del" title="Elimina"><i class="bi bi-trash3"></i></button>
+            </div>
+        </div>
+
+        <!-- Dish row: available -->
+        <div class="dish-row">
+            <i class="bi bi-grip-vertical dish-drag"></i>
+            <div class="dish-thumb">🐙</div>
+            <div class="dish-info">
+                <div class="dish-info-name">Polpo alla griglia</div>
+                <div class="dish-info-desc">Polpo verace con patate schiacciate, olive taggiasche e capperi</div>
+                <div class="dish-badges">
+                    <span class="dish-badge gluten-free">Senza glutine</span>
+                </div>
+            </div>
+            <div class="dish-price">€14.00</div>
+            <label class="avail-toggle">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+            <div class="dish-actions">
+                <button class="dish-action-btn" title="Modifica"><i class="bi bi-pencil"></i></button>
+                <button class="dish-action-btn" title="Duplica"><i class="bi bi-copy"></i></button>
+                <button class="dish-action-btn del" title="Elimina"><i class="bi bi-trash3"></i></button>
+            </div>
+        </div>
+
+        <!-- Dish row: unavailable (esaurito) -->
+        <div class="dish-row unavailable">
+            <i class="bi bi-grip-vertical dish-drag"></i>
+            <div class="dish-thumb">🍤</div>
+            <div class="dish-info">
+                <div class="dish-info-name">
+                    Frittura di paranza
+                    <span style="font-size:.65rem;color:var(--red);font-weight:600;background:#fef2f2;padding:.1rem .35rem;border-radius:4px;">Esaurito</span>
+                </div>
+                <div class="dish-info-desc">Misto di pesce fritto con maionese al limone</div>
+                <div class="dish-badges">
+                    <span class="dish-badge">Glutine</span>
+                    <span class="dish-badge">Crostacei</span>
+                </div>
+            </div>
+            <div class="dish-price">€13.00</div>
+            <label class="avail-toggle">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+            <div class="dish-actions">
+                <button class="dish-action-btn" title="Modifica"><i class="bi bi-pencil"></i></button>
+                <button class="dish-action-btn" title="Duplica"><i class="bi bi-copy"></i></button>
+                <button class="dish-action-btn del" title="Elimina"><i class="bi bi-trash3"></i></button>
+            </div>
+        </div>
+
+        <!-- Dish row: new dish -->
+        <div class="dish-row">
+            <i class="bi bi-grip-vertical dish-drag"></i>
+            <div class="dish-thumb">🧀</div>
+            <div class="dish-info">
+                <div class="dish-info-name">
+                    Tagliere misto formaggi
+                </div>
+                <div class="dish-info-desc">Selezione di 5 formaggi stagionati con mieli e confetture</div>
+                <div class="dish-badges">
+                    <span class="dish-badge veg">Vegetariano</span>
+                    <span class="dish-badge new">Nuovo</span>
+                </div>
+            </div>
+            <div class="dish-price">€12.00</div>
+            <label class="avail-toggle">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+            <div class="dish-actions">
+                <button class="dish-action-btn" title="Modifica"><i class="bi bi-pencil"></i></button>
+                <button class="dish-action-btn" title="Duplica"><i class="bi bi-copy"></i></button>
+                <button class="dish-action-btn del" title="Elimina"><i class="bi bi-trash3"></i></button>
+            </div>
+        </div>
+
+        <div class="add-dish-row">
+            <i class="bi bi-plus-circle"></i> Aggiungi piatto ad Antipasti
+        </div>
+    </div>
+</div>
+
+<!-- ===== CATEGORY: PRIMI ===== -->
+<div class="cat-section">
+    <div class="cat-header">
+        <i class="bi bi-grip-vertical cat-drag"></i>
+        <span class="cat-name">Primi</span>
+        <span class="cat-count">5 piatti</span>
+        <div class="cat-actions">
+            <button class="cat-action-btn" title="Modifica categoria"><i class="bi bi-pencil"></i></button>
+            <button class="cat-action-btn" title="Aggiungi piatto"><i class="bi bi-plus"></i></button>
+        </div>
+        <i class="bi bi-chevron-down cat-toggle"></i>
+    </div>
+    <div class="dish-list">
+        <div class="dish-row">
+            <i class="bi bi-grip-vertical dish-drag"></i>
+            <div class="dish-thumb">🍝</div>
+            <div class="dish-info">
+                <div class="dish-info-name">Cacio e pepe</div>
+                <div class="dish-info-desc">Tonnarelli freschi, pecorino romano DOP, pepe nero di Sarawak</div>
+                <div class="dish-badges">
+                    <span class="dish-badge veg">Vegetariano</span>
+                </div>
+            </div>
+            <div class="dish-price">€12.00</div>
+            <label class="avail-toggle">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+            <div class="dish-actions">
+                <button class="dish-action-btn" title="Modifica"><i class="bi bi-pencil"></i></button>
+                <button class="dish-action-btn" title="Duplica"><i class="bi bi-copy"></i></button>
+                <button class="dish-action-btn del" title="Elimina"><i class="bi bi-trash3"></i></button>
+            </div>
+        </div>
+
+        <div class="dish-row highlight">
+            <i class="bi bi-grip-vertical dish-drag"></i>
+            <div class="dish-thumb">🦐</div>
+            <div class="dish-info">
+                <div class="dish-info-name">Risotto alla pescatora</div>
+                <div class="dish-info-desc">Riso Carnaroli con frutti di mare misti, pomodorini e prezzemolo</div>
+                <div class="dish-badges">
+                    <span class="dish-badge promo"><i class="bi bi-tag"></i> -15%</span>
+                </div>
+            </div>
+            <div class="dish-price">
+                €13.60
+                <div class="dish-price-promo">€16.00</div>
+            </div>
+            <label class="avail-toggle">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+            <div class="dish-actions">
+                <button class="dish-action-btn" title="Modifica"><i class="bi bi-pencil"></i></button>
+                <button class="dish-action-btn" title="Duplica"><i class="bi bi-copy"></i></button>
+                <button class="dish-action-btn del" title="Elimina"><i class="bi bi-trash3"></i></button>
+            </div>
+        </div>
+
+        <div class="dish-row">
+            <i class="bi bi-grip-vertical dish-drag"></i>
+            <div class="dish-thumb">🍜</div>
+            <div class="dish-info">
+                <div class="dish-info-name">Pappardelle al ragù di cinghiale</div>
+                <div class="dish-info-desc">Pasta fresca all'uovo con ragù cotto lentamente 6 ore</div>
+                <div class="dish-badges"></div>
+            </div>
+            <div class="dish-price">€14.50</div>
+            <label class="avail-toggle">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+            <div class="dish-actions">
+                <button class="dish-action-btn" title="Modifica"><i class="bi bi-pencil"></i></button>
+                <button class="dish-action-btn" title="Duplica"><i class="bi bi-copy"></i></button>
+                <button class="dish-action-btn del" title="Elimina"><i class="bi bi-trash3"></i></button>
+            </div>
+        </div>
+
+        <div class="add-dish-row">
+            <i class="bi bi-plus-circle"></i> Aggiungi piatto a Primi
+        </div>
+    </div>
+</div>
+
+<!-- ===== CATEGORY: BEVANDE (collapsed) ===== -->
+<div class="cat-section">
+    <div class="cat-header">
+        <i class="bi bi-grip-vertical cat-drag"></i>
+        <span class="cat-name">Bevande</span>
+        <span class="cat-count">8 piatti</span>
+        <div class="cat-actions">
+            <button class="cat-action-btn" title="Modifica categoria"><i class="bi bi-pencil"></i></button>
+            <button class="cat-action-btn" title="Aggiungi piatto"><i class="bi bi-plus"></i></button>
+        </div>
+        <i class="bi bi-chevron-right cat-toggle"></i>
+    </div>
+</div>
+
+<!-- ===== CATEGORY: DOLCI (collapsed) ===== -->
+<div class="cat-section">
+    <div class="cat-header">
+        <i class="bi bi-grip-vertical cat-drag"></i>
+        <span class="cat-name">Dolci</span>
+        <span class="cat-count">3 piatti</span>
+        <div class="cat-actions">
+            <button class="cat-action-btn" title="Modifica categoria"><i class="bi bi-pencil"></i></button>
+            <button class="cat-action-btn" title="Aggiungi piatto"><i class="bi bi-plus"></i></button>
+        </div>
+        <i class="bi bi-chevron-right cat-toggle"></i>
+    </div>
+</div>
+
+<!-- ===== ADD CATEGORY ===== -->
+<div style="text-align:center; margin:1rem 0;">
+    <button class="btn primary" style="padding:.6rem 1.5rem;">
+        <i class="bi bi-plus-lg"></i> Nuova categoria
+    </button>
+</div>
+
+<!-- ===== BULK ACTIONS BAR (shown when items selected) ===== -->
+<div class="bulk-bar">
+    <span class="bulk-bar-count">3 selezionati</span>
+    <button class="bulk-bar-btn avail"><i class="bi bi-check-circle"></i> Rendi disponibili</button>
+    <button class="bulk-bar-btn unavail"><i class="bi bi-pause-circle"></i> Segna esauriti</button>
+    <button class="bulk-bar-btn del"><i class="bi bi-trash3"></i> Elimina</button>
+    <button class="bulk-bar-close"><i class="bi bi-x-lg"></i></button>
+</div>
+
+<!-- ===== MODAL: MODIFICA PIATTO ===== -->
+<div class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span class="modal-title"><i class="bi bi-pencil" style="color:var(--brand);margin-right:.35rem;"></i> Modifica piatto</span>
+            <button class="modal-close"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+            <!-- Image -->
+            <div class="form-group">
+                <label class="form-label">Immagine piatto</label>
+                <div class="img-upload">
+                    <i class="bi bi-image"></i>
+                    <span>Trascina o clicca per caricare</span>
+                    <small>JPG, PNG · Max 2 MB · 800x600 consigliato</small>
+                </div>
+            </div>
+
+            <!-- Name + Price -->
+            <div class="form-row">
+                <div class="form-group" style="flex:2;">
+                    <label class="form-label">Nome piatto *</label>
+                    <input class="form-input" type="text" value="Caprese di bufala DOP">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label class="form-label">Prezzo *</label>
+                    <input class="form-input" type="number" step="0.50" value="9.50" style="text-align:right;">
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label class="form-label">Descrizione</label>
+                <textarea class="form-input">Mozzarella di bufala campana, pomodoro cuore di bue, basilico fresco, olio EVO</textarea>
+            </div>
+
+            <!-- Category -->
+            <div class="form-group">
+                <label class="form-label">Categoria *</label>
+                <select class="form-input">
+                    <option selected>Antipasti</option>
+                    <option>Primi</option>
+                    <option>Secondi</option>
+                    <option>Contorni</option>
+                    <option>Dolci</option>
+                    <option>Bevande</option>
+                </select>
+            </div>
+
+            <!-- Tags -->
+            <div class="form-group">
+                <label class="form-label">Etichette</label>
+                <div style="display:flex;gap:.35rem;flex-wrap:wrap;">
+                    <span class="allergen-chip selected"><span class="check"><i class="bi bi-check"></i></span> Vegetariano</span>
+                    <span class="allergen-chip">Vegano</span>
+                    <span class="allergen-chip">Senza glutine</span>
+                    <span class="allergen-chip">Piccante</span>
+                    <span class="allergen-chip">Novità</span>
+                    <span class="allergen-chip">Consigliato</span>
+                </div>
+            </div>
+
+            <!-- Allergens -->
+            <div class="form-group">
+                <label class="form-label">Allergeni</label>
+                <div class="allergen-grid">
+                    <span class="allergen-chip">Glutine</span>
+                    <span class="allergen-chip">Crostacei</span>
+                    <span class="allergen-chip">Uova</span>
+                    <span class="allergen-chip selected"><span class="check"><i class="bi bi-check"></i></span> Latte</span>
+                    <span class="allergen-chip">Frutta a guscio</span>
+                    <span class="allergen-chip">Arachidi</span>
+                    <span class="allergen-chip">Soia</span>
+                    <span class="allergen-chip">Sedano</span>
+                    <span class="allergen-chip">Senape</span>
+                    <span class="allergen-chip">Sesamo</span>
+                    <span class="allergen-chip">Anidride solforosa</span>
+                    <span class="allergen-chip">Lupini</span>
+                    <span class="allergen-chip">Molluschi</span>
+                    <span class="allergen-chip">Pesce</span>
+                </div>
+            </div>
+
+            <!-- Ordering options -->
+            <div class="form-group">
+                <label class="form-label">Opzioni ordine</label>
+                <div class="form-check-row">
+                    <input type="checkbox" id="opt-takeaway" checked>
+                    <label for="opt-takeaway">Disponibile per asporto</label>
+                </div>
+                <div class="form-check-row">
+                    <input type="checkbox" id="opt-delivery" checked>
+                    <label for="opt-delivery">Disponibile per delivery</label>
+                </div>
+                <div class="form-check-row">
+                    <input type="checkbox" id="opt-dinein" checked>
+                    <label for="opt-dinein">Visibile nel menu consultivo</label>
+                </div>
+            </div>
+
+            <!-- Prep time -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Tempo preparazione extra</label>
+                    <select class="form-input">
+                        <option selected>Standard (come impostazioni)</option>
+                        <option>+5 min</option>
+                        <option>+10 min</option>
+                        <option>+15 min</option>
+                        <option>+20 min</option>
+                    </select>
+                    <div class="form-hint">Aggiunto al tempo base del ristorante</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Max ordini / fascia</label>
+                    <select class="form-input">
+                        <option selected>Illimitato</option>
+                        <option>5</option>
+                        <option>10</option>
+                        <option>15</option>
+                        <option>20</option>
+                    </select>
+                    <div class="form-hint">Limita per evitare sovraccarico</div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn">Annulla</button>
+            <button class="btn primary"><i class="bi bi-check-lg"></i> Salva modifiche</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== NOTES ===== -->
+<div class="wf-notes">
+    <div class="wf-notes-title"><i class="bi bi-lightbulb"></i> Note wireframe</div>
+    <ul>
+        <li><strong>Sincronizza da menu</strong> — importa piatti dal menu consultivo esistente (FASE 20A) con un click, evitando duplicazione manuale</li>
+        <li><strong>Drag & drop</strong> — riordina categorie e piatti trascinando l'icona grip (grip-vertical)</li>
+        <li><strong>Toggle disponibilità</strong> — un click per segnare un piatto come esaurito (tempo reale, si riflette subito nello store)</li>
+        <li><strong>Bulk actions</strong> — seleziona più piatti per azioni di massa (esaurito, disponibile, elimina)</li>
+        <li><strong>Badge promo</strong> — sfondo giallo per i piatti con promozione attiva (integrazione col sistema promozioni esistente)</li>
+        <li><strong>Opzioni ordine per piatto</strong> — possibilità di rendere un piatto disponibile solo per asporto, solo delivery, o entrambi</li>
+        <li><strong>Tempo preparazione extra</strong> — per piatti complessi che richiedono più tempo (si somma al tempo base)</li>
+        <li><strong>Max ordini / fascia per piatto</strong> — evita che un piatto popolare saturi la cucina</li>
+        <li><strong>Immagini</strong> — upload opzionale, thumbnail nella lista per riconoscimento rapido</li>
+        <li><strong>Ordinamento attivo</strong> — toggle globale per mettere in pausa tutti gli ordini (es. cucina piena, emergenza)</li>
+        <li><strong>Tab "Impostazioni ordini"</strong> — tempo prep default, ordine minimo, costi spedizione, zone, orari, max ordini/fascia globale</li>
+    </ul>
+</div>
+
+</body>
+</html>

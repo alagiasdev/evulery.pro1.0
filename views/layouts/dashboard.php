@@ -70,6 +70,13 @@
                     </a>
                     <?php endif; ?>
                 </li>
+                <?php if (tenant_can('online_ordering')): ?>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'orders' ? 'active' : '' ?>" href="<?= url('dashboard/orders') ?>">
+                        <i class="bi bi-bag-check me-2"></i> Ordini
+                    </a>
+                </li>
+                <?php endif; ?>
                 <li class="nav-item">
                     <?php if (tenant_can('email_broadcast')): ?>
                     <a class="nav-link <?= ($activeMenu ?? '') === 'communications' ? 'active' : '' ?>" href="<?= url('dashboard/communications') ?>">
@@ -86,7 +93,7 @@
                         <i class="bi bi-bell me-2"></i> Notifiche
                     </a>
                 </li>
-                <?php $settingsKeys = ['settings','slots','meal-categories','closures','promotions','settings-notifications','deposit','domain']; ?>
+                <?php $settingsKeys = ['settings','slots','meal-categories','closures','promotions','settings-notifications','deposit','settings-ordering','domain']; ?>
                 <li class="nav-item">
                     <a class="nav-link <?= in_array($activeMenu ?? '', $settingsKeys) ? 'active' : '' ?>" href="<?= url('dashboard/settings') ?>">
                         <i class="bi bi-gear me-2"></i> Impostazioni
@@ -169,10 +176,10 @@
         <i class="bi bi-plus-lg"></i>
     </a>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="<?= asset('js/app.js') ?>"></script>
+    <script nonce="<?= csp_nonce() ?>" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script nonce="<?= csp_nonce() ?>" src="<?= asset('js/app.js') ?>"></script>
     <?php if (tenant_can('push_notifications')): ?>
-    <script src="<?= asset('js/dashboard-notifications.js') ?>" defer
+    <script nonce="<?= csp_nonce() ?>" src="<?= asset('js/dashboard-notifications.js') ?>" defer
             data-unread-url="<?= url('dashboard/notifications/unread') ?>"
             data-recent-url="<?= url('dashboard/notifications/recent') ?>"
             data-mark-read-url="<?= url('dashboard/notifications') ?>"
@@ -199,7 +206,7 @@
     </script>
     <?php if (isset($pageScripts)): ?>
         <?php foreach ((array)$pageScripts as $script): ?>
-        <script src="<?= asset($script) ?>"></script>
+        <script nonce="<?= csp_nonce() ?>" src="<?= asset($script) ?>"></script>
         <?php endforeach; ?>
     <?php endif; ?>
 </body>

@@ -239,6 +239,54 @@ function csp_nonce(): string
 }
 
 /**
+ * Traduce lo stato ordine in etichetta italiana.
+ */
+function order_status_label(string $status): string
+{
+    return match ($status) {
+        'pending'   => 'In attesa',
+        'accepted'  => 'Accettato',
+        'preparing' => 'In preparazione',
+        'ready'     => 'Pronto',
+        'completed' => 'Completato',
+        'cancelled' => 'Annullato',
+        'rejected'  => 'Rifiutato',
+        default     => ucfirst($status),
+    };
+}
+
+/**
+ * Badge Bootstrap per stato ordine.
+ */
+function order_status_badge(string $status): string
+{
+    $label = order_status_label($status);
+    $class = match ($status) {
+        'pending'   => 'bg-warning text-dark',
+        'accepted'  => 'bg-info text-dark',
+        'preparing' => 'bg-primary',
+        'ready'     => 'bg-success',
+        'completed' => 'bg-secondary',
+        'cancelled' => 'bg-danger',
+        'rejected'  => 'bg-dark',
+        default     => 'bg-secondary',
+    };
+    return '<span class="badge ' . $class . '">' . htmlspecialchars($label) . '</span>';
+}
+
+/**
+ * Traduce il tipo ordine in italiano.
+ */
+function order_type_label(string $type): string
+{
+    return match ($type) {
+        'takeaway' => 'Asporto',
+        'delivery' => 'Consegna',
+        default    => ucfirst($type),
+    };
+}
+
+/**
  * Log message to storage/logs
  */
 function app_log(string $message, string $level = 'info'): void

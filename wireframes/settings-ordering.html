@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe — Settings: Ordini Online</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-light: #e8f5e9;
+            --brand-dark: #006837;
+        }
+        body { background: #f5f6f8; font-family: system-ui, -apple-system, sans-serif; }
+        .wireframe-badge {
+            position: fixed; top: 12px; right: 12px; background: #FF9800; color: #fff;
+            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 999;
+        }
+        .page-wrap { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+
+        /* Section cards */
+        .section-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 1.25rem; overflow: hidden; }
+        .section-header { display: flex; align-items: center; gap: .75rem; padding: 1rem 1.25rem; border-bottom: 1px solid #f0f0f0; }
+        .section-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: .9rem; flex-shrink: 0; }
+        .section-title { font-size: .88rem; font-weight: 700; color: #1a1d23; }
+        .section-subtitle { font-size: .72rem; color: #6c757d; }
+        .section-body { padding: 1.25rem; }
+
+        /* Master toggle */
+        .master-toggle { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 1.25rem; }
+        .mt-left { display: flex; align-items: center; gap: .75rem; }
+        .mt-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .mt-title { font-weight: 700; font-size: .9rem; }
+        .mt-desc { font-size: .72rem; color: #6c757d; }
+        .mt-link { font-size: .72rem; color: var(--brand); margin-top: 2px; }
+
+        /* Form helpers */
+        .field-label { font-size: .78rem; font-weight: 600; color: #495057; margin-bottom: .3rem; display: block; }
+        .field-hint { font-size: .68rem; color: #adb5bd; margin-top: .2rem; }
+
+        /* Zones table */
+        .zone-row { display: flex; align-items: center; gap: .75rem; padding: .65rem 0; border-bottom: 1px solid #f0f0f0; }
+        .zone-row:last-child { border-bottom: none; }
+        .zone-name { font-weight: 600; font-size: .82rem; min-width: 100px; }
+        .zone-caps { font-size: .72rem; color: #6c757d; flex: 1; }
+        .zone-fee { font-size: .82rem; font-weight: 600; white-space: nowrap; }
+        .zone-min { font-size: .72rem; color: #6c757d; white-space: nowrap; }
+        .zone-badge { font-size: .68rem; }
+        .zone-actions { display: flex; gap: .25rem; }
+
+        /* Add zone form */
+        .add-zone-form { background: #f8f9fa; border-radius: 10px; padding: 1rem; margin-top: .75rem; }
+        .add-zone-form .field-label { font-size: .72rem; }
+
+        /* Info bar */
+        .info-bar { display: flex; align-items: flex-start; gap: .5rem; background: #E3F2FD; border-radius: 8px; padding: .65rem .85rem; font-size: .75rem; color: #1565C0; margin-bottom: 1rem; }
+        .info-bar i { margin-top: .1rem; flex-shrink: 0; }
+
+        /* Right column - how it works */
+        .how-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06); padding: 1.25rem; position: sticky; top: 1rem; }
+        .how-title { font-size: .82rem; font-weight: 700; margin-bottom: .75rem; }
+        .how-step { display: flex; gap: .6rem; margin-bottom: .65rem; }
+        .how-num { width: 24px; height: 24px; border-radius: 50%; background: var(--brand); color: #fff; font-size: .68rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .how-text { font-size: .75rem; color: #495057; }
+        .how-text strong { color: #1a1d23; }
+    </style>
+</head>
+<body>
+
+<div class="wireframe-badge">WIREFRAME</div>
+
+<div class="page-wrap">
+    <h5 style="font-weight:700; margin-bottom:.15rem;">Impostazioni</h5>
+    <p style="font-size:.78rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+
+    <!-- Tabs (placeholder) -->
+    <div style="display:flex; gap:.5rem; overflow-x:auto; margin-bottom:1.5rem; padding-bottom:.5rem;">
+        <span style="padding:.45rem .85rem; border-radius:8px; font-size:.78rem; color:#6c757d; white-space:nowrap;">Generali</span>
+        <span style="padding:.45rem .85rem; border-radius:8px; font-size:.78rem; color:#6c757d; white-space:nowrap;">Orari e Coperti</span>
+        <span style="padding:.45rem .85rem; border-radius:8px; font-size:.78rem; color:#6c757d; white-space:nowrap;">...</span>
+        <span style="padding:.45rem .85rem; border-radius:8px; font-size:.78rem; background:var(--brand); color:#fff; font-weight:600; white-space:nowrap;">Ordini online</span>
+        <span style="padding:.45rem .85rem; border-radius:8px; font-size:.78rem; color:#6c757d; white-space:nowrap;">Dominio</span>
+    </div>
+
+    <div class="row g-4">
+        <!-- ===== LEFT COLUMN (form) ===== -->
+        <div class="col-lg-7">
+
+            <!-- 1. Master toggle -->
+            <div class="master-toggle">
+                <div class="mt-left">
+                    <div class="mt-icon" style="background:var(--brand-light); color:var(--brand);">
+                        <i class="bi bi-bag-check"></i>
+                    </div>
+                    <div>
+                        <div class="mt-title">Abilita ordini online</div>
+                        <div class="mt-desc">I clienti possono ordinare dal tuo store</div>
+                        <div class="mt-link"><i class="bi bi-link-45deg"></i> /trattoria-da-mario/order</div>
+                    </div>
+                </div>
+                <div class="form-check form-switch" style="font-size:1.4rem;">
+                    <input class="form-check-input" type="checkbox" checked>
+                </div>
+            </div>
+
+            <!-- 2. Modalita ordini -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon" style="background:var(--brand);"><i class="bi bi-sliders"></i></div>
+                    <div>
+                        <div class="section-title">Modalit&agrave; ordini</div>
+                        <div class="section-subtitle">Tipo di servizio, tempi e limiti</div>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="field-label">Tipo di servizio</label>
+                            <select class="form-select form-select-sm">
+                                <option>Solo asporto</option>
+                                <option>Solo consegna</option>
+                                <option selected>Asporto + Consegna</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="field-label">Ordine minimo</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text">&euro;</span>
+                                <input type="number" class="form-control" value="20.00">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-4">
+                            <label class="field-label">Tempo preparazione</label>
+                            <div class="input-group input-group-sm">
+                                <input type="number" class="form-control" value="30">
+                                <span class="input-group-text">min</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="field-label">Intervallo slot</label>
+                            <select class="form-select form-select-sm">
+                                <option selected>15 min</option>
+                                <option>30 min</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="field-label">Max per slot</label>
+                            <input type="number" class="form-control form-control-sm" value="10">
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox">
+                            <label class="form-check-label" style="font-size:.8rem;">Accetta ordini automaticamente</label>
+                        </div>
+                        <div class="field-hint">Se attivo, gli ordini vengono confermati senza intervento manuale</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Pagamenti -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon" style="background:#5C6BC0;"><i class="bi bi-credit-card"></i></div>
+                    <div>
+                        <div class="section-title">Metodi di pagamento</div>
+                        <div class="section-subtitle">Come i clienti possono pagare</div>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" checked>
+                        <label class="form-check-label" style="font-size:.82rem;"><i class="bi bi-cash me-1 text-success"></i> Contanti al ritiro</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox">
+                        <label class="form-check-label" style="font-size:.82rem;"><i class="bi bi-stripe me-1" style="color:#635BFF;"></i> Carta online (Stripe)</label>
+                    </div>
+                    <div class="field-hint mt-2">Per pagamenti online, configura Stripe nella sezione <a href="#" style="color:var(--brand);">Caparra</a>.</div>
+                </div>
+            </div>
+
+            <!-- 4. Consegna -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon" style="background:#E65100;"><i class="bi bi-truck"></i></div>
+                    <div>
+                        <div class="section-title">Consegna a domicilio</div>
+                        <div class="section-subtitle">Tariffe, zone e limiti per la delivery</div>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="field-label">Modalit&agrave;</label>
+                            <select class="form-select form-select-sm">
+                                <option>Tariffa fissa</option>
+                                <option selected>Zone per CAP</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="field-label">Costo consegna base</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text">&euro;</span>
+                                <input type="number" class="form-control" value="5.00">
+                            </div>
+                            <div class="field-hint">Usato se tariffa fissa</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="field-label">Min ordine consegna</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text">&euro;</span>
+                                <input type="number" class="form-control" value="20.00">
+                            </div>
+                            <div class="field-hint">Usato se tariffa fissa</div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="field-label">Descrizione consegna</label>
+                        <textarea class="form-control form-control-sm" rows="2" placeholder="Es: Consegniamo in zona Milano centro, entro 5km dal locale">Consegniamo in zona Milano centro</textarea>
+                        <div class="field-hint">Visibile ai clienti nello store</div>
+                    </div>
+
+                    <!-- Zones section (inside delivery card) -->
+                    <hr style="margin:1.25rem 0 1rem;">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <div style="font-size:.85rem; font-weight:700;"><i class="bi bi-geo-alt me-1"></i> Zone di consegna</div>
+                            <div class="field-hint">Ogni zona ha CAP, costo e minimo ordine specifici</div>
+                        </div>
+                    </div>
+
+                    <!-- Existing zones -->
+                    <div class="zone-row">
+                        <div class="zone-name">Centro</div>
+                        <div class="zone-caps">00186, 00187, 00192</div>
+                        <div class="zone-fee">&euro; 3,00</div>
+                        <div class="zone-min">min &euro;15</div>
+                        <span class="badge bg-success zone-badge">Attiva</span>
+                        <div class="zone-actions">
+                            <button class="btn btn-sm btn-outline-danger" style="padding:2px 6px;"><i class="bi bi-trash" style="font-size:.72rem;"></i></button>
+                        </div>
+                    </div>
+                    <div class="zone-row">
+                        <div class="zone-name">Periferia</div>
+                        <div class="zone-caps">00195, 00196, 00197, 00198</div>
+                        <div class="zone-fee">&euro; 5,00</div>
+                        <div class="zone-min">min &euro;25</div>
+                        <span class="badge bg-success zone-badge">Attiva</span>
+                        <div class="zone-actions">
+                            <button class="btn btn-sm btn-outline-danger" style="padding:2px 6px;"><i class="bi bi-trash" style="font-size:.72rem;"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Add zone inline form -->
+                    <div class="add-zone-form">
+                        <div style="font-size:.78rem; font-weight:600; margin-bottom:.5rem;"><i class="bi bi-plus-circle me-1"></i> Aggiungi zona</div>
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-3">
+                                <label class="field-label">Nome</label>
+                                <input type="text" class="form-control form-control-sm" placeholder="Es: Centro">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="field-label">CAP</label>
+                                <input type="text" class="form-control form-control-sm" placeholder="00186, 00187...">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="field-label">Costo (&euro;)</label>
+                                <input type="number" class="form-control form-control-sm" placeholder="3.00">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="field-label">Min (&euro;)</label>
+                                <input type="number" class="form-control form-control-sm" placeholder="15.00">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-sm btn-success w-100"><i class="bi bi-plus-lg"></i> Aggiungi</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save button -->
+            <button class="btn btn-success px-4"><i class="bi bi-check-lg me-1"></i> Salva impostazioni</button>
+
+        </div>
+
+        <!-- ===== RIGHT COLUMN (help) ===== -->
+        <div class="col-lg-5">
+            <div class="how-card">
+                <div class="how-title"><i class="bi bi-lightbulb me-1" style="color:#FFC107;"></i> Come funziona</div>
+                <div class="how-step">
+                    <div class="how-num">1</div>
+                    <div class="how-text"><strong>Abilita</strong> gli ordini online e scegli il tipo di servizio (asporto, consegna o entrambi)</div>
+                </div>
+                <div class="how-step">
+                    <div class="how-num">2</div>
+                    <div class="how-text">Nel <strong>Menu</strong>, abilita "Ordinabile online" sui piatti che vuoi rendere disponibili</div>
+                </div>
+                <div class="how-step">
+                    <div class="how-num">3</div>
+                    <div class="how-text">I clienti ordinano da <strong>/slug/order</strong> e tu gestisci gli ordini dalla sezione <strong>Ordini</strong></div>
+                </div>
+                <div class="how-step">
+                    <div class="how-num">4</div>
+                    <div class="how-text">Accetta o rifiuta, segui la <strong>preparazione</strong> e segna come pronto/completato</div>
+                </div>
+                <hr>
+                <div style="font-size:.72rem; color:#6c757d;">
+                    <div class="mb-1"><i class="bi bi-clock me-1"></i> <strong>Slot:</strong> il sistema genera slot di ritiro basati sugli orari e il tempo di preparazione</div>
+                    <div class="mb-1"><i class="bi bi-truck me-1"></i> <strong>Zone CAP:</strong> ogni zona ha costo e minimo ordine indipendenti</div>
+                    <div><i class="bi bi-bell me-1"></i> <strong>Notifiche:</strong> ricevi email e campanella per ogni nuovo ordine</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

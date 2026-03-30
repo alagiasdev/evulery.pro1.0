@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Store Takeaway / Delivery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-dark: #006837;
+            --brand-light: #e8f5ee;
+            --text-dark: #1a1d23;
+            --text-body: #4a4a4a;
+            --text-muted: #8a8a8a;
+            --bg: #FAF8F5;
+            --bg-card: #ffffff;
+            --border: #EDEBE8;
+            --radius: 14px;
+            --orange: #E8A317;
+            --red: #dc3545;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px;
+        }
+
+        /* ========== HEADER ========== */
+        .store-header {
+            background: var(--brand);
+            color: #fff;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .store-header-logo {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            background: rgba(255,255,255,.2);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 1.1rem;
+        }
+        .store-header-info h1 {
+            font-size: .95rem;
+            font-weight: 700;
+            margin-bottom: .1rem;
+        }
+        .store-header-info span {
+            font-size: .72rem;
+            opacity: .85;
+        }
+
+        /* ========== MODE TOGGLE ========== */
+        .mode-toggle {
+            display: flex;
+            margin: 1rem 1.25rem .75rem;
+            background: var(--bg-card);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .mode-btn {
+            flex: 1;
+            padding: .65rem;
+            text-align: center;
+            font-size: .8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+            border: none;
+            background: none;
+            color: var(--text-muted);
+        }
+        .mode-btn.active {
+            background: var(--brand);
+            color: #fff;
+        }
+        .mode-btn i { margin-right: .35rem; }
+
+        /* ========== DELIVERY INFO BAR ========== */
+        .delivery-bar {
+            margin: 0 1.25rem .75rem;
+            background: var(--brand-light);
+            border-radius: 10px;
+            padding: .6rem .85rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .75rem;
+            color: var(--brand-dark);
+        }
+        .delivery-bar i { font-size: .9rem; }
+        .delivery-bar-pills {
+            display: flex; gap: .5rem; margin-left: auto;
+        }
+        .delivery-bar-pill {
+            background: rgba(0,132,74,.12);
+            padding: .2rem .5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: .7rem;
+        }
+
+        /* ========== SEARCH ========== */
+        .store-search {
+            margin: 0 1.25rem .75rem;
+            position: relative;
+        }
+        .store-search input {
+            width: 100%;
+            padding: .6rem .85rem .6rem 2.2rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            font-size: .82rem;
+            outline: none;
+        }
+        .store-search input:focus { border-color: var(--brand); }
+        .store-search i {
+            position: absolute;
+            left: .75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: .85rem;
+        }
+
+        /* ========== CATEGORY PILLS ========== */
+        .cat-strip {
+            display: flex;
+            gap: .5rem;
+            padding: 0 1.25rem .75rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .cat-strip::-webkit-scrollbar { display: none; }
+        .cat-pill {
+            white-space: nowrap;
+            padding: .4rem .85rem;
+            border-radius: 20px;
+            font-size: .75rem;
+            font-weight: 600;
+            border: 1.5px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-body);
+            cursor: pointer;
+            transition: all .2s;
+            flex-shrink: 0;
+        }
+        .cat-pill.active {
+            background: var(--brand);
+            color: #fff;
+            border-color: var(--brand);
+        }
+
+        /* ========== CATEGORY SECTION ========== */
+        .cat-section {
+            padding: 0 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+        .cat-title {
+            font-size: .85rem;
+            font-weight: 700;
+            margin-bottom: .65rem;
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+        }
+        .cat-count {
+            font-size: .65rem;
+            background: var(--border);
+            padding: .15rem .45rem;
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* ========== DISH CARD ========== */
+        .dish-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: .85rem;
+            display: flex;
+            gap: .75rem;
+            margin-bottom: .6rem;
+            transition: all .15s;
+        }
+        .dish-card:hover { border-color: var(--brand); }
+        .dish-img {
+            width: 72px; height: 72px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #f0ece6, #e8e4de);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .dish-body { flex: 1; min-width: 0; }
+        .dish-name {
+            font-size: .82rem;
+            font-weight: 600;
+            margin-bottom: .15rem;
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+        }
+        .dish-name .badge-veg {
+            width: 14px; height: 14px;
+            border-radius: 3px;
+            background: #4caf50;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: .55rem;
+        }
+        .dish-desc {
+            font-size: .72rem;
+            color: var(--text-muted);
+            line-height: 1.35;
+            margin-bottom: .4rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .dish-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .dish-price {
+            font-size: .85rem;
+            font-weight: 700;
+            color: var(--brand-dark);
+        }
+        .dish-price-old {
+            font-size: .7rem;
+            color: var(--text-muted);
+            text-decoration: line-through;
+            margin-left: .35rem;
+        }
+        .dish-promo-badge {
+            font-size: .6rem;
+            font-weight: 700;
+            background: #fff3e0;
+            color: var(--orange);
+            padding: .15rem .4rem;
+            border-radius: 5px;
+            margin-left: .35rem;
+        }
+        .dish-unavailable {
+            opacity: .5;
+            pointer-events: none;
+        }
+        .dish-unavailable .dish-footer::after {
+            content: 'Esaurito';
+            font-size: .7rem;
+            color: var(--red);
+            font-weight: 600;
+        }
+
+        /* ========== ADD BUTTON ========== */
+        .add-btn {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            border: 1.5px solid var(--brand);
+            background: var(--brand-light);
+            color: var(--brand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .9rem;
+            cursor: pointer;
+            transition: all .15s;
+            flex-shrink: 0;
+        }
+        .add-btn:hover {
+            background: var(--brand);
+            color: #fff;
+        }
+
+        /* Quantity controls (shown when item is in cart) */
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+        }
+        .qty-btn {
+            width: 28px; height: 28px;
+            border-radius: 7px;
+            border: 1.5px solid var(--brand);
+            background: var(--brand-light);
+            color: var(--brand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .75rem;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .qty-btn.minus {
+            border-color: var(--red);
+            background: #fde8ea;
+            color: var(--red);
+        }
+        .qty-value {
+            font-size: .82rem;
+            font-weight: 700;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* ========== ALLERGEN TAGS ========== */
+        .dish-allergens {
+            display: flex;
+            gap: .25rem;
+            margin-top: .25rem;
+        }
+        .allergen-dot {
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            font-size: .5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        /* ========== FLOATING CART BAR ========== */
+        .cart-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            padding: .75rem 1.25rem;
+            padding-bottom: calc(.75rem + env(safe-area-inset-bottom, 0));
+            background: rgba(255,255,255,.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border);
+            z-index: 200;
+        }
+        .cart-btn {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: .85rem 1rem;
+            border-radius: 12px;
+            border: none;
+            background: var(--brand);
+            color: #fff;
+            font-size: .85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s;
+        }
+        .cart-btn:hover { background: var(--brand-dark); }
+        .cart-btn-badge {
+            background: rgba(255,255,255,.25);
+            padding: .2rem .55rem;
+            border-radius: 7px;
+            font-size: .75rem;
+            font-weight: 700;
+            margin-right: .75rem;
+        }
+        .cart-btn-total {
+            margin-left: auto;
+            font-size: .9rem;
+        }
+
+        /* ========== PROMO BANNER ========== */
+        .promo-banner {
+            margin: 0 1.25rem .75rem;
+            background: linear-gradient(135deg, #fff8e1, #fff3cd);
+            border-radius: 10px;
+            padding: .65rem .85rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .75rem;
+            color: #8b6914;
+            border: 1px solid #ffe082;
+        }
+        .promo-banner i {
+            font-size: 1.1rem;
+            color: var(--orange);
+        }
+        .promo-banner strong { color: #6d4c00; }
+
+        /* ========== INFO SECTION ========== */
+        .store-info {
+            margin: .5rem 1.25rem 1rem;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: .85rem;
+        }
+        .store-info-row {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .35rem 0;
+            font-size: .78rem;
+            color: var(--text-body);
+        }
+        .store-info-row + .store-info-row {
+            border-top: 1px solid var(--border);
+        }
+        .store-info-row i {
+            color: var(--brand);
+            width: 18px;
+            text-align: center;
+        }
+
+        /* ========== ANNOTATIONS ========== */
+        .wf-note {
+            position: absolute;
+            right: -200px;
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: .5rem .65rem;
+            font-size: .65rem;
+            color: #664d03;
+            max-width: 180px;
+            line-height: 1.35;
+        }
+        .wf-note::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 12px;
+            border: 4px solid transparent;
+            border-right-color: #ffc107;
+        }
+
+        /* Desktop view */
+        @media (min-width: 900px) {
+            body {
+                max-width: 900px;
+                display: flex;
+                flex-wrap: wrap;
+            }
+            .store-header, .mode-toggle, .delivery-bar, .promo-banner, .store-search, .cat-strip {
+                width: 100%;
+            }
+            .main-col {
+                flex: 1;
+                min-width: 0;
+            }
+            .side-col {
+                width: 300px;
+                padding: 1rem;
+                position: sticky;
+                top: 70px;
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<div class="store-header">
+    <div class="store-header-logo">TR</div>
+    <div class="store-header-info">
+        <h1>Trattoria da Mario</h1>
+        <span><i class="bi bi-clock"></i> Aperto · Chiude alle 22:30</span>
+    </div>
+</div>
+
+<!-- ===== MODE TOGGLE: Takeaway / Delivery ===== -->
+<div class="mode-toggle">
+    <button class="mode-btn active">
+        <i class="bi bi-bag"></i> Asporto
+    </button>
+    <button class="mode-btn">
+        <i class="bi bi-bicycle"></i> Consegna
+    </button>
+</div>
+
+<!-- ===== DELIVERY INFO (shown when Delivery selected) ===== -->
+<div class="delivery-bar">
+    <i class="bi bi-geo-alt-fill"></i>
+    <span>Consegna entro 5 km</span>
+    <div class="delivery-bar-pills">
+        <span class="delivery-bar-pill">Min. €15</span>
+        <span class="delivery-bar-pill">€2.50 spedizione</span>
+    </div>
+</div>
+
+<!-- ===== PROMO BANNER (if active promo) ===== -->
+<div class="promo-banner">
+    <i class="bi bi-tag-fill"></i>
+    <span><strong>-15%</strong> su tutti i piatti · Pranzo infrasettimanale</span>
+</div>
+
+<!-- ===== SEARCH ===== -->
+<div class="store-search">
+    <i class="bi bi-search"></i>
+    <input type="text" placeholder="Cerca un piatto...">
+</div>
+
+<!-- ===== CATEGORY PILLS ===== -->
+<div class="cat-strip">
+    <span class="cat-pill active">Tutto</span>
+    <span class="cat-pill">Antipasti</span>
+    <span class="cat-pill">Primi</span>
+    <span class="cat-pill">Secondi</span>
+    <span class="cat-pill">Contorni</span>
+    <span class="cat-pill">Dolci</span>
+    <span class="cat-pill">Bevande</span>
+</div>
+
+<!-- ===== RESTAURANT INFO ===== -->
+<div class="store-info">
+    <div class="store-info-row">
+        <i class="bi bi-clock"></i>
+        <span>Orari asporto: 12:00 – 14:30 · 19:00 – 22:00</span>
+    </div>
+    <div class="store-info-row">
+        <i class="bi bi-geo-alt"></i>
+        <span>Via Roma 42, Milano</span>
+    </div>
+    <div class="store-info-row">
+        <i class="bi bi-stopwatch"></i>
+        <span>Tempo preparazione: ~25 min</span>
+    </div>
+</div>
+
+<!-- ===== DISHES: ANTIPASTI ===== -->
+<div class="cat-section">
+    <div class="cat-title">
+        Antipasti <span class="cat-count">4 piatti</span>
+    </div>
+
+    <!-- Dish with quantity controls (already in cart) -->
+    <div class="dish-card">
+        <div class="dish-img">🥗</div>
+        <div class="dish-body">
+            <div class="dish-name">
+                <span class="badge-veg">V</span>
+                Caprese di bufala DOP
+            </div>
+            <div class="dish-desc">Mozzarella di bufala campana, pomodoro cuore di bue, basilico fresco, olio EVO</div>
+            <div class="dish-allergens">
+                <span class="allergen-dot" title="Latte">La</span>
+            </div>
+            <div class="dish-footer">
+                <span class="dish-price">€9.50</span>
+                <div class="qty-controls">
+                    <button class="qty-btn minus">−</button>
+                    <span class="qty-value">2</span>
+                    <button class="qty-btn">+</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dish with add button -->
+    <div class="dish-card">
+        <div class="dish-img">🐙</div>
+        <div class="dish-body">
+            <div class="dish-name">Polpo alla griglia</div>
+            <div class="dish-desc">Polpo verace con patate schiacciate, olive taggiasche e capperi</div>
+            <div class="dish-allergens">
+                <span class="allergen-dot" title="Molluschi">Mo</span>
+            </div>
+            <div class="dish-footer">
+                <span class="dish-price">€14.00</span>
+                <button class="add-btn"><i class="bi bi-plus"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dish with promo applied -->
+    <div class="dish-card">
+        <div class="dish-img">🧀</div>
+        <div class="dish-body">
+            <div class="dish-name">Tagliere misto formaggi</div>
+            <div class="dish-desc">Selezione di 5 formaggi stagionati con mieli e confetture</div>
+            <div class="dish-allergens">
+                <span class="allergen-dot" title="Latte">La</span>
+                <span class="allergen-dot" title="Frutta a guscio">Fg</span>
+            </div>
+            <div class="dish-footer">
+                <span class="dish-price">€10.20 <span class="dish-price-old">€12.00</span></span>
+                <span class="dish-promo-badge">-15%</span>
+                <button class="add-btn" style="margin-left:auto;"><i class="bi bi-plus"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unavailable dish -->
+    <div class="dish-card dish-unavailable">
+        <div class="dish-img">🍤</div>
+        <div class="dish-body">
+            <div class="dish-name">Frittura di paranza</div>
+            <div class="dish-desc">Misto di pesce fritto con maionese al limone</div>
+            <div class="dish-footer">
+                <span class="dish-price">€13.00</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== DISHES: PRIMI ===== -->
+<div class="cat-section">
+    <div class="cat-title">
+        Primi <span class="cat-count">5 piatti</span>
+    </div>
+
+    <div class="dish-card">
+        <div class="dish-img">🍝</div>
+        <div class="dish-body">
+            <div class="dish-name">Cacio e pepe</div>
+            <div class="dish-desc">Tonnarelli freschi, pecorino romano DOP, pepe nero di Sarawak</div>
+            <div class="dish-allergens">
+                <span class="allergen-dot" title="Glutine">Gl</span>
+                <span class="allergen-dot" title="Latte">La</span>
+            </div>
+            <div class="dish-footer">
+                <span class="dish-price">€12.00</span>
+                <button class="add-btn"><i class="bi bi-plus"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dish-card">
+        <div class="dish-img">🦐</div>
+        <div class="dish-body">
+            <div class="dish-name">Risotto alla pescatora</div>
+            <div class="dish-desc">Riso Carnaroli con frutti di mare misti, pomodorini e prezzemolo</div>
+            <div class="dish-allergens">
+                <span class="allergen-dot" title="Crostacei">Cr</span>
+                <span class="allergen-dot" title="Molluschi">Mo</span>
+            </div>
+            <div class="dish-footer">
+                <span class="dish-price">€16.00</span>
+                <div class="qty-controls">
+                    <button class="qty-btn minus">−</button>
+                    <span class="qty-value">1</span>
+                    <button class="qty-btn">+</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dish-card">
+        <div class="dish-img">🍜</div>
+        <div class="dish-body">
+            <div class="dish-name">Pappardelle al ragù di cinghiale</div>
+            <div class="dish-desc">Pasta fresca all'uovo con ragù di cinghiale cotto lentamente 6 ore</div>
+            <div class="dish-allergens">
+                <span class="allergen-dot" title="Glutine">Gl</span>
+                <span class="allergen-dot" title="Uova">Uo</span>
+            </div>
+            <div class="dish-footer">
+                <span class="dish-price">€14.50</span>
+                <button class="add-btn"><i class="bi bi-plus"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== DISHES: DOLCI ===== -->
+<div class="cat-section">
+    <div class="cat-title">
+        Dolci <span class="cat-count">3 piatti</span>
+    </div>
+
+    <div class="dish-card">
+        <div class="dish-img">🍮</div>
+        <div class="dish-body">
+            <div class="dish-name">Tiramisù classico</div>
+            <div class="dish-desc">Savoiardi, mascarpone, caffè espresso, cacao amaro</div>
+            <div class="dish-allergens">
+                <span class="allergen-dot" title="Glutine">Gl</span>
+                <span class="allergen-dot" title="Uova">Uo</span>
+                <span class="allergen-dot" title="Latte">La</span>
+            </div>
+            <div class="dish-footer">
+                <span class="dish-price">€6.50 <span class="dish-price-old">€7.50</span></span>
+                <span class="dish-promo-badge">-15%</span>
+                <button class="add-btn" style="margin-left:auto;"><i class="bi bi-plus"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== FLOATING CART BAR ===== -->
+<div class="cart-bar">
+    <button class="cart-btn">
+        <span class="cart-btn-badge">3</span>
+        <span>Vedi carrello</span>
+        <span class="cart-btn-total">€35.00</span>
+    </button>
+</div>
+
+</body>
+</html>

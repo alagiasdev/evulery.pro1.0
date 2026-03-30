@@ -11,6 +11,11 @@
 
 body { background: #f5f6fa; }
 
+/* Green brand overrides for Bootstrap form controls */
+.form-check-input:checked { background-color: var(--brand); border-color: var(--brand); }
+.form-check-input:focus { border-color: var(--brand); box-shadow: 0 0 0 .25rem rgba(0,132,74,.25); }
+.form-select:focus, .form-control:focus { border-color: var(--brand); box-shadow: 0 0 0 .25rem rgba(0,132,74,.15); }
+
 /* ===== Sidebar ===== */
 #sidebar {
     position: fixed; left: 0; top: 0; bottom: 0;
@@ -582,7 +587,8 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 .hero-contact a { color: #6c757d; text-decoration: none; }
 .hero-contact a:hover { color: var(--brand); }
 .hero-contact i { font-size: .75rem; }
-.hero-meta { font-size: .72rem; color: #adb5bd; margin-top: .25rem; }
+.hero-meta { font-size: .72rem; color: #adb5bd; margin-top: .25rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.source-badge { display: inline-flex; align-items: center; gap: .25rem; font-size: .65rem; color: #6c757d; background: #f0f0f0; padding: .15rem .5rem; border-radius: 20px; }
 .hero-actions { display: flex; gap: .5rem; flex-shrink: 0; }
 .hero-actions .btn { font-size: .82rem; padding: .4rem .85rem; border-radius: 8px; }
 
@@ -2867,5 +2873,199 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
         position: fixed; top: 52px; left: 0; right: 0;
         width: 100%; border-radius: 0; margin-top: 0;
         max-height: calc(100vh - 52px);
+    }
+}
+
+/* ============================================================
+   Dashboard Orders — Kanban Board (namespace: .do-*)
+   ============================================================ */
+
+/* Stat cards */
+.do-stat-value {
+    font-size: 1.45rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+.do-stat-label {
+    font-size: .7rem;
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+/* Kanban board */
+.do-kanban {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: .75rem;
+}
+.do-kanban-col {
+    background: rgba(0,0,0,.02);
+    border-radius: 10px;
+    min-height: 300px;
+}
+.do-kanban-header {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .6rem .75rem;
+    font-size: .78rem;
+    font-weight: 700;
+    border-radius: 10px 10px 0 0;
+    border-bottom: 2px solid transparent;
+}
+.do-kanban-header--warning { border-bottom-color: #ffc107; color: #856404; background: #fff8e1; }
+.do-kanban-header--info { border-bottom-color: #0dcaf0; color: #055160; background: #e8f9fd; }
+.do-kanban-header--primary { border-bottom-color: #0d6efd; color: #084298; background: #e7f0ff; }
+.do-kanban-header--success { border-bottom-color: #198754; color: #0a5c36; background: #e8f5ee; }
+.do-kanban-cards {
+    padding: .5rem;
+    min-height: 100px;
+}
+.do-kanban-empty {
+    text-align: center;
+    color: #adb5bd;
+    font-size: .78rem;
+    padding: 1.5rem .5rem;
+}
+
+/* Order card */
+.do-order-card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    padding: .75rem;
+    margin-bottom: .6rem;
+    transition: border-color .15s, box-shadow .15s;
+}
+.do-order-card:hover {
+    border-color: #198754;
+    box-shadow: 0 2px 8px rgba(25,135,84,.1);
+}
+.do-order-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .4rem;
+}
+.do-order-type {
+    font-size: .65rem;
+    font-weight: 600;
+    padding: .15rem .4rem;
+    border-radius: 5px;
+    background: #ede9fe;
+    color: #7c3aed;
+}
+.do-order-type--delivery {
+    background: #fef3c7;
+    color: #92400e;
+}
+.do-order-card-body {
+    font-size: .78rem;
+    margin-bottom: .4rem;
+}
+.do-order-customer {
+    font-weight: 600;
+    margin-bottom: .15rem;
+}
+.do-order-time {
+    color: #6c757d;
+    font-size: .72rem;
+}
+.do-order-address {
+    color: #6c757d;
+    font-size: .72rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.do-order-total {
+    font-weight: 700;
+    font-size: .85rem;
+    margin-top: .25rem;
+}
+.do-order-card-timer {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    font-size: .65rem;
+    font-weight: 600;
+    padding: .2rem .5rem;
+    border-radius: 5px;
+    background: #fef3c7;
+    color: #92400e;
+    margin-bottom: .4rem;
+}
+.do-order-late {
+    background: #fde8ea;
+    color: #dc3545;
+}
+.do-order-card-actions {
+    display: flex;
+    gap: .35rem;
+    flex-wrap: wrap;
+}
+.do-order-card-actions .btn {
+    font-size: .72rem;
+    padding: .3rem .55rem;
+}
+
+/* New order pulse animation */
+.do-order-card[data-new="1"] {
+    animation: do-pulse 2s ease-in-out infinite;
+}
+@keyframes do-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,193,7,.3); }
+    50% { box-shadow: 0 0 0 6px rgba(255,193,7,0); }
+}
+
+/* Audio alert toast */
+.do-alert {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: #f59e0b;
+    color: #fff;
+    padding: .65rem 1rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .82rem;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(245,158,11,.3);
+    animation: do-slide-in .3s ease-out;
+    z-index: 999;
+}
+@keyframes do-slide-in {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+.do-alert-close {
+    background: rgba(255,255,255,.2);
+    border: none;
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Kanban mobile — stacked columns */
+@media (max-width: 991.98px) {
+    .do-kanban {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 575.98px) {
+    .do-kanban {
+        grid-template-columns: 1fr;
+    }
+    .do-kanban-col {
+        min-height: auto;
     }
 }

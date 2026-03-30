@@ -73,6 +73,11 @@ class AuditLog
     public const EMAIL_BROADCAST_DELETED = 'email_broadcast_deleted';
     public const EMAIL_CREDITS_ASSIGNED  = 'email_credits_assigned';
 
+    // Ordini online
+    public const ORDER_CREATED   = 'order_created';
+    public const ORDER_STATUS    = 'order_status';
+    public const ORDER_CANCELLED = 'order_cancelled';
+
     /**
      * Traduce un evento in etichetta italiana leggibile.
      */
@@ -121,6 +126,9 @@ class AuditLog
             self::EMAIL_BROADCAST_SENT    => 'Comunicazione email inviata',
             self::EMAIL_BROADCAST_DELETED => 'Comunicazione email eliminata',
             self::EMAIL_CREDITS_ASSIGNED  => 'Crediti email assegnati',
+            self::ORDER_CREATED          => 'Ordine creato',
+            self::ORDER_STATUS           => 'Stato ordine cambiato',
+            self::ORDER_CANCELLED        => 'Ordine annullato',
             default                      => $event,
         };
     }
