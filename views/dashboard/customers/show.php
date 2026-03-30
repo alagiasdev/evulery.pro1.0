@@ -120,7 +120,20 @@ $sourceLabels = ['phone' => 'Telefono', 'walkin' => 'Walk-in', 'widget' => 'Widg
                 <a href="mailto:<?= e($customer['email']) ?>"><?= e($customer['email']) ?></a>
             </div>
         </div>
-        <div class="hero-meta">Cliente dal <?= format_date($customer['created_at'], 'd F Y') ?></div>
+        <div class="hero-meta">
+            Cliente dal <?= format_date($customer['created_at'], 'd F Y') ?>
+            <?php
+                $sourceIcons = [
+                    'import'  => ['bi-cloud-upload', 'Importato da CSV'],
+                    'manual'  => ['bi-pencil-square', 'Aggiunto manualmente'],
+                    'ordering'=> ['bi-bag-check', 'Da ordine online'],
+                ];
+                $src = $customer['source'] ?? 'booking';
+                if (isset($sourceIcons[$src])):
+            ?>
+            <span class="source-badge"><i class="bi <?= $sourceIcons[$src][0] ?>"></i> <?= $sourceIcons[$src][1] ?></span>
+            <?php endif; ?>
+        </div>
     </div>
     <div class="hero-actions">
         <?php if (empty($customer['is_blocked'])): ?>

@@ -160,6 +160,32 @@ class Customer
         };
     }
 
+    public function findByTenantAndPhone(int $tenantId, string $phone): ?array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT * FROM customers WHERE tenant_id = :tenant_id AND phone = :phone LIMIT 1'
+        );
+        $stmt->execute(['tenant_id' => $tenantId, 'phone' => $phone]);
+        return $stmt->fetch() ?: null;
+    }
+
+    public function createImported(int $tenantId, array $data): int
+    {
+        $stmt = $this->db->prepare(
+            'INSERT INTO customers (tenant_id, first_name, last_name, email, phone, source)
+             VALUES (:tenant_id, :first_name, :last_name, :email, :phone, :source)'
+        );
+        $stmt->execute([
+            'tenant_id'  => $tenantId,
+            'first_name' => $data['first_name'],
+            'last_name'  => $data['last_name'],
+            'email'      => $data['email'],
+            'phone'      => $data['phone'],
+            'source'     => $data['source'] ?? 'import',
+        ]);
+        return (int)$this->db->lastInsertId();
+    }
+
     public function findOrCreate(int $tenantId, array $data): array
     {
         $existing = $this->findByTenantAndEmail($tenantId, $data['email']);

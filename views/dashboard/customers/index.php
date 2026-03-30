@@ -60,6 +60,13 @@ $segTabs = [
     <?php endif; ?>
 </div>
 
+<!-- Action bar -->
+<div class="d-flex align-items-center justify-content-end" style="margin-bottom:.5rem;">
+    <a href="<?= url('dashboard/customers/import') ?>" class="btn btn-sm btn-outline-secondary" style="font-size:.78rem;">
+        <i class="bi bi-cloud-upload me-1"></i> Importa CSV
+    </a>
+</div>
+
 <!-- Filter bar -->
 <form method="GET" action="<?= url('dashboard/customers') ?>">
 <div class="filter-bar">

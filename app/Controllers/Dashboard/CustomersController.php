@@ -194,6 +194,244 @@ class CustomersController
         Response::redirect(url("dashboard/customers/{$id}"));
     }
 
+    public function import(Request $request): void
+    {
+        $tenant = TenantResolver::current();
+        $step = $request->query('step', '1');
+        $preview = [];
+        $headers = [];
+        $filename = '';
+
+        // Step 2: se c'è un file in sessione, mostra preview
+        if ($step === '2' && !empty($_SESSION['import_csv_file'])) {
+            $filename = $_SESSION['import_csv_file'];
+            $mapping = [
+                'first_name' => (int)($request->query('col_first_name', 0)),
+                'last_name'  => (int)($request->query('col_last_name', 1)),
+                'email'      => (int)($request->query('col_email', 2)),
+                'phone'      => (int)($request->query('col_phone', 3)),
+            ];
+            $_SESSION['import_csv_mapping'] = $mapping;
+
+            if (file_exists($filename)) {
+                $handle = fopen($filename, 'r');
+                $headers = fgetcsv($handle, 0, $this->detectDelimiter($filename));
+                $rows = [];
+                $i = 0;
+                while (($row = fgetcsv($handle, 0, $this->detectDelimiter($filename))) !== false && $i < 100) {
+                    $rows[] = $row;
+                    $i++;
+                }
+                fclose($handle);
+                $preview = $rows;
+            }
+        }
+
+        view('dashboard/customers/import', [
+            'title'      => 'Importa clienti',
+            'activeMenu' => 'customers',
+            'tenant'     => $tenant,
+            'step'       => $step,
+            'preview'    => $preview,
+            'headers'    => $headers ?: [],
+            'mapping'    => $_SESSION['import_csv_mapping'] ?? null,
+            'filename'   => $filename,
+        ], 'dashboard');
+    }
+
+    public function processImport(Request $request): void
+    {
+        $tenantId = Auth::tenantId();
+        $action = $request->input('action', 'upload');
+
+        if ($action === 'upload') {
+            // Step 1: Upload CSV
+            if (empty($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
+                flash('danger', 'Errore nel caricamento del file.');
+                Response::redirect(url('dashboard/customers/import'));
+                return;
+            }
+
+            $file = $_FILES['csv_file'];
+            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, ['csv', 'txt'])) {
+                flash('danger', 'Formato non supportato. Usa un file .csv');
+                Response::redirect(url('dashboard/customers/import'));
+                return;
+            }
+
+            if ($file['size'] > 5 * 1024 * 1024) {
+                flash('danger', 'File troppo grande (max 5 MB).');
+                Response::redirect(url('dashboard/customers/import'));
+                return;
+            }
+
+            // Save to temp
+            $tmpPath = sys_get_temp_dir() . '/evulery_import_' . $tenantId . '_' . time() . '.csv';
+            move_uploaded_file($file['tmp_name'], $tmpPath);
+            $_SESSION['import_csv_file'] = $tmpPath;
+
+            // Read headers for mapping
+            $delimiter = $this->detectDelimiter($tmpPath);
+            $handle = fopen($tmpPath, 'r');
+            $headers = fgetcsv($handle, 0, $delimiter);
+            fclose($handle);
+
+            if (!$headers || count($headers) < 2) {
+                flash('danger', 'Il file non contiene colonne sufficienti.');
+                @unlink($tmpPath);
+                unset($_SESSION['import_csv_file']);
+                Response::redirect(url('dashboard/customers/import'));
+                return;
+            }
+
+            // Auto-detect column mapping
+            $mapping = $this->autoDetectMapping($headers);
+            $_SESSION['import_csv_mapping'] = $mapping;
+
+            view('dashboard/customers/import', [
+                'title'      => 'Importa clienti',
+                'activeMenu' => 'customers',
+                'tenant'     => TenantResolver::current(),
+                'step'       => 'map',
+                'headers'    => $headers,
+                'mapping'    => $mapping,
+                'preview'    => $this->readPreview($tmpPath, $delimiter, 5),
+                'filename'   => $tmpPath,
+            ], 'dashboard');
+            return;
+        }
+
+        if ($action === 'confirm') {
+            // Step 2: Process import
+            $filename = $_SESSION['import_csv_file'] ?? '';
+            if (!$filename || !file_exists($filename)) {
+                flash('danger', 'File di importazione scaduto. Ricarica il CSV.');
+                Response::redirect(url('dashboard/customers/import'));
+                return;
+            }
+
+            $mapping = [
+                'first_name' => (int)($request->input('col_first_name', -1)),
+                'last_name'  => (int)($request->input('col_last_name', -1)),
+                'email'      => (int)($request->input('col_email', -1)),
+                'phone'      => (int)($request->input('col_phone', -1)),
+            ];
+
+            if ($mapping['email'] < 0 && $mapping['phone'] < 0) {
+                flash('danger', 'Devi mappare almeno la colonna email o telefono.');
+                Response::redirect(url('dashboard/customers/import'));
+                return;
+            }
+
+            $delimiter = $this->detectDelimiter($filename);
+            $handle = fopen($filename, 'r');
+            fgetcsv($handle, 0, $delimiter); // skip header
+
+            $customerModel = new Customer();
+            $created = 0;
+            $updated = 0;
+            $skipped = 0;
+            $errors = 0;
+
+            while (($row = fgetcsv($handle, 0, $delimiter)) !== false) {
+                $firstName = trim($row[$mapping['first_name']] ?? '');
+                $lastName  = trim($row[$mapping['last_name']] ?? '');
+                $email     = strtolower(trim($row[$mapping['email']] ?? ''));
+                $phone     = trim($row[$mapping['phone']] ?? '');
+
+                // Validate
+                if (!$firstName && !$lastName) { $skipped++; continue; }
+                if (!$email && !$phone) { $skipped++; continue; }
+                if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) { $errors++; continue; }
+
+                // Deduplica per email (se presente) o telefono
+                $existing = null;
+                if ($email) {
+                    $existing = $customerModel->findByTenantAndEmail($tenantId, $email);
+                }
+                if (!$existing && $phone) {
+                    $existing = $customerModel->findByTenantAndPhone($tenantId, $phone);
+                }
+
+                if ($existing) {
+                    $updated++;
+                    continue; // Non sovrascrivere dati esistenti
+                }
+
+                // Create new
+                $customerModel->createImported($tenantId, [
+                    'first_name' => $firstName ?: 'N/D',
+                    'last_name'  => $lastName ?: 'N/D',
+                    'email'      => $email ?: '',
+                    'phone'      => $phone ?: '',
+                    'source'     => 'import',
+                ]);
+                $created++;
+            }
+
+            fclose($handle);
+            @unlink($filename);
+            unset($_SESSION['import_csv_file'], $_SESSION['import_csv_mapping']);
+
+            AuditLog::log(AuditLog::SETTINGS_UPDATED, "Import clienti: {$created} nuovi, {$updated} esistenti, {$skipped} saltati, {$errors} errori", Auth::id(), $tenantId);
+
+            $msg = "{$created} clienti importati";
+            if ($updated > 0) $msg .= ", {$updated} già esistenti";
+            if ($skipped > 0) $msg .= ", {$skipped} righe incomplete";
+            if ($errors > 0) $msg .= ", {$errors} errori";
+            flash('success', $msg . '.');
+            Response::redirect(url('dashboard/customers'));
+            return;
+        }
+
+        Response::redirect(url('dashboard/customers/import'));
+    }
+
+    private function detectDelimiter(string $filepath): string
+    {
+        $line = fgets(fopen($filepath, 'r'));
+        $semicolons = substr_count($line, ';');
+        $commas = substr_count($line, ',');
+        $tabs = substr_count($line, "\t");
+        if ($semicolons > $commas && $semicolons > $tabs) return ';';
+        if ($tabs > $commas) return "\t";
+        return ',';
+    }
+
+    private function autoDetectMapping(array $headers): array
+    {
+        $mapping = ['first_name' => -1, 'last_name' => -1, 'email' => -1, 'phone' => -1];
+        $namePatterns = ['nome', 'first_name', 'firstname', 'first name', 'name'];
+        $lastNamePatterns = ['cognome', 'last_name', 'lastname', 'last name', 'surname'];
+        $emailPatterns = ['email', 'e-mail', 'mail', 'email address'];
+        $phonePatterns = ['telefono', 'phone', 'tel', 'cellulare', 'mobile', 'cell'];
+
+        foreach ($headers as $i => $h) {
+            $h = strtolower(trim($h));
+            foreach ($namePatterns as $p) { if (str_contains($h, $p) && $mapping['first_name'] === -1) { $mapping['first_name'] = $i; break; } }
+            foreach ($lastNamePatterns as $p) { if (str_contains($h, $p) && $mapping['last_name'] === -1) { $mapping['last_name'] = $i; break; } }
+            foreach ($emailPatterns as $p) { if (str_contains($h, $p) && $mapping['email'] === -1) { $mapping['email'] = $i; break; } }
+            foreach ($phonePatterns as $p) { if (str_contains($h, $p) && $mapping['phone'] === -1) { $mapping['phone'] = $i; break; } }
+        }
+
+        return $mapping;
+    }
+
+    private function readPreview(string $filepath, string $delimiter, int $max = 5): array
+    {
+        $handle = fopen($filepath, 'r');
+        fgetcsv($handle, 0, $delimiter); // skip header
+        $rows = [];
+        $i = 0;
+        while (($row = fgetcsv($handle, 0, $delimiter)) !== false && $i < $max) {
+            $rows[] = $row;
+            $i++;
+        }
+        fclose($handle);
+        return $rows;
+    }
+
     public function toggleBlock(Request $request): void
     {
         $id = (int)$request->param('id');
