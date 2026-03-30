@@ -1,0 +1,477 @@
+/* ============================================================
+   delivery-board.css — Delivery Board per fattorini (namespace: .db-*)
+   Mobile-first, max-width 520px centered, standalone page
+   ============================================================ */
+
+:root {
+    --db-orange: #E65100;
+    --db-orange-light: #FFF3E0;
+    --db-green: #00844A;
+    --db-green-light: #e8f5ee;
+    --db-text-dark: #1a1d23;
+    --db-text-muted: #8a8a8a;
+    --db-bg: #f5f3f0;
+    --db-card-bg: #ffffff;
+    --db-border: #EDEBE8;
+    --db-radius: 14px;
+    --db-blue: #1565C0;
+    --db-yellow: #F9A825;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    background: var(--db-bg);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--db-text-dark);
+    -webkit-font-smoothing: antialiased;
+    max-width: 520px;
+    margin: 0 auto;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* ===== PIN SCREEN ===== */
+.db-pin-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.25rem;
+}
+.db-pin-card {
+    background: var(--db-card-bg);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.08);
+}
+.db-pin-logo {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 14px;
+    margin-bottom: 1rem;
+}
+.db-pin-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    background: var(--db-orange-light);
+    color: var(--db-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin: 0 auto 1rem;
+}
+.db-pin-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 .25rem;
+}
+.db-pin-subtitle {
+    font-size: .82rem;
+    color: var(--db-text-muted);
+    margin: 0 0 1.5rem;
+}
+.db-pin-error {
+    background: #fef2f2;
+    color: #dc3545;
+    font-size: .78rem;
+    padding: .5rem .75rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+.db-pin-label {
+    display: block;
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--db-text-muted);
+    margin-bottom: .5rem;
+}
+.db-pin-input {
+    width: 100%;
+    padding: .85rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: .6rem;
+    border: 2px solid var(--db-border);
+    border-radius: 14px;
+    outline: none;
+    background: var(--db-bg);
+    transition: border-color .2s;
+    font-family: inherit;
+}
+.db-pin-input:focus {
+    border-color: var(--db-orange);
+    box-shadow: 0 0 0 4px rgba(230,81,0,.1);
+}
+.db-pin-input::placeholder {
+    color: #d0d0d0;
+    letter-spacing: .8rem;
+}
+.db-pin-submit {
+    width: 100%;
+    padding: .75rem;
+    margin-top: 1.25rem;
+    border: none;
+    border-radius: 12px;
+    background: var(--db-orange);
+    color: #fff;
+    font-size: .9rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background .2s;
+}
+.db-pin-submit:hover { background: #BF360C; }
+.db-pin-submit:active { transform: scale(.98); }
+.db-pin-footer {
+    margin-top: 2rem;
+    font-size: .65rem;
+    color: #bbb;
+}
+
+/* ===== HEADER ===== */
+.db-header {
+    background: var(--db-orange);
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.db-header-inner {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .85rem 1.25rem;
+}
+.db-header-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+.db-header-text { flex: 1; min-width: 0; }
+.db-header-name {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.db-header-sub {
+    font-size: .7rem;
+    margin: 0;
+    opacity: .85;
+}
+.db-header-count {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+/* ===== MAIN ===== */
+.db-main {
+    padding: 1rem 1rem 4rem;
+}
+
+/* ===== EMPTY STATE ===== */
+.db-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--db-text-muted);
+}
+.db-empty i {
+    font-size: 3rem;
+    color: #ddd;
+    display: block;
+    margin-bottom: .75rem;
+}
+.db-empty p {
+    font-size: .95rem;
+    font-weight: 600;
+    margin: 0 0 .25rem;
+    color: var(--db-text-dark);
+}
+.db-empty span {
+    font-size: .75rem;
+}
+
+/* ===== ORDER CARDS ===== */
+.db-orders {
+    display: flex;
+    flex-direction: column;
+    gap: .85rem;
+}
+.db-order-card {
+    background: var(--db-card-bg);
+    border-radius: var(--db-radius);
+    padding: 1rem 1.1rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    border-left: 4px solid var(--db-border);
+}
+.db-order-card[data-status="ready"] {
+    border-left-color: var(--db-green);
+    box-shadow: 0 2px 16px rgba(0,132,74,.12);
+}
+.db-order-card[data-status="preparing"] {
+    border-left-color: var(--db-yellow);
+}
+.db-order-card[data-status="accepted"] {
+    border-left-color: var(--db-blue);
+}
+
+.db-order-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .6rem;
+}
+.db-order-number {
+    font-size: .88rem;
+    font-weight: 700;
+}
+.db-status-badge {
+    font-size: .65rem;
+    font-weight: 600;
+    padding: .25rem .6rem;
+    border-radius: 20px;
+}
+.db-status-ready {
+    background: var(--db-green-light);
+    color: var(--db-green);
+}
+.db-status-preparing {
+    background: #FFF8E1;
+    color: #F57F17;
+}
+.db-status-accepted {
+    background: #E3F2FD;
+    color: var(--db-blue);
+}
+
+.db-order-time {
+    font-size: .78rem;
+    color: var(--db-text-muted);
+    margin-bottom: .5rem;
+}
+.db-order-time i {
+    font-size: .7rem;
+    margin-right: .2rem;
+}
+
+/* Address */
+.db-order-address {
+    display: flex;
+    gap: .5rem;
+    padding: .65rem .75rem;
+    background: var(--db-bg);
+    border-radius: 10px;
+    margin-bottom: .6rem;
+}
+.db-order-address > i {
+    color: var(--db-orange);
+    font-size: .9rem;
+    margin-top: .1rem;
+    flex-shrink: 0;
+}
+.db-address-text {
+    font-size: .82rem;
+    font-weight: 500;
+    line-height: 1.35;
+}
+.db-address-cap {
+    font-size: .68rem;
+    color: var(--db-text-muted);
+    background: var(--db-card-bg);
+    padding: .1rem .4rem;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: .2rem;
+}
+
+/* Customer */
+.db-order-customer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .5rem;
+}
+.db-customer-info {
+    font-size: .8rem;
+    font-weight: 500;
+}
+.db-customer-info i {
+    color: var(--db-text-muted);
+    font-size: .72rem;
+    margin-right: .2rem;
+}
+.db-customer-actions {
+    display: flex;
+    gap: .4rem;
+}
+.db-action-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .85rem;
+    text-decoration: none;
+    transition: transform .15s;
+}
+.db-action-btn:active { transform: scale(.9); }
+.db-action-call {
+    background: #E3F2FD;
+    color: var(--db-blue);
+}
+.db-action-wa {
+    background: #E8F5E9;
+    color: #25D366;
+}
+
+/* Notes */
+.db-order-notes {
+    font-size: .75rem;
+    color: #6c757d;
+    background: #FFF8E1;
+    padding: .45rem .65rem;
+    border-radius: 8px;
+    margin-bottom: .5rem;
+}
+.db-order-notes i {
+    font-size: .65rem;
+    margin-right: .25rem;
+    color: #F9A825;
+}
+
+/* Items */
+.db-order-items {
+    margin-bottom: .6rem;
+    padding: .5rem .65rem;
+    background: var(--db-bg);
+    border-radius: 8px;
+}
+.db-items-label {
+    font-size: .68rem;
+    font-weight: 600;
+    color: var(--db-text-muted);
+    margin-bottom: .35rem;
+}
+.db-items-label i { font-size: .62rem; }
+.db-item-row {
+    font-size: .78rem;
+    padding: .15rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+    align-items: baseline;
+}
+.db-item-qty {
+    font-weight: 700;
+    color: var(--db-orange);
+    min-width: 22px;
+}
+.db-item-name {
+    font-weight: 500;
+}
+.db-item-note {
+    font-size: .68rem;
+    color: var(--db-green);
+    width: 100%;
+    padding-left: 22px;
+}
+.db-item-note i {
+    font-size: .6rem;
+    margin-right: .2rem;
+}
+
+/* Total */
+.db-order-total {
+    font-size: .82rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .65rem;
+}
+.db-payment-badge {
+    font-size: .62rem;
+    padding: .15rem .45rem;
+    border-radius: 12px;
+    background: #f0f0f0;
+    color: #666;
+}
+
+/* Complete button */
+.db-complete-form { margin: 0; }
+.db-complete-btn {
+    width: 100%;
+    padding: .7rem;
+    border: none;
+    border-radius: 12px;
+    background: var(--db-green);
+    color: #fff;
+    font-size: .88rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+}
+.db-complete-btn:hover { background: #006837; }
+.db-complete-btn:active { transform: scale(.98); }
+
+/* Waiting badge */
+.db-waiting-badge {
+    text-align: center;
+    font-size: .75rem;
+    color: var(--db-text-muted);
+    padding: .5rem;
+    background: var(--db-bg);
+    border-radius: 10px;
+}
+
+/* ===== FOOTER ===== */
+.db-footer {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    justify-content: space-between;
+    padding: .5rem 1rem;
+    font-size: .62rem;
+    color: #aaa;
+    background: var(--db-bg);
+    border-top: 1px solid var(--db-border);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 380px) {
+    .db-pin-input {
+        font-size: 1.4rem;
+        letter-spacing: .4rem;
+    }
+    .db-order-address {
+        padding: .5rem;
+    }
+    .db-address-text {
+        font-size: .78rem;
+    }
+}
