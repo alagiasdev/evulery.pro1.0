@@ -206,20 +206,28 @@ class CustomersController
         if ($step === '2' && !empty($_SESSION['import_csv_file'])) {
             $filename = $_SESSION['import_csv_file'];
             $mapping = [
-                'first_name' => (int)($request->query('col_first_name', 0)),
-                'last_name'  => (int)($request->query('col_last_name', 1)),
-                'email'      => (int)($request->query('col_email', 2)),
-                'phone'      => (int)($request->query('col_phone', 3)),
+                'first_name'        => (int)($request->query('col_first_name', 0)),
+                'last_name'         => (int)($request->query('col_last_name', 1)),
+                'email'             => (int)($request->query('col_email', 2)),
+                'phone'             => (int)($request->query('col_phone', 3)),
+                'birthday'          => (int)($request->query('col_birthday', -1)),
+                'last_visit'        => (int)($request->query('col_last_visit', -1)),
+                'total_bookings'    => (int)($request->query('col_total_bookings', -1)),
+                'tags'              => (int)($request->query('col_tags', -1)),
+                'marketing_consent' => (int)($request->query('col_marketing_consent', -1)),
+                'notes'             => (int)($request->query('col_notes', -1)),
             ];
             $_SESSION['import_csv_mapping'] = $mapping;
 
             if (file_exists($filename)) {
+                $delim = $this->detectDelimiter($filename);
                 $handle = fopen($filename, 'r');
-                $headers = fgetcsv($handle, 0, $this->detectDelimiter($filename));
+                $headers = fgetcsv($handle, 0, $delim);
+                $headerCount = $headers ? count($headers) : 0;
                 $rows = [];
                 $i = 0;
-                while (($row = fgetcsv($handle, 0, $this->detectDelimiter($filename))) !== false && $i < 100) {
-                    $rows[] = $row;
+                while (($row = fgetcsv($handle, 0, $delim)) !== false && $i < 100) {
+                    $rows[] = $this->fixWrappedRow($row, $headerCount, $delim);
                     $i++;
                 }
                 fclose($handle);
@@ -312,10 +320,16 @@ class CustomersController
             }
 
             $mapping = [
-                'first_name' => (int)($request->input('col_first_name', -1)),
-                'last_name'  => (int)($request->input('col_last_name', -1)),
-                'email'      => (int)($request->input('col_email', -1)),
-                'phone'      => (int)($request->input('col_phone', -1)),
+                'first_name'        => (int)($request->input('col_first_name', -1)),
+                'last_name'         => (int)($request->input('col_last_name', -1)),
+                'email'             => (int)($request->input('col_email', -1)),
+                'phone'             => (int)($request->input('col_phone', -1)),
+                'birthday'          => (int)($request->input('col_birthday', -1)),
+                'last_visit'        => (int)($request->input('col_last_visit', -1)),
+                'total_bookings'    => (int)($request->input('col_total_bookings', -1)),
+                'tags'              => (int)($request->input('col_tags', -1)),
+                'marketing_consent' => (int)($request->input('col_marketing_consent', -1)),
+                'notes'             => (int)($request->input('col_notes', -1)),
             ];
 
             if ($mapping['email'] < 0 && $mapping['phone'] < 0) {
@@ -334,11 +348,21 @@ class CustomersController
             $skipped = 0;
             $errors = 0;
 
+            $headerCount = count($headers ?? []);
+            // Re-read headers if not available
+            if ($headerCount === 0) {
+                $hHandle = fopen($filename, 'r');
+                $hdr = fgetcsv($hHandle, 0, $delimiter);
+                $headerCount = $hdr ? count($hdr) : 0;
+                fclose($hHandle);
+            }
+
             while (($row = fgetcsv($handle, 0, $delimiter)) !== false) {
-                $firstName = trim($row[$mapping['first_name']] ?? '');
-                $lastName  = trim($row[$mapping['last_name']] ?? '');
-                $email     = strtolower(trim($row[$mapping['email']] ?? ''));
-                $phone     = trim($row[$mapping['phone']] ?? '');
+                $row = $this->fixWrappedRow($row, $headerCount, $delimiter);
+                $firstName = $mapping['first_name'] >= 0 ? trim($row[$mapping['first_name']] ?? '') : '';
+                $lastName  = $mapping['last_name'] >= 0 ? trim($row[$mapping['last_name']] ?? '') : '';
+                $email     = $mapping['email'] >= 0 ? strtolower(trim($row[$mapping['email']] ?? '')) : '';
+                $phone     = $mapping['phone'] >= 0 ? trim($row[$mapping['phone']] ?? '') : '';
 
                 // Validate
                 if (!$firstName && !$lastName) { $skipped++; continue; }
@@ -359,14 +383,63 @@ class CustomersController
                     continue; // Non sovrascrivere dati esistenti
                 }
 
-                // Create new
-                $customerModel->createImported($tenantId, [
+                // Build data array with extended fields
+                $data = [
                     'first_name' => $firstName ?: 'N/D',
                     'last_name'  => $lastName ?: 'N/D',
                     'email'      => $email ?: '',
                     'phone'      => $phone ?: '',
                     'source'     => 'import',
-                ]);
+                ];
+
+                // Birthday (dd/mm/yyyy → Y-m-d)
+                if ($mapping['birthday'] >= 0) {
+                    $bRaw = trim($row[$mapping['birthday']] ?? '');
+                    if ($bRaw) {
+                        $bDate = $this->parseDate($bRaw);
+                        if ($bDate) $data['birthday'] = $bDate;
+                    }
+                }
+
+                // Last visit (dd/mm/yyyy → Y-m-d)
+                if ($mapping['last_visit'] >= 0) {
+                    $lvRaw = trim($row[$mapping['last_visit']] ?? '');
+                    if ($lvRaw) {
+                        $lvDate = $this->parseDate($lvRaw);
+                        if ($lvDate) $data['last_visit'] = $lvDate;
+                    }
+                }
+
+                // Total bookings
+                if ($mapping['total_bookings'] >= 0) {
+                    $tb = (int)trim($row[$mapping['total_bookings']] ?? '0');
+                    if ($tb > 0) $data['total_bookings'] = $tb;
+                }
+
+                // Tags (comma-separated string → JSON array)
+                if ($mapping['tags'] >= 0) {
+                    $tagsRaw = trim($row[$mapping['tags']] ?? '');
+                    if ($tagsRaw) {
+                        $tagsArr = array_filter(array_map('trim', explode(',', $tagsRaw)));
+                        if (!empty($tagsArr)) $data['tags'] = array_values($tagsArr);
+                    }
+                }
+
+                // Marketing consent: CSV "1" = subscribed → unsubscribed=0; CSV "0" → unsubscribed=1
+                if ($mapping['marketing_consent'] >= 0) {
+                    $consent = trim($row[$mapping['marketing_consent']] ?? '');
+                    if ($consent !== '') {
+                        $data['unsubscribed'] = in_array(strtolower($consent), ['1', 'true', 'si', 'sì', 'yes'], true) ? 0 : 1;
+                    }
+                }
+
+                // Notes
+                if ($mapping['notes'] >= 0) {
+                    $notesRaw = trim($row[$mapping['notes']] ?? '');
+                    if ($notesRaw) $data['notes'] = mb_substr($notesRaw, 0, 2000);
+                }
+
+                $customerModel->createImported($tenantId, $data);
                 $created++;
             }
 
@@ -388,6 +461,21 @@ class CustomersController
         Response::redirect(url('dashboard/customers/import'));
     }
 
+    /**
+     * Fix rows where the entire line is wrapped in a single quoted field
+     * (common in Plateform CSV exports where Tags contain commas).
+     */
+    private function fixWrappedRow(array $row, int $expectedCols, string $delimiter): array
+    {
+        if (count($row) <= 2 && $expectedCols > 2 && !empty($row[0])) {
+            $reparsed = str_getcsv($row[0], $delimiter);
+            if (count($reparsed) >= $expectedCols - 1) {
+                return $reparsed;
+            }
+        }
+        return $row;
+    }
+
     private function detectDelimiter(string $filepath): string
     {
         $line = fgets(fopen($filepath, 'r'));
@@ -401,30 +489,63 @@ class CustomersController
 
     private function autoDetectMapping(array $headers): array
     {
-        $mapping = ['first_name' => -1, 'last_name' => -1, 'email' => -1, 'phone' => -1];
-        $namePatterns = ['nome', 'first_name', 'firstname', 'first name', 'name'];
-        $lastNamePatterns = ['cognome', 'last_name', 'lastname', 'last name', 'surname'];
-        $emailPatterns = ['email', 'e-mail', 'mail', 'email address'];
-        $phonePatterns = ['telefono', 'phone', 'tel', 'cellulare', 'mobile', 'cell'];
+        $mapping = [
+            'first_name' => -1, 'last_name' => -1, 'email' => -1, 'phone' => -1,
+            'birthday' => -1, 'last_visit' => -1, 'total_bookings' => -1,
+            'tags' => -1, 'marketing_consent' => -1, 'notes' => -1,
+        ];
+        $patterns = [
+            'first_name'        => ['nome', 'first_name', 'firstname', 'first name', 'name'],
+            'last_name'         => ['cognome', 'last_name', 'lastname', 'last name', 'surname'],
+            'email'             => ['email', 'e-mail', 'mail', 'email address'],
+            'phone'             => ['telefono', 'phone', 'tel', 'cellulare', 'mobile', 'cell'],
+            'birthday'          => ['nascita', 'birthday', 'birth', 'data nascita', 'date of birth', 'compleanno'],
+            'last_visit'        => ['ultima presenza', 'last visit', 'ultima visita', 'last_visit'],
+            'total_bookings'    => ['presenze', 'visite', 'bookings', 'visits', 'total_bookings'],
+            'tags'              => ['tags', 'etichette', 'categorie', 'labels'],
+            'marketing_consent' => ['consenso marketing', 'marketing', 'consent', 'newsletter'],
+            'notes'             => ['note', 'notes', 'commenti', 'comments'],
+        ];
 
         foreach ($headers as $i => $h) {
             $h = strtolower(trim($h));
-            foreach ($namePatterns as $p) { if (str_contains($h, $p) && $mapping['first_name'] === -1) { $mapping['first_name'] = $i; break; } }
-            foreach ($lastNamePatterns as $p) { if (str_contains($h, $p) && $mapping['last_name'] === -1) { $mapping['last_name'] = $i; break; } }
-            foreach ($emailPatterns as $p) { if (str_contains($h, $p) && $mapping['email'] === -1) { $mapping['email'] = $i; break; } }
-            foreach ($phonePatterns as $p) { if (str_contains($h, $p) && $mapping['phone'] === -1) { $mapping['phone'] = $i; break; } }
+            foreach ($patterns as $field => $pList) {
+                if ($mapping[$field] !== -1) continue;
+                foreach ($pList as $p) {
+                    if (str_contains($h, $p)) { $mapping[$field] = $i; break; }
+                }
+            }
         }
 
         return $mapping;
     }
 
+    private function parseDate(string $raw): ?string
+    {
+        // Try dd/mm/yyyy
+        if (preg_match('#^(\d{1,2})/(\d{1,2})/(\d{4})$#', $raw, $m)) {
+            return sprintf('%04d-%02d-%02d', (int)$m[3], (int)$m[2], (int)$m[1]);
+        }
+        // Try yyyy-mm-dd
+        if (preg_match('#^\d{4}-\d{2}-\d{2}$#', $raw)) {
+            return $raw;
+        }
+        // Try dd-mm-yyyy
+        if (preg_match('#^(\d{1,2})-(\d{1,2})-(\d{4})$#', $raw, $m)) {
+            return sprintf('%04d-%02d-%02d', (int)$m[3], (int)$m[2], (int)$m[1]);
+        }
+        return null;
+    }
+
     private function readPreview(string $filepath, string $delimiter, int $max = 5): array
     {
         $handle = fopen($filepath, 'r');
-        fgetcsv($handle, 0, $delimiter); // skip header
+        $headers = fgetcsv($handle, 0, $delimiter);
+        $headerCount = $headers ? count($headers) : 0;
         $rows = [];
         $i = 0;
         while (($row = fgetcsv($handle, 0, $delimiter)) !== false && $i < $max) {
+            $row = $this->fixWrappedRow($row, $headerCount, $delimiter);
             $rows[] = $row;
             $i++;
         }
@@ -474,6 +595,71 @@ class CustomersController
             flash('success', $customer['first_name'] . ' ' . $customer['last_name'] . ' è stato re-iscritto alle comunicazioni.');
         }
 
+        Response::redirect(url("dashboard/customers/{$id}"));
+    }
+
+    public function updateBirthday(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $customerModel = new Customer();
+        $customer = $customerModel->findById($id);
+
+        if (!$customer || (int)$customer['tenant_id'] !== (int)Auth::tenantId()) {
+            flash('danger', 'Cliente non trovato.');
+            Response::redirect(url('dashboard/customers'));
+            return;
+        }
+
+        $birthday = $request->input('birthday', '');
+        $birthday = $birthday ? $birthday : null;
+
+        // Validate date format
+        if ($birthday && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $birthday)) {
+            flash('danger', 'Data non valida.');
+            Response::redirect(url("dashboard/customers/{$id}"));
+            return;
+        }
+
+        $customerModel->updateBirthday($id, $birthday);
+        flash('success', 'Data di nascita aggiornata.');
+        Response::redirect(url("dashboard/customers/{$id}"));
+    }
+
+    public function addTag(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $customerModel = new Customer();
+        $customer = $customerModel->findById($id);
+
+        if (!$customer || (int)$customer['tenant_id'] !== (int)Auth::tenantId()) {
+            flash('danger', 'Cliente non trovato.');
+            Response::redirect(url('dashboard/customers'));
+            return;
+        }
+
+        $tag = trim(mb_substr($request->input('tag', ''), 0, 50));
+        if ($tag) {
+            $customerModel->addTag($id, $tag);
+        }
+        Response::redirect(url("dashboard/customers/{$id}"));
+    }
+
+    public function removeTag(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $customerModel = new Customer();
+        $customer = $customerModel->findById($id);
+
+        if (!$customer || (int)$customer['tenant_id'] !== (int)Auth::tenantId()) {
+            flash('danger', 'Cliente non trovato.');
+            Response::redirect(url('dashboard/customers'));
+            return;
+        }
+
+        $tag = $request->input('tag', '');
+        if ($tag) {
+            $customerModel->removeTag($id, $tag);
+        }
         Response::redirect(url("dashboard/customers/{$id}"));
     }
 }

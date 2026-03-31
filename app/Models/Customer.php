@@ -171,18 +171,46 @@ class Customer
 
     public function createImported(int $tenantId, array $data): int
     {
-        $stmt = $this->db->prepare(
-            'INSERT INTO customers (tenant_id, first_name, last_name, email, phone, source)
-             VALUES (:tenant_id, :first_name, :last_name, :email, :phone, :source)'
-        );
-        $stmt->execute([
+        $cols = ['tenant_id', 'first_name', 'last_name', 'email', 'phone', 'source'];
+        $vals = [
             'tenant_id'  => $tenantId,
             'first_name' => $data['first_name'],
             'last_name'  => $data['last_name'],
             'email'      => $data['email'],
             'phone'      => $data['phone'],
             'source'     => $data['source'] ?? 'import',
-        ]);
+        ];
+
+        // Optional extended fields
+        if (!empty($data['birthday'])) {
+            $cols[] = 'birthday';
+            $vals['birthday'] = $data['birthday'];
+        }
+        if (!empty($data['last_visit'])) {
+            $cols[] = 'last_visit';
+            $vals['last_visit'] = $data['last_visit'];
+        }
+        if (!empty($data['tags'])) {
+            $cols[] = 'tags';
+            $vals['tags'] = is_array($data['tags']) ? json_encode($data['tags'], JSON_UNESCAPED_UNICODE) : $data['tags'];
+        }
+        if (isset($data['total_bookings']) && (int)$data['total_bookings'] > 0) {
+            $cols[] = 'total_bookings';
+            $vals['total_bookings'] = (int)$data['total_bookings'];
+        }
+        if (!empty($data['notes'])) {
+            $cols[] = 'notes';
+            $vals['notes'] = $data['notes'];
+        }
+        if (isset($data['unsubscribed'])) {
+            $cols[] = 'unsubscribed';
+            $vals['unsubscribed'] = (int)$data['unsubscribed'];
+        }
+
+        $placeholders = array_map(fn($c) => ':' . $c, $cols);
+        $sql = 'INSERT INTO customers (' . implode(', ', $cols) . ') VALUES (' . implode(', ', $placeholders) . ')';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($vals);
         return (int)$this->db->lastInsertId();
     }
 
@@ -329,6 +357,49 @@ class Customer
             'returning_res'   => (int)$resStats['returning_res'],
             'new_res'         => $totalRes - (int)$resStats['returning_res'],
         ];
+    }
+
+    // ===== Extended fields =====
+
+    public function updateBirthday(int $id, ?string $birthday): void
+    {
+        $this->db->prepare('UPDATE customers SET birthday = :birthday WHERE id = :id')
+                 ->execute(['id' => $id, 'birthday' => $birthday]);
+    }
+
+    public function updateLastVisit(int $id, string $date): void
+    {
+        $this->db->prepare('UPDATE customers SET last_visit = :d WHERE id = :id')
+                 ->execute(['id' => $id, 'd' => $date]);
+    }
+
+    public function getTags(int $id): array
+    {
+        $stmt = $this->db->prepare('SELECT tags FROM customers WHERE id = :id LIMIT 1');
+        $stmt->execute(['id' => $id]);
+        $raw = $stmt->fetchColumn();
+        if (!$raw) return [];
+        $decoded = json_decode($raw, true);
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    public function addTag(int $id, string $tag): void
+    {
+        $tags = $this->getTags($id);
+        $tag = trim($tag);
+        if ($tag === '' || in_array($tag, $tags, true)) return;
+        $tags[] = $tag;
+        $this->db->prepare('UPDATE customers SET tags = :tags WHERE id = :id')
+                 ->execute(['id' => $id, 'tags' => json_encode(array_values($tags), JSON_UNESCAPED_UNICODE)]);
+    }
+
+    public function removeTag(int $id, string $tag): void
+    {
+        $tags = $this->getTags($id);
+        $tags = array_filter($tags, fn($t) => $t !== $tag);
+        $json = empty($tags) ? null : json_encode(array_values($tags), JSON_UNESCAPED_UNICODE);
+        $this->db->prepare('UPDATE customers SET tags = :tags WHERE id = :id')
+                 ->execute(['id' => $id, 'tags' => $json]);
     }
 
     /**

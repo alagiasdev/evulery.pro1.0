@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Scheda Cliente v3</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 180px;
+            --brand: #00844A;
+            --brand-light: #E8F5E9;
+            --brand-dark: #006837;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        /* Sidebar mock */
+        .mock-sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w); background: #1a1d23; color: #fff;
+            padding: 1rem 0; z-index: 100;
+        }
+        .mock-sidebar .brand { padding: 0 1rem 1rem; font-weight: 700; font-size: 1.05rem; border-bottom: 1px solid #333; margin-bottom: .5rem; }
+        .mock-sidebar .nav-item { padding: .5rem 1rem; font-size: .9rem; color: #adb5bd; cursor: pointer; }
+        .mock-sidebar .nav-item.active { background: var(--brand); color: #fff; border-radius: 6px; margin: 0 .5rem; padding: .5rem .75rem; }
+
+        /* Main */
+        .main { margin-left: var(--sidebar-w); padding: 1.25rem 1.5rem; }
+
+        /* Breadcrumb */
+        .page-back a { color: var(--brand); text-decoration: none; font-size: .85rem; font-weight: 500; }
+        .page-back a:hover { text-decoration: underline; }
+
+        /* Birthday alert banner */
+        .birthday-alert {
+            background: linear-gradient(135deg, #FFF8E1, #FFF3E0);
+            border: 1px solid #FFE082;
+            border-radius: 12px; padding: .6rem 1rem;
+            display: flex; align-items: center; gap: .75rem;
+            margin-bottom: 1rem; font-size: .82rem;
+        }
+        .birthday-alert-icon { font-size: 1.5rem; }
+        .birthday-alert-text { flex: 1; }
+        .birthday-alert-text strong { color: #E65100; }
+        .birthday-alert-action {
+            font-size: .75rem; padding: 4px 12px; border-radius: 8px;
+            border: 1px solid #FFB300; background: #fff; color: #F57F17;
+            cursor: pointer; font-weight: 600; white-space: nowrap;
+        }
+        .birthday-alert-action:hover { background: #FFF8E1; }
+
+        /* Hero card */
+        .hero-card {
+            display: flex; align-items: center; gap: 1.25rem;
+            background: #fff; border-radius: 14px; padding: 1.25rem 1.5rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 1rem;
+        }
+        .hero-avatar {
+            width: 56px; height: 56px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 700; font-size: 1.15rem; flex-shrink: 0;
+            position: relative;
+        }
+        .hero-avatar .bday-ring {
+            position: absolute; inset: -3px; border-radius: 50%;
+            border: 2px solid #FFB300; animation: bday-pulse 2s infinite;
+        }
+        @keyframes bday-pulse {
+            0%, 100% { opacity: .4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        .hero-info { flex: 1; min-width: 0; }
+        .hero-name { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+        .hero-contacts { display: flex; gap: 1.25rem; font-size: .82rem; margin-top: .3rem; color: #6c757d; flex-wrap: wrap; }
+        .hero-contacts a { color: var(--brand); text-decoration: none; }
+        .hero-meta { font-size: .75rem; color: #adb5bd; margin-top: .25rem; display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; }
+        .hero-actions { display: flex; gap: .5rem; flex-shrink: 0; flex-wrap: wrap; }
+        .hero-actions .btn { font-size: .78rem; padding: .35rem .75rem; border-radius: 8px; }
+
+        /* Badges */
+        .seg-badge { font-size: .68rem; font-weight: 700; padding: 2px 10px; border-radius: 20px; }
+        .seg-badge.vip { background: #FFF3E0; color: #E65100; }
+        .seg-badge.abituale { background: #E8F5E9; color: #2E7D32; }
+        .seg-badge.occasionale { background: #E3F2FD; color: #1565C0; }
+        .seg-badge.nuovo { background: #F5F5F5; color: #757575; }
+        .unsub-badge { font-size: .68rem; font-weight: 600; padding: 2px 8px; border-radius: 4px; background: #FFF3E0; color: #E65100; }
+        .source-badge { font-size: .7rem; padding: 2px 8px; border-radius: 4px; background: #f0f0f0; color: #6c757d; }
+
+        /* Birthday inline in hero-meta */
+        .hero-birthday { font-size: .75rem; color: #6c757d; }
+        .hero-birthday i { color: #E65100; }
+
+        /* Stats strip */
+        .stats-strip {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: .75rem;
+            margin-bottom: 1rem;
+        }
+        .stat-card {
+            background: #fff; border-radius: 12px; padding: .85rem;
+            text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,.05);
+            position: relative;
+        }
+        .stat-value { font-size: 1.35rem; font-weight: 800; line-height: 1.1; }
+        .stat-label { font-size: .68rem; color: #adb5bd; text-transform: uppercase; letter-spacing: .3px; margin-top: .2rem; }
+        .stat-trend {
+            position: absolute; top: .5rem; right: .6rem;
+            font-size: .6rem; font-weight: 700; padding: 1px 5px; border-radius: 4px;
+        }
+        .stat-trend.up { background: #E8F5E9; color: #2E7D32; }
+        .stat-trend.down { background: #FFEBEE; color: #C62828; }
+        .stat-trend.neutral { background: #F5F5F5; color: #9E9E9E; }
+
+        /* Tags + Affidabilita row */
+        .info-row {
+            display: grid; grid-template-columns: 1fr auto; gap: .75rem;
+            margin-bottom: 1rem; align-items: start;
+        }
+
+        /* Tags inline */
+        .tags-strip {
+            background: #fff; border-radius: 12px; padding: .75rem 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.05);
+        }
+        .tags-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: .5rem;
+        }
+        .tags-title { font-size: .78rem; font-weight: 600; color: #495057; }
+        .tags-count { font-size: .7rem; color: #adb5bd; }
+        .tags-wrap { display: flex; flex-wrap: wrap; gap: .3rem; }
+        .tags-wrap.collapsed { max-height: 32px; overflow: hidden; }
+        .customer-tag {
+            display: inline-flex; align-items: center; gap: .2rem;
+            font-size: .7rem; font-weight: 600; padding: 2px 10px;
+            border-radius: 20px; background: var(--brand-light); color: var(--brand-dark);
+            white-space: nowrap;
+        }
+        /* Tag color variants per category */
+        .customer-tag.tag-geo { background: #E3F2FD; color: #1565C0; }
+        .customer-tag.tag-behavior { background: #FFF3E0; color: #E65100; }
+        .customer-tag.tag-demo { background: #F3E5F5; color: #7B1FA2; }
+        .tag-remove {
+            border: none; background: none; color: inherit; font-size: .8rem;
+            cursor: pointer; padding: 0; line-height: 1; opacity: .5;
+        }
+        .tag-remove:hover { opacity: 1; color: #dc3545; }
+        .tag-toggle { font-size: .7rem; color: var(--brand); cursor: pointer; border: none; background: none; padding: 0; }
+        .tag-toggle:hover { text-decoration: underline; }
+        .add-tag-inline {
+            display: inline-flex; align-items: center; gap: .25rem;
+        }
+        .add-tag-inline input {
+            font-size: .72rem; padding: 2px 8px; border-radius: 20px; border: 1px dashed #ccc;
+            width: 120px; outline: none;
+        }
+        .add-tag-inline input:focus { border-color: var(--brand); }
+        .add-tag-inline button {
+            font-size: .7rem; padding: 2px 8px; border-radius: 20px;
+            border: 1px solid var(--brand); background: var(--brand-light); color: var(--brand-dark);
+            cursor: pointer;
+        }
+
+        /* Reliability compact (right side of info-row) */
+        .reliability-compact {
+            background: #fff; border-radius: 12px; padding: .75rem 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.05);
+            min-width: 200px; max-width: 220px;
+        }
+        .rel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .4rem; }
+        .rel-title { font-size: .78rem; font-weight: 600; }
+        .rel-value { font-size: .78rem; font-weight: 700; }
+        .rel-bar { height: 6px; background: #eee; border-radius: 3px; }
+        .rel-bar-fill { height: 100%; border-radius: 3px; transition: width .3s; }
+        .rel-detail { font-size: .65rem; color: #adb5bd; margin-top: .35rem; display: flex; gap: .75rem; }
+
+        /* Section labels */
+        .section-label {
+            font-size: .72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .5px; color: #adb5bd; margin-bottom: .6rem;
+        }
+        .section-label i { font-size: .8rem; margin-right: .3rem; }
+
+        /* Profile card (left column) - tabbed */
+        .profile-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.05);
+            overflow: hidden;
+        }
+        .profile-tabs {
+            display: flex; border-bottom: 1px solid #f0f0f0;
+        }
+        .profile-tab {
+            flex: 1; padding: .6rem; text-align: center;
+            font-size: .72rem; font-weight: 600; color: #adb5bd;
+            cursor: pointer; border-bottom: 2px solid transparent;
+            transition: all .2s; background: none; border-top: none; border-left: none; border-right: none;
+        }
+        .profile-tab:hover { color: #495057; background: #fafafa; }
+        .profile-tab.active { color: var(--brand); border-bottom-color: var(--brand); }
+        .profile-tab i { display: block; font-size: .9rem; margin-bottom: 2px; }
+        .profile-body { padding: 1rem; }
+        .profile-panel { display: none; }
+        .profile-panel.active { display: block; }
+
+        /* Insight chips */
+        .insight-chip {
+            display: inline-flex; align-items: center; gap: .3rem;
+            font-size: .72rem; padding: 4px 10px; border-radius: 20px;
+            background: #f8f9fa; color: #495057; margin-bottom: .25rem;
+        }
+
+        /* Notes */
+        .notes-textarea {
+            width: 100%; border: 1px solid #e9ecef; border-radius: 8px;
+            padding: .5rem .75rem; font-size: .82rem; resize: vertical; min-height: 60px;
+            font-family: inherit; box-sizing: border-box;
+        }
+        .notes-textarea:focus { border-color: var(--brand); outline: none; box-shadow: 0 0 0 3px rgba(0,132,74,.1); }
+
+        .btn-save-sm {
+            font-size: .72rem; padding: 3px 12px; border-radius: 6px;
+            border: 1px solid var(--brand); background: var(--brand-light); color: var(--brand-dark);
+            cursor: pointer; font-weight: 600;
+        }
+        .btn-save-sm:hover { background: var(--brand); color: #fff; }
+
+        /* Privacy panel */
+        .privacy-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: .5rem 0; border-bottom: 1px solid #f8f8f8;
+            font-size: .82rem;
+        }
+        .privacy-row:last-child { border: none; }
+        .privacy-label { color: #6c757d; font-size: .75rem; }
+        .privacy-value { font-weight: 600; }
+        .privacy-ok { color: #2E7D32; }
+        .privacy-no { color: #E65100; }
+
+        /* History card */
+        .history-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.05); overflow: hidden;
+        }
+        /* History filters */
+        .history-filters {
+            display: flex; gap: .35rem; padding: .75rem 1rem;
+            border-bottom: 1px solid #f0f0f0; flex-wrap: wrap; align-items: center;
+        }
+        .filter-chip {
+            font-size: .68rem; font-weight: 600; padding: 3px 10px;
+            border-radius: 20px; border: 1px solid #e0e0e0; background: #fff;
+            color: #6c757d; cursor: pointer; transition: all .15s;
+        }
+        .filter-chip:hover { border-color: var(--brand); color: var(--brand); }
+        .filter-chip.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+        .filter-chip .fc-count {
+            font-size: .6rem; background: rgba(0,0,0,.08); padding: 0 4px;
+            border-radius: 8px; margin-left: 2px;
+        }
+        .filter-chip.active .fc-count { background: rgba(255,255,255,.25); }
+
+        .ch-header {
+            display: grid; grid-template-columns: 100px 60px 1fr 50px 100px 20px;
+            padding: .5rem 1rem; font-size: .7rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .3px; color: #adb5bd;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .ch-row {
+            display: grid; grid-template-columns: 100px 60px 1fr 50px 100px 20px;
+            padding: .55rem 1rem; font-size: .82rem; align-items: center;
+            border-bottom: 1px solid #f8f8f8; cursor: pointer; transition: background .15s;
+        }
+        .ch-row:hover { background: #fafff8; }
+        .ch-row:last-child { border: none; }
+        .ch-pax { text-align: center; font-weight: 600; }
+        .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; }
+        .status-dot.confirmed { background: var(--brand); }
+        .status-dot.arrived { background: #1565C0; }
+        .status-dot.noshow { background: #dc3545; }
+        .status-dot.cancelled { background: #adb5bd; }
+        .ch-status { font-size: .75rem; text-align: right; }
+
+        /* Visit frequency mini chart */
+        .frequency-chart {
+            display: flex; align-items: flex-end; gap: 3px; height: 40px;
+            margin-top: .5rem;
+        }
+        .freq-bar {
+            flex: 1; background: var(--brand-light); border-radius: 3px 3px 0 0;
+            transition: height .3s; min-height: 2px; position: relative;
+        }
+        .freq-bar:hover { background: var(--brand); }
+        .freq-bar:hover::after {
+            content: attr(data-tip);
+            position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%);
+            background: #333; color: #fff; font-size: .55rem; padding: 2px 6px;
+            border-radius: 4px; white-space: nowrap;
+        }
+        .freq-labels {
+            display: flex; gap: 3px; margin-top: 2px;
+        }
+        .freq-label {
+            flex: 1; text-align: center; font-size: .5rem; color: #ccc;
+        }
+
+        /* Empty state */
+        .empty-state { text-align: center; padding: 2.5rem; color: #adb5bd; }
+        .empty-state i { font-size: 2rem; display: block; margin-bottom: .5rem; }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .stats-strip { grid-template-columns: repeat(3, 1fr); }
+            .hero-card { flex-direction: column; text-align: center; }
+            .hero-actions { justify-content: center; }
+            .hero-contacts { justify-content: center; }
+            .info-row { grid-template-columns: 1fr; }
+            .reliability-compact { max-width: none; }
+        }
+        @media (max-width: 768px) {
+            .mock-sidebar { display: none; }
+            .main { margin-left: 0; padding: 1rem; }
+            .stats-strip { grid-template-columns: repeat(2, 1fr); }
+            .ch-header, .ch-row { grid-template-columns: 80px 50px 1fr 40px 80px; }
+            .ch-header span:last-child, .ch-row i:last-child { display: none; }
+            .profile-tab span { display: none; }
+        }
+
+        /* Annotation bubbles */
+        .anno { position: relative; display: inline-block; }
+        .anno::after {
+            content: attr(data-note);
+            position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
+            background: #E65100; color: #fff; font-size: .6rem; font-weight: 700;
+            padding: 2px 8px; border-radius: 10px; white-space: nowrap;
+            opacity: 0; transition: opacity .2s; pointer-events: none;
+        }
+        .anno:hover::after { opacity: 1; }
+
+        .change-badge {
+            display: inline-block; font-size: .55rem; font-weight: 800;
+            padding: 1px 6px; border-radius: 4px; vertical-align: middle; margin-left: 4px;
+        }
+        .change-new { background: #C8E6C9; color: #2E7D32; }
+        .change-moved { background: #FFF9C4; color: #F57F17; }
+        .change-improved { background: #E3F2FD; color: #1565C0; }
+        .change-removed { background: #FFCDD2; color: #C62828; }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="mock-sidebar">
+    <div class="brand">Trattoria Da Mario</div>
+    <div class="nav-item"><i class="bi bi-grid me-2"></i>Dashboard</div>
+    <div class="nav-item"><i class="bi bi-calendar3 me-2"></i>Prenotazioni</div>
+    <div class="nav-item active"><i class="bi bi-people me-2"></i>Clienti</div>
+    <div class="nav-item"><i class="bi bi-card-list me-2"></i>Menu</div>
+    <div class="nav-item"><i class="bi bi-bag me-2"></i>Ordini</div>
+    <div class="nav-item"><i class="bi bi-envelope me-2"></i>Comunicazioni</div>
+    <div class="nav-item"><i class="bi bi-bell me-2"></i>Notifiche</div>
+    <div class="nav-item"><i class="bi bi-gear me-2"></i>Impostazioni</div>
+</div>
+
+<!-- Main content -->
+<div class="main">
+
+    <!-- Breadcrumb -->
+    <div class="page-back" style="margin-bottom: .75rem;">
+        <a href="#"><i class="bi bi-arrow-left"></i> Clienti</a>
+        <span style="color:#adb5bd;font-size:.82rem;margin-left:.25rem;">/ D Marco Sommelier</span>
+    </div>
+
+    <!-- ============================== -->
+    <!--  BIRTHDAY ALERT BANNER (v3)    -->
+    <!--  Appare solo se compleanno     -->
+    <!--  entro i prossimi 7 giorni     -->
+    <!-- ============================== -->
+    <div class="birthday-alert anno" data-note="Visibile solo se compleanno entro 7 giorni">
+        <span class="birthday-alert-icon">🎂</span>
+        <div class="birthday-alert-text">
+            <strong>Compleanno tra 3 giorni!</strong> D Marco compie <strong>52 anni</strong> il 18 agosto.
+            Potresti inviargli un messaggio di auguri.
+        </div>
+        <button class="birthday-alert-action"><i class="bi bi-whatsapp me-1"></i> Invia auguri</button>
+        <span class="change-badge change-new">NUOVO v3</span>
+    </div>
+
+    <!-- ============================== -->
+    <!--  HERO CARD                     -->
+    <!--  Invariato da v2 + anello      -->
+    <!--  compleanno su avatar          -->
+    <!-- ============================== -->
+    <div class="hero-card">
+        <div class="hero-avatar" style="background: #E65100;">
+            DM
+            <div class="bday-ring" title="Compleanno vicino!"></div>
+        </div>
+        <div class="hero-info">
+            <div class="hero-name">
+                D Marco Sommelier
+                <span class="seg-badge vip">VIP</span>
+                <span class="unsub-badge"><i class="bi bi-envelope-slash"></i> Disiscritto</span>
+            </div>
+            <div class="hero-contacts">
+                <span><i class="bi bi-telephone-fill me-1"></i><a href="#">+393337585460</a></span>
+                <span><i class="bi bi-whatsapp me-1"></i><a href="#">Chatta</a></span>
+                <span><i class="bi bi-envelope-fill me-1"></i><a href="#">danilocar74@gmail.com</a></span>
+            </div>
+            <div class="hero-meta">
+                <span>Cliente dal 31 Marzo 2026</span>
+                <span class="source-badge"><i class="bi bi-cloud-upload"></i> Importato da CSV</span>
+                <span class="hero-birthday" title="Data di nascita">
+                    <i class="bi bi-cake2"></i> 18 Ago 1974 · 51 anni
+                </span>
+            </div>
+        </div>
+        <div class="hero-actions">
+            <button class="btn btn-success btn-sm"><i class="bi bi-plus-circle me-1"></i>Prenota</button>
+            <button class="btn btn-outline-danger btn-sm"><i class="bi bi-slash-circle me-1"></i>Blocca</button>
+            <button class="btn btn-outline-success btn-sm"><i class="bi bi-envelope-check me-1"></i>Re-iscrivi</button>
+            <a href="#" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>Lista</a>
+        </div>
+    </div>
+
+    <!-- ============================== -->
+    <!--  STATS STRIP + trend badge     -->
+    <!-- ============================== -->
+    <div class="stats-strip">
+        <div class="stat-card">
+            <span class="stat-trend up anno" data-note="Trend vs mese precedente">+3</span>
+            <div class="stat-value" style="color: var(--brand);">18</div>
+            <div class="stat-label">Prenotazioni</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-trend neutral">—</span>
+            <div class="stat-value" style="color: #dc3545;">0</div>
+            <div class="stat-label">No-show</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color: #6c757d;">3.2</div>
+            <div class="stat-label">Media coperti</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color: #495057;">22 Apr</div>
+            <div class="stat-label">Ultima visita</div>
+        </div>
+        <div class="stat-card anno" data-note="Se birthday presente mostra eta, altrimenti 'Cliente da'">
+            <div class="stat-value" style="color: #E65100;">51</div>
+            <div class="stat-label">Eta (anni)</div>
+        </div>
+    </div>
+
+    <!-- ============================== -->
+    <!--  TAGS + AFFIDABILITA in riga   -->
+    <!--  Tags prende lo spazio, aff.   -->
+    <!--  compatta a destra (v3)        -->
+    <!-- ============================== -->
+    <div class="info-row">
+        <!-- Tags -->
+        <div class="tags-strip">
+            <div class="tags-header">
+                <span class="tags-title"><i class="bi bi-tags me-1"></i> Tag <span class="change-badge change-improved">MIGLIORATO v3</span></span>
+                <span class="tags-count">15 tag</span>
+            </div>
+            <div class="tags-wrap" id="tagsWrap">
+                <!-- Geo tags (blue) -->
+                <span class="customer-tag tag-geo">Provincia Frosinone <button class="tag-remove">&times;</button></span>
+                <span class="customer-tag tag-geo">Regione Lazio <button class="tag-remove">&times;</button></span>
+                <span class="customer-tag tag-geo">Nazionalita IT <button class="tag-remove">&times;</button></span>
+                <!-- Demographic (purple) -->
+                <span class="customer-tag tag-demo">Segno zodiacale Leone <button class="tag-remove">&times;</button></span>
+                <span class="customer-tag tag-demo">anno 1974 <button class="tag-remove">&times;</button></span>
+                <span class="customer-tag tag-demo">agosto <button class="tag-remove">&times;</button></span>
+                <!-- Behavior (orange) -->
+                <span class="customer-tag tag-behavior">VIP <button class="tag-remove">&times;</button></span>
+                <span class="customer-tag tag-behavior">cena <button class="tag-remove">&times;</button></span>
+                <span class="customer-tag tag-behavior">compleanno <button class="tag-remove">&times;</button></span>
+                <span class="customer-tag tag-behavior">arrivato <button class="tag-remove">&times;</button></span>
+                <span class="customer-tag tag-behavior">fuori prenotazione <button class="tag-remove">&times;</button></span>
+                <span class="customer-tag tag-behavior">no show <button class="tag-remove">&times;</button></span>
+                <!-- Default (green) -->
+                <span class="customer-tag">amici <button class="tag-remove">&times;</button></span>
+                <span class="customer-tag">0 Fiammelle <button class="tag-remove">&times;</button></span>
+                <span class="customer-tag">Inattivo <button class="tag-remove">&times;</button></span>
+                <!-- Add inline -->
+                <span class="add-tag-inline">
+                    <input type="text" placeholder="Nuovo tag...">
+                    <button>+ Aggiungi</button>
+                </span>
+            </div>
+            <div style="margin-top:.35rem;">
+                <button class="tag-toggle" id="tagToggle" style="display:none;">Mostra tutti (15)</button>
+            </div>
+        </div>
+
+        <!-- Affidabilita compatta -->
+        <div class="reliability-compact anno" data-note="Compattata in sidebar, non piu full-width">
+            <div class="rel-header">
+                <span class="rel-title"><i class="bi bi-shield-check me-1"></i> Affidabilita</span>
+                <span class="rel-value" style="color: var(--brand);">100%</span>
+            </div>
+            <div class="rel-bar">
+                <div class="rel-bar-fill" style="width: 100%; background: var(--brand);"></div>
+            </div>
+            <div class="rel-detail">
+                <span>18 arrivi</span>
+                <span>0 no-show</span>
+                <span style="color:var(--brand);font-weight:600;">Ottima</span>
+            </div>
+            <span class="change-badge change-improved" style="margin-top:.35rem;">COMPATTATA v3</span>
+        </div>
+    </div>
+
+    <!-- ============================== -->
+    <!--  TWO COLUMNS                   -->
+    <!--  Left: Profile (tabbed)        -->
+    <!--  Right: History (filtered)     -->
+    <!-- ============================== -->
+    <div class="row g-4">
+        <!-- Left column: Profile Card with tabs -->
+        <div class="col-lg-4">
+            <div class="profile-card">
+                <div class="profile-tabs">
+                    <button class="profile-tab active" data-tab="profilo">
+                        <i class="bi bi-person"></i> <span>Profilo</span>
+                    </button>
+                    <button class="profile-tab" data-tab="note">
+                        <i class="bi bi-sticky"></i> <span>Note</span>
+                    </button>
+                    <button class="profile-tab" data-tab="privacy">
+                        <i class="bi bi-shield-lock"></i> <span>Privacy</span>
+                    </button>
+                </div>
+                <div class="profile-body">
+
+                    <!-- Tab: Profilo -->
+                    <div class="profile-panel active" id="tab-profilo">
+                        <!-- Insights -->
+                        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:var(--brand);margin-bottom:.5rem;">
+                            <i class="bi bi-lightbulb me-1"></i> Insight
+                        </div>
+                        <div style="margin-bottom: .75rem;">
+                            <span class="insight-chip"><i class="bi bi-moon-stars" style="color:#5C6BC0;"></i> Preferisce la cena</span>
+                            <span class="insight-chip"><i class="bi bi-calendar-week" style="color:var(--brand);"></i> Viene il sabato</span>
+                            <span class="insight-chip"><i class="bi bi-people" style="color:#E65100;"></i> Tavoli da 2-4</span>
+                            <span class="insight-chip"><i class="bi bi-clock" style="color:#1565C0;"></i> Ore 20:00-20:30</span>
+                        </div>
+
+                        <hr style="margin: .75rem 0; border-color: #f0f0f0;">
+
+                        <!-- Birthday edit -->
+                        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:var(--brand);margin-bottom:.5rem;">
+                            <i class="bi bi-cake2 me-1"></i> Data di nascita
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <input type="date" class="form-control form-control-sm" value="1974-08-18" style="max-width:160px; font-size:.8rem;">
+                            <button class="btn-save-sm"><i class="bi bi-check-lg"></i></button>
+                        </div>
+
+                        <hr style="margin: .75rem 0; border-color: #f0f0f0;">
+
+                        <!-- Frequenza visite mini-chart (v3 new) -->
+                        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:var(--brand);margin-bottom:.3rem;">
+                            <i class="bi bi-graph-up me-1"></i> Frequenza visite
+                            <span class="change-badge change-new">NUOVO v3</span>
+                        </div>
+                        <div style="font-size:.65rem;color:#adb5bd;margin-bottom:.25rem;">Ultimi 6 mesi</div>
+                        <div class="frequency-chart">
+                            <div class="freq-bar" style="height:20%;" data-tip="Nov: 1"></div>
+                            <div class="freq-bar" style="height:50%;" data-tip="Dic: 3"></div>
+                            <div class="freq-bar" style="height:35%;" data-tip="Gen: 2"></div>
+                            <div class="freq-bar" style="height:75%;" data-tip="Feb: 4"></div>
+                            <div class="freq-bar" style="height:100%;" data-tip="Mar: 5"></div>
+                            <div class="freq-bar" style="height:55%;" data-tip="Apr: 3"></div>
+                        </div>
+                        <div class="freq-labels">
+                            <span class="freq-label">Nov</span>
+                            <span class="freq-label">Dic</span>
+                            <span class="freq-label">Gen</span>
+                            <span class="freq-label">Feb</span>
+                            <span class="freq-label">Mar</span>
+                            <span class="freq-label">Apr</span>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Note -->
+                    <div class="profile-panel" id="tab-note">
+                        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:var(--brand);margin-bottom:.5rem;">
+                            <i class="bi bi-sticky me-1"></i> Note interne
+                        </div>
+                        <textarea class="notes-textarea" rows="5" placeholder="Allergie, preferenze, tavolo preferito...">Preferisce tavolo angolo, allergia ai crostacei. Ottimo cliente, sempre puntuale.</textarea>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <span style="font-size:.65rem;color:#adb5bd;">Ultima modifica: 28 Mar 2026</span>
+                            <button class="btn-save-sm"><i class="bi bi-check-lg me-1"></i>Salva</button>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Privacy (v3 new) -->
+                    <div class="profile-panel" id="tab-privacy">
+                        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:var(--brand);margin-bottom:.5rem;">
+                            <i class="bi bi-shield-lock me-1"></i> Privacy e consensi
+                            <span class="change-badge change-new">NUOVO v3</span>
+                        </div>
+                        <div class="privacy-row">
+                            <span class="privacy-label">Email marketing</span>
+                            <span class="privacy-value privacy-no"><i class="bi bi-x-circle me-1"></i> Disiscritto</span>
+                        </div>
+                        <div class="privacy-row">
+                            <span class="privacy-label">Data disiscrizione</span>
+                            <span class="privacy-value" style="font-size:.78rem;">15 Mar 2026</span>
+                        </div>
+                        <div class="privacy-row">
+                            <span class="privacy-label">Fonte dati</span>
+                            <span class="privacy-value" style="font-size:.78rem;">Importazione CSV</span>
+                        </div>
+                        <div class="privacy-row">
+                            <span class="privacy-label">Data acquisizione</span>
+                            <span class="privacy-value" style="font-size:.78rem;">31 Mar 2026</span>
+                        </div>
+                        <div class="privacy-row">
+                            <span class="privacy-label">Stato account</span>
+                            <span class="privacy-value privacy-ok"><i class="bi bi-check-circle me-1"></i> Attivo</span>
+                        </div>
+                        <div style="margin-top:.75rem; padding:.5rem .75rem; background:#FFF3E0; border-radius:8px; font-size:.7rem; color:#E65100;">
+                            <i class="bi bi-info-circle me-1"></i> Questo cliente si e disiscritto dalle comunicazioni email. Puoi re-iscriverlo dal pulsante nell'header.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Right column: History with filters -->
+        <div class="col-lg-8">
+            <div class="section-label"><i class="bi bi-clock-history"></i> Storico prenotazioni</div>
+
+            <div class="history-card">
+                <!-- Filter chips (v3 new) -->
+                <div class="history-filters anno" data-note="Filtri rapidi per stato prenotazione">
+                    <span class="filter-chip active">Tutte <span class="fc-count">18</span></span>
+                    <span class="filter-chip"><i class="bi bi-check-circle me-1" style="color:var(--brand);"></i>Confermate <span class="fc-count">8</span></span>
+                    <span class="filter-chip"><i class="bi bi-person-check me-1" style="color:#1565C0;"></i>Arrivati <span class="fc-count">7</span></span>
+                    <span class="filter-chip"><i class="bi bi-x-circle me-1" style="color:#dc3545;"></i>No-show <span class="fc-count">1</span></span>
+                    <span class="filter-chip"><i class="bi bi-dash-circle me-1" style="color:#adb5bd;"></i>Annullate <span class="fc-count">2</span></span>
+                    <span class="change-badge change-new" style="margin-left:auto;">NUOVO v3</span>
+                </div>
+
+                <div class="ch-header">
+                    <span>Data</span>
+                    <span>Ora</span>
+                    <span>Dettaglio</span>
+                    <span style="text-align:center;">Pax</span>
+                    <span style="text-align:right;">Stato</span>
+                    <span></span>
+                </div>
+                <div class="ch-row">
+                    <div>22 Apr 2024</div>
+                    <div>20:30</div>
+                    <div style="color:#6c757d;">Cena</div>
+                    <div class="ch-pax">4</div>
+                    <div class="ch-status"><span class="status-dot arrived"></span> Arrivato</div>
+                    <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+                </div>
+                <div class="ch-row">
+                    <div>15 Mar 2024</div>
+                    <div>20:00</div>
+                    <div style="color:#6c757d;">Cena · Telefono</div>
+                    <div class="ch-pax">2</div>
+                    <div class="ch-status"><span class="status-dot confirmed"></span> Confermata</div>
+                    <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+                </div>
+                <div class="ch-row">
+                    <div>28 Feb 2024</div>
+                    <div>13:00</div>
+                    <div style="color:#6c757d;">Pranzo · Widget</div>
+                    <div class="ch-pax">3</div>
+                    <div class="ch-status"><span class="status-dot arrived"></span> Arrivato</div>
+                    <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+                </div>
+                <div class="ch-row">
+                    <div>10 Feb 2024</div>
+                    <div>20:30</div>
+                    <div style="color:#6c757d;">Cena · Walk-in</div>
+                    <div class="ch-pax">6</div>
+                    <div class="ch-status"><span class="status-dot noshow"></span> No-show</div>
+                    <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+                </div>
+                <div class="ch-row">
+                    <div>25 Gen 2024</div>
+                    <div>20:00</div>
+                    <div style="color:#6c757d;">Cena</div>
+                    <div class="ch-pax">2</div>
+                    <div class="ch-status"><span class="status-dot cancelled"></span> Annullata</div>
+                    <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+                </div>
+                <div class="ch-row">
+                    <div>12 Gen 2024</div>
+                    <div>20:30</div>
+                    <div style="color:#6c757d;">Cena · Widget</div>
+                    <div class="ch-pax">2</div>
+                    <div class="ch-status"><span class="status-dot arrived"></span> Arrivato</div>
+                    <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================== -->
+    <!--  DESIGN NOTES                  -->
+    <!-- ============================== -->
+    <div style="margin-top: 2rem; padding: 1.25rem; background: #FFF8E1; border-radius: 12px; border: 2px dashed #FFB300;">
+        <h6 style="font-weight: 700; color: #F57F17; margin-bottom: .75rem;"><i class="bi bi-pencil-square me-1"></i> Note wireframe v3 — Migliorie rispetto a v2</h6>
+        <div style="font-size: .82rem; line-height: 1.7;">
+
+            <p><strong>1. Banner compleanno imminente</strong> <span class="change-badge change-new">NUOVO</span><br>
+            Appare solo quando il compleanno e entro i prossimi 7 giorni. Mostra quanti giorni mancano, l'eta che compira, e un pulsante rapido "Invia auguri" via WhatsApp. L'avatar mostra un anello dorato pulsante.</p>
+
+            <p><strong>2. Stat cards con trend</strong> <span class="change-badge change-improved">MIGLIORATO</span><br>
+            Le card "Prenotazioni" e "No-show" mostrano un micro-badge con il trend rispetto al mese precedente (+3, -1, —). Aiuta a capire a colpo d'occhio se il cliente sta tornando di piu o di meno.</p>
+
+            <p><strong>3. Tag con colori per categoria</strong> <span class="change-badge change-improved">MIGLIORATO</span><br>
+            I tag sono colorati automaticamente: <span style="color:#1565C0;">blu = geografici</span> (Provincia, Regione, Nazionalita), <span style="color:#7B1FA2;">viola = demografici</span> (Segno, anno, mese), <span style="color:#E65100;">arancione = comportamento</span> (VIP, cena, no show). I non categorizzati restano verdi. La logica e keyword-based nel backend.</p>
+
+            <p><strong>4. Affidabilita compattata in sidebar</strong> <span class="change-badge change-improved">MIGLIORATO</span><br>
+            Non piu una barra full-width a se stante. Ora e un box compatto affiancato ai tag, con dettaglio arrivi/no-show. Risparmia spazio verticale.</p>
+
+            <p><strong>5. Profilo con tab</strong> <span class="change-badge change-improved">MIGLIORATO</span><br>
+            La colonna sinistra ha 3 tab: <strong>Profilo</strong> (insight + birthday + frequenza), <strong>Note</strong> (con data ultima modifica), <strong>Privacy</strong> (stato consensi GDPR, fonte dati, data acquisizione). Evita di sovraccaricare la colonna singola.</p>
+
+            <p><strong>6. Grafico frequenza visite</strong> <span class="change-badge change-new">NUOVO</span><br>
+            Mini bar chart negli ultimi 6 mesi nel tab Profilo. Mostra visivamente il trend del cliente. Hover su barra = tooltip con mese e numero visite. Pure CSS, nessuna libreria.</p>
+
+            <p><strong>7. Filtri rapidi storico</strong> <span class="change-badge change-new">NUOVO</span><br>
+            Barra di filtro sopra la tabella con chip: Tutte, Confermate, Arrivati, No-show, Annullate. Ciascuno con conteggio. Filtro client-side istantaneo, utile con clienti con molte prenotazioni.</p>
+
+            <p><strong>8. Tab Privacy/GDPR</strong> <span class="change-badge change-new">NUOVO</span><br>
+            Mostra stato email marketing, data disiscrizione, fonte dati, data acquisizione. Banner informativo contestuale (es. "cliente disiscritto"). Utile per conformita GDPR e per capire il contesto.</p>
+
+            <p><strong>9. Nessuna modifica a</strong>: Hero card (struttura confermata da v2), 5a stat card dinamica (eta/cliente da), birthday inline nell'hero-meta, campo add-tag inline.</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// Tab switching
+document.querySelectorAll('.profile-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+        document.querySelectorAll('.profile-tab').forEach(function(t) { t.classList.remove('active'); });
+        document.querySelectorAll('.profile-panel').forEach(function(p) { p.classList.remove('active'); });
+        this.classList.add('active');
+        document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+    });
+});
+
+// Tag collapse/expand
+(function() {
+    var wrap = document.getElementById('tagsWrap');
+    var toggle = document.getElementById('tagToggle');
+    if (!wrap || !toggle) return;
+    var tags = wrap.querySelectorAll('.customer-tag');
+    if (tags.length > 8) {
+        wrap.classList.add('collapsed');
+        toggle.style.display = 'inline';
+        toggle.textContent = 'Mostra tutti (' + tags.length + ')';
+    }
+    toggle.addEventListener('click', function() {
+        if (wrap.classList.contains('collapsed')) {
+            wrap.classList.remove('collapsed');
+            toggle.textContent = 'Mostra meno';
+        } else {
+            wrap.classList.add('collapsed');
+            toggle.textContent = 'Mostra tutti (' + tags.length + ')';
+        }
+    });
+})();
+
+// Filter chips (demo)
+document.querySelectorAll('.filter-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+        document.querySelectorAll('.filter-chip').forEach(function(c) { c.classList.remove('active'); });
+        this.classList.add('active');
+    });
+});
+</script>
+
+</body>
+</html>

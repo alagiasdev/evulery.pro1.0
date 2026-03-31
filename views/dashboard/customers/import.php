@@ -64,7 +64,8 @@ $step = $step ?? '1';
                     <div class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> Separatore automatico (virgola, punto e virgola, tab)</div>
                     <div class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> Deduplica automatica per email/telefono</div>
                     <div class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> I clienti gi&agrave; presenti non vengono modificati</div>
-                    <div><i class="bi bi-check-circle text-success me-1"></i> Mappatura colonne flessibile</div>
+                    <div class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> Mappatura colonne flessibile</div>
+                    <div><i class="bi bi-check-circle text-success me-1"></i> Campi extra: nascita, ultima visita, presenze, tag, consenso, note</div>
                 </div>
                 <hr>
                 <div style="font-size:.72rem; color:#6c757d;">
@@ -91,15 +92,23 @@ $step = $step ?? '1';
             <?= csrf_field() ?>
             <input type="hidden" name="action" value="confirm">
 
+            <div style="font-size:.78rem;font-weight:600;margin-bottom:.4rem;"><i class="bi bi-person-vcard me-1"></i> Campi principali</div>
             <div class="row g-3 mb-3">
                 <?php
                 $fields = [
-                    'col_first_name' => ['label' => 'Nome', 'icon' => 'bi-person', 'required' => false],
-                    'col_last_name'  => ['label' => 'Cognome', 'icon' => 'bi-person-badge', 'required' => false],
-                    'col_email'      => ['label' => 'Email', 'icon' => 'bi-envelope', 'required' => false],
-                    'col_phone'      => ['label' => 'Telefono', 'icon' => 'bi-telephone', 'required' => false],
+                    'col_first_name'        => ['label' => 'Nome', 'icon' => 'bi-person', 'key' => 'first_name'],
+                    'col_last_name'         => ['label' => 'Cognome', 'icon' => 'bi-person-badge', 'key' => 'last_name'],
+                    'col_email'             => ['label' => 'Email', 'icon' => 'bi-envelope', 'key' => 'email'],
+                    'col_phone'             => ['label' => 'Telefono', 'icon' => 'bi-telephone', 'key' => 'phone'],
                 ];
-                $mapKeys = ['col_first_name' => 'first_name', 'col_last_name' => 'last_name', 'col_email' => 'email', 'col_phone' => 'phone'];
+                $fieldsExtra = [
+                    'col_birthday'          => ['label' => 'Data nascita', 'icon' => 'bi-cake2', 'key' => 'birthday'],
+                    'col_last_visit'        => ['label' => 'Ultima visita', 'icon' => 'bi-calendar-check', 'key' => 'last_visit'],
+                    'col_total_bookings'    => ['label' => 'Presenze', 'icon' => 'bi-hash', 'key' => 'total_bookings'],
+                    'col_tags'              => ['label' => 'Tag', 'icon' => 'bi-tags', 'key' => 'tags'],
+                    'col_marketing_consent' => ['label' => 'Consenso marketing', 'icon' => 'bi-envelope-check', 'key' => 'marketing_consent'],
+                    'col_notes'             => ['label' => 'Note', 'icon' => 'bi-sticky', 'key' => 'notes'],
+                ];
                 ?>
                 <?php foreach ($fields as $inputName => $field): ?>
                 <div class="col-md-3">
@@ -107,7 +116,22 @@ $step = $step ?? '1';
                     <select class="form-select form-select-sm" name="<?= $inputName ?>">
                         <option value="-1">— Non presente —</option>
                         <?php foreach ($headers as $i => $h): ?>
-                        <option value="<?= $i ?>" <?= ($mapping[$mapKeys[$inputName]] ?? -1) === $i ? 'selected' : '' ?>><?= e($h) ?></option>
+                        <option value="<?= $i ?>" <?= ($mapping[$field['key']] ?? -1) === $i ? 'selected' : '' ?>><?= e($h) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <?php endforeach; ?>
+            </div>
+
+            <div style="font-size:.78rem;font-weight:600;margin-bottom:.4rem;"><i class="bi bi-plus-circle me-1" style="color:var(--brand);"></i> Campi aggiuntivi <span style="font-weight:400;color:#6c757d;">(opzionali)</span></div>
+            <div class="row g-3 mb-3">
+                <?php foreach ($fieldsExtra as $inputName => $field): ?>
+                <div class="col-md-4 col-lg-2">
+                    <label class="field-label"><i class="bi <?= $field['icon'] ?> me-1"></i> <?= $field['label'] ?></label>
+                    <select class="form-select form-select-sm" name="<?= $inputName ?>">
+                        <option value="-1">— Non presente —</option>
+                        <?php foreach ($headers as $i => $h): ?>
+                        <option value="<?= $i ?>" <?= ($mapping[$field['key']] ?? -1) === $i ? 'selected' : '' ?>><?= e($h) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

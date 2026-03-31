@@ -238,6 +238,9 @@ class ReservationsController
         (new ReservationLog())->create($id, $reservation['status'], $newStatus, Auth::id());
 
         // Update customer stats
+        if ($newStatus === 'arrived' && $reservation['customer_id']) {
+            (new Customer())->updateLastVisit((int)$reservation['customer_id'], $reservation['reservation_date']);
+        }
         if ($newStatus === 'noshow') {
             (new Customer())->incrementNoshow($reservation['customer_id']);
         }

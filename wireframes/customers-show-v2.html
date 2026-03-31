@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Scheda Cliente v2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 180px;
+            --brand: #00844A;
+            --brand-light: #E8F5E9;
+            --brand-dark: #006837;
+        }
+        body { background: #f5f6fa; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+
+        /* Sidebar mock */
+        .mock-sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w); background: #1a1d23; color: #fff;
+            padding: 1rem 0; z-index: 100;
+        }
+        .mock-sidebar .brand { padding: 0 1rem 1rem; font-weight: 700; font-size: 1.05rem; border-bottom: 1px solid #333; margin-bottom: .5rem; }
+        .mock-sidebar .nav-item { padding: .5rem 1rem; font-size: .9rem; color: #adb5bd; cursor: pointer; }
+        .mock-sidebar .nav-item.active { background: var(--brand); color: #fff; border-radius: 6px; margin: 0 .5rem; padding: .5rem .75rem; }
+
+        /* Main */
+        .main { margin-left: var(--sidebar-w); padding: 1.25rem 1.5rem; }
+
+        /* Breadcrumb */
+        .page-back a { color: var(--brand); text-decoration: none; font-size: .85rem; font-weight: 500; }
+        .page-back a:hover { text-decoration: underline; }
+
+        /* Hero card */
+        .hero-card {
+            display: flex; align-items: center; gap: 1.25rem;
+            background: #fff; border-radius: 14px; padding: 1.25rem 1.5rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 1rem;
+        }
+        .hero-avatar {
+            width: 56px; height: 56px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 700; font-size: 1.15rem; flex-shrink: 0;
+        }
+        .hero-info { flex: 1; min-width: 0; }
+        .hero-name { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+        .hero-contacts { display: flex; gap: 1.25rem; font-size: .82rem; margin-top: .3rem; color: #6c757d; flex-wrap: wrap; }
+        .hero-contacts a { color: var(--brand); text-decoration: none; }
+        .hero-meta { font-size: .75rem; color: #adb5bd; margin-top: .25rem; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+        .hero-actions { display: flex; gap: .5rem; flex-shrink: 0; flex-wrap: wrap; }
+        .hero-actions .btn { font-size: .78rem; padding: .35rem .75rem; border-radius: 8px; }
+
+        /* Badges */
+        .seg-badge { font-size: .68rem; font-weight: 700; padding: 2px 10px; border-radius: 20px; }
+        .seg-badge.vip { background: #FFF3E0; color: #E65100; }
+        .seg-badge.abituale { background: #E8F5E9; color: #2E7D32; }
+        .seg-badge.occasionale { background: #E3F2FD; color: #1565C0; }
+        .seg-badge.nuovo { background: #F5F5F5; color: #757575; }
+        .unsub-badge { font-size: .68rem; font-weight: 600; padding: 2px 8px; border-radius: 4px; background: #FFF3E0; color: #E65100; }
+        .source-badge { font-size: .7rem; padding: 2px 8px; border-radius: 4px; background: #f0f0f0; color: #6c757d; }
+
+        /* Birthday inline in hero-meta */
+        .hero-birthday { font-size: .75rem; color: #6c757d; }
+        .hero-birthday i { color: #E65100; }
+
+        /* Stats strip */
+        .stats-strip {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: .75rem;
+            margin-bottom: 1rem;
+        }
+        .stat-card {
+            background: #fff; border-radius: 12px; padding: .85rem;
+            text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,.05);
+        }
+        .stat-value { font-size: 1.35rem; font-weight: 800; line-height: 1.1; }
+        .stat-label { font-size: .68rem; color: #adb5bd; text-transform: uppercase; letter-spacing: .3px; margin-top: .2rem; }
+
+        /* Reliability bar */
+        .reliability-card {
+            background: #fff; border-radius: 12px; padding: .75rem 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.05); margin-bottom: 1rem;
+        }
+        .rel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .4rem; }
+        .rel-title { font-size: .78rem; font-weight: 600; }
+        .rel-value { font-size: .78rem; font-weight: 700; }
+        .rel-bar { height: 6px; background: #eee; border-radius: 3px; }
+        .rel-bar-fill { height: 100%; border-radius: 3px; transition: width .3s; }
+
+        /* Tags inline (sotto hero, full width) */
+        .tags-strip {
+            background: #fff; border-radius: 12px; padding: .75rem 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.05); margin-bottom: 1rem;
+        }
+        .tags-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: .5rem;
+        }
+        .tags-title { font-size: .78rem; font-weight: 600; color: #495057; }
+        .tags-count { font-size: .7rem; color: #adb5bd; }
+        .tags-wrap { display: flex; flex-wrap: wrap; gap: .3rem; }
+        .tags-wrap.collapsed { max-height: 32px; overflow: hidden; }
+        .customer-tag {
+            display: inline-flex; align-items: center; gap: .2rem;
+            font-size: .7rem; font-weight: 600; padding: 2px 10px;
+            border-radius: 20px; background: var(--brand-light); color: var(--brand-dark);
+            white-space: nowrap;
+        }
+        .tag-remove {
+            border: none; background: none; color: var(--brand-dark); font-size: .8rem;
+            cursor: pointer; padding: 0; line-height: 1; opacity: .5;
+        }
+        .tag-remove:hover { opacity: 1; color: #dc3545; }
+        .tag-toggle { font-size: .7rem; color: var(--brand); cursor: pointer; border: none; background: none; padding: 0; }
+        .tag-toggle:hover { text-decoration: underline; }
+        .add-tag-inline {
+            display: inline-flex; align-items: center; gap: .25rem;
+        }
+        .add-tag-inline input {
+            font-size: .72rem; padding: 2px 8px; border-radius: 20px; border: 1px dashed #ccc;
+            width: 110px; outline: none;
+        }
+        .add-tag-inline input:focus { border-color: var(--brand); }
+        .add-tag-inline button {
+            font-size: .7rem; padding: 2px 8px; border-radius: 20px;
+            border: 1px solid var(--brand); background: var(--brand-light); color: var(--brand-dark);
+            cursor: pointer;
+        }
+
+        /* Section labels */
+        .section-label {
+            font-size: .72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .5px; color: #adb5bd; margin-bottom: .6rem;
+        }
+        .section-label i { font-size: .8rem; margin-right: .3rem; }
+
+        /* Profile card (left column) */
+        .profile-card {
+            background: #fff; border-radius: 12px; padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.05);
+        }
+        .profile-section { margin-bottom: 1rem; }
+        .profile-section:last-child { margin-bottom: 0; }
+        .profile-section-title {
+            font-size: .72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .3px; color: var(--brand); margin-bottom: .5rem;
+            display: flex; align-items: center; gap: .3rem;
+        }
+        .profile-row {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: .82rem; padding: .3rem 0;
+        }
+        .profile-row-label { color: #6c757d; font-size: .75rem; }
+        .profile-row-value { font-weight: 600; font-size: .82rem; }
+
+        /* Insight chips */
+        .insight-chip {
+            display: inline-flex; align-items: center; gap: .3rem;
+            font-size: .72rem; padding: 4px 10px; border-radius: 20px;
+            background: #f8f9fa; color: #495057; margin-bottom: .25rem;
+        }
+
+        /* Notes */
+        .notes-textarea {
+            width: 100%; border: 1px solid #e9ecef; border-radius: 8px;
+            padding: .5rem .75rem; font-size: .82rem; resize: vertical; min-height: 60px;
+            font-family: inherit;
+        }
+        .notes-textarea:focus { border-color: var(--brand); outline: none; box-shadow: 0 0 0 3px rgba(0,132,74,.1); }
+
+        .btn-save-sm {
+            font-size: .72rem; padding: 3px 12px; border-radius: 6px;
+            border: 1px solid var(--brand); background: var(--brand-light); color: var(--brand-dark);
+            cursor: pointer; font-weight: 600;
+        }
+        .btn-save-sm:hover { background: var(--brand); color: #fff; }
+
+        /* History table */
+        .history-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.05); overflow: hidden;
+        }
+        .ch-header {
+            display: grid; grid-template-columns: 100px 60px 1fr 50px 90px 20px;
+            padding: .5rem 1rem; font-size: .7rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .3px; color: #adb5bd;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .ch-row {
+            display: grid; grid-template-columns: 100px 60px 1fr 50px 90px 20px;
+            padding: .55rem 1rem; font-size: .82rem; align-items: center;
+            border-bottom: 1px solid #f8f8f8; cursor: pointer; transition: background .15s;
+        }
+        .ch-row:hover { background: #fafff8; }
+        .ch-row:last-child { border: none; }
+        .ch-pax { text-align: center; font-weight: 600; }
+        .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; }
+        .status-dot.confirmed { background: var(--brand); }
+        .status-dot.arrived { background: #1565C0; }
+        .status-dot.noshow { background: #dc3545; }
+        .status-dot.cancelled { background: #adb5bd; }
+        .ch-status { font-size: .75rem; }
+
+        /* Empty state */
+        .empty-state { text-align: center; padding: 2.5rem; color: #adb5bd; }
+        .empty-state i { font-size: 2rem; display: block; margin-bottom: .5rem; }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .stats-strip { grid-template-columns: repeat(3, 1fr); }
+            .hero-card { flex-direction: column; text-align: center; }
+            .hero-actions { justify-content: center; }
+            .hero-contacts { justify-content: center; }
+        }
+        @media (max-width: 768px) {
+            .mock-sidebar { display: none; }
+            .main { margin-left: 0; padding: 1rem; }
+            .stats-strip { grid-template-columns: repeat(2, 1fr); }
+            .ch-header, .ch-row { grid-template-columns: 80px 50px 1fr 40px 80px; }
+            .ch-header span:last-child, .ch-row i:last-child { display: none; }
+        }
+
+        /* Annotation bubbles */
+        .anno {
+            position: relative; display: inline-block;
+        }
+        .anno::after {
+            content: attr(data-note);
+            position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
+            background: #E65100; color: #fff; font-size: .6rem; font-weight: 700;
+            padding: 2px 8px; border-radius: 10px; white-space: nowrap;
+            opacity: 0; transition: opacity .2s;
+        }
+        .anno:hover::after { opacity: 1; }
+
+        .change-badge {
+            display: inline-block; font-size: .55rem; font-weight: 800;
+            padding: 1px 6px; border-radius: 4px; vertical-align: middle; margin-left: 4px;
+        }
+        .change-new { background: #C8E6C9; color: #2E7D32; }
+        .change-moved { background: #FFF9C4; color: #F57F17; }
+        .change-removed { background: #FFCDD2; color: #C62828; }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="mock-sidebar">
+    <div class="brand">Trattoria Da Mario</div>
+    <div class="nav-item"><i class="bi bi-grid me-2"></i>Dashboard</div>
+    <div class="nav-item"><i class="bi bi-calendar3 me-2"></i>Prenotazioni</div>
+    <div class="nav-item active"><i class="bi bi-people me-2"></i>Clienti</div>
+    <div class="nav-item"><i class="bi bi-card-list me-2"></i>Menu</div>
+    <div class="nav-item"><i class="bi bi-bag me-2"></i>Ordini</div>
+    <div class="nav-item"><i class="bi bi-envelope me-2"></i>Comunicazioni</div>
+    <div class="nav-item"><i class="bi bi-bell me-2"></i>Notifiche</div>
+    <div class="nav-item"><i class="bi bi-gear me-2"></i>Impostazioni</div>
+</div>
+
+<!-- Main content -->
+<div class="main">
+
+    <!-- Breadcrumb -->
+    <div class="page-back" style="margin-bottom: .75rem;">
+        <a href="#"><i class="bi bi-arrow-left"></i> Clienti</a>
+        <span style="color:#adb5bd;font-size:.82rem;margin-left:.25rem;">/ D Marco Sommelier</span>
+    </div>
+
+    <!-- ============================== -->
+    <!--  HERO CARD                     -->
+    <!--  Compatto: avatar + info + birthday inline + actions -->
+    <!-- ============================== -->
+    <div class="hero-card">
+        <div class="hero-avatar" style="background: #E65100;">DM</div>
+        <div class="hero-info">
+            <div class="hero-name">
+                D Marco Sommelier
+                <span class="seg-badge vip">VIP</span>
+                <span class="unsub-badge"><i class="bi bi-envelope-slash"></i> Disiscritto</span>
+            </div>
+            <div class="hero-contacts">
+                <span><i class="bi bi-telephone-fill me-1"></i><a href="#">+393337585460</a></span>
+                <span><i class="bi bi-whatsapp me-1"></i><a href="#">Chatta</a></span>
+                <span><i class="bi bi-envelope-fill me-1"></i><a href="#">danilocar74@gmail.com</a></span>
+            </div>
+            <div class="hero-meta">
+                <span>Cliente dal 31 Marzo 2026</span>
+                <span class="source-badge"><i class="bi bi-cloud-upload"></i> Importato da CSV</span>
+                <span class="hero-birthday" title="Data di nascita">
+                    <i class="bi bi-cake2"></i> 18 Ago 1974 · 51 anni
+                    <span class="change-badge change-moved">SPOSTATO QUI</span>
+                </span>
+            </div>
+        </div>
+        <div class="hero-actions">
+            <button class="btn btn-success btn-sm"><i class="bi bi-plus-circle me-1"></i>Prenota</button>
+            <button class="btn btn-outline-danger btn-sm"><i class="bi bi-slash-circle me-1"></i>Blocca</button>
+            <button class="btn btn-outline-success btn-sm"><i class="bi bi-envelope-check me-1"></i>Re-iscrivi</button>
+            <a href="#" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>Lista</a>
+        </div>
+    </div>
+
+    <!-- ============================== -->
+    <!--  STATS STRIP (unchanged)       -->
+    <!-- ============================== -->
+    <div class="stats-strip">
+        <div class="stat-card">
+            <div class="stat-value" style="color: var(--brand);">18</div>
+            <div class="stat-label">Prenotazioni</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color: #dc3545;">0</div>
+            <div class="stat-label">No-show</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color: #6c757d;">0</div>
+            <div class="stat-label">Media coperti</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color: #495057;">22 Apr</div>
+            <div class="stat-label">Ultima visita</div>
+        </div>
+        <div class="stat-card anno" data-note="Mostra eta se birthday presente, altrimenti 'cliente da'">
+            <div class="stat-value" style="color: #E65100;">51</div>
+            <div class="stat-label">Eta (anni) <span class="change-badge change-new">NUOVO</span></div>
+        </div>
+    </div>
+
+    <!-- ============================== -->
+    <!--  TAGS STRIP (full width, new)  -->
+    <!--  Collapsible se >6 tag         -->
+    <!-- ============================== -->
+    <div class="tags-strip">
+        <div class="tags-header">
+            <span class="tags-title"><i class="bi bi-tags me-1"></i> Tag</span>
+            <span class="tags-count">15 tag</span>
+        </div>
+        <div class="tags-wrap" id="tagsWrap">
+            <span class="customer-tag">Segno zodiacale Leone <button class="tag-remove">&times;</button></span>
+            <span class="customer-tag">amici <button class="tag-remove">&times;</button></span>
+            <span class="customer-tag">Provincia Frosinone <button class="tag-remove">&times;</button></span>
+            <span class="customer-tag">Nazionalita IT <button class="tag-remove">&times;</button></span>
+            <span class="customer-tag">agosto <button class="tag-remove">&times;</button></span>
+            <span class="customer-tag">anno 1974 <button class="tag-remove">&times;</button></span>
+            <span class="customer-tag">fuori prenotazione <button class="tag-remove">&times;</button></span>
+            <span class="customer-tag">no show <button class="tag-remove">&times;</button></span>
+            <span class="customer-tag">arrivato <button class="tag-remove">&times;</button></span>
+            <span class="customer-tag">compleanno <button class="tag-remove">&times;</button></span>
+            <span class="customer-tag">cena <button class="tag-remove">&times;</button></span>
+            <span class="customer-tag">VIP <button class="tag-remove">&times;</button></span>
+            <span class="customer-tag">Regione Lazio <button class="tag-remove">&times;</button></span>
+            <span class="customer-tag">0 Fiammelle <button class="tag-remove">&times;</button></span>
+            <span class="customer-tag">Inattivo <button class="tag-remove">&times;</button></span>
+            <!-- Add tag inline -->
+            <span class="add-tag-inline">
+                <input type="text" placeholder="Nuovo tag...">
+                <button>+ Aggiungi</button>
+            </span>
+        </div>
+        <div style="margin-top:.35rem;">
+            <button class="tag-toggle" id="tagToggle" style="display:none;">Mostra tutti (15)</button>
+        </div>
+    </div>
+
+    <!-- ============================== -->
+    <!--  AFFIDABILITA (unchanged)      -->
+    <!-- ============================== -->
+    <div class="reliability-card">
+        <div class="rel-header">
+            <span class="rel-title"><i class="bi bi-shield-check me-1"></i> Affidabilita</span>
+            <span class="rel-value" style="color: var(--brand);">Ottima — 100%</span>
+        </div>
+        <div class="rel-bar">
+            <div class="rel-bar-fill" style="width: 100%; background: var(--brand);"></div>
+        </div>
+    </div>
+
+    <!-- ============================== -->
+    <!--  TWO COLUMNS                   -->
+    <!--  Left: Profilo + Note          -->
+    <!--  Right: Storico prenotazioni   -->
+    <!-- ============================== -->
+    <div class="row g-4">
+        <!-- Left column: Profile -->
+        <div class="col-lg-4">
+            <!-- Profilo compatto -->
+            <div class="profile-card" style="margin-bottom: 1rem;">
+                <div class="profile-section-title"><i class="bi bi-lightbulb"></i> Insight</div>
+                <div style="margin-bottom: .5rem;">
+                    <span class="insight-chip"><i class="bi bi-moon-stars" style="color:#5C6BC0;"></i> Preferisce la cena</span>
+                    <span class="insight-chip"><i class="bi bi-calendar-week" style="color:var(--brand);"></i> Viene il sabato</span>
+                    <span class="insight-chip"><i class="bi bi-people" style="color:#E65100;"></i> Tavoli da 2-4</span>
+                    <span class="insight-chip"><i class="bi bi-clock" style="color:#1565C0;"></i> Ore 20:00-20:30</span>
+                </div>
+
+                <hr style="margin: .75rem 0; border-color: #f0f0f0;">
+
+                <!-- Birthday edit (compatto) -->
+                <div class="profile-section-title"><i class="bi bi-cake2"></i> Data di nascita</div>
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <input type="date" class="form-control form-control-sm" value="1974-08-18" style="max-width:160px; font-size:.8rem;">
+                    <button class="btn-save-sm"><i class="bi bi-check-lg"></i></button>
+                </div>
+
+                <hr style="margin: .75rem 0; border-color: #f0f0f0;">
+
+                <!-- Notes -->
+                <div class="profile-section-title"><i class="bi bi-sticky"></i> Note interne</div>
+                <textarea class="notes-textarea" rows="3" placeholder="Allergie, preferenze, tavolo preferito..."></textarea>
+                <div class="d-flex justify-content-end mt-2">
+                    <button class="btn-save-sm"><i class="bi bi-check-lg me-1"></i>Salva</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right column: History -->
+        <div class="col-lg-8">
+            <div class="section-label"><i class="bi bi-clock-history"></i> Storico prenotazioni</div>
+
+            <div class="history-card">
+                <div class="ch-header">
+                    <span>Data</span>
+                    <span>Ora</span>
+                    <span>Dettaglio</span>
+                    <span style="text-align:center;">Pax</span>
+                    <span style="text-align:right;">Stato</span>
+                    <span></span>
+                </div>
+                <div class="ch-row">
+                    <div>22 Apr 2024</div>
+                    <div>20:30</div>
+                    <div style="color:#6c757d;">Cena</div>
+                    <div class="ch-pax">4</div>
+                    <div class="ch-status" style="text-align:right;"><span class="status-dot arrived"></span> Arrivato</div>
+                    <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+                </div>
+                <div class="ch-row">
+                    <div>15 Mar 2024</div>
+                    <div>20:00</div>
+                    <div style="color:#6c757d;">Cena · Telefono</div>
+                    <div class="ch-pax">2</div>
+                    <div class="ch-status" style="text-align:right;"><span class="status-dot confirmed"></span> Confermata</div>
+                    <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+                </div>
+                <div class="ch-row">
+                    <div>28 Feb 2024</div>
+                    <div>13:00</div>
+                    <div style="color:#6c757d;">Pranzo · Widget</div>
+                    <div class="ch-pax">3</div>
+                    <div class="ch-status" style="text-align:right;"><span class="status-dot arrived"></span> Arrivato</div>
+                    <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+                </div>
+                <div class="ch-row">
+                    <div>10 Feb 2024</div>
+                    <div>20:30</div>
+                    <div style="color:#6c757d;">Cena · Walk-in</div>
+                    <div class="ch-pax">6</div>
+                    <div class="ch-status" style="text-align:right;"><span class="status-dot noshow"></span> No-show</div>
+                    <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+                </div>
+                <div class="ch-row">
+                    <div>25 Gen 2024</div>
+                    <div>20:00</div>
+                    <div style="color:#6c757d;">Cena</div>
+                    <div class="ch-pax">2</div>
+                    <div class="ch-status" style="text-align:right;"><span class="status-dot cancelled"></span> Annullata</div>
+                    <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Design notes -->
+    <div style="margin-top: 2rem; padding: 1.25rem; background: #FFF8E1; border-radius: 12px; border: 2px dashed #FFB300;">
+        <h6 style="font-weight: 700; color: #F57F17; margin-bottom: .75rem;"><i class="bi bi-pencil-square me-1"></i> Note wireframe v2 — Modifiche rispetto a v1</h6>
+        <div style="font-size: .82rem; line-height: 1.7;">
+            <p><strong>1. Birthday spostato nella hero-meta</strong> <span class="change-badge change-moved">SPOSTATO</span><br>
+            Non piu card dedicata — l'eta appare inline dopo "Cliente dal..." e nella stats strip.
+            Il form edit rimane nella colonna sinistra sotto gli insight.</p>
+
+            <p><strong>2. Stats strip: 5a card dinamica</strong> <span class="change-badge change-new">NUOVO</span><br>
+            Se il cliente ha birthday → mostra "Eta (anni)" con il valore.
+            Se non ha birthday → mostra "Cliente da" come prima (es. "2 anni").</p>
+
+            <p><strong>3. Tags in strip full-width</strong> <span class="change-badge change-moved">SPOSTATO</span><br>
+            I tag ora sono una barra orizzontale full-width sotto le stats (non piu nella colonna sinistra).
+            Con >6 tag: collapse con bottone "Mostra tutti (N)".
+            Il campo "Aggiungi tag" e inline nella stessa riga dei tag.</p>
+
+            <p><strong>4. Colonna sinistra alleggerita</strong><br>
+            Contiene solo: Insight + Birthday edit + Note.
+            Tutto in un'unica card "profilo" con separatori leggeri.</p>
+
+            <p><strong>5. Nessuna modifica a</strong>: Hero card (struttura), Stats strip (layout), Affidabilita, Storico prenotazioni, Mobile history.</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// Tag collapse/expand demo
+(function() {
+    var wrap = document.getElementById('tagsWrap');
+    var toggle = document.getElementById('tagToggle');
+    if (!wrap || !toggle) return;
+
+    var tags = wrap.querySelectorAll('.customer-tag');
+    if (tags.length > 8) {
+        wrap.classList.add('collapsed');
+        toggle.style.display = 'inline';
+        toggle.textContent = 'Mostra tutti (' + tags.length + ')';
+    }
+
+    toggle.addEventListener('click', function() {
+        if (wrap.classList.contains('collapsed')) {
+            wrap.classList.remove('collapsed');
+            toggle.textContent = 'Mostra meno';
+        } else {
+            wrap.classList.add('collapsed');
+            toggle.textContent = 'Mostra tutti (' + tags.length + ')';
+        }
+    });
+})();
+</script>
+
+</body>
+</html>
