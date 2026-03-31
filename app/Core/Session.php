@@ -10,7 +10,8 @@ class Session
     public static function start(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
-            $isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+            $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+                || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
             session_set_cookie_params([
                 'lifetime' => 0,
                 'path'     => '/',
