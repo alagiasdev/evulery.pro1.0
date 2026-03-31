@@ -157,6 +157,15 @@ $sourceLabels = ['phone' => 'Telefono', 'walkin' => 'Walk-in', 'widget' => 'Widg
             </button>
             <?php endif; ?>
         </form>
+        <?php if (!empty($customer['unsubscribed'])): ?>
+        <form method="POST" action="<?= url("dashboard/customers/{$customer['id']}/resubscribe") ?>" style="display:inline;">
+            <?= csrf_field() ?>
+            <button type="submit" class="btn btn-outline-success" title="Re-iscrivi alle comunicazioni"
+                    data-confirm="Re-iscrivere <?= e($customer['first_name'] . ' ' . $customer['last_name']) ?> alle comunicazioni email?">
+                <i class="bi bi-envelope-check me-1"></i> Re-iscrivi
+            </button>
+        </form>
+        <?php endif; ?>
         <a href="<?= url('dashboard/customers') ?>" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-1"></i> Lista
         </a>

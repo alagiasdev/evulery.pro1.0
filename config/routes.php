@@ -77,6 +77,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('/customers/{id}', [CustomersController::class, 'show']);
     $r->post('/customers/{id}/notes', [CustomersController::class, 'updateNotes']);
     $r->post('/customers/{id}/toggle-block', [CustomersController::class, 'toggleBlock']);
+    $r->post('/customers/{id}/resubscribe', [CustomersController::class, 'resubscribe']);
     $r->get('/settings', [SettingsController::class, 'general']);
     $r->post('/settings', [SettingsController::class, 'updateGeneral']);
     $r->get('/settings/slots', [SlotsController::class, 'index']);

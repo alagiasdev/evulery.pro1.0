@@ -455,4 +455,25 @@ class CustomersController
 
         Response::redirect(url("dashboard/customers/{$id}"));
     }
+
+    public function resubscribe(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $customerModel = new Customer();
+        $customer = $customerModel->findById($id);
+
+        if (!$customer || (int)$customer['tenant_id'] !== (int)Auth::tenantId()) {
+            flash('danger', 'Cliente non trovato.');
+            Response::redirect(url('dashboard/customers'));
+        }
+
+        if (!empty($customer['unsubscribed'])) {
+            $db = \App\Core\Database::getInstance();
+            $db->prepare('UPDATE customers SET unsubscribed = 0, unsubscribed_at = NULL WHERE id = :id')
+               ->execute(['id' => $id]);
+            flash('success', $customer['first_name'] . ' ' . $customer['last_name'] . ' è stato re-iscritto alle comunicazioni.');
+        }
+
+        Response::redirect(url("dashboard/customers/{$id}"));
+    }
 }
