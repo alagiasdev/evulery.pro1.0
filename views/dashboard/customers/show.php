@@ -100,6 +100,9 @@ $sourceLabels = ['phone' => 'Telefono', 'walkin' => 'Walk-in', 'widget' => 'Widg
             <?php if (!empty($customer['is_blocked'])): ?>
             <span class="blocked-badge"><i class="bi bi-slash-circle"></i> Bloccato</span>
             <?php endif; ?>
+            <?php if (!empty($customer['unsubscribed'])): ?>
+            <span class="unsub-badge"><i class="bi bi-envelope-slash"></i> Disiscritto</span>
+            <?php endif; ?>
         </div>
         <div class="hero-contacts">
             <div class="hero-contact">

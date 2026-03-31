@@ -19,6 +19,13 @@
         <span class="sp-num" style="color:#6f42c1;"><?= number_format((int)$kpi['total_sent'], 0, ',', '.') ?></span>
         <span class="sp-label">Email inviate</span>
     </div>
+    <?php if (!empty($unsubCount)): ?>
+    <div class="stat-pill">
+        <div class="sp-dot" style="background:#dc3545;"></div>
+        <span class="sp-num" style="color:#dc3545;"><?= $unsubCount ?></span>
+        <span class="sp-label">Disiscritti</span>
+    </div>
+    <?php endif; ?>
 </div>
 
 <!-- Action bar -->

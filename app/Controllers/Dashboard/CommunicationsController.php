@@ -63,6 +63,12 @@ class CommunicationsController
         $credits = (int)($tenant['email_credits_balance'] ?? 0);
         $archivedCount = $showArchived ? 0 : $model->countByTenant($tenantId, true);
 
+        // Count unsubscribed customers
+        $db = \App\Core\Database::getInstance();
+        $unsubStmt = $db->prepare('SELECT COUNT(*) FROM customers WHERE tenant_id = :tid AND unsubscribed = 1');
+        $unsubStmt->execute(['tid' => $tenantId]);
+        $unsubCount = (int)$unsubStmt->fetchColumn();
+
         view('dashboard/communications/index', [
             'title'         => 'Comunicazioni',
             'activeMenu'    => 'communications',
@@ -73,6 +79,7 @@ class CommunicationsController
             'credits'       => $credits,
             'showArchived'  => $showArchived,
             'archivedCount' => $archivedCount,
+            'unsubCount'    => $unsubCount,
         ], 'dashboard');
     }
 

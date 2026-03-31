@@ -120,6 +120,9 @@ $segTabs = [
                 <?php if (!empty($c['is_blocked'])): ?>
                 <span class="blocked-badge"><i class="bi bi-slash-circle"></i> Bloccato</span>
                 <?php endif; ?>
+                <?php if (!empty($c['unsubscribed'])): ?>
+                <span class="unsub-badge"><i class="bi bi-envelope-slash"></i></span>
+                <?php endif; ?>
             </div>
             <?php if ($createdDate): ?>
             <div class="c-sub">Cliente dal <?= $createdDate ?></div>
@@ -185,6 +188,9 @@ $segTabs = [
                 <?= e($c['first_name'] . ' ' . $c['last_name']) ?>
                 <?php if (!empty($c['is_blocked'])): ?>
                 <span class="blocked-badge"><i class="bi bi-slash-circle"></i></span>
+                <?php endif; ?>
+                <?php if (!empty($c['unsubscribed'])): ?>
+                <span class="unsub-badge"><i class="bi bi-envelope-slash"></i></span>
                 <?php endif; ?>
             </div>
             <div class="mc-meta"><?= e($c['phone']) ?> &middot; <?= (int)$c['total_bookings'] ?> pren.</div>

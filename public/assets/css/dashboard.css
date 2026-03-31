@@ -784,6 +784,12 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     border-radius: 4px; background: #FFEBEE; color: #C62828;
     margin-left: .35rem; vertical-align: middle;
 }
+.unsub-badge {
+    display: inline-flex; align-items: center; gap: .2rem;
+    font-size: .68rem; font-weight: 600; padding: 2px 8px;
+    border-radius: 4px; background: #FFF3E0; color: #E65100;
+    margin-left: .35rem; vertical-align: middle;
+}
 .blocked-banner {
     display: flex; align-items: center; gap: .75rem;
     background: #FFEBEE; border: 1px solid #FFCDD2; border-radius: 10px;
