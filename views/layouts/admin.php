@@ -124,6 +124,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+document.addEventListener('submit', function(e) {
+    var form = e.target.closest('[data-confirm]');
+    if (form && !confirm(form.getAttribute('data-confirm'))) {
+        e.preventDefault();
+    }
+});
 </script>
 </body>
 </html>

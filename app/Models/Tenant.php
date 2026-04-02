@@ -133,6 +133,10 @@ class Tenant
             'ordering_payment_methods', 'ordering_pickup_interval', 'ordering_auto_accept',
             'delivery_mode', 'delivery_fee', 'delivery_min_amount', 'delivery_description',
             'delivery_board_enabled', 'delivery_board_token', 'delivery_board_pin',
+            'review_enabled', 'review_url', 'review_platform_label',
+            'review_delay_hours', 'review_quiet_hour',
+            'review_filter_enabled', 'review_filter_threshold', 'review_filter_message',
+            'review_email_subject', 'review_email_body', 'review_email_cta',
         ];
 
         foreach ($allowed as $field) {

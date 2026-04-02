@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Disiscrizione - Evulery</title>
-    <style>
+    <style nonce="<?= csp_nonce() ?>">
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #f5f6f8; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
         .unsub-card { background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,.08); max-width: 480px; width: 90%; padding: 3rem 2rem; text-align: center; }

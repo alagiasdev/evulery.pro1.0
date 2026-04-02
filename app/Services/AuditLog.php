@@ -78,6 +78,10 @@ class AuditLog
     public const ORDER_STATUS    = 'order_status';
     public const ORDER_CANCELLED = 'order_cancelled';
 
+    // Reputazione
+    public const REVIEW_SETTINGS_UPDATED  = 'review_settings_updated';
+    public const REVIEW_FEEDBACK_REPLIED  = 'review_feedback_replied';
+
     /**
      * Traduce un evento in etichetta italiana leggibile.
      */
@@ -128,7 +132,9 @@ class AuditLog
             self::EMAIL_CREDITS_ASSIGNED  => 'Crediti email assegnati',
             self::ORDER_CREATED          => 'Ordine creato',
             self::ORDER_STATUS           => 'Stato ordine cambiato',
-            self::ORDER_CANCELLED        => 'Ordine annullato',
+            self::ORDER_CANCELLED         => 'Ordine annullato',
+            self::REVIEW_SETTINGS_UPDATED => 'Impostazioni recensioni aggiornate',
+            self::REVIEW_FEEDBACK_REPLIED => 'Risposta a feedback cliente',
             default                      => $event,
         };
     }

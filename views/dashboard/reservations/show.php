@@ -183,9 +183,9 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
                 <i class="bi bi-exclamation-triangle-fill me-1"></i>
                 Caparra di <strong>&euro;<?= number_format($reservation['deposit_amount'], 2) ?></strong> da rimborsare
             </div>
-            <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/deposit-refunded") ?>" class="d-inline">
+            <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/deposit-refunded") ?>" class="d-inline" data-confirm="Confermi di aver rimborsato la caparra?">
                 <?= csrf_field() ?>
-                <button type="submit" class="btn btn-sm" style="background:#2E7D32;color:#fff;font-size:.78rem;" onclick="return confirm('Confermi di aver rimborsato la caparra?');">
+                <button type="submit" class="btn btn-sm" style="background:#2E7D32;color:#fff;font-size:.78rem;">
                     <i class="bi bi-check2 me-1"></i> Segna come rimborsata
                 </button>
             </form>

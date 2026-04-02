@@ -1,0 +1,264 @@
+/* ============================================================
+   REVIEWS — Public Landing Page
+   Namespace: .rv-*
+   ============================================================ */
+
+:root {
+    --rv-brand: #00844A;
+    --rv-brand-light: #e8f5e9;
+    --rv-brand-dark: #006837;
+    --rv-star: #FFC107;
+    --rv-star-empty: #e9ecef;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f6f8;
+    color: #1a1d23;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Page wrapper */
+.rv-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+}
+
+/* Header */
+.rv-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+.rv-logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    object-fit: cover;
+    margin-bottom: .5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.1);
+}
+.rv-logo-placeholder {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: var(--rv-brand);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto .5rem;
+}
+.rv-restaurant {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #1a1d23;
+}
+.rv-subtitle {
+    font-size: .82rem;
+    color: #6c757d;
+    margin-top: .15rem;
+}
+
+/* Content */
+.rv-content {
+    width: 100%;
+    max-width: 480px;
+}
+
+/* Greeting */
+.rv-greeting {
+    font-size: .88rem;
+    color: #495057;
+    text-align: center;
+    margin-bottom: .5rem;
+    line-height: 1.5;
+}
+.rv-res-info {
+    font-size: .72rem;
+    color: #adb5bd;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+/* Stars card */
+.rv-stars-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    padding: 1.5rem;
+    text-align: center;
+    margin-bottom: 1.25rem;
+}
+.rv-stars-question {
+    font-size: .88rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+.rv-stars-row {
+    display: flex;
+    justify-content: center;
+    gap: .5rem;
+    margin-bottom: .5rem;
+}
+.rv-star-btn {
+    background: none;
+    border: none;
+    font-size: 2.5rem;
+    color: var(--rv-star-empty);
+    cursor: pointer;
+    transition: color .15s, transform .15s;
+    padding: 0;
+    line-height: 1;
+}
+.rv-star-btn:hover,
+.rv-star-btn.active {
+    color: var(--rv-star);
+    transform: scale(1.15);
+}
+.rv-star-btn:disabled {
+    cursor: default;
+    opacity: .7;
+}
+.rv-star-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: .68rem;
+    color: #adb5bd;
+    padding: 0 .5rem;
+}
+
+/* CTA button */
+.rv-cta-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    background: var(--rv-brand);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: .65rem 1.5rem;
+    font-size: .85rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .15s;
+}
+.rv-cta-btn:hover {
+    background: var(--rv-brand-dark);
+    color: #fff;
+}
+
+/* Feedback card */
+.rv-feedback-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    padding: 1.5rem;
+    animation: rv-fadeIn .4s;
+}
+.rv-feedback-title {
+    font-size: .88rem;
+    font-weight: 700;
+    margin-bottom: .15rem;
+}
+.rv-feedback-subtitle {
+    font-size: .75rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+.rv-feedback-textarea {
+    width: 100%;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: .75rem;
+    font-size: .82rem;
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+    transition: border-color .15s;
+}
+.rv-feedback-textarea:focus {
+    outline: none;
+    border-color: var(--rv-brand);
+    box-shadow: 0 0 0 3px rgba(0,132,74,.1);
+}
+.rv-feedback-hint {
+    font-size: .68rem;
+    color: #adb5bd;
+    margin-top: .35rem;
+}
+.rv-privacy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    font-size: .68rem;
+    color: #adb5bd;
+    margin-top: .5rem;
+}
+
+/* State cards (expired, already, thanks) */
+.rv-state-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    animation: rv-fadeIn .4s;
+}
+.rv-state-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto .75rem;
+}
+.rv-state-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: .25rem;
+}
+.rv-state-text {
+    font-size: .82rem;
+    color: #6c757d;
+    line-height: 1.5;
+}
+
+/* Footer */
+.rv-footer {
+    padding: 1.5rem 1rem;
+    text-align: center;
+    font-size: .65rem;
+    color: #ccc;
+    margin-top: auto;
+}
+
+/* Embed mode */
+.rv-embed .rv-page {
+    min-height: auto;
+    padding: 1rem;
+}
+
+/* Animation */
+@keyframes rv-fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .rv-star-btn { font-size: 2rem; }
+    .rv-stars-row { gap: .35rem; }
+    .rv-page { padding: 1.25rem .75rem; }
+}

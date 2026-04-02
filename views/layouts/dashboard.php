@@ -88,12 +88,19 @@
                     </a>
                     <?php endif; ?>
                 </li>
+                <?php if (tenant_can('review_management')): ?>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'reputation' ? 'active' : '' ?>" href="<?= url('dashboard/reputation') ?>">
+                        <i class="bi bi-star me-2"></i> Reputazione
+                    </a>
+                </li>
+                <?php endif; ?>
                 <li class="nav-item">
                     <a class="nav-link <?= ($activeMenu ?? '') === 'notifications' ? 'active' : '' ?>" href="<?= url('dashboard/notifications') ?>">
                         <i class="bi bi-bell me-2"></i> Notifiche
                     </a>
                 </li>
-                <?php $settingsKeys = ['settings','slots','meal-categories','closures','promotions','settings-notifications','deposit','settings-ordering','domain']; ?>
+                <?php $settingsKeys = ['settings','slots','meal-categories','closures','promotions','settings-notifications','deposit','settings-ordering','settings-reviews','domain']; ?>
                 <li class="nav-item">
                     <a class="nav-link <?= in_array($activeMenu ?? '', $settingsKeys) ? 'active' : '' ?>" href="<?= url('dashboard/settings') ?>">
                         <i class="bi bi-gear me-2"></i> Impostazioni

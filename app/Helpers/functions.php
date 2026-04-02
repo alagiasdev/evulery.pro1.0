@@ -287,6 +287,33 @@ function order_type_label(string $type): string
 }
 
 /**
+ * Review feedback status → Italian label.
+ */
+function review_status_label(string $status): string
+{
+    return match ($status) {
+        'new'     => 'Nuovo',
+        'read'    => 'Letto',
+        'replied' => 'Risposto',
+        default   => ucfirst($status),
+    };
+}
+
+/**
+ * Review feedback status → Bootstrap badge.
+ */
+function review_status_badge(string $status): string
+{
+    $class = match ($status) {
+        'new'     => 'bg-primary',
+        'read'    => 'bg-secondary',
+        'replied' => 'bg-success',
+        default   => 'bg-secondary',
+    };
+    return '<span class="badge ' . $class . '">' . review_status_label($status) . '</span>';
+}
+
+/**
  * Log message to storage/logs
  */
 function app_log(string $message, string $level = 'info'): void

@@ -320,6 +320,66 @@ class SettingsController
         Response::redirect(url('dashboard/settings/deposit'));
     }
 
+    // ─── REVIEWS ──────────────────────────────────────────────
+
+    public function reviews(Request $request): void
+    {
+        $tenant = TenantResolver::current();
+        $canUse = tenant_can('review_management');
+
+        view('dashboard/settings/reviews', [
+            'title'      => 'Recensioni',
+            'activeMenu' => 'settings-reviews',
+            'tenant'     => $tenant,
+            'canUse'     => $canUse,
+        ], 'dashboard');
+    }
+
+    public function updateReviews(Request $request): void
+    {
+        if (gate_service('review_management', url('dashboard/settings/reviews'))) return;
+
+        $tenantId = Auth::tenantId();
+        $data = $request->all();
+
+        $reviewEnabled = !empty($data['review_enabled']) ? 1 : 0;
+
+        // Validate review_url if enabling
+        $reviewUrl = trim($data['review_url'] ?? '');
+        if ($reviewEnabled && $reviewUrl !== '' && !filter_var($reviewUrl, FILTER_VALIDATE_URL)) {
+            flash('danger', 'Inserisci un URL valido per la piattaforma di recensioni.');
+            Response::redirect(url('dashboard/settings/reviews'));
+        }
+
+        $delayHours = max(1, min(24, (int)($data['review_delay_hours'] ?? 2)));
+        $quietHour = max(0, min(23, (int)($data['review_quiet_hour'] ?? 22)));
+        $filterThreshold = max(3, min(5, (int)($data['review_filter_threshold'] ?? 4)));
+
+        $updateData = [
+            'review_enabled'          => $reviewEnabled,
+            'review_url'              => $reviewUrl ?: null,
+            'review_platform_label'   => trim($data['review_platform_label'] ?? '') ?: null,
+            'review_delay_hours'      => $delayHours,
+            'review_quiet_hour'       => $quietHour,
+            'review_filter_enabled'   => !empty($data['review_filter_enabled']) ? 1 : 0,
+            'review_filter_threshold' => $filterThreshold,
+            'review_filter_message'   => trim($data['review_filter_message'] ?? '') ?: null,
+            'review_email_subject'    => trim($data['review_email_subject'] ?? '') ?: null,
+            'review_email_body'       => trim($data['review_email_body'] ?? '') ?: null,
+            'review_email_cta'        => trim($data['review_email_cta'] ?? '') ?: null,
+        ];
+
+        (new Tenant())->update($tenantId, $updateData);
+
+        AuditLog::log(AuditLog::REVIEW_SETTINGS_UPDATED, null, Auth::id(), $tenantId);
+
+        $tenant = (new Tenant())->findById($tenantId);
+        TenantResolver::setCurrent($tenant);
+
+        flash('success', 'Impostazioni recensioni aggiornate.');
+        Response::redirect(url('dashboard/settings/reviews'));
+    }
+
     // ─── ORDERING ─────────────────────────────────────────────
 
     public function ordering(Request $request): void

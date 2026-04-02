@@ -44,22 +44,22 @@ $segLabels = [
         <?php if (in_array($campaign['status'], ['draft', 'queued'])): ?>
         <div style="margin-top:1rem;display:flex;gap:.5rem;align-items:center;">
             <?php if ($campaign['status'] === 'queued'): ?>
-            <form method="POST" action="<?= url("dashboard/communications/{$campaign['id']}/send-now") ?>" style="display:inline;">
+            <form method="POST" action="<?= url("dashboard/communications/{$campaign['id']}/send-now") ?>" style="display:inline;" data-confirm="Inviare subito questa comunicazione?">
                 <?= csrf_field() ?>
-                <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Inviare subito questa comunicazione?');">
+                <button type="submit" class="btn btn-success btn-sm">
                     <i class="bi bi-send me-1"></i> Invia ora
                 </button>
             </form>
             <?php endif; ?>
-            <form method="POST" action="<?= url("dashboard/communications/{$campaign['id']}/delete") ?>" style="display:inline;">
+            <?php
+                $btnLabel = $campaign['status'] === 'draft' ? 'Elimina bozza' : 'Annulla e elimina';
+                $confirmMsg = $campaign['status'] === 'queued'
+                    ? 'Annullare questa campagna? I crediti non utilizzati verranno rimborsati.'
+                    : 'Eliminare questa bozza?';
+            ?>
+            <form method="POST" action="<?= url("dashboard/communications/{$campaign['id']}/delete") ?>" style="display:inline;" data-confirm="<?= e($confirmMsg) ?>">
                 <?= csrf_field() ?>
-                <?php
-                    $btnLabel = $campaign['status'] === 'draft' ? 'Elimina bozza' : 'Annulla e elimina';
-                    $confirmMsg = $campaign['status'] === 'queued'
-                        ? 'Annullare questa campagna? I crediti non utilizzati verranno rimborsati.'
-                        : 'Eliminare questa bozza?';
-                ?>
-                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('<?= e($confirmMsg) ?>');">
+                <button type="submit" class="btn btn-outline-danger btn-sm">
                     <i class="bi bi-trash me-1"></i> <?= $btnLabel ?>
                 </button>
             </form>
@@ -69,16 +69,16 @@ $segLabels = [
         <?php if (in_array($campaign['status'], ['sent', 'failed'])): ?>
         <div style="margin-top:1rem;display:flex;gap:.5rem;align-items:center;">
             <?php if ($campaign['status'] === 'sent' && (int)$campaign['failed_count'] > 0): ?>
-            <form method="POST" action="<?= url("dashboard/communications/{$campaign['id']}/retry") ?>" style="display:inline;">
+            <form method="POST" action="<?= url("dashboard/communications/{$campaign['id']}/retry") ?>" style="display:inline;" data-confirm="Ritentare l'invio a <?= (int)$campaign['failed_count'] ?> destinatari falliti?">
                 <?= csrf_field() ?>
-                <button type="submit" class="btn btn-outline-warning btn-sm" onclick="return confirm('Ritentare l\'invio a <?= (int)$campaign['failed_count'] ?> destinatari falliti?');">
+                <button type="submit" class="btn btn-outline-warning btn-sm">
                     <i class="bi bi-arrow-repeat me-1"></i> Riprova fallite (<?= (int)$campaign['failed_count'] ?>)
                 </button>
             </form>
             <?php endif; ?>
-            <form method="POST" action="<?= url("dashboard/communications/{$campaign['id']}/archive") ?>" style="display:inline;">
+            <form method="POST" action="<?= url("dashboard/communications/{$campaign['id']}/archive") ?>" style="display:inline;" data-confirm="Archiviare questa comunicazione? Non sarà più visibile nella lista.">
                 <?= csrf_field() ?>
-                <button type="submit" class="btn btn-outline-secondary btn-sm" onclick="return confirm('Archiviare questa comunicazione? Non sarà più visibile nella lista.');">
+                <button type="submit" class="btn btn-outline-secondary btn-sm">
                     <i class="bi bi-archive me-1"></i> Archivia
                 </button>
             </form>

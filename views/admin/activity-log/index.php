@@ -141,7 +141,7 @@ $defaultStyle = ['icon' => 'bi-circle', 'bg' => '#F5F5F5', 'color' => '#757575']
         </button>
     </form>
 </div>
-<script>
+<script nonce="<?= csp_nonce() ?>">
 document.querySelector('[data-confirm-purge]').addEventListener('submit', function(e) {
     var sel = this.querySelector('select[name="months"]');
     var label = sel.options[sel.selectedIndex].text.toLowerCase();

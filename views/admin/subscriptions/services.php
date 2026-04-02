@@ -102,7 +102,7 @@ $tabs = [
                 </button>
                 <?php if (empty($svc['plans'])): ?>
                 <form method="POST" action="<?= url("admin/subscriptions/services/{$svc['id']}/delete") ?>" style="display:inline;"
-                      onsubmit="return confirm('Eliminare il servizio <?= e($svc['name']) ?>?')">
+                      data-confirm="Eliminare il servizio <?= e($svc['name']) ?>?">
                     <?= csrf_field() ?>
                     <button type="submit" class="adm-action-btn adm-action-danger" title="Elimina"><i class="bi bi-trash"></i></button>
                 </form>

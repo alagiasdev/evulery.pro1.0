@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe — Dashboard Reputazione</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-light: #e8f5e9;
+            --brand-dark: #006837;
+            --star: #FFC107;
+        }
+        body { background: #f5f6f8; font-family: system-ui, -apple-system, sans-serif; }
+        .wireframe-badge {
+            position: fixed; top: 12px; right: 12px; background: #FF9800; color: #fff;
+            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 999;
+        }
+        .page-wrap { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+
+        /* Page header */
+        .page-title { font-size: 1.35rem; font-weight: 700; margin-bottom: .15rem; }
+        .page-subtitle { font-size: .82rem; color: #6c757d; margin-bottom: 1.25rem; }
+
+        /* Tabs */
+        .rep-tabs { display: flex; gap: .35rem; margin-bottom: 1.5rem; border-bottom: 2px solid #e9ecef; padding-bottom: 0; }
+        .rep-tab {
+            padding: .55rem 1rem; font-size: .8rem; font-weight: 600; color: #6c757d;
+            border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent;
+            margin-bottom: -2px; transition: all .15s; display: flex; align-items: center; gap: .35rem;
+        }
+        .rep-tab:hover { color: #1a1d23; }
+        .rep-tab.active { color: var(--brand); border-bottom-color: var(--brand); }
+        .rep-tab .badge {
+            font-size: .62rem; padding: .15rem .4rem; border-radius: 10px;
+            font-weight: 700; line-height: 1;
+        }
+
+        /* KPI cards */
+        .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: .75rem; margin-bottom: 1.25rem; }
+        .kpi-card {
+            background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+            padding: 1rem; text-align: center;
+        }
+        .kpi-icon { font-size: 1.2rem; margin-bottom: .35rem; }
+        .kpi-value { font-size: 1.35rem; font-weight: 800; color: #1a1d23; line-height: 1.1; }
+        .kpi-label { font-size: .68rem; color: #6c757d; margin-top: .15rem; }
+        .kpi-trend { font-size: .65rem; margin-top: .25rem; display: inline-flex; align-items: center; gap: .2rem; padding: .1rem .4rem; border-radius: 8px; }
+        .kpi-trend.up { background: #e8f5e9; color: #2e7d32; }
+        .kpi-trend.down { background: #ffebee; color: #c62828; }
+        .kpi-trend.neutral { background: #f5f5f5; color: #757575; }
+
+        /* Stars display */
+        .stars-display { color: var(--star); letter-spacing: 1px; }
+        .stars-empty { color: #e9ecef; }
+
+        /* Charts area */
+        .chart-card {
+            background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+            padding: 1.25rem; margin-bottom: 1.25rem;
+        }
+        .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+        .chart-title { font-size: .85rem; font-weight: 700; color: #1a1d23; }
+        .chart-period { font-size: .72rem; color: #adb5bd; }
+
+        /* Bar chart (CSS) */
+        .bar-chart { display: flex; align-items: flex-end; gap: .5rem; height: 120px; padding-top: .5rem; }
+        .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: .25rem; height: 100%; justify-content: flex-end; }
+        .bar-fill { width: 100%; border-radius: 6px 6px 0 0; transition: height .3s; min-height: 2px; position: relative; }
+        .bar-fill.sent { background: #E3F2FD; }
+        .bar-fill.clicked { background: #42A5F5; }
+        .bar-fill.reviewed { background: var(--brand); }
+        .bar-label { font-size: .62rem; color: #adb5bd; }
+        .bar-value { font-size: .62rem; font-weight: 600; color: #495057; }
+
+        /* Rating distribution */
+        .rating-dist { display: flex; flex-direction: column; gap: .4rem; }
+        .rating-row { display: flex; align-items: center; gap: .5rem; }
+        .rating-stars { font-size: .72rem; white-space: nowrap; min-width: 36px; text-align: right; color: var(--star); }
+        .rating-bar-bg { flex: 1; height: 8px; background: #f0f0f0; border-radius: 4px; overflow: hidden; }
+        .rating-bar-fill { height: 100%; border-radius: 4px; transition: width .3s; }
+        .rating-bar-fill.s5 { background: #4CAF50; width: 62%; }
+        .rating-bar-fill.s4 { background: #8BC34A; width: 24%; }
+        .rating-bar-fill.s3 { background: #FFC107; width: 8%; }
+        .rating-bar-fill.s2 { background: #FF9800; width: 4%; }
+        .rating-bar-fill.s1 { background: #F44336; width: 2%; }
+        .rating-count { font-size: .68rem; color: #6c757d; min-width: 24px; }
+        .rating-pct { font-size: .65rem; color: #adb5bd; min-width: 30px; text-align: right; }
+
+        /* Funnel */
+        .funnel { display: flex; flex-direction: column; gap: .35rem; }
+        .funnel-step { display: flex; align-items: center; gap: .5rem; }
+        .funnel-bar-bg { flex: 1; height: 28px; background: #f8f9fa; border-radius: 8px; overflow: hidden; position: relative; }
+        .funnel-bar-fill {
+            height: 100%; border-radius: 8px; display: flex; align-items: center;
+            padding: 0 .6rem; font-size: .7rem; font-weight: 600; color: #fff; transition: width .3s;
+        }
+        .funnel-label { font-size: .72rem; color: #495057; min-width: 80px; font-weight: 600; }
+        .funnel-value { font-size: .72rem; color: #6c757d; min-width: 50px; text-align: right; }
+
+        /* Feedback list */
+        .feedback-card {
+            background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+            margin-bottom: 1.25rem; overflow: hidden;
+        }
+        .feedback-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1rem 1.25rem; border-bottom: 1px solid #f0f0f0;
+        }
+        .feedback-title { font-size: .85rem; font-weight: 700; }
+        .feedback-badge { font-size: .68rem; padding: .2rem .55rem; border-radius: 10px; font-weight: 600; }
+
+        .fb-item { padding: .85rem 1.25rem; border-bottom: 1px solid #f8f8f8; display: flex; gap: .75rem; }
+        .fb-item:last-child { border-bottom: none; }
+        .fb-item:hover { background: #fafafa; }
+        .fb-avatar {
+            width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: .75rem; font-weight: 700; flex-shrink: 0;
+        }
+        .fb-body { flex: 1; min-width: 0; }
+        .fb-top { display: flex; align-items: center; gap: .5rem; margin-bottom: .2rem; flex-wrap: wrap; }
+        .fb-name { font-size: .8rem; font-weight: 700; color: #1a1d23; }
+        .fb-stars { font-size: .72rem; color: var(--star); }
+        .fb-date { font-size: .68rem; color: #adb5bd; margin-left: auto; }
+        .fb-text { font-size: .78rem; color: #495057; line-height: 1.45; }
+        .fb-meta { display: flex; align-items: center; gap: .75rem; margin-top: .35rem; flex-wrap: wrap; }
+        .fb-meta-item { font-size: .65rem; color: #adb5bd; display: flex; align-items: center; gap: .2rem; }
+        .fb-actions { display: flex; gap: .35rem; flex-shrink: 0; align-self: flex-start; margin-top: .15rem; }
+        .fb-action-btn {
+            width: 28px; height: 28px; border-radius: 6px; border: 1px solid #e9ecef;
+            background: #fff; display: flex; align-items: center; justify-content: center;
+            font-size: .72rem; color: #6c757d; cursor: pointer; transition: all .15s;
+        }
+        .fb-action-btn:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+        .fb-action-btn.danger:hover { border-color: #ef5350; color: #ef5350; background: #ffebee; }
+
+        /* Status badges */
+        .status-new { background: #E3F2FD; color: #1565C0; }
+        .status-read { background: #f5f5f5; color: #757575; }
+        .status-replied { background: #e8f5e9; color: #2e7d32; }
+
+        /* Reply inline */
+        .fb-reply {
+            background: #f8f9fa; border-radius: 8px; padding: .55rem .75rem; margin-top: .4rem;
+            border-left: 3px solid var(--brand);
+        }
+        .fb-reply-label { font-size: .65rem; font-weight: 600; color: var(--brand); margin-bottom: .15rem; }
+        .fb-reply-text { font-size: .75rem; color: #495057; }
+
+        /* Timeline (storico invii) */
+        .timeline-card {
+            background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+            padding: 1.25rem; margin-bottom: 1.25rem;
+        }
+        .tl-item { display: flex; gap: .65rem; padding: .5rem 0; border-bottom: 1px solid #f8f8f8; }
+        .tl-item:last-child { border-bottom: none; }
+        .tl-dot {
+            width: 8px; height: 8px; border-radius: 50%; margin-top: .35rem; flex-shrink: 0;
+        }
+        .tl-dot.sent { background: #42A5F5; }
+        .tl-dot.clicked { background: #FFC107; }
+        .tl-dot.reviewed { background: var(--brand); }
+        .tl-dot.skipped { background: #e0e0e0; }
+        .tl-body { flex: 1; }
+        .tl-text { font-size: .78rem; color: #495057; }
+        .tl-text strong { color: #1a1d23; }
+        .tl-date { font-size: .65rem; color: #adb5bd; }
+
+        /* Empty state */
+        .empty-state { text-align: center; padding: 3rem 1rem; }
+        .empty-icon { font-size: 2.5rem; color: #e0e0e0; margin-bottom: .5rem; }
+        .empty-title { font-size: .88rem; font-weight: 700; color: #6c757d; }
+        .empty-text { font-size: .78rem; color: #adb5bd; margin-top: .25rem; }
+
+        /* Filters bar */
+        .filters-bar {
+            display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .filter-chip {
+            padding: .3rem .7rem; border-radius: 20px; font-size: .72rem; font-weight: 600;
+            border: 1px solid #e9ecef; background: #fff; color: #6c757d; cursor: pointer;
+            transition: all .15s; display: flex; align-items: center; gap: .25rem;
+        }
+        .filter-chip:hover { border-color: var(--brand); color: var(--brand); }
+        .filter-chip.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+        /* Demo tabs (bottom) */
+        .demo-tabs {
+            position: fixed; bottom: 0; left: 0; right: 0; background: #1a1d23;
+            display: flex; gap: 0; z-index: 998; box-shadow: 0 -2px 12px rgba(0,0,0,.2);
+        }
+        .demo-tab {
+            flex: 1; padding: .6rem .5rem; text-align: center; color: #adb5bd;
+            font-size: .68rem; cursor: pointer; border: none; background: none;
+            transition: all .15s; border-top: 2px solid transparent;
+        }
+        .demo-tab:hover { color: #fff; background: rgba(255,255,255,.05); }
+        .demo-tab.active { color: var(--star); border-top-color: var(--star); font-weight: 600; }
+        .demo-tab i { display: block; font-size: .9rem; margin-bottom: .15rem; }
+        body { padding-bottom: 52px; }
+        .state { display: none; }
+        .state.active { display: block; }
+
+        /* Chart legend */
+        .chart-legend { display: flex; gap: 1rem; margin-top: .75rem; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: .3rem; font-size: .68rem; color: #6c757d; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+        @media (max-width: 768px) {
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+            .kpi-row .kpi-card:last-child { grid-column: span 2; }
+            .fb-date { margin-left: 0; width: 100%; }
+            .fb-actions { position: absolute; top: .5rem; right: .5rem; }
+            .fb-item { position: relative; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wireframe-badge">WIREFRAME — Dashboard Reputazione</div>
+
+<!-- ===== STATE 1: Panoramica ===== -->
+<div class="state active" id="state-overview">
+<div class="page-wrap">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div>
+            <div class="page-title"><i class="bi bi-star" style="color:var(--star);"></i> Reputazione</div>
+            <div class="page-subtitle">Monitora le recensioni e il feedback dei tuoi clienti</div>
+        </div>
+        <div class="d-flex gap-2">
+            <select class="form-select form-select-sm" style="font-size:.75rem; width:auto;">
+                <option>Ultimi 30 giorni</option>
+                <option selected>Ultimi 90 giorni</option>
+                <option>Quest'anno</option>
+                <option>Tutto</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="rep-tabs">
+        <button class="rep-tab active"><i class="bi bi-grid"></i> Panoramica</button>
+        <button class="rep-tab" onclick="switchState('state-feedback')">
+            <i class="bi bi-chat-dots"></i> Feedback
+            <span class="badge bg-danger">3</span>
+        </button>
+        <button class="rep-tab" onclick="switchState('state-timeline')"><i class="bi bi-clock-history"></i> Storico invii</button>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpi-row">
+        <div class="kpi-card">
+            <div class="kpi-icon">📧</div>
+            <div class="kpi-value">127</div>
+            <div class="kpi-label">Email inviate</div>
+            <span class="kpi-trend up"><i class="bi bi-arrow-up"></i> +18%</span>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon">👆</div>
+            <div class="kpi-value">89</div>
+            <div class="kpi-label">Click ricevuti</div>
+            <span class="kpi-trend up"><i class="bi bi-arrow-up"></i> +12%</span>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon">📊</div>
+            <div class="kpi-value" style="color:var(--brand);">70%</div>
+            <div class="kpi-label">Tasso click</div>
+            <span class="kpi-trend up"><i class="bi bi-arrow-up"></i> +3%</span>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon">⭐</div>
+            <div class="kpi-value" style="color:var(--star);">4.6</div>
+            <div class="kpi-label">Media interna</div>
+            <span class="kpi-trend neutral"><i class="bi bi-dash"></i> =</span>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon">🛡️</div>
+            <div class="kpi-value" style="color:#ef5350;">7</div>
+            <div class="kpi-label">Feedback privati</div>
+            <span class="kpi-trend down"><i class="bi bi-arrow-down"></i> -2</span>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <!-- Left: Charts -->
+        <div class="col-lg-7">
+
+            <!-- Funnel conversion -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title"><i class="bi bi-funnel" style="color:#7C4DFF;"></i> Funnel conversione</div>
+                    <div class="chart-period">Ultimi 90 giorni</div>
+                </div>
+                <div class="funnel">
+                    <div class="funnel-step">
+                        <div class="funnel-label">Inviate</div>
+                        <div class="funnel-bar-bg">
+                            <div class="funnel-bar-fill" style="width:100%; background:#42A5F5;">127</div>
+                        </div>
+                        <div class="funnel-value">100%</div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="funnel-label">Aperte</div>
+                        <div class="funnel-bar-bg">
+                            <div class="funnel-bar-fill" style="width:78%; background:#66BB6A;">99</div>
+                        </div>
+                        <div class="funnel-value">78%</div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="funnel-label">Click</div>
+                        <div class="funnel-bar-bg">
+                            <div class="funnel-bar-fill" style="width:70%; background:var(--brand);">89</div>
+                        </div>
+                        <div class="funnel-value">70%</div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="funnel-label">Valutato</div>
+                        <div class="funnel-bar-bg">
+                            <div class="funnel-bar-fill" style="width:55%; background:#FFC107; color:#333;">70</div>
+                        </div>
+                        <div class="funnel-value">55%</div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="funnel-label">Pubblico</div>
+                        <div class="funnel-bar-bg">
+                            <div class="funnel-bar-fill" style="width:50%; background:#FF7043;">63</div>
+                        </div>
+                        <div class="funnel-value">50%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly trend -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title"><i class="bi bi-graph-up" style="color:#42A5F5;"></i> Andamento mensile</div>
+                </div>
+                <div class="bar-chart">
+                    <div class="bar-col">
+                        <div class="bar-value">28</div>
+                        <div class="bar-fill sent" style="height:55%;"></div>
+                        <div class="bar-fill clicked" style="height:38%;"></div>
+                        <div class="bar-fill reviewed" style="height:28%;"></div>
+                        <div class="bar-label">Gen</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">35</div>
+                        <div class="bar-fill sent" style="height:68%;"></div>
+                        <div class="bar-fill clicked" style="height:52%;"></div>
+                        <div class="bar-fill reviewed" style="height:35%;"></div>
+                        <div class="bar-label">Feb</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">42</div>
+                        <div class="bar-fill sent" style="height:82%;"></div>
+                        <div class="bar-fill clicked" style="height:60%;"></div>
+                        <div class="bar-fill reviewed" style="height:45%;"></div>
+                        <div class="bar-label">Mar</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">22</div>
+                        <div class="bar-fill sent" style="height:42%;"></div>
+                        <div class="bar-fill clicked" style="height:30%;"></div>
+                        <div class="bar-fill reviewed" style="height:18%;"></div>
+                        <div class="bar-label">Apr</div>
+                    </div>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item"><div class="legend-dot" style="background:#E3F2FD;"></div> Inviate</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#42A5F5;"></div> Click</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:var(--brand);"></div> Recensione pubblica</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Rating distribution + recent -->
+        <div class="col-lg-5">
+
+            <!-- Rating distribution -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title"><i class="bi bi-bar-chart-steps" style="color:var(--star);"></i> Distribuzione voti</div>
+                </div>
+                <div style="text-align:center; margin-bottom:1rem;">
+                    <div style="font-size:2rem; font-weight:800; color:#1a1d23;">4.6</div>
+                    <div class="stars-display" style="font-size:1.1rem;">★★★★<span style="background:linear-gradient(90deg, var(--star) 60%, #e9ecef 60%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">★</span></div>
+                    <div style="font-size:.68rem; color:#adb5bd; margin-top:.15rem;">70 valutazioni</div>
+                </div>
+                <div class="rating-dist">
+                    <div class="rating-row">
+                        <div class="rating-stars">5 ★</div>
+                        <div class="rating-bar-bg"><div class="rating-bar-fill s5"></div></div>
+                        <div class="rating-count">43</div>
+                        <div class="rating-pct">62%</div>
+                    </div>
+                    <div class="rating-row">
+                        <div class="rating-stars">4 ★</div>
+                        <div class="rating-bar-bg"><div class="rating-bar-fill s4"></div></div>
+                        <div class="rating-count">17</div>
+                        <div class="rating-pct">24%</div>
+                    </div>
+                    <div class="rating-row">
+                        <div class="rating-stars">3 ★</div>
+                        <div class="rating-bar-bg"><div class="rating-bar-fill s3"></div></div>
+                        <div class="rating-count">6</div>
+                        <div class="rating-pct">8%</div>
+                    </div>
+                    <div class="rating-row">
+                        <div class="rating-stars">2 ★</div>
+                        <div class="rating-bar-bg"><div class="rating-bar-fill s2"></div></div>
+                        <div class="rating-count">3</div>
+                        <div class="rating-pct">4%</div>
+                    </div>
+                    <div class="rating-row">
+                        <div class="rating-stars">1 ★</div>
+                        <div class="rating-bar-bg"><div class="rating-bar-fill s1"></div></div>
+                        <div class="rating-count">1</div>
+                        <div class="rating-pct">2%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Redirect platform -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title"><i class="bi bi-box-arrow-up-right" style="color:var(--brand);"></i> Piattaforma</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:.75rem; padding:.25rem 0;">
+                    <div style="width:40px; height:40px; border-radius:10px; background:#E8F5E9; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
+                        <i class="bi bi-google" style="color:var(--brand);"></i>
+                    </div>
+                    <div style="flex:1;">
+                        <div style="font-size:.82rem; font-weight:700;">Google Maps</div>
+                        <div style="font-size:.68rem; color:#adb5bd;">63 clienti reindirizzati</div>
+                    </div>
+                    <a href="#" style="font-size:.72rem; color:var(--brand); text-decoration:none;">
+                        <i class="bi bi-pencil"></i> Modifica
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent feedback (compact) -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title"><i class="bi bi-chat-left-text" style="color:#ef5350;"></i> Ultimi feedback</div>
+                    <a href="#" style="font-size:.72rem; color:var(--brand); text-decoration:none;" onclick="switchState('state-feedback'); return false;">Vedi tutti →</a>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:.5rem;">
+                    <div style="display:flex; align-items:flex-start; gap:.5rem; padding:.4rem 0; border-bottom:1px solid #f8f8f8;">
+                        <div style="width:28px; height:28px; border-radius:50%; background:#FFEBEE; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <span style="font-size:.65rem; font-weight:700; color:#ef5350;">LP</span>
+                        </div>
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-size:.72rem;"><strong>Luca P.</strong> <span style="color:var(--star);">★★</span> <span style="color:#adb5bd; font-size:.65rem;">· 2h fa</span></div>
+                            <div style="font-size:.7rem; color:#6c757d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Porzioni piccole per il prezzo...</div>
+                        </div>
+                        <span class="badge status-new" style="font-size:.58rem;">Nuovo</span>
+                    </div>
+                    <div style="display:flex; align-items:flex-start; gap:.5rem; padding:.4rem 0; border-bottom:1px solid #f8f8f8;">
+                        <div style="width:28px; height:28px; border-radius:50%; background:#E3F2FD; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <span style="font-size:.65rem; font-weight:700; color:#42A5F5;">SB</span>
+                        </div>
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-size:.72rem;"><strong>Sara B.</strong> <span style="color:var(--star);">★★★</span> <span style="color:#adb5bd; font-size:.65rem;">· 1g fa</span></div>
+                            <div style="font-size:.7rem; color:#6c757d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Cameriere un po' sbrigativo ma cibo ok</div>
+                        </div>
+                        <span class="badge status-read" style="font-size:.58rem;">Letto</span>
+                    </div>
+                    <div style="display:flex; align-items:flex-start; gap:.5rem; padding:.4rem 0;">
+                        <div style="width:28px; height:28px; border-radius:50%; background:#FFF3E0; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <span style="font-size:.65rem; font-weight:700; color:#FF9800;">MR</span>
+                        </div>
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-size:.72rem;"><strong>Marco R.</strong> <span style="color:var(--star);">★★★</span> <span style="color:#adb5bd; font-size:.65rem;">· 3g fa</span></div>
+                            <div style="font-size:.7rem; color:#6c757d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Attesa lunga, 40min per il primo...</div>
+                        </div>
+                        <span class="badge status-replied" style="font-size:.58rem;">Risposto</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- ===== STATE 2: Feedback list ===== -->
+<div class="state" id="state-feedback">
+<div class="page-wrap">
+    <div>
+        <div class="page-title"><i class="bi bi-star" style="color:var(--star);"></i> Reputazione</div>
+        <div class="page-subtitle">Monitora le recensioni e il feedback dei tuoi clienti</div>
+    </div>
+
+    <div class="rep-tabs">
+        <button class="rep-tab" onclick="switchState('state-overview')"><i class="bi bi-grid"></i> Panoramica</button>
+        <button class="rep-tab active">
+            <i class="bi bi-chat-dots"></i> Feedback
+            <span class="badge bg-danger">3</span>
+        </button>
+        <button class="rep-tab" onclick="switchState('state-timeline')"><i class="bi bi-clock-history"></i> Storico invii</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-bar">
+        <span class="filter-chip active">Tutti <span style="opacity:.7;">(7)</span></span>
+        <span class="filter-chip"><i class="bi bi-circle-fill" style="font-size:.4rem; color:#1565C0;"></i> Nuovi (3)</span>
+        <span class="filter-chip"><i class="bi bi-circle-fill" style="font-size:.4rem; color:#757575;"></i> Letti (2)</span>
+        <span class="filter-chip"><i class="bi bi-circle-fill" style="font-size:.4rem; color:#2e7d32;"></i> Risposti (2)</span>
+        <div class="ms-auto">
+            <select class="form-select form-select-sm" style="font-size:.72rem; width:auto;">
+                <option>Più recenti</option>
+                <option>Voto più basso</option>
+                <option>Voto più alto</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Feedback items -->
+    <div class="feedback-card">
+
+        <!-- Item 1: New, low rating -->
+        <div class="fb-item">
+            <div class="fb-avatar" style="background:#FFEBEE; color:#ef5350;">LP</div>
+            <div class="fb-body">
+                <div class="fb-top">
+                    <span class="fb-name">Luca Pellegrini</span>
+                    <span class="fb-stars">★★<span class="stars-empty">★★★</span></span>
+                    <span class="badge status-new">Nuovo</span>
+                    <span class="fb-date">Oggi, 14:32</span>
+                </div>
+                <div class="fb-text">Porzioni piccole per il prezzo pagato. 18€ per un piatto di pasta con 4 gamberi è eccessivo. Il gusto era buono ma il rapporto qualità/prezzo no.</div>
+                <div class="fb-meta">
+                    <span class="fb-meta-item"><i class="bi bi-calendar3"></i> Cena 30/03/2026</span>
+                    <span class="fb-meta-item"><i class="bi bi-people"></i> 2 persone</span>
+                    <span class="fb-meta-item"><i class="bi bi-person"></i> 3 visite totali</span>
+                </div>
+            </div>
+            <div class="fb-actions">
+                <button class="fb-action-btn" title="Rispondi"><i class="bi bi-reply"></i></button>
+                <button class="fb-action-btn" title="Segna come letto"><i class="bi bi-check2"></i></button>
+                <button class="fb-action-btn" title="Vedi cliente"><i class="bi bi-person"></i></button>
+            </div>
+        </div>
+
+        <!-- Item 2: New -->
+        <div class="fb-item">
+            <div class="fb-avatar" style="background:#E8EAF6; color:#5C6BC0;">GF</div>
+            <div class="fb-body">
+                <div class="fb-top">
+                    <span class="fb-name">Giulia Ferraro</span>
+                    <span class="fb-stars">★<span class="stars-empty">★★★★</span></span>
+                    <span class="badge status-new">Nuovo</span>
+                    <span class="fb-date">Oggi, 11:15</span>
+                </div>
+                <div class="fb-text">Prenotato per le 20:30, ci hanno fatto sedere alle 21:00 senza scuse. Il tavolo era vicino alla cucina, rumoroso. Non torneremo.</div>
+                <div class="fb-meta">
+                    <span class="fb-meta-item"><i class="bi bi-calendar3"></i> Cena 29/03/2026</span>
+                    <span class="fb-meta-item"><i class="bi bi-people"></i> 4 persone</span>
+                    <span class="fb-meta-item"><i class="bi bi-person"></i> Prima visita</span>
+                </div>
+            </div>
+            <div class="fb-actions">
+                <button class="fb-action-btn" title="Rispondi"><i class="bi bi-reply"></i></button>
+                <button class="fb-action-btn" title="Segna come letto"><i class="bi bi-check2"></i></button>
+                <button class="fb-action-btn" title="Vedi cliente"><i class="bi bi-person"></i></button>
+            </div>
+        </div>
+
+        <!-- Item 3: New -->
+        <div class="fb-item">
+            <div class="fb-avatar" style="background:#FFF3E0; color:#FF9800;">AB</div>
+            <div class="fb-body">
+                <div class="fb-top">
+                    <span class="fb-name">Andrea Bianchi</span>
+                    <span class="fb-stars">★★★<span class="stars-empty">★★</span></span>
+                    <span class="badge status-new">Nuovo</span>
+                    <span class="fb-date">Ieri, 22:10</span>
+                </div>
+                <div class="fb-text">Cibo buono, servizio nella media. Niente di speciale per distinguersi dagli altri ristoranti della zona.</div>
+                <div class="fb-meta">
+                    <span class="fb-meta-item"><i class="bi bi-calendar3"></i> Cena 29/03/2026</span>
+                    <span class="fb-meta-item"><i class="bi bi-people"></i> 2 persone</span>
+                    <span class="fb-meta-item"><i class="bi bi-person"></i> 2 visite totali</span>
+                </div>
+            </div>
+            <div class="fb-actions">
+                <button class="fb-action-btn" title="Rispondi"><i class="bi bi-reply"></i></button>
+                <button class="fb-action-btn" title="Segna come letto"><i class="bi bi-check2"></i></button>
+                <button class="fb-action-btn" title="Vedi cliente"><i class="bi bi-person"></i></button>
+            </div>
+        </div>
+
+        <!-- Item 4: Read -->
+        <div class="fb-item" style="background:#fcfcfc;">
+            <div class="fb-avatar" style="background:#E3F2FD; color:#42A5F5;">SB</div>
+            <div class="fb-body">
+                <div class="fb-top">
+                    <span class="fb-name">Sara Benedetti</span>
+                    <span class="fb-stars">★★★<span class="stars-empty">★★</span></span>
+                    <span class="badge status-read">Letto</span>
+                    <span class="fb-date">27/03/2026</span>
+                </div>
+                <div class="fb-text">Cameriere un po' sbrigativo, sembrava infastidito dalle domande sul menu. Il cibo era buono però, torneremo probabilmente.</div>
+                <div class="fb-meta">
+                    <span class="fb-meta-item"><i class="bi bi-calendar3"></i> Cena 26/03/2026</span>
+                    <span class="fb-meta-item"><i class="bi bi-people"></i> 3 persone</span>
+                </div>
+            </div>
+            <div class="fb-actions">
+                <button class="fb-action-btn" title="Rispondi"><i class="bi bi-reply"></i></button>
+                <button class="fb-action-btn" title="Vedi cliente"><i class="bi bi-person"></i></button>
+            </div>
+        </div>
+
+        <!-- Item 5: Replied (with response) -->
+        <div class="fb-item" style="background:#fcfcfc;">
+            <div class="fb-avatar" style="background:#FFF3E0; color:#FF9800;">MR</div>
+            <div class="fb-body">
+                <div class="fb-top">
+                    <span class="fb-name">Marco Rossi</span>
+                    <span class="fb-stars">★★★<span class="stars-empty">★★</span></span>
+                    <span class="badge status-replied">Risposto</span>
+                    <span class="fb-date">25/03/2026</span>
+                </div>
+                <div class="fb-text">L'attesa è stata un po' lunga, circa 40 minuti per il primo. Il cibo era ottimo però. Forse un cameriere in più aiuterebbe nelle serate piene.</div>
+                <div class="fb-reply">
+                    <div class="fb-reply-label"><i class="bi bi-reply"></i> La tua risposta · 26/03</div>
+                    <div class="fb-reply-text">Grazie Marco per il feedback! Hai ragione, il venerdì sera siamo spesso sotto organico. Stiamo inserendo un nuovo cameriere proprio per le serate di punta. Speriamo di rivederti presto!</div>
+                </div>
+                <div class="fb-meta">
+                    <span class="fb-meta-item"><i class="bi bi-calendar3"></i> Cena 24/03/2026</span>
+                    <span class="fb-meta-item"><i class="bi bi-people"></i> 2 persone</span>
+                    <span class="fb-meta-item"><i class="bi bi-person"></i> Cliente abituale (8 visite)</span>
+                </div>
+            </div>
+            <div class="fb-actions">
+                <button class="fb-action-btn" title="Modifica risposta"><i class="bi bi-pencil"></i></button>
+                <button class="fb-action-btn" title="Vedi cliente"><i class="bi bi-person"></i></button>
+            </div>
+        </div>
+
+    </div><!-- /feedback-card -->
+</div>
+</div>
+
+<!-- ===== STATE 3: Timeline invii ===== -->
+<div class="state" id="state-timeline">
+<div class="page-wrap">
+    <div>
+        <div class="page-title"><i class="bi bi-star" style="color:var(--star);"></i> Reputazione</div>
+        <div class="page-subtitle">Monitora le recensioni e il feedback dei tuoi clienti</div>
+    </div>
+
+    <div class="rep-tabs">
+        <button class="rep-tab" onclick="switchState('state-overview')"><i class="bi bi-grid"></i> Panoramica</button>
+        <button class="rep-tab" onclick="switchState('state-feedback')">
+            <i class="bi bi-chat-dots"></i> Feedback
+            <span class="badge bg-danger">3</span>
+        </button>
+        <button class="rep-tab active"><i class="bi bi-clock-history"></i> Storico invii</button>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filters-bar">
+        <span class="filter-chip active">Tutti</span>
+        <span class="filter-chip"><i class="bi bi-circle-fill" style="font-size:.4rem; color:#42A5F5;"></i> Inviate</span>
+        <span class="filter-chip"><i class="bi bi-circle-fill" style="font-size:.4rem; color:#FFC107;"></i> Click</span>
+        <span class="filter-chip"><i class="bi bi-circle-fill" style="font-size:.4rem; color:var(--brand);"></i> Recensite</span>
+        <span class="filter-chip"><i class="bi bi-circle-fill" style="font-size:.4rem; color:#e0e0e0;"></i> Ignorate</span>
+        <div class="ms-auto">
+            <input type="text" class="form-control form-control-sm" placeholder="Cerca cliente..." style="font-size:.72rem; width:160px;">
+        </div>
+    </div>
+
+    <!-- Timeline card -->
+    <div class="timeline-card">
+        <div style="font-size:.72rem; font-weight:600; color:#adb5bd; text-transform:uppercase; letter-spacing:.5px; margin-bottom:.5rem;">Oggi — 31 marzo 2026</div>
+
+        <div class="tl-item">
+            <div class="tl-dot sent"></div>
+            <div class="tl-body">
+                <div class="tl-text">Email inviata a <strong>Chiara Moretti</strong></div>
+                <div class="tl-date">14:45 · Cena 30/03 ore 21:00 · 2 persone</div>
+            </div>
+            <span class="badge" style="background:#E3F2FD; color:#1565C0; font-size:.62rem;">Inviata</span>
+        </div>
+
+        <div class="tl-item">
+            <div class="tl-dot clicked"></div>
+            <div class="tl-body">
+                <div class="tl-text"><strong>Luca Pellegrini</strong> ha cliccato il link — <span style="color:var(--star);">★★</span> → feedback privato</div>
+                <div class="tl-date">14:32 · Cena 30/03 ore 20:30 · Email inviata alle 12:30</div>
+            </div>
+            <span class="badge" style="background:#FFF3E0; color:#E65100; font-size:.62rem;">Feedback</span>
+        </div>
+
+        <div class="tl-item">
+            <div class="tl-dot reviewed"></div>
+            <div class="tl-body">
+                <div class="tl-text"><strong>Francesca De Luca</strong> ha lasciato una recensione su <strong>Google</strong> — <span style="color:var(--star);">★★★★★</span></div>
+                <div class="tl-date">13:10 · Cena 30/03 ore 20:00 · Email inviata alle 11:00</div>
+            </div>
+            <span class="badge" style="background:#E8F5E9; color:#2E7D32; font-size:.62rem;">Recensione</span>
+        </div>
+
+        <div class="tl-item">
+            <div class="tl-dot sent"></div>
+            <div class="tl-body">
+                <div class="tl-text">Email inviata a <strong>Giovanni Baldi</strong></div>
+                <div class="tl-date">11:00 · Cena 30/03 ore 19:30 · 6 persone</div>
+            </div>
+            <span class="badge" style="background:#E3F2FD; color:#1565C0; font-size:.62rem;">Inviata</span>
+        </div>
+
+        <div style="font-size:.72rem; font-weight:600; color:#adb5bd; text-transform:uppercase; letter-spacing:.5px; margin: .75rem 0 .5rem; padding-top:.5rem; border-top:1px solid #f0f0f0;">Ieri — 30 marzo 2026</div>
+
+        <div class="tl-item">
+            <div class="tl-dot reviewed"></div>
+            <div class="tl-body">
+                <div class="tl-text"><strong>Paolo Verdi</strong> ha lasciato una recensione su <strong>Google</strong> — <span style="color:var(--star);">★★★★</span></div>
+                <div class="tl-date">22:15 · Cena 29/03 ore 20:00</div>
+            </div>
+            <span class="badge" style="background:#E8F5E9; color:#2E7D32; font-size:.62rem;">Recensione</span>
+        </div>
+
+        <div class="tl-item">
+            <div class="tl-dot clicked"></div>
+            <div class="tl-body">
+                <div class="tl-text"><strong>Giulia Ferraro</strong> ha cliccato il link — <span style="color:var(--star);">★</span> → feedback privato</div>
+                <div class="tl-date">21:15 · Cena 29/03 ore 20:30 · 4 persone</div>
+            </div>
+            <span class="badge" style="background:#FFF3E0; color:#E65100; font-size:.62rem;">Feedback</span>
+        </div>
+
+        <div class="tl-item">
+            <div class="tl-dot skipped"></div>
+            <div class="tl-body">
+                <div class="tl-text"><strong>Roberto Conti</strong> — email non aperta</div>
+                <div class="tl-date">Inviata alle 14:00 · Cena 29/03 ore 12:30</div>
+            </div>
+            <span class="badge" style="background:#f5f5f5; color:#9e9e9e; font-size:.62rem;">Ignorata</span>
+        </div>
+
+        <div class="tl-item">
+            <div class="tl-dot reviewed"></div>
+            <div class="tl-body">
+                <div class="tl-text"><strong>Elena Marini</strong> ha lasciato una recensione su <strong>Google</strong> — <span style="color:var(--star);">★★★★★</span></div>
+                <div class="tl-date">13:45 · Pranzo 29/03 ore 12:00</div>
+            </div>
+            <span class="badge" style="background:#E8F5E9; color:#2E7D32; font-size:.62rem;">Recensione</span>
+        </div>
+
+        <div class="tl-item">
+            <div class="tl-dot sent"></div>
+            <div class="tl-body">
+                <div class="tl-text">Email inviata a <strong>Anna Colombo</strong></div>
+                <div class="tl-date">11:30 · Pranzo 29/03 ore 13:00 · Disiscritta (non riceverà più)</div>
+            </div>
+            <span class="badge" style="background:#FFEBEE; color:#C62828; font-size:.62rem;">Disiscritto</span>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-between align-items-center" style="font-size:.75rem; color:#6c757d;">
+        <span>Mostrando 1-10 di 127 invii</span>
+        <nav>
+            <ul class="pagination pagination-sm mb-0" style="--bs-pagination-active-bg:var(--brand); --bs-pagination-active-border-color:var(--brand);">
+                <li class="page-item disabled"><a class="page-link" href="#">←</a></li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">...</a></li>
+                <li class="page-item"><a class="page-link" href="#">13</a></li>
+                <li class="page-item"><a class="page-link" href="#">→</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</div>
+
+
+<!-- ===== DEMO TABS ===== -->
+<div class="demo-tabs">
+    <button class="demo-tab active" data-state="state-overview">
+        <i class="bi bi-grid"></i> Panoramica
+    </button>
+    <button class="demo-tab" data-state="state-feedback">
+        <i class="bi bi-chat-dots"></i> Feedback
+    </button>
+    <button class="demo-tab" data-state="state-timeline">
+        <i class="bi bi-clock-history"></i> Storico
+    </button>
+</div>
+
+<script>
+    function switchState(stateId) {
+        document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(stateId).classList.add('active');
+        document.querySelector(`[data-state="${stateId}"]`).classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    document.querySelectorAll('.demo-tab').forEach(tab => {
+        tab.addEventListener('click', () => switchState(tab.dataset.state));
+    });
+</script>
+
+</body>
+</html>

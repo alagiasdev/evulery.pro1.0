@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe — Landing Recensione Cliente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-light: #e8f5e9;
+            --brand-dark: #006837;
+            --star: #FFC107;
+            --star-hover: #FFD54F;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f5f6f8; font-family: system-ui, -apple-system, sans-serif; min-height: 100vh; }
+        .wireframe-badge {
+            position: fixed; top: 12px; right: 12px; background: #FF9800; color: #fff;
+            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 999;
+        }
+
+        /* Page container — mobile first (max 480px centered) */
+        .page-wrap {
+            max-width: 480px; margin: 0 auto; min-height: 100vh;
+            display: flex; flex-direction: column;
+        }
+
+        /* Header */
+        .review-header {
+            background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+            color: #fff; padding: 2rem 1.5rem 1.5rem; text-align: center;
+            border-radius: 0 0 24px 24px;
+        }
+        .review-logo {
+            width: 64px; height: 64px; border-radius: 16px; background: rgba(255,255,255,.15);
+            display: flex; align-items: center; justify-content: center; margin: 0 auto .75rem;
+            font-size: 1.5rem; backdrop-filter: blur(4px);
+        }
+        .review-restaurant { font-size: 1.15rem; font-weight: 700; margin-bottom: .2rem; }
+        .review-subtitle { font-size: .82rem; opacity: .85; }
+
+        /* Main content */
+        .review-content { flex: 1; padding: 1.5rem; }
+
+        /* Greeting */
+        .greeting { text-align: center; margin-bottom: 1.5rem; }
+        .greeting-text { font-size: .88rem; color: #495057; line-height: 1.5; }
+        .greeting-name { font-weight: 700; color: #1a1d23; }
+        .greeting-date { font-size: .75rem; color: #adb5bd; margin-top: .25rem; }
+
+        /* Stars rating */
+        .stars-card {
+            background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,.08);
+            padding: 1.5rem; text-align: center; margin-bottom: 1.25rem;
+        }
+        .stars-question { font-size: .92rem; font-weight: 700; color: #1a1d23; margin-bottom: 1rem; }
+        .stars-row { display: flex; justify-content: center; gap: .5rem; margin-bottom: .75rem; }
+        .star-btn {
+            width: 52px; height: 52px; border-radius: 12px; border: 2px solid #e9ecef;
+            background: #fff; display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; color: #dee2e6; cursor: pointer; transition: all .2s;
+            position: relative;
+        }
+        .star-btn:hover, .star-btn.active {
+            border-color: var(--star); color: var(--star); background: #FFFDE7;
+            transform: scale(1.1);
+        }
+        .star-btn.active { box-shadow: 0 2px 8px rgba(255,193,7,.3); }
+        .star-label { font-size: .68rem; color: #adb5bd; margin-top: .5rem; }
+        .star-labels { display: flex; justify-content: space-between; padding: 0 .25rem; }
+
+        /* Selected state feedback */
+        .rating-feedback {
+            display: none; margin-top: 1rem; padding: .75rem; border-radius: 10px;
+            font-size: .8rem; text-align: center; animation: fadeIn .3s;
+        }
+        .rating-feedback.positive { background: #e8f5e9; color: #2e7d32; }
+        .rating-feedback.negative { background: #fff3e0; color: #e65100; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* CTA button (after rating) */
+        .cta-area { display: none; text-align: center; animation: fadeIn .4s; }
+        .cta-btn {
+            display: inline-flex; align-items: center; gap: .5rem;
+            background: var(--brand); color: #fff; padding: .75rem 2rem;
+            border-radius: 12px; font-size: .88rem; font-weight: 700;
+            text-decoration: none; border: none; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,132,74,.25); transition: all .2s;
+        }
+        .cta-btn:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,132,74,.3); }
+        .cta-btn i { font-size: 1.1rem; }
+        .cta-skip { display: block; margin-top: .75rem; font-size: .72rem; color: #adb5bd; text-decoration: none; }
+        .cta-skip:hover { color: #6c757d; }
+
+        /* Private feedback form */
+        .feedback-form {
+            display: none; background: #fff; border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.08); padding: 1.25rem;
+            margin-bottom: 1.25rem; animation: fadeIn .4s;
+        }
+        .feedback-title { font-size: .88rem; font-weight: 700; color: #1a1d23; margin-bottom: .15rem; }
+        .feedback-subtitle { font-size: .75rem; color: #6c757d; margin-bottom: 1rem; }
+        .feedback-textarea {
+            width: 100%; border: 1px solid #dee2e6; border-radius: 10px; padding: .75rem;
+            font-size: .82rem; resize: vertical; min-height: 100px; font-family: inherit;
+            transition: border-color .15s;
+        }
+        .feedback-textarea:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(0,132,74,.1); }
+        .feedback-textarea::placeholder { color: #ccc; }
+        .feedback-hint { font-size: .68rem; color: #adb5bd; margin-top: .35rem; }
+        .feedback-submit {
+            display: flex; align-items: center; justify-content: center; gap: .4rem;
+            width: 100%; background: var(--brand); color: #fff; border: none; border-radius: 10px;
+            padding: .65rem; font-size: .82rem; font-weight: 600; cursor: pointer; margin-top: .75rem;
+            transition: background .15s;
+        }
+        .feedback-submit:hover { background: var(--brand-dark); }
+
+        /* Privacy badge */
+        .privacy-badge {
+            display: flex; align-items: center; justify-content: center; gap: .35rem;
+            font-size: .68rem; color: #adb5bd; margin-top: .5rem;
+        }
+        .privacy-badge i { font-size: .75rem; }
+
+        /* ========== SUCCESS STATES ========== */
+
+        /* Thank you (after public review redirect) */
+        .thank-you {
+            display: none; text-align: center; padding: 2rem 1rem;
+            animation: fadeIn .4s;
+        }
+        .thank-check {
+            width: 64px; height: 64px; border-radius: 50%; background: var(--brand-light);
+            color: var(--brand); font-size: 1.8rem; display: flex; align-items: center;
+            justify-content: center; margin: 0 auto .75rem;
+        }
+        .thank-title { font-size: 1rem; font-weight: 700; color: #1a1d23; margin-bottom: .25rem; }
+        .thank-text { font-size: .82rem; color: #6c757d; line-height: 1.5; }
+
+        /* Footer */
+        .review-footer {
+            padding: 1rem 1.5rem; text-align: center; font-size: .65rem; color: #ccc;
+        }
+        .review-footer a { color: #adb5bd; text-decoration: none; }
+        .review-footer a:hover { text-decoration: underline; }
+
+        /* ========== DEMO STATES TABS ========== */
+        .demo-tabs {
+            position: fixed; bottom: 0; left: 0; right: 0; background: #1a1d23;
+            display: flex; gap: 0; z-index: 998; box-shadow: 0 -2px 12px rgba(0,0,0,.2);
+        }
+        .demo-tab {
+            flex: 1; padding: .6rem .5rem; text-align: center; color: #adb5bd;
+            font-size: .68rem; cursor: pointer; border: none; background: none;
+            transition: all .15s; border-top: 2px solid transparent;
+        }
+        .demo-tab:hover { color: #fff; background: rgba(255,255,255,.05); }
+        .demo-tab.active { color: var(--star); border-top-color: var(--star); font-weight: 600; }
+        .demo-tab i { display: block; font-size: .9rem; margin-bottom: .15rem; }
+
+        /* States */
+        .state { display: none; }
+        .state.active { display: block; }
+
+        /* Already reviewed page */
+        .already-card {
+            background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,.08);
+            padding: 2rem 1.5rem; text-align: center;
+        }
+        .already-icon {
+            width: 56px; height: 56px; border-radius: 50%; background: #E3F2FD;
+            color: #42A5F5; font-size: 1.5rem; display: flex; align-items: center;
+            justify-content: center; margin: 0 auto .75rem;
+        }
+
+        /* Expired link */
+        .expired-card {
+            background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,.08);
+            padding: 2rem 1.5rem; text-align: center;
+        }
+        .expired-icon {
+            width: 56px; height: 56px; border-radius: 50%; background: #FFF3E0;
+            color: #FF9800; font-size: 1.5rem; display: flex; align-items: center;
+            justify-content: center; margin: 0 auto .75rem;
+        }
+
+        /* Mobile padding for demo bar */
+        body { padding-bottom: 52px; }
+    </style>
+</head>
+<body>
+
+<div class="wireframe-badge">WIREFRAME — Landing Recensione</div>
+
+<!-- ===== STATE 1: Rating page (with sentiment filter) ===== -->
+<div class="state active" id="state-rating">
+    <div class="page-wrap">
+        <div class="review-header">
+            <div class="review-logo">🍽️</div>
+            <div class="review-restaurant">Trattoria Da Mario</div>
+            <div class="review-subtitle">Ti ringraziamo per averci scelto!</div>
+        </div>
+        <div class="review-content">
+            <div class="greeting">
+                <div class="greeting-text">Ciao <span class="greeting-name">Marco</span>, com'è andata la tua esperienza?</div>
+                <div class="greeting-date"><i class="bi bi-calendar3"></i> Cena del 30 marzo 2026, ore 20:30</div>
+            </div>
+
+            <div class="stars-card">
+                <div class="stars-question">Come valuti la tua esperienza?</div>
+                <div class="stars-row">
+                    <button class="star-btn" data-rating="1">★</button>
+                    <button class="star-btn" data-rating="2">★</button>
+                    <button class="star-btn" data-rating="3">★</button>
+                    <button class="star-btn" data-rating="4">★</button>
+                    <button class="star-btn" data-rating="5">★</button>
+                </div>
+                <div class="star-labels">
+                    <span class="star-label">Pessima</span>
+                    <span class="star-label">Eccellente</span>
+                </div>
+
+                <!-- Positive feedback (4-5 stars) -->
+                <div class="rating-feedback positive" id="feedback-positive">
+                    <i class="bi bi-heart-fill"></i> Che bello! Ci farebbe molto piacere se condividessi la tua esperienza
+                </div>
+                <!-- Negative feedback (1-3 stars) -->
+                <div class="rating-feedback negative" id="feedback-negative">
+                    <i class="bi bi-emoji-frown"></i> Ci dispiace! Dicci cosa possiamo migliorare
+                </div>
+            </div>
+
+            <!-- CTA: appears for 4-5 stars -->
+            <div class="cta-area" id="cta-public">
+                <a href="#" class="cta-btn" id="cta-link">
+                    <i class="bi bi-google"></i> Lascia una recensione su Google
+                </a>
+                <a href="#" class="cta-skip">No grazie, un'altra volta</a>
+            </div>
+
+            <!-- Feedback form: appears for 1-3 stars -->
+            <div class="feedback-form" id="feedback-form">
+                <div class="feedback-title">Aiutaci a migliorare</div>
+                <div class="feedback-subtitle">Il tuo commento resterà privato e verrà letto direttamente dal ristorante</div>
+                <textarea class="feedback-textarea" placeholder="Raccontaci cosa non ha funzionato: servizio, tempi di attesa, qualità del cibo, ambiente..."></textarea>
+                <div class="feedback-hint">Minimo 10 caratteri · Il tuo feedback è anonimo per gli altri clienti</div>
+                <button class="feedback-submit"><i class="bi bi-send"></i> Invia feedback</button>
+                <div class="privacy-badge"><i class="bi bi-lock"></i> Solo il ristorante vedrà il tuo commento</div>
+            </div>
+        </div>
+
+        <div class="review-footer">
+            <a href="#">Non desidero ricevere queste email</a>
+            <br>© 2026 Evulery · by alagias. — Soluzioni per il web
+        </div>
+    </div>
+</div>
+
+<!-- ===== STATE 2: Direct link (no filter) ===== -->
+<div class="state" id="state-direct">
+    <div class="page-wrap">
+        <div class="review-header">
+            <div class="review-logo">🍽️</div>
+            <div class="review-restaurant">Trattoria Da Mario</div>
+            <div class="review-subtitle">Ti ringraziamo per averci scelto!</div>
+        </div>
+        <div class="review-content">
+            <div class="greeting">
+                <div class="greeting-text">Ciao <span class="greeting-name">Marco</span>, com'è andata la tua cena?</div>
+                <div class="greeting-date"><i class="bi bi-calendar3"></i> 30 marzo 2026, ore 20:30</div>
+            </div>
+
+            <div class="stars-card" style="padding:2rem 1.5rem;">
+                <div style="font-size:2.5rem; margin-bottom:.5rem;">⭐</div>
+                <div class="stars-question">La tua opinione conta!</div>
+                <p style="font-size:.82rem; color:#6c757d; margin-bottom:1.25rem; line-height:1.5;">
+                    Ci farebbe molto piacere se dedicassi un minuto a condividere la tua esperienza. Le recensioni ci aiutano a crescere e migliorare ogni giorno.
+                </p>
+                <a href="#" class="cta-btn" style="display:inline-flex;">
+                    <i class="bi bi-google"></i> Recensisci su Google
+                </a>
+                <a href="#" class="cta-skip" style="margin-top:1rem;">No grazie</a>
+            </div>
+        </div>
+
+        <div class="review-footer">
+            <a href="#">Non desidero ricevere queste email</a>
+            <br>© 2026 Evulery · by alagias. — Soluzioni per il web
+        </div>
+    </div>
+</div>
+
+<!-- ===== STATE 3: Thank you (after feedback sent) ===== -->
+<div class="state" id="state-thanks">
+    <div class="page-wrap">
+        <div class="review-header">
+            <div class="review-logo">🍽️</div>
+            <div class="review-restaurant">Trattoria Da Mario</div>
+            <div class="review-subtitle">Grazie per il tuo tempo!</div>
+        </div>
+        <div class="review-content">
+            <div class="thank-you" style="display:block;">
+                <div class="thank-check"><i class="bi bi-check-lg"></i></div>
+                <div class="thank-title">Feedback inviato!</div>
+                <div class="thank-text" style="margin-bottom:1.5rem;">
+                    Grazie Marco, il tuo commento è stato inviato direttamente al ristorante.
+                    <br>Il tuo parere ci aiuta a offrirti un'esperienza migliore.
+                </div>
+
+                <div style="background:#f8f9fa; border-radius:12px; padding:1rem; text-align:left; margin-bottom:1rem;">
+                    <div style="font-size:.72rem; font-weight:600; color:#6c757d; margin-bottom:.5rem;">Il tuo feedback:</div>
+                    <div style="font-size:.8rem; color:#495057; font-style:italic; line-height:1.5;">
+                        "L'attesa è stata un po' lunga, circa 40 minuti per il primo. Il cibo era ottimo però. Forse un cameriere in più aiuterebbe nelle serate piene."
+                    </div>
+                    <div style="display:flex; align-items:center; gap:.35rem; margin-top:.5rem;">
+                        <span style="color:var(--star); font-size:.85rem;">★ ★ ★</span>
+                        <span style="font-size:.7rem; color:#adb5bd;">3/5</span>
+                    </div>
+                </div>
+
+                <div style="background:var(--brand-light); border-radius:10px; padding:.75rem; font-size:.75rem; color:var(--brand-dark);">
+                    <i class="bi bi-heart"></i> Il ristorante leggerà il tuo commento e lavorerà per migliorare
+                </div>
+            </div>
+        </div>
+
+        <div class="review-footer">
+            © 2026 Evulery · by alagias. — Soluzioni per il web
+        </div>
+    </div>
+</div>
+
+<!-- ===== STATE 4: Already reviewed ===== -->
+<div class="state" id="state-already">
+    <div class="page-wrap">
+        <div class="review-header">
+            <div class="review-logo">🍽️</div>
+            <div class="review-restaurant">Trattoria Da Mario</div>
+            <div class="review-subtitle">Grazie!</div>
+        </div>
+        <div class="review-content" style="display:flex; align-items:center; justify-content:center; flex:1;">
+            <div class="already-card">
+                <div class="already-icon"><i class="bi bi-check2-circle"></i></div>
+                <div style="font-size:.92rem; font-weight:700; margin-bottom:.25rem;">Hai già lasciato il tuo feedback</div>
+                <div style="font-size:.8rem; color:#6c757d; line-height:1.5;">
+                    Grazie Marco! Abbiamo già ricevuto la tua valutazione per la cena del 30 marzo.
+                </div>
+            </div>
+        </div>
+        <div class="review-footer">
+            © 2026 Evulery · by alagias. — Soluzioni per il web
+        </div>
+    </div>
+</div>
+
+<!-- ===== STATE 5: Expired link ===== -->
+<div class="state" id="state-expired">
+    <div class="page-wrap">
+        <div class="review-header" style="background:linear-gradient(135deg, #78909C, #546E7A);">
+            <div class="review-logo">🍽️</div>
+            <div class="review-restaurant">Trattoria Da Mario</div>
+            <div class="review-subtitle">Link scaduto</div>
+        </div>
+        <div class="review-content" style="display:flex; align-items:center; justify-content:center; flex:1;">
+            <div class="expired-card">
+                <div class="expired-icon"><i class="bi bi-clock-history"></i></div>
+                <div style="font-size:.92rem; font-weight:700; margin-bottom:.25rem;">Questo link è scaduto</div>
+                <div style="font-size:.8rem; color:#6c757d; line-height:1.5; margin-bottom:1rem;">
+                    Il link per lasciare la recensione non è più valido. Se vuoi ancora condividere la tua opinione, puoi farlo direttamente:
+                </div>
+                <a href="#" class="cta-btn" style="font-size:.82rem; padding:.6rem 1.5rem;">
+                    <i class="bi bi-google"></i> Vai su Google
+                </a>
+            </div>
+        </div>
+        <div class="review-footer">
+            © 2026 Evulery · by alagias. — Soluzioni per il web
+        </div>
+    </div>
+</div>
+
+
+<!-- ===== DEMO TABS (bottom bar) ===== -->
+<div class="demo-tabs">
+    <button class="demo-tab active" data-state="state-rating">
+        <i class="bi bi-stars"></i> Con filtro
+    </button>
+    <button class="demo-tab" data-state="state-direct">
+        <i class="bi bi-link-45deg"></i> Diretto
+    </button>
+    <button class="demo-tab" data-state="state-thanks">
+        <i class="bi bi-check-circle"></i> Grazie
+    </button>
+    <button class="demo-tab" data-state="state-already">
+        <i class="bi bi-check2-all"></i> Già fatto
+    </button>
+    <button class="demo-tab" data-state="state-expired">
+        <i class="bi bi-clock"></i> Scaduto
+    </button>
+</div>
+
+<script>
+    // Star rating interaction
+    const starBtns = document.querySelectorAll('#state-rating .star-btn');
+    let selectedRating = 0;
+
+    starBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            selectedRating = parseInt(btn.dataset.rating);
+            // Update stars visual
+            starBtns.forEach(s => {
+                s.classList.toggle('active', parseInt(s.dataset.rating) <= selectedRating);
+            });
+            // Show appropriate feedback
+            const isPositive = selectedRating >= 4;
+            document.getElementById('feedback-positive').style.display = isPositive ? 'block' : 'none';
+            document.getElementById('feedback-negative').style.display = isPositive ? 'none' : 'block';
+            document.getElementById('cta-public').style.display = isPositive ? 'block' : 'none';
+            document.getElementById('feedback-form').style.display = isPositive ? 'none' : 'block';
+        });
+
+        // Hover effect
+        btn.addEventListener('mouseenter', () => {
+            const hoverRating = parseInt(btn.dataset.rating);
+            starBtns.forEach(s => {
+                if (parseInt(s.dataset.rating) <= hoverRating) {
+                    s.style.borderColor = 'var(--star)';
+                    s.style.color = 'var(--star)';
+                    s.style.background = '#FFFDE7';
+                }
+            });
+        });
+        btn.addEventListener('mouseleave', () => {
+            starBtns.forEach(s => {
+                if (!s.classList.contains('active')) {
+                    s.style.borderColor = '#e9ecef';
+                    s.style.color = '#dee2e6';
+                    s.style.background = '#fff';
+                }
+            });
+        });
+    });
+
+    // Demo state tabs
+    document.querySelectorAll('.demo-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById(tab.dataset.state).classList.add('active');
+        });
+    });
+</script>
+
+</body>
+</html>

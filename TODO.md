@@ -120,7 +120,7 @@ Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widg
 - [x] Colonne `reminder_24h_sent_at` e `reminder_2h_sent_at` su tabella `reservations`
 - [x] Query: prenotazioni confermate con margine temporale (23-25h e 1.5-2.5h)
 - [x] Template HTML reminder (blu 24h, arancione 2h) con riepilogo prenotazione
-- [ ] Setup cron sul server di produzione (ogni 15 min) — da configurare al deploy
+- [x] Setup cron sul server di produzione (ogni 15 min)
 
 ### ~~7-11. Sviluppo futuro~~ → RIMANDATI
 Le seguenti migliorie non sono prioritarie per il lancio e vengono rimandate a fasi successive:
@@ -251,7 +251,7 @@ Gestione chiusure straordinarie, ferie e orari speciali.
 - [x] Template email: conferma prenotazione (con link magico di gestione, sconto se applicato, link menu)
 - [x] Template email: aggiornamento prenotazione (variante blu)
 - [x] Template email: reset password (funzionante)
-- [ ] Template email: cancellazione prenotazione (notifica al ristoratore)
+- [x] Template email: cancellazione prenotazione (notifica al ristoratore)
 - [ ] Template email: ricevuta caparra (richiede integrazione Stripe, FASE 8)
 
 ### Reminder Email → COMPLETATO
@@ -260,7 +260,7 @@ Gestione chiusure straordinarie, ferie e orari speciali.
 - [x] Doppio reminder: 24h + 2h prima della prenotazione
 - [x] Colonne `reminder_24h_sent_at` e `reminder_2h_sent_at` per evitare invii doppi
 - [x] Service gating: skip tenant senza servizio `email_reminder` nel piano
-- [ ] Setup cron sul server di produzione (ogni 15 min) — da configurare al deploy
+- [x] Setup cron sul server di produzione (ogni 15 min)
 
 ## FASE 14: Promozioni e Sconti [COMPLETATA]
 Badge sconto percentuale nel widget (stile TheFork). Il ristoratore gestisce la domanda incentivando le fasce orarie/giorni vuoti.
@@ -485,8 +485,8 @@ Vedi `check-live.md` per la checklist completa. Punti principali:
 - [x] Slot orfani: fallback gruppo "Altro" in `getGroupedSlots()` per slot fuori da categorie pasto
 - [x] startHour dinamico: tabella Orari e Coperti parte dall'ora minima tra categorie attive e slot esistenti (floor 9)
 - [x] Slot passati per "Oggi": widget li nasconde, dashboard li mostra grigi ma cliccabili (walk-in)
-- [ ] Calendario mobile dashboard home: verificare su device reale (≥375px)
-- [ ] Calendario mobile pagina prenotazioni: tagliato su mobile (mancano sab/dom)
+- [x] Calendario mobile dashboard home: verificato su device reale (≥375px)
+- [x] Calendario mobile pagina prenotazioni: fix sab/dom su mobile
 - [ ] CSP: verificare che non ci siano policy server-level che sovrascrivano .htaccess
 - [ ] HTTPS: verificare mixed content e cookie Secure flag
 

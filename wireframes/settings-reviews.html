@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe — Settings: Recensioni</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-light: #e8f5e9;
+            --brand-dark: #006837;
+        }
+        body { background: #f5f6f8; font-family: system-ui, -apple-system, sans-serif; }
+        .wireframe-badge {
+            position: fixed; top: 12px; right: 12px; background: #FF9800; color: #fff;
+            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 999;
+        }
+        .page-wrap { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+
+        /* Section cards */
+        .section-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 1.25rem; overflow: hidden; }
+        .section-header { display: flex; align-items: center; gap: .75rem; padding: 1rem 1.25rem; border-bottom: 1px solid #f0f0f0; }
+        .section-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: .9rem; flex-shrink: 0; }
+        .section-title { font-size: .88rem; font-weight: 700; color: #1a1d23; }
+        .section-subtitle { font-size: .72rem; color: #6c757d; }
+        .section-body { padding: 1.25rem; }
+
+        /* Master toggle */
+        .master-toggle { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 1.25rem; }
+        .mt-left { display: flex; align-items: center; gap: .75rem; }
+        .mt-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .mt-title { font-weight: 700; font-size: .9rem; }
+        .mt-desc { font-size: .72rem; color: #6c757d; }
+
+        /* Form helpers */
+        .field-label { font-size: .78rem; font-weight: 600; color: #495057; margin-bottom: .3rem; display: block; }
+        .field-hint { font-size: .68rem; color: #adb5bd; margin-top: .2rem; }
+        .field-input { display: block; width: 100%; padding: .5rem .75rem; font-size: .82rem; border: 1px solid #dee2e6; border-radius: 8px; transition: border-color .15s; }
+        .field-input:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(0,132,74,.1); }
+        select.field-input { appearance: auto; }
+
+        /* Info bar */
+        .info-bar { display: flex; align-items: flex-start; gap: .5rem; background: #E3F2FD; border-radius: 8px; padding: .65rem .85rem; font-size: .75rem; color: #1565C0; margin-bottom: 1rem; }
+        .info-bar i { margin-top: .1rem; flex-shrink: 0; }
+        .info-bar.warning { background: #FFF3E0; color: #E65100; }
+
+        /* Toggle switch */
+        .form-check-input:checked { background-color: var(--brand); border-color: var(--brand); }
+
+        /* Preview card */
+        .preview-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06); padding: 1.25rem; position: sticky; top: 1rem; }
+        .preview-title { font-size: .82rem; font-weight: 700; margin-bottom: .75rem; display: flex; align-items: center; gap: .4rem; }
+
+        /* Email preview */
+        .email-preview { background: #f8f9fa; border-radius: 10px; padding: 1.25rem; text-align: center; }
+        .email-preview-header { background: var(--brand); color: #fff; padding: .75rem; border-radius: 8px 8px 0 0; margin: -1.25rem -1.25rem .75rem; font-weight: 700; font-size: .85rem; }
+        .email-preview-body { font-size: .78rem; color: #495057; line-height: 1.5; }
+        .email-preview-stars { font-size: 1.8rem; color: #FFC107; letter-spacing: 4px; margin: .75rem 0; }
+        .email-preview-cta { display: inline-block; background: var(--brand); color: #fff; padding: .55rem 1.5rem; border-radius: 8px; font-size: .8rem; font-weight: 600; text-decoration: none; margin-top: .5rem; }
+        .email-preview-footer { font-size: .65rem; color: #adb5bd; margin-top: .75rem; border-top: 1px solid #e9ecef; padding-top: .5rem; }
+
+        /* How it works */
+        .how-step { display: flex; gap: .6rem; margin-bottom: .65rem; }
+        .how-num { width: 24px; height: 24px; border-radius: 50%; background: var(--brand); color: #fff; font-size: .68rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .how-text { font-size: .75rem; color: #495057; }
+        .how-text strong { color: #1a1d23; }
+
+        /* Sentiment flow diagram */
+        .flow-diagram { display: flex; flex-direction: column; gap: .5rem; margin-top: .75rem; padding: .75rem; background: #fafafa; border-radius: 8px; }
+        .flow-row { display: flex; align-items: center; gap: .4rem; font-size: .72rem; }
+        .flow-arrow { color: #adb5bd; }
+        .flow-badge { padding: .2rem .5rem; border-radius: 6px; font-weight: 600; font-size: .68rem; }
+        .flow-badge.positive { background: #e8f5e9; color: #2e7d32; }
+        .flow-badge.negative { background: #fff3e0; color: #e65100; }
+        .flow-badge.neutral { background: #f5f5f5; color: #616161; }
+
+        /* Stats preview */
+        .stat-mini { text-align: center; }
+        .stat-mini-value { font-size: 1.1rem; font-weight: 700; color: #1a1d23; }
+        .stat-mini-label { font-size: .65rem; color: #6c757d; }
+
+        /* Platform icons */
+        .platform-example { display: inline-flex; align-items: center; gap: .3rem; padding: .25rem .6rem; background: #f8f9fa; border-radius: 6px; font-size: .72rem; color: #495057; margin-right: .35rem; margin-bottom: .35rem; }
+        .platform-example i { font-size: .8rem; }
+
+        /* Rate limit pill */
+        .rate-pill { display: inline-flex; align-items: center; gap: .3rem; padding: .25rem .65rem; background: #f0f0f0; border-radius: 20px; font-size: .7rem; color: #616161; }
+        .rate-pill i { font-size: .72rem; }
+
+        /* Divider */
+        .section-divider { border: none; border-top: 1px solid #f0f0f0; margin: 1rem 0; }
+
+        @media (max-width: 991px) {
+            .preview-card { position: static; margin-top: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wireframe-badge">WIREFRAME — Settings: Recensioni</div>
+
+<div class="page-wrap">
+    <h5 style="font-weight:700; margin-bottom:.15rem;">Impostazioni</h5>
+    <p style="font-size:.78rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+
+    <!-- Tabs -->
+    <div style="display:flex; gap:.5rem; overflow-x:auto; margin-bottom:1.5rem; padding-bottom:.5rem;">
+        <span style="padding:.45rem .85rem; border-radius:8px; font-size:.78rem; color:#6c757d; white-space:nowrap;">Generali</span>
+        <span style="padding:.45rem .85rem; border-radius:8px; font-size:.78rem; color:#6c757d; white-space:nowrap;">Orari e Coperti</span>
+        <span style="padding:.45rem .85rem; border-radius:8px; font-size:.78rem; color:#6c757d; white-space:nowrap;">...</span>
+        <span style="padding:.45rem .85rem; border-radius:8px; font-size:.78rem; background:var(--brand); color:#fff; font-weight:600; white-space:nowrap;"><i class="bi bi-star"></i> Recensioni</span>
+        <span style="padding:.45rem .85rem; border-radius:8px; font-size:.78rem; color:#6c757d; white-space:nowrap;">Dominio</span>
+    </div>
+
+    <div class="row g-4">
+        <!-- ===== LEFT COLUMN (form) ===== -->
+        <div class="col-lg-7">
+
+            <!-- 1. Master toggle -->
+            <div class="master-toggle">
+                <div class="mt-left">
+                    <div class="mt-icon" style="background:#FFF8E1; color:#F9A825;">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <div>
+                        <div class="mt-title">Richiedi recensioni ai clienti</div>
+                        <div class="mt-desc">Invia automaticamente una richiesta dopo la visita</div>
+                    </div>
+                </div>
+                <div class="form-check form-switch" style="margin:0; padding-left:3rem;">
+                    <input class="form-check-input" type="checkbox" checked style="width:2.5rem; height:1.25rem; cursor:pointer;" id="toggleReviews">
+                </div>
+            </div>
+
+            <!-- Content (shown when enabled) -->
+            <div id="reviewSettings">
+
+                <!-- 2. Link Recensione -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon" style="background:var(--brand);"><i class="bi bi-link-45deg"></i></div>
+                        <div>
+                            <div class="section-title">Link recensione</div>
+                            <div class="section-subtitle">Dove vuoi mandare i clienti a lasciare la recensione?</div>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                        <div class="info-bar">
+                            <i class="bi bi-info-circle"></i>
+                            <div>Inserisci il link diretto alla tua pagina recensioni. Può essere Google, TripAdvisor, TheFork, o qualsiasi altra piattaforma.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="field-label">URL pagina recensioni *</label>
+                            <input type="url" class="field-input" placeholder="https://g.page/r/CxxxxxXXXXX/review" value="https://www.google.com/maps/place/Trattoria+Da+Mario/@45.464/review">
+                            <div class="field-hint">Copia il link dalla piattaforma dove vuoi ricevere le recensioni</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="field-label">Nome piattaforma <span style="font-weight:400; color:#adb5bd;">(opzionale)</span></label>
+                            <input type="text" class="field-input" placeholder="Es: Google, TripAdvisor, TheFork..." value="Google">
+                            <div class="field-hint">Verrà mostrato nell'email: "Lascia una recensione su <strong>Google</strong>"</div>
+                        </div>
+
+                        <div style="margin-top:.75rem;">
+                            <div class="field-hint" style="margin-bottom:.4rem;">Piattaforme supportate (qualsiasi link funziona):</div>
+                            <div>
+                                <span class="platform-example"><i class="bi bi-google"></i> Google Maps</span>
+                                <span class="platform-example"><i class="bi bi-pin-map"></i> TripAdvisor</span>
+                                <span class="platform-example"><i class="bi bi-cup-hot"></i> TheFork</span>
+                                <span class="platform-example"><i class="bi bi-facebook"></i> Facebook</span>
+                                <span class="platform-example"><i class="bi bi-globe"></i> Altro...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Tempistica -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon" style="background:#7C4DFF;"><i class="bi bi-clock-history"></i></div>
+                        <div>
+                            <div class="section-title">Tempistica invio</div>
+                            <div class="section-subtitle">Quando inviare la richiesta dopo la visita</div>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="field-label">Invia richiesta dopo</label>
+                                <select class="field-input">
+                                    <option>1 ora</option>
+                                    <option selected>2 ore</option>
+                                    <option>3 ore</option>
+                                    <option>4 ore</option>
+                                    <option>6 ore</option>
+                                    <option>12 ore</option>
+                                    <option>24 ore (giorno dopo)</option>
+                                </select>
+                                <div class="field-hint">Dalla prenotazione (orario previsto). Raccomandiamo 2-3 ore</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="field-label">Non inviare dopo le</label>
+                                <select class="field-input">
+                                    <option>21:00</option>
+                                    <option selected>22:00</option>
+                                    <option>23:00</option>
+                                    <option>Nessun limite</option>
+                                </select>
+                                <div class="field-hint">Evita di disturbare di notte. Verrà inviata il giorno dopo alle 10:00</div>
+                            </div>
+                        </div>
+
+                        <hr class="section-divider">
+
+                        <div class="d-flex align-items: center; gap:.75rem; flex-wrap: wrap;">
+                            <span class="rate-pill"><i class="bi bi-shield-check"></i> Max 1 email per prenotazione</span>
+                            <span class="rate-pill"><i class="bi bi-calendar-check"></i> Max 1 ogni 30 giorni per cliente</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Filtro sentimento -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon" style="background:#FF7043;"><i class="bi bi-emoji-smile"></i></div>
+                        <div>
+                            <div class="section-title">Filtro sentimento</div>
+                            <div class="section-subtitle">Filtra i clienti insoddisfatti prima che lascino una recensione pubblica</div>
+                        </div>
+                        <div class="ms-auto">
+                            <div class="form-check form-switch" style="margin:0; padding-left:2.5rem;">
+                                <input class="form-check-input" type="checkbox" checked style="width:2.25rem; height:1.15rem; cursor:pointer;" id="toggleFilter">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-body" id="filterSettings">
+                        <div class="info-bar warning">
+                            <i class="bi bi-lightbulb"></i>
+                            <div>Quando attivo, il cliente vede prima una pagina con le stelle. Se la valutazione è alta viene mandato alla piattaforma; se bassa, compila un feedback privato per te.</div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="field-label">Soglia recensione pubblica</label>
+                                <select class="field-input">
+                                    <option>3+ stelle → piattaforma</option>
+                                    <option selected>4+ stelle → piattaforma</option>
+                                    <option>5 stelle → piattaforma</option>
+                                </select>
+                                <div class="field-hint">Sotto questa soglia il cliente vede il form feedback privato</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="field-label">Messaggio feedback privato</label>
+                                <input type="text" class="field-input" value="Ci dispiace! Dicci cosa possiamo migliorare" placeholder="Messaggio personalizzato...">
+                                <div class="field-hint">Mostrato ai clienti con valutazione bassa</div>
+                            </div>
+                        </div>
+
+                        <!-- Flow diagram -->
+                        <div class="flow-diagram">
+                            <div style="font-size:.7rem; font-weight:600; color:#495057; margin-bottom:.25rem;">Come funziona:</div>
+                            <div class="flow-row">
+                                <span class="flow-badge neutral"><i class="bi bi-envelope"></i> Email inviata</span>
+                                <i class="bi bi-arrow-right flow-arrow"></i>
+                                <span class="flow-badge neutral"><i class="bi bi-stars"></i> Pagina stelle</span>
+                            </div>
+                            <div class="flow-row" style="padding-left:1.5rem;">
+                                <i class="bi bi-arrow-return-right flow-arrow"></i>
+                                <span class="flow-badge positive">4-5 ★</span>
+                                <i class="bi bi-arrow-right flow-arrow"></i>
+                                <span style="font-size:.72rem;">Redirect a <strong>Google</strong> (recensione pubblica)</span>
+                            </div>
+                            <div class="flow-row" style="padding-left:1.5rem;">
+                                <i class="bi bi-arrow-return-right flow-arrow"></i>
+                                <span class="flow-badge negative">1-3 ★</span>
+                                <i class="bi bi-arrow-right flow-arrow"></i>
+                                <span style="font-size:.72rem;">Form feedback privato (solo per te)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Template email -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon" style="background:#42A5F5;"><i class="bi bi-envelope-paper"></i></div>
+                        <div>
+                            <div class="section-title">Personalizza email</div>
+                            <div class="section-subtitle">Modifica il messaggio inviato ai clienti</div>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                        <div class="mb-3">
+                            <label class="field-label">Oggetto email</label>
+                            <input type="text" class="field-input" value="Come è andata da {ristorante}?">
+                            <div class="field-hint">Variabili: {ristorante}, {nome_cliente}</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="field-label">Messaggio</label>
+                            <textarea class="field-input" rows="3" style="resize:vertical;">Ciao {nome_cliente},
+
+grazie per aver cenato da {ristorante}! Ci farebbe piacere sapere come è stata la tua esperienza.</textarea>
+                            <div class="field-hint">Variabili: {ristorante}, {nome_cliente}, {data_prenotazione}</div>
+                        </div>
+                        <div>
+                            <label class="field-label">Testo bottone CTA</label>
+                            <input type="text" class="field-input" value="Lascia una recensione" style="max-width:300px;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save button -->
+                <div class="d-flex justify-content-end gap-2" style="margin-top:.5rem;">
+                    <button class="btn btn-outline-secondary btn-sm" style="font-size:.8rem; padding:.45rem 1rem;">Annulla</button>
+                    <button class="btn btn-success btn-sm" style="font-size:.8rem; padding:.45rem 1.5rem;">
+                        <i class="bi bi-check-lg"></i> Salva impostazioni
+                    </button>
+                </div>
+
+            </div><!-- /reviewSettings -->
+
+        </div>
+
+        <!-- ===== RIGHT COLUMN ===== -->
+        <div class="col-lg-5">
+
+            <!-- How it works -->
+            <div class="preview-card" style="margin-bottom:1.25rem;">
+                <div class="preview-title"><i class="bi bi-info-circle" style="color:var(--brand);"></i> Come funziona</div>
+                <div class="how-step">
+                    <div class="how-num">1</div>
+                    <div class="how-text"><strong>Il cliente cena</strong> — la prenotazione passa in stato "Arrivato"</div>
+                </div>
+                <div class="how-step">
+                    <div class="how-num">2</div>
+                    <div class="how-text"><strong>Dopo X ore</strong> — il sistema invia automaticamente l'email</div>
+                </div>
+                <div class="how-step">
+                    <div class="how-num">3</div>
+                    <div class="how-text"><strong>Filtro sentimento</strong> — se attivo, il cliente vota prima con le stelle</div>
+                </div>
+                <div class="how-step">
+                    <div class="how-num">4</div>
+                    <div class="how-text"><strong>Recensione o feedback</strong> — positivi vanno sulla piattaforma, negativi restano privati</div>
+                </div>
+
+                <hr style="margin:.75rem 0;">
+
+                <div style="font-size:.72rem; color:#6c757d;">
+                    <i class="bi bi-shield-check" style="color:var(--brand);"></i>
+                    <strong>Privacy:</strong> Il cliente può disiscriversi in qualsiasi momento. Max 1 email per prenotazione, 1 ogni 30 giorni per cliente.
+                </div>
+            </div>
+
+            <!-- Email preview -->
+            <div class="preview-card">
+                <div class="preview-title"><i class="bi bi-eye" style="color:#42A5F5;"></i> Anteprima email</div>
+                <div class="email-preview">
+                    <div class="email-preview-header">
+                        🍽️ Trattoria Da Mario
+                    </div>
+                    <div class="email-preview-body">
+                        <p style="margin-bottom:.25rem; font-weight:600;">Come è andata da Trattoria Da Mario?</p>
+                        <p>Ciao Marco,<br>grazie per aver cenato da Trattoria Da Mario! Ci farebbe piacere sapere come è stata la tua esperienza.</p>
+
+                        <div id="previewStars" style="margin: .5rem 0;">
+                            <div class="email-preview-stars">★ ★ ★ ★ ★</div>
+                            <div style="font-size:.68rem; color:#adb5bd;">Con filtro sentimento attivo</div>
+                        </div>
+
+                        <div id="previewDirect" style="display:none; margin: .5rem 0;">
+                            <a class="email-preview-cta" style="color:#fff;">Lascia una recensione su Google</a>
+                        </div>
+                    </div>
+                    <div class="email-preview-footer">
+                        Non vuoi più ricevere queste email? <a href="#" style="color:#adb5bd;">Disiscriviti</a>
+                        <br>© 2026 Evulery · by alagias. — Soluzioni per il web
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick stats (what they'll see in dashboard) -->
+            <div class="preview-card" style="margin-top:1.25rem;">
+                <div class="preview-title"><i class="bi bi-bar-chart" style="color:#7C4DFF;"></i> Statistiche (in dashboard)</div>
+                <div class="row g-2 text-center">
+                    <div class="col-4 stat-mini">
+                        <div class="stat-mini-value">127</div>
+                        <div class="stat-mini-label">Email inviate</div>
+                    </div>
+                    <div class="col-4 stat-mini">
+                        <div class="stat-mini-value" style="color:var(--brand);">68%</div>
+                        <div class="stat-mini-label">Tasso apertura</div>
+                    </div>
+                    <div class="col-4 stat-mini">
+                        <div class="stat-mini-value" style="color:#F9A825;">4.6 ★</div>
+                        <div class="stat-mini-label">Media interna</div>
+                    </div>
+                </div>
+                <div style="margin-top:.75rem; font-size:.68rem; color:#adb5bd; text-align:center;">
+                    <i class="bi bi-arrow-right"></i> Dettagli nella sezione <strong>Reputazione</strong> del menu laterale
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Toggle master switch
+    document.getElementById('toggleReviews').addEventListener('change', function() {
+        document.getElementById('reviewSettings').style.display = this.checked ? 'block' : 'none';
+    });
+
+    // Toggle filter → update email preview
+    document.getElementById('toggleFilter').addEventListener('change', function() {
+        document.getElementById('filterSettings').style.display = this.checked ? 'block' : 'none';
+        document.getElementById('previewStars').style.display = this.checked ? 'block' : 'none';
+        document.getElementById('previewDirect').style.display = this.checked ? 'none' : 'block';
+    });
+</script>
+
+</body>
+</html>

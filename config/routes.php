@@ -40,6 +40,8 @@ use App\Controllers\Api\WebhookController;
 use App\Controllers\Api\OrderApiController;
 use App\Controllers\Ordering\OrderStoreController;
 use App\Controllers\Delivery\DeliveryBoardController;
+use App\Controllers\Dashboard\ReviewController;
+use App\Controllers\ReviewLandingController;
 
 // --- AUTH ROUTES ---
 $router->group('/auth', ['csrf'], function ($r) {
@@ -149,6 +151,16 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('/orders/api/stats', [OrderController::class, 'apiStats']);
     $r->get('/orders/{id}', [OrderController::class, 'show']);
     $r->post('/orders/{id}/status', [OrderController::class, 'updateStatus']);
+    // Reputation management
+    $r->get('/reputation', [ReviewController::class, 'index']);
+    $r->get('/reputation/feedback', [ReviewController::class, 'feedback']);
+    $r->get('/reputation/history', [ReviewController::class, 'history']);
+    $r->get('/reputation/api/stats', [ReviewController::class, 'apiStats']);
+    $r->post('/reputation/feedback/{id}/reply', [ReviewController::class, 'replyFeedback']);
+    $r->post('/reputation/feedback/{id}/status', [ReviewController::class, 'updateFeedbackStatus']);
+    // Settings reviews
+    $r->get('/settings/reviews', [SettingsController::class, 'reviews']);
+    $r->post('/settings/reviews', [SettingsController::class, 'updateReviews']);
     // Settings ordering
     $r->get('/settings/ordering', [SettingsController::class, 'ordering']);
     $r->post('/settings/ordering', [SettingsController::class, 'updateOrdering']);
@@ -208,6 +220,9 @@ $router->group('/api/v1', ['ratelimit'], function ($r) {
     $r->get('/tenants/{slug}/order-menu', [OrderApiController::class, 'menu']);
     $r->post('/tenants/{slug}/orders', [OrderApiController::class, 'store']);
     $r->post('/stripe/webhook', [WebhookController::class, 'handle']);
+    // Review landing API (public)
+    $r->post('/tenants/{slug}/review', [ReviewLandingController::class, 'submitRating']);
+    $r->post('/tenants/{slug}/review/feedback', [ReviewLandingController::class, 'submitFeedback']);
 });
 
 // --- EMAIL UNSUBSCRIBE (public, GDPR) ---
@@ -229,6 +244,10 @@ $router->get('/{slug}/menu', [MenuPageController::class, 'show']);
 // --- PUBLIC ORDERING (must be before /{slug} catch-all) ---
 $router->get('/{slug}/order', [OrderStoreController::class, 'show']);
 $router->get('/{slug}/order/success', [OrderStoreController::class, 'success']);
+
+// --- PUBLIC REVIEW LANDING (must be before /{slug} catch-all) ---
+$router->get('/{slug}/review', [ReviewLandingController::class, 'show']);
+$router->get('/{slug}/review/open', [ReviewLandingController::class, 'trackOpen']);
 
 // --- PUBLIC BOOKING ROUTES (tenant-scoped, must be last) ---
 $router->get('/{slug}', [BookingController::class, 'show']);

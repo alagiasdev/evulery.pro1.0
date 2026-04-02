@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($tenantName ?? 'Ristorante') ?> - Prenotazioni non disponibili</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
-    <style>
+    <style nonce="<?= csp_nonce() ?>">
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8f9fa;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;color:#1a1d23}
         .pub-susp{max-width:440px;width:100%;text-align:center}

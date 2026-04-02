@@ -3250,3 +3250,96 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
         min-height: auto;
     }
 }
+
+/* ============================================================
+   REPUTATION DASHBOARD (.rv-*)
+   ============================================================ */
+
+/* Tabs */
+.rv-tabs {
+    display: flex;
+    gap: .35rem;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0;
+}
+.rv-tab {
+    padding: .55rem 1rem;
+    font-size: .8rem;
+    font-weight: 600;
+    color: #6c757d;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+}
+.rv-tab:hover { color: #1a1d23; }
+.rv-tab.active { color: var(--brand, #00844A); border-bottom-color: var(--brand, #00844A); }
+
+/* KPI card */
+.rv-kpi-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.rv-kpi-value {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #1a1d23;
+    line-height: 1.1;
+}
+.rv-kpi-label {
+    font-size: .68rem;
+    color: #6c757d;
+    margin-top: .15rem;
+}
+
+/* Filter chips */
+.rv-filter-chip {
+    padding: .3rem .7rem;
+    border-radius: 20px;
+    font-size: .72rem;
+    font-weight: 600;
+    border: 1px solid #e9ecef;
+    background: #fff;
+    color: #6c757d;
+    text-decoration: none;
+    transition: all .15s;
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+}
+.rv-filter-chip:hover { border-color: var(--brand, #00844A); color: var(--brand, #00844A); }
+.rv-filter-chip.active { background: var(--brand, #00844A); color: #fff; border-color: var(--brand, #00844A); }
+
+/* Feedback item */
+.rv-feedback-item:hover { background: #fafafa; }
+
+/* Action button */
+.rv-action-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .72rem;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all .15s;
+}
+.rv-action-btn:hover {
+    border-color: var(--brand, #00844A);
+    color: var(--brand, #00844A);
+    background: #e8f5e9;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .rv-tabs { overflow-x: auto; flex-wrap: nowrap; }
+    .rv-tab { white-space: nowrap; font-size: .75rem; padding: .45rem .75rem; }
+}

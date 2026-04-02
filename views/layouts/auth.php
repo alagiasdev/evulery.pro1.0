@@ -6,7 +6,7 @@
     <title><?= e($title ?? 'Login') ?> - <?= e(env('APP_NAME', 'Evulery')) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
-    <style>
+    <style nonce="<?= csp_nonce() ?>">
         :root { --brand: #00844A; --brand-dark: #006837; --brand-light: #E8F5E9; }
         body {
             background: #f5f6f8;

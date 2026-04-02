@@ -1089,4 +1089,120 @@ class MailService
         $service = new self();
         return $service->send($to, "Ordine #{$orderNum}: {$statusLabel} - {$tenant['name']}", $html, $tenant['name'] ?? null);
     }
+
+    /**
+     * Send review request email to customer after their visit.
+     */
+    public static function sendReviewRequest(array $reviewRequest, array $tenant, array $customer, ?array $reservation): bool
+    {
+        $customerEmail = $customer['email'] ?? '';
+        if (!$customerEmail) {
+            return false;
+        }
+
+        $firstName       = e($customer['first_name'] ?? '');
+        $restaurantName  = e($tenant['name'] ?? '');
+        $slug            = $tenant['slug'] ?? '';
+        $token           = $reviewRequest['token'] ?? '';
+        $platformLabel   = e($tenant['review_platform_label'] ?? '');
+
+        // Email template vars
+        $subjectTemplate = $tenant['review_email_subject'] ?? 'Come è andata da {ristorante}?';
+        $bodyTemplate    = $tenant['review_email_body'] ?? "Ciao {nome_cliente},\n\ngrazie per aver cenato da {ristorante}! Ci farebbe piacere sapere come è stata la tua esperienza.";
+        $ctaText         = e($tenant['review_email_cta'] ?? 'Lascia una recensione');
+
+        // Reservation details
+        $dateFormatted = '';
+        $timeFormatted = '';
+        if ($reservation) {
+            $dateFormatted = self::formatDateItalian($reservation['reservation_date'] ?? '');
+            $timeFormatted = substr($reservation['reservation_time'] ?? '', 0, 5);
+        }
+
+        // Replace placeholders
+        $replacements = [
+            '{ristorante}'        => $restaurantName,
+            '{nome_cliente}'      => $firstName,
+            '{data_prenotazione}' => $dateFormatted ? "$dateFormatted ore $timeFormatted" : '',
+        ];
+        $subjectLine = str_replace(array_keys($replacements), array_values($replacements), $subjectTemplate);
+        $bodyText    = str_replace(array_keys($replacements), array_values($replacements), $bodyTemplate);
+        $bodyHtml    = nl2br(e($bodyText));
+
+        // CTA label
+        $ctaLabel = $ctaText;
+        if ($platformLabel) {
+            $ctaLabel = "$ctaText su $platformLabel";
+        }
+
+        // URLs
+        $baseUrl   = rtrim(env('APP_URL', ''), '/');
+        $reviewUrl = "{$baseUrl}/{$slug}/review?t={$token}";
+        $pixelUrl  = "{$baseUrl}/{$slug}/review/open?t={$token}";
+
+        // Unsubscribe
+        $unsubToken = $customer['unsubscribe_token'] ?? '';
+        $unsubUrl   = $unsubToken ? "{$baseUrl}/email/unsubscribe/{$unsubToken}" : '';
+        $unsubHtml  = $unsubUrl
+            ? "<a href=\"{$unsubUrl}\" style=\"color:#adb5bd;text-decoration:underline;\">Non desidero ricevere queste email</a><br>"
+            : '';
+
+        // Reservation details card
+        $detailsHtml = '';
+        if ($reservation && $dateFormatted) {
+            $partySize = (int)($reservation['party_size'] ?? 0);
+            $personeLabel = $partySize === 1 ? 'persona' : 'persone';
+            $detailsHtml = <<<HTML
+            <div style="background:#f8f9fa;border-radius:10px;padding:14px 16px;margin:0 32px 20px;font-size:13px;color:#495057;text-align:center;">
+                <span style="color:#6c757d;">&#128197;</span> {$dateFormatted}, ore {$timeFormatted} &middot; {$partySize} {$personeLabel}
+            </div>
+            HTML;
+        }
+
+        $html = <<<HTML
+        <!DOCTYPE html>
+        <html lang="it">
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+        <body style="margin:0;padding:0;background:#f5f6f8;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;">
+        <div style="max-width:600px;margin:0 auto;padding:24px 16px;">
+            <div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08);">
+
+                <!-- Header -->
+                <div style="background:#00844A;padding:32px 32px 28px;text-align:center;">
+                    <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.2);color:#fff;display:inline-block;line-height:48px;font-size:22px;margin-bottom:12px;">&#11088;</div>
+                    <h1 style="font-size:22px;font-weight:700;color:#fff;margin:0 0 4px;">{$restaurantName}</h1>
+                    <p style="font-size:13px;color:rgba(255,255,255,.8);margin:0;">Ti ringraziamo per averci scelto!</p>
+                </div>
+
+                <!-- Body -->
+                <div style="padding:28px 32px 12px;">
+                    <p style="font-size:15px;line-height:1.6;color:#1a1d23;margin:0 0 16px;">{$bodyHtml}</p>
+                </div>
+
+                {$detailsHtml}
+
+                <!-- CTA -->
+                <div style="text-align:center;padding:8px 32px 28px;">
+                    <a href="{$reviewUrl}" style="display:inline-block;background:#00844A;color:#ffffff;padding:14px 36px;border-radius:10px;font-size:15px;font-weight:700;text-decoration:none;">{$ctaLabel}</a>
+                </div>
+
+                <!-- Footer -->
+                <div style="padding:16px 32px;border-top:1px solid #e9ecef;text-align:center;">
+                    <p style="margin:0 0 6px;font-size:11px;color:#adb5bd;">
+                        {$unsubHtml}
+                        &copy; <?= date('Y') ?> Evulery &middot; by alagias. - Soluzioni per il web
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- Open tracking pixel -->
+        <img src="{$pixelUrl}" width="1" height="1" style="display:none;" alt="">
+        </body>
+        </html>
+        HTML;
+
+        $service = new self();
+        $replyTo = $tenant['email'] ?? null;
+        return $service->send($customerEmail, $subjectLine, $html, $restaurantName, $replyTo);
+    }
 }

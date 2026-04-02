@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#00844A">
     <title><?= e($title ?? 'Evulery') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
-    <style>
+    <style nonce="<?= csp_nonce() ?>">
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f5f6f8;color:#1a1d23;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;}
         .manage-wrap{max-width:480px;width:100%;}

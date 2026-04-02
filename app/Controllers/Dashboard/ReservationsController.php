@@ -67,7 +67,7 @@ class ReservationsController
         }
 
         $logs = (new ReservationLog())->findByReservation($id);
-        $customerHistory = (new Reservation())->findByCustomer($reservation['customer_id']);
+        $customerHistory = (new Reservation())->findByCustomer($reservation['customer_id'], (int)Auth::tenantId());
 
         view('dashboard/reservations/show', [
             'title'       => 'Dettaglio Prenotazione',

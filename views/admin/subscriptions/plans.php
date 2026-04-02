@@ -230,7 +230,7 @@ $colors = ['#1565C0', '#7B1FA2', '#E65100', '#2E7D32', '#C62828'];
             </form>
             <?php if (!$plan['is_default']): ?>
             <form method="POST" action="<?= url("admin/subscriptions/plans/{$plan['id']}/delete") ?>" style="display:inline;"
-                  onsubmit="return confirm('Eliminare il piano <?= e($plan['name']) ?>?')">
+                  data-confirm="Eliminare il piano <?= e($plan['name']) ?>?">
                 <?= csrf_field() ?>
                 <button type="submit" class="adm-action-btn adm-action-danger" title="Elimina"><i class="bi bi-trash"></i></button>
             </form>

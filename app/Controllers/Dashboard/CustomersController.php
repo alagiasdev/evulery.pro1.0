@@ -164,7 +164,7 @@ class CustomersController
             Response::redirect(url('dashboard/customers'));
         }
 
-        $reservations = (new Reservation())->findByCustomer($id);
+        $reservations = (new Reservation())->findByCustomer($id, (int)Auth::tenantId());
 
         view('dashboard/customers/show', [
             'title'        => $customer['first_name'] . ' ' . $customer['last_name'],

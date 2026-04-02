@@ -95,12 +95,17 @@ class Reservation
         return $stmt->fetchAll();
     }
 
-    public function findByCustomer(int $customerId): array
+    public function findByCustomer(int $customerId, ?int $tenantId = null): array
     {
-        $stmt = $this->db->prepare(
-            'SELECT * FROM reservations WHERE customer_id = :customer_id ORDER BY reservation_date DESC, reservation_time DESC'
-        );
-        $stmt->execute(['customer_id' => $customerId]);
+        $sql = 'SELECT * FROM reservations WHERE customer_id = :customer_id';
+        $params = ['customer_id' => $customerId];
+        if ($tenantId !== null) {
+            $sql .= ' AND tenant_id = :tenant_id';
+            $params['tenant_id'] = $tenantId;
+        }
+        $sql .= ' ORDER BY reservation_date DESC, reservation_time DESC';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 

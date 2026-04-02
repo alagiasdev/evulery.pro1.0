@@ -260,6 +260,31 @@ class NotificationService
     }
 
     /**
+     * Notify restaurant about new customer feedback (bell + push).
+     */
+    public function notifyNewFeedback(array $reviewRequest, array $tenant): void
+    {
+        $tenantId = (int) $tenant['id'];
+
+        if ($this->canPush($tenantId)) {
+            $name = trim(($reviewRequest['first_name'] ?? '') . ' ' . ($reviewRequest['last_name'] ?? ''));
+            if ($name === '') $name = 'Cliente anonimo';
+            $rating = (int) ($reviewRequest['rating'] ?? 0);
+
+            $title = 'Nuovo feedback cliente';
+            $body = "{$name} — {$rating} " . ($rating === 1 ? 'stella' : 'stelle');
+
+            $data = [
+                'review_request_id' => (int) ($reviewRequest['id'] ?? 0),
+                'url' => url('dashboard/reputation/feedback'),
+            ];
+
+            (new \App\Models\Notification())->create($tenantId, 'new_feedback', $title, $body, $data);
+            $this->sendPush($tenantId, $title, $body, $data);
+        }
+    }
+
+    /**
      * Check if tenant has push_notifications service enabled.
      */
     private function canPush(int $tenantId): bool
