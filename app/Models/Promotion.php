@@ -151,13 +151,10 @@ class Promotion
      */
     public function getBookingsPerPromo(int $tenantId, int $days = 30): array
     {
-        // Match reservations to promotions by discount_percent value
-        // This is approximate — a reservation stores the discount % applied
         $stmt = $this->db->prepare(
             'SELECT p.id, COUNT(r.id) as cnt
              FROM promotions p
-             LEFT JOIN reservations r ON r.tenant_id = p.tenant_id
-                AND r.discount_percent = p.discount_percent
+             LEFT JOIN reservations r ON r.promotion_id = p.id
                 AND r.reservation_date >= DATE_SUB(CURDATE(), INTERVAL :days DAY)
              WHERE p.tenant_id = :tenant_id
              GROUP BY p.id'

@@ -147,6 +147,7 @@ class ReservationApiController
 
         if ($promo) {
             $reservationData['discount_percent'] = (int)$promo['discount_percent'];
+            $reservationData['promotion_id'] = (int)$promo['id'];
         }
 
         if (!empty($data['notes'])) {
