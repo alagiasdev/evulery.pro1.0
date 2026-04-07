@@ -9,7 +9,7 @@
     var pollTimer = null;
     var previousCount = -1;
     var soundEnabled = true;
-    var BASE = window.DO_BASE || '';
+    var BASE = (window.DO_BASE || '').replace(/\/+$/, '');
 
     // CSRF token from meta or form
     var csrfToken = '';

@@ -8,7 +8,7 @@
 
     var CFG = window.OS_CONFIG || {};
     var API = CFG.apiBaseUrl || '';
-    var BASE = CFG.baseUrl || '';
+    var BASE = (CFG.baseUrl || '').replace(/\/+$/, '');
     var SLUG = CFG.slug || '';
     var CART_KEY = 'evulery_cart_' + SLUG;
 
