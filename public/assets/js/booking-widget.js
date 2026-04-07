@@ -562,10 +562,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 var resId = (data.data && data.data.reservation_id) ? data.data.reservation_id : '';
                 var depType = (data.data && data.data.deposit_type) ? data.data.deposit_type : '';
-                var isPendingDeposit = data.data && data.data.deposit_required && depType !== 'stripe';
+                var isPendingDeposit = data.data && data.data.deposit_required;
                 var isPendingManual = data.data && data.data.status === 'pending' && !data.data.deposit_required;
 
-                if (isPendingDeposit) {
+                if (isPendingDeposit && depType === 'stripe') {
+                    confHtml += '<p style="color:#E65100;"><i class="bi bi-credit-card"></i> Prenotazione <strong>n. ' + resId + '</strong> in attesa di pagamento. Completa il pagamento della caparra per confermare.</p>';
+                } else if (isPendingDeposit) {
                     confHtml += '<p style="color:#E65100;"><i class="bi bi-hourglass-split"></i> Prenotazione <strong>n. ' + resId + '</strong> in attesa di pagamento caparra. Riceverai un\'email di conferma dopo la verifica.</p>';
                 } else if (isPendingManual) {
                     confHtml += '<p style="color:#E65100;"><i class="bi bi-hourglass-split"></i> Prenotazione <strong>n. ' + resId + '</strong> in attesa di conferma dal ristorante. Riceverai un\'email quando sarà confermata.</p>';
@@ -580,7 +582,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var headingEl = confirmStep.querySelector('h3');
                 var iconEl = confirmStep.querySelector('.bw-confirm-icon i');
                 if (isPendingDeposit || isPendingManual) {
-                    if (headingEl) headingEl.textContent = isPendingDeposit ? 'Prenotazione in Attesa' : 'Prenotazione Ricevuta!';
+                    if (headingEl) headingEl.textContent = isPendingDeposit ? (depType === 'stripe' ? 'Pagamento Caparra' : 'Prenotazione in Attesa') : 'Prenotazione Ricevuta!';
                     if (iconEl) { iconEl.className = 'bi bi-hourglass-split'; iconEl.style.color = '#E65100'; }
                 } else {
                     if (headingEl) headingEl.textContent = 'Prenotazione Confermata!';
