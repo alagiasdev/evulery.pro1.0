@@ -6,8 +6,8 @@
         <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:0;">Ordini di oggi</h2>
         <small class="text-muted"><?= date('d/m/Y') ?></small>
     </div>
-    <a href="<?= url('dashboard/orders/history') ?>" class="btn btn-outline-secondary btn-sm">
-        <i class="bi bi-clock-history me-1"></i> Storico
+    <a href="<?= url('dashboard/orders/history') ?>" class="btn btn-outline-success btn-sm">
+        <i class="bi bi-clock-history me-1"></i> Storico ordini
     </a>
 </div>
 

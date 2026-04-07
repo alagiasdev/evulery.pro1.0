@@ -398,4 +398,63 @@ Il copy per il cliente finale deve comunicare semplicita:
 
 ---
 
-*Documento aggiornato al 28 Febbraio 2026*
+## 12. Ordini Online — Asporto e Consegna a Domicilio
+
+### Filosofia: Lo Store del Ristorante
+Ogni ristorante ha il suo store online (/slug/order) dove i clienti possono ordinare per asporto o consegna. Non e un marketplace — il ristorante controlla i prezzi, le zone di consegna e i tempi.
+
+### Funzionalita Chiave
+- **Takeaway + Delivery**: due modalita con configurazione indipendente
+- **Zone di consegna per CAP**: costi e minimi differenziati per zona
+- **Kanban operativo**: board con colonne Nuovi → Accettati → In preparazione → Pronti
+- **Storico con statistiche**: trend ordini, ripartizione tipo/pagamento, top piatti venduti, top clienti
+- **Auto-accept**: opzionale, per flussi ad alto volume
+- **Slot con capacita**: tempo preparazione + intervallo + max ordini per slot
+
+### Copy per Marketing
+- "Il tuo ristorante, anche a casa del cliente"
+- "Asporto e consegna, senza commissioni di piattaforma"
+- "Gestione ordini in tempo reale con kanban visuale"
+
+---
+
+## 13. Gestione Reputazione — Recensioni Verificate
+
+### Filosofia: Proteggere e Costruire la Reputazione
+Il ristoratore ha bisogno di recensioni positive su Google per attirare clienti, ma non puo permettersi recensioni negative ingiustificate. Evulery agisce come filtro intelligente tra la visita e la recensione pubblica.
+
+### Come Funziona
+1. Il cliente viene segnato come "Arrivato" nella dashboard
+2. Dopo un delay configurabile (1-4 ore), parte una email automatica con richiesta di feedback
+3. Il cliente valuta l'esperienza su una landing con stelle (1-5)
+4. Se la valutazione e alta (es. 4-5 stelle) → viene indirizzato a Google per recensire pubblicamente
+5. Se la valutazione e bassa (es. 1-3 stelle) → il feedback resta privato, visibile solo al ristoratore
+
+### Canali di Raccolta
+- **Email tracciata**: invio automatico post-visita, con tracking apertura e click
+- **QR/NFC/Embed anonimo**: link diretto alla landing, per tavoli, scontrini, biglietti
+
+### Conformita Legge 34/2026 (vigente dal 7 aprile 2026)
+Le nuove norme sulle recensioni online impongono:
+- La recensione deve provenire da chi ha **effettivamente usufruito** del servizio
+- Deve essere pubblicata entro **30 giorni** dalla fruizione
+- Non deve essere legata a **sconti, vantaggi o utilita**
+- E considerata autentica se corredata di documentazione fiscale
+
+**Evulery e nativamente conforme:**
+- Le richieste partono solo da prenotazioni con status "arrivato" (fruizione verificata)
+- L'invio avviene entro poche ore dalla visita (ampiamente nei 30 giorni)
+- Nessun incentivo offerto al cliente per la recensione
+- Ogni richiesta e tracciata: cliente → prenotazione → review request → feedback
+
+**Argomento commerciale forte**: il ristoratore che usa Evulery puo dimostrare che le sue recensioni sono conformi alla legge, un vantaggio competitivo rispetto a chi gestisce le recensioni in modo informale.
+
+### Copy per Marketing
+- "Le tue recensioni sono a norma di legge. Ogni feedback e tracciato e verificabile."
+- "Proteggi la tua reputazione: i clienti felici recensiscono su Google, gli insoddisfatti parlano con te."
+- "Conforme alla Legge 34/2026 sulle recensioni verificate."
+- "Il 77% dei consumatori legge le recensioni prima di scegliere un ristorante. Assicurati che le tue siano autentiche."
+
+---
+
+*Documento aggiornato al 7 Aprile 2026*

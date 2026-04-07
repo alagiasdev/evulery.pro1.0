@@ -121,13 +121,75 @@ class OrderController
     }
 
     /**
-     * GET /dashboard/orders/history — Storico ordini paginato.
+     * Calcola date per il selettore periodo (7gg, 30gg, 90gg, tutto).
+     */
+    private function getPeriodDates(string $period): array
+    {
+        return match ($period) {
+            '7'   => [date('Y-m-d', strtotime('-7 days')), date('Y-m-d')],
+            '30'  => [date('Y-m-d', strtotime('-30 days')), date('Y-m-d')],
+            '90'  => [date('Y-m-d', strtotime('-90 days')), date('Y-m-d')],
+            'all' => [null, null],
+            default => [date('Y-m-d', strtotime('-30 days')), date('Y-m-d')],
+        };
+    }
+
+    /**
+     * GET /dashboard/orders/history — Panoramica (tab default).
      */
     public function history(Request $request): void
     {
         if ($this->gate()) return;
 
-        $tenantId = Auth::tenantId();
+        $tenantId = (int)Auth::tenantId();
+        $orderModel = new Order();
+        $period = $request->query('period', '30');
+
+        [$dateFrom, $dateTo] = $this->getPeriodDates($period);
+
+        $stats = $orderModel->getHistoryStats($tenantId, $dateFrom, $dateTo);
+
+        // Previous period for comparison
+        $prevStats = null;
+        if ($dateFrom && $dateTo) {
+            $days = (int)$period;
+            $prevFrom = date('Y-m-d', strtotime("-" . ($days * 2) . " days"));
+            $prevTo = date('Y-m-d', strtotime("-" . ($days + 1) . " days"));
+            $prevStats = $orderModel->getHistoryStats($tenantId, $prevFrom, $prevTo);
+        }
+
+        // Daily trend
+        $trend = [];
+        $prevTrend = [];
+        if ($dateFrom && $dateTo) {
+            $trend = $orderModel->getDailyTrend($tenantId, $dateFrom, $dateTo);
+            $days = (int)$period;
+            $prevFrom = date('Y-m-d', strtotime("-" . ($days * 2) . " days"));
+            $prevTo = date('Y-m-d', strtotime("-" . ($days + 1) . " days"));
+            $prevTrend = $orderModel->getDailyTrend($tenantId, $prevFrom, $prevTo);
+        }
+
+        view('dashboard/orders/history', [
+            'title'      => 'Storico Ordini',
+            'activeMenu' => 'orders',
+            'tenant'     => TenantResolver::current(),
+            'tab'        => 'panoramica',
+            'period'     => $period,
+            'stats'      => $stats,
+            'prevStats'  => $prevStats,
+            'trend'      => $trend,
+            'prevTrend'  => $prevTrend,
+        ], 'dashboard');
+    }
+
+    /**
+     * GET /dashboard/orders/history/orders — Tab ordini.
+     */
+    public function historyOrders(Request $request): void
+    {
+        if ($this->gate()) return;
+
+        $tenantId = (int)Auth::tenantId();
         $orderModel = new Order();
 
         $filters = [
@@ -143,14 +205,96 @@ class OrderController
         $orders = $orderModel->findByTenant($tenantId, $filters);
         $total = $orderModel->countByTenant($tenantId, $filters);
 
+        // Preload item summaries
+        $itemSummaries = [];
+        foreach ($orders as $o) {
+            $itemSummaries[$o['id']] = $orderModel->getItemsSummary((int)$o['id']);
+        }
+
         view('dashboard/orders/history', [
-            'title'      => 'Storico Ordini',
-            'activeMenu' => 'orders',
-            'tenant'     => TenantResolver::current(),
-            'orders'     => $orders,
-            'total'      => $total,
-            'filters'    => $filters,
+            'title'         => 'Storico Ordini',
+            'activeMenu'    => 'orders',
+            'tenant'        => TenantResolver::current(),
+            'tab'           => 'ordini',
+            'orders'        => $orders,
+            'total'         => $total,
+            'filters'       => $filters,
+            'itemSummaries' => $itemSummaries,
         ], 'dashboard');
+    }
+
+    /**
+     * GET /dashboard/orders/history/rankings — Tab classifiche.
+     */
+    public function historyRankings(Request $request): void
+    {
+        if ($this->gate()) return;
+
+        $tenantId = (int)Auth::tenantId();
+        $orderModel = new Order();
+        $period = $request->query('period', '30');
+
+        [$dateFrom, $dateTo] = $this->getPeriodDates($period);
+
+        $topItems     = $orderModel->getTopItems($tenantId, 10, $dateFrom, $dateTo);
+        $topCustomers = $orderModel->getTopCustomers($tenantId, 10, $dateFrom, $dateTo);
+
+        view('dashboard/orders/history', [
+            'title'        => 'Storico Ordini',
+            'activeMenu'   => 'orders',
+            'tenant'       => TenantResolver::current(),
+            'tab'          => 'classifiche',
+            'period'       => $period,
+            'topItems'     => $topItems,
+            'topCustomers' => $topCustomers,
+        ], 'dashboard');
+    }
+
+    /**
+     * GET /dashboard/orders/history/csv — Esporta ordini in CSV.
+     */
+    public function exportCsv(Request $request): void
+    {
+        if ($this->gate()) return;
+
+        $tenantId = (int)Auth::tenantId();
+        $orderModel = new Order();
+
+        $filters = [
+            'status'     => $request->query('status', ''),
+            'order_type' => $request->query('type', ''),
+            'date_from'  => $request->query('from', ''),
+            'date_to'    => $request->query('to', ''),
+            'search'     => $request->query('q', ''),
+            'limit'      => 10000,
+            'offset'     => 0,
+        ];
+
+        $orders = $orderModel->findByTenant($tenantId, $filters);
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="ordini-' . date('Y-m-d') . '.csv"');
+
+        $out = fopen('php://output', 'w');
+        fprintf($out, chr(0xEF) . chr(0xBB) . chr(0xBF)); // BOM UTF-8
+
+        fputcsv($out, ['#Ordine', 'Data', 'Cliente', 'Telefono', 'Tipo', 'Totale', 'Pagamento', 'Stato'], ';');
+
+        foreach ($orders as $o) {
+            fputcsv($out, [
+                $o['order_number'],
+                date('d/m/Y H:i', strtotime($o['created_at'])),
+                $o['customer_name'],
+                $o['customer_phone'],
+                $o['order_type'] === 'delivery' ? 'Consegna' : 'Asporto',
+                number_format((float)$o['total'], 2, ',', '.'),
+                $o['payment_method'] === 'stripe' ? 'Carta' : 'Contanti',
+                order_status_label($o['status']),
+            ], ';');
+        }
+
+        fclose($out);
+        exit;
     }
 
     /**

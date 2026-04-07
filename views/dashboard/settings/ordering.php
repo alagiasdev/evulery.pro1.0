@@ -51,7 +51,7 @@ $isZones = ($tenant['delivery_mode'] ?? '') === 'zones';
                             <div style="font-weight:700; font-size:.9rem;">Abilita ordini online</div>
                             <div style="font-size:.72rem; color:#6c757d;">I clienti possono ordinare dal tuo store</div>
                             <?php if ($tenant['ordering_enabled']): ?>
-                            <div style="font-size:.72rem; color:var(--brand, #00844A); margin-top:2px;"><i class="bi bi-link-45deg"></i> /<?= e($tenant['slug']) ?>/order</div>
+                            <div style="font-size:.72rem; color:var(--brand, #00844A); margin-top:2px;"><i class="bi bi-link-45deg"></i> <a href="<?= url($tenant['slug'] . '/order') ?>" target="_blank" style="color:inherit; text-decoration:underline;">/<?= e($tenant['slug']) ?>/order</a></div>
                             <?php endif; ?>
                         </div>
                     </div>

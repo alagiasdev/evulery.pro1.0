@@ -4,6 +4,18 @@ $transitions = (new \App\Models\Order())->getValidTransitions($order['status']);
 $waNum = preg_replace('/[^0-9]/', '', $order['customer_phone']);
 if (str_starts_with($waNum, '0')) $waNum = '39' . substr($waNum, 1);
 elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . $waNum;
+
+// Status badge helper (pill, same pattern as reservations)
+$statusColors = [
+    'pending'   => 'pending',
+    'accepted'  => 'accepted',
+    'preparing' => 'preparing',
+    'ready'     => 'ready',
+    'completed' => 'completed',
+    'cancelled' => 'cancelled',
+    'rejected'  => 'rejected',
+];
+$statusClass = $statusColors[$order['status']] ?? 'pending';
 ?>
 
 <!-- Back -->
@@ -16,19 +28,20 @@ elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . 
 <!-- Hero card -->
 <div class="hero-card">
     <div class="hero-top">
-        <div>
+        <div style="display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;">
             <span class="hero-name"><?= e($order['order_number']) ?></span>
-            <span class="ms-2 badge <?= $isDelivery ? 'bg-info text-dark' : 'bg-secondary' ?>" style="font-size:.72rem;">
-                <i class="bi <?= $isDelivery ? 'bi-truck' : 'bi-bag' ?> me-1"></i><?= order_type_label($order['order_type']) ?>
+            <span class="do-detail-type do-detail-type--<?= $isDelivery ? 'delivery' : 'takeaway' ?>">
+                <i class="bi <?= $isDelivery ? 'bi-truck' : 'bi-bag' ?>"></i><?= order_type_label($order['order_type']) ?>
             </span>
-            <?php if ($order['payment_method'] === 'stripe'): ?>
-            <span class="ms-1 badge" style="background:#635BFF; color:#fff; font-size:.72rem;">
-                <i class="bi bi-credit-card me-1"></i>Stripe
-                <?php if ($order['payment_status'] === 'paid'): ?> <i class="bi bi-check-circle"></i><?php endif; ?>
-            </span>
+            <?php if ($order['payment_status'] === 'paid'): ?>
+            <span class="do-detail-pay do-detail-pay--paid"><i class="bi bi-check-circle"></i>Pagato</span>
+            <?php elseif ($order['payment_method'] === 'stripe'): ?>
+            <span class="do-detail-pay do-detail-pay--stripe"><i class="bi bi-credit-card"></i>Carta</span>
+            <?php else: ?>
+            <span class="do-detail-pay do-detail-pay--cash"><i class="bi bi-cash"></i>Contanti</span>
             <?php endif; ?>
         </div>
-        <?= order_status_badge($order['status']) ?>
+        <span class="do-detail-status do-detail-status--<?= $statusClass ?>"><?= order_status_label($order['status']) ?></span>
     </div>
 
     <div class="hero-details">
@@ -63,14 +76,6 @@ elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . 
         <div>
             <div class="detail-label"><i class="bi bi-calendar3 me-1"></i>Ricevuto</div>
             <div class="detail-value"><?= date('d/m/Y H:i', strtotime($order['created_at'])) ?></div>
-        </div>
-        <div>
-            <div class="detail-label"><i class="bi bi-cash me-1"></i>Pagamento</div>
-            <div class="detail-value"><?= $order['payment_method'] === 'stripe' ? 'Carta' : 'Contanti' ?>
-                <?php if ($order['payment_status'] === 'paid'): ?>
-                <span style="color:var(--brand); font-size:.72rem; font-weight:600;">Pagato</span>
-                <?php endif; ?>
-            </div>
         </div>
     </div>
 </div>
@@ -129,7 +134,7 @@ elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . 
                         <?php endif; ?>
                         <tr class="table-light">
                             <td colspan="3" class="text-end fw-bold">Totale</td>
-                            <td class="text-end fw-bold" style="padding-right:1.25rem; font-size:1.05rem;">&euro; <?= number_format((float)$order['total'], 2, ',', '.') ?></td>
+                            <td class="text-end fw-bold" style="padding-right:1.25rem; font-size:1.05rem; color:var(--brand);">&euro; <?= number_format((float)$order['total'], 2, ',', '.') ?></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -165,7 +170,7 @@ elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . 
         <?php endif; ?>
     </div>
 
-    <!-- Right: delivery + actions -->
+    <!-- Right: delivery + timeline + actions -->
     <div class="col-lg-5">
         <?php if ($isDelivery): ?>
         <div class="card section-card mb-3">
@@ -192,6 +197,80 @@ elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . 
             </div>
         </div>
         <?php endif; ?>
+
+        <!-- Timeline -->
+        <div class="card section-card mb-3">
+            <div class="section-header">
+                <div class="section-icon" style="background:#42A5F5;"><i class="bi bi-clock-history"></i></div>
+                <div>
+                    <div class="section-title">Cronologia</div>
+                    <div class="section-subtitle">Passaggi di stato</div>
+                </div>
+            </div>
+            <div class="form-body">
+                <?php
+                // Build timeline from available data
+                $tlColors = [
+                    'completed' => '#2E7D32', 'ready' => '#00695C', 'preparing' => '#5E35B1',
+                    'accepted' => '#1565C0', 'pending' => '#E65100',
+                    'cancelled' => '#757575', 'rejected' => '#C62828',
+                ];
+                $tlSteps = [
+                    'completed' => 'Completato',
+                    'ready'     => $isDelivery ? 'Pronto per la consegna' : 'Pronto per il ritiro',
+                    'preparing' => 'In preparazione',
+                    'accepted'  => 'Accettato',
+                    'pending'   => 'Ordine ricevuto',
+                    'cancelled' => 'Annullato',
+                    'rejected'  => 'Rifiutato',
+                ];
+                $statusFlow = ['pending', 'accepted', 'preparing', 'ready', 'completed'];
+                $cancelledStates = ['cancelled', 'rejected'];
+
+                // Current status position
+                $currentIdx = array_search($order['status'], $statusFlow);
+                $isCancelled = in_array($order['status'], $cancelledStates);
+
+                // Show current status first (most recent)
+                if ($isCancelled):
+                ?>
+                <div class="do-detail-tl">
+                    <div class="do-detail-tl-dot" style="background:<?= $tlColors[$order['status']] ?>;"></div>
+                    <div>
+                        <div class="do-detail-tl-text"><strong><?= $tlSteps[$order['status']] ?></strong></div>
+                        <div class="do-detail-tl-date"><?= date('d/m/Y H:i', strtotime($order['updated_at'])) ?></div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <?php
+                // Show completed flow steps (reverse order = most recent first)
+                $showSteps = $isCancelled ? $statusFlow : $statusFlow;
+                $maxIdx = $isCancelled ? (array_search('accepted', $statusFlow)) : $currentIdx;
+
+                for ($i = min($maxIdx, count($statusFlow) - 1); $i >= 0; $i--):
+                    $step = $statusFlow[$i];
+                    if ($currentIdx !== false && $i <= $currentIdx || $isCancelled && $i <= $maxIdx):
+                ?>
+                <div class="do-detail-tl">
+                    <div class="do-detail-tl-dot" style="background:<?= $tlColors[$step] ?? '#adb5bd' ?>;"></div>
+                    <div>
+                        <div class="do-detail-tl-text"><strong><?= $tlSteps[$step] ?? ucfirst($step) ?></strong></div>
+                        <div class="do-detail-tl-date">
+                            <?php if ($step === 'pending'): ?>
+                                <?= date('d/m/Y H:i', strtotime($order['created_at'])) ?>
+                            <?php elseif ($i === $currentIdx && !$isCancelled): ?>
+                                <?= date('d/m/Y H:i', strtotime($order['updated_at'])) ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                <?php
+                    endif;
+                endfor;
+                ?>
+            </div>
+        </div>
 
         <!-- Actions -->
         <?php if (!empty($transitions)): ?>

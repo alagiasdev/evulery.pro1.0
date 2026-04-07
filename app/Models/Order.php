@@ -343,4 +343,163 @@ class Order
         $stmt->execute(['tenant_id' => $tenantId]);
         return $stmt->fetchAll();
     }
+
+    /**
+     * Statistiche storico per un periodo: totali, incasso, media, completamento.
+     * Ritorna anche il confronto col periodo precedente.
+     */
+    public function getHistoryStats(int $tenantId, ?string $dateFrom, ?string $dateTo): array
+    {
+        $where = 'tenant_id = :tenant_id';
+        $params = ['tenant_id' => $tenantId];
+
+        if ($dateFrom) {
+            $where .= ' AND created_at >= :date_from';
+            $params['date_from'] = $dateFrom . ' 00:00:00';
+        }
+        if ($dateTo) {
+            $where .= ' AND created_at <= :date_to';
+            $params['date_to'] = $dateTo . ' 23:59:59';
+        }
+
+        $sql = "SELECT
+            COUNT(*) as total_orders,
+            SUM(CASE WHEN status NOT IN ('cancelled','rejected') THEN total ELSE 0 END) as revenue,
+            AVG(CASE WHEN status NOT IN ('cancelled','rejected') THEN total ELSE NULL END) as avg_order,
+            SUM(CASE WHEN order_type = 'takeaway' THEN 1 ELSE 0 END) as takeaway_count,
+            SUM(CASE WHEN order_type = 'delivery' THEN 1 ELSE 0 END) as delivery_count,
+            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_count,
+            SUM(CASE WHEN status IN ('cancelled','rejected') THEN 1 ELSE 0 END) as cancelled_count,
+            SUM(CASE WHEN payment_method = 'cash' THEN 1 ELSE 0 END) as cash_count,
+            SUM(CASE WHEN payment_method = 'stripe' THEN 1 ELSE 0 END) as stripe_count
+        FROM orders WHERE {$where}";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $row = $stmt->fetch();
+
+        $total = (int)($row['total_orders'] ?? 0);
+        $completed = (int)($row['completed_count'] ?? 0);
+
+        return [
+            'total_orders'     => $total,
+            'revenue'          => (float)($row['revenue'] ?? 0),
+            'avg_order'        => (float)($row['avg_order'] ?? 0),
+            'takeaway_count'   => (int)($row['takeaway_count'] ?? 0),
+            'delivery_count'   => (int)($row['delivery_count'] ?? 0),
+            'completed_count'  => $completed,
+            'cancelled_count'  => (int)($row['cancelled_count'] ?? 0),
+            'completion_rate'  => $total > 0 ? round($completed / $total * 100) : 0,
+            'cash_count'       => (int)($row['cash_count'] ?? 0),
+            'stripe_count'     => (int)($row['stripe_count'] ?? 0),
+        ];
+    }
+
+    /**
+     * Trend giornaliero ordini per un periodo.
+     * Ritorna array di ['date' => 'Y-m-d', 'orders' => int, 'revenue' => float].
+     */
+    public function getDailyTrend(int $tenantId, string $dateFrom, string $dateTo): array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT DATE(created_at) as day, COUNT(*) as orders,
+                    SUM(CASE WHEN status NOT IN ('cancelled','rejected') THEN total ELSE 0 END) as revenue
+             FROM orders
+             WHERE tenant_id = :tenant_id
+               AND created_at >= :date_from AND created_at <= :date_to
+             GROUP BY DATE(created_at)
+             ORDER BY day ASC"
+        );
+        $stmt->execute([
+            'tenant_id' => $tenantId,
+            'date_from' => $dateFrom . ' 00:00:00',
+            'date_to'   => $dateTo . ' 23:59:59',
+        ]);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Top N piatti venduti (aggregando order_items).
+     */
+    public function getTopItems(int $tenantId, int $limit = 10, ?string $dateFrom = null, ?string $dateTo = null): array
+    {
+        $where = 'o.tenant_id = :tenant_id AND o.status NOT IN (\'cancelled\',\'rejected\')';
+        $params = ['tenant_id' => $tenantId];
+
+        if ($dateFrom) {
+            $where .= ' AND o.created_at >= :date_from';
+            $params['date_from'] = $dateFrom . ' 00:00:00';
+        }
+        if ($dateTo) {
+            $where .= ' AND o.created_at <= :date_to';
+            $params['date_to'] = $dateTo . ' 23:59:59';
+        }
+
+        $stmt = $this->db->prepare(
+            "SELECT oi.item_name, SUM(oi.quantity) as total_qty, COUNT(DISTINCT o.id) as order_count,
+                    SUM(oi.quantity * oi.unit_price) as total_revenue
+             FROM order_items oi
+             JOIN orders o ON o.id = oi.order_id
+             WHERE {$where}
+             GROUP BY oi.item_name
+             ORDER BY total_qty DESC
+             LIMIT {$limit}"
+        );
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Top N clienti per spesa totale.
+     */
+    public function getTopCustomers(int $tenantId, int $limit = 10, ?string $dateFrom = null, ?string $dateTo = null): array
+    {
+        $where = 'tenant_id = :tenant_id AND status NOT IN (\'cancelled\',\'rejected\')';
+        $params = ['tenant_id' => $tenantId];
+
+        if ($dateFrom) {
+            $where .= ' AND created_at >= :date_from';
+            $params['date_from'] = $dateFrom . ' 00:00:00';
+        }
+        if ($dateTo) {
+            $where .= ' AND created_at <= :date_to';
+            $params['date_to'] = $dateTo . ' 23:59:59';
+        }
+
+        $stmt = $this->db->prepare(
+            "SELECT customer_name, customer_phone, COUNT(*) as order_count,
+                    SUM(total) as total_spent,
+                    SUM(CASE WHEN order_type = 'takeaway' THEN 1 ELSE 0 END) as takeaway,
+                    SUM(CASE WHEN order_type = 'delivery' THEN 1 ELSE 0 END) as delivery
+             FROM orders
+             WHERE {$where}
+             GROUP BY customer_name, customer_phone
+             ORDER BY total_spent DESC
+             LIMIT {$limit}"
+        );
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Riepilogo articoli di un ordine (stringa breve per tabella).
+     */
+    public function getItemsSummary(int $orderId, int $maxLen = 60): string
+    {
+        $stmt = $this->db->prepare(
+            'SELECT quantity, item_name FROM order_items WHERE order_id = :id ORDER BY id ASC'
+        );
+        $stmt->execute(['id' => $orderId]);
+        $items = $stmt->fetchAll();
+
+        $parts = [];
+        foreach ($items as $item) {
+            $parts[] = $item['quantity'] . 'x ' . $item['item_name'];
+        }
+        $str = implode(', ', $parts);
+        if (mb_strlen($str) > $maxLen) {
+            $str = mb_substr($str, 0, $maxLen) . '...';
+        }
+        return $str;
+    }
 }

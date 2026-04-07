@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe — Storico Ordini</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-light: #e8f5e9;
+            --brand-dark: #006837;
+        }
+        body { background: #f5f6f8; font-family: system-ui, -apple-system, sans-serif; }
+        .wireframe-badge {
+            position: fixed; top: 12px; right: 12px; background: #FF9800; color: #fff;
+            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 999;
+        }
+        .page-wrap { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+
+        /* Page header */
+        .page-title { font-size: 1.35rem; font-weight: 700; margin-bottom: .15rem; }
+        .page-subtitle { font-size: .82rem; color: #6c757d; margin-bottom: 1.25rem; }
+
+        /* KPI cards — same pattern as dashboard-reviews.html */
+        .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; margin-bottom: 1.25rem; }
+        .kpi-card {
+            background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+            padding: 1rem; text-align: center;
+        }
+        .kpi-icon { font-size: 1.2rem; margin-bottom: .35rem; }
+        .kpi-value { font-size: 1.35rem; font-weight: 800; color: #1a1d23; line-height: 1.1; }
+        .kpi-label { font-size: .68rem; color: #6c757d; margin-top: .15rem; }
+        .kpi-trend { font-size: .65rem; margin-top: .25rem; display: inline-flex; align-items: center; gap: .2rem; padding: .1rem .4rem; border-radius: 8px; }
+        .kpi-trend.up { background: #e8f5e9; color: #2e7d32; }
+        .kpi-trend.down { background: #ffebee; color: #c62828; }
+        .kpi-trend.neutral { background: #f5f5f5; color: #757575; }
+
+        /* Chart cards — same pattern as dashboard-reviews.html */
+        .chart-card {
+            background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+            padding: 1.25rem; margin-bottom: 1.25rem;
+        }
+        .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+        .chart-title { font-size: .85rem; font-weight: 700; color: #1a1d23; }
+        .chart-period { font-size: .72rem; color: #adb5bd; }
+
+        /* Funnel bars — same pattern as dashboard-reviews.html */
+        .funnel { display: flex; flex-direction: column; gap: .35rem; }
+        .funnel-step { display: flex; align-items: center; gap: .5rem; }
+        .funnel-bar-bg { flex: 1; height: 28px; background: #f8f9fa; border-radius: 8px; overflow: hidden; }
+        .funnel-bar-fill {
+            height: 100%; border-radius: 8px; display: flex; align-items: center;
+            padding: 0 .6rem; font-size: .7rem; font-weight: 600; color: #fff; transition: width .3s;
+        }
+        .funnel-label { font-size: .72rem; color: #495057; min-width: 80px; font-weight: 600; }
+        .funnel-value { font-size: .72rem; color: #6c757d; min-width: 50px; text-align: right; }
+
+        /* Bar chart (CSS) — same pattern as dashboard-reviews.html */
+        .bar-chart { display: flex; align-items: flex-end; gap: .5rem; height: 140px; padding-top: .5rem; }
+        .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: .25rem; height: 100%; justify-content: flex-end; }
+        .bar-fill { width: 100%; border-radius: 6px 6px 0 0; transition: height .3s; min-height: 2px; }
+        .bar-fill.orders { background: var(--brand); }
+        .bar-fill.revenue { background: #E3F2FD; }
+        .bar-label { font-size: .62rem; color: #adb5bd; }
+        .bar-value { font-size: .62rem; font-weight: 600; color: #495057; }
+        .chart-legend { display: flex; gap: 1rem; margin-top: .75rem; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: .3rem; font-size: .68rem; color: #6c757d; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+        /* Filters bar */
+        .filters-bar {
+            background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+            padding: .85rem 1rem; margin-bottom: 1rem;
+        }
+
+        /* Table card */
+        .table-card {
+            background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+            overflow: hidden; margin-bottom: 1rem;
+        }
+
+        /* Period selector */
+        .period-selector { display: flex; gap: .25rem; }
+        .period-btn {
+            padding: .3rem .75rem; border-radius: 8px; font-size: .72rem; font-weight: 600;
+            border: 1px solid #e9ecef; background: #fff; color: #6c757d; cursor: pointer;
+            text-decoration: none; transition: all .15s;
+        }
+        .period-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+        .period-btn:hover:not(.active) { border-color: var(--brand); color: var(--brand); }
+
+        /* Pagination */
+        .pagination-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: .75rem 1rem; border-top: 1px solid #f0f0f0;
+        }
+        .pagination-info { font-size: .75rem; color: #6c757d; }
+        .page-btns { display: flex; gap: .25rem; }
+        .page-btn {
+            padding: .25rem .6rem; border-radius: 6px; font-size: .72rem; font-weight: 600;
+            border: 1px solid #e9ecef; background: #fff; color: #6c757d; cursor: pointer;
+            text-decoration: none; transition: all .15s;
+        }
+        .page-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+        .page-btn:hover:not(.active):not(.disabled) { border-color: var(--brand); color: var(--brand); }
+        .page-btn.disabled { opacity: .4; pointer-events: none; }
+
+        /* Detail button */
+        .detail-btn {
+            width: 28px; height: 28px; border-radius: 6px; border: 1px solid #e9ecef;
+            background: #fff; display: flex; align-items: center; justify-content: center;
+            font-size: .72rem; color: #6c757d; cursor: pointer; transition: all .15s;
+            text-decoration: none;
+        }
+        .detail-btn:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-block; padding: .2rem .5rem; border-radius: 8px;
+            font-size: .68rem; font-weight: 600;
+        }
+        .status-completed { background: #e8f5e9; color: #2e7d32; }
+        .status-cancelled { background: #ffebee; color: #c62828; }
+        .status-rejected { background: #fff3e0; color: #e65100; }
+        .status-pending { background: #fff8e1; color: #f57f17; }
+
+        /* Payment badge */
+        .payment-badge {
+            display: inline-flex; align-items: center; gap: .25rem;
+            font-size: .68rem; padding: .15rem .45rem; border-radius: 6px;
+        }
+        .payment-paid { background: #e8f5e9; color: #2e7d32; }
+        .payment-cash { background: #f5f5f5; color: #495057; }
+
+        @media (max-width: 768px) {
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wireframe-badge">WIREFRAME — Storico Ordini</div>
+
+<div class="page-wrap">
+
+    <!-- ═══ Header ═══ -->
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div>
+            <div class="page-title"><i class="bi bi-bag-check" style="color:var(--brand);"></i> Storico Ordini</div>
+            <div class="page-subtitle">Analisi e riepilogo ordini online</div>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+            <div class="period-selector">
+                <a class="period-btn" href="#">7gg</a>
+                <a class="period-btn active" href="#">30gg</a>
+                <a class="period-btn" href="#">90gg</a>
+                <a class="period-btn" href="#">Tutto</a>
+            </div>
+            <a href="#" class="period-btn" style="background:none; border-color:var(--brand); color:var(--brand);">
+                <i class="bi bi-kanban me-1"></i> Kanban
+            </a>
+        </div>
+    </div>
+
+    <!-- ═══ KPI Cards ═══ -->
+    <div class="kpi-row">
+        <div class="kpi-card">
+            <div class="kpi-icon"><i class="bi bi-bag-check" style="color:#1a1d23;"></i></div>
+            <div class="kpi-value">156</div>
+            <div class="kpi-label">Ordini totali</div>
+            <span class="kpi-trend up"><i class="bi bi-arrow-up"></i> +12%</span>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon"><i class="bi bi-currency-euro" style="color:var(--brand);"></i></div>
+            <div class="kpi-value" style="color:var(--brand);">&euro; 4.280</div>
+            <div class="kpi-label">Incasso totale</div>
+            <span class="kpi-trend up"><i class="bi bi-arrow-up"></i> +8%</span>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon"><i class="bi bi-receipt" style="color:#E65100;"></i></div>
+            <div class="kpi-value" style="color:#E65100;">&euro; 27,40</div>
+            <div class="kpi-label">Ordine medio</div>
+            <span class="kpi-trend down"><i class="bi bi-arrow-down"></i> -3%</span>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon"><i class="bi bi-check-circle" style="color:#2e7d32;"></i></div>
+            <div class="kpi-value" style="color:#2e7d32;">92%</div>
+            <div class="kpi-label">Tasso completamento</div>
+            <span class="kpi-trend up"><i class="bi bi-arrow-up"></i> +2%</span>
+        </div>
+    </div>
+
+    <!-- ═══ Charts row ═══ -->
+    <div class="row g-3">
+        <!-- Left: Trend chart -->
+        <div class="col-lg-7">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title"><i class="bi bi-graph-up" style="color:var(--brand);"></i> Trend ordini</div>
+                    <div class="chart-period">Ultimi 30 giorni</div>
+                </div>
+                <div class="bar-chart">
+                    <div class="bar-col">
+                        <div class="bar-value">3</div>
+                        <div class="bar-fill orders" style="height:30%;"></div>
+                        <div class="bar-label">09/03</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">5</div>
+                        <div class="bar-fill orders" style="height:50%;"></div>
+                        <div class="bar-label">10</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">2</div>
+                        <div class="bar-fill orders" style="height:20%;"></div>
+                        <div class="bar-label">11</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">7</div>
+                        <div class="bar-fill orders" style="height:70%;"></div>
+                        <div class="bar-label">12</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">4</div>
+                        <div class="bar-fill orders" style="height:40%;"></div>
+                        <div class="bar-label">13</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">8</div>
+                        <div class="bar-fill orders" style="height:80%;"></div>
+                        <div class="bar-label">14</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">10</div>
+                        <div class="bar-fill orders" style="height:100%;"></div>
+                        <div class="bar-label">15</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">6</div>
+                        <div class="bar-fill orders" style="height:60%;"></div>
+                        <div class="bar-label">16</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">3</div>
+                        <div class="bar-fill orders" style="height:30%;"></div>
+                        <div class="bar-label">17</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">5</div>
+                        <div class="bar-fill orders" style="height:50%;"></div>
+                        <div class="bar-label">18</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">9</div>
+                        <div class="bar-fill orders" style="height:90%;"></div>
+                        <div class="bar-label">19</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">7</div>
+                        <div class="bar-fill orders" style="height:70%;"></div>
+                        <div class="bar-label">20</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">4</div>
+                        <div class="bar-fill orders" style="height:40%;"></div>
+                        <div class="bar-label">21</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">6</div>
+                        <div class="bar-fill orders" style="height:60%;"></div>
+                        <div class="bar-label">22</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">8</div>
+                        <div class="bar-fill orders" style="height:80%;"></div>
+                        <div class="bar-label">23</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">5</div>
+                        <div class="bar-fill orders" style="height:50%;"></div>
+                        <div class="bar-label">24</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">9</div>
+                        <div class="bar-fill orders" style="height:90%;"></div>
+                        <div class="bar-label">25</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">6</div>
+                        <div class="bar-fill orders" style="height:60%;"></div>
+                        <div class="bar-label">26</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">4</div>
+                        <div class="bar-fill orders" style="height:40%;"></div>
+                        <div class="bar-label">27</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">7</div>
+                        <div class="bar-fill orders" style="height:70%;"></div>
+                        <div class="bar-label">28</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">3</div>
+                        <div class="bar-fill orders" style="height:30%;"></div>
+                        <div class="bar-label">29</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">5</div>
+                        <div class="bar-fill orders" style="height:50%;"></div>
+                        <div class="bar-label">30</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">8</div>
+                        <div class="bar-fill orders" style="height:80%;"></div>
+                        <div class="bar-label">31</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">6</div>
+                        <div class="bar-fill orders" style="height:60%;"></div>
+                        <div class="bar-label">01/04</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">4</div>
+                        <div class="bar-fill orders" style="height:40%;"></div>
+                        <div class="bar-label">02</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">7</div>
+                        <div class="bar-fill orders" style="height:70%;"></div>
+                        <div class="bar-label">03</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">9</div>
+                        <div class="bar-fill orders" style="height:90%;"></div>
+                        <div class="bar-label">04</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">5</div>
+                        <div class="bar-fill orders" style="height:50%;"></div>
+                        <div class="bar-label">05</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">8</div>
+                        <div class="bar-fill orders" style="height:80%;"></div>
+                        <div class="bar-label">06</div>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-value">6</div>
+                        <div class="bar-fill orders" style="height:60%;"></div>
+                        <div class="bar-label">07</div>
+                    </div>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item"><div class="legend-dot" style="background:var(--brand);"></div> Ordini</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Breakdown -->
+        <div class="col-lg-5">
+            <!-- Per tipo -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title"><i class="bi bi-pie-chart" style="color:#7C4DFF;"></i> Ripartizione per tipo</div>
+                </div>
+                <div class="funnel">
+                    <div class="funnel-step">
+                        <div class="funnel-label"><i class="bi bi-bag" style="color:#E65100;"></i> Asporto</div>
+                        <div class="funnel-bar-bg">
+                            <div class="funnel-bar-fill" style="width:62%; background:#E65100;">97</div>
+                        </div>
+                        <div class="funnel-value">62%</div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="funnel-label"><i class="bi bi-truck" style="color:#1565C0;"></i> Consegna</div>
+                        <div class="funnel-bar-bg">
+                            <div class="funnel-bar-fill" style="width:38%; background:#1565C0;">59</div>
+                        </div>
+                        <div class="funnel-value">38%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Per pagamento -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title"><i class="bi bi-wallet2" style="color:#2e7d32;"></i> Ripartizione per pagamento</div>
+                </div>
+                <div class="funnel">
+                    <div class="funnel-step">
+                        <div class="funnel-label"><i class="bi bi-cash" style="color:#2e7d32;"></i> Contanti</div>
+                        <div class="funnel-bar-bg">
+                            <div class="funnel-bar-fill" style="width:71%; background:var(--brand);">111</div>
+                        </div>
+                        <div class="funnel-value">71%</div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="funnel-label"><i class="bi bi-credit-card" style="color:#7B1FA2;"></i> Carta</div>
+                        <div class="funnel-bar-bg">
+                            <div class="funnel-bar-fill" style="width:29%; background:#7B1FA2;">45</div>
+                        </div>
+                        <div class="funnel-value">29%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ Filters ═══ -->
+    <div class="filters-bar">
+        <form class="row g-2 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label" style="font-size:.72rem; font-weight:600; color:#6c757d;">Stato</label>
+                <select class="form-select form-select-sm">
+                    <option>Tutti</option>
+                    <option>Completato</option>
+                    <option>Cancellato</option>
+                    <option>Rifiutato</option>
+                    <option>In attesa</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label" style="font-size:.72rem; font-weight:600; color:#6c757d;">Tipo</label>
+                <select class="form-select form-select-sm">
+                    <option>Tutti</option>
+                    <option>Asporto</option>
+                    <option>Consegna</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label" style="font-size:.72rem; font-weight:600; color:#6c757d;">Da</label>
+                <input type="date" class="form-control form-control-sm" value="2026-03-08">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label" style="font-size:.72rem; font-weight:600; color:#6c757d;">A</label>
+                <input type="date" class="form-control form-control-sm" value="2026-04-07">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label" style="font-size:.72rem; font-weight:600; color:#6c757d;">Cerca</label>
+                <input type="text" class="form-control form-control-sm" placeholder="Nome, #ordine, tel...">
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-sm w-100" style="background:var(--brand); color:#fff; font-weight:600;">
+                    <i class="bi bi-search me-1"></i> Filtra
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ═══ Table ═══ -->
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0" style="font-size:.82rem;">
+                <thead>
+                    <tr style="background:#fafbfc;">
+                        <th style="padding:.65rem .75rem; font-size:.72rem; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:.3px; border-bottom:2px solid #f0f0f0;">#</th>
+                        <th style="padding:.65rem .75rem; font-size:.72rem; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:.3px; border-bottom:2px solid #f0f0f0;">Data</th>
+                        <th style="padding:.65rem .75rem; font-size:.72rem; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:.3px; border-bottom:2px solid #f0f0f0;">Cliente</th>
+                        <th style="padding:.65rem .75rem; font-size:.72rem; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:.3px; border-bottom:2px solid #f0f0f0;">Tipo</th>
+                        <th style="padding:.65rem .75rem; font-size:.72rem; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:.3px; border-bottom:2px solid #f0f0f0;">Totale</th>
+                        <th style="padding:.65rem .75rem; font-size:.72rem; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:.3px; border-bottom:2px solid #f0f0f0;">Pagamento</th>
+                        <th style="padding:.65rem .75rem; font-size:.72rem; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:.3px; border-bottom:2px solid #f0f0f0;">Stato</th>
+                        <th style="padding:.65rem .75rem; border-bottom:2px solid #f0f0f0;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom:1px solid #f5f5f5;">
+                        <td style="padding:.6rem .75rem;"><strong style="color:#1a1d23;">#ORD-0156</strong></td>
+                        <td style="padding:.6rem .75rem;">07/04 14:30</td>
+                        <td style="padding:.6rem .75rem;">
+                            <div style="font-weight:600; font-size:.8rem;">Marco Rossi</div>
+                            <div style="font-size:.68rem; color:#6c757d;">333 1234567</div>
+                        </td>
+                        <td style="padding:.6rem .75rem;"><i class="bi bi-bag" style="color:#E65100;"></i> Asporto</td>
+                        <td style="padding:.6rem .75rem;"><strong>&euro; 32,50</strong></td>
+                        <td style="padding:.6rem .75rem;"><span class="payment-badge payment-paid"><i class="bi bi-credit-card"></i> Pagato</span></td>
+                        <td style="padding:.6rem .75rem;"><span class="status-badge status-completed">Completato</span></td>
+                        <td style="padding:.6rem .75rem;"><a href="#" class="detail-btn"><i class="bi bi-eye"></i></a></td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #f5f5f5;">
+                        <td style="padding:.6rem .75rem;"><strong style="color:#1a1d23;">#ORD-0155</strong></td>
+                        <td style="padding:.6rem .75rem;">07/04 13:15</td>
+                        <td style="padding:.6rem .75rem;">
+                            <div style="font-weight:600; font-size:.8rem;">Lucia Bianchi</div>
+                            <div style="font-size:.68rem; color:#6c757d;">Via Roma 42, 80100</div>
+                        </td>
+                        <td style="padding:.6rem .75rem;"><i class="bi bi-truck" style="color:#1565C0;"></i> Consegna</td>
+                        <td style="padding:.6rem .75rem;"><strong>&euro; 45,00</strong></td>
+                        <td style="padding:.6rem .75rem;"><span class="payment-badge payment-cash"><i class="bi bi-cash"></i> Contanti</span></td>
+                        <td style="padding:.6rem .75rem;"><span class="status-badge status-completed">Completato</span></td>
+                        <td style="padding:.6rem .75rem;"><a href="#" class="detail-btn"><i class="bi bi-eye"></i></a></td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #f5f5f5;">
+                        <td style="padding:.6rem .75rem;"><strong style="color:#1a1d23;">#ORD-0154</strong></td>
+                        <td style="padding:.6rem .75rem;">07/04 12:45</td>
+                        <td style="padding:.6rem .75rem;">
+                            <div style="font-weight:600; font-size:.8rem;">Giovanni Verdi</div>
+                            <div style="font-size:.68rem; color:#6c757d;">339 9876543</div>
+                        </td>
+                        <td style="padding:.6rem .75rem;"><i class="bi bi-bag" style="color:#E65100;"></i> Asporto</td>
+                        <td style="padding:.6rem .75rem;"><strong>&euro; 18,90</strong></td>
+                        <td style="padding:.6rem .75rem;"><span class="payment-badge payment-paid"><i class="bi bi-credit-card"></i> Pagato</span></td>
+                        <td style="padding:.6rem .75rem;"><span class="status-badge status-cancelled">Cancellato</span></td>
+                        <td style="padding:.6rem .75rem;"><a href="#" class="detail-btn"><i class="bi bi-eye"></i></a></td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #f5f5f5;">
+                        <td style="padding:.6rem .75rem;"><strong style="color:#1a1d23;">#ORD-0153</strong></td>
+                        <td style="padding:.6rem .75rem;">06/04 20:10</td>
+                        <td style="padding:.6rem .75rem;">
+                            <div style="font-weight:600; font-size:.8rem;">Anna Esposito</div>
+                            <div style="font-size:.68rem; color:#6c757d;">Via Napoli 15, 80100</div>
+                        </td>
+                        <td style="padding:.6rem .75rem;"><i class="bi bi-truck" style="color:#1565C0;"></i> Consegna</td>
+                        <td style="padding:.6rem .75rem;"><strong>&euro; 52,00</strong></td>
+                        <td style="padding:.6rem .75rem;"><span class="payment-badge payment-paid"><i class="bi bi-credit-card"></i> Pagato</span></td>
+                        <td style="padding:.6rem .75rem;"><span class="status-badge status-completed">Completato</span></td>
+                        <td style="padding:.6rem .75rem;"><a href="#" class="detail-btn"><i class="bi bi-eye"></i></a></td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #f5f5f5;">
+                        <td style="padding:.6rem .75rem;"><strong style="color:#1a1d23;">#ORD-0152</strong></td>
+                        <td style="padding:.6rem .75rem;">06/04 19:30</td>
+                        <td style="padding:.6rem .75rem;">
+                            <div style="font-weight:600; font-size:.8rem;">Paolo Conte</div>
+                            <div style="font-size:.68rem; color:#6c757d;">340 5551234</div>
+                        </td>
+                        <td style="padding:.6rem .75rem;"><i class="bi bi-bag" style="color:#E65100;"></i> Asporto</td>
+                        <td style="padding:.6rem .75rem;"><strong>&euro; 24,50</strong></td>
+                        <td style="padding:.6rem .75rem;"><span class="payment-badge payment-cash"><i class="bi bi-cash"></i> Contanti</span></td>
+                        <td style="padding:.6rem .75rem;"><span class="status-badge status-completed">Completato</span></td>
+                        <td style="padding:.6rem .75rem;"><a href="#" class="detail-btn"><i class="bi bi-eye"></i></a></td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #f5f5f5;">
+                        <td style="padding:.6rem .75rem;"><strong style="color:#1a1d23;">#ORD-0151</strong></td>
+                        <td style="padding:.6rem .75rem;">06/04 18:50</td>
+                        <td style="padding:.6rem .75rem;">
+                            <div style="font-weight:600; font-size:.8rem;">Francesca Russo</div>
+                            <div style="font-size:.68rem; color:#6c757d;">Via Duomo 8, 80100</div>
+                        </td>
+                        <td style="padding:.6rem .75rem;"><i class="bi bi-truck" style="color:#1565C0;"></i> Consegna</td>
+                        <td style="padding:.6rem .75rem;"><strong>&euro; 38,00</strong></td>
+                        <td style="padding:.6rem .75rem;"><span class="payment-badge payment-cash"><i class="bi bi-cash"></i> Contanti</span></td>
+                        <td style="padding:.6rem .75rem;"><span class="status-badge status-rejected">Rifiutato</span></td>
+                        <td style="padding:.6rem .75rem;"><a href="#" class="detail-btn"><i class="bi bi-eye"></i></a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding:.6rem .75rem;"><strong style="color:#1a1d23;">#ORD-0150</strong></td>
+                        <td style="padding:.6rem .75rem;">06/04 13:20</td>
+                        <td style="padding:.6rem .75rem;">
+                            <div style="font-weight:600; font-size:.8rem;">Sergio Moretti</div>
+                            <div style="font-size:.68rem; color:#6c757d;">347 8889999</div>
+                        </td>
+                        <td style="padding:.6rem .75rem;"><i class="bi bi-bag" style="color:#E65100;"></i> Asporto</td>
+                        <td style="padding:.6rem .75rem;"><strong>&euro; 15,00</strong></td>
+                        <td style="padding:.6rem .75rem;"><span class="payment-badge payment-paid"><i class="bi bi-credit-card"></i> Pagato</span></td>
+                        <td style="padding:.6rem .75rem;"><span class="status-badge status-completed">Completato</span></td>
+                        <td style="padding:.6rem .75rem;"><a href="#" class="detail-btn"><i class="bi bi-eye"></i></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-bar">
+            <div class="pagination-info">Mostrando <strong>1-30</strong> di <strong>156</strong> ordini</div>
+            <div class="page-btns">
+                <a class="page-btn disabled"><i class="bi bi-chevron-left"></i></a>
+                <a class="page-btn active">1</a>
+                <a class="page-btn">2</a>
+                <a class="page-btn">3</a>
+                <a class="page-btn">4</a>
+                <a class="page-btn">5</a>
+                <a class="page-btn">6</a>
+                <a class="page-btn"><i class="bi bi-chevron-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

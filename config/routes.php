@@ -147,6 +147,9 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     // Orders (online ordering)
     $r->get('/orders', [OrderController::class, 'index']);
     $r->get('/orders/history', [OrderController::class, 'history']);
+    $r->get('/orders/history/orders', [OrderController::class, 'historyOrders']);
+    $r->get('/orders/history/rankings', [OrderController::class, 'historyRankings']);
+    $r->get('/orders/history/csv', [OrderController::class, 'exportCsv']);
     $r->get('/orders/api/kanban', [OrderController::class, 'apiKanban']);
     $r->get('/orders/api/stats', [OrderController::class, 'apiStats']);
     $r->get('/orders/{id}', [OrderController::class, 'show']);
