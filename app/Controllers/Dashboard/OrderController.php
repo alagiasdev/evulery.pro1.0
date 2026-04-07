@@ -216,6 +216,7 @@ class OrderController
             'activeMenu'    => 'orders',
             'tenant'        => TenantResolver::current(),
             'tab'           => 'ordini',
+            'period'        => $request->query('period', '30'),
             'orders'        => $orders,
             'total'         => $total,
             'filters'       => $filters,

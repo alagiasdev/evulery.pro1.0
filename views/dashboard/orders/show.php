@@ -245,8 +245,13 @@ $statusClass = $statusColors[$order['status']] ?? 'pending';
 
                 <?php
                 // Show completed flow steps (reverse order = most recent first)
-                $showSteps = $isCancelled ? $statusFlow : $statusFlow;
-                $maxIdx = $isCancelled ? (array_search('accepted', $statusFlow)) : $currentIdx;
+                // For cancelled/rejected: infer last normal step from valid transitions
+                if ($isCancelled) {
+                    // rejected comes from pending (idx 0), cancelled from accepted (1) or preparing (2)
+                    $maxIdx = ($order['status'] === 'rejected') ? 0 : 1;
+                } else {
+                    $maxIdx = $currentIdx;
+                }
 
                 for ($i = min($maxIdx, count($statusFlow) - 1); $i >= 0; $i--):
                     $step = $statusFlow[$i];

@@ -39,7 +39,7 @@ function ohPctChange(float $current, float $previous): ?int {
     <a class="oh-tab <?= $currentTab === 'panoramica' ? 'active' : '' ?>" href="<?= url('dashboard/orders/history') ?>?period=<?= $currentPeriod ?>">
         <i class="bi bi-grid"></i> Panoramica
     </a>
-    <a class="oh-tab <?= $currentTab === 'ordini' ? 'active' : '' ?>" href="<?= url('dashboard/orders/history/orders') ?>">
+    <a class="oh-tab <?= $currentTab === 'ordini' ? 'active' : '' ?>" href="<?= url('dashboard/orders/history/orders') ?>?period=<?= $currentPeriod ?>">
         <i class="bi bi-list-ul"></i> Ordini
         <?php if (isset($total)): ?><span class="badge bg-secondary" style="font-size:.6rem;"><?= $total ?></span><?php endif; ?>
     </a>
