@@ -29,6 +29,19 @@ if (file_exists($envFile)) {
     }
 }
 
+// CORS preflight for API (landing page cross-origin requests)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS' && str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/api/')) {
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    $allowed = ['https://evulery.it', 'https://www.evulery.it', 'http://localhost'];
+    if (in_array($origin, $allowed)) {
+        header("Access-Control-Allow-Origin: {$origin}");
+    }
+    header('Access-Control-Allow-Methods: POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type');
+    http_response_code(204);
+    exit;
+}
+
 // Error handling
 if (env('APP_DEBUG', false)) {
     error_reporting(E_ALL);

@@ -1205,4 +1205,17 @@ class MailService
         $replyTo = $tenant['email'] ?? null;
         return $service->send($customerEmail, $subjectLine, $html, $restaurantName, $replyTo);
     }
+
+    /**
+     * Send a plain text email (utility for system notifications, demo requests, etc.).
+     */
+    public static function sendRawEmail(string $to, string $subject, string $textBody, ?string $replyTo = null, ?string $replyToName = null): bool
+    {
+        $html = '<div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#333;">'
+            . nl2br(htmlspecialchars($textBody, ENT_QUOTES, 'UTF-8'))
+            . '</div>';
+
+        $service = new self();
+        return $service->send($to, $subject, $html, null, $replyTo);
+    }
 }

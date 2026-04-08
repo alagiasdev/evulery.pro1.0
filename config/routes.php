@@ -223,6 +223,8 @@ $router->group('/api/v1', ['ratelimit'], function ($r) {
     $r->get('/tenants/{slug}/order-menu', [OrderApiController::class, 'menu']);
     $r->post('/tenants/{slug}/orders', [OrderApiController::class, 'store']);
     $r->post('/stripe/webhook', [WebhookController::class, 'handle']);
+    // Demo request (landing page form)
+    $r->post('/demo-request', [\App\Controllers\Api\DemoRequestController::class, 'store']);
     // Review landing API (public)
     $r->post('/tenants/{slug}/review', [ReviewLandingController::class, 'submitRating']);
     $r->post('/tenants/{slug}/review/feedback', [ReviewLandingController::class, 'submitFeedback']);
