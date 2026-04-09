@@ -81,6 +81,12 @@ foreach ($presets as $days => $label) {
     <button type="submit" class="cs-filter-btn"><i class="bi bi-funnel"></i> Applica</button>
 </form>
 
+<!-- Info note -->
+<div style="background:#E3F2FD; border-left:3px solid #1565C0; padding:10px 14px; border-radius:8px; margin-bottom:1rem; font-size:.78rem; color:#0d47a1; line-height:1.5;">
+    <i class="bi bi-info-circle me-1"></i>
+    Le statistiche del periodo si basano sulle prenotazioni gestite tramite Evulery. I clienti importati da CSV contribuiscono al totale clienti e alla segmentazione, ma non alle metriche di tasso di ritorno e no-show del periodo.
+</div>
+
 <!-- KPI Cards -->
 <div class="cs-kpi-row">
     <div class="cs-kpi">
