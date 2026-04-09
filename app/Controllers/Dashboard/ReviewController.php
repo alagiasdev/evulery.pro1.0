@@ -8,6 +8,7 @@ use App\Core\Response;
 use App\Core\TenantResolver;
 use App\Models\ReviewRequest;
 use App\Services\AuditLog;
+use App\Services\MailService;
 
 class ReviewController
 {
@@ -181,14 +182,29 @@ class ReviewController
 
         $model->saveFeedbackReply($id, $reply);
 
+        // Send reply email to customer (if email available — anonymous QR/NFC feedbacks have no email)
+        $emailSent = false;
+        try {
+            $tenant = TenantResolver::current();
+            $emailSent = MailService::sendFeedbackReply($rr, $tenant, $reply);
+        } catch (\Throwable $e) {
+            app_log("Feedback reply email failed: {$e->getMessage()}", 'error');
+        }
+
         AuditLog::log(
             AuditLog::REVIEW_FEEDBACK_REPLIED,
-            "Feedback #{$id}",
+            "Feedback #{$id}" . ($emailSent ? ' (email inviata)' : ''),
             Auth::id(),
             $tenantId
         );
 
-        flash('success', 'Risposta salvata.');
+        if ($emailSent) {
+            flash('success', 'Risposta inviata al cliente.');
+        } elseif (empty($rr['email'])) {
+            flash('warning', 'Risposta salvata. Il cliente ha lasciato un feedback anonimo, non riceverà email.');
+        } else {
+            flash('warning', 'Risposta salvata, ma l\'invio email è fallito. Riprova o contatta il cliente direttamente.');
+        }
         Response::redirect(url('dashboard/reputation/feedback'));
     }
 

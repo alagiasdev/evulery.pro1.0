@@ -1207,6 +1207,68 @@ class MailService
     }
 
     /**
+     * Send feedback reply from restaurant to customer.
+     */
+    public static function sendFeedbackReply(array $feedback, array $tenant, string $replyText): bool
+    {
+        $customerEmail = $feedback['email'] ?? '';
+        if (!$customerEmail) {
+            return false; // anonymous review (QR/NFC), no email available
+        }
+
+        $firstName      = e($feedback['first_name'] ?? '');
+        $restaurantName = e($tenant['name'] ?? 'Il ristorante');
+        $rating         = (int)($feedback['rating'] ?? 0);
+        $stars          = str_repeat('★', $rating) . str_repeat('☆', 5 - $rating);
+        $originalText   = e($feedback['feedback_text'] ?? '');
+        $replyEsc       = nl2br(e($replyText));
+        $replyToEmail   = $tenant['email'] ?? null;
+
+        $subject = "Risposta al tuo feedback — {$restaurantName}";
+
+        $html = <<<HTML
+        <!DOCTYPE html>
+        <html>
+        <head><meta charset="UTF-8"></head>
+        <body style="font-family:Arial,sans-serif;background:#f5f6f8;margin:0;padding:20px;">
+            <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);">
+                <div style="background:#00844A;color:#fff;padding:24px;text-align:center;">
+                    <h1 style="margin:0;font-size:1.3rem;">Risposta dal ristorante</h1>
+                </div>
+                <div style="padding:28px;">
+                    <p style="font-size:1rem;color:#1a1d23;">Ciao {$firstName},</p>
+                    <p style="font-size:.95rem;color:#495057;line-height:1.6;">
+                        Grazie per il tempo che hai dedicato a lasciarci un feedback. Volevamo risponderti personalmente.
+                    </p>
+
+                    <div style="background:#f8f9fa;border-left:3px solid #FFC107;padding:16px;border-radius:8px;margin:20px 0;">
+                        <div style="font-size:.78rem;color:#6c757d;margin-bottom:6px;">Il tuo feedback ({$stars})</div>
+                        <div style="font-size:.9rem;color:#495057;font-style:italic;">"{$originalText}"</div>
+                    </div>
+
+                    <div style="background:#e8f5e9;border-left:3px solid #00844A;padding:16px;border-radius:8px;margin:20px 0;">
+                        <div style="font-size:.78rem;color:#2e7d32;font-weight:600;margin-bottom:6px;">Risposta da {$restaurantName}</div>
+                        <div style="font-size:.95rem;color:#1a1d23;line-height:1.6;">{$replyEsc}</div>
+                    </div>
+
+                    <p style="font-size:.88rem;color:#6c757d;line-height:1.6;margin-top:24px;">
+                        Speriamo di rivederti presto.<br>
+                        <strong>{$restaurantName}</strong>
+                    </p>
+                </div>
+                <div style="background:#fafbfc;padding:16px;text-align:center;font-size:.72rem;color:#adb5bd;border-top:1px solid #f0f0f0;">
+                    Questa email &egrave; stata inviata in risposta al feedback che hai lasciato.
+                </div>
+            </div>
+        </body>
+        </html>
+        HTML;
+
+        $service = new self();
+        return $service->send($customerEmail, $subject, $html, $restaurantName, $replyToEmail);
+    }
+
+    /**
      * Send a plain text email (utility for system notifications, demo requests, etc.).
      */
     public static function sendRawEmail(string $to, string $subject, string $textBody, ?string $replyTo = null, ?string $replyToName = null): bool
