@@ -104,6 +104,10 @@ $DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
             <span class="info-pill"><i class="bi bi-clock"></i> Step: <?= $timeStep ?> min</span>
             <span class="info-pill" style="margin-left:.25rem;"><i class="bi bi-hourglass-split"></i> Durata tavolo: <?= (int)$tenant['table_duration'] ?> min</span>
         </div>
+        <div style="margin-top:.5rem; font-size:.75rem; color:#6c757d;">
+            <i class="bi bi-lightbulb me-1" style="color:#FFB300;"></i>
+            Gli slot vengono generati ogni <strong><?= $timeStep ?> minuti</strong>. Se nelle <a href="<?= url('dashboard/settings/meal-categories') ?>" style="color:var(--brand); text-decoration:underline;">Categorie Pasto</a> hai un orario non allineato (es. 11:30 con step 60), lo slot non sar&agrave; disponibile. Modifica lo step in <a href="<?= url('dashboard/settings') ?>" style="color:var(--brand); text-decoration:underline;">Generali</a> per averli tutti.
+        </div>
     </div>
 </div>
 
@@ -130,6 +134,12 @@ $DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
                 <button type="button" class="tb-btn" data-fill="50">50</button>
                 <button type="button" class="tb-btn" data-fill="0" style="color:#dc3545;border-color:#dc3545;">Azzera</button>
             </div>
+            <div class="toolbar-group" style="margin-left:auto;">
+                <label class="form-check form-switch" style="display:flex; align-items:center; gap:.5rem; font-size:.78rem; color:#495057; cursor:pointer; margin:0;">
+                    <input type="checkbox" id="hideInactiveToggle" class="form-check-input" style="cursor:pointer;">
+                    Mostra solo categorie attive
+                </label>
+            </div>
         </div>
 
         <div style="overflow-x:auto;">
@@ -148,15 +158,19 @@ $DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
                     $shownInactiveDividers = [];
                     foreach ($times as $time):
                         $isPhantom = isset($phantomTimes[$time]);
-                        $inactiveCat = getInactiveCategoryName($time, $inactiveRanges);
+                        $activeCatHit = getCategoryForTime($time, $activeCats);
+                        // Inactive only if NOT in any active category (active categories take priority on overlap)
+                        $inactiveCatHit = !$activeCatHit ? getInactiveCategoryForTime($time, $inactiveRanges) : null;
+                        $inactiveCat = $inactiveCatHit['name'] ?? null;
                         $isInactive = ($inactiveCat !== null);
+                        // Orphan: not in any active or inactive category
+                        $isOrphan = !$activeCatHit && !$inactiveCatHit && !$isPhantom;
                         $rowClass = '';
                         if ($isPhantom) $rowClass = 'row-phantom';
                         elseif ($isInactive) $rowClass = 'row-inactive';
+                        elseif ($isOrphan) $rowClass = 'row-orphan';
 
                         // Show divider for the first slot that falls within a category
-                        $activeCatHit = getCategoryForTime($time, $activeCats);
-                        $inactiveCatHit = getInactiveCategoryForTime($time, $inactiveRanges);
                         $showActiveDivider = $activeCatHit && !isset($shownActiveDividers[$activeCatHit['name']]);
                         $showInactiveDivider = $inactiveCatHit && !isset($shownInactiveDividers[$inactiveCatHit['name']]);
                         if ($showActiveDivider) $shownActiveDividers[$activeCatHit['name']] = true;
@@ -173,7 +187,7 @@ $DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
                         </td>
                     </tr>
                     <?php elseif ($showInactiveDivider): ?>
-                    <tr>
+                    <tr class="row-inactive-divider">
                         <td colspan="8" style="padding:0;">
                             <div class="meal-divider" style="background:#f8f8f8; opacity:.6;">
                                 <span class="meal-divider-icon" style="color:#adb5bd;">&#9676;</span>
@@ -258,4 +272,33 @@ document.querySelectorAll('.slot-input:not([disabled]):not([readonly])').forEach
         this.className = 'slot-input ' + (v > 0 ? 'has-value' : 'zero');
     });
 });
+
+// Toggle hide inactive categories
+(function() {
+    var toggle = document.getElementById('hideInactiveToggle');
+    if (!toggle) return;
+
+    var STORAGE_KEY = 'evulery_hide_inactive_slots';
+    var inactiveRows = document.querySelectorAll('tr.row-inactive, tr.row-inactive-divider, tr.row-orphan');
+
+    function applyState(hide) {
+        inactiveRows.forEach(function(row) {
+            row.style.display = hide ? 'none' : '';
+        });
+    }
+
+    // Restore from localStorage
+    try {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved === '1') {
+            toggle.checked = true;
+            applyState(true);
+        }
+    } catch (e) {}
+
+    toggle.addEventListener('change', function() {
+        applyState(this.checked);
+        try { localStorage.setItem(STORAGE_KEY, this.checked ? '1' : '0'); } catch (e) {}
+    });
+})();
 </script>

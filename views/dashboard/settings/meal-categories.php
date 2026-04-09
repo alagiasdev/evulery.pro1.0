@@ -47,6 +47,19 @@ $tlStart = 9; $tlEnd = 24; $tlSpan = $tlEnd - $tlStart;
                 Le categorie raggruppano gli orari nel widget di prenotazione (es. "Pranzo", "Cena").
             </p>
 
+            <?php $timeStep = (int)($tenant['time_step'] ?? 30); ?>
+            <div style="background:#FFF8E1; border-left:3px solid #FFB300; padding:10px 14px; border-radius:8px; margin-bottom:1rem; font-size:.78rem; color:#5D4037; line-height:1.5;">
+                <i class="bi bi-info-circle me-1" style="color:#F57F17;"></i>
+                <strong>Importante:</strong> gli orari delle categorie devono essere allineati allo <strong>step di prenotazione</strong> configurato in <a href="<?= url('dashboard/settings') ?>" style="color:#E65100; text-decoration:underline;">Generali</a> (attuale: <strong><?= $timeStep ?> minuti</strong>).
+                <?php if ($timeStep === 60): ?>
+                Con step <strong>60 min</strong>, usa solo orari pieni (es. 12:00, 19:00). Se imposti 11:30, lo slot delle 11:30 non sar&agrave; disponibile.
+                <?php elseif ($timeStep === 30): ?>
+                Con step <strong>30 min</strong>, puoi usare orari pieni o mezz'ora (es. 11:30, 12:00, 12:30).
+                <?php else: ?>
+                Con step <strong><?= $timeStep ?> min</strong>, allinea gli orari di inizio/fine ai multipli di <?= $timeStep ?> minuti.
+                <?php endif; ?>
+            </div>
+
             <?php foreach ($categories as $i => $cat):
                 $style = $catStyles[$cat['name']] ?? $defaultStyle;
                 $isActive = (bool)$cat['is_active'];

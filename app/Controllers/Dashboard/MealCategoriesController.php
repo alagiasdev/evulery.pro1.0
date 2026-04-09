@@ -24,6 +24,7 @@ class MealCategoriesController
             'title'      => 'Categorie Pasto',
             'activeMenu' => 'meal-categories',
             'categories' => $categories,
+            'tenant'     => \App\Core\TenantResolver::current(),
         ], 'dashboard');
     }
 
