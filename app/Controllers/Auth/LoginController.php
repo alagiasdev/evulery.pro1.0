@@ -18,13 +18,17 @@ class LoginController
         }
 
         // Diagnostic: log session/cookie state on GET /auth/login
+        $params = session_get_cookie_params();
         app_log(sprintf(
-            'CSRF DEBUG GET /auth/login | session_id=%s | session_token=%s | cookie=%s | save_path=%s | save_path_writable=%s',
+            'CSRF DEBUG GET | sid=%s | cookie=%s | secure=%s | samesite=%s | HTTPS=%s | X-Fwd-Proto=%s | HOST=%s | UA=%s',
             substr(session_id(), 0, 8),
-            \App\Core\Session::has('_csrf_token') ? substr(\App\Core\Session::get('_csrf_token'), 0, 8) . '...' : 'empty',
-            $_COOKIE[session_name()] ?? 'no_cookie',
-            session_save_path() ?: 'default',
-            is_writable(session_save_path() ?: sys_get_temp_dir()) ? 'yes' : 'no'
+            $_COOKIE[session_name()] ?? 'NO',
+            $params['secure'] ? 'true' : 'false',
+            $params['samesite'] ?? '',
+            $_SERVER['HTTPS'] ?? 'unset',
+            $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? 'unset',
+            $_SERVER['HTTP_HOST'] ?? 'unset',
+            substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 30)
         ), 'info');
 
         view('auth/login', ['title' => 'Accedi'], 'auth');
