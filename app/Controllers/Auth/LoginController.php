@@ -17,6 +17,16 @@ class LoginController
             $this->redirectByRole();
         }
 
+        // Diagnostic: log session/cookie state on GET /auth/login
+        app_log(sprintf(
+            'CSRF DEBUG GET /auth/login | session_id=%s | session_token=%s | cookie=%s | save_path=%s | save_path_writable=%s',
+            substr(session_id(), 0, 8),
+            \App\Core\Session::has('_csrf_token') ? substr(\App\Core\Session::get('_csrf_token'), 0, 8) . '...' : 'empty',
+            $_COOKIE[session_name()] ?? 'no_cookie',
+            session_save_path() ?: 'default',
+            is_writable(session_save_path() ?: sys_get_temp_dir()) ? 'yes' : 'no'
+        ), 'info');
+
         view('auth/login', ['title' => 'Accedi'], 'auth');
     }
 
