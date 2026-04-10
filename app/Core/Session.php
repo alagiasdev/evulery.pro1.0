@@ -21,20 +21,19 @@ class Session
             ]);
             session_start();
 
-            // Idle timeout: destroy session after 30 min of inactivity
+            // Idle timeout: clear session data after 30 min of inactivity (without destroying cookie)
             if (isset($_SESSION['_last_activity']) && (time() - $_SESSION['_last_activity']) > self::IDLE_TIMEOUT) {
-                self::destroy();
-                session_start();
-                return;
+                $_SESSION = [];
+                session_regenerate_id(true);
             }
-            $_SESSION['_last_activity'] = time();
 
-            // Absolute timeout: destroy session after 8 hours regardless of activity
+            // Absolute timeout: clear session data after 8 hours regardless of activity
             if (isset($_SESSION['_created_at']) && (time() - $_SESSION['_created_at']) > self::ABSOLUTE_TIMEOUT) {
-                self::destroy();
-                session_start();
-                return;
+                $_SESSION = [];
+                session_regenerate_id(true);
             }
+
+            $_SESSION['_last_activity'] = time();
             if (!isset($_SESSION['_created_at'])) {
                 $_SESSION['_created_at'] = time();
             }
