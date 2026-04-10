@@ -17,18 +17,18 @@ class LoginController
             $this->redirectByRole();
         }
 
-        // Diagnostic: log session/cookie state on GET /auth/login
+        // Diagnostic: log session/cookie state and outgoing headers on GET /auth/login
         $params = session_get_cookie_params();
+        $sentHeaders = headers_list();
+        $setCookieHeaders = array_filter($sentHeaders, fn($h) => stripos($h, 'set-cookie') === 0);
         app_log(sprintf(
-            'CSRF DEBUG GET | sid=%s | cookie=%s | secure=%s | samesite=%s | HTTPS=%s | X-Fwd-Proto=%s | HOST=%s | UA=%s',
+            'CSRF DEBUG GET | sid=%s | cookie_in=%s | secure=%s | samesite=%s | session_name=%s | set_cookie_out=%s',
             substr(session_id(), 0, 8),
             $_COOKIE[session_name()] ?? 'NO',
             $params['secure'] ? 'true' : 'false',
             $params['samesite'] ?? '',
-            $_SERVER['HTTPS'] ?? 'unset',
-            $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? 'unset',
-            $_SERVER['HTTP_HOST'] ?? 'unset',
-            substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 30)
+            session_name(),
+            empty($setCookieHeaders) ? 'NONE' : implode(' || ', $setCookieHeaders)
         ), 'info');
 
         view('auth/login', ['title' => 'Accedi'], 'auth');
