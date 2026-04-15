@@ -64,7 +64,7 @@ class DemoRequestController
         }
 
         // Send email to support
-        $supportEmail = env('SUPPORT_EMAIL', 'supporto@evulery.it');
+        $supportEmail = env('SUPPORT_EMAIL', 'info@evulery.it');
 
         $subject = "Nuova richiesta demo — {$restaurant}";
         $body = "Nuova richiesta demo dal sito evulery.it\n\n"

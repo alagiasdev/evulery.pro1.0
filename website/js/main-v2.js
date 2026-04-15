@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 })
                 .catch(function() {
-                    showFormError('Errore di connessione. Riprova o contattaci a supporto@evulery.it');
+                    showFormError('Errore di connessione. Riprova o contattaci a info@evulery.it');
                     btn.innerHTML = originalText;
                     btn.disabled = false;
                 });

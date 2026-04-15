@@ -106,6 +106,11 @@
                         <i class="bi bi-gear me-2"></i> Impostazioni
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'help' ? 'active' : '' ?>" href="<?= url('dashboard/help') ?>">
+                        <i class="bi bi-book me-2"></i> Guida
+                    </a>
+                </li>
             </ul>
         </nav>
         <div class="sidebar-logout">

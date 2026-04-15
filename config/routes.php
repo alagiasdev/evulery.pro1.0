@@ -13,6 +13,7 @@ use App\Controllers\Admin\SubscriptionsController;
 use App\Controllers\Admin\ActivityLogController;
 use App\Controllers\Admin\UsersController;
 use App\Controllers\Dashboard\HomeController;
+use App\Controllers\Dashboard\HelpController;
 use App\Controllers\Dashboard\ReservationsController;
 use App\Controllers\Dashboard\CustomersController;
 use App\Controllers\Dashboard\SettingsController;
@@ -83,6 +84,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/customers/{id}/birthday', [CustomersController::class, 'updateBirthday']);
     $r->post('/customers/{id}/add-tag', [CustomersController::class, 'addTag']);
     $r->post('/customers/{id}/remove-tag', [CustomersController::class, 'removeTag']);
+    $r->get('/help', [HelpController::class, 'index']);
     $r->get('/settings', [SettingsController::class, 'general']);
     $r->post('/settings', [SettingsController::class, 'updateGeneral']);
     $r->get('/settings/slots', [SlotsController::class, 'index']);

@@ -37,7 +37,7 @@ class SuspendedController
             'expiredDate'     => $expiredDate,
             'daysSinceExpiry' => $daysSinceExpiry,
             'planName'        => $planName,
-            'supportEmail'    => env('SUPPORT_EMAIL', 'supporto@evulery.it'),
+            'supportEmail'    => env('SUPPORT_EMAIL', 'info@evulery.it'),
             'supportPhone'    => env('SUPPORT_PHONE', ''),
         ], 'dashboard');
     }
