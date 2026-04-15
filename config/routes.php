@@ -85,6 +85,8 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/customers/{id}/add-tag', [CustomersController::class, 'addTag']);
     $r->post('/customers/{id}/remove-tag', [CustomersController::class, 'removeTag']);
     $r->get('/help', [HelpController::class, 'index']);
+    $r->post('/help/feedback', [HelpController::class, 'feedback']);
+    $r->get('/help/{slug}', [HelpController::class, 'show']);
     $r->get('/settings', [SettingsController::class, 'general']);
     $r->post('/settings', [SettingsController::class, 'updateGeneral']);
     $r->get('/settings/slots', [SlotsController::class, 'index']);

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe v2 — Dettaglio Guida</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-light: #e8f5e9;
+            --brand-dark: #006837;
+        }
+        body { background: #f5f6f8; font-family: system-ui, -apple-system, sans-serif; }
+        .wireframe-badge {
+            position: fixed; top: 12px; right: 12px; background: #FF9800; color: #fff;
+            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 999;
+        }
+        .page-wrap { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+
+        /* Breadcrumb */
+        .hg2d-breadcrumb {
+            display: flex; align-items: center; gap: .4rem;
+            font-size: .78rem; color: #6c757d;
+            margin-bottom: 1rem;
+        }
+        .hg2d-breadcrumb a {
+            color: #6c757d; text-decoration: none;
+            display: inline-flex; align-items: center; gap: .25rem;
+        }
+        .hg2d-breadcrumb a:hover { color: var(--brand); }
+        .hg2d-breadcrumb .sep { color: #adb5bd; }
+
+        /* Layout */
+        .hg2d-layout {
+            display: grid; grid-template-columns: 1fr 300px; gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        /* Article */
+        .hg2d-article {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,.06);
+            padding: 2.5rem;
+        }
+
+        .hg2d-article-header {
+            display: flex; align-items: flex-start; gap: 1rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 1.5rem;
+        }
+        .hg2d-article-icon {
+            width: 56px; height: 56px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1.4rem; flex-shrink: 0;
+        }
+        .hg2d-article-title {
+            font-size: 1.6rem; font-weight: 800; color: #1a1d23;
+            margin: 0 0 .25rem 0;
+        }
+        .hg2d-article-subtitle {
+            font-size: .88rem; color: #6c757d;
+        }
+        .hg2d-meta {
+            display: flex; gap: 1rem; margin-top: .75rem;
+            font-size: .72rem; color: #adb5bd;
+        }
+        .hg2d-meta i { margin-right: .25rem; }
+
+        /* Content body */
+        .hg2d-body {
+            font-size: .92rem; color: #495057; line-height: 1.75;
+        }
+        .hg2d-body p { margin-bottom: 1rem; }
+        .hg2d-body strong { color: #1a1d23; }
+        .hg2d-body ol, .hg2d-body ul {
+            padding-left: 1.5rem; margin-bottom: 1rem;
+        }
+        .hg2d-body li { margin-bottom: .5rem; }
+        .hg2d-body code {
+            background: #f1f3f5; padding: .15rem .45rem;
+            border-radius: 4px; font-size: .85rem; color: #495057;
+        }
+
+        /* Step */
+        .hg2d-step {
+            display: flex; gap: 1rem; padding: 1rem 1.25rem;
+            background: #f8f9fa; border-radius: 10px;
+            margin-bottom: .65rem; align-items: flex-start;
+        }
+        .hg2d-step-num {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--brand); color: #fff;
+            font-size: .78rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .hg2d-step-content { font-size: .88rem; color: #495057; line-height: 1.6; }
+        .hg2d-step-content strong { color: #1a1d23; }
+
+        /* Boxes */
+        .hg2d-tip {
+            background: #FFF8E1; border-left: 3px solid #FFB300;
+            padding: 1rem 1.25rem; border-radius: 8px;
+            font-size: .85rem; color: #5D4037; margin: 1.25rem 0;
+        }
+        .hg2d-tip strong { color: #BF360C; }
+        .hg2d-info {
+            background: #E3F2FD; border-left: 3px solid #1565C0;
+            padding: 1rem 1.25rem; border-radius: 8px;
+            font-size: .85rem; color: #0d47a1; margin: 1.25rem 0;
+        }
+        .hg2d-info strong { color: #0d47a1; }
+
+        /* Article footer */
+        .hg2d-article-footer {
+            margin-top: 2rem; padding-top: 1.5rem;
+            border-top: 1px solid #f0f0f0;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 1rem;
+        }
+        .hg2d-feedback {
+            font-size: .82rem; color: #495057;
+        }
+        .hg2d-feedback-btn {
+            display: inline-flex; align-items: center; gap: .35rem;
+            padding: .4rem .85rem; margin-left: .5rem;
+            border-radius: 8px; font-size: .78rem; font-weight: 600;
+            border: 1px solid #e9ecef; background: #fff;
+            color: #6c757d; cursor: pointer; text-decoration: none;
+        }
+        .hg2d-feedback-btn:hover {
+            border-color: var(--brand); color: var(--brand);
+        }
+
+        /* Sidebar */
+        .hg2d-sidebar {
+            position: sticky; top: 1rem;
+        }
+        .hg2d-sidebar-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,.06);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .hg2d-sidebar-title {
+            font-size: .72rem; font-weight: 700; color: #adb5bd;
+            text-transform: uppercase; letter-spacing: .4px;
+            margin-bottom: .75rem;
+        }
+        .hg2d-related {
+            display: flex; flex-direction: column; gap: .5rem;
+        }
+        .hg2d-related-item {
+            display: flex; align-items: center; gap: .65rem;
+            padding: .6rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background .15s;
+        }
+        .hg2d-related-item:hover { background: #f8f9fa; }
+        .hg2d-related-icon {
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: .85rem; flex-shrink: 0;
+        }
+        .hg2d-related-text {
+            font-size: .82rem; color: #1a1d23; font-weight: 500;
+        }
+
+        /* Support card in sidebar */
+        .hg2d-support {
+            background: linear-gradient(135deg, #E8F5E9, #fff);
+            border: 1px solid var(--brand-light);
+        }
+        .hg2d-support-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: var(--brand); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; margin-bottom: .75rem;
+        }
+        .hg2d-support h4 {
+            font-size: .9rem; font-weight: 800; color: #1a1d23; margin-bottom: .35rem;
+        }
+        .hg2d-support p {
+            font-size: .76rem; color: #6c757d; margin-bottom: .75rem; line-height: 1.55;
+        }
+        .hg2d-support-btn {
+            display: block; padding: .55rem; background: var(--brand);
+            color: #fff; border-radius: 8px; font-size: .78rem; font-weight: 600;
+            text-align: center; text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hg2d-layout { grid-template-columns: 1fr; }
+            .hg2d-sidebar { position: static; }
+            .hg2d-article { padding: 1.5rem; }
+            .hg2d-article-title { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wireframe-badge">WIREFRAME v2 — Dettaglio</div>
+
+<div class="page-wrap">
+
+    <!-- Breadcrumb -->
+    <div class="hg2d-breadcrumb">
+        <a href="help-guide-v2.html"><i class="bi bi-book"></i> Guida</a>
+        <span class="sep">/</span>
+        <span>Configurazione</span>
+        <span class="sep">/</span>
+        <span style="color:#1a1d23; font-weight:500;">Orari e coperti</span>
+    </div>
+
+    <div class="hg2d-layout">
+
+        <!-- Articolo principale -->
+        <article class="hg2d-article">
+
+            <div class="hg2d-article-header">
+                <div class="hg2d-article-icon" style="background:#E65100;">
+                    <i class="bi bi-clock"></i>
+                </div>
+                <div style="flex:1;">
+                    <h1 class="hg2d-article-title">Orari e coperti</h1>
+                    <p class="hg2d-article-subtitle">Imposta quanti coperti accetti per ogni fascia oraria</p>
+                    <div class="hg2d-meta">
+                        <span><i class="bi bi-clock-history"></i>Lettura ~3 min</span>
+                        <span><i class="bi bi-calendar3"></i>Aggiornato 15/04/2026</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hg2d-body">
+                <p>In <em>Impostazioni &rarr; Orari e Coperti</em> imposti quanti coperti accetti per ogni fascia oraria e giorno della settimana. Questa configurazione determina le disponibilit&agrave; che il widget mostrer&agrave; ai tuoi clienti.</p>
+
+                <h3 style="font-size:1.05rem; font-weight:700; color:#1a1d23; margin-top:1.5rem; margin-bottom:.75rem;">Procedura passo-passo</h3>
+
+                <div class="hg2d-step">
+                    <div class="hg2d-step-num">1</div>
+                    <div class="hg2d-step-content"><strong>Scegli lo step di prenotazione</strong> in <em>Impostazioni Generali</em> (15, 30 o 60 minuti). Questo determina ogni quanto tempo vengono proposti gli slot nel widget.</div>
+                </div>
+                <div class="hg2d-step">
+                    <div class="hg2d-step-num">2</div>
+                    <div class="hg2d-step-content"><strong>Torna in Orari e Coperti</strong> e inserisci il numero massimo di coperti per ogni slot orario. I valori vengono salvati automaticamente.</div>
+                </div>
+                <div class="hg2d-step">
+                    <div class="hg2d-step-num">3</div>
+                    <div class="hg2d-step-content"><strong>Lascia 0 nelle fasce chiuse</strong> dove non accetti prenotazioni (es. pausa pomeriggio).</div>
+                </div>
+                <div class="hg2d-step">
+                    <div class="hg2d-step-num">4</div>
+                    <div class="hg2d-step-content"><strong>Usa i pulsanti "Compila tutti"</strong> (20, 30, 40, 50) per riempire velocemente l&rsquo;intera griglia senza dover inserire un valore per ogni slot.</div>
+                </div>
+
+                <div class="hg2d-info">
+                    <strong><i class="bi bi-info-circle me-1"></i>Nota importante:</strong> le fasce orarie devono essere allineate allo step di prenotazione. Se hai impostato step 60 minuti, puoi usare solo orari pieni (12:00, 13:00) e non mezz&rsquo;ora (12:30). Modifica lo step in <em>Impostazioni Generali</em> per avere pi&ugrave; granularit&agrave;.
+                </div>
+
+                <h3 style="font-size:1.05rem; font-weight:700; color:#1a1d23; margin-top:1.5rem; margin-bottom:.75rem;">Consigli utili</h3>
+
+                <p>Alcuni consigli per ottimizzare la gestione dei coperti:</p>
+                <ul>
+                    <li><strong>Non overbooking</strong>: imposta un numero massimo realistico, considerando anche walk-in</li>
+                    <li><strong>Picchi</strong>: riduci i coperti nei picchi se il servizio &egrave; al limite</li>
+                    <li><strong>Giorni deboli</strong>: attiva delle <a href="#">promozioni</a> per riempire le fasce meno richieste</li>
+                </ul>
+
+                <div class="hg2d-tip">
+                    <strong><i class="bi bi-lightbulb me-1"></i>Suggerimento:</strong> se non sei sicuro dei numeri, parti con valori conservativi e aumentali gradualmente guardando le statistiche nella dashboard.
+                </div>
+            </div>
+
+            <!-- Footer articolo con feedback -->
+            <div class="hg2d-article-footer">
+                <div class="hg2d-feedback">
+                    Questo articolo ti &egrave; stato utile?
+                    <a href="#" class="hg2d-feedback-btn"><i class="bi bi-hand-thumbs-up"></i> S&igrave;</a>
+                    <a href="#" class="hg2d-feedback-btn"><i class="bi bi-hand-thumbs-down"></i> No</a>
+                </div>
+                <a href="help-guide-v2.html" class="hg2d-feedback-btn">
+                    <i class="bi bi-arrow-left"></i> Torna alla guida
+                </a>
+            </div>
+        </article>
+
+        <!-- Sidebar -->
+        <aside class="hg2d-sidebar">
+
+            <!-- Articoli correlati -->
+            <div class="hg2d-sidebar-card">
+                <div class="hg2d-sidebar-title">Articoli correlati</div>
+                <div class="hg2d-related">
+                    <a href="help-guide-v2-detail.html#categorie" class="hg2d-related-item">
+                        <div class="hg2d-related-icon" style="background:#7B1FA2;"><i class="bi bi-tags"></i></div>
+                        <div class="hg2d-related-text">Categorie pasto</div>
+                    </a>
+                    <a href="help-guide-v2-detail.html#chiusure" class="hg2d-related-item">
+                        <div class="hg2d-related-icon" style="background:#C62828;"><i class="bi bi-calendar-x"></i></div>
+                        <div class="hg2d-related-text">Chiusure e ferie</div>
+                    </a>
+                    <a href="help-guide-v2-detail.html#prenotazioni" class="hg2d-related-item">
+                        <div class="hg2d-related-icon" style="background:#00844A;"><i class="bi bi-calendar-check"></i></div>
+                        <div class="hg2d-related-text">Gestione prenotazioni</div>
+                    </a>
+                    <a href="help-guide-v2-detail.html#widget" class="hg2d-related-item">
+                        <div class="hg2d-related-icon" style="background:#42A5F5;"><i class="bi bi-globe2"></i></div>
+                        <div class="hg2d-related-text">Widget online</div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Box supporto -->
+            <div class="hg2d-sidebar-card hg2d-support">
+                <div class="hg2d-support-icon"><i class="bi bi-headset"></i></div>
+                <h4>Serve assistenza?</h4>
+                <p>Non hai trovato quello che cercavi? Contattaci e ti aiuteremo personalmente.</p>
+                <a href="mailto:info@evulery.it" class="hg2d-support-btn">
+                    <i class="bi bi-envelope me-1"></i> Contattaci
+                </a>
+            </div>
+
+        </aside>
+    </div>
+
+</div>
+</body>
+</html>
