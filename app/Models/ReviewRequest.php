@@ -60,7 +60,8 @@ class ReviewRequest
         $params = ['tid' => $tenantId];
 
         $sql = $this->applyFilters($sql, $params, $filters);
-        $sql .= ' ORDER BY rr.created_at DESC LIMIT :lim OFFSET :off';
+        // Order by most recent action: rated feedback first, then pending ones by creation
+        $sql .= ' ORDER BY COALESCE(rr.rated_at, rr.created_at) DESC LIMIT :lim OFFSET :off';
 
         $stmt = $this->db->prepare($sql);
         foreach ($params as $k => $v) {
@@ -244,7 +245,7 @@ class ReviewRequest
     public function saveRating(int $id, int $rating): void
     {
         $stmt = $this->db->prepare(
-            'UPDATE review_requests SET rating = :rating WHERE id = :id'
+            'UPDATE review_requests SET rating = :rating, rated_at = NOW() WHERE id = :id'
         );
         $stmt->execute(['id' => $id, 'rating' => $rating]);
     }
