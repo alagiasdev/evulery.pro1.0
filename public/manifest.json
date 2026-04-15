@@ -1,12 +1,15 @@
 {
-    "name": "Evulery Dashboard",
+    "name": "Evulery",
     "short_name": "Evulery",
-    "description": "Gestisci le prenotazioni del tuo ristorante",
+    "description": "Gestisci prenotazioni, ordini, menu e reputazione del tuo ristorante in un'unica piattaforma.",
     "start_url": "/dashboard",
+    "scope": "/",
     "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#198754",
+    "background_color": "#f5f6f8",
+    "theme_color": "#00844A",
     "orientation": "any",
+    "lang": "it",
+    "categories": ["business", "productivity", "food"],
     "icons": [
         {
             "src": "/assets/img/icon-192.png",

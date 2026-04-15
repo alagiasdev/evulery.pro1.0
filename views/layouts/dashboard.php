@@ -9,7 +9,7 @@
     <link href="<?= asset('css/dashboard.css') ?>" rel="stylesheet">
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#198754">
+    <meta name="theme-color" content="#00844A">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
