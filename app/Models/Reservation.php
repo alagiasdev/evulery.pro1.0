@@ -141,13 +141,15 @@ class Reservation
     public function create(array $data): int
     {
         $token = bin2hex(random_bytes(32));
+        $tenantId = (int)$data['tenant_id'];
+        $bookingNumber = $this->allocateBookingNumber($tenantId);
 
         $stmt = $this->db->prepare(
-            'INSERT INTO reservations (tenant_id, customer_id, reservation_date, reservation_time, party_size, status, deposit_required, deposit_amount, source, discount_percent, promotion_id, manage_token, customer_notes)
-             VALUES (:tenant_id, :customer_id, :reservation_date, :reservation_time, :party_size, :status, :deposit_required, :deposit_amount, :source, :discount_percent, :promotion_id, :manage_token, :customer_notes)'
+            'INSERT INTO reservations (tenant_id, customer_id, reservation_date, reservation_time, party_size, status, deposit_required, deposit_amount, source, discount_percent, promotion_id, manage_token, customer_notes, booking_number)
+             VALUES (:tenant_id, :customer_id, :reservation_date, :reservation_time, :party_size, :status, :deposit_required, :deposit_amount, :source, :discount_percent, :promotion_id, :manage_token, :customer_notes, :booking_number)'
         );
         $stmt->execute([
-            'tenant_id'        => $data['tenant_id'],
+            'tenant_id'        => $tenantId,
             'customer_id'      => $data['customer_id'],
             'reservation_date' => $data['reservation_date'],
             'reservation_time' => $data['reservation_time'],
@@ -160,7 +162,30 @@ class Reservation
             'promotion_id'     => $data['promotion_id'] ?? null,
             'manage_token'     => $token,
             'customer_notes'   => $data['customer_notes'] ?? null,
+            'booking_number'   => $bookingNumber,
         ]);
+        return (int)$this->db->lastInsertId();
+    }
+
+    /**
+     * Atomically allocates the next booking number for a tenant.
+     * Uses MySQL's LAST_INSERT_ID(expr) trick so concurrent allocations
+     * are serialized at the row-lock level on tenant_booking_counters.
+     */
+    private function allocateBookingNumber(int $tenantId): int
+    {
+        // Ensure the counter row exists (idempotent).
+        $this->db->prepare(
+            'INSERT IGNORE INTO tenant_booking_counters (tenant_id, last_number) VALUES (:tid, 0)'
+        )->execute(['tid' => $tenantId]);
+
+        // Atomic increment; UPDATE row lock serializes concurrent calls.
+        $this->db->prepare(
+            'UPDATE tenant_booking_counters
+             SET last_number = LAST_INSERT_ID(last_number + 1)
+             WHERE tenant_id = :tid'
+        )->execute(['tid' => $tenantId]);
+
         return (int)$this->db->lastInsertId();
     }
 
@@ -293,7 +318,7 @@ class Reservation
     {
         $like = '%' . $query . '%';
         $stmt = $this->db->prepare(
-            'SELECT r.id, r.reservation_date, r.reservation_time, r.party_size, r.status, r.source,
+            'SELECT r.id, r.booking_number, r.reservation_date, r.reservation_time, r.party_size, r.status, r.source,
                     c.first_name, c.last_name, c.email, c.phone, c.total_bookings
              FROM reservations r
              JOIN customers c ON r.customer_id = c.id

@@ -88,7 +88,7 @@ $isUpcoming = !empty($isUpcoming);
             <div class="res-time" style="color:#6c757d;"><?= format_time($sr['reservation_time']) ?></div>
             <div class="status-dot <?= e($sr['status']) ?>" title="<?= status_label($sr['status']) ?>"></div>
             <div class="res-info">
-                <div class="res-name"><?= e($sr['first_name'] . ' ' . $sr['last_name']) ?> <?= getSegmentBadge((int)$sr['total_bookings']) ?> <span class="res-id">#<?= (int)$sr['id'] ?></span></div>
+                <div class="res-name"><?= e($sr['first_name'] . ' ' . $sr['last_name']) ?> <?= getSegmentBadge((int)$sr['total_bookings']) ?> <span class="res-id">#<?= (int)($sr['booking_number'] ?? $sr['id']) ?></span></div>
                 <div class="res-meta">
                     <i class="bi bi-telephone me-1"></i><?= e($sr['phone']) ?>
                     <?php if ($sr['email']): ?> &middot; <?= e($sr['email']) ?><?php endif; ?>
@@ -319,7 +319,7 @@ $isUpcoming = !empty($isUpcoming);
             <span class="res-time"><?= format_time($r['reservation_time']) ?></span>
             <span class="status-dot <?= e($r['status']) ?>"></span>
             <div class="res-info">
-                <div class="res-name"><?= e($r['first_name'] . ' ' . $r['last_name']) ?> <?= getSegmentBadge((int)($r['total_bookings'] ?? 0)) ?> <span class="res-id">#<?= (int)$r['id'] ?></span></div>
+                <div class="res-name"><?= e($r['first_name'] . ' ' . $r['last_name']) ?> <?= getSegmentBadge((int)($r['total_bookings'] ?? 0)) ?> <span class="res-id">#<?= (int)($r['booking_number'] ?? $r['id']) ?></span></div>
                 <div class="res-contact">
                     <i class="bi bi-telephone me-1"></i><?= e($r['phone']) ?>
                     &nbsp;&middot;&nbsp;

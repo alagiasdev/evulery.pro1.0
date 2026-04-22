@@ -34,7 +34,7 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
     <div class="hero-top">
         <div>
             <span class="hero-name"><?= e($reservation['first_name'] . ' ' . $reservation['last_name']) ?></span>
-            <span class="hero-id">#<?= (int)$reservation['id'] ?></span>
+            <span class="hero-id">#<?= (int)($reservation['booking_number'] ?? $reservation['id']) ?></span>
         </div>
         <span class="status-badge <?= e($reservation['status']) ?>"><?= status_label($reservation['status']) ?></span>
     </div>

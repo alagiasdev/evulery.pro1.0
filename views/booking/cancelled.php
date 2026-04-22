@@ -11,7 +11,7 @@
         <?php if (!empty($canRetry) && !empty($reservation)): ?>
         <div class="bw-conf-note bw-conf-note--warn">
             <i class="bi bi-exclamation-triangle"></i>
-            <span>Il pagamento della caparra non è stato completato. La prenotazione n. <strong><?= (int)$reservation['id'] ?></strong> è ancora in attesa.</span>
+            <span>Il pagamento della caparra non è stato completato. La prenotazione n. <strong><?= (int)($reservation['booking_number'] ?? $reservation['id']) ?></strong> è ancora in attesa.</span>
         </div>
 
         <div style="background:#f8f9fa;border:1px solid #e9ecef;border-radius:10px;padding:14px;margin:12px 0;font-size:.88rem;">
