@@ -27,10 +27,13 @@ $inactiveRanges = [];
 foreach ($allCategories as $cat) {
     $catStart = (int)substr($cat['start_time'], 0, 2) * 60 + (int)substr($cat['start_time'], 3, 2);
     $catEnd = (int)substr($cat['end_time'], 0, 2) * 60 + (int)substr($cat['end_time'], 3, 2);
+    // Actual last bookable slot: largest step-aligned minute that is < catEnd and >= catStart
+    $lastSlotMin = $catEnd > 0 ? intdiv($catEnd - 1, $timeStep) * $timeStep : -1;
+    $lastSlotTime = ($lastSlotMin >= $catStart) ? sprintf('%02d:%02d', intdiv($lastSlotMin, 60), $lastSlotMin % 60) : null;
     if ($cat['is_active']) {
-        $activeCats[] = ['name' => $cat['display_name'], 'start' => $catStart, 'end' => $catEnd, 'start_time' => substr($cat['start_time'], 0, 5), 'end_time' => substr($cat['end_time'], 0, 5)];
+        $activeCats[] = ['name' => $cat['display_name'], 'start' => $catStart, 'end' => $catEnd, 'start_time' => substr($cat['start_time'], 0, 5), 'end_time' => substr($cat['end_time'], 0, 5), 'last_slot_time' => $lastSlotTime];
     } else {
-        $inactiveRanges[] = ['name' => $cat['display_name'], 'start' => $catStart, 'end' => $catEnd, 'start_time' => substr($cat['start_time'], 0, 5), 'end_time' => substr($cat['end_time'], 0, 5)];
+        $inactiveRanges[] = ['name' => $cat['display_name'], 'start' => $catStart, 'end' => $catEnd, 'start_time' => substr($cat['start_time'], 0, 5), 'end_time' => substr($cat['end_time'], 0, 5), 'last_slot_time' => $lastSlotTime];
     }
 }
 
@@ -182,7 +185,7 @@ $DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
                             <div class="meal-divider">
                                 <span class="meal-divider-icon" style="color:var(--brand);">&#9679;</span>
                                 <span class="meal-divider-name"><?= e($activeCatHit['name']) ?></span>
-                                <span class="meal-divider-range"><?= $activeCatHit['start_time'] ?> &ndash; <?= $activeCatHit['end_time'] ?></span>
+                                <span class="meal-divider-range" title="Categoria configurata <?= $activeCatHit['start_time'] ?> &ndash; <?= $activeCatHit['end_time'] ?>"><?= $activeCatHit['start_time'] ?> &ndash; <?= $activeCatHit['last_slot_time'] ?? $activeCatHit['end_time'] ?></span>
                             </div>
                         </td>
                     </tr>
@@ -192,7 +195,7 @@ $DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
                             <div class="meal-divider" style="background:#f8f8f8; opacity:.6;">
                                 <span class="meal-divider-icon" style="color:#adb5bd;">&#9676;</span>
                                 <span class="meal-divider-name" style="color:#adb5bd;"><?= e($inactiveCatHit['name']) ?></span>
-                                <span class="meal-divider-range"><?= $inactiveCatHit['start_time'] ?> &ndash; <?= $inactiveCatHit['end_time'] ?></span>
+                                <span class="meal-divider-range" title="Categoria configurata <?= $inactiveCatHit['start_time'] ?> &ndash; <?= $inactiveCatHit['end_time'] ?>"><?= $inactiveCatHit['start_time'] ?> &ndash; <?= $inactiveCatHit['last_slot_time'] ?? $inactiveCatHit['end_time'] ?></span>
                                 <span class="inactive-tag">DISATTIVATO</span>
                             </div>
                         </td>
@@ -205,6 +208,8 @@ $DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
                                 <i class="bi bi-exclamation-triangle" style="color:#F57F17;font-size:.7rem;"></i>
                             <?php elseif ($isInactive): ?>
                                 <span class="inactive-tag"><?= e($inactiveCat) ?></span>
+                            <?php elseif ($isOrphan): ?>
+                                <span class="orphan-tag" title="Non appartiene ad alcuna categoria pasto">Fuori categoria</span>
                             <?php endif; ?>
                         </td>
                         <?php for ($day = 0; $day < 7; $day++):
@@ -287,14 +292,14 @@ document.querySelectorAll('.slot-input:not([disabled]):not([readonly])').forEach
         });
     }
 
-    // Restore from localStorage
+    // Restore from localStorage (default ON when never set)
+    var hide = true;
     try {
         var saved = localStorage.getItem(STORAGE_KEY);
-        if (saved === '1') {
-            toggle.checked = true;
-            applyState(true);
-        }
+        if (saved === '0') hide = false;
     } catch (e) {}
+    toggle.checked = hide;
+    applyState(hide);
 
     toggle.addEventListener('change', function() {
         applyState(this.checked);

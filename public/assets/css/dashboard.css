@@ -1251,6 +1251,14 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 }
 .row-phantom td { background: #FFF8E1; }
 .row-phantom .slot-input { background: #FFF3E0; border-color: #FFB74D; cursor: not-allowed; }
+.row-orphan td { background: #fafafa; color: #adb5bd; }
+.row-orphan .slot-input { background: #f5f5f5; border-color: #ececec; color: #c5c9cd; }
+.orphan-tag {
+    font-size: .6rem; font-weight: 600; color: #9aa0a6;
+    padding: 1px 5px; border-radius: 4px;
+    background: #eef0f2; margin-left: .35rem;
+    text-transform: uppercase; letter-spacing: .3px;
+}
 .slots-toolbar {
     display: flex; align-items: center; justify-content: space-between;
     padding: .6rem 1rem; background: #fafbfc;
