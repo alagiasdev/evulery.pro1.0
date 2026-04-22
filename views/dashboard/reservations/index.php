@@ -54,6 +54,8 @@ for ($i = 0; $i < 3; $i++) {
     $label = $i === 0 ? 'Oggi' : ($i === 1 ? 'Domani' : 'Dopodomani');
     $chipDates[] = ['date' => $d, 'label' => $label, 'sub' => $dayName . ' ' . $dt->format('j/n')];
 }
+
+$isUpcoming = !empty($isUpcoming);
 ?>
 
 <!-- Search bar (global) -->
@@ -105,13 +107,20 @@ for ($i = 0; $i < 3; $i++) {
 
 <!-- Filter bar -->
 <form method="GET" action="<?= url('dashboard/reservations') ?>" id="res-filter-form">
+<?php if ($isUpcoming): ?>
+<input type="hidden" name="upcoming" value="1">
+<?php endif; ?>
 <div class="filter-bar">
     <!-- Row 1: Quick date chips + actions -->
     <div class="filter-row">
         <div class="date-chips">
+            <a href="<?= url('dashboard/reservations?upcoming=1' . ($status ? '&status=' . e($status) : '') . ($source ? '&source=' . e($source) : '')) ?>"
+               class="date-chip-sm <?= $isUpcoming ? 'active' : '' ?>" title="Le prossime 15 prenotazioni">
+                <i class="bi bi-fast-forward-fill me-1"></i>Prossime
+            </a>
             <?php foreach ($chipDates as $chip): ?>
             <a href="<?= url('dashboard/reservations?date=' . $chip['date'] . ($status ? '&status=' . e($status) : '') . ($source ? '&source=' . e($source) : '')) ?>"
-               class="date-chip-sm <?= $date === $chip['date'] && !$isRange ? 'active' : '' ?>">
+               class="date-chip-sm <?= !$isUpcoming && $date === $chip['date'] && !$isRange ? 'active' : '' ?>">
                 <?= $chip['label'] ?> <span class="chip-day"><?= $chip['sub'] ?></span>
             </a>
             <?php endforeach; ?>
@@ -167,15 +176,15 @@ for ($i = 0; $i < 3; $i++) {
 
     <!-- Row 2: Advanced filters -->
     <div class="filter-row filter-advanced<?= ($status || $source) ? ' show' : '' ?>" id="filter-advanced">
-        <div class="filter-group">
+        <div class="filter-group"<?= $isUpcoming ? ' style="display:none;"' : '' ?>>
             <label>Da</label>
             <input type="date" class="filter-input" name="date" value="<?= e($date) ?>" id="filter-date-from" style="width:auto;">
         </div>
-        <div class="filter-group">
+        <div class="filter-group"<?= $isUpcoming ? ' style="display:none;"' : '' ?>>
             <label>A</label>
             <input type="date" class="filter-input" name="date_to" value="<?= e($dateTo ?? $date) ?>" id="filter-date-to" style="width:auto;">
         </div>
-        <div class="filter-divider"></div>
+        <div class="filter-divider"<?= $isUpcoming ? ' style="display:none;"' : '' ?>></div>
         <div class="filter-group">
             <label>Stato</label>
             <select class="filter-input" name="status" data-autosubmit>
@@ -260,11 +269,13 @@ for ($i = 0; $i < 3; $i++) {
         <span class="sp-num" style="color:#ffc107;"><?= $pendingCount ?></span>
         <span class="sp-label">In Attesa</span>
     </div>
+    <?php if (!$isUpcoming): ?>
     <div class="stat-pill">
         <div class="sp-dot" style="background:#dc3545;"></div>
         <span class="sp-num" style="color:#dc3545;"><?= $cancelledCount ?></span>
         <span class="sp-label">Annullate</span>
     </div>
+    <?php endif; ?>
     <div class="stat-pill">
         <div class="sp-dot" style="background:#0d6efd;"></div>
         <span class="sp-num" style="color:#0d6efd;"><?= $totalCovers ?></span>
@@ -277,14 +288,22 @@ for ($i = 0; $i < 3; $i++) {
     <?php if (empty($reservations)): ?>
     <div class="empty-state">
         <i class="bi bi-calendar-x"></i>
+        <?php if ($isUpcoming): ?>
+        <p>Nessuna prenotazione in programma<?= ($status || $source) ? ' con i filtri correnti' : '' ?>.</p>
+        <?php else: ?>
         <p>Nessuna prenotazione per <?= format_date($date, 'd/m/Y') ?></p>
+        <?php endif; ?>
     </div>
     <?php else: ?>
 
     <?php
     // Build redirect back URL preserving filters
-    $redirectParams = 'date=' . e($date);
-    if (!empty($dateTo) && $dateTo !== $date) $redirectParams .= '&date_to=' . e($dateTo);
+    if ($isUpcoming) {
+        $redirectParams = 'upcoming=1';
+    } else {
+        $redirectParams = 'date=' . e($date);
+        if (!empty($dateTo) && $dateTo !== $date) $redirectParams .= '&date_to=' . e($dateTo);
+    }
     if ($status) $redirectParams .= '&status=' . e($status);
     if (!empty($source)) $redirectParams .= '&source=' . e($source);
     $redirectBack = 'dashboard/reservations?' . $redirectParams;
@@ -338,8 +357,8 @@ for ($i = 0; $i < 3; $i++) {
         <?php
     }
 
-    if ($isRange):
-        // Range mode: group by date
+    if ($isRange || $isUpcoming):
+        // Group by date (range mode or upcoming mode)
         $byDate = [];
         foreach ($reservations as $r) {
             $byDate[$r['reservation_date']][] = $r;
@@ -375,12 +394,25 @@ for ($i = 0; $i < 3; $i++) {
     <!-- Pagination info -->
     <div class="pagination-bar">
         <span class="pagination-info"><?= $totalCount ?> prenotazion<?= $totalCount === 1 ? 'e' : 'i' ?>
-        <?php if ($isRange): ?>
+        <?php if ($isUpcoming): ?>
+            &middot; prossime in programma<?= $totalCount >= 15 ? ' (limite 15)' : '' ?>
+        <?php elseif ($isRange): ?>
             &middot; <?= format_date($date, 'd/m/Y') ?> &ndash; <?= format_date($dateTo, 'd/m/Y') ?>
         <?php else: ?>
             &middot; <?= format_date($date, 'd/m/Y') ?>
         <?php endif; ?>
         </span>
+        <?php if ($isUpcoming && $totalCount >= 15):
+            $viewAllFrom = date('Y-m-d');
+            $viewAllTo = date('Y-m-d', strtotime('+30 days'));
+            $viewAllUrl = 'dashboard/reservations?date=' . $viewAllFrom . '&date_to=' . $viewAllTo;
+            if ($status) $viewAllUrl .= '&status=' . e($status);
+            if ($source) $viewAllUrl .= '&source=' . e($source);
+        ?>
+        <a href="<?= url($viewAllUrl) ?>" class="pagination-info" style="margin-left:auto;text-decoration:none;color:var(--brand);">
+            Vedi tutte (prossimi 30 gg) <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+        <?php endif; ?>
     </div>
 
     <?php endif; ?>
@@ -443,7 +475,11 @@ for ($i = 0; $i < 3; $i++) {
                 selectedDate = this.dataset.date;
                 dateFromInput.value = selectedDate;
                 document.getElementById('filter-date-to').value = selectedDate;
-                document.getElementById('res-filter-form').submit();
+                var form = document.getElementById('res-filter-form');
+                // Picking a specific date leaves "upcoming" mode
+                var upcomingInput = form.querySelector('input[name="upcoming"]');
+                if (upcomingInput) upcomingInput.remove();
+                form.submit();
             });
         });
     }

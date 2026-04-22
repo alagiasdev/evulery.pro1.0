@@ -66,6 +66,35 @@ class Reservation
         return $stmt->fetchAll();
     }
 
+    public function findUpcoming(int $tenantId, int $limit = 15, ?string $status = null, ?string $source = null): array
+    {
+        $sql = 'SELECT r.*, c.first_name, c.last_name, c.email, c.phone, c.total_bookings
+                FROM reservations r
+                JOIN customers c ON r.customer_id = c.id
+                WHERE r.tenant_id = :tenant_id
+                AND (
+                    r.reservation_date > CURDATE()
+                    OR (r.reservation_date = CURDATE() AND r.reservation_time >= CURTIME())
+                )
+                AND r.status IN ("confirmed", "pending")';
+        $params = ['tenant_id' => $tenantId];
+
+        if ($status && in_array($status, ['confirmed', 'pending'], true)) {
+            $sql .= ' AND r.status = :status';
+            $params['status'] = $status;
+        }
+
+        if ($source) {
+            $sql .= ' AND r.source = :source';
+            $params['source'] = $source;
+        }
+
+        $sql .= ' ORDER BY r.reservation_date ASC, r.reservation_time ASC LIMIT ' . max(1, (int)$limit);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
     public function findForExport(int $tenantId, ?string $dateFrom, ?string $dateTo, ?string $status = null): array
     {
         $sql = 'SELECT r.reservation_date, r.reservation_time, c.first_name, c.last_name,

@@ -22,6 +22,7 @@ class ReservationsController
     {
         $tenantId = Auth::tenantId();
         $searchQuery = trim($request->query('q', ''));
+        $upcoming = $request->query('upcoming') === '1';
         $date = $request->query('date', date('Y-m-d'));
         $dateTo = $request->query('date_to');
         $status = $request->query('status');
@@ -38,9 +39,14 @@ class ReservationsController
             $searchResults = (new Reservation())->searchGlobal($tenantId, $searchQuery);
         }
 
-        $reservations = (new Reservation())->findByTenantAndDate($tenantId, $date, $status, $dateTo, $source);
+        $resModel = new Reservation();
+        if ($upcoming) {
+            $reservations = $resModel->findUpcoming($tenantId, 15, $status, $source);
+        } else {
+            $reservations = $resModel->findByTenantAndDate($tenantId, $date, $status, $dateTo, $source);
+        }
 
-        $isRange = $dateTo && $dateTo !== $date;
+        $isRange = !$upcoming && $dateTo && $dateTo !== $date;
 
         view('dashboard/reservations/index', [
             'title'        => 'Prenotazioni',
@@ -49,6 +55,7 @@ class ReservationsController
             'date'         => $date,
             'dateTo'       => $dateTo,
             'isRange'      => $isRange,
+            'isUpcoming'   => $upcoming,
             'status'       => $status,
             'source'       => $source,
             'searchQuery'  => $searchQuery,
