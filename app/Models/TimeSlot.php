@@ -34,6 +34,20 @@ class TimeSlot
         return $stmt->fetchAll();
     }
 
+    /**
+     * Returns the weekdays (0=Mon..6=Sun) that have at least one active slot with covers > 0.
+     */
+    public function getWorkingWeekdays(int $tenantId): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT DISTINCT day_of_week FROM time_slots
+             WHERE tenant_id = :tenant_id AND is_active = 1 AND max_covers > 0
+             ORDER BY day_of_week ASC'
+        );
+        $stmt->execute(['tenant_id' => $tenantId]);
+        return array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+    }
+
     public function upsert(int $tenantId, int $dayOfWeek, string $slotTime, int $maxCovers, bool $isActive = true): void
     {
         $stmt = $this->db->prepare(

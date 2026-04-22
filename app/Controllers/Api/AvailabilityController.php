@@ -6,6 +6,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Models\SlotOverride;
 use App\Models\Tenant;
+use App\Models\TimeSlot;
 use App\Services\AvailabilityService;
 
 class AvailabilityController
@@ -84,7 +85,11 @@ class AvailabilityController
         }
 
         $dates = (new SlotOverride())->getClosedDates($tenant['id'], $from, $to);
+        $workingWeekdays = (new TimeSlot())->getWorkingWeekdays((int)$tenant['id']);
 
-        Response::success(['closed_dates' => $dates]);
+        Response::success([
+            'closed_dates'     => $dates,
+            'working_weekdays' => $workingWeekdays,
+        ]);
     }
 }

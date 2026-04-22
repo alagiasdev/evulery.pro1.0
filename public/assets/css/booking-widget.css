@@ -255,6 +255,10 @@
     color: #FFCDD2; cursor: default;
     background: repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(220,53,69,.06) 3px, rgba(220,53,69,.06) 6px);
 }
+.bw-cal-cell.bw-cal-nonworking {
+    color: #CBD5E1; cursor: default;
+    background: #F8FAFC;
+}
 .bw-cal-cell.bw-cal-empty { cursor: default; }
 
 /* ---- Grouped Time Slots ---- */
@@ -376,6 +380,21 @@
     background: var(--bw-primary);
     border-color: var(--bw-primary);
     color: white;
+}
+
+.bw-party-btn.bw-party-disabled {
+    background: #F8FAFC;
+    border-color: #E5E7EB;
+    color: #CBD5E1;
+    cursor: not-allowed;
+}
+.bw-party-btn.bw-party-disabled:hover { border-color: #E5E7EB; color: #CBD5E1; }
+
+.bw-party-max-hint {
+    font-size: 0.82rem;
+    color: var(--bw-text-muted);
+    margin-bottom: 10px;
+    text-align: center;
 }
 
 .bw-more-options { text-align: center; margin-top: 16px; }

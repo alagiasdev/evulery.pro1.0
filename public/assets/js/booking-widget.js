@@ -26,7 +26,9 @@ document.addEventListener('DOMContentLoaded', function() {
         lastFetchDate: null,
         selectedDiscount: 0,
         closedDates: {},       // { 'YYYY-MM': ['YYYY-MM-DD', ...] }
-        closedDatesLoading: {} // { 'YYYY-MM': true }
+        closedDatesLoading: {}, // { 'YYYY-MM': true }
+        workingWeekdays: null,  // [0..6] weekdays (Mon=0..Sun=6) with at least one active slot; null = unknown
+        maxPartyForDate: null   // max available covers across all slots for selectedDate; null = unknown
     };
 
     // ===== ITALIAN LOCALE =====
@@ -68,6 +70,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     state.closedDates[key] = data.data.closed_dates;
                 } else {
                     state.closedDates[key] = [];
+                }
+                if (data.success && Array.isArray(data.data.working_weekdays)) {
+                    state.workingWeekdays = data.data.working_weekdays.map(Number);
                 }
                 delete state.closedDatesLoading[key];
                 renderCalendar();
@@ -128,25 +133,38 @@ document.addEventListener('DOMContentLoaded', function() {
             var dateStr = formatDateISO(d);
 
             var classes = 'bw-cal-cell';
-            var isClosed = isDateClosed(dateStr);
+            var isPast = d < today;
+            var isClosed = !isPast && isDateClosed(dateStr);
+
+            // Weekday not operative (no active slots for that day-of-week)
+            var dow = d.getDay() - 1; if (dow < 0) dow = 6; // Mon=0..Sun=6
+            var isNonWorking = !isPast
+                && Array.isArray(state.workingWeekdays)
+                && state.workingWeekdays.indexOf(dow) === -1;
 
             if (d.getTime() === today.getTime()) {
                 classes += ' bw-cal-today';
             }
 
-            if (d < minDate || d > maxDate || isClosed) {
+            if (isPast || d < minDate || d > maxDate || isClosed || isNonWorking) {
                 classes += ' bw-cal-disabled';
             }
 
             if (isClosed) {
                 classes += ' bw-cal-closed';
+            } else if (isNonWorking && d >= minDate && d <= maxDate) {
+                classes += ' bw-cal-nonworking';
             }
 
             if (state.selectedDate === dateStr) {
                 classes += ' bw-cal-selected';
             }
 
-            html += '<div class="' + classes + '" data-date="' + dateStr + '"' + (isClosed ? ' title="Chiuso"' : '') + '>' + day + '</div>';
+            var cellTitle = '';
+            if (isClosed) cellTitle = ' title="Chiuso"';
+            else if (isNonWorking && d >= minDate && d <= maxDate) cellTitle = ' title="Non operativo"';
+
+            html += '<div class="' + classes + '" data-date="' + dateStr + '"' + cellTitle + '>' + day + '</div>';
         }
 
         getEl('cal-grid').innerHTML = html;
@@ -184,10 +202,65 @@ document.addEventListener('DOMContentLoaded', function() {
     function selectDate(dateStr) {
         state.selectedDate = dateStr;
         state.selectedTime = null;
+        state.maxPartyForDate = null;
         updatePill('date', formatDatePill(dateStr));
         if (pills.time) pills.time.style.display = 'none';
         renderCalendar();
+        fetchMaxParty(dateStr);
         setTimeout(function() { goToStep(2); }, 250);
+    }
+
+    // ===== MAX PARTY FOR DATE =====
+    function fetchMaxParty(dateStr) {
+        applyPartyAvailability(); // reset grid to loading state
+        fetch(apiUrl + '/tenants/' + slug + '/availability?date=' + dateStr + '&party_size=1')
+            .then(function(r) { return checkApiResponse(r); })
+            .then(function(data) {
+                if (!data.success || !Array.isArray(data.data.slots)) {
+                    state.maxPartyForDate = null;
+                } else {
+                    var max = 0;
+                    data.data.slots.forEach(function(s) {
+                        var avail = parseInt(s.available_covers, 10) || 0;
+                        if (avail > max) max = avail;
+                    });
+                    state.maxPartyForDate = max;
+                }
+                applyPartyAvailability();
+            })
+            .catch(function() {
+                state.maxPartyForDate = null;
+                applyPartyAvailability();
+            });
+    }
+
+    function applyPartyAvailability() {
+        var max = state.maxPartyForDate;
+        var hint = getEl('party-max-hint');
+        widget.querySelectorAll('.bw-party-btn').forEach(function(btn) {
+            var size = parseInt(btn.dataset.size, 10) || 0;
+            var disabled = (max !== null && size > max);
+            btn.classList.toggle('bw-party-disabled', disabled);
+            if (disabled) {
+                btn.setAttribute('title', 'Non disponibile per questa data');
+                btn.setAttribute('aria-disabled', 'true');
+            } else {
+                btn.removeAttribute('title');
+                btn.removeAttribute('aria-disabled');
+            }
+        });
+        if (hint) {
+            if (max === null) {
+                hint.textContent = '';
+                hint.style.display = 'none';
+            } else if (max === 0) {
+                hint.textContent = 'Nessun posto disponibile in questa data';
+                hint.style.display = '';
+            } else {
+                hint.textContent = 'Capienza disponibile: fino a ' + max + (max === 1 ? ' persona' : ' persone');
+                hint.style.display = '';
+            }
+        }
     }
 
     // ===== TIME SLOTS =====
@@ -312,6 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function bindPartyClicks() {
         widget.querySelectorAll('.bw-party-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
+                if (this.classList.contains('bw-party-disabled')) return;
                 widget.querySelectorAll('.bw-party-btn').forEach(function(b) { b.classList.remove('bw-party-active'); });
                 this.classList.add('bw-party-active');
                 state.selectedPartySize = parseInt(this.dataset.size);
