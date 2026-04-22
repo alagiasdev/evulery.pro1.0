@@ -17,14 +17,21 @@ ALTER TABLE `reservations`
     ADD COLUMN `booking_number` INT UNSIGNED NOT NULL DEFAULT 0 AFTER `id`;
 
 -- Backfill: for each tenant, number reservations 1..N ordered by created_at ASC, id ASC.
--- Requires MySQL 8.0+ / MariaDB 10.2+ for ROW_NUMBER().
+-- Portable pattern (no window functions) for MariaDB < 10.2 compatibility.
+SET @rn := 0;
+SET @prev := 0;
+
 UPDATE `reservations` r
-JOIN (
-    SELECT id,
-           ROW_NUMBER() OVER (PARTITION BY tenant_id ORDER BY created_at ASC, id ASC) AS rn
-    FROM `reservations`
-) numbered ON numbered.id = r.id
-SET r.booking_number = numbered.rn;
+INNER JOIN (
+    SELECT id, rn FROM (
+        SELECT id,
+               @rn := IF(@prev = tenant_id, @rn + 1, 1) AS rn,
+               @prev := tenant_id AS _p
+        FROM `reservations`
+        ORDER BY tenant_id ASC, created_at ASC, id ASC
+    ) s
+) sq ON sq.id = r.id
+SET r.booking_number = sq.rn;
 
 -- Seed the counter table with the current max per tenant.
 INSERT INTO `tenant_booking_counters` (`tenant_id`, `last_number`)
