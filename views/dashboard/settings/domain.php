@@ -14,9 +14,13 @@ $settingsTabs = [
 
 $customDomain = $tenant['custom_domain'] ?? '';
 $domainStatus = $tenant['domain_status'] ?? 'none';
-$cnameTarget = $tenant['cname_target'] ?? '';
+// Always read cname target from env (single source of truth); fallback to tenant column for backward compat
+$cnameTarget = env('CUSTOM_DOMAIN_CNAME_TARGET')
+    ?: parse_url((string)env('APP_URL', ''), PHP_URL_HOST)
+    ?: ($tenant['cname_target'] ?? 'dash.evulery.it');
 $hostedUrl = url($tenant['slug']);
-$isLinked = $domainStatus === 'linked';
+$isActive = in_array($domainStatus, ['active', 'linked'], true);  // 'linked' = legacy
+$isDnsOk = $domainStatus === 'dns_ok';
 $isPending = $domainStatus === 'dns_pending';
 ?>
 
@@ -61,9 +65,13 @@ $isPending = $domainStatus === 'dns_pending';
             <div class="status-card">
                 <div class="status-header">
                     <div class="status-left">
-                        <?php if ($isLinked): ?>
+                        <?php if ($isActive): ?>
                         <div class="status-icon" style="background:var(--brand-light);color:var(--brand);">
                             <i class="bi bi-check-circle"></i>
+                        </div>
+                        <?php elseif ($isDnsOk): ?>
+                        <div class="status-icon" style="background:#E3F2FD;color:#1565C0;">
+                            <i class="bi bi-gear-wide-connected"></i>
                         </div>
                         <?php elseif ($isPending): ?>
                         <div class="status-icon" style="background:#FFF8E1;color:#F57F17;">
@@ -79,9 +87,13 @@ $isPending = $domainStatus === 'dns_pending';
                             <div class="dns-status-sub"><?= e($customDomain) ?></div>
                         </div>
                     </div>
-                    <?php if ($isLinked): ?>
+                    <?php if ($isActive): ?>
                     <span class="dns-status-badge" style="background:var(--brand-light);color:var(--brand);">
-                        <i class="bi bi-check-circle-fill me-1"></i>Collegato
+                        <i class="bi bi-check-circle-fill me-1"></i>Attivo
+                    </span>
+                    <?php elseif ($isDnsOk): ?>
+                    <span class="dns-status-badge" style="background:#E3F2FD;color:#1565C0;">
+                        <i class="bi bi-gear-wide-connected me-1"></i>Attivazione in corso
                     </span>
                     <?php elseif ($isPending): ?>
                     <span class="dns-status-badge" style="background:#FFF3E0;color:#E65100;">
@@ -94,18 +106,31 @@ $isPending = $domainStatus === 'dns_pending';
                     <?php endif; ?>
                 </div>
 
+                <?php if ($isDnsOk): ?>
+                <div style="background:#E3F2FD; border:1px solid #90CAF9; border-radius:8px; padding:.75rem 1rem; margin:.85rem 0; font-size:.85rem; color:#0D47A1;">
+                    <i class="bi bi-info-circle-fill me-1"></i>
+                    <strong>DNS verificato correttamente.</strong> Stiamo configurando il tuo dominio sul nostro server: riceverai una email quando sarà pienamente attivo (di solito entro 24h). Non devi fare altro.
+                </div>
+                <?php endif; ?>
+
                 <?php if ($cnameTarget): ?>
+                <?php
+                    $step2Class = ($isDnsOk || $isActive) ? 'done' : 'current';
+                    $step3Class = $isActive ? 'done' : (($isDnsOk) ? 'current' : '');
+                    $step4Class = $isActive ? 'done' : '';
+                    $stepDoneIcon = '<i class="bi bi-check-lg" style="font-size:.6rem;"></i>';
+                ?>
                 <div class="dns-steps">
                     <div class="dns-step done">
-                        <div class="dns-num"><i class="bi bi-check-lg" style="font-size:.6rem;"></i></div>
+                        <div class="dns-num"><?= $stepDoneIcon ?></div>
                         <div class="dns-content">
                             <div class="dns-title">Dominio registrato</div>
                             <div class="dns-desc"><?= e($customDomain) ?> salvato nel sistema</div>
                         </div>
                     </div>
 
-                    <div class="dns-step <?= $isLinked ? 'done' : 'current' ?>">
-                        <div class="dns-num"><?= $isLinked ? '<i class="bi bi-check-lg" style="font-size:.6rem;"></i>' : '2' ?></div>
+                    <div class="dns-step <?= $step2Class ?>">
+                        <div class="dns-num"><?= ($isDnsOk || $isActive) ? $stepDoneIcon : '2' ?></div>
                         <div class="dns-content">
                             <div class="dns-title">Configura il record CNAME</div>
                             <div class="dns-desc">Vai nel pannello DNS del tuo provider e crea questo record:</div>
@@ -131,19 +156,19 @@ $isPending = $domainStatus === 'dns_pending';
                         </div>
                     </div>
 
-                    <div class="dns-step <?= $isLinked ? 'done' : '' ?>">
-                        <div class="dns-num"><?= $isLinked ? '<i class="bi bi-check-lg" style="font-size:.6rem;"></i>' : '3' ?></div>
+                    <div class="dns-step <?= $step3Class ?>">
+                        <div class="dns-num"><?= $isActive ? $stepDoneIcon : '3' ?></div>
                         <div class="dns-content">
-                            <div class="dns-title">Verifica propagazione</div>
-                            <div class="dns-desc">La propagazione DNS pu&ograve; richiedere fino a 48 ore. Clicca "Verifica" per controllare.</div>
+                            <div class="dns-title">Attivazione tecnica</div>
+                            <div class="dns-desc">Dopo la verifica DNS, aggiungiamo il tuo dominio al nostro server. Entro 24h ricevi conferma via email.</div>
                         </div>
                     </div>
 
-                    <div class="dns-step <?= $isLinked ? 'done' : '' ?>">
-                        <div class="dns-num"><?= $isLinked ? '<i class="bi bi-check-lg" style="font-size:.6rem;"></i>' : '4' ?></div>
+                    <div class="dns-step <?= $step4Class ?>">
+                        <div class="dns-num"><?= $isActive ? $stepDoneIcon : '4' ?></div>
                         <div class="dns-content">
-                            <div class="dns-title">Certificato SSL</div>
-                            <div class="dns-desc">Emissione automatica del certificato HTTPS dopo la verifica DNS</div>
+                            <div class="dns-title">Certificato SSL (HTTPS)</div>
+                            <div class="dns-desc">Emissione automatica del certificato HTTPS. Quando ricevi l'email, torna qui e clicca "Verifica" per completare.</div>
                         </div>
                     </div>
                 </div>
@@ -153,11 +178,23 @@ $isPending = $domainStatus === 'dns_pending';
 
             <!-- Save / Verify -->
             <div class="save-bar">
-                <span class="save-hint"><i class="bi bi-info-circle me-1"></i>Dopo aver configurato il DNS, clicca Verifica</span>
+                <span class="save-hint">
+                    <?php if ($isActive): ?>
+                        <i class="bi bi-check-circle-fill me-1" style="color:var(--brand);"></i>Dominio attivo
+                    <?php elseif ($isDnsOk): ?>
+                        <i class="bi bi-info-circle me-1"></i>Attivazione in corso. Quando ricevi l'email clicca "Verifica"
+                    <?php else: ?>
+                        <i class="bi bi-info-circle me-1"></i>Dopo aver configurato il DNS, clicca Verifica
+                    <?php endif; ?>
+                </span>
                 <div style="display:flex;gap:.5rem;">
-                    <?php if ($customDomain && !$isLinked): ?>
+                    <?php if ($customDomain && !$isActive): ?>
                     <button type="submit" formaction="<?= url('dashboard/settings/domain/verify') ?>" class="btn-verify">
-                        <i class="bi bi-arrow-repeat me-1"></i> Verifica DNS
+                        <?php if ($isDnsOk): ?>
+                            <i class="bi bi-shield-check me-1"></i> Verifica SSL
+                        <?php else: ?>
+                            <i class="bi bi-arrow-repeat me-1"></i> Verifica DNS
+                        <?php endif; ?>
                     </button>
                     <?php endif; ?>
                     <button type="submit" class="btn-save"><i class="bi bi-check-circle me-1"></i> Salva</button>
@@ -207,8 +244,10 @@ $isPending = $domainStatus === 'dns_pending';
             <div class="url-row">
                 <span class="url-label-text">Personalizzato</span>
                 <span class="url-value"><?= e($customDomain) ?></span>
-                <?php if ($isLinked): ?>
+                <?php if ($isActive): ?>
                 <span class="url-status" style="color:var(--brand);"><i class="bi bi-check-circle-fill"></i> Attivo</span>
+                <?php elseif ($isDnsOk): ?>
+                <span class="url-status" style="color:#1565C0;"><i class="bi bi-gear-wide-connected"></i> Attivazione</span>
                 <?php else: ?>
                 <span class="url-status" style="color:#F57F17;"><i class="bi bi-clock-fill"></i> Pending</span>
                 <?php endif; ?>
@@ -221,10 +260,10 @@ $isPending = $domainStatus === 'dns_pending';
             <div class="tip-card">
                 <i class="bi bi-question-circle" style="color:#1565C0;font-size:1rem;margin-top:.1rem;"></i>
                 <div>
-                    <div class="tip-title">Dove configuro il DNS?</div>
+                    <div class="tip-title">Serve aiuto?</div>
                     <div class="tip-text">
-                        Accedi al pannello di controllo del provider dove hai acquistato il dominio
-                        (es. GoDaddy, Aruba, Register.it, Cloudflare) e cerca la sezione <strong>DNS</strong> o <strong>Zone DNS</strong>.
+                        Leggi la <a href="<?= url('dashboard/help/dominio') ?>" style="color:#1565C0; font-weight:600;">guida completa al dominio personalizzato</a>
+                        con istruzioni step-by-step per Aruba, Register.it, GoDaddy, Namecheap e FAQ sui problemi comuni.
                     </div>
                 </div>
             </div>
