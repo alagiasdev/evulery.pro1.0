@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Wireframe — Hub Settings (dashboard)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root { --brand: #00844A; --brand-light: #E8F5E9; --brand-dark: #006837; }
+        body { background: #f5f6fa; font-family: system-ui, sans-serif; margin: 0; font-size: .9rem; }
+        .mock-sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 180px; background: #1a1d23; color: #adb5bd; padding: 1rem 0; font-size: .85rem; }
+        .mock-sidebar .brand { padding: 0 1rem 1rem; color: #fff; font-weight: 700; border-bottom: 1px solid #333; margin-bottom: .5rem; }
+        .mock-sidebar .nav-item { padding: .5rem 1rem; cursor: pointer; }
+        .mock-sidebar .nav-item.active { background: var(--brand); color: #fff; margin: 0 .5rem; border-radius: 6px; padding: .5rem .75rem; }
+
+        .main { margin-left: 180px; padding: 1.25rem 1.5rem; }
+        h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: .25rem; }
+        .subtitle { color: #6c757d; font-size: .82rem; margin-bottom: 1rem; }
+
+        .tabs { display: flex; gap: .35rem; margin-bottom: 1.25rem; overflow-x: auto; padding-bottom: .25rem; }
+        .tab { padding: .5rem .85rem; border: 1px solid #dee2e6; border-radius: 8px; font-size: .78rem; color: #495057; background: #fff; white-space: nowrap; cursor: pointer; }
+        .tab.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+        .info-banner { display: flex; gap: .75rem; padding: .85rem 1rem; background: var(--brand-light); border-radius: 10px; margin-bottom: 1rem; font-size: .82rem; }
+        .info-banner i { color: var(--brand); font-size: 1.1rem; }
+
+        /* Two-column layout */
+        .layout { display: grid; grid-template-columns: 1fr 420px; gap: 1.5rem; }
+        @media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } .preview-sticky { position: static !important; } }
+
+        /* Left column — config */
+        .card { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+        .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75rem; }
+        .card-head h5 { font-size: 1rem; font-weight: 700; margin: 0; }
+
+        .action-row {
+            display: grid; grid-template-columns: 20px 38px 1fr auto auto;
+            gap: .75rem; align-items: center;
+            padding: .75rem; border: 1px solid #e9ecef; border-radius: 10px;
+            margin-bottom: .5rem; background: #fff;
+        }
+        .action-row.off { opacity: .5; }
+        .drag-handle { color: #adb5bd; cursor: grab; font-size: 1rem; }
+        .action-icon {
+            width: 38px; height: 38px; background: var(--brand-light); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .action-icon i { color: var(--brand); font-size: 1.1rem; }
+        .action-row.off .action-icon { background: #f5f5f5; }
+        .action-row.off .action-icon i { color: #adb5bd; }
+
+        .action-text { display: flex; flex-direction: column; }
+        .action-label-input { border: none; font-size: .88rem; font-weight: 700; padding: 2px 0; background: transparent; width: 100%; }
+        .action-label-input:focus { outline: 1px solid var(--brand); border-radius: 4px; padding: 2px 4px; }
+        .action-sub { font-size: .7rem; color: #adb5bd; margin-top: 1px; }
+
+        .btn-edit-sm, .btn-action-sm { background: none; border: 1px solid #dee2e6; border-radius: 6px; padding: 4px 8px; font-size: .75rem; color: #495057; cursor: pointer; }
+        .btn-edit-sm:hover { border-color: var(--brand); color: var(--brand); }
+
+        .add-custom {
+            padding: .75rem; border: 2px dashed #dee2e6; border-radius: 10px;
+            text-align: center; color: #6c757d; font-size: .85rem; cursor: pointer;
+            margin-top: .5rem;
+        }
+        .add-custom:hover { border-color: var(--brand); color: var(--brand); }
+
+        .brand-field { margin-bottom: .85rem; }
+        .brand-field label { font-size: .78rem; font-weight: 600; color: #495057; display: block; margin-bottom: .3rem; }
+        .brand-field input, .brand-field textarea { width: 100%; border: 1px solid #dee2e6; border-radius: 8px; padding: .5rem .7rem; font-size: .85rem; box-sizing: border-box; }
+
+        .uploader {
+            border: 2px dashed #dee2e6; border-radius: 10px;
+            padding: 1.25rem; text-align: center; color: #6c757d; font-size: .82rem;
+            background: #fafbfc;
+        }
+        .uploader i { font-size: 1.5rem; display: block; margin-bottom: .35rem; color: #adb5bd; }
+
+        .save-bar { background: #fff; border-top: 1px solid #e9ecef; padding: .75rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-radius: 0 0 12px 12px; margin: -1rem -1.25rem -1rem; }
+        .btn-brand { background: var(--brand); color: #fff; border: none; padding: .5rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: .85rem; }
+
+        /* Right column — QR + preview */
+        .preview-sticky { position: sticky; top: 1rem; }
+
+        .qr-card { background: linear-gradient(135deg, #212529, #343a40); color: #fff; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; text-align: center; }
+        .qr-card h6 { font-size: .88rem; font-weight: 700; margin-bottom: .75rem; }
+        .qr-img {
+            width: 180px; height: 180px; background: #fff;
+            border-radius: 10px; margin: 0 auto .75rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; color: #212529;
+            background-image:
+                linear-gradient(to right, #212529 50%, transparent 50%),
+                linear-gradient(to bottom, #212529 50%, transparent 50%);
+            background-size: 8px 8px, 8px 8px;
+            background-blend-mode: normal;
+        }
+        .qr-url { font-size: .72rem; color: #adb5bd; margin-bottom: .75rem; word-break: break-all; }
+        .qr-actions { display: flex; gap: .5rem; justify-content: center; }
+        .btn-qr { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.25); padding: .35rem .75rem; border-radius: 6px; font-size: .72rem; cursor: pointer; }
+        .btn-qr:hover { background: rgba(255,255,255,.25); }
+
+        .preview-card { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; padding: 1rem; }
+        .preview-card h6 { font-size: .82rem; font-weight: 700; margin-bottom: .5rem; color: #495057; }
+        .preview-iframe-mock {
+            background: #fafbfc; border: 1px solid #e9ecef; border-radius: 8px;
+            padding: .75rem; height: 320px; overflow-y: auto;
+            font-size: .7rem;
+        }
+        .preview-iframe-mock .ph-cover { background: linear-gradient(135deg, #81C784, #2E7D32); height: 60px; border-radius: 6px; margin-bottom: .5rem; }
+        .preview-iframe-mock .ph-logo { width: 36px; height: 36px; background: #fff; border-radius: 50%; margin: -20px auto .5rem; display: flex; align-items: center; justify-content: center; color: var(--brand); font-weight: 800; border: 2px solid #fff; }
+        .preview-iframe-mock .ph-name { text-align: center; font-weight: 800; font-size: .85rem; }
+        .preview-iframe-mock .ph-sub { text-align: center; color: #adb5bd; margin-bottom: .75rem; }
+        .preview-iframe-mock .ph-cta { background: var(--brand); color: #fff; text-align: center; padding: .5rem; border-radius: 6px; font-size: .7rem; font-weight: 700; margin-bottom: .5rem; }
+        .preview-iframe-mock .ph-row { background: #fff; border: 1px solid #e9ecef; border-radius: 6px; padding: .35rem .5rem; margin-bottom: .25rem; font-size: .7rem; display: flex; gap: .4rem; }
+        .preview-iframe-mock .ph-row i { color: var(--brand); }
+
+        .notes { font-size: .7rem; background: #fff3cd; border: 1px dashed #ffc107; padding: .25rem .5rem; border-radius: 4px; color: #856404; font-style: italic; display: inline-block; }
+
+        /* Palette preset grid */
+        .palette-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem; }
+        @media (max-width: 560px) { .palette-grid { grid-template-columns: repeat(2, 1fr); } }
+        .palette-card {
+            background: #fff; border: 2px solid #e9ecef; border-radius: 10px;
+            padding: .5rem; cursor: pointer; position: relative;
+            transition: all .15s;
+        }
+        .palette-card:hover { border-color: var(--brand); transform: translateY(-1px); }
+        .palette-card.selected { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(0,132,74,.15); }
+        .palette-card.selected::after {
+            content: '✓'; position: absolute; top: 4px; right: 6px;
+            width: 18px; height: 18px; background: var(--brand); color: #fff;
+            border-radius: 50%; font-size: .7rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .palette-swatch {
+            height: 40px; border-radius: 6px; margin-bottom: .4rem;
+            display: flex; overflow: hidden;
+        }
+        .palette-swatch > div { flex: 1; }
+        .palette-name { font-size: .72rem; font-weight: 700; color: #212529; text-align: center; }
+        .palette-name-sub { font-size: .62rem; color: #adb5bd; text-align: center; display: block; margin-top: 1px; }
+
+        /* Enterprise-only section */
+        .enterprise-section {
+            position: relative;
+            border: 1.5px dashed #FFB300;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            background: linear-gradient(135deg, #FFFBF0, #FFF8E1);
+        }
+        .enterprise-badge {
+            position: absolute; top: -10px; left: 1rem;
+            background: linear-gradient(135deg, #FFA000, #F57F17);
+            color: #fff; font-size: .65rem; font-weight: 800;
+            padding: 3px 10px; border-radius: 6px;
+            text-transform: uppercase; letter-spacing: .5px;
+            box-shadow: 0 2px 8px rgba(245,127,23,.3);
+        }
+        .enterprise-badge i { margin-right: 3px; }
+
+        .color-picker-row { display: flex; gap: .5rem; align-items: center; }
+        .color-picker-row input[type=color] {
+            width: 44px; height: 36px; border: 1px solid #dee2e6;
+            border-radius: 8px; padding: 2px; background: #fff; cursor: pointer;
+        }
+        .color-picker-row input[type=text] {
+            flex: 1; border: 1px solid #dee2e6; border-radius: 8px;
+            padding: .5rem .7rem; font-size: .85rem; font-family: monospace;
+        }
+
+        .color-split { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .5rem; }
+        @media (max-width: 700px) { .color-split { grid-template-columns: 1fr; } }
+        .color-split .brand-field { margin-bottom: 0; }
+
+        .toggle-row-wl { display: flex; align-items: center; gap: .75rem; padding: .5rem 0; }
+        .toggle-row-wl .text { flex: 1; }
+        .toggle-row-wl .text strong { display: block; font-size: .85rem; color: #212529; }
+        .toggle-row-wl .text small { font-size: .72rem; color: #6c757d; }
+    </style>
+</head>
+<body>
+
+<div class="mock-sidebar">
+    <div class="brand">Evulery</div>
+    <div class="nav-item"><i class="bi bi-house-door me-2"></i>Dashboard</div>
+    <div class="nav-item"><i class="bi bi-calendar-check me-2"></i>Prenotazioni</div>
+    <div class="nav-item"><i class="bi bi-people me-2"></i>Clienti</div>
+    <div class="nav-item active"><i class="bi bi-gear me-2"></i>Impostazioni</div>
+    <div class="nav-item"><i class="bi bi-question-circle me-2"></i>Guida</div>
+</div>
+
+<div class="main">
+    <h2>Impostazioni</h2>
+    <p class="subtitle">Configura il tuo ristorante</p>
+
+    <div class="tabs">
+        <div class="tab">Generali</div>
+        <div class="tab">Orari e Coperti</div>
+        <div class="tab">Categorie Pasto</div>
+        <div class="tab">Chiusure</div>
+        <div class="tab">Promozioni</div>
+        <div class="tab">Notifiche</div>
+        <div class="tab">Caparra</div>
+        <div class="tab">Dominio</div>
+        <div class="tab active"><i class="bi bi-grid-3x3-gap"></i> Vetrina Digitale</div>
+    </div>
+
+    <div class="info-banner">
+        <i class="bi bi-info-circle"></i>
+        <div>
+            La <strong>Vetrina Digitale</strong> è una pagina pubblica (<strong>dash.evulery.it/nuok/hub</strong>) con tutte le azioni che i clienti possono fare: prenotare, vedere il menu, recensire, contattarti. Stampa il QR code qui sotto e mettilo al tavolo, in vetrina fisica, sul menu cartaceo, sui volantini, sul biglietto da visita.
+        </div>
+    </div>
+
+    <div class="layout">
+
+        <!-- LEFT: configuration -->
+        <div>
+
+            <!-- Branding -->
+            <div class="card">
+                <div class="card-head"><h5><i class="bi bi-palette me-1" style="color:var(--brand);"></i> Identità del tuo ristorante</h5></div>
+
+                <div class="brand-field">
+                    <label>Nome pubblico</label>
+                    <input type="text" value="Nuok">
+                </div>
+                <div class="brand-field">
+                    <label>Tagline (1 riga sotto il nome)</label>
+                    <input type="text" value="Trattoria moderna · Roma">
+                </div>
+                <div class="brand-field">
+                    <label>Logo</label>
+                    <div class="uploader">
+                        <i class="bi bi-cloud-upload"></i>
+                        Trascina qui o <a href="#" style="color:var(--brand);">sfoglia</a>
+                        <div style="font-size:.7rem; margin-top: .2rem;">PNG/JPG · 200x200 min · sfondo trasparente consigliato</div>
+                    </div>
+                </div>
+                <div class="brand-field">
+                    <label>Copertina (sfondo dietro il logo)</label>
+                    <div class="uploader">
+                        <i class="bi bi-image"></i>
+                        Trascina qui o <a href="#" style="color:var(--brand);">sfoglia</a>
+                        <div style="font-size:.7rem; margin-top: .2rem;">Consigliato 1200x400 · foto del locale o piatto</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stili e Brand -->
+            <div class="card">
+                <div class="card-head">
+                    <h5><i class="bi bi-droplet me-1" style="color:var(--brand);"></i> Stili e colori</h5>
+                </div>
+
+                <div class="brand-field">
+                    <label>Palette (8 temi curati)</label>
+                    <div class="palette-grid">
+                        <div class="palette-card selected">
+                            <div class="palette-swatch">
+                                <div style="background:#00844A;"></div>
+                                <div style="background:#E8F5E9;"></div>
+                                <div style="background:#006837;"></div>
+                            </div>
+                            <div class="palette-name">Evulery Green</div>
+                            <span class="palette-name-sub">Default</span>
+                        </div>
+                        <div class="palette-card">
+                            <div class="palette-swatch">
+                                <div style="background:#C62828;"></div>
+                                <div style="background:#FFEBEE;"></div>
+                                <div style="background:#8B0000;"></div>
+                            </div>
+                            <div class="palette-name">Rosso Trattoria</div>
+                            <span class="palette-name-sub">Osterie, pizzerie</span>
+                        </div>
+                        <div class="palette-card">
+                            <div class="palette-swatch">
+                                <div style="background:#212121;"></div>
+                                <div style="background:#FFD700;"></div>
+                                <div style="background:#000;"></div>
+                            </div>
+                            <div class="palette-name">Nero Elegante</div>
+                            <span class="palette-name-sub">Fine dining</span>
+                        </div>
+                        <div class="palette-card">
+                            <div class="palette-swatch">
+                                <div style="background:#D84315;"></div>
+                                <div style="background:#FFF3E0;"></div>
+                                <div style="background:#BF360C;"></div>
+                            </div>
+                            <div class="palette-name">Terracotta</div>
+                            <span class="palette-name-sub">Rustico, campagna</span>
+                        </div>
+                        <div class="palette-card">
+                            <div class="palette-swatch">
+                                <div style="background:#1565C0;"></div>
+                                <div style="background:#E3F2FD;"></div>
+                                <div style="background:#0D47A1;"></div>
+                            </div>
+                            <div class="palette-name">Blu Navy</div>
+                            <span class="palette-name-sub">Pesce, mare</span>
+                        </div>
+                        <div class="palette-card">
+                            <div class="palette-swatch">
+                                <div style="background:#8D6E63;"></div>
+                                <div style="background:#EFEBE9;"></div>
+                                <div style="background:#5D4037;"></div>
+                            </div>
+                            <div class="palette-name">Oro & Marrone</div>
+                            <span class="palette-name-sub">Enoteche, wine bar</span>
+                        </div>
+                        <div class="palette-card">
+                            <div class="palette-swatch">
+                                <div style="background:#2E7D32;"></div>
+                                <div style="background:#F1F8E9;"></div>
+                                <div style="background:#1B5E20;"></div>
+                            </div>
+                            <div class="palette-name">Verde Bosco</div>
+                            <span class="palette-name-sub">Bio, vegetale</span>
+                        </div>
+                        <div class="palette-card">
+                            <div class="palette-swatch">
+                                <div style="background:#6A1B9A;"></div>
+                                <div style="background:#F3E5F5;"></div>
+                                <div style="background:#4A148C;"></div>
+                            </div>
+                            <div class="palette-name">Viola Elegante</div>
+                            <span class="palette-name-sub">Cocktail bar, lounge</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enterprise-only: custom colors + font + white-label -->
+                <div class="enterprise-section">
+                    <span class="enterprise-badge"><i class="bi bi-stars"></i> Enterprise</span>
+
+                    <div style="margin-top: .5rem; margin-bottom: 1rem; font-size: .8rem; color: #6D4C41;">
+                        <i class="bi bi-palette me-1"></i>
+                        Se nessuna palette ti convince, personalizza i colori del tuo Hub a piacere.
+                    </div>
+
+                    <div class="color-split">
+                        <div class="brand-field">
+                            <label>Primario <span style="color:#adb5bd; font-weight:normal;">(CTA, icone)</span></label>
+                            <div class="color-picker-row">
+                                <input type="color" value="#00844A">
+                                <input type="text" value="#00844A">
+                            </div>
+                        </div>
+                        <div class="brand-field">
+                            <label>Accento <span style="color:#adb5bd; font-weight:normal;">(hover, badge)</span></label>
+                            <div class="color-picker-row">
+                                <input type="color" value="#E8F5E9">
+                                <input type="text" value="#E8F5E9">
+                            </div>
+                        </div>
+                        <div class="brand-field">
+                            <label>Sfondo</label>
+                            <div class="color-picker-row">
+                                <input type="color" value="#F5F6FA">
+                                <input type="text" value="#F5F6FA">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="brand-field" style="margin-top: 1rem;">
+                        <label>Font del titolo ristorante</label>
+                        <select style="width:100%; border: 1px solid #dee2e6; border-radius: 8px; padding: .5rem .7rem; font-size: .85rem; background: #fff;">
+                            <option>System moderno (default · sans-serif)</option>
+                            <option>Serif elegante (Playfair Display)</option>
+                            <option>Serif classico (Merriweather)</option>
+                            <option>Artigianale (Caveat · scritta a mano)</option>
+                            <option>Minimalista (Inter)</option>
+                        </select>
+                    </div>
+
+                    <div class="toggle-row-wl" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #FFE082;">
+                        <div class="text">
+                            <strong><i class="bi bi-eye-slash me-1"></i> White-label</strong>
+                            <small>Rimuove "Powered by Evulery" dal footer della Vetrina</small>
+                        </div>
+                        <div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action cards toggle -->
+            <div class="card">
+                <div class="card-head">
+                    <h5><i class="bi bi-list-check me-1" style="color:var(--brand);"></i> Azioni disponibili</h5>
+                    <span style="font-size:.75rem; color:#6c757d;">Trascina per riordinare · click per modificare</span>
+                </div>
+
+                <!-- Action row ACTIVE -->
+                <div class="action-row">
+                    <i class="bi bi-grip-vertical drag-handle"></i>
+                    <div class="action-icon"><i class="bi bi-calendar-check"></i></div>
+                    <div class="action-text">
+                        <input class="action-label-input" value="Prenota un tavolo">
+                        <span class="action-sub">→ collega a widget prenotazione</span>
+                    </div>
+                    <button class="btn-edit-sm"><i class="bi bi-pencil"></i></button>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div>
+                </div>
+
+                <div class="action-row">
+                    <i class="bi bi-grip-vertical drag-handle"></i>
+                    <div class="action-icon"><i class="bi bi-journal-richtext"></i></div>
+                    <div class="action-text">
+                        <input class="action-label-input" value="Guarda il menu">
+                        <span class="action-sub">→ collega al menu digitale</span>
+                    </div>
+                    <button class="btn-edit-sm"><i class="bi bi-pencil"></i></button>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div>
+                </div>
+
+                <div class="action-row">
+                    <i class="bi bi-grip-vertical drag-handle"></i>
+                    <div class="action-icon"><i class="bi bi-star"></i></div>
+                    <div class="action-text">
+                        <input class="action-label-input" value="Lascia una recensione">
+                        <span class="action-sub">→ collega alla landing recensioni</span>
+                    </div>
+                    <button class="btn-edit-sm"><i class="bi bi-pencil"></i></button>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div>
+                </div>
+
+                <div class="action-row">
+                    <i class="bi bi-grip-vertical drag-handle"></i>
+                    <div class="action-icon"><i class="bi bi-gift"></i></div>
+                    <div class="action-text">
+                        <input class="action-label-input" value="Offerte del momento">
+                        <span class="action-sub">→ mostra promozioni attive</span>
+                    </div>
+                    <button class="btn-edit-sm"><i class="bi bi-pencil"></i></button>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div>
+                </div>
+
+                <div class="action-row">
+                    <i class="bi bi-grip-vertical drag-handle"></i>
+                    <div class="action-icon"><i class="bi bi-whatsapp"></i></div>
+                    <div class="action-text">
+                        <input class="action-label-input" value="Scrivici su WhatsApp">
+                        <span class="action-sub">wa.me/39061234567</span>
+                    </div>
+                    <button class="btn-edit-sm"><i class="bi bi-pencil"></i></button>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div>
+                </div>
+
+                <!-- Action row OFF -->
+                <div class="action-row off">
+                    <i class="bi bi-grip-vertical drag-handle"></i>
+                    <div class="action-icon"><i class="bi bi-telephone"></i></div>
+                    <div class="action-text">
+                        <input class="action-label-input" value="Chiamaci">
+                        <span class="action-sub">tel:+390612345678</span>
+                    </div>
+                    <button class="btn-edit-sm"><i class="bi bi-pencil"></i></button>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div>
+                </div>
+
+                <div class="action-row">
+                    <i class="bi bi-grip-vertical drag-handle"></i>
+                    <div class="action-icon"><i class="bi bi-geo-alt"></i></div>
+                    <div class="action-text">
+                        <input class="action-label-input" value="Come raggiungerci">
+                        <span class="action-sub">→ Google Maps · Via Roma 42</span>
+                    </div>
+                    <button class="btn-edit-sm"><i class="bi bi-pencil"></i></button>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div>
+                </div>
+
+                <!-- CUSTOM action example (Enterprise only) -->
+                <div class="action-row" style="border-style: dashed; border-color: #FFB74D;">
+                    <i class="bi bi-grip-vertical drag-handle"></i>
+                    <div class="action-icon" style="background: #FFF3E0;"><i class="bi bi-link-45deg" style="color:#E65100;"></i></div>
+                    <div class="action-text">
+                        <input class="action-label-input" value="Prenota eventi privati">
+                        <span class="action-sub">https://eventi.nuok.it/richiesta</span>
+                    </div>
+                    <button class="btn-edit-sm"><i class="bi bi-pencil"></i></button>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div>
+                </div>
+
+                <div class="add-custom">
+                    <i class="bi bi-plus-circle me-1"></i> Aggiungi link personalizzato
+                    <span class="notes ms-1" style="margin-left:.5rem !important;">Solo Enterprise</span>
+                </div>
+            </div>
+
+            <!-- Social footer -->
+            <div class="card">
+                <div class="card-head"><h5><i class="bi bi-share me-1" style="color:var(--brand);"></i> Social (footer Hub)</h5></div>
+                <div class="brand-field">
+                    <label><i class="bi bi-instagram me-1"></i> Instagram URL</label>
+                    <input type="url" placeholder="https://instagram.com/tuoristorante" value="https://instagram.com/nuok_roma">
+                </div>
+                <div class="brand-field">
+                    <label><i class="bi bi-facebook me-1"></i> Facebook URL</label>
+                    <input type="url" placeholder="https://facebook.com/tuoristorante">
+                </div>
+                <div class="brand-field">
+                    <label><i class="bi bi-tiktok me-1"></i> TikTok URL</label>
+                    <input type="url" placeholder="https://tiktok.com/@tuoristorante">
+                </div>
+            </div>
+
+            <!-- Save -->
+            <div class="card" style="padding:0;">
+                <div class="save-bar">
+                    <span style="font-size:.78rem; color:#6c757d;"><i class="bi bi-eye me-1"></i>Apri la tua Vetrina: <a href="#" style="color:var(--brand);">dash.evulery.it/nuok/hub</a></span>
+                    <button class="btn-brand"><i class="bi bi-check-circle me-1"></i> Salva Vetrina</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT: QR + preview -->
+        <div>
+            <div class="preview-sticky">
+
+                <!-- QR card -->
+                <div class="qr-card">
+                    <h6><i class="bi bi-qr-code me-1"></i> QR Code della tua Vetrina</h6>
+                    <div class="qr-img"><i class="bi bi-qr-code" style="font-size:7rem;"></i></div>
+                    <div class="qr-url">dash.evulery.it/nuok/hub</div>
+                    <div class="qr-actions">
+                        <button class="btn-qr"><i class="bi bi-download me-1"></i>PNG</button>
+                        <button class="btn-qr"><i class="bi bi-file-earmark-pdf me-1"></i>PDF stampa</button>
+                        <button class="btn-qr"><i class="bi bi-clipboard me-1"></i>Copia link</button>
+                    </div>
+                </div>
+
+                <!-- Live preview mock -->
+                <div class="preview-card">
+                    <h6><i class="bi bi-phone me-1"></i> Anteprima mobile</h6>
+                    <div class="preview-iframe-mock">
+                        <div class="ph-cover"></div>
+                        <div class="ph-logo">N</div>
+                        <div class="ph-name">Nuok</div>
+                        <div class="ph-sub">Trattoria moderna · Roma</div>
+                        <div class="ph-cta"><i class="bi bi-calendar-check"></i> PRENOTA UN TAVOLO</div>
+                        <div class="ph-row"><i class="bi bi-journal-richtext"></i> Guarda il menu</div>
+                        <div class="ph-row"><i class="bi bi-star"></i> Lascia una recensione</div>
+                        <div class="ph-row"><i class="bi bi-gift"></i> Offerte del momento</div>
+                        <div class="ph-row"><i class="bi bi-whatsapp"></i> Scrivici su WhatsApp</div>
+                        <div class="ph-row"><i class="bi bi-geo-alt"></i> Come raggiungerci</div>
+                        <div class="ph-row"><i class="bi bi-link-45deg"></i> Prenota eventi privati</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

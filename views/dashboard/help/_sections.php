@@ -329,6 +329,115 @@ HTML
 HTML
     ],
 
+    'dominio' => [
+        'title'       => 'Dominio personalizzato',
+        'subtitle'    => 'Usa il tuo dominio per prenotazioni e Vetrina',
+        'icon'        => 'bi-globe',
+        'color'       => '#3F51B5',
+        'category'    => 'avanzati',
+        'count_label' => '5 step',
+        'keywords'    => 'dominio personalizzato custom domain cname dns ssl https registrar aruba register godaddy namecheap sottodominio',
+        'read_time'   => 5,
+        'body' => <<<'HTML'
+<p>Con il piano <strong>Enterprise</strong> puoi usare un <strong>tuo dominio</strong> al posto di <code>dash.evulery.it/tuo-ristorante</code>. Es. i tuoi clienti prenotano su <code>prenotazioni.ristorantemario.it</code> invece che su un URL Evulery.</p>
+
+<div class="hg-tip"><strong><i class="bi bi-lightbulb me-1"></i>Perch&eacute; usarlo:</strong> pi&ugrave; professionale, marchio coerente, aumenta la fiducia del cliente (vede il TUO dominio, non un servizio esterno).</div>
+
+<h5 style="margin-top:1.5rem;">Cosa ti serve prima di iniziare</h5>
+<ul>
+    <li>Un <strong>dominio di propriet&agrave;</strong> (es. <code>ristorantemario.it</code> comprato su Aruba, Register.it, GoDaddy, Namecheap, ecc.)</li>
+    <li>L&rsquo;<strong>accesso al pannello DNS</strong> del tuo registrar (la password dove hai comprato il dominio)</li>
+    <li>Piano <strong>Enterprise</strong> attivo su Evulery</li>
+</ul>
+<p style="margin-top:.75rem;">Puoi usare il dominio <strong>completo</strong> (<code>ristorantemario.it</code>) oppure un <strong>sottodominio</strong> (<code>prenotazioni.ristorantemario.it</code>, <code>tavolo.ristorantemario.it</code>). Consigliamo il sottodominio: cos&igrave; il sito principale del tuo ristorante non viene toccato.</p>
+
+<h5 style="margin-top:1.5rem;">Procedura in 5 step</h5>
+
+<div class="hg-step">
+    <div class="hg-step-num">1</div>
+    <div class="hg-step-content">
+        <strong>Inserisci il dominio in Evulery</strong><br>
+        Vai in <em>Impostazioni &rarr; Dominio personalizzato</em>, scrivi il dominio che vuoi usare (es. <code>prenotazioni.ristorantemario.it</code>) e clicca <strong>Salva</strong>. Il sistema ti mostrer&agrave; un valore <strong>CNAME</strong> da configurare sul tuo DNS (es. <code>dash.evulery.it</code>).
+    </div>
+</div>
+
+<div class="hg-step">
+    <div class="hg-step-num">2</div>
+    <div class="hg-step-content">
+        <strong>Configura il record DNS sul tuo registrar</strong><br>
+        Accedi al pannello del registrar dove hai comprato il dominio. Vai nella sezione <strong>Gestione DNS</strong> (o &ldquo;Zone DNS&rdquo;) del tuo dominio. Aggiungi un record di tipo <strong>CNAME</strong>:
+        <table style="margin-top:.5rem; font-size:.85rem; border-collapse: collapse;">
+            <tr style="background:#f0f0f0;"><th style="padding:4px 8px; text-align:left;">Campo</th><th style="padding:4px 8px; text-align:left;">Valore</th></tr>
+            <tr><td style="padding:4px 8px; border-top: 1px solid #ddd;"><strong>Tipo</strong></td><td style="padding:4px 8px; border-top: 1px solid #ddd;">CNAME</td></tr>
+            <tr><td style="padding:4px 8px;"><strong>Nome / Host</strong></td><td style="padding:4px 8px;"><code>prenotazioni</code> (solo la parte prima del dominio)</td></tr>
+            <tr><td style="padding:4px 8px;"><strong>Valore / Punta a</strong></td><td style="padding:4px 8px;"><code>dash.evulery.it</code></td></tr>
+            <tr><td style="padding:4px 8px;"><strong>TTL</strong></td><td style="padding:4px 8px;">3600 (1 ora) o <em>automatico</em></td></tr>
+        </table>
+        <p style="margin-top:.5rem; font-size:.85rem;">Salva il record. <strong>Attenzione:</strong> se usi il dominio completo (non un sottodominio) chiedi al tuo registrar come fare &mdash; alcuni registrar usano <code>@</code> come &ldquo;Nome&rdquo; oppure richiedono ALIAS/ANAME invece di CNAME.</p>
+    </div>
+</div>
+
+<div class="hg-step">
+    <div class="hg-step-num">3</div>
+    <div class="hg-step-content">
+        <strong>Attendi la propagazione DNS</strong><br>
+        Il cambio DNS si propaga da <strong>pochi minuti fino a 24 ore</strong>, a seconda del registrar. Nella maggior parte dei casi bastano 10-30 minuti. Torna in <em>Impostazioni &rarr; Dominio personalizzato</em> e clicca <strong>Verifica DNS</strong>. Se il verde appare, sei a met&agrave; strada.
+    </div>
+</div>
+
+<div class="hg-step">
+    <div class="hg-step-num">4</div>
+    <div class="hg-step-content">
+        <strong>Attendi l&rsquo;attivazione SSL</strong><br>
+        Dopo la verifica DNS, il nostro team aggiunge il tuo dominio al server entro 24h lavorative. Poi il certificato HTTPS viene emesso automaticamente (Let&rsquo;s Encrypt). Riceverai un&rsquo;<strong>email di conferma</strong> quando il dominio &egrave; attivo. Non devi fare nulla in questa fase.
+    </div>
+</div>
+
+<div class="hg-step">
+    <div class="hg-step-num">5</div>
+    <div class="hg-step-content">
+        <strong>Testa il dominio</strong><br>
+        Apri un browser e vai sul tuo dominio (es. <code>https://prenotazioni.ristorantemario.it</code>). Dovresti vedere la tua <strong>Vetrina Digitale</strong> o il tuo widget di prenotazione. Se vedi il lucchetto verde, HTTPS funziona. Aggiorna i link del tuo sito/social/biglietti da visita col nuovo dominio.
+    </div>
+</div>
+
+<h5 style="margin-top:1.5rem;">Guide specifiche per registrar</h5>
+<ul>
+    <li><strong>Aruba</strong>: Area clienti &rarr; Hosting e domini &rarr; <em>il tuo dominio</em> &rarr; Gestione DNS &rarr; Modifica &rarr; Aggiungi record CNAME</li>
+    <li><strong>Register.it</strong>: Dominio &rarr; DNS avanzato &rarr; Nuovo record &rarr; tipo CNAME</li>
+    <li><strong>GoDaddy</strong>: My Products &rarr; DNS &rarr; Add New Record &rarr; CNAME</li>
+    <li><strong>Namecheap</strong>: Domain List &rarr; Manage &rarr; Advanced DNS &rarr; Add New Record &rarr; CNAME Record</li>
+    <li><strong>Serverplan</strong>: Pannello cPanel del tuo dominio &rarr; Zone Editor &rarr; Add Record &rarr; Tipo CNAME</li>
+</ul>
+
+<h5 style="margin-top:1.5rem;">Problemi comuni</h5>
+<div class="hg-faq">
+    <div class="hg-faq-item">
+        <div class="hg-faq-q"><i class="bi bi-chevron-right"></i>La verifica DNS dice che il record non &egrave; corretto, ma l&rsquo;ho appena inserito</div>
+        <div class="hg-faq-a">Il DNS ha bisogno di <strong>tempo per propagarsi</strong>. Aspetta 15-30 minuti e riprova. Se dopo 2 ore ancora non verifica, ricontrolla il record sul registrar &mdash; spesso l&rsquo;errore &egrave; nel campo "Nome/Host" (deve essere solo la parte prima del dominio, non quella completa).</div>
+    </div>
+    <div class="hg-faq-item">
+        <div class="hg-faq-q"><i class="bi bi-chevron-right"></i>Posso usare direttamente il mio dominio principale (ristorantemario.it senza sottodominio)?</div>
+        <div class="hg-faq-a">Tecnicamente s&igrave;, ma <strong>non lo consigliamo</strong>: sostituisci completamente il sito principale del ristorante. Inoltre molti registrar non permettono CNAME sul dominio radice, serve un record ALIAS/ANAME. Usa un sottodominio (<code>prenotazioni</code>, <code>tavolo</code>, <code>vetrina</code>) e tieni il sito principale separato.</div>
+    </div>
+    <div class="hg-faq-item">
+        <div class="hg-faq-q"><i class="bi bi-chevron-right"></i>Quanto costa il dominio personalizzato?</div>
+        <div class="hg-faq-a">Il servizio Evulery &egrave; <strong>gratuito</strong> (incluso nel piano Enterprise). Il dominio lo acquisti dal tuo registrar (tipicamente 10-15&euro;/anno per un .it).</div>
+    </div>
+    <div class="hg-faq-item">
+        <div class="hg-faq-q"><i class="bi bi-chevron-right"></i>Il browser mostra "Not Secure" o "Certificato non valido"</div>
+        <div class="hg-faq-a">&Egrave; normale nelle prime 24 ore dopo la verifica DNS: il certificato SSL non &egrave; ancora stato emesso. Aspetta e riprova. Se dopo 48 ore dalla verifica DNS vedi ancora l&rsquo;errore, <a href="mailto:info@evulery.it" style="color:var(--brand);">scrivici</a>.</div>
+    </div>
+    <div class="hg-faq-item">
+        <div class="hg-faq-q"><i class="bi bi-chevron-right"></i>Posso cambiare o rimuovere il dominio personalizzato?</div>
+        <div class="hg-faq-a">S&igrave;. In <em>Impostazioni &rarr; Dominio personalizzato</em> lascia il campo vuoto e salva. Il tuo account torner&agrave; a funzionare esclusivamente su <code>dash.evulery.it/tuo-ristorante</code>.</div>
+    </div>
+</div>
+
+<div class="hg-info"><strong><i class="bi bi-question-circle me-1"></i>Hai bisogno di aiuto?</strong> Scrivici a <a href="mailto:info@evulery.it" style="color:var(--brand);">info@evulery.it</a> indicando il tuo dominio: possiamo verificare la configurazione insieme a te.</div>
+HTML
+    ],
+
     // ══════════ SUPPORTO ══════════
 
     'faq' => [

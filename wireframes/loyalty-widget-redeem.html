@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Wireframe — Widget prenotazione con riscatto punti</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root { --brand: #00844A; --brand-light: #E8F5E9; --brand-dark: #006837; --gold: #F57F17; --gold-light: #FFF8E1; }
+        body { background: #f5f6fa; font-family: system-ui, sans-serif; font-size: .92rem; padding: 2rem 1rem; }
+        .widget { max-width: 540px; margin: 0 auto; background: #fff; border: 1px solid #e9ecef; border-radius: 16px; padding: 1.5rem; }
+        .wtitle { text-align: center; font-size: 1.5rem; font-weight: 700; margin-bottom: .25rem; }
+        .wsub { text-align: center; color: #6c757d; font-size: .85rem; margin-bottom: 1.25rem; }
+        .progress-bar-steps { display: flex; justify-content: space-between; align-items: center; padding: .5rem 0; margin-bottom: 1.25rem; gap: .25rem; }
+        .pstep { display: flex; align-items: center; gap: .35rem; font-size: .78rem; color: #adb5bd; }
+        .pstep.active { color: var(--brand); font-weight: 700; }
+        .pstep.done { color: var(--brand); }
+        .pstep i { font-size: .95rem; }
+        .pchip { background: var(--brand-light); color: var(--brand-dark); padding: 2px 8px; border-radius: 6px; font-size: .7rem; font-weight: 700; margin-left: 4px; }
+        .pchev { color: #dee2e6; font-size: .7rem; }
+
+        /* Pre-widget banner (visible when loyalty enabled and customer NOT yet identified) */
+        .loyalty-banner-unknown {
+            background: linear-gradient(135deg, var(--gold-light), #FFF3E0);
+            border: 1px solid #FFCC80; border-radius: 10px;
+            padding: .6rem .85rem; display: flex; align-items: center; gap: .6rem;
+            font-size: .8rem; color: #6D4C41; margin-bottom: 1rem;
+        }
+        .loyalty-banner-unknown i { color: var(--gold); font-size: 1.1rem; }
+
+        /* Step 4 - dati form */
+        .form-field { margin-bottom: 1rem; }
+        .form-field label { font-size: .8rem; font-weight: 600; color: #495057; display: block; margin-bottom: .35rem; }
+        .form-field input, .form-field textarea { width: 100%; border: 1px solid #dee2e6; border-radius: 8px; padding: .55rem .75rem; font-size: .88rem; }
+
+        /* Returning customer hero */
+        .returning-hero {
+            background: linear-gradient(135deg, var(--brand-light), #D7F5DC);
+            border: 1px solid #81C784;
+            border-radius: 12px; padding: 1rem; margin: 1rem 0;
+        }
+        .returning-hero-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .75rem; }
+        .returning-title { font-size: .95rem; font-weight: 700; color: var(--brand-dark); }
+        .returning-pts { background: #fff; border: 2px solid var(--brand); border-radius: 10px; padding: 4px 12px; font-size: .95rem; font-weight: 800; color: var(--brand); }
+
+        /* Tier cards */
+        .tier-list { display: flex; flex-direction: column; gap: .5rem; margin-top: .5rem; }
+        .tier-card { background: #fff; border: 2px solid #e9ecef; border-radius: 10px; padding: .7rem .85rem; display: flex; align-items: center; gap: .75rem; cursor: pointer; }
+        .tier-card.selected { border-color: var(--brand); background: var(--brand-light); }
+        .tier-card.disabled { opacity: .5; cursor: not-allowed; background: #fafbfc; }
+        .tier-radio { width: 20px; height: 20px; border: 2px solid #adb5bd; border-radius: 50%; flex-shrink: 0; position: relative; }
+        .tier-card.selected .tier-radio { border-color: var(--brand); }
+        .tier-card.selected .tier-radio::after { content: ''; position: absolute; inset: 3px; background: var(--brand); border-radius: 50%; }
+        .tier-info { flex: 1; }
+        .tier-main { font-size: .88rem; font-weight: 700; color: #212529; }
+        .tier-sub { font-size: .74rem; color: #6c757d; margin-top: 2px; }
+        .tier-badge { background: var(--brand); color: #fff; font-size: .65rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: .5px; }
+        .tier-card.disabled .tier-radio { border-color: #dee2e6; }
+
+        /* Impact preview */
+        .impact-preview {
+            background: #fff; border: 1px dashed var(--brand); border-radius: 8px;
+            padding: .6rem .85rem; margin-top: .75rem;
+            display: flex; justify-content: space-between; font-size: .8rem;
+        }
+        .impact-preview .highlight { color: var(--brand); font-weight: 700; }
+
+        .btn-submit { width: 100%; background: var(--brand); color: #fff; border: none; padding: .8rem; border-radius: 10px; font-weight: 700; font-size: 1rem; margin-top: 1rem; }
+        .notes { font-size: .7rem; background: #fff3cd; border: 1px dashed #ffc107; padding: .25rem .5rem; border-radius: 4px; color: #856404; font-style: italic; display: inline-block; margin-top: .35rem; }
+
+        .divider-title { font-size: .75rem; font-weight: 700; text-transform: uppercase; color: #adb5bd; letter-spacing: .5px; margin: 1.25rem 0 .5rem; }
+    </style>
+</head>
+<body>
+
+<div class="widget">
+    <div class="wtitle">Nuok</div>
+    <div class="wsub">Prenota un tavolo</div>
+
+    <!-- Progress bar (step 4 attivo) -->
+    <div class="progress-bar-steps">
+        <div class="pstep done"><i class="bi bi-calendar3"></i> Data <span class="pchip">25 Apr</span></div>
+        <div class="pchev">›</div>
+        <div class="pstep done"><i class="bi bi-people"></i> Persone <span class="pchip">2</span></div>
+        <div class="pchev">›</div>
+        <div class="pstep done"><i class="bi bi-clock"></i> Orario <span class="pchip">20:30</span></div>
+        <div class="pchev">›</div>
+        <div class="pstep active"><i class="bi bi-person-lines-fill"></i> Dati</div>
+    </div>
+
+    <!-- Form dati contatto -->
+    <div class="form-field">
+        <label>Nome *</label>
+        <input type="text" value="Mario" placeholder="Mario">
+    </div>
+    <div class="form-field">
+        <label>Cognome *</label>
+        <input type="text" value="Rossi" placeholder="Rossi">
+    </div>
+    <div class="form-field">
+        <label>Email *</label>
+        <input type="email" value="mario.rossi@email.it">
+    </div>
+    <div class="form-field">
+        <label>Telefono *</label>
+        <input type="tel" value="+39 333 1234567">
+    </div>
+
+    <!-- Returning customer recognition + loyalty -->
+    <div class="returning-hero">
+        <div class="returning-hero-head">
+            <div>
+                <div class="returning-title"><i class="bi bi-gift-fill me-1"></i> Bentornato Mario!</div>
+                <div style="font-size:.78rem; color:#546E2F;">Ultima visita: 2 Aprile 2026</div>
+            </div>
+            <div class="returning-pts">340 pts</div>
+        </div>
+
+        <div class="divider-title" style="margin:.5rem 0 .35rem; color:#6D4C41;">Vuoi usare i tuoi punti?</div>
+
+        <div class="tier-list">
+            <div class="tier-card">
+                <div class="tier-radio"></div>
+                <div class="tier-info">
+                    <div class="tier-main">Non usare punti ora</div>
+                    <div class="tier-sub">Accumuli altri 10 pts dopo questa visita</div>
+                </div>
+            </div>
+
+            <div class="tier-card selected">
+                <div class="tier-radio"></div>
+                <div class="tier-info">
+                    <div class="tier-main">Usa 100 punti · <span style="color:var(--brand);">−5% sulla prenotazione</span></div>
+                    <div class="tier-sub">Ti resteranno 240 pts</div>
+                </div>
+                <span class="tier-badge">Consigliato</span>
+            </div>
+
+            <div class="tier-card">
+                <div class="tier-radio"></div>
+                <div class="tier-info">
+                    <div class="tier-main">Usa 250 punti · <span style="color:var(--brand);">−10%</span></div>
+                    <div class="tier-sub">Ti resteranno 90 pts</div>
+                </div>
+            </div>
+
+            <div class="tier-card disabled">
+                <div class="tier-radio"></div>
+                <div class="tier-info">
+                    <div class="tier-main">Usa 500 punti · −15%</div>
+                    <div class="tier-sub">Punti insufficienti (mancano 160)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="impact-preview">
+            <span>Sconto applicato al tavolo:</span>
+            <span class="highlight">−5% con 100 punti</span>
+        </div>
+    </div>
+
+    <div class="form-field">
+        <label>Note e richieste</label>
+        <textarea rows="2" placeholder="Es: compleanno, allergie, seggiolone..."></textarea>
+    </div>
+
+    <button class="btn-submit">Conferma Prenotazione</button>
+
+    <!-- Info scenario utenti SCONOSCIUTI (banner separato, mostrato SOLO se loyalty visible + no ID) -->
+    <div style="margin-top: 2rem; border-top: 2px dashed #e9ecef; padding-top: 1.5rem;">
+        <div class="notes">Per clienti NON riconosciuti (prima visita o email diversa) il blocco verde non appare. Al suo posto:</div>
+        <div class="loyalty-banner-unknown">
+            <i class="bi bi-gift"></i>
+            <div>Prenota qui e guadagni <strong>10 punti fedeltà</strong>. Accumulali per ottenere sconti sulle prossime prenotazioni.</div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

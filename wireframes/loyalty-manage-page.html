@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Wireframe — Manage page con programma fedeltà</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root { --brand: #00844A; --brand-light: #E8F5E9; --brand-dark: #006837; --gold: #F57F17; --gold-light: #FFF8E1; }
+        body { background: #f5f6fa; font-family: system-ui, sans-serif; font-size: .92rem; padding: 2rem 1rem; margin: 0; }
+        .page { max-width: 620px; margin: 0 auto; }
+        .header { background: var(--brand); color: #fff; border-radius: 16px 16px 0 0; padding: 1.5rem; text-align: center; }
+        .header h1 { font-size: 1.5rem; font-weight: 700; margin: 0; }
+        .header .sub { font-size: .85rem; opacity: .9; margin-top: .25rem; }
+        .content { background: #fff; border: 1px solid #e9ecef; border-top: none; border-radius: 0 0 16px 16px; padding: 1.5rem; }
+
+        .status-card { background: var(--brand-light); border-left: 4px solid var(--brand); padding: .85rem 1rem; border-radius: 8px; margin-bottom: 1.25rem; font-size: .88rem; }
+        .status-card strong { color: var(--brand-dark); }
+
+        .section-title { font-size: .82rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #6c757d; margin: 1.25rem 0 .5rem; padding-bottom: .35rem; border-bottom: 1px solid #f0f0f0; }
+        .detail-row { display: grid; grid-template-columns: 110px 1fr; gap: 1rem; padding: .5rem 0; font-size: .88rem; }
+        .detail-label { color: #6c757d; }
+        .detail-value { font-weight: 600; color: #212529; }
+
+        /* Loyalty celebration block (post-visit) */
+        .loyalty-earn {
+            background: linear-gradient(135deg, var(--gold-light), #FFE0B2);
+            border: 1px solid #FFB74D;
+            border-radius: 12px; padding: 1.25rem; margin-top: 1rem;
+            text-align: center; position: relative; overflow: hidden;
+        }
+        .loyalty-earn .earn-icon { font-size: 2.5rem; color: var(--gold); margin-bottom: .5rem; }
+        .loyalty-earn .earn-headline { font-size: 1.25rem; font-weight: 800; color: #5D4037; }
+        .loyalty-earn .earn-points { font-size: 2rem; font-weight: 900; color: var(--gold); line-height: 1; margin: .35rem 0; }
+        .loyalty-earn .earn-sub { font-size: .85rem; color: #6D4C41; }
+
+        /* Balance + progress panel */
+        .balance-panel { background: #fff; border: 1px solid #FFE0B2; border-radius: 12px; padding: 1rem 1.25rem; margin-top: 1rem; }
+        .balance-row { display: flex; justify-content: space-between; align-items: center; }
+        .balance-total { font-size: 1.75rem; font-weight: 800; color: var(--gold); }
+        .balance-label { font-size: .82rem; color: #795548; font-weight: 600; }
+
+        .progress-wrap { margin-top: 1rem; }
+        .progress-label { display: flex; justify-content: space-between; font-size: .75rem; color: #6D4C41; margin-bottom: .35rem; }
+        .progress { height: 10px; background: #FFE0B2; border-radius: 10px; overflow: hidden; }
+        .progress-bar-loyalty { height: 100%; background: linear-gradient(90deg, #FFB300, var(--gold)); border-radius: 10px; }
+
+        .tier-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: .35rem; margin-top: 1rem; }
+        .tier-chip { background: #FFF8E1; border: 1px solid #FFE0B2; border-radius: 8px; padding: .5rem; text-align: center; font-size: .75rem; }
+        .tier-chip.available { border-color: var(--brand); background: #E8F5E9; }
+        .tier-chip.unavailable { opacity: .5; }
+        .tier-chip .pts { font-weight: 700; display: block; font-size: .85rem; }
+        .tier-chip.available .pts { color: var(--brand-dark); }
+        .tier-chip .disc { font-size: .72rem; color: #6D4C41; }
+
+        .cta-book { margin-top: 1rem; text-align: center; }
+        .btn-book { background: var(--brand); color: #fff; border: none; padding: .7rem 1.5rem; border-radius: 10px; font-weight: 700; text-decoration: none; display: inline-block; }
+
+        .expiry-alert { background: #FFF3E0; border: 1px solid #FFB74D; border-radius: 8px; padding: .6rem .85rem; font-size: .78rem; color: #E65100; margin-top: 1rem; display: flex; align-items: center; gap: .5rem; }
+
+        .footer { text-align: center; color: #adb5bd; font-size: .78rem; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid #f0f0f0; }
+
+        .scenario-label { position: absolute; top: -10px; right: 12px; background: #fff3cd; border: 1px dashed #ffc107; padding: 2px 10px; border-radius: 4px; color: #856404; font-size: .7rem; font-style: italic; font-weight: 600; }
+        .scenario-wrap { position: relative; margin: 2rem 0 1rem; }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <div class="header">
+        <h1>La tua prenotazione</h1>
+        <div class="sub">Nuok · Trattoria moderna</div>
+    </div>
+
+    <div class="content">
+
+        <!-- Stato: visitata -->
+        <div class="status-card">
+            <i class="bi bi-check-circle-fill me-1" style="color:var(--brand);"></i>
+            <strong>Visita completata</strong> il 15 Aprile 2026. Grazie di essere venuto!
+        </div>
+
+        <!-- Dettaglio prenotazione -->
+        <div class="section-title">Dettagli</div>
+        <div class="detail-row">
+            <span class="detail-label">Codice</span>
+            <span class="detail-value">#47</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Data</span>
+            <span class="detail-value">Mercoledì 15 Aprile 2026</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Orario</span>
+            <span class="detail-value">20:30</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Persone</span>
+            <span class="detail-value">2</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Sconto</span>
+            <span class="detail-value" style="color:var(--brand);">−5% (100 punti fedeltà riscattati)</span>
+        </div>
+
+        <!-- Celebration block (post-visita) -->
+        <div class="scenario-wrap">
+            <span class="scenario-label">Scenario A: visita appena completata</span>
+            <div class="loyalty-earn">
+                <div class="earn-icon"><i class="bi bi-stars"></i></div>
+                <div class="earn-headline">Hai guadagnato</div>
+                <div class="earn-points">+10 punti</div>
+                <div class="earn-sub">per la tua visita del 15 Aprile</div>
+            </div>
+        </div>
+
+        <!-- Balance + tier availability -->
+        <div class="section-title">Il tuo programma fedeltà</div>
+        <div class="balance-panel">
+            <div class="balance-row">
+                <div>
+                    <div class="balance-total">340 pts</div>
+                    <div class="balance-label">saldo disponibile</div>
+                </div>
+                <div style="font-size: 2rem; color: var(--gold);"><i class="bi bi-gift-fill"></i></div>
+            </div>
+
+            <div class="progress-wrap">
+                <div class="progress-label">
+                    <span>Prossimo livello: <strong>500 pts</strong> per −15%</span>
+                    <span>340 / 500</span>
+                </div>
+                <div class="progress"><div class="progress-bar-loyalty" style="width:68%;"></div></div>
+            </div>
+
+            <div class="tier-strip">
+                <div class="tier-chip available">
+                    <span class="pts">100 pts</span>
+                    <span class="disc">−5% disponibile</span>
+                </div>
+                <div class="tier-chip available">
+                    <span class="pts">250 pts</span>
+                    <span class="disc">−10% disponibile</span>
+                </div>
+                <div class="tier-chip unavailable">
+                    <span class="pts">500 pts</span>
+                    <span class="disc">−15% (mancano 160)</span>
+                </div>
+            </div>
+
+            <!-- Expiry warning -->
+            <div class="expiry-alert">
+                <i class="bi bi-hourglass-split"></i>
+                <div>50 punti in scadenza il <strong>7 Maggio</strong>. Prenota entro quella data per usarli.</div>
+            </div>
+
+            <div class="cta-book">
+                <a href="#" class="btn-book"><i class="bi bi-calendar-plus me-1"></i> Prenota di nuovo</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            Ricevi questa pagina perché hai prenotato con Nuok.<br>
+            <a href="#" style="color:#adb5bd;">Disiscriviti dalle comunicazioni</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
