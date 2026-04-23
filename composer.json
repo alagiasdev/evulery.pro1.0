@@ -16,5 +16,10 @@
             "app/Helpers/functions.php",
             "app/Helpers/view.php"
         ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "classmap-authoritative": true,
+        "sort-packages": true
     }
 }

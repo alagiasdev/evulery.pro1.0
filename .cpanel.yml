@@ -6,6 +6,7 @@ deployment:
     - /bin/cp .htaccess $DEPLOYPATH/.htaccess
     - /bin/cp public/.htaccess $DEPLOYPATH/public/.htaccess
     - /bin/cp .env $DEPLOYPATH/.env 2>/dev/null || true
-    - cd $DEPLOYPATH && /usr/local/bin/composer install --no-dev --optimize-autoloader 2>/dev/null || true
+    - cd $DEPLOYPATH && /usr/local/bin/composer install --no-dev 2>&1 || echo "WARNING composer install failed"
+    - cd $DEPLOYPATH && /usr/local/bin/composer dump-autoload -o -a 2>&1 || echo "WARNING composer dump-autoload failed"
     - chmod -R 775 $DEPLOYPATH/storage/
     - chmod -R 775 $DEPLOYPATH/public/uploads/

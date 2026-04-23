@@ -3,6 +3,7 @@
 namespace App\Controllers\Dashboard;
 
 use App\Core\Auth;
+use App\Core\Cache;
 use App\Core\Database;
 use App\Core\Request;
 use App\Core\TenantResolver;
@@ -59,11 +60,19 @@ class HomeController
         $stmt->execute(['tenant_id' => $tenantId]);
         $upcoming = $stmt->fetchAll();
 
-        // --- No-show rate (last 30 days) ---
-        $noshow = $this->getNoshowRate($db, $tenantId);
+        // --- No-show rate (last 30 days) --- cached 15 min (stable aggregate)
+        $noshow = Cache::remember(
+            "home_noshow_t{$tenantId}",
+            900,
+            fn() => $this->getNoshowRate($db, $tenantId)
+        );
 
-        // --- Source breakdown (last 30 days) ---
-        $sources = $this->getSourceBreakdown($db, $tenantId);
+        // --- Source breakdown (last 30 days) --- cached 15 min (stable aggregate)
+        $sources = Cache::remember(
+            "home_sources_t{$tenantId}",
+            900,
+            fn() => $this->getSourceBreakdown($db, $tenantId)
+        );
 
         // --- User & tenant info for greeting ---
         $user = Auth::user();
