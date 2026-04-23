@@ -15,6 +15,9 @@ class App
 
     public function boot(): void
     {
+        // Install slow-request logger (no-op when under threshold or disabled)
+        PerfLog::install();
+
         // Set timezone
         date_default_timezone_set(env('APP_TIMEZONE', 'Europe/Rome'));
 

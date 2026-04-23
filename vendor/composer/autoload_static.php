@@ -164,6 +164,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Core\\Cache' => __DIR__ . '/../..' . '/app/Core/Cache.php',
         'App\\Core\\Database' => __DIR__ . '/../..' . '/app/Core/Database.php',
         'App\\Core\\Paginator' => __DIR__ . '/../..' . '/app/Core/Paginator.php',
+        'App\\Core\\PerfLog' => __DIR__ . '/../..' . '/app/Core/PerfLog.php',
         'App\\Core\\Request' => __DIR__ . '/../..' . '/app/Core/Request.php',
         'App\\Core\\Response' => __DIR__ . '/../..' . '/app/Core/Response.php',
         'App\\Core\\Router' => __DIR__ . '/../..' . '/app/Core/Router.php',
