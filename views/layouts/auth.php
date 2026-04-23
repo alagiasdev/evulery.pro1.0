@@ -4,16 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($title ?? 'Login') ?> - <?= e(env('APP_NAME', 'Evulery')) ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
     <style nonce="<?= csp_nonce() ?>">
         :root { --brand: #00844A; --brand-dark: #006837; --brand-light: #E8F5E9; }
+        *, *::before, *::after { box-sizing: border-box; }
         body {
             background: #f5f6f8;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
             margin: 0; min-height: 100vh;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
+            color: #1a1d23;
+        }
+        .me-1 { margin-right: .25rem; }
+        .icon {
+            display: inline-block;
+            width: 1em; height: 1em;
+            fill: currentColor;
+            vertical-align: -0.125em;
         }
         .auth-wrapper { width: 100%; max-width: 420px; padding: 2rem 1rem; }
         .auth-logo { text-align: center; margin-bottom: 1.75rem; }
@@ -73,8 +80,8 @@
             background: var(--brand-light);
             display: inline-flex; align-items: center; justify-content: center;
             margin-bottom: .75rem;
+            font-size: 1.3rem; color: var(--brand);
         }
-        .auth-page-icon i { font-size: 1.3rem; color: var(--brand); }
 
         @media (max-width: 576px) {
             .auth-wrapper { padding: 1.5rem 1rem; }
@@ -87,7 +94,7 @@
 <body>
     <div class="auth-wrapper">
         <div class="auth-logo">
-            <div class="auth-logo-icon"><i class="bi bi-calendar-check"></i></div>
+            <div class="auth-logo-icon"><?= bi_icon('calendar-check') ?></div>
             <div class="auth-logo-name"><?= e(env('APP_NAME', 'Evulery')) ?></div>
             <div class="auth-logo-sub">by alagias. - Soluzioni per il web</div>
         </div>
@@ -102,21 +109,24 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script nonce="<?= csp_nonce() ?>">
-    document.querySelectorAll('.auth-toggle-pw').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            var input = this.closest('.auth-input-wrap').querySelector('.auth-input');
-            var icon = this.querySelector('i');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.replace('bi-eye', 'bi-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.replace('bi-eye-slash', 'bi-eye');
-            }
+    (function() {
+        // Bootstrap-icons eye / eye-slash inline SVGs for password toggle
+        var SVG_EYE = '<?= str_replace("'", "\\'", bi_icon('eye')) ?>';
+        var SVG_EYE_SLASH = '<?= str_replace("'", "\\'", bi_icon('eye-slash')) ?>';
+        document.querySelectorAll('.auth-toggle-pw').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var input = this.closest('.auth-input-wrap').querySelector('.auth-input');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    this.innerHTML = SVG_EYE_SLASH;
+                } else {
+                    input.type = 'password';
+                    this.innerHTML = SVG_EYE;
+                }
+            });
         });
-    });
+    })();
     </script>
 </body>
 </html>
