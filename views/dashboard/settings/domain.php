@@ -18,10 +18,30 @@ $domainStatus = $tenant['domain_status'] ?? 'none';
 $cnameTarget = env('CUSTOM_DOMAIN_CNAME_TARGET')
     ?: parse_url((string)env('APP_URL', ''), PHP_URL_HOST)
     ?: ($tenant['cname_target'] ?? 'dash.evulery.it');
+// A record target: explicit env or resolved via cached DNS lookup (handled in controller; here we try env only)
+$aTarget = env('CUSTOM_DOMAIN_A_TARGET');
+if (!$aTarget) {
+    // Best-effort DNS resolution (shared cache with controller)
+    $cached = \App\Core\Cache::get('custom_domain_a_target');
+    if ($cached) {
+        $aTarget = $cached;
+    } else {
+        $rec = @dns_get_record($cnameTarget, DNS_A);
+        if ($rec && isset($rec[0]['ip'])) {
+            $aTarget = $rec[0]['ip'];
+            \App\Core\Cache::put('custom_domain_a_target', $aTarget, 86400);
+        }
+    }
+}
 $hostedUrl = url($tenant['slug']);
 $isActive = in_array($domainStatus, ['active', 'linked'], true);  // 'linked' = legacy
 $isDnsOk = $domainStatus === 'dns_ok';
 $isPending = $domainStatus === 'dns_pending';
+
+// Determine if user is using a subdomain or apex: influences the "Host" field shown
+$domainParts = $customDomain ? explode('.', $customDomain) : [];
+$isSubdomain = count($domainParts) >= 3;
+$hostForDns = $isSubdomain ? $domainParts[0] : '@';
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
@@ -132,16 +152,21 @@ $isPending = $domainStatus === 'dns_pending';
                     <div class="dns-step <?= $step2Class ?>">
                         <div class="dns-num"><?= ($isDnsOk || $isActive) ? $stepDoneIcon : '2' ?></div>
                         <div class="dns-content">
-                            <div class="dns-title">Configura il record CNAME</div>
-                            <div class="dns-desc">Vai nel pannello DNS del tuo provider e crea questo record:</div>
-                            <div class="dns-record">
+                            <div class="dns-title">Configura il record DNS</div>
+                            <div class="dns-desc">Scegli <strong>uno dei due</strong> tipi di record. Entrambi funzionano.</div>
+
+                            <!-- Option A: CNAME (recommended for subdomains) -->
+                            <div class="dns-record" style="margin-top:.75rem;">
+                                <div class="dns-record-row" style="background:var(--brand-light); border-radius:6px 6px 0 0; padding:6px 10px; font-weight:700; color:var(--brand-dark);">
+                                    <span>Opzione A — CNAME <?= $isSubdomain ? '(consigliato per sottodomini)' : '' ?></span>
+                                </div>
                                 <div class="dns-record-row">
                                     <span class="dns-label">Tipo</span>
                                     <span class="dns-value">CNAME</span>
                                 </div>
                                 <div class="dns-record-row">
                                     <span class="dns-label">Host</span>
-                                    <span class="dns-value"><?= e(explode('.', $customDomain)[0]) ?></span>
+                                    <span class="dns-value"><?= e($hostForDns) ?></span>
                                 </div>
                                 <div class="dns-record-row">
                                     <span class="dns-label">Punta a</span>
@@ -152,6 +177,37 @@ $isPending = $domainStatus === 'dns_pending';
                                     <span class="dns-label">TTL</span>
                                     <span class="dns-value">3600 (o Auto)</span>
                                 </div>
+                            </div>
+
+                            <?php if ($aTarget): ?>
+                            <!-- Option B: A record (required for apex, good for Aruba) -->
+                            <div class="dns-record" style="margin-top:.75rem;">
+                                <div class="dns-record-row" style="background:#FFF3E0; border-radius:6px 6px 0 0; padding:6px 10px; font-weight:700; color:#E65100;">
+                                    <span>Opzione B — Record A <?= !$isSubdomain ? '(unica opzione per il dominio apex)' : '(alternativo)' ?></span>
+                                </div>
+                                <div class="dns-record-row">
+                                    <span class="dns-label">Tipo</span>
+                                    <span class="dns-value">A</span>
+                                </div>
+                                <div class="dns-record-row">
+                                    <span class="dns-label">Host</span>
+                                    <span class="dns-value"><?= e($hostForDns) ?></span>
+                                </div>
+                                <div class="dns-record-row">
+                                    <span class="dns-label">Valore</span>
+                                    <span class="dns-value"><?= e($aTarget) ?></span>
+                                    <button type="button" class="dns-copy" data-copy-text="<?= e($aTarget) ?>"><i class="bi bi-clipboard me-1"></i>Copia</button>
+                                </div>
+                                <div class="dns-record-row">
+                                    <span class="dns-label">TTL</span>
+                                    <span class="dns-value">3600 (o Auto)</span>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+
+                            <div style="margin-top:.6rem; font-size:.78rem; color:#6c757d;">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Se il tuo registrar (es. Aruba) non permette CNAME su un nome host specifico o sull'apex del dominio, usa l'<strong>Opzione B</strong>.
                             </div>
                         </div>
                     </div>

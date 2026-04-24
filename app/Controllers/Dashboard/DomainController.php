@@ -92,15 +92,32 @@ class DomainController
             Response::redirect(url('dashboard/settings/domain'));
         }
 
-        // Step 1: verify DNS CNAME
+        // Step 1: verify DNS. Accept either CNAME -> cnameTarget or A -> aTarget.
+        // This lets users choose the record type (CNAME for subdomains,
+        // A for apex domains or registrars that don't allow CNAME).
         $verified = false;
-        $records = @dns_get_record($domain, DNS_CNAME);
-        if ($records) {
-            foreach ($records as $record) {
+        $cnameRecords = @dns_get_record($domain, DNS_CNAME);
+        if ($cnameRecords) {
+            foreach ($cnameRecords as $record) {
                 $target = rtrim($record['target'] ?? '', '.');
                 if (strcasecmp($target, $cnameTarget) === 0) {
                     $verified = true;
                     break;
+                }
+            }
+        }
+
+        if (!$verified) {
+            $aTarget = $this->getATarget();
+            if ($aTarget) {
+                $aRecords = @dns_get_record($domain, DNS_A);
+                if ($aRecords) {
+                    foreach ($aRecords as $record) {
+                        if (($record['ip'] ?? '') === $aTarget) {
+                            $verified = true;
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -110,7 +127,10 @@ class DomainController
             $this->notifyAdminDomainReady($tenant, $domain);
             flash('success', 'DNS verificato! Stiamo configurando il dominio sul server. Riceverai una email quando sarà pienamente attivo (entro 24h).');
         } else {
-            flash('warning', "DNS non ancora propagato. Il record CNAME di {$domain} non punta a {$cnameTarget}. Controlla il pannello DNS e riprova tra 15-30 minuti.");
+            $aTarget = $this->getATarget();
+            $hint = "CNAME → {$cnameTarget}";
+            if ($aTarget) $hint .= " oppure record A → {$aTarget}";
+            flash('warning', "DNS non ancora propagato. Per {$domain} serve un {$hint}. Controlla il pannello DNS e riprova tra 15-30 minuti.");
         }
 
         Response::redirect(url('dashboard/settings/domain'));
@@ -126,6 +146,29 @@ class DomainController
 
         $appHost = parse_url((string)env('APP_URL', ''), PHP_URL_HOST);
         return $appHost ?: 'dash.evulery.it';
+    }
+
+    /**
+     * Resolve the A-record target (VPS IP) from env.
+     * Falls back to resolving the CNAME target dynamically (cached 24h).
+     * Returns null only if both env is unset and DNS resolution fails.
+     */
+    private function getATarget(): ?string
+    {
+        $explicit = env('CUSTOM_DOMAIN_A_TARGET');
+        if ($explicit) return $explicit;
+
+        // Auto-resolve CNAME target A record, cache for a day to avoid repeated DNS lookups
+        $cacheKey = 'custom_domain_a_target';
+        $cached = \App\Core\Cache::get($cacheKey);
+        if ($cached) return $cached;
+
+        $records = @dns_get_record($this->getCnameTarget(), DNS_A);
+        if ($records && isset($records[0]['ip'])) {
+            \App\Core\Cache::put($cacheKey, $records[0]['ip'], 86400);
+            return $records[0]['ip'];
+        }
+        return null;
     }
 
     /**
