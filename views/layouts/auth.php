@@ -22,6 +22,22 @@
             fill: currentColor;
             vertical-align: -0.125em;
         }
+        .alert {
+            padding: .65rem .85rem; border-radius: 8px;
+            font-size: .82rem; margin-bottom: 1rem;
+            display: flex; align-items: flex-start; gap: .5rem;
+        }
+        .alert-danger  { background: #FFEBEE; color: #C62828; border: 1px solid #FFCDD2; }
+        .alert-success { background: #E8F5E9; color: #2E7D32; border: 1px solid #C8E6C9; }
+        .alert-warning { background: #FFF8E1; color: #F57F17; border: 1px solid #FFE082; }
+        .alert-info    { background: #E3F2FD; color: #1565C0; border: 1px solid #BBDEFB; }
+        .alert .btn-close {
+            margin-left: auto; background: none; border: none; cursor: pointer;
+            color: currentColor; opacity: .6; font-size: 1rem; padding: 0 .25rem;
+            line-height: 1;
+        }
+        .alert .btn-close:hover { opacity: 1; }
+        .alert .btn-close::before { content: '×'; }
         .auth-wrapper { width: 100%; max-width: 420px; padding: 2rem 1rem; }
         .auth-logo { text-align: center; margin-bottom: 1.75rem; }
         .auth-logo-icon {
@@ -124,6 +140,13 @@
                     input.type = 'password';
                     this.innerHTML = SVG_EYE;
                 }
+            });
+        });
+        // Dismissible alerts (Bootstrap JS replacement)
+        document.querySelectorAll('.alert .btn-close').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var alert = this.closest('.alert');
+                if (alert) alert.style.display = 'none';
             });
         });
     })();
