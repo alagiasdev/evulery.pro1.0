@@ -19,6 +19,8 @@ use App\Controllers\Dashboard\CustomersController;
 use App\Controllers\Dashboard\SettingsController;
 use App\Controllers\Dashboard\SlotsController;
 use App\Controllers\Dashboard\DomainController;
+use App\Controllers\Dashboard\HubController;
+use App\Controllers\Hub\HubPublicController;
 use App\Controllers\Dashboard\MealCategoriesController;
 use App\Controllers\Dashboard\ClosuresController;
 use App\Controllers\Dashboard\PromotionsController;
@@ -100,6 +102,11 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('/settings/domain', [DomainController::class, 'index']);
     $r->post('/settings/domain', [DomainController::class, 'update']);
     $r->post('/settings/domain/verify', [DomainController::class, 'verify']);
+    $r->get('/settings/hub', [HubController::class, 'index']);
+    $r->post('/settings/hub', [HubController::class, 'update']);
+    $r->post('/settings/hub/reorder', [HubController::class, 'reorder']);
+    $r->post('/settings/hub/links', [HubController::class, 'addCustomLink']);
+    $r->post('/settings/hub/links/{id}/delete', [HubController::class, 'deleteCustomLink']);
     $r->get('/settings/closures', [ClosuresController::class, 'index']);
     $r->post('/settings/closures', [ClosuresController::class, 'store']);
     $r->post('/settings/closures/delete-group', [ClosuresController::class, 'deleteGroup']);
@@ -257,6 +264,9 @@ $router->get('/{slug}/order/success', [OrderStoreController::class, 'success']);
 // --- PUBLIC REVIEW LANDING (must be before /{slug} catch-all) ---
 $router->get('/{slug}/review', [ReviewLandingController::class, 'show']);
 $router->get('/{slug}/review/open', [ReviewLandingController::class, 'trackOpen']);
+
+// --- PUBLIC VETRINA DIGITALE (must be before /{slug} catch-all) ---
+$router->get('/{slug}/hub', [HubPublicController::class, 'show']);
 
 // --- PUBLIC BOOKING ROUTES (tenant-scoped, must be last) ---
 $router->get('/{slug}', [BookingController::class, 'show']);

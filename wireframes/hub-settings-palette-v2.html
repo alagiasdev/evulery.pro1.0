@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Wireframe — Settings palette (v1 vs v2)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root { --brand: #00844A; --brand-light: #E8F5E9; --brand-dark: #006837; }
+        body { background: #f5f6fa; font-family: system-ui, sans-serif; margin: 0; padding: 1.5rem 1rem; font-size: .9rem; color: #212529; }
+        .page-head { text-align: center; margin-bottom: 1.5rem; max-width: 1300px; margin-left: auto; margin-right: auto; }
+        .page-head h1 { font-size: 1.3rem; font-weight: 800; margin: 0; }
+        .page-head p { color: #6c757d; font-size: .85rem; margin: .25rem 0 0; }
+
+        .scenarios { max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        @media (max-width: 1100px) { .scenarios { grid-template-columns: 1fr; } }
+        .scenario-col h3 { font-size: 1rem; font-weight: 700; text-align: center; color: #495057; margin-bottom: .25rem; }
+        .scenario-col .tagline { text-align: center; color: #6c757d; font-size: .78rem; margin-bottom: 1rem; }
+
+        .card { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; padding: 1rem 1.25rem; }
+        .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75rem; }
+        .card-head h5 { font-size: 1rem; font-weight: 700; margin: 0; }
+        .brand-field { margin-bottom: .85rem; }
+        .brand-field label { font-size: .78rem; font-weight: 600; color: #495057; display: block; margin-bottom: .5rem; }
+
+        /* ============ V1 — colori astratti (current) ============ */
+        .palette-grid-v1 { display: grid; grid-template-columns: repeat(2, 1fr); gap: .6rem; }
+        .palette-card-v1 {
+            background: #fff; border: 2px solid #e9ecef; border-radius: 10px;
+            padding: .5rem; cursor: pointer; position: relative;
+            transition: all .15s;
+        }
+        .palette-card-v1:hover { border-color: var(--brand); transform: translateY(-1px); }
+        .palette-card-v1.selected { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(0,132,74,.15); }
+        .palette-card-v1.selected::after {
+            content: '✓'; position: absolute; top: 4px; right: 6px;
+            width: 18px; height: 18px; background: var(--brand); color: #fff;
+            border-radius: 50%; font-size: .7rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .palette-swatch {
+            height: 40px; border-radius: 6px; margin-bottom: .4rem;
+            display: flex; overflow: hidden;
+        }
+        .palette-swatch > div { flex: 1; }
+        .palette-name { font-size: .72rem; font-weight: 700; color: #212529; text-align: center; }
+        .palette-name-sub { font-size: .62rem; color: #adb5bd; text-align: center; display: block; margin-top: 1px; }
+
+        /* ============ V2 — mini phone mockup ============ */
+        .palette-grid-v2 {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem;
+        }
+        @media (max-width: 600px) { .palette-grid-v2 { grid-template-columns: repeat(2, 1fr); } }
+
+        .palette-mock-card {
+            background: #fff; border: 2px solid #e9ecef; border-radius: 14px;
+            padding: .75rem .5rem .85rem;
+            cursor: pointer; position: relative;
+            transition: all .15s;
+            text-align: center;
+        }
+        .palette-mock-card:hover { border-color: var(--brand); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.06); }
+        .palette-mock-card.selected {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(0,132,74,.15);
+        }
+        .palette-mock-card.selected::after {
+            content: '✓'; position: absolute; top: 6px; right: 8px;
+            width: 22px; height: 22px; background: var(--brand); color: #fff;
+            border-radius: 50%; font-size: .8rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,132,74,.3);
+            z-index: 5;
+        }
+
+        /* Mini mockup body */
+        .mini-mock {
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--mock-bg, #fff);
+            border: 1px solid rgba(0,0,0,.08);
+            margin-bottom: .55rem;
+            position: relative;
+        }
+        .mini-cover {
+            height: 32px;
+            background: var(--mock-primary, #00844A);
+            position: relative;
+        }
+        .mini-logo {
+            position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+            width: 22px; height: 22px; border-radius: 50%;
+            background: #fff; border: 2px solid #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 9px; font-weight: 800; color: var(--mock-primary, #00844A);
+            z-index: 4;
+        }
+        .mini-body {
+            padding: 14px 8px 8px;
+            background: var(--mock-bg, #fff);
+        }
+        .mini-name {
+            text-align: center;
+            font-size: 9px; font-weight: 800;
+            color: var(--mock-text, #212529);
+            margin-bottom: 3px;
+        }
+        .mini-tag {
+            text-align: center;
+            font-size: 7px; color: var(--mock-muted, #888);
+            margin-bottom: 6px;
+        }
+        .mini-cta {
+            background: var(--mock-primary, #00844A);
+            color: var(--mock-cta-text, #fff);
+            border-radius: 4px;
+            padding: 5px 4px;
+            text-align: center;
+            font-size: 8px; font-weight: 800;
+            letter-spacing: .3px;
+            margin-bottom: 4px;
+        }
+        .mini-row {
+            background: var(--mock-row-bg, #fff);
+            border: 1px solid var(--mock-row-border, #eee);
+            border-radius: 4px;
+            padding: 3px 5px;
+            font-size: 7px;
+            color: var(--mock-text, #212529);
+            margin-bottom: 2px;
+            display: flex; align-items: center; gap: 3px;
+        }
+        .mini-row::before {
+            content: ''; width: 8px; height: 8px;
+            background: var(--mock-accent, #E8F5E9);
+            border-radius: 2px;
+            display: block; flex-shrink: 0;
+        }
+
+        .palette-mock-name {
+            font-size: .82rem; font-weight: 700; color: #212529;
+        }
+        .palette-mock-sub {
+            font-size: .68rem; color: #adb5bd; font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .pro-cons { margin-top: 1.25rem; padding: .85rem 1rem; background: #fff; border: 1px solid #e9ecef; border-radius: 10px; font-size: .78rem; }
+        .pro-cons .title { font-weight: 700; color: #495057; margin-bottom: .35rem; font-size: .8rem; }
+        .pro-cons .row { display: flex; gap: .5rem; margin-bottom: .2rem; }
+        .pro-cons .row i.pro { color: var(--brand); }
+        .pro-cons .row i.con { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+<div class="page-head">
+    <h1>Settings &mdash; sezione Palette</h1>
+    <p>v1 (attuale, swatch astratti) vs v2 (mini-mockup del telefono)</p>
+</div>
+
+<div class="scenarios">
+
+    <!-- ============ V1 — current ============ -->
+    <div class="scenario-col">
+        <h3>v1 — Swatch astratti (attuale)</h3>
+        <p class="tagline">3 quadrati di colore + nome + descrizione</p>
+
+        <div class="card">
+            <div class="card-head"><h5><i class="bi bi-droplet me-1" style="color:var(--brand);"></i> Stili e colori</h5></div>
+
+            <div class="brand-field">
+                <label>Palette (8 temi curati)</label>
+                <div class="palette-grid-v1">
+                    <div class="palette-card-v1 selected">
+                        <div class="palette-swatch">
+                            <div style="background:#00844A;"></div>
+                            <div style="background:#E8F5E9;"></div>
+                            <div style="background:#006837;"></div>
+                        </div>
+                        <div class="palette-name">Evulery Green</div>
+                        <span class="palette-name-sub">Default</span>
+                    </div>
+                    <div class="palette-card-v1">
+                        <div class="palette-swatch">
+                            <div style="background:#C62828;"></div>
+                            <div style="background:#FFEBEE;"></div>
+                            <div style="background:#8B0000;"></div>
+                        </div>
+                        <div class="palette-name">Rosso Trattoria</div>
+                        <span class="palette-name-sub">Osterie, pizzerie</span>
+                    </div>
+                    <div class="palette-card-v1">
+                        <div class="palette-swatch">
+                            <div style="background:#212121;"></div>
+                            <div style="background:#FFD700;"></div>
+                            <div style="background:#000;"></div>
+                        </div>
+                        <div class="palette-name">Nero Elegante</div>
+                        <span class="palette-name-sub">Fine dining</span>
+                    </div>
+                    <div class="palette-card-v1">
+                        <div class="palette-swatch">
+                            <div style="background:#D84315;"></div>
+                            <div style="background:#FFF3E0;"></div>
+                            <div style="background:#BF360C;"></div>
+                        </div>
+                        <div class="palette-name">Terracotta</div>
+                        <span class="palette-name-sub">Rustico</span>
+                    </div>
+                    <div class="palette-card-v1">
+                        <div class="palette-swatch">
+                            <div style="background:#1565C0;"></div>
+                            <div style="background:#E3F2FD;"></div>
+                            <div style="background:#0D47A1;"></div>
+                        </div>
+                        <div class="palette-name">Blu Navy</div>
+                        <span class="palette-name-sub">Pesce, mare</span>
+                    </div>
+                    <div class="palette-card-v1">
+                        <div class="palette-swatch">
+                            <div style="background:#8D6E63;"></div>
+                            <div style="background:#EFEBE9;"></div>
+                            <div style="background:#5D4037;"></div>
+                        </div>
+                        <div class="palette-name">Oro & Marrone</div>
+                        <span class="palette-name-sub">Wine bar</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pro-cons">
+            <div class="title">v1 in sintesi</div>
+            <div class="row"><i class="bi bi-check pro"></i><span>Compatto verticalmente, occupa poco spazio</span></div>
+            <div class="row"><i class="bi bi-x con"></i><span>I colori astratti non comunicano com'è il risultato</span></div>
+            <div class="row"><i class="bi bi-x con"></i><span>Il ristoratore deve "immaginare" il proprio hub</span></div>
+        </div>
+    </div>
+
+    <!-- ============ V2 — mini mockup ============ -->
+    <div class="scenario-col">
+        <h3>v2 — Mini mockup del telefono</h3>
+        <p class="tagline">Ogni palette mostra come apparirà davvero l'hub</p>
+
+        <div class="card">
+            <div class="card-head"><h5><i class="bi bi-droplet me-1" style="color:var(--brand);"></i> Stili e colori</h5></div>
+
+            <div class="brand-field">
+                <label>Palette &mdash; clicca per vedere l'anteprima reale</label>
+
+                <div class="palette-grid-v2">
+
+                    <!-- Evulery Green -->
+                    <div class="palette-mock-card selected"
+                         style="--mock-primary:#00844A; --mock-bg:#fff; --mock-text:#212529; --mock-muted:#888; --mock-cta-text:#fff; --mock-row-bg:#fff; --mock-row-border:#e9ecef; --mock-accent:#E8F5E9;">
+                        <div class="mini-mock">
+                            <div class="mini-cover"><div class="mini-logo">N</div></div>
+                            <div class="mini-body">
+                                <div class="mini-name">Nuok</div>
+                                <div class="mini-tag">Trattoria moderna</div>
+                                <div class="mini-cta">PRENOTA</div>
+                                <div class="mini-row">Menu</div>
+                                <div class="mini-row">Recensioni</div>
+                                <div class="mini-row">Offerte</div>
+                            </div>
+                        </div>
+                        <div class="palette-mock-name">Evulery Green</div>
+                        <div class="palette-mock-sub">Default</div>
+                    </div>
+
+                    <!-- Rosso Trattoria -->
+                    <div class="palette-mock-card"
+                         style="--mock-primary:#C62828; --mock-bg:#fff; --mock-text:#212529; --mock-muted:#888; --mock-cta-text:#fff; --mock-row-bg:#fff; --mock-row-border:#e9ecef; --mock-accent:#FFEBEE;">
+                        <div class="mini-mock">
+                            <div class="mini-cover"><div class="mini-logo">N</div></div>
+                            <div class="mini-body">
+                                <div class="mini-name">Nuok</div>
+                                <div class="mini-tag">Trattoria moderna</div>
+                                <div class="mini-cta">PRENOTA</div>
+                                <div class="mini-row">Menu</div>
+                                <div class="mini-row">Recensioni</div>
+                                <div class="mini-row">Offerte</div>
+                            </div>
+                        </div>
+                        <div class="palette-mock-name">Rosso Trattoria</div>
+                        <div class="palette-mock-sub">Osterie, pizzerie</div>
+                    </div>
+
+                    <!-- Nero Elegante -->
+                    <div class="palette-mock-card"
+                         style="--mock-primary:#212121; --mock-bg:#fafafa; --mock-text:#212121; --mock-muted:#888; --mock-cta-text:#FFD700; --mock-row-bg:#fff; --mock-row-border:#e0e0e0; --mock-accent:#FFD700;">
+                        <div class="mini-mock">
+                            <div class="mini-cover"><div class="mini-logo">N</div></div>
+                            <div class="mini-body">
+                                <div class="mini-name">Nuok</div>
+                                <div class="mini-tag">Trattoria moderna</div>
+                                <div class="mini-cta">PRENOTA</div>
+                                <div class="mini-row">Menu</div>
+                                <div class="mini-row">Recensioni</div>
+                                <div class="mini-row">Offerte</div>
+                            </div>
+                        </div>
+                        <div class="palette-mock-name">Nero Elegante</div>
+                        <div class="palette-mock-sub">Fine dining</div>
+                    </div>
+
+                    <!-- Terracotta -->
+                    <div class="palette-mock-card"
+                         style="--mock-primary:#D84315; --mock-bg:#FFF8F0; --mock-text:#3E2723; --mock-muted:#8D6E63; --mock-cta-text:#fff; --mock-row-bg:#fff; --mock-row-border:#FFCCBC; --mock-accent:#FFCCBC;">
+                        <div class="mini-mock">
+                            <div class="mini-cover"><div class="mini-logo">N</div></div>
+                            <div class="mini-body">
+                                <div class="mini-name">Nuok</div>
+                                <div class="mini-tag">Trattoria moderna</div>
+                                <div class="mini-cta">PRENOTA</div>
+                                <div class="mini-row">Menu</div>
+                                <div class="mini-row">Recensioni</div>
+                                <div class="mini-row">Offerte</div>
+                            </div>
+                        </div>
+                        <div class="palette-mock-name">Terracotta</div>
+                        <div class="palette-mock-sub">Rustico, campagna</div>
+                    </div>
+
+                    <!-- Blu Navy -->
+                    <div class="palette-mock-card"
+                         style="--mock-primary:#1565C0; --mock-bg:#fff; --mock-text:#0D47A1; --mock-muted:#5C6BC0; --mock-cta-text:#fff; --mock-row-bg:#fff; --mock-row-border:#BBDEFB; --mock-accent:#BBDEFB;">
+                        <div class="mini-mock">
+                            <div class="mini-cover"><div class="mini-logo">N</div></div>
+                            <div class="mini-body">
+                                <div class="mini-name">Nuok</div>
+                                <div class="mini-tag">Trattoria moderna</div>
+                                <div class="mini-cta">PRENOTA</div>
+                                <div class="mini-row">Menu</div>
+                                <div class="mini-row">Recensioni</div>
+                                <div class="mini-row">Offerte</div>
+                            </div>
+                        </div>
+                        <div class="palette-mock-name">Blu Navy</div>
+                        <div class="palette-mock-sub">Pesce, mare</div>
+                    </div>
+
+                    <!-- Oro & Marrone -->
+                    <div class="palette-mock-card"
+                         style="--mock-primary:#5D4037; --mock-bg:#FFF8E1; --mock-text:#3E2723; --mock-muted:#8D6E63; --mock-cta-text:#FFD54F; --mock-row-bg:#fff; --mock-row-border:#D7CCC8; --mock-accent:#FFD54F;">
+                        <div class="mini-mock">
+                            <div class="mini-cover"><div class="mini-logo">N</div></div>
+                            <div class="mini-body">
+                                <div class="mini-name">Nuok</div>
+                                <div class="mini-tag">Trattoria moderna</div>
+                                <div class="mini-cta">PRENOTA</div>
+                                <div class="mini-row">Menu</div>
+                                <div class="mini-row">Recensioni</div>
+                                <div class="mini-row">Offerte</div>
+                            </div>
+                        </div>
+                        <div class="palette-mock-name">Oro & Marrone</div>
+                        <div class="palette-mock-sub">Wine bar</div>
+                    </div>
+
+                    <!-- Verde Bosco -->
+                    <div class="palette-mock-card"
+                         style="--mock-primary:#2E7D32; --mock-bg:#F1F8E9; --mock-text:#1B5E20; --mock-muted:#558B2F; --mock-cta-text:#fff; --mock-row-bg:#fff; --mock-row-border:#C8E6C9; --mock-accent:#C8E6C9;">
+                        <div class="mini-mock">
+                            <div class="mini-cover"><div class="mini-logo">N</div></div>
+                            <div class="mini-body">
+                                <div class="mini-name">Nuok</div>
+                                <div class="mini-tag">Trattoria moderna</div>
+                                <div class="mini-cta">PRENOTA</div>
+                                <div class="mini-row">Menu</div>
+                                <div class="mini-row">Recensioni</div>
+                                <div class="mini-row">Offerte</div>
+                            </div>
+                        </div>
+                        <div class="palette-mock-name">Verde Bosco</div>
+                        <div class="palette-mock-sub">Bio, vegetale</div>
+                    </div>
+
+                    <!-- Viola Elegante -->
+                    <div class="palette-mock-card"
+                         style="--mock-primary:#6A1B9A; --mock-bg:#fff; --mock-text:#4A148C; --mock-muted:#888; --mock-cta-text:#fff; --mock-row-bg:#fff; --mock-row-border:#E1BEE7; --mock-accent:#E1BEE7;">
+                        <div class="mini-mock">
+                            <div class="mini-cover"><div class="mini-logo">N</div></div>
+                            <div class="mini-body">
+                                <div class="mini-name">Nuok</div>
+                                <div class="mini-tag">Trattoria moderna</div>
+                                <div class="mini-cta">PRENOTA</div>
+                                <div class="mini-row">Menu</div>
+                                <div class="mini-row">Recensioni</div>
+                                <div class="mini-row">Offerte</div>
+                            </div>
+                        </div>
+                        <div class="palette-mock-name">Viola Elegante</div>
+                        <div class="palette-mock-sub">Cocktail bar</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="pro-cons">
+            <div class="title">v2 in sintesi</div>
+            <div class="row"><i class="bi bi-check pro"></i><span>Il ristoratore vede il risultato, non immagina</span></div>
+            <div class="row"><i class="bi bi-check pro"></i><span>Le decisioni sono più rapide e sicure</span></div>
+            <div class="row"><i class="bi bi-check pro"></i><span>Mostra tipografia, contrast, accenti tutti insieme</span></div>
+            <div class="row"><i class="bi bi-x con"></i><span>Occupa più spazio verticale (3 col vs 2)</span></div>
+            <div class="row"><i class="bi bi-x con"></i><span>Più CSS da scrivere (variabili palette parametrizzate)</span></div>
+        </div>
+    </div>
+
+</div>
+
+<div style="max-width: 1300px; margin: 2rem auto 0; background: #fff; border: 1px solid #e9ecef; border-radius: 12px; padding: 1.25rem;">
+    <h4 style="font-size: .95rem; font-weight: 700; margin-bottom: .75rem;">Da senior — il mio voto</h4>
+    <p style="font-size: .85rem; margin-bottom: .5rem;"><strong>v2 mockup-preview</strong>, senza dubbi. Tre ragioni concrete:</p>
+    <ol style="font-size: .82rem; margin-bottom: 1rem;">
+        <li><strong>Riduce il rischio di scelte sbagliate</strong>. Con v1 il ristoratore può scegliere "Nero Elegante" pensando sia chic, e sorprendersi quando vede il risultato. Con v2 vede il risultato PRIMA di scegliere &mdash; meno reclami, meno cambi di idea, meno supporto.</li>
+        <li><strong>&Egrave; pedagogico</strong>. Il mockup contiene tutti gli elementi chiave (cover, logo, CTA, row card) coi colori applicati. Dopo aver scrollato 8 mockup il ristoratore ha gi&agrave; un'idea chiarissima di cosa stia configurando, anche se non ha mai visto un Hub Evulery prima.</li>
+        <li><strong>Costo di sviluppo basso</strong>. CSS variables fanno il grosso del lavoro. Si scrive UNA volta il template del mockup, le 8 palette diventano 8 oggetti con 6-7 variabili CSS ciascuno. Stessa quantit&agrave; di linee di v1, solo strutturate diversamente.</li>
+    </ol>
+    <p style="font-size: .82rem; margin-bottom: 0;">Per Enterprise il color picker custom appare sotto la griglia delle palette &mdash; quando l'utente cambia un colore, possiamo aggiornare in tempo reale un mockup "live preview" identico a quelli statici.</p>
+</div>
+
+</body>
+</html>

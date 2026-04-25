@@ -117,7 +117,7 @@
         .notes { font-size: .7rem; background: #fff3cd; border: 1px dashed #ffc107; padding: .25rem .5rem; border-radius: 4px; color: #856404; font-style: italic; display: inline-block; }
 
         /* Palette preset grid */
-        .palette-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem; }
+        .palette-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .65rem; }
         @media (max-width: 560px) { .palette-grid { grid-template-columns: repeat(2, 1fr); } }
         .palette-card {
             background: #fff; border: 2px solid #e9ecef; border-radius: 10px;
@@ -177,6 +177,140 @@
         .toggle-row-wl .text { flex: 1; }
         .toggle-row-wl .text strong { display: block; font-size: .85rem; color: #212529; }
         .toggle-row-wl .text small { font-size: .72rem; color: #6c757d; }
+
+        /* ============ URL share card (discrete, in sidebar) ============ */
+        .vurl-card {
+            background: var(--brand-light);
+            border: 1px solid #C8E6C9;
+            border-left: 3px solid var(--brand);
+            border-radius: 10px;
+            padding: .75rem .85rem;
+            margin-bottom: 1rem;
+        }
+        .vurl-label {
+            font-size: .68rem; text-transform: uppercase; letter-spacing: .8px;
+            color: var(--brand-dark); font-weight: 700; margin-bottom: .2rem;
+            display: flex; align-items: center; gap: .35rem;
+        }
+        .vurl-label i { font-size: .85rem; }
+        .vurl-url {
+            font-size: .82rem; font-weight: 700; color: #1B5E20;
+            font-family: ui-monospace, "SF Mono", Menlo, monospace;
+            word-break: break-all; margin-bottom: .35rem;
+            line-height: 1.3;
+        }
+        .vurl-hint {
+            font-size: .68rem; color: #2E7D32; line-height: 1.4;
+            margin-bottom: .5rem;
+        }
+        .vurl-actions { display: flex; gap: .35rem; }
+        .vurl-btn {
+            background: #fff; color: var(--brand-dark); border: 1px solid #C8E6C9;
+            padding: .35rem .65rem; border-radius: 6px;
+            font-size: .72rem; font-weight: 600; cursor: pointer;
+            display: inline-flex; align-items: center; gap: .25rem;
+            font-family: inherit;
+        }
+        .vurl-btn:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
+        .vurl-btn.primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+        .vurl-btn.primary:hover { background: var(--brand-dark); }
+
+        /* ============ Identità 2-col ============ */
+        .identity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 700px) { .identity-grid { grid-template-columns: 1fr; } }
+        .identity-grid .uploader { height: 100%; min-height: 110px; }
+
+        /* ============ Social grid 3x2 ============ */
+        .social-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .75rem; }
+        @media (max-width: 700px) { .social-grid { grid-template-columns: 1fr 1fr; } }
+        .social-field { margin-bottom: 0; }
+        .social-field label {
+            display: flex; align-items: center; gap: .35rem;
+            font-size: .76rem; font-weight: 600; color: #495057; margin-bottom: .3rem;
+        }
+        .social-field label i { font-size: .9rem; }
+        .social-field input {
+            width: 100%; border: 1px solid #dee2e6; border-radius: 8px;
+            padding: .45rem .6rem; font-size: .78rem; box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        /* ============ Improved phone mockup preview ============ */
+        .preview-phone-frame {
+            background: #1a1d23;
+            border-radius: 18px;
+            padding: 6px;
+            margin: 0 auto;
+            max-width: 280px;
+            box-shadow: 0 12px 28px rgba(0,0,0,.18);
+        }
+        .preview-phone-screen {
+            background: #fff;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            min-height: 460px;
+            font-size: 9px;
+        }
+        .preview-phone-notch {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 60px; height: 14px; background: #1a1d23;
+            border-radius: 0 0 8px 8px; z-index: 10;
+        }
+        .ppm-cover {
+            height: 56px;
+            background: linear-gradient(135deg, #2E7D32, #81C784);
+            position: relative;
+        }
+        .ppm-cover::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,.35));
+        }
+        .ppm-logo {
+            position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%);
+            width: 36px; height: 36px; background: #fff; border-radius: 50%;
+            border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.15);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 800; color: var(--brand); z-index: 5;
+        }
+        .ppm-body { padding: 22px 14px 12px; }
+        .ppm-name { text-align: center; font-size: 13px; font-weight: 800; color: #212529; margin-bottom: 1px; }
+        .ppm-tag { text-align: center; color: #6c757d; font-size: 9px; margin-bottom: 12px; }
+        .ppm-cta {
+            background: var(--brand); color: #fff; border-radius: 7px;
+            padding: 9px 8px; text-align: center; margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,132,74,.25);
+        }
+        .ppm-cta i { font-size: 12px; display: block; margin-bottom: 1px; }
+        .ppm-cta-label { font-size: 10px; font-weight: 800; letter-spacing: .3px; }
+        .ppm-cta-hint { font-size: 8px; opacity: .85; margin-top: 1px; }
+        .ppm-sep {
+            font-size: 7px; text-transform: uppercase; letter-spacing: .5px;
+            color: #adb5bd; font-weight: 700; margin: 8px 0 4px; text-align: center;
+        }
+        .ppm-row {
+            background: #fff; border: 1px solid #e9ecef; border-radius: 6px;
+            padding: 5px 7px; margin-bottom: 3px;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .ppm-row-icon {
+            width: 18px; height: 18px; background: #E8F5E9; border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .ppm-row-icon i { font-size: 9px; color: var(--brand); }
+        .ppm-row-text { flex: 1; min-width: 0; }
+        .ppm-row-main { font-size: 8.5px; font-weight: 700; color: #212529; line-height: 1; }
+        .ppm-row-sub { font-size: 6.5px; color: #6c757d; margin-top: 1px; }
+        .ppm-row-chev { font-size: 7px; color: #adb5bd; }
+        .ppm-footer {
+            border-top: 1px solid #f0f0f0; padding: 8px; text-align: center;
+            font-size: 6px; color: #adb5bd; margin-top: 8px;
+        }
+        .ppm-footer-social {
+            display: flex; gap: 6px; justify-content: center; margin-bottom: 4px;
+            font-size: 11px; color: #6c757d;
+        }
     </style>
 </head>
 <body>
@@ -209,7 +343,7 @@
     <div class="info-banner">
         <i class="bi bi-info-circle"></i>
         <div>
-            La <strong>Vetrina Digitale</strong> è una pagina pubblica (<strong>dash.evulery.it/nuok/hub</strong>) con tutte le azioni che i clienti possono fare: prenotare, vedere il menu, recensire, contattarti. Stampa il QR code qui sotto e mettilo al tavolo, in vetrina fisica, sul menu cartaceo, sui volantini, sul biglietto da visita.
+            La <strong>Vetrina Digitale</strong> è una pagina pubblica con tutte le azioni che i clienti possono fare: prenotare, vedere il menu, recensire, contattarti. Stampa il QR code qui sotto e mettilo al tavolo, in vetrina fisica, sul menu cartaceo, sui volantini.
         </div>
     </div>
 
@@ -230,20 +364,22 @@
                     <label>Tagline (1 riga sotto il nome)</label>
                     <input type="text" value="Trattoria moderna · Roma">
                 </div>
-                <div class="brand-field">
-                    <label>Logo</label>
-                    <div class="uploader">
-                        <i class="bi bi-cloud-upload"></i>
-                        Trascina qui o <a href="#" style="color:var(--brand);">sfoglia</a>
-                        <div style="font-size:.7rem; margin-top: .2rem;">PNG/JPG · 200x200 min · sfondo trasparente consigliato</div>
+                <div class="identity-grid">
+                    <div class="brand-field" style="margin-bottom:0;">
+                        <label>Logo</label>
+                        <div class="uploader">
+                            <i class="bi bi-cloud-upload"></i>
+                            Trascina qui o <a href="#" style="color:var(--brand);">sfoglia</a>
+                            <div style="font-size:.7rem; margin-top: .2rem;">PNG/JPG · 200x200 min</div>
+                        </div>
                     </div>
-                </div>
-                <div class="brand-field">
-                    <label>Copertina (sfondo dietro il logo)</label>
-                    <div class="uploader">
-                        <i class="bi bi-image"></i>
-                        Trascina qui o <a href="#" style="color:var(--brand);">sfoglia</a>
-                        <div style="font-size:.7rem; margin-top: .2rem;">Consigliato 1200x400 · foto del locale o piatto</div>
+                    <div class="brand-field" style="margin-bottom:0;">
+                        <label>Copertina</label>
+                        <div class="uploader">
+                            <i class="bi bi-image"></i>
+                            Trascina qui o <a href="#" style="color:var(--brand);">sfoglia</a>
+                            <div style="font-size:.7rem; margin-top: .2rem;">Consigliato 1200x400</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -255,7 +391,7 @@
                 </div>
 
                 <div class="brand-field">
-                    <label>Palette (8 temi curati)</label>
+                    <label>Palette (6 temi curati)</label>
                     <div class="palette-grid">
                         <div class="palette-card selected">
                             <div class="palette-swatch">
@@ -268,24 +404,6 @@
                         </div>
                         <div class="palette-card">
                             <div class="palette-swatch">
-                                <div style="background:#C62828;"></div>
-                                <div style="background:#FFEBEE;"></div>
-                                <div style="background:#8B0000;"></div>
-                            </div>
-                            <div class="palette-name">Rosso Trattoria</div>
-                            <span class="palette-name-sub">Osterie, pizzerie</span>
-                        </div>
-                        <div class="palette-card">
-                            <div class="palette-swatch">
-                                <div style="background:#212121;"></div>
-                                <div style="background:#FFD700;"></div>
-                                <div style="background:#000;"></div>
-                            </div>
-                            <div class="palette-name">Nero Elegante</div>
-                            <span class="palette-name-sub">Fine dining</span>
-                        </div>
-                        <div class="palette-card">
-                            <div class="palette-swatch">
                                 <div style="background:#D84315;"></div>
                                 <div style="background:#FFF3E0;"></div>
                                 <div style="background:#BF360C;"></div>
@@ -295,12 +413,12 @@
                         </div>
                         <div class="palette-card">
                             <div class="palette-swatch">
-                                <div style="background:#1565C0;"></div>
-                                <div style="background:#E3F2FD;"></div>
-                                <div style="background:#0D47A1;"></div>
+                                <div style="background:#212121;"></div>
+                                <div style="background:#FFD700;"></div>
+                                <div style="background:#000000;"></div>
                             </div>
-                            <div class="palette-name">Blu Navy</div>
-                            <span class="palette-name-sub">Pesce, mare</span>
+                            <div class="palette-name">Nero Elegante</div>
+                            <span class="palette-name-sub">Fine dining</span>
                         </div>
                         <div class="palette-card">
                             <div class="palette-swatch">
@@ -322,12 +440,12 @@
                         </div>
                         <div class="palette-card">
                             <div class="palette-swatch">
-                                <div style="background:#6A1B9A;"></div>
-                                <div style="background:#F3E5F5;"></div>
-                                <div style="background:#4A148C;"></div>
+                                <div style="background:#37474F;"></div>
+                                <div style="background:#ECEFF1;"></div>
+                                <div style="background:#263238;"></div>
                             </div>
-                            <div class="palette-name">Viola Elegante</div>
-                            <span class="palette-name-sub">Cocktail bar, lounge</span>
+                            <div class="palette-name">Grigio Minimal</div>
+                            <span class="palette-name-sub">Concept, brunch, lounge</span>
                         </div>
                     </div>
                 </div>
@@ -492,18 +610,39 @@
 
             <!-- Social footer -->
             <div class="card">
-                <div class="card-head"><h5><i class="bi bi-share me-1" style="color:var(--brand);"></i> Social (footer Hub)</h5></div>
-                <div class="brand-field">
-                    <label><i class="bi bi-instagram me-1"></i> Instagram URL</label>
-                    <input type="url" placeholder="https://instagram.com/tuoristorante" value="https://instagram.com/nuok_roma">
+                <div class="card-head">
+                    <h5><i class="bi bi-share me-1" style="color:var(--brand);"></i> Social e contatti (footer Hub)</h5>
+                    <span style="font-size:.72rem; color:#6c757d;">Lascia vuoto se non hai l'account</span>
                 </div>
-                <div class="brand-field">
-                    <label><i class="bi bi-facebook me-1"></i> Facebook URL</label>
-                    <input type="url" placeholder="https://facebook.com/tuoristorante">
+                <div class="social-grid">
+                    <div class="social-field">
+                        <label><i class="bi bi-instagram" style="color:#E1306C;"></i> Instagram</label>
+                        <input type="url" placeholder="https://instagram.com/..." value="https://instagram.com/nuok_roma">
+                    </div>
+                    <div class="social-field">
+                        <label><i class="bi bi-facebook" style="color:#1877F2;"></i> Facebook</label>
+                        <input type="url" placeholder="https://facebook.com/...">
+                    </div>
+                    <div class="social-field">
+                        <label><i class="bi bi-tiktok" style="color:#000;"></i> TikTok</label>
+                        <input type="url" placeholder="https://tiktok.com/@...">
+                    </div>
+                    <div class="social-field">
+                        <label><i class="bi bi-twitter-x" style="color:#000;"></i> X (Twitter)</label>
+                        <input type="url" placeholder="https://x.com/...">
+                    </div>
+                    <div class="social-field">
+                        <label><i class="bi bi-youtube" style="color:#FF0000;"></i> YouTube</label>
+                        <input type="url" placeholder="https://youtube.com/@...">
+                    </div>
+                    <div class="social-field">
+                        <label><i class="bi bi-whatsapp" style="color:#25D366;"></i> WhatsApp</label>
+                        <input type="tel" placeholder="+39 333 1234567">
+                    </div>
                 </div>
-                <div class="brand-field">
-                    <label><i class="bi bi-tiktok me-1"></i> TikTok URL</label>
-                    <input type="url" placeholder="https://tiktok.com/@tuoristorante">
+                <div style="margin-top:.65rem; font-size:.72rem; color:#6c757d;">
+                    <i class="bi bi-info-circle me-1"></i>
+                    WhatsApp è anche disponibile come azione principale nelle <strong>Azioni disponibili</strong> sopra. Qui appare come icona discreta nel footer.
                 </div>
             </div>
 
@@ -521,6 +660,17 @@
         <div>
             <div class="preview-sticky">
 
+                <!-- URL share card (discrete) -->
+                <div class="vurl-card">
+                    <div class="vurl-label"><i class="bi bi-link-45deg"></i> La tua Vetrina è online</div>
+                    <div class="vurl-url">dash.evulery.it/nuok/hub</div>
+                    <div class="vurl-hint">Inseriscilo nella bio Instagram, sul biglietto da visita, sui volantini.</div>
+                    <div class="vurl-actions">
+                        <button class="vurl-btn primary"><i class="bi bi-clipboard"></i> Copia</button>
+                        <button class="vurl-btn"><i class="bi bi-box-arrow-up-right"></i> Apri</button>
+                    </div>
+                </div>
+
                 <!-- QR card -->
                 <div class="qr-card">
                     <h6><i class="bi bi-qr-code me-1"></i> QR Code della tua Vetrina</h6>
@@ -533,21 +683,78 @@
                     </div>
                 </div>
 
-                <!-- Live preview mock -->
+                <!-- Live preview mock — matches Variant B public hub layout -->
                 <div class="preview-card">
-                    <h6><i class="bi bi-phone me-1"></i> Anteprima mobile</h6>
-                    <div class="preview-iframe-mock">
-                        <div class="ph-cover"></div>
-                        <div class="ph-logo">N</div>
-                        <div class="ph-name">Nuok</div>
-                        <div class="ph-sub">Trattoria moderna · Roma</div>
-                        <div class="ph-cta"><i class="bi bi-calendar-check"></i> PRENOTA UN TAVOLO</div>
-                        <div class="ph-row"><i class="bi bi-journal-richtext"></i> Guarda il menu</div>
-                        <div class="ph-row"><i class="bi bi-star"></i> Lascia una recensione</div>
-                        <div class="ph-row"><i class="bi bi-gift"></i> Offerte del momento</div>
-                        <div class="ph-row"><i class="bi bi-whatsapp"></i> Scrivici su WhatsApp</div>
-                        <div class="ph-row"><i class="bi bi-geo-alt"></i> Come raggiungerci</div>
-                        <div class="ph-row"><i class="bi bi-link-45deg"></i> Prenota eventi privati</div>
+                    <h6><i class="bi bi-phone me-1"></i> Anteprima della Vetrina</h6>
+                    <div class="preview-phone-frame">
+                        <div class="preview-phone-screen">
+                            <div class="preview-phone-notch"></div>
+                            <div class="ppm-cover">
+                                <div class="ppm-logo">N</div>
+                            </div>
+                            <div class="ppm-body">
+                                <div class="ppm-name">Nuok</div>
+                                <div class="ppm-tag">Trattoria moderna · Roma</div>
+
+                                <div class="ppm-cta">
+                                    <i class="bi bi-calendar-check"></i>
+                                    <div class="ppm-cta-label">PRENOTA UN TAVOLO</div>
+                                    <div class="ppm-cta-hint">Scegli data e orario in 30 secondi</div>
+                                </div>
+
+                                <div class="ppm-sep">Altre cose che puoi fare</div>
+
+                                <div class="ppm-row">
+                                    <div class="ppm-row-icon"><i class="bi bi-journal-richtext"></i></div>
+                                    <div class="ppm-row-text">
+                                        <div class="ppm-row-main">Guarda il menu</div>
+                                        <div class="ppm-row-sub">Allergeni · ingredienti</div>
+                                    </div>
+                                    <i class="bi bi-chevron-right ppm-row-chev"></i>
+                                </div>
+                                <div class="ppm-row">
+                                    <div class="ppm-row-icon"><i class="bi bi-star"></i></div>
+                                    <div class="ppm-row-text">
+                                        <div class="ppm-row-main">Lascia una recensione</div>
+                                        <div class="ppm-row-sub">Aiutaci a migliorare</div>
+                                    </div>
+                                    <i class="bi bi-chevron-right ppm-row-chev"></i>
+                                </div>
+                                <div class="ppm-row">
+                                    <div class="ppm-row-icon"><i class="bi bi-gift"></i></div>
+                                    <div class="ppm-row-text">
+                                        <div class="ppm-row-main">Offerte del momento</div>
+                                        <div class="ppm-row-sub">Promozioni attive</div>
+                                    </div>
+                                    <i class="bi bi-chevron-right ppm-row-chev"></i>
+                                </div>
+                                <div class="ppm-row">
+                                    <div class="ppm-row-icon"><i class="bi bi-whatsapp"></i></div>
+                                    <div class="ppm-row-text">
+                                        <div class="ppm-row-main">Scrivici su WhatsApp</div>
+                                        <div class="ppm-row-sub">+39 06 12345678</div>
+                                    </div>
+                                    <i class="bi bi-chevron-right ppm-row-chev"></i>
+                                </div>
+                                <div class="ppm-row">
+                                    <div class="ppm-row-icon"><i class="bi bi-geo-alt"></i></div>
+                                    <div class="ppm-row-text">
+                                        <div class="ppm-row-main">Come raggiungerci</div>
+                                        <div class="ppm-row-sub">Via Roma 42, Roma</div>
+                                    </div>
+                                    <i class="bi bi-chevron-right ppm-row-chev"></i>
+                                </div>
+
+                                <div class="ppm-footer">
+                                    <div class="ppm-footer-social">
+                                        <i class="bi bi-instagram"></i>
+                                        <i class="bi bi-facebook"></i>
+                                        <i class="bi bi-tiktok"></i>
+                                    </div>
+                                    Powered by Evulery
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
