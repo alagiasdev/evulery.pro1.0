@@ -293,6 +293,107 @@ HTML
 HTML
     ],
 
+    'vetrina' => [
+        'title'       => 'Vetrina Digitale',
+        'subtitle'    => 'Pagina pubblica con QR code',
+        'icon'        => 'bi-qr-code',
+        'color'       => '#00897B',
+        'category'    => 'avanzati',
+        'count_label' => '4 step',
+        'keywords'    => 'vetrina digitale hub link in bio qr code stampa pagina pubblica social instagram biglietti volantini palette colori personalizzati enterprise white-label',
+        'read_time'   => 4,
+        'body' => <<<'HTML'
+<p>La <strong>Vetrina Digitale</strong> &egrave; una pagina pubblica del tuo ristorante che raggruppa in un&rsquo;unica schermata tutto ci&ograve; che un cliente pu&ograve; fare: prenotare un tavolo, vedere il menu, ordinare online, lasciare una recensione, scoprire le offerte attive, contattarti su WhatsApp, vedere come raggiungerti.</p>
+
+<p>Funziona come un &ldquo;<strong>link in bio</strong>&rdquo;: lo metti nella biografia Instagram, sui biglietti da visita, sui volantini, oppure stampi il QR code per il tavolo. Una volta scansionato, il cliente atterra su una pagina ottimizzata per smartphone con tutte le azioni a portata di tap.</p>
+
+<div class="hg-tip"><strong><i class="bi bi-lightbulb me-1"></i>Quando &egrave; utile:</strong> sostituisce LinkTree o servizi simili, &egrave; integrato col tuo brand Evulery, gratuito col piano Professional. Un solo QR per tutto, niente confusione.</div>
+
+<h5 style="margin-top:1.5rem;">Come si attiva</h5>
+
+<div class="hg-step">
+    <div class="hg-step-num">1</div>
+    <div class="hg-step-content">
+        <strong>Vai in <em>Impostazioni &rarr; Vetrina Digitale</em></strong> e attiva il toggle <strong>&ldquo;Vetrina online&rdquo;</strong>. La pagina diventa subito pubblica all&rsquo;URL <code>dash.evulery.it/tuo-ristorante/hub</code>.
+    </div>
+</div>
+
+<div class="hg-step">
+    <div class="hg-step-num">2</div>
+    <div class="hg-step-content">
+        <strong>Personalizza l&rsquo;identit&agrave;</strong><br>
+        Carica un <strong>logo</strong> (200x200 min, max 2MB) e una <strong>copertina</strong> (1200x400 consigliato). Aggiungi un <strong>sottotitolo</strong> sotto il nome (es. &ldquo;Trattoria moderna in centro storico&rdquo;).
+    </div>
+</div>
+
+<div class="hg-step">
+    <div class="hg-step-num">3</div>
+    <div class="hg-step-content">
+        <strong>Scegli la palette</strong><br>
+        Seleziona uno dei 6 temi preconfigurati: Evulery Green, Terracotta, Nero Elegante, Oro &amp; Marrone, Verde Bosco, Grigio Minimal. La palette colora cover, CTA, badge e icone in modo coordinato.
+    </div>
+</div>
+
+<div class="hg-step">
+    <div class="hg-step-num">4</div>
+    <div class="hg-step-content">
+        <strong>Attiva le azioni che ti interessano</strong><br>
+        La sezione &ldquo;Azioni disponibili&rdquo; mostra cosa apparir&agrave; nella Vetrina. <em>Prenota un tavolo</em> &egrave; sempre presente come CTA principale. Le altre (Menu, Ordini online, Recensioni, Offerte, WhatsApp, Telefono, Mappa) appaiono automaticamente se il servizio &egrave; attivo. Trascinale per riordinarle, oppure disattiva quelle che non vuoi mostrare.
+    </div>
+</div>
+
+<h5 style="margin-top:1.5rem;">Stampare il QR code</h5>
+<p>Nella colonna destra trovi il QR code della tua Vetrina. Due bottoni:</p>
+<ul>
+    <li><strong>PNG</strong>: scarica il QR ad <strong>alta risoluzione</strong> (1024x1024 px) pronto per la tipografia. Va bene per stampe fino a 17cm a 300 dpi (qualit&agrave; professionale).</li>
+    <li><strong>Stampa</strong>: apre l&rsquo;anteprima di stampa con titolo &ldquo;Scansiona per accedere&rdquo; e l&rsquo;URL sotto. Pronto da stampare per il tavolo o la vetrina.</li>
+</ul>
+
+<div class="hg-tip"><strong><i class="bi bi-lightbulb me-1"></i>Casi d&rsquo;uso comuni:</strong></div>
+<ul>
+    <li><strong>Bio Instagram/Facebook</strong>: incolla il link nella tua bio invece di LinkTree</li>
+    <li><strong>Biglietti da visita</strong>: stampa il QR sul retro</li>
+    <li><strong>Volantini</strong>: aggiungi il QR per dare ai clienti accesso immediato a menu, prenotazioni e contatti</li>
+    <li><strong>Sul tavolo</strong>: QR plastificato che il cliente scansiona durante o a fine pasto</li>
+    <li><strong>Vetrina del locale</strong>: poster con QR per chi passa fuori e vuole prenotare</li>
+</ul>
+
+<h5 style="margin-top:1.5rem;">Personalizzazione avanzata (Enterprise)</h5>
+<p>Con il piano <strong>Enterprise</strong> puoi attivare il toggle &ldquo;Personalizza la tua vetrina&rdquo; e impostare:</p>
+<ul>
+    <li><strong>Colori personalizzati</strong>: 4 colori liberi (primario, scuro per il gradiente cover, accento, sfondo). Quando attivo, sostituisce la palette preset selezionata.</li>
+    <li><strong>Link personalizzati illimitati</strong>: aggiungi azioni custom oltre alle preset (es. &ldquo;Eventi privati&rdquo;, &ldquo;Newsletter VIP&rdquo;, &ldquo;Compleanni&rdquo;) con etichetta, URL, icona e una breve descrizione.</li>
+    <li><strong>White-label</strong>: rimuove la scritta &ldquo;Powered by Evulery&rdquo; dal footer della Vetrina.</li>
+</ul>
+
+<div class="hg-info"><strong><i class="bi bi-info-circle me-1"></i>Nota:</strong> se passi da Enterprise a un piano inferiore, le impostazioni custom restano salvate ma <strong>non vengono applicate</strong> finch&eacute; non torni Enterprise. La Vetrina mostrer&agrave; la palette preset selezionata.</div>
+
+<h5 style="margin-top:1.5rem;">Domande frequenti</h5>
+<div class="hg-faq">
+    <div class="hg-faq-item">
+        <div class="hg-faq-q"><i class="bi bi-chevron-right"></i>L&rsquo;URL della Vetrina si pu&ograve; cambiare?</div>
+        <div class="hg-faq-a">L&rsquo;URL deriva dallo slug del ristorante (es. <code>/trattoria-da-mario/hub</code>). Per cambiarlo, modifica lo slug del tuo ristorante in <em>Impostazioni &rarr; Generali</em>. Con piano Enterprise puoi anche usare un <strong>dominio personalizzato</strong> (vedi sezione Dominio).</div>
+    </div>
+    <div class="hg-faq-item">
+        <div class="hg-faq-q"><i class="bi bi-chevron-right"></i>Cosa vedono i clienti se la Vetrina &egrave; spenta?</div>
+        <div class="hg-faq-a">Non un errore 404. Vedono una pagina friendly con il nome del ristorante e un bottone per prenotare comunque. Cos&igrave; chi scansiona il QR non resta a mani vuote.</div>
+    </div>
+    <div class="hg-faq-item">
+        <div class="hg-faq-q"><i class="bi bi-chevron-right"></i>La Vetrina &egrave; mobile-friendly?</div>
+        <div class="hg-faq-a">S&igrave;, &egrave; pensata principalmente per smartphone (chi scansiona il QR usa il telefono). Funziona perfettamente anche su desktop, ma il layout privilegia la lettura mobile.</div>
+    </div>
+    <div class="hg-faq-item">
+        <div class="hg-faq-q"><i class="bi bi-chevron-right"></i>Posso aggiungere link ai miei social nel footer?</div>
+        <div class="hg-faq-a">S&igrave;. Nella sezione &ldquo;Social e contatti&rdquo; inserisci gli URL di Instagram, Facebook, TikTok, X, YouTube e il numero WhatsApp. Le icone appaiono nel footer della Vetrina solo se hai compilato il relativo campo.</div>
+    </div>
+    <div class="hg-faq-item">
+        <div class="hg-faq-q"><i class="bi bi-chevron-right"></i>Il QR code che ho stampato cambier&agrave; se modifico la Vetrina?</div>
+        <div class="hg-faq-a">No, il QR punta solo all&rsquo;URL della Vetrina. Modifiche a colori, azioni, link, palette si vedono <strong>immediatamente</strong> alla scansione successiva, senza riguardare il QR. Stampa una volta, aggiorna quando vuoi.</div>
+    </div>
+</div>
+HTML
+    ],
+
     'email' => [
         'title'       => 'Email marketing',
         'subtitle'    => 'Comunicazioni e campagne',
