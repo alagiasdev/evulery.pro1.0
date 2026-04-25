@@ -145,36 +145,57 @@ $enabled = !empty($settings['enabled']);
                     </div>
                 </div>
 
-                <?php if ($isEnterprise): ?>
+                <?php if ($isEnterprise):
+                    $customEnabled = !empty($settings['custom_colors_enabled']);
+                ?>
                 <div class="hub-enterprise-section">
                     <span class="hub-enterprise-badge"><i class="bi bi-stars"></i> Enterprise</span>
-                    <div class="hub-enterprise-intro">
-                        <i class="bi bi-palette me-1"></i>
-                        Se nessuna palette ti convince, personalizza i colori a piacere.
+
+                    <!-- Master toggle: attiva colori personalizzati (esclude la palette preset) -->
+                    <div class="hub-toggle-row" style="margin-bottom:.85rem;">
+                        <div style="flex:1;">
+                            <div class="hub-toggle-label"><i class="bi bi-palette me-1"></i> Attiva colori personalizzati</div>
+                            <div class="hub-toggle-sub">Se attivo, la Vetrina usa i tuoi colori e ignora la palette preset selezionata sopra.</div>
+                        </div>
+                        <label class="hub-switch">
+                            <input type="checkbox" name="custom_colors_enabled" value="1" id="hub-custom-colors-toggle" <?= $customEnabled ? 'checked' : '' ?>>
+                            <span class="hub-switch-slider"></span>
+                        </label>
                     </div>
-                    <div class="hub-grid-3">
-                        <div class="hub-field">
-                            <label>Primario <span style="color:#adb5bd; font-weight:normal;">(CTA, icone)</span></label>
-                            <div class="hub-color-row">
-                                <input type="color" name="custom_primary" value="<?= e($settings['custom_primary'] ?? '#00844A') ?>">
-                                <input type="text" value="<?= e($settings['custom_primary'] ?? '#00844A') ?>" data-color-text>
+
+                    <div class="hub-custom-colors-block <?= $customEnabled ? '' : 'is-disabled' ?>" id="hub-custom-colors-block">
+                        <div class="hub-grid-2">
+                            <div class="hub-field">
+                                <label>Primario <span style="color:#adb5bd; font-weight:normal;">(CTA, icone)</span></label>
+                                <div class="hub-color-row">
+                                    <input type="color" name="custom_primary" value="<?= e($settings['custom_primary'] ?? '#00844A') ?>">
+                                    <input type="text" value="<?= e($settings['custom_primary'] ?? '#00844A') ?>" data-color-text>
+                                </div>
                             </div>
-                        </div>
-                        <div class="hub-field">
-                            <label>Accento <span style="color:#adb5bd; font-weight:normal;">(hover, badge)</span></label>
-                            <div class="hub-color-row">
-                                <input type="color" name="custom_accent" value="<?= e($settings['custom_accent'] ?? '#E8F5E9') ?>">
-                                <input type="text" value="<?= e($settings['custom_accent'] ?? '#E8F5E9') ?>" data-color-text>
+                            <div class="hub-field">
+                                <label>Scuro <span style="color:#adb5bd; font-weight:normal;">(gradiente cover)</span></label>
+                                <div class="hub-color-row">
+                                    <input type="color" name="custom_dark" value="<?= e($settings['custom_dark'] ?? '#006837') ?>">
+                                    <input type="text" value="<?= e($settings['custom_dark'] ?? '#006837') ?>" data-color-text>
+                                </div>
                             </div>
-                        </div>
-                        <div class="hub-field">
-                            <label>Sfondo</label>
-                            <div class="hub-color-row">
-                                <input type="color" name="custom_bg" value="<?= e($settings['custom_bg'] ?? '#FFFFFF') ?>">
-                                <input type="text" value="<?= e($settings['custom_bg'] ?? '#FFFFFF') ?>" data-color-text>
+                            <div class="hub-field">
+                                <label>Accento <span style="color:#adb5bd; font-weight:normal;">(hover, badge)</span></label>
+                                <div class="hub-color-row">
+                                    <input type="color" name="custom_accent" value="<?= e($settings['custom_accent'] ?? '#E8F5E9') ?>">
+                                    <input type="text" value="<?= e($settings['custom_accent'] ?? '#E8F5E9') ?>" data-color-text>
+                                </div>
+                            </div>
+                            <div class="hub-field">
+                                <label>Sfondo</label>
+                                <div class="hub-color-row">
+                                    <input type="color" name="custom_bg" value="<?= e($settings['custom_bg'] ?? '#FFFFFF') ?>">
+                                    <input type="text" value="<?= e($settings['custom_bg'] ?? '#FFFFFF') ?>" data-color-text>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="hub-field" style="margin-top:.85rem;">
                         <label>Font del titolo ristorante</label>
                         <select name="custom_font" class="form-select form-select-sm">

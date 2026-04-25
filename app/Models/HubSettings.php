@@ -69,7 +69,8 @@ class HubSettings
     {
         $allowed = [
             'enabled', 'palette', 'logo_url', 'cover_url', 'subtitle',
-            'custom_primary', 'custom_accent', 'custom_bg', 'custom_font', 'hide_branding',
+            'custom_colors_enabled', 'custom_primary', 'custom_accent', 'custom_dark',
+            'custom_bg', 'custom_font', 'hide_branding',
             'instagram_url', 'facebook_url', 'tiktok_url',
             'twitter_url', 'youtube_url', 'whatsapp_number',
         ];
@@ -89,19 +90,36 @@ class HubSettings
 
     /**
      * Resolves the active palette colors for rendering.
-     * Returns ['primary' => '#xxx', 'accent' => '#xxx', 'dark' => '#xxx'].
-     * Enterprise custom colors override the preset when set.
+     * Returns ['primary' => '#xxx', 'accent' => '#xxx', 'dark' => '#xxx', 'bg' => '#xxx'].
+     *
+     * Modalità tutto-o-niente:
+     *   custom_colors_enabled = 0 → usa preset, custom_* ignorati
+     *   custom_colors_enabled = 1 → usa custom_*, preset ignorato (con fallback a primario se dark vuoto)
      */
     public function resolveColors(array $settings): array
     {
+        $useCustom = !empty($settings['custom_colors_enabled']);
+
+        if ($useCustom) {
+            $primary = $settings['custom_primary'] ?: '#00844A';
+            return [
+                'primary' => $primary,
+                'accent'  => $settings['custom_accent'] ?: '#E8F5E9',
+                // Se dark non impostato, fallback al primary (gradiente piatto invece di mismatch)
+                'dark'    => $settings['custom_dark'] ?: $primary,
+                'bg'      => $settings['custom_bg'] ?: '#ffffff',
+            ];
+        }
+
+        // Modalità preset: tutto deriva dalla palette scelta
         $paletteKey = $settings['palette'] ?? 'evulery_green';
         $base = self::PALETTES[$paletteKey] ?? self::PALETTES['evulery_green'];
 
         return [
-            'primary' => !empty($settings['custom_primary']) ? $settings['custom_primary'] : $base['primary'],
-            'accent'  => !empty($settings['custom_accent'])  ? $settings['custom_accent']  : $base['accent'],
-            'dark'    => $base['dark'],   // dark non è personalizzabile, deriva sempre dalla palette
-            'bg'      => !empty($settings['custom_bg'])      ? $settings['custom_bg']      : '#ffffff',
+            'primary' => $base['primary'],
+            'accent'  => $base['accent'],
+            'dark'    => $base['dark'],
+            'bg'      => '#ffffff',
         ];
     }
 }

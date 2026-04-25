@@ -16,6 +16,10 @@
 /* Greyed-out blocks when hub is disabled */
 .hub-greyed { opacity: .45; pointer-events: none; user-select: none; transition: opacity .2s; }
 
+/* Greyed-out custom-colors block when master toggle is OFF */
+.hub-custom-colors-block { transition: opacity .2s; }
+.hub-custom-colors-block.is-disabled { opacity: .4; pointer-events: none; user-select: none; }
+
 /* File uploader (logo + cover) */
 .hub-uploader { position: relative; }
 .hub-uploader-preview {

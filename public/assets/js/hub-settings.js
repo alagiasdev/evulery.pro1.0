@@ -131,23 +131,42 @@
         }
     });
 
+    // -------- Custom-colors master toggle --------
+    var customColorsToggle = document.getElementById('hub-custom-colors-toggle');
+    var customColorsBlock = document.getElementById('hub-custom-colors-block');
+    if (customColorsToggle && customColorsBlock) {
+        customColorsToggle.addEventListener('change', function() {
+            customColorsBlock.classList.toggle('is-disabled', !customColorsToggle.checked);
+            updateLivePreview();
+        });
+    }
+
     // -------- Live preview update --------
     function updateLivePreview() {
-        var selectedPalette = document.querySelector('.hub-palette-card.selected');
-        if (!selectedPalette) return;
-        var swatch = selectedPalette.querySelector('.hub-palette-swatch');
-        if (!swatch) return;
-        var divs = swatch.querySelectorAll('div');
-        if (divs.length < 3) return;
-        var primary = divs[0].style.background;
-        var accent = divs[1].style.background;
-        var dark = divs[2].style.background;
+        // Modalità: custom toggle ON → usa input custom; altrimenti palette
+        var useCustom = customColorsToggle && customColorsToggle.checked;
+        var primary, accent, dark, bg = '#ffffff';
 
-        // Override with custom colors if Enterprise
-        var customPrimary = document.querySelector('input[name="custom_primary"]');
-        var customAccent = document.querySelector('input[name="custom_accent"]');
-        if (customPrimary && customPrimary.value && customPrimary.value !== '#000000') primary = customPrimary.value;
-        if (customAccent && customAccent.value && customAccent.value !== '#000000') accent = customAccent.value;
+        if (useCustom) {
+            var cp = document.querySelector('input[name="custom_primary"]');
+            var ca = document.querySelector('input[name="custom_accent"]');
+            var cd = document.querySelector('input[name="custom_dark"]');
+            var cb = document.querySelector('input[name="custom_bg"]');
+            primary = cp ? cp.value : '#00844A';
+            accent  = ca ? ca.value : '#E8F5E9';
+            dark    = cd && cd.value ? cd.value : primary;  // fallback al primary se vuoto
+            bg      = cb ? cb.value : '#ffffff';
+        } else {
+            var selectedPalette = document.querySelector('.hub-palette-card.selected');
+            if (!selectedPalette) return;
+            var swatch = selectedPalette.querySelector('.hub-palette-swatch');
+            if (!swatch) return;
+            var divs = swatch.querySelectorAll('div');
+            if (divs.length < 3) return;
+            primary = divs[0].style.background;
+            accent  = divs[1].style.background;
+            dark    = divs[2].style.background;
+        }
 
         // Apply to preview elements
         var cover = document.getElementById('ppm-cover');
@@ -158,6 +177,8 @@
         document.querySelectorAll('.ppm-row-icon i').forEach(function(el) { el.style.color = primary; });
         var logo = document.querySelector('.ppm-logo');
         if (logo) logo.style.color = primary;
+        var body = document.querySelector('.ppm-body');
+        if (body) body.style.background = bg;
     }
 
     // -------- Copy URL to clipboard --------
