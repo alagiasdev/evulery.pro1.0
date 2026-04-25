@@ -149,7 +149,7 @@ $enabled = !empty($settings['enabled']);
                     $customEnabled = !empty($settings['custom_colors_enabled']);
                 ?>
                 <div class="hub-enterprise-section">
-                    <span class="hub-enterprise-badge"><i class="bi bi-stars"></i> Enterprise</span>
+                    <span class="hub-enterprise-badge"><i class="bi bi-stars"></i> Personalizza la tua vetrina</span>
 
                     <!-- Master toggle: attiva colori personalizzati (esclude la palette preset) -->
                     <div class="hub-toggle-row" style="margin-bottom:.85rem;">
