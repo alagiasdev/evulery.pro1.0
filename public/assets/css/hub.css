@@ -504,7 +504,7 @@
 .hub-promo-card:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,.08); }
 .hub-promo-card.is-live { border-color: var(--hub-primary); box-shadow: 0 4px 14px rgba(var(--hub-primary-rgb,0,132,74), .14); }
 .hub-promo-discount {
-    display: flex; align-items: center; justify-content: center;
+    display: flex; align-items: baseline; justify-content: center;
     flex-shrink: 0;
     width: 78px;
     background: var(--hub-accent);
@@ -516,7 +516,7 @@
 }
 .hub-promo-discount-sign { font-size: 1.4rem; line-height: 1; }
 .hub-promo-discount-num  { font-size: 1.85rem; line-height: 1; }
-.hub-promo-discount-pct  { font-size: 1rem; line-height: 1; margin-left: 1px; align-self: flex-end; padding-bottom: .15rem; }
+.hub-promo-discount-pct  { font-size: 1.05rem; line-height: 1; margin-left: 1px; }
 .hub-promo-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
 .hub-promo-head { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-bottom: .35rem; }
 .hub-promo-name { font-size: 1.02rem; font-weight: 700; color: #1a1d23; line-height: 1.2; }
