@@ -10,6 +10,14 @@ $logoUrl = $settings['logo_url'] ?? null;
 $coverUrl = $settings['cover_url'] ?? null;
 $hideBranding = !empty($settings['hide_branding']);
 
+// Hex #RRGGBB -> "r,g,b" per usare in rgba() delle box-shadow del CTA
+$hexToRgb = function (string $hex): string {
+    $hex = ltrim($hex, '#');
+    if (strlen($hex) !== 6) return '0,132,74';
+    return hexdec(substr($hex, 0, 2)) . ',' . hexdec(substr($hex, 2, 2)) . ',' . hexdec(substr($hex, 4, 2));
+};
+$primaryRgb = $hexToRgb($primary);
+
 // Social links — only render if URL/number set
 $socials = [
     'instagram' => ['url' => $settings['instagram_url'] ?? '', 'icon' => 'bi-instagram', 'label' => 'Instagram'],
@@ -59,6 +67,7 @@ $wa = $settings['whatsapp_number'] ?? '';
     <style>
         body.hub-public-page {
             --hub-primary: <?= e($primary) ?>;
+            --hub-primary-rgb: <?= e($primaryRgb) ?>;
             --hub-accent: <?= e($accent) ?>;
             --hub-dark: <?= e($dark) ?>;
             --hub-bg: <?= e($bg) ?>;
