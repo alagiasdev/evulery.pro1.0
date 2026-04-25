@@ -47,11 +47,12 @@
 .hub-uploader-remove:hover { background: #b02a37; }
 .hub-uploader-drop {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto auto;
     grid-template-rows: auto auto;
     column-gap: .65rem;
     row-gap: 1px;
-    align-items: center;
+    align-content: center;
+    justify-content: center;
     padding: .65rem .85rem;
     border: 2px dashed #cbd0d4;
     border-radius: 8px;
@@ -59,6 +60,7 @@
     cursor: pointer;
     transition: border-color .15s, background .15s;
     margin: 0;
+    text-align: center;
 }
 .hub-uploader-drop:hover, .hub-uploader-drop.is-dragging {
     border-color: var(--brand);
