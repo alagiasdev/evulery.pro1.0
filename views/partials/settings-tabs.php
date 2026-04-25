@@ -35,16 +35,17 @@ $activeKey = $activeKey ?? '';
 <div class="settings-tabs-wrap">
     <div class="scroll-hint"><i class="bi bi-arrows"></i></div>
     <div class="settings-tabs">
-        <?php $first = true; foreach ($settingsGroups as $groupLabel => $tabs): ?>
-            <?php if (!$first): ?>
-            <div class="settings-tabs-divider" aria-hidden="true"></div>
-            <?php endif; $first = false; ?>
-            <span class="settings-tabs-grouplabel"><?= e($groupLabel) ?></span>
-            <?php foreach ($tabs as $tab): ?>
-            <a href="<?= $tab['url'] ?>" class="settings-tab <?= $tab['key'] === $activeKey ? 'active' : '' ?>">
-                <i class="bi <?= $tab['icon'] ?>"></i> <span class="tab-label"><?= $tab['label'] ?></span>
-            </a>
-            <?php endforeach; ?>
+        <?php foreach ($settingsGroups as $groupLabel => $tabs): ?>
+        <div class="settings-group">
+            <div class="settings-group-header"><?= e($groupLabel) ?></div>
+            <div class="settings-group-tabs">
+                <?php foreach ($tabs as $tab): ?>
+                <a href="<?= $tab['url'] ?>" class="settings-tab <?= $tab['key'] === $activeKey ? 'active' : '' ?>">
+                    <i class="bi <?= $tab['icon'] ?>"></i> <span class="tab-label"><?= $tab['label'] ?></span>
+                </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
         <?php endforeach; ?>
     </div>
 </div>
