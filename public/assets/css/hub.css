@@ -331,7 +331,9 @@
     --hub-bg: #ffffff;
     background: var(--hub-bg);
     min-height: 100vh;
-    font-family: var(--hub-font, system-ui, -apple-system, sans-serif);
+    /* Body sempre Inter (font dell'identità Evulery) per coerenza con landing/dashboard.
+       Il display font (serif, caveat, merriweather) è applicato solo al nome ristorante via .hub-public-name. */
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     color: #212529;
 }
 .hub-public-cover {

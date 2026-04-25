@@ -41,18 +41,20 @@ $wa = $settings['whatsapp_number'] ?? '';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="<?= asset('css/hub.css') ?>">
 
-    <?php if (in_array($settings['custom_font'] ?? null, ['serif','merriweather','caveat','inter'], true)): ?>
+    <!-- Inter (default, font dell'identità Evulery) + eventuale font custom scelto dal ristoratore -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?<?php
-        switch ($settings['custom_font']) {
-            case 'serif':        echo 'family=Playfair+Display:wght@700;800;900&display=swap'; break;
-            case 'merriweather': echo 'family=Merriweather:wght@700;900&display=swap'; break;
-            case 'caveat':       echo 'family=Caveat:wght@700&display=swap'; break;
-            case 'inter':        echo 'family=Inter:wght@500;700;800&display=swap'; break;
+    <?php
+        // Sempre Inter come base, anche se è impostato un display font (serif/caveat),
+        // perché il display font si applica solo al nome del ristorante.
+        $fontFamilies = ['family=Inter:wght@400;500;600;700;800'];
+        switch ($settings['custom_font'] ?? null) {
+            case 'serif':        $fontFamilies[] = 'family=Playfair+Display:wght@700;800;900'; break;
+            case 'merriweather': $fontFamilies[] = 'family=Merriweather:wght@700;900'; break;
+            case 'caveat':       $fontFamilies[] = 'family=Caveat:wght@700'; break;
         }
-    ?>" rel="stylesheet">
-    <?php endif; ?>
+    ?>
+    <link href="https://fonts.googleapis.com/css2?<?= implode('&', $fontFamilies) ?>&display=swap" rel="stylesheet">
 
     <style>
         body.hub-public-page {
@@ -60,9 +62,9 @@ $wa = $settings['whatsapp_number'] ?? '';
             --hub-accent: <?= e($accent) ?>;
             --hub-dark: <?= e($dark) ?>;
             --hub-bg: <?= e($bg) ?>;
-            --hub-font: <?= e($fontFamily) ?>;
+            --hub-display-font: <?= e($fontFamily) ?>;
         }
-        .hub-public-name { font-family: var(--hub-font); }
+        .hub-public-name { font-family: var(--hub-display-font); }
     </style>
 </head>
 <body class="hub-public-page">

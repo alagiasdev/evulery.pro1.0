@@ -61,8 +61,8 @@ class HubPublicController
             'serif'        => "'Playfair Display', Georgia, serif",
             'merriweather' => "'Merriweather', Georgia, serif",
             'caveat'       => "'Caveat', cursive",
-            'inter'        => "'Inter', system-ui, sans-serif",
-            default        => "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+            // Default: Inter (font dell'identità Evulery, coerente con landing/marchio)
+            default        => "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
         };
     }
 
