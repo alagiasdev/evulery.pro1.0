@@ -91,11 +91,20 @@ class HubController
         (new HubService())->ensureInitialized($tenantId);
         (new HubSettings())->update($tenantId, $data);
 
-        // Toggle individual preset actions on/off
+        // Toggle individual preset actions on/off.
+        // Skip locked presets (e.g. booking) — their checkbox is `disabled`
+        // and never submits, so toggling them off here would silently
+        // deactivate them. They must always stay active.
         $activeIds = (array)$request->input('action_active', []);
         $allActions = (new HubAction())->findAllByTenant($tenantId);
         $hubAction = new HubAction();
         foreach ($allActions as $action) {
+            if ($action['action_type'] === 'preset') {
+                $def = HubAction::PRESETS[$action['preset_key']] ?? null;
+                if ($def && !empty($def['locked_position'])) {
+                    continue;
+                }
+            }
             $shouldBeActive = in_array((string)$action['id'], $activeIds, true);
             $hubAction->setActive((int)$action['id'], $tenantId, $shouldBeActive);
         }

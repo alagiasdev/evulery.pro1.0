@@ -149,6 +149,23 @@ class HubAction
     }
 
     /**
+     * Forces is_active=1 on all locked preset rows for a tenant.
+     * Repairs state if a previous save accidentally turned them off
+     * (e.g. disabled checkboxes don't submit and used to be set to 0).
+     */
+    public function ensureLockedActive(int $tenantId): void
+    {
+        $stmt = $this->db->prepare(
+            "UPDATE tenant_hub_actions SET is_active = 1
+             WHERE tenant_id = :tid AND action_type = 'preset' AND preset_key = :key"
+        );
+        foreach (self::PRESETS as $key => $def) {
+            if (empty($def['locked_position'])) continue;
+            $stmt->execute(['tid' => $tenantId, 'key' => $key]);
+        }
+    }
+
+    /**
      * Updates sort_order for a list of action IDs in the given order.
      * Used by drag-to-reorder UI.
      */

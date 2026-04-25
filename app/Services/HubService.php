@@ -168,6 +168,7 @@ class HubService
     {
         $this->settingsModel->findOrCreate($tenantId);
         $this->actionModel->seedPresets($tenantId);
+        $this->actionModel->ensureLockedActive($tenantId);
     }
 
     private function cleanPhone(string $phone): string
