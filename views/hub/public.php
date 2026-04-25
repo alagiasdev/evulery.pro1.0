@@ -98,8 +98,14 @@ $wa = $settings['whatsapp_number'] ?? '';
         <?php if (!empty($items)): ?>
         <div class="hub-public-sep">Altre cose che puoi fare</div>
         <div class="hub-public-list">
-            <?php foreach ($items as $item):
-                $isExternal = preg_match('#^https?://#i', $item['url']);
+            <?php
+                $appBase = rtrim(url(''), '/');
+                foreach ($items as $item):
+                    // External = http(s) URL che NON appartiene al nostro dominio app.
+                    // tel:/mailto: non sono "external" in senso target=_blank, restano same-tab.
+                    $isHttp = (bool)preg_match('#^https?://#i', $item['url']);
+                    $isInternal = $isHttp && str_starts_with($item['url'], $appBase);
+                    $isExternal = $isHttp && !$isInternal;
             ?>
             <a href="<?= e($item['url']) ?>" class="hub-public-row" <?= $isExternal ? 'target="_blank" rel="noopener"' : '' ?>>
                 <span class="hub-public-row-icon"><i class="bi <?= e($item['icon']) ?>"></i></span>
