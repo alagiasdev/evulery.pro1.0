@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Evulery — Il sistema di prenotazione per ristoranti</title>
     <meta name="description" content="Gestisci le prenotazioni del tuo ristorante in modo semplice e professionale. Widget online, dashboard intuitiva, CRM clienti, menu digitale e molto altro.">
-    <meta name="keywords" content="prenotazioni ristorante, gestione prenotazioni, sistema prenotazione online, software ristoranti">
+    <meta name="keywords" content="prenotazioni ristorante, gestione prenotazioni, sistema prenotazione online, software ristoranti, ordini online ristorante">
     <meta name="author" content="alagias. - Soluzioni per il web">
 
     <!-- Open Graph -->
@@ -25,6 +25,10 @@
 
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <!-- reCAPTCHA v3 -->
+    <meta name="recaptcha-site-key" content="6LdWcK0sAAAAAE2MctFUjiKzu5HqmfX8kGTh5-CM">
+    <script src="https://www.google.com/recaptcha/api.js?render=6LdWcK0sAAAAAE2MctFUjiKzu5HqmfX8kGTh5-CM" async></script>
 
     <!-- Styles -->
     <link rel="stylesheet" href="css/style.css">
@@ -68,9 +72,9 @@
     <section class="ev-hero">
         <div class="ev-container">
             <div class="ev-hero-content">
-                <div class="ev-hero-badge">Nuovo: Notifiche push in tempo reale</div>
-                <h1>Meno telefonate,<br>pi&ugrave; prenotazioni.</h1>
-                <p class="ev-hero-sub">Il sistema completo per gestire le prenotazioni del tuo ristorante. Widget online, dashboard intuitiva, CRM clienti e notifiche in tempo reale &mdash; tutto in un&rsquo;unica piattaforma.</p>
+                <div class="ev-hero-badge"><i class="bi bi-shield-check"></i> Conforme alla Legge 34/2026 sulle recensioni verificate</div>
+                <h1>Il tuo ristorante,<br>sempre pieno.</h1>
+                <p class="ev-hero-sub">Prenotazioni online, ordini asporto e delivery, menu digitale, gestione reputazione e CRM clienti. Tutto in un&rsquo;unica piattaforma, senza commissioni.</p>
                 <div class="ev-hero-actions">
                     <a href="#demo" class="ev-btn ev-btn--primary ev-btn--lg">
                         Richiedi una demo gratuita
@@ -83,11 +87,11 @@
                 <div class="ev-hero-trust">
                     <div class="ev-trust-item">
                         <i class="bi bi-shield-check"></i>
-                        <span>Nessuna commissione</span>
+                        <span>Zero commissioni</span>
                     </div>
                     <div class="ev-trust-item">
-                        <i class="bi bi-clock"></i>
-                        <span>Attivo in 5 minuti</span>
+                        <i class="bi bi-person-check"></i>
+                        <span>Onboarding dedicato</span>
                     </div>
                     <div class="ev-trust-item">
                         <i class="bi bi-headset"></i>
@@ -153,12 +157,39 @@
                     </div>
                     <!-- Floating widget card -->
                     <div class="ev-float-card ev-float-card--widget">
-                        <i class="bi bi-calendar-check-fill"></i>
+                        <i class="bi bi-bag-check-fill"></i>
                         <div>
-                            <strong>Widget attivo</strong>
-                            <span>3 prenotazioni nelle ultime 2 ore</span>
+                            <strong>Nuovo ordine</strong>
+                            <span>ORD-042 &mdash; Asporto, &euro; 32,50</span>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SOCIAL PROOF ========== -->
+    <section class="ev-social-proof">
+        <div class="ev-container">
+            <div class="ev-proof-grid">
+                <div class="ev-proof-item">
+                    <div class="ev-proof-num">500+</div>
+                    <div class="ev-proof-label">Prenotazioni gestite al mese</div>
+                </div>
+                <div class="ev-proof-divider"></div>
+                <div class="ev-proof-item">
+                    <div class="ev-proof-num">-73%</div>
+                    <div class="ev-proof-label">Telefonate al ristorante</div>
+                </div>
+                <div class="ev-proof-divider"></div>
+                <div class="ev-proof-item">
+                    <div class="ev-proof-num">-40%</div>
+                    <div class="ev-proof-label">No-show con caparra</div>
+                </div>
+                <div class="ev-proof-divider"></div>
+                <div class="ev-proof-item">
+                    <div class="ev-proof-num">4.8<span style="font-size:.7em; color:var(--brand);">/5</span></div>
+                    <div class="ev-proof-label">Soddisfazione ristoratori</div>
                 </div>
             </div>
         </div>
@@ -212,7 +243,7 @@
                 <div class="ev-feature-card">
                     <div class="ev-feature-icon"><i class="bi bi-people"></i></div>
                     <h3>CRM clienti automatico</h3>
-                    <p>Il sistema costruisce automaticamente il profilo di ogni cliente: frequenza visite, preferenze, segmentazione (Nuovo, Abituale, VIP).</p>
+                    <p>Il sistema costruisce automaticamente il profilo di ogni cliente: frequenza visite, preferenze, segmentazione (Nuovo, Abituale, VIP). Importa i clienti da TheFork, Quandoo o qualsiasi CSV.</p>
                 </div>
                 <div class="ev-feature-card">
                     <div class="ev-feature-icon"><i class="bi bi-bell"></i></div>
@@ -247,23 +278,55 @@
                 <div class="ev-feature-card">
                     <div class="ev-feature-icon"><i class="bi bi-star"></i></div>
                     <h3>Gestione reputazione</h3>
-                    <p>Richiedi recensioni automaticamente dopo ogni visita. Filtra il sentimento prima di Google: i clienti soddisfatti recensiscono, gli insoddisfatti ti scrivono in privato. <strong>Conforme alla legge 34/2026</strong> sulle recensioni verificate.</p>
+                    <p>Richiedi recensioni automaticamente dopo ogni visita. Filtra il sentimento prima di Google: i clienti soddisfatti recensiscono, gli insoddisfatti ti scrivono in privato. <strong>Conforme alla legge 34/2026</strong>.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- ========== COMPLIANCE BANNER ========== -->
-    <section class="ev-section" style="padding:2.5rem 0; background:linear-gradient(135deg, #f0faf4 0%, #e8f5e9 100%);">
-        <div class="ev-container" style="text-align:center; max-width:800px;">
-            <div style="display:inline-flex; align-items:center; gap:.5rem; background:#fff; padding:.4rem 1rem; border-radius:20px; font-size:.75rem; font-weight:600; color:#2E7D32; margin-bottom:1rem; box-shadow:0 1px 4px rgba(0,0,0,.06);">
-                <i class="bi bi-shield-check"></i> Conforme alla Legge 34/2026
+    <section class="ev-section ev-compliance">
+        <div class="ev-container">
+            <div class="ev-compliance-inner">
+                <div class="ev-compliance-badge"><i class="bi bi-shield-check"></i> Conforme alla Legge 34/2026</div>
+                <h2>Recensioni verificate, come richiede la legge</h2>
+                <p>
+                    Dal 7 aprile 2026 le nuove norme impongono che le recensioni online provengano da <strong>chi ha effettivamente usufruito del servizio</strong>, siano pubblicate entro <strong>30 giorni</strong> e non siano legate a sconti o vantaggi.
+                    Con Evulery le richieste di recensione partono <strong>solo da clienti realmente arrivati</strong> al ristorante, entro poche ore dalla visita, senza alcun incentivo.
+                </p>
             </div>
-            <h2 style="font-size:1.5rem; font-weight:800; color:#1a1d23; margin-bottom:.75rem;">Recensioni verificate, come richiede la legge</h2>
-            <p style="font-size:.95rem; color:#495057; line-height:1.7; margin-bottom:0;">
-                Dal 7 aprile 2026 le nuove norme impongono che le recensioni online provengano da <strong>chi ha effettivamente usufruito del servizio</strong>, siano pubblicate entro <strong>30 giorni</strong> e non siano legate a sconti o vantaggi.
-                Con Evulery le richieste di recensione partono <strong>solo da clienti realmente arrivati</strong> al ristorante, entro poche ore dalla visita, senza alcun incentivo. Ogni recensione &egrave; tracciata e verificabile.
-            </p>
+        </div>
+    </section>
+
+    <!-- ========== WHY EVULERY ========== -->
+    <section class="ev-section ev-why">
+        <div class="ev-container">
+            <div class="ev-section-header">
+                <span class="ev-section-tag">Perch&eacute; Evulery</span>
+                <h2>Il tuo ristorante, i tuoi clienti,<br>le tue regole</h2>
+            </div>
+            <div class="ev-why-grid">
+                <div class="ev-why-card">
+                    <div class="ev-why-icon"><i class="bi bi-currency-euro"></i></div>
+                    <h3>Zero commissioni</h3>
+                    <p>Canone fisso mensile, nessuna commissione per coperto o per ordine. Sai sempre quanto spendi.</p>
+                </div>
+                <div class="ev-why-card">
+                    <div class="ev-why-icon"><i class="bi bi-database-check"></i></div>
+                    <h3>I clienti sono tuoi</h3>
+                    <p>Non sei su un marketplace: i dati dei clienti (email, telefono, storico visite) restano nel tuo CRM, per sempre.</p>
+                </div>
+                <div class="ev-why-card">
+                    <div class="ev-why-icon"><i class="bi bi-palette"></i></div>
+                    <h3>Il tuo brand, non il nostro</h3>
+                    <p>Il widget mostra il nome e il logo del tuo ristorante. I clienti prenotano da te, non da una piattaforma terza.</p>
+                </div>
+                <div class="ev-why-card">
+                    <div class="ev-why-icon"><i class="bi bi-arrow-left-right"></i></div>
+                    <h3>Migra senza perdere nulla</h3>
+                    <p>Importa i clienti da qualsiasi piattaforma (TheFork, Quandoo, CSV). Porta con te il tuo database clienti in pochi click.</p>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -272,30 +335,38 @@
         <div class="ev-container">
             <div class="ev-section-header">
                 <span class="ev-section-tag">Come funziona</span>
-                <h2>Operativo in 3 semplici passaggi</h2>
+                <h2>Da zero a operativo, con il nostro supporto</h2>
             </div>
             <div class="ev-steps">
                 <div class="ev-step">
                     <div class="ev-step-num">1</div>
                     <div class="ev-step-content">
-                        <h3>Configura il tuo ristorante</h3>
-                        <p>Inserisci gli orari, i coperti disponibili e le categorie di servizio (pranzo, cena, aperitivo). Aggiungi il logo e personalizza il widget.</p>
+                        <h3>Richiedi una demo</h3>
+                        <p>Ti mostriamo la piattaforma in 20 minuti. Rispondiamo a tutte le tue domande e valutiamo insieme le esigenze del tuo ristorante.</p>
                     </div>
                 </div>
                 <div class="ev-step-line"></div>
                 <div class="ev-step">
                     <div class="ev-step-num">2</div>
                     <div class="ev-step-content">
-                        <h3>Integra il widget nel tuo sito</h3>
-                        <p>Copia il link o il codice embed e inseriscilo nel tuo sito web, nella bio di Instagram o nella pagina Facebook. Un minuto e sei online.</p>
+                        <h3>Configuriamo tutto noi</h3>
+                        <p>Ti affianchiamo nell&rsquo;attivazione: configuriamo orari, coperti, menu digitale, widget personalizzato e importiamo i tuoi clienti esistenti.</p>
                     </div>
                 </div>
                 <div class="ev-step-line"></div>
                 <div class="ev-step">
                     <div class="ev-step-num">3</div>
                     <div class="ev-step-content">
-                        <h3>Ricevi prenotazioni</h3>
-                        <p>I clienti prenotano online, tu ricevi notifiche in tempo reale. La dashboard mostra tutto: prenotazioni, coperti, arrivi, clienti.</p>
+                        <h3>Formiamo il tuo staff</h3>
+                        <p>Sessione di formazione dedicata per te e il tuo team: dashboard, prenotazioni, ordini, gestione clienti. Tutto chiaro prima di partire.</p>
+                    </div>
+                </div>
+                <div class="ev-step-line"></div>
+                <div class="ev-step">
+                    <div class="ev-step-num">4</div>
+                    <div class="ev-step-content">
+                        <h3>Vai online</h3>
+                        <p>Integra il widget nel tuo sito, nella bio di Instagram o nella pagina Facebook. I clienti prenotano e ordinano, tu ricevi notifiche in tempo reale.</p>
                     </div>
                 </div>
             </div>
@@ -322,18 +393,19 @@
                         </div>
                     </div>
                     <ul class="ev-plan-features">
-                        <li><i class="bi bi-check-circle-fill"></i> Coperti illimitati</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Prenotazioni illimitate</li>
                         <li><i class="bi bi-check-circle-fill"></i> Widget di prenotazione</li>
                         <li><i class="bi bi-check-circle-fill"></i> Dashboard completa</li>
                         <li><i class="bi bi-check-circle-fill"></i> CRM clienti automatico</li>
-                        <li><i class="bi bi-check-circle-fill"></i> Email conferma</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Email di conferma</li>
                         <li><i class="bi bi-check-circle-fill"></i> Menu digitale con QR code</li>
                         <li><i class="bi bi-check-circle-fill"></i> Promozioni e sconti</li>
-                        <li><i class="bi bi-check-circle-fill"></i> Email marketing base</li>
-                        <li class="ev-plan-feature--disabled"><i class="bi bi-x-circle"></i> Email reminder pre-visita</li>
-                        <li class="ev-plan-feature--disabled"><i class="bi bi-x-circle"></i> Caparra anti no-show</li>
-                        <li class="ev-plan-feature--disabled"><i class="bi bi-x-circle"></i> Statistiche clienti</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Email marketing</li>
+                        <li class="ev-plan-feature--disabled"><i class="bi bi-x-circle"></i> Email reminder</li>
+                        <li class="ev-plan-feature--disabled"><i class="bi bi-x-circle"></i> Caparra online</li>
+                        <li class="ev-plan-feature--disabled"><i class="bi bi-x-circle"></i> Ordini online</li>
                         <li class="ev-plan-feature--disabled"><i class="bi bi-x-circle"></i> Gestione reputazione</li>
+                        <li class="ev-plan-feature--disabled"><i class="bi bi-x-circle"></i> Notifiche push</li>
                     </ul>
                     <a href="#demo" class="ev-btn ev-btn--outline ev-btn--block">Richiedi una demo</a>
                 </div>
@@ -350,13 +422,15 @@
                     </div>
                     <ul class="ev-plan-features">
                         <li><i class="bi bi-check-circle-fill"></i> Tutto di Starter, pi&ugrave;:</li>
-                        <li><i class="bi bi-check-circle-fill"></i> <strong>Caparra anti no-show</strong> (Stripe, link, bonifico)</li>
                         <li><i class="bi bi-check-circle-fill"></i> Email reminder pre-visita</li>
                         <li><i class="bi bi-check-circle-fill"></i> Notifiche push in tempo reale</li>
                         <li><i class="bi bi-check-circle-fill"></i> Statistiche clienti</li>
                         <li><i class="bi bi-check-circle-fill"></i> Analytics avanzati</li>
-                        <li><i class="bi bi-check-circle-fill"></i> Gestione reputazione <span style="font-size:.65rem; color:#2E7D32; font-weight:600;">L.34/2026</span></li>
+                        <li><i class="bi bi-check-circle-fill"></i> Gestione reputazione <span class="ev-plan-law-badge">L.34/2026</span></li>
                         <li><i class="bi bi-check-circle-fill"></i> Esportazione CSV</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Caparra online (Stripe, link, bonifico)</li>
+                        <li class="ev-plan-feature--disabled"><i class="bi bi-x-circle"></i> Ordini online</li>
+                        <li class="ev-plan-feature--disabled"><i class="bi bi-x-circle"></i> Dominio personalizzato</li>
                     </ul>
                     <a href="#demo" class="ev-btn ev-btn--primary ev-btn--block">Richiedi una demo</a>
                 </div>
@@ -364,7 +438,7 @@
                 <div class="ev-plan-card">
                     <div class="ev-plan-header">
                         <h3>Enterprise</h3>
-                        <p class="ev-plan-desc">Per ristoranti che fanno anche delivery</p>
+                        <p class="ev-plan-desc">La soluzione completa per il tuo ristorante</p>
                         <div class="ev-plan-price">
                             <span class="ev-plan-amount">&euro;129</span>
                             <span class="ev-plan-period">/mese</span>
@@ -372,10 +446,10 @@
                     </div>
                     <ul class="ev-plan-features">
                         <li><i class="bi bi-check-circle-fill"></i> Tutto di Professional, pi&ugrave;:</li>
-                        <li><i class="bi bi-check-circle-fill"></i> <strong>Ordini online</strong> (asporto + delivery)</li>
-                        <li><i class="bi bi-check-circle-fill"></i> Zone consegna con CAP</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Ordini online (asporto + delivery)</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Zone consegna per CAP</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Dominio personalizzato</li>
                         <li><i class="bi bi-check-circle-fill"></i> Supporto prioritario</li>
-                        <li><i class="bi bi-check-circle-fill"></i> Onboarding dedicato</li>
                     </ul>
                     <a href="#demo" class="ev-btn ev-btn--outline ev-btn--block">Contattaci</a>
                 </div>
@@ -411,16 +485,16 @@
                         <i class="bi bi-chevron-down"></i>
                     </button>
                     <div class="ev-faq-answer">
-                        <p>No, mai. Evulery funziona con un canone mensile fisso. Non applichiamo alcuna commissione sulle prenotazioni, indipendentemente dal piano scelto.</p>
+                        <p>No, mai. Evulery funziona con un canone mensile fisso. Non applichiamo alcuna commissione sulle prenotazioni o sugli ordini, indipendentemente dal piano scelto.</p>
                     </div>
                 </div>
                 <div class="ev-faq-item">
                     <button class="ev-faq-question" aria-expanded="false">
-                        <span>Quanto tempo serve per configurare il sistema?</span>
+                        <span>Come funziona l&rsquo;attivazione?</span>
                         <i class="bi bi-chevron-down"></i>
                     </button>
                     <div class="ev-faq-answer">
-                        <p>La configurazione base richiede circa 5 minuti: inserisci gli orari, i coperti e il logo. Il widget &egrave; subito pronto per essere integrato nel tuo sito o condiviso sui social.</p>
+                        <p>Ti affianchiamo in ogni fase: configuriamo insieme orari, coperti, widget personalizzato e formiamo il tuo staff sull&rsquo;utilizzo della piattaforma. Sarai operativo in pochi giorni.</p>
                     </div>
                 </div>
                 <div class="ev-faq-item">
@@ -434,15 +508,6 @@
                 </div>
                 <div class="ev-faq-item">
                     <button class="ev-faq-question" aria-expanded="false">
-                        <span>Posso integrare il widget nel mio sito esistente?</span>
-                        <i class="bi bi-chevron-down"></i>
-                    </button>
-                    <div class="ev-faq-answer">
-                        <p>S&igrave;, il widget si integra con una semplice riga di codice (iframe) in qualsiasi sito web: WordPress, Wix, Squarespace o sito custom. In alternativa, puoi condividere il link diretto.</p>
-                    </div>
-                </div>
-                <div class="ev-faq-item">
-                    <button class="ev-faq-question" aria-expanded="false">
                         <span>Come funziona la caparra online?</span>
                         <i class="bi bi-chevron-down"></i>
                     </button>
@@ -452,20 +517,29 @@
                 </div>
                 <div class="ev-faq-item">
                     <button class="ev-faq-question" aria-expanded="false">
+                        <span>Come funzionano gli ordini online?</span>
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <div class="ev-faq-answer">
+                        <p>Ogni ristorante ha il proprio store online per asporto e consegna a domicilio. I clienti ordinano dal tuo menu, tu gestisci tutto con un kanban visuale in dashboard. Puoi configurare zone di consegna per CAP con costi differenziati.</p>
+                    </div>
+                </div>
+                <div class="ev-faq-item">
+                    <button class="ev-faq-question" aria-expanded="false">
+                        <span>Le recensioni raccolte con Evulery sono a norma?</span>
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <div class="ev-faq-answer">
+                        <p>S&igrave;. Le richieste di recensione partono solo da clienti effettivamente arrivati al ristorante, entro poche ore dalla visita e senza incentivi. Questo rispetta i requisiti della Legge 34/2026 sulle recensioni online verificate.</p>
+                    </div>
+                </div>
+                <div class="ev-faq-item">
+                    <button class="ev-faq-question" aria-expanded="false">
                         <span>Posso cambiare piano in qualsiasi momento?</span>
                         <i class="bi bi-chevron-down"></i>
                     </button>
                     <div class="ev-faq-answer">
                         <p>S&igrave;, puoi fare upgrade o downgrade in qualsiasi momento. Le funzionalit&agrave; del nuovo piano si attivano immediatamente. Nessun vincolo contrattuale.</p>
-                    </div>
-                </div>
-                <div class="ev-faq-item">
-                    <button class="ev-faq-question" aria-expanded="false">
-                        <span>Offrite un periodo di prova?</span>
-                        <i class="bi bi-chevron-down"></i>
-                    </button>
-                    <div class="ev-faq-answer">
-                        <p>S&igrave;, offriamo una demo gratuita e personalizzata. Ti mostriamo la piattaforma, configuriamo insieme il tuo ristorante e ti lasciamo provare il sistema prima di decidere.</p>
                     </div>
                 </div>
             </div>
@@ -505,6 +579,7 @@
                     <label for="demo-message">Messaggio (opzionale)</label>
                     <textarea id="demo-message" name="message" rows="3" placeholder="Raccontaci le tue esigenze..."></textarea>
                 </div>
+                <div id="demo-form-error" style="display:none; background:#FFEBEE; color:#C62828; padding:10px 16px; border-radius:8px; font-size:.85rem; margin-bottom:16px; text-align:center;"></div>
                 <button type="submit" class="ev-btn ev-btn--primary ev-btn--lg ev-btn--block">
                     Invia richiesta
                     <i class="bi bi-send"></i>
@@ -535,14 +610,14 @@
                 <div class="ev-footer-col">
                     <h4>Supporto</h4>
                     <a href="#faq">FAQ</a>
-                    <a href="mailto:support@evulery.it">support@evulery.it</a>
+                    <a href="mailto:info@evulery.it">info@evulery.it</a>
                     <a href="https://dash.evulery.it/auth/login">Accedi alla dashboard</a>
                 </div>
                 <div class="ev-footer-col">
                     <h4>Legale</h4>
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Termini di Servizio</a>
-                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Termini di Servizio</a>
+                    <a href="#">Cookie Policy</a>
                 </div>
             </div>
             <div class="ev-footer-bottom">
