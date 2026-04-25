@@ -154,6 +154,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Controllers\\Dashboard\\SuspendedController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/SuspendedController.php',
         'App\\Controllers\\Delivery\\DeliveryBoardController' => __DIR__ . '/../..' . '/app/Controllers/Delivery/DeliveryBoardController.php',
         'App\\Controllers\\Hub\\HubPublicController' => __DIR__ . '/../..' . '/app/Controllers/Hub/HubPublicController.php',
+        'App\\Controllers\\Hub\\PromotionsPublicController' => __DIR__ . '/../..' . '/app/Controllers/Hub/PromotionsPublicController.php',
         'App\\Controllers\\ManageReservationController' => __DIR__ . '/../..' . '/app/Controllers/ManageReservationController.php',
         'App\\Controllers\\Menu\\MenuPageController' => __DIR__ . '/../..' . '/app/Controllers/Menu/MenuPageController.php',
         'App\\Controllers\\Ordering\\OrderStoreController' => __DIR__ . '/../..' . '/app/Controllers/Ordering/OrderStoreController.php',

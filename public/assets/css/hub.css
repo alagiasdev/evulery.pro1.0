@@ -483,3 +483,63 @@
     .hub-public-row-label { font-size: .88rem; }
     .hub-public-row-sub { font-size: .72rem; }
 }
+
+/* ============ Pagina /{slug}/promo — elenco offerte ============ */
+.hub-promo-back {
+    display: inline-flex; align-items: center; gap: .35rem;
+    color: var(--hub-primary); text-decoration: none;
+    font-size: .82rem; font-weight: 600;
+    margin-bottom: 1rem;
+    transition: opacity .15s;
+}
+.hub-promo-back:hover { color: var(--hub-primary); opacity: .75; }
+.hub-promo-list { display: flex; flex-direction: column; gap: .75rem; }
+.hub-promo-card {
+    display: flex; align-items: stretch; gap: 1rem;
+    background: #fff; border: 1px solid #e9ecef; border-radius: 14px;
+    padding: 1rem 1.1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    transition: transform .12s, box-shadow .12s;
+}
+.hub-promo-card:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+.hub-promo-card.is-live { border-color: var(--hub-primary); box-shadow: 0 4px 14px rgba(var(--hub-primary-rgb,0,132,74), .14); }
+.hub-promo-discount {
+    display: flex; align-items: baseline; justify-content: center;
+    flex-shrink: 0;
+    width: 78px;
+    background: var(--hub-accent);
+    border-radius: 10px;
+    color: var(--hub-primary);
+    font-weight: 800;
+    line-height: 1;
+}
+.hub-promo-discount-num { font-size: 1.85rem; }
+.hub-promo-discount-pct { font-size: 1rem; margin-left: 1px; }
+.hub-promo-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.hub-promo-head { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-bottom: .35rem; }
+.hub-promo-name { font-size: 1.02rem; font-weight: 700; color: #1a1d23; line-height: 1.2; }
+.hub-promo-badge {
+    display: inline-flex; align-items: center; gap: .25rem;
+    background: var(--hub-primary); color: #fff;
+    font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .4px;
+    padding: 2px 7px; border-radius: 10px;
+}
+.hub-promo-meta {
+    display: flex; flex-wrap: wrap; gap: .25rem .9rem;
+    font-size: .78rem; color: #6c757d;
+}
+.hub-promo-meta span { display: inline-flex; align-items: center; gap: .25rem; }
+.hub-promo-empty {
+    text-align: center;
+    padding: 2.5rem 1rem 1rem;
+    color: #6c757d;
+}
+.hub-promo-empty i { font-size: 3rem; color: #cbd0d4; display: block; margin-bottom: .75rem; }
+.hub-promo-empty p { font-size: .92rem; margin-bottom: 1.5rem; }
+
+@media (max-width: 480px) {
+    .hub-promo-card { padding: .85rem; gap: .75rem; }
+    .hub-promo-discount { width: 64px; }
+    .hub-promo-discount-num { font-size: 1.55rem; }
+    .hub-promo-name { font-size: .95rem; }
+}

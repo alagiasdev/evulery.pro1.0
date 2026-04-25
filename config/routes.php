@@ -21,6 +21,7 @@ use App\Controllers\Dashboard\SlotsController;
 use App\Controllers\Dashboard\DomainController;
 use App\Controllers\Dashboard\HubController;
 use App\Controllers\Hub\HubPublicController;
+use App\Controllers\Hub\PromotionsPublicController;
 use App\Controllers\Dashboard\MealCategoriesController;
 use App\Controllers\Dashboard\ClosuresController;
 use App\Controllers\Dashboard\PromotionsController;
@@ -267,6 +268,7 @@ $router->get('/{slug}/review/open', [ReviewLandingController::class, 'trackOpen'
 
 // --- PUBLIC VETRINA DIGITALE (must be before /{slug} catch-all) ---
 $router->get('/{slug}/hub', [HubPublicController::class, 'show']);
+$router->get('/{slug}/promo', [PromotionsPublicController::class, 'show']);
 
 // --- PUBLIC BOOKING ROUTES (tenant-scoped, must be last) ---
 $router->get('/{slug}', [BookingController::class, 'show']);

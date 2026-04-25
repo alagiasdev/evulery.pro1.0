@@ -136,7 +136,7 @@ class HubService
             'menu'       => url($slug . '/menu'),
             'order'      => url($slug . '/order'),
             'reviews'    => url($slug . '/review'),
-            'promotions' => url($slug),  // widget shows active promos in slot picker
+            'promotions' => url($slug . '/promo'),
             'whatsapp'   => 'https://wa.me/' . $this->cleanPhone($settings['whatsapp_number'] ?? ''),
             'phone'      => 'tel:' . $this->cleanPhone($tenant['phone'] ?? ''),
             'maps'       => 'https://maps.google.com/?q=' . urlencode($tenant['address'] ?? ''),

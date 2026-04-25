@@ -41,6 +41,7 @@ return array(
     'App\\Controllers\\Dashboard\\SuspendedController' => $baseDir . '/app/Controllers/Dashboard/SuspendedController.php',
     'App\\Controllers\\Delivery\\DeliveryBoardController' => $baseDir . '/app/Controllers/Delivery/DeliveryBoardController.php',
     'App\\Controllers\\Hub\\HubPublicController' => $baseDir . '/app/Controllers/Hub/HubPublicController.php',
+    'App\\Controllers\\Hub\\PromotionsPublicController' => $baseDir . '/app/Controllers/Hub/PromotionsPublicController.php',
     'App\\Controllers\\ManageReservationController' => $baseDir . '/app/Controllers/ManageReservationController.php',
     'App\\Controllers\\Menu\\MenuPageController' => $baseDir . '/app/Controllers/Menu/MenuPageController.php',
     'App\\Controllers\\Ordering\\OrderStoreController' => $baseDir . '/app/Controllers/Ordering/OrderStoreController.php',
