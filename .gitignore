@@ -22,3 +22,4 @@ composer.phar
 .vscode/
 .idea/
 .claude/
+/website/sito_live/

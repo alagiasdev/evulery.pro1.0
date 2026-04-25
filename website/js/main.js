@@ -1,11 +1,12 @@
 /* ============================================
-   Evulery.it — Main JS
+   Evulery.it — Main JS v2
+   No scroll animations, clean and functional
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', function() {
 
     /* ========== Navbar scroll effect ========== */
-    const navbar = document.getElementById('navbar');
+    var navbar = document.getElementById('navbar');
     function checkScroll() {
         navbar.classList.toggle('scrolled', window.scrollY > 20);
     }
@@ -13,16 +14,15 @@ document.addEventListener('DOMContentLoaded', function() {
     checkScroll();
 
     /* ========== Mobile menu ========== */
-    const hamburger = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobile-menu');
+    var hamburger = document.getElementById('hamburger');
+    var mobileMenu = document.getElementById('mobile-menu');
 
     hamburger.addEventListener('click', function() {
-        const isOpen = mobileMenu.classList.toggle('open');
+        var isOpen = mobileMenu.classList.toggle('open');
         hamburger.classList.toggle('active', isOpen);
         hamburger.setAttribute('aria-expanded', isOpen);
     });
 
-    // Close mobile menu on link click
     mobileMenu.querySelectorAll('a').forEach(function(link) {
         link.addEventListener('click', function() {
             mobileMenu.classList.remove('open');
@@ -36,13 +36,11 @@ document.addEventListener('DOMContentLoaded', function() {
             var item = btn.closest('.ev-faq-item');
             var isOpen = item.classList.contains('open');
 
-            // Close all others
             document.querySelectorAll('.ev-faq-item.open').forEach(function(openItem) {
                 openItem.classList.remove('open');
                 openItem.querySelector('.ev-faq-question').setAttribute('aria-expanded', 'false');
             });
 
-            // Toggle current
             if (!isOpen) {
                 item.classList.add('open');
                 btn.setAttribute('aria-expanded', 'true');
@@ -61,62 +59,79 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    /* ========== Demo form ========== */
+    /* ========== Demo form with reCAPTCHA v3 ========== */
+    var API_URL = 'https://dash.evulery.it/api/v1/demo-request';
     var form = document.getElementById('demo-form');
+    var formError = document.getElementById('demo-form-error');
+
     form.addEventListener('submit', function(e) {
         e.preventDefault();
+        if (formError) formError.style.display = 'none';
 
         var btn = form.querySelector('button[type="submit"]');
         var originalText = btn.innerHTML;
 
-        // Simple validation
         var name = form.querySelector('#demo-name').value.trim();
         var restaurant = form.querySelector('#demo-restaurant').value.trim();
         var email = form.querySelector('#demo-email').value.trim();
         var phone = form.querySelector('#demo-phone').value.trim();
+        var message = form.querySelector('#demo-message').value.trim();
 
-        if (!name || !restaurant || !email || !phone) {
-            return;
-        }
+        if (!name || !restaurant || !email || !phone) return;
 
-        // Show loading
         btn.disabled = true;
         btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Invio in corso...';
 
-        // Simulate form submission (replace with actual endpoint)
-        setTimeout(function() {
-            btn.innerHTML = '<i class="bi bi-check-circle"></i> Richiesta inviata!';
-            btn.style.background = '#28a745';
+        // Get reCAPTCHA token, then submit
+        var siteKey = document.querySelector('meta[name="recaptcha-site-key"]');
+        var key = siteKey ? siteKey.getAttribute('content') : '';
 
-            // Reset after 3s
-            setTimeout(function() {
-                form.reset();
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                btn.style.background = '';
-            }, 3000);
-        }, 1200);
+        function submitForm(recaptchaToken) {
+            var body = new FormData();
+            body.append('name', name);
+            body.append('restaurant', restaurant);
+            body.append('email', email);
+            body.append('phone', phone);
+            body.append('message', message);
+            if (recaptchaToken) body.append('recaptcha_token', recaptchaToken);
+
+            fetch(API_URL, { method: 'POST', body: body })
+                .then(function(r) { return r.json(); })
+                .then(function(json) {
+                    if (json.success) {
+                        btn.innerHTML = '<i class="bi bi-check-circle"></i> Richiesta inviata!';
+                        btn.style.background = '#28a745';
+                        setTimeout(function() {
+                            form.reset();
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                            btn.style.background = '';
+                        }, 4000);
+                    } else {
+                        showFormError(json.error || 'Errore nell\'invio. Riprova.');
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
+                })
+                .catch(function() {
+                    showFormError('Errore di connessione. Riprova o contattaci a supporto@evulery.it');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+        }
+
+        if (key && window.grecaptcha) {
+            grecaptcha.ready(function() {
+                grecaptcha.execute(key, { action: 'demo_request' }).then(submitForm);
+            });
+        } else {
+            submitForm('');
+        }
     });
 
-    /* ========== Scroll reveal animation ========== */
-    var revealElements = document.querySelectorAll(
-        '.ev-problem-card, .ev-feature-card, .ev-step, .ev-plan-card, .ev-faq-item'
-    );
-
-    var observer = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    revealElements.forEach(function(el) {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(24px)';
-        el.style.transition = 'opacity .5s ease, transform .5s ease';
-        observer.observe(el);
-    });
+    function showFormError(msg) {
+        if (!formError) return;
+        formError.textContent = msg;
+        formError.style.display = 'block';
+    }
 });
