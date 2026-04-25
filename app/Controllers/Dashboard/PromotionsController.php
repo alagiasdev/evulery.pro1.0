@@ -192,8 +192,16 @@ class PromotionsController
             $appliesTo = 'all';
         }
 
+        $description = trim((string)($data['description'] ?? ''));
+        if ($description === '') {
+            $description = null;
+        } elseif (mb_strlen($description) > 280) {
+            $description = mb_substr($description, 0, 280);
+        }
+
         $promoData = [
             'name'             => trim($data['name']),
+            'description'      => $description,
             'discount_percent' => $discount,
             'type'             => $type,
             'applies_to'       => $appliesTo,

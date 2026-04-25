@@ -86,6 +86,9 @@ $primaryRgb = $hexToRgb($primary);
                         <span class="hub-promo-badge"><i class="bi bi-broadcast"></i> Attiva adesso</span>
                         <?php endif; ?>
                     </div>
+                    <?php if (!empty($p['description'])): ?>
+                    <div class="hub-promo-desc"><?= e($p['description']) ?></div>
+                    <?php endif; ?>
                     <div class="hub-promo-meta">
                         <span><i class="bi bi-clock"></i> <?= e($p['_when_label']) ?></span>
                         <span><i class="bi bi-tag"></i> <?= e($p['_applies_to_label']) ?></span>

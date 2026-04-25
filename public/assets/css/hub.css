@@ -526,6 +526,11 @@
     font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .4px;
     padding: 2px 7px; border-radius: 10px;
 }
+.hub-promo-desc {
+    font-size: .82rem; color: #495057;
+    line-height: 1.35;
+    margin-bottom: .35rem;
+}
 .hub-promo-meta {
     display: flex; flex-wrap: wrap; gap: .25rem .9rem;
     font-size: .78rem; color: #6c757d;

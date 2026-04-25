@@ -217,7 +217,19 @@ function promoBadgeColor(string $type): string {
                         <label class="form-label fw-semibold" style="font-size:.82rem;">Nome promozione *</label>
                         <input type="text" name="name" class="form-control form-control-sm" required maxlength="100"
                                placeholder="Es: Martedi Sconto, Early Bird, Lancio menu estivo..." value="<?= e($old['name'] ?? '') ?>">
-                        <div class="promo-field-hint">Nome interno, non visibile al cliente</div>
+                        <div class="promo-field-hint">Visibile ai clienti nella pagina pubblica delle offerte</div>
+                    </div>
+
+                    <!-- Descrizione -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="font-size:.82rem;">Descrizione <span class="text-muted fw-normal">(opzionale)</span></label>
+                        <textarea name="description" class="form-control form-control-sm" rows="2" maxlength="280"
+                                  placeholder="Es. Sconto valido sul totale del conto, esclusi vini pregiati e bevande alcoliche."
+                                  data-promo-desc><?= e($old['description'] ?? '') ?></textarea>
+                        <div class="promo-field-hint d-flex justify-content-between">
+                            <span>Mostrata sotto il nome nella pagina /promo</span>
+                            <span data-promo-desc-counter>0/280</span>
+                        </div>
                     </div>
 
                     <!-- Sconto -->
@@ -379,6 +391,17 @@ function promoBadgeColor(string $type): string {
     });
 
     updateFields();
+
+    // Counter caratteri descrizione promo
+    var descTextarea = document.querySelector('[data-promo-desc]');
+    var descCounter = document.querySelector('[data-promo-desc-counter]');
+    if (descTextarea && descCounter) {
+        function updateDescCounter() {
+            descCounter.textContent = descTextarea.value.length + '/280';
+        }
+        descTextarea.addEventListener('input', updateDescCounter);
+        updateDescCounter();
+    }
 })();
 </script>
 

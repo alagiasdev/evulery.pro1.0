@@ -62,6 +62,17 @@ if (isset($old['days'])) {
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label fw-semibold" style="font-size:.82rem;">Descrizione <span class="text-muted fw-normal">(opzionale)</span></label>
+                    <textarea name="description" class="form-control form-control-sm" rows="2" maxlength="280"
+                              placeholder="Es. Sconto valido sul totale del conto, esclusi vini pregiati e bevande alcoliche."
+                              data-promo-desc><?= e($old['description'] ?? '') ?></textarea>
+                    <div class="d-flex justify-content-between" style="font-size:.72rem; color:#6c757d; margin-top:.25rem;">
+                        <span>Mostrata sotto il nome nella pagina /promo</span>
+                        <span data-promo-desc-counter>0/280</span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Sconto % *</label>
                     <select name="discount_percent" class="form-select form-select-sm" required>
                         <option value="">Seleziona...</option>
@@ -190,5 +201,16 @@ if (isset($old['days'])) {
 
     typeRadios.forEach(function(r) { r.addEventListener('change', updateFields); });
     updateFields();
+
+    // Counter caratteri descrizione promo
+    var descTextarea = document.querySelector('[data-promo-desc]');
+    var descCounter = document.querySelector('[data-promo-desc-counter]');
+    if (descTextarea && descCounter) {
+        function updateDescCounter() {
+            descCounter.textContent = descTextarea.value.length + '/280';
+        }
+        descTextarea.addEventListener('input', updateDescCounter);
+        updateDescCounter();
+    }
 })();
 </script>

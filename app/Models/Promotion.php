@@ -50,12 +50,13 @@ class Promotion
     public function create(int $tenantId, array $data): int
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO promotions (tenant_id, name, discount_percent, type, days_of_week, time_from, time_to, date_from, date_to, is_active, applies_to)
-             VALUES (:tenant_id, :name, :discount_percent, :type, :days_of_week, :time_from, :time_to, :date_from, :date_to, :is_active, :applies_to)'
+            'INSERT INTO promotions (tenant_id, name, description, discount_percent, type, days_of_week, time_from, time_to, date_from, date_to, is_active, applies_to)
+             VALUES (:tenant_id, :name, :description, :discount_percent, :type, :days_of_week, :time_from, :time_to, :date_from, :date_to, :is_active, :applies_to)'
         );
         $stmt->execute([
             'tenant_id'        => $tenantId,
             'name'             => $data['name'],
+            'description'      => $data['description'] ?? null,
             'discount_percent' => (int)$data['discount_percent'],
             'type'             => $data['type'],
             'days_of_week'     => $data['days_of_week'] ?? null,
@@ -72,7 +73,8 @@ class Promotion
     public function update(int $id, int $tenantId, array $data): bool
     {
         $stmt = $this->db->prepare(
-            'UPDATE promotions SET name = :name, discount_percent = :discount_percent, type = :type,
+            'UPDATE promotions SET name = :name, description = :description,
+                    discount_percent = :discount_percent, type = :type,
                     days_of_week = :days_of_week, time_from = :time_from, time_to = :time_to,
                     date_from = :date_from, date_to = :date_to, applies_to = :applies_to
              WHERE id = :id AND tenant_id = :tenant_id'
@@ -81,6 +83,7 @@ class Promotion
             'id'               => $id,
             'tenant_id'        => $tenantId,
             'name'             => $data['name'],
+            'description'      => $data['description'] ?? null,
             'discount_percent' => (int)$data['discount_percent'],
             'type'             => $data['type'],
             'days_of_week'     => $data['days_of_week'] ?? null,
