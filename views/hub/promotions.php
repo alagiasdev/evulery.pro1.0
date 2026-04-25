@@ -77,8 +77,7 @@ $primaryRgb = $hexToRgb($primary);
             <?php foreach ($promos as $p): ?>
             <div class="hub-promo-card <?= $p['_is_live_now'] ? 'is-live' : '' ?>">
                 <div class="hub-promo-discount">
-                    <span class="hub-promo-discount-num">-<?= (int)$p['discount_percent'] ?></span>
-                    <span class="hub-promo-discount-pct">%</span>
+                    <span class="hub-promo-discount-sign">−</span><span class="hub-promo-discount-num"><?= (int)$p['discount_percent'] ?></span><span class="hub-promo-discount-pct">%</span>
                 </div>
                 <div class="hub-promo-info">
                     <div class="hub-promo-head">
