@@ -203,34 +203,73 @@
         });
     }
 
-    // Download QR as PNG
-    var qrDownload = document.getElementById('hub-qr-download-png');
-    if (qrDownload) {
-        qrDownload.addEventListener('click', function() {
-            var img = qrCanvas ? qrCanvas.querySelector('img, canvas') : null;
-            if (!img) return;
-            var dataUrl = img.tagName === 'CANVAS' ? img.toDataURL('image/png') : img.src;
-            var a = document.createElement('a');
-            a.href = dataUrl;
-            a.download = 'vetrina-qr.png';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
+    // Generate a high-resolution QR data URL (1024x1024, error correction H for print)
+    function generateHighResQrDataUrl(text, callback) {
+        loadQrLib(function() {
+            var holder = document.createElement('div');
+            holder.style.cssText = 'position:absolute;left:-99999px;top:-99999px;';
+            document.body.appendChild(holder);
+            new QRCode(holder, {
+                text: text,
+                width: 1024,
+                height: 1024,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            // qrcodejs renders asynchronously — wait a tick for canvas/img to populate
+            setTimeout(function() {
+                var node = holder.querySelector('canvas, img');
+                var dataUrl = '';
+                if (node) {
+                    dataUrl = node.tagName === 'CANVAS' ? node.toDataURL('image/png') : node.src;
+                }
+                holder.remove();
+                callback(dataUrl);
+            }, 50);
         });
     }
 
-    // Print QR
+    // Download QR as high-res PNG (1024x1024, suitable for print)
+    var qrDownload = document.getElementById('hub-qr-download-png');
+    if (qrDownload) {
+        qrDownload.addEventListener('click', function() {
+            if (!qrCanvas) return;
+            var originalLabel = qrDownload.innerHTML;
+            qrDownload.disabled = true;
+            qrDownload.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Generazione...';
+            generateHighResQrDataUrl(qrCanvas.dataset.url, function(dataUrl) {
+                qrDownload.disabled = false;
+                qrDownload.innerHTML = originalLabel;
+                if (!dataUrl) return;
+                var a = document.createElement('a');
+                a.href = dataUrl;
+                a.download = 'vetrina-qr.png';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            });
+        });
+    }
+
+    // Print QR (uses high-res image so output is sharp on paper)
     var qrPrint = document.getElementById('hub-qr-print');
     if (qrPrint) {
         qrPrint.addEventListener('click', function() {
-            var img = qrCanvas ? qrCanvas.querySelector('img, canvas') : null;
-            if (!img) return;
-            var dataUrl = img.tagName === 'CANVAS' ? img.toDataURL('image/png') : img.src;
-            var url = qrCanvas.dataset.url;
-            var w = window.open('', '_blank');
-            w.document.write('<!DOCTYPE html><html><head><title>QR Vetrina</title><style>body{font-family:system-ui,sans-serif;text-align:center;padding:2rem;}h1{font-size:1.5rem;margin-bottom:1rem;}img{max-width:300px;}p{color:#666;margin-top:1rem;font-size:.9rem;}</style></head><body><h1>Scansiona per accedere</h1><img src="' + dataUrl + '"><p>' + url + '</p></body></html>');
-            w.document.close();
-            setTimeout(function() { w.print(); }, 200);
+            if (!qrCanvas) return;
+            var originalLabel = qrPrint.innerHTML;
+            qrPrint.disabled = true;
+            qrPrint.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Generazione...';
+            generateHighResQrDataUrl(qrCanvas.dataset.url, function(dataUrl) {
+                qrPrint.disabled = false;
+                qrPrint.innerHTML = originalLabel;
+                if (!dataUrl) return;
+                var url = qrCanvas.dataset.url;
+                var w = window.open('', '_blank');
+                w.document.write('<!DOCTYPE html><html><head><title>QR Vetrina</title><style>body{font-family:system-ui,sans-serif;text-align:center;padding:2rem;}h1{font-size:1.5rem;margin-bottom:1rem;}img{width:300px;height:300px;image-rendering:pixelated;}p{color:#666;margin-top:1rem;font-size:.9rem;word-break:break-all;}@media print{body{padding:0;}img{width:8cm;height:8cm;}}</style></head><body><h1>Scansiona per accedere</h1><img src="' + dataUrl + '"><p>' + url + '</p></body></html>');
+                w.document.close();
+                setTimeout(function() { w.print(); }, 300);
+            });
         });
     }
 
