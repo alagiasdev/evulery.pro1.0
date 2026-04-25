@@ -45,11 +45,11 @@
     font-family: inherit; font-weight: 600;
 }
 .hub-uploader-remove:hover { background: #b02a37; }
-.hub-uploader-drop {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.hub-uploader .hub-uploader-drop {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
     gap: .15rem;
     padding: .85rem 1rem;
     border: 2px dashed #cbd0d4;
@@ -59,6 +59,7 @@
     text-align: center;
     transition: border-color .15s, background .15s;
     margin: 0;
+    width: 100%;
 }
 .hub-uploader-drop:hover, .hub-uploader-drop.is-dragging {
     border-color: var(--brand);
@@ -71,14 +72,21 @@
     margin-bottom: .15rem;
 }
 .hub-uploader-drop:hover i, .hub-uploader-drop.is-dragging i { color: var(--brand); }
-.hub-uploader-text {
+.hub-uploader-drop .hub-uploader-text {
+    display: block;
+    width: 100%;
     font-size: .85rem; font-weight: 600; color: #212529;
     line-height: 1.2;
+    text-align: center;
 }
-.hub-uploader-text strong { color: var(--brand); font-weight: 700; }
-.hub-uploader-meta {
+.hub-uploader-drop .hub-uploader-text strong { color: var(--brand); font-weight: 700; }
+.hub-uploader-drop .hub-uploader-meta {
+    display: block;
+    width: 100%;
     font-size: .68rem; color: #6c757d;
     line-height: 1.3;
+    text-align: center;
+    margin-top: .1rem;
 }
 
 .hub-switch { position: relative; display: inline-block; width: 46px; height: 26px; flex-shrink: 0; }
