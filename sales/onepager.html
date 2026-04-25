@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evulery — One Pager</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #006837;
+    --brand-light: #E8F5E9;
+    --ink: #0a0e14;
+    --ink-soft: #495057;
+    --muted: #6c757d;
+    --line: #e9ecef;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #f5f6f8;
+    color: var(--ink);
+    line-height: 1.45;
+}
+
+.page-wrap { display: flex; justify-content: center; padding: 24px; }
+.page {
+    width: 210mm;
+    min-height: 297mm;
+    background: #fff;
+    box-shadow: 0 4px 24px rgba(0,0,0,.08);
+    padding: 14mm 16mm;
+    display: flex; flex-direction: column;
+    position: relative;
+}
+
+/* ================ HEADER ================ */
+.op-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    padding-bottom: 12px;
+    border-bottom: 3px solid var(--brand);
+    margin-bottom: 14px;
+}
+.op-logo {
+    font-size: 32px; font-weight: 900; letter-spacing: -1.5px;
+    color: var(--ink);
+}
+.op-logo .dot { color: var(--brand); }
+.op-headtag {
+    text-align: right;
+    font-size: 9px; color: var(--muted); letter-spacing: 1px;
+    text-transform: uppercase; font-weight: 600;
+}
+
+.op-tagline {
+    font-size: 22px; font-weight: 800; line-height: 1.25;
+    margin: 0 0 4px 0; color: var(--ink); letter-spacing: -.3px;
+}
+.op-tagline .brand { color: var(--brand); }
+.op-sub {
+    font-size: 12px; color: var(--ink-soft);
+    margin: 0 0 16px 0;
+}
+
+/* ================ KEY POINTS ================ */
+.op-keypoints {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    margin-bottom: 16px;
+}
+.op-kp {
+    background: linear-gradient(135deg, #fafbfc 0%, #ffffff 100%);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--brand);
+    border-radius: 6px;
+    padding: 10px 12px;
+}
+.op-kp-num { font-size: 18px; font-weight: 800; color: var(--brand); line-height: 1; margin-bottom: 3px; }
+.op-kp-text { font-size: 10px; color: var(--ink); line-height: 1.35; font-weight: 500; }
+
+/* ================ FEATURES ================ */
+.op-section-title {
+    font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--brand); margin: 0 0 10px 0;
+    display: flex; align-items: center; gap: 8px;
+}
+.op-section-title::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+
+.op-features {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    margin-bottom: 16px;
+}
+.op-feat {
+    background: #fafbfc; border: 1px solid var(--line); border-radius: 6px;
+    padding: 10px;
+    display: flex; align-items: flex-start; gap: 8px;
+}
+.op-feat-icon {
+    flex-shrink: 0;
+    width: 24px; height: 24px; border-radius: 5px;
+    background: var(--brand-light); color: var(--brand);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+}
+.op-feat-text strong { display: block; font-size: 11px; font-weight: 700; line-height: 1.2; margin-bottom: 1px; }
+.op-feat-text span { font-size: 9.5px; color: var(--muted); line-height: 1.35; }
+
+/* ================ PLANS ================ */
+.op-plans {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    margin-bottom: 16px;
+}
+.op-plan {
+    border: 1px solid var(--line); border-radius: 8px;
+    padding: 12px;
+    display: flex; flex-direction: column;
+    background: #fff;
+}
+.op-plan.popular { border: 2px solid var(--brand); background: linear-gradient(180deg, #f6fcf9 0%, #ffffff 70%); position: relative; }
+.op-plan.popular::before {
+    content: 'CONSIGLIATO';
+    position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+    background: var(--brand); color: #fff;
+    font-size: 8px; font-weight: 700; letter-spacing: 1px;
+    padding: 3px 8px; border-radius: 4px;
+}
+.op-plan-name { font-size: 13px; font-weight: 700; margin: 0 0 2px 0; }
+.op-plan-desc { font-size: 9px; color: var(--muted); margin: 0 0 8px 0; min-height: 24px; line-height: 1.35; }
+.op-plan-price { font-size: 22px; font-weight: 900; color: var(--ink); margin-bottom: 8px; }
+.op-plan-price sub { font-size: 10px; font-weight: 500; color: var(--muted); margin-left: 1px; }
+.op-plan-features { list-style: none; padding: 0; margin: 0; flex: 1; }
+.op-plan-features li {
+    font-size: 9.5px; padding: 2px 0;
+    display: flex; align-items: flex-start; gap: 4px;
+    color: var(--ink); line-height: 1.4;
+}
+.op-plan-features li i { color: var(--brand); font-size: 10px; margin-top: 1px; flex-shrink: 0; }
+
+/* ================ CASE STUDY MINI ================ */
+.op-case {
+    background: linear-gradient(135deg, var(--ink) 0%, #1a2027 100%);
+    color: #fff;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: grid; grid-template-columns: 2fr 1fr; gap: 16px; align-items: center;
+}
+.op-case-text h4 { font-size: 13px; font-weight: 700; margin: 0 0 4px 0; color: #fff; }
+.op-case-text p { font-size: 10px; margin: 0; opacity: .85; line-height: 1.45; }
+.op-case-roi { text-align: center; }
+.op-case-roi-val { font-size: 28px; font-weight: 900; color: #4ade80; line-height: 1; }
+.op-case-roi-lbl { font-size: 9px; opacity: .7; letter-spacing: .5px; text-transform: uppercase; margin-top: 2px; }
+
+/* ================ COMPLIANCE BANNER ================ */
+.op-compliance {
+    background: #FFF8E1; border: 1px solid #F57F17; border-radius: 6px;
+    padding: 8px 12px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+}
+.op-compliance i { color: #F57F17; font-size: 18px; flex-shrink: 0; }
+.op-compliance-text { font-size: 10px; color: #5D4037; line-height: 1.4; }
+.op-compliance-text strong { font-weight: 700; }
+
+/* ================ FOOTER / CTA ================ */
+.op-footer {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 2px solid var(--line);
+    display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center;
+}
+.op-cta-text h4 { font-size: 14px; font-weight: 800; margin: 0 0 3px 0; color: var(--ink); }
+.op-cta-text p { font-size: 10px; color: var(--muted); margin: 0; }
+.op-contact {
+    display: flex; gap: 14px; flex-direction: column; text-align: right;
+}
+.op-contact-item {
+    font-size: 10px; color: var(--ink); display: flex; align-items: center; gap: 6px; justify-content: flex-end;
+}
+.op-contact-item i { color: var(--brand); font-size: 12px; }
+.op-contact-item strong { font-weight: 700; }
+.op-cta-btn {
+    background: var(--brand); color: #fff; text-decoration: none;
+    font-size: 11px; font-weight: 700;
+    padding: 10px 18px; border-radius: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 6px;
+}
+
+/* ================ PRINT ================ */
+@page { size: A4; margin: 0; }
+@media print {
+    body { background: #fff; }
+    .page-wrap { padding: 0; }
+    .page { box-shadow: none; }
+    .print-hint { display: none !important; }
+}
+
+.print-hint {
+    position: fixed; bottom: 20px; right: 20px;
+    background: var(--ink); color: #fff;
+    padding: 12px 18px; border-radius: 10px;
+    font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,.2);
+    z-index: 999; max-width: 280px;
+}
+.print-hint strong { color: #4ade80; }
+.print-hint kbd {
+    background: rgba(255,255,255,.15); padding: 2px 6px; border-radius: 4px;
+    font-family: monospace; font-size: 12px;
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+<div class="page">
+
+    <!-- Header -->
+    <div class="op-header">
+        <div class="op-logo">evulery<span class="dot">.</span></div>
+        <div class="op-headtag">
+            La piattaforma italiana<br>
+            per le prenotazioni del tuo ristorante
+        </div>
+    </div>
+
+    <!-- Hero text -->
+    <h1 class="op-tagline">Prenotazioni online, CRM, recensioni e ordini.<br><span class="brand">Senza commissioni.</span></h1>
+    <p class="op-sub">Una sola dashboard per gestire tutto: prenotazioni 24/7, caparra integrata, reputazione conforme alla Legge 34/2026, ordini online, Vetrina Digitale con QR. Made in Italy.</p>
+
+    <!-- Key points -->
+    <div class="op-keypoints">
+        <div class="op-kp">
+            <div class="op-kp-num">€0</div>
+            <div class="op-kp-text">commissioni per coperto, sempre. Solo canone fisso mensile</div>
+        </div>
+        <div class="op-kp">
+            <div class="op-kp-num">−80%</div>
+            <div class="op-kp-text">no-show con caparra integrata (Stripe, link, informativa)</div>
+        </div>
+        <div class="op-kp">
+            <div class="op-kp-num">L.34</div>
+            <div class="op-kp-text">recensioni conformi alla nuova legge dal 7/4/2026</div>
+        </div>
+        <div class="op-kp">
+            <div class="op-kp-num">3 gg</div>
+            <div class="op-kp-text">setup completo con onboarding gratuito incluso</div>
+        </div>
+    </div>
+
+    <!-- Compliance banner -->
+    <div class="op-compliance">
+        <i class="bi bi-shield-check"></i>
+        <div class="op-compliance-text">
+            <strong>Conforme Legge 34/2026:</strong> recensioni solo da clienti realmente arrivati, entro 30 giorni dalla visita, senza incentivi. Niente rischi sanzioni o perdita visibilità.
+        </div>
+    </div>
+
+    <!-- Features grid -->
+    <div class="op-section-title">Cosa include</div>
+    <div class="op-features">
+        <div class="op-feat">
+            <div class="op-feat-icon"><i class="bi bi-globe2"></i></div>
+            <div class="op-feat-text"><strong>Widget prenotazioni</strong><span>Embed sul sito o link in bio social, mobile-first</span></div>
+        </div>
+        <div class="op-feat">
+            <div class="op-feat-icon"><i class="bi bi-people"></i></div>
+            <div class="op-feat-text"><strong>CRM clienti</strong><span>Profili automatici, segmentazione, import CSV</span></div>
+        </div>
+        <div class="op-feat">
+            <div class="op-feat-icon"><i class="bi bi-shield-lock"></i></div>
+            <div class="op-feat-text"><strong>Caparra</strong><span>3 modalità: informativa, link, Stripe</span></div>
+        </div>
+        <div class="op-feat">
+            <div class="op-feat-icon"><i class="bi bi-percent"></i></div>
+            <div class="op-feat-text"><strong>Promozioni</strong><span>Sconti per fasce vuote, ricorrenti o data unica</span></div>
+        </div>
+        <div class="op-feat">
+            <div class="op-feat-icon"><i class="bi bi-star"></i></div>
+            <div class="op-feat-text"><strong>Reputazione</strong><span>Recensioni post-visita con filtro sentimento</span></div>
+        </div>
+        <div class="op-feat">
+            <div class="op-feat-icon"><i class="bi bi-bag-check"></i></div>
+            <div class="op-feat-text"><strong>Ordini online</strong><span>Asporto + delivery con kanban e zone CAP</span></div>
+        </div>
+        <div class="op-feat">
+            <div class="op-feat-icon"><i class="bi bi-qr-code"></i></div>
+            <div class="op-feat-text"><strong>Vetrina Digitale</strong><span>Pagina pubblica con QR — il "link in bio"</span></div>
+        </div>
+        <div class="op-feat">
+            <div class="op-feat-icon"><i class="bi bi-envelope-paper"></i></div>
+            <div class="op-feat-text"><strong>Email marketing</strong><span>Campagne segmentate, GDPR, gestione crediti</span></div>
+        </div>
+    </div>
+
+    <!-- Plans -->
+    <div class="op-section-title">Piani · canone fisso mensile</div>
+    <div class="op-plans">
+        <div class="op-plan">
+            <div class="op-plan-name">Starter</div>
+            <div class="op-plan-desc">Le basi per le prenotazioni online</div>
+            <div class="op-plan-price">€49<sub>/mese</sub></div>
+            <ul class="op-plan-features">
+                <li><i class="bi bi-check-circle-fill"></i>Prenotazioni illimitate</li>
+                <li><i class="bi bi-check-circle-fill"></i>Widget + CRM clienti</li>
+                <li><i class="bi bi-check-circle-fill"></i>Menu digitale + QR</li>
+                <li><i class="bi bi-check-circle-fill"></i>Promozioni base</li>
+                <li><i class="bi bi-check-circle-fill"></i>Email marketing</li>
+            </ul>
+        </div>
+        <div class="op-plan popular">
+            <div class="op-plan-name">Professional</div>
+            <div class="op-plan-desc">Per crescere. Il piano più adottato</div>
+            <div class="op-plan-price">€79<sub>/mese</sub></div>
+            <ul class="op-plan-features">
+                <li><i class="bi bi-check-circle-fill"></i>Tutto di Starter +</li>
+                <li><i class="bi bi-check-circle-fill"></i>Caparra (Stripe, link, info)</li>
+                <li><i class="bi bi-check-circle-fill"></i>Reputazione L.34/2026</li>
+                <li><i class="bi bi-check-circle-fill"></i>Vetrina Digitale + QR HD</li>
+                <li><i class="bi bi-check-circle-fill"></i>Email reminder + push</li>
+                <li><i class="bi bi-check-circle-fill"></i>Statistiche avanzate</li>
+            </ul>
+        </div>
+        <div class="op-plan">
+            <div class="op-plan-name">Enterprise</div>
+            <div class="op-plan-desc">Per ristoranti strutturati</div>
+            <div class="op-plan-price">€129<sub>/mese</sub></div>
+            <ul class="op-plan-features">
+                <li><i class="bi bi-check-circle-fill"></i>Tutto di Professional +</li>
+                <li><i class="bi bi-check-circle-fill"></i>Ordini online (asporto + delivery)</li>
+                <li><i class="bi bi-check-circle-fill"></i>Zone consegna CAP</li>
+                <li><i class="bi bi-check-circle-fill"></i>Dominio personalizzato</li>
+                <li><i class="bi bi-check-circle-fill"></i>Vetrina white-label</li>
+                <li><i class="bi bi-check-circle-fill"></i>Supporto prioritario</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Case study mini -->
+    <div class="op-case">
+        <div class="op-case-text">
+            <h4>Trattoria Da Mario · 60 coperti · Roma centro</h4>
+            <p>No-show: <strong>8% → 2%</strong> · Recensioni Google: <strong>3 → 18/mese</strong> · Coperti recuperati: <strong>+187/mese</strong> (≈ +€6.500). Modello proiettivo basato su benchmark settore.</p>
+        </div>
+        <div class="op-case-roi">
+            <div class="op-case-roi-val">82×</div>
+            <div class="op-case-roi-lbl">ROI mensile</div>
+        </div>
+    </div>
+
+    <!-- Footer / CTA -->
+    <div class="op-footer">
+        <div class="op-cta-text">
+            <h4>Vuoi vederlo dal vivo?</h4>
+            <p>Demo gratuita 30 minuti · setup incluso · nessun vincolo</p>
+            <a href="https://evulery.it/#demo" class="op-cta-btn">
+                <i class="bi bi-calendar-check"></i> Richiedi demo · evulery.it
+            </a>
+        </div>
+        <div class="op-contact">
+            <div class="op-contact-item"><i class="bi bi-envelope"></i> <strong>info@evulery.it</strong></div>
+            <div class="op-contact-item"><i class="bi bi-globe2"></i> evulery.it</div>
+            <div class="op-contact-item" style="color: var(--muted); font-size: 9px; margin-top: 4px;">© 2026 Evulery · by alagias.</div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<div class="print-hint">
+    <strong>Esporta in PDF</strong><br>
+    Premi <kbd>Ctrl</kbd> + <kbd>P</kbd> (Windows) o <kbd>Cmd</kbd> + <kbd>P</kbd> (Mac) → "Salva come PDF" → margini "Nessuno", scala 100%.
+</div>
+
+</body>
+</html>
