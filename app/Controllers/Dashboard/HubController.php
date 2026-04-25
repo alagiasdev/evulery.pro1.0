@@ -57,11 +57,18 @@ class HubController
         $tenantId = Auth::tenantId();
         $isEnterprise = $this->isEnterprise($tenantId);
 
+        // Load current settings to know what to preserve / delete
+        $current = (new HubSettings())->findOrCreate($tenantId);
+
+        // Handle file uploads (logo + cover) before assembling $data
+        $logoUrl = $this->handleFileUpload('logo', $tenantId, $current['logo_url'] ?? null, $request);
+        $coverUrl = $this->handleFileUpload('cover', $tenantId, $current['cover_url'] ?? null, $request);
+
         $data = [
             'enabled'         => $request->input('enabled') ? 1 : 0,
             'palette'         => $this->validPalette($request->input('palette', 'evulery_green')),
-            'logo_url'        => $this->cleanUrl($request->input('logo_url', '')),
-            'cover_url'       => $this->cleanUrl($request->input('cover_url', '')),
+            'logo_url'        => $logoUrl,
+            'cover_url'       => $coverUrl,
             'subtitle'        => trim((string)$request->input('subtitle', '')) ?: null,
             'instagram_url'   => $this->cleanUrl($request->input('instagram_url', '')),
             'facebook_url'    => $this->cleanUrl($request->input('facebook_url', '')),
@@ -187,6 +194,88 @@ class HubController
         // Allow only http(s); reject anything else for image/social URLs
         if (!preg_match('#^https?://#i', $url)) return null;
         return mb_substr($url, 0, 500);
+    }
+
+    /**
+     * Handle logo/cover image upload. Returns the new URL to save, or
+     * the existing one if no new upload, or null if user clicked "remove".
+     */
+    private function handleFileUpload(string $field, int $tenantId, ?string $currentUrl, Request $request): ?string
+    {
+        // "remove" checkbox: user wants to clear the image
+        if ($request->input($field . '_remove')) {
+            $this->deleteOldFile($currentUrl);
+            return null;
+        }
+
+        $file = $_FILES[$field] ?? null;
+        $hasUpload = $file && isset($file['error']) && $file['error'] !== UPLOAD_ERR_NO_FILE;
+
+        // No upload, no remove → keep existing URL
+        if (!$hasUpload) {
+            return $currentUrl;
+        }
+
+        // Upload errors
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            $msg = $file['error'] === UPLOAD_ERR_INI_SIZE || $file['error'] === UPLOAD_ERR_FORM_SIZE
+                ? 'File troppo grande.'
+                : 'Errore durante il caricamento.';
+            flash('danger', $msg . ' (' . $field . ')');
+            return $currentUrl;
+        }
+
+        // Size check (2MB)
+        $maxSize = 2 * 1024 * 1024;
+        if ($file['size'] > $maxSize) {
+            flash('danger', ucfirst($field) . ' troppo grande (max 2 MB).');
+            return $currentUrl;
+        }
+
+        // MIME validation
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($file['tmp_name']);
+        $allowed = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!in_array($mime, $allowed, true)) {
+            flash('danger', ucfirst($field) . ': formato non supportato. Usa JPG, PNG o WebP.');
+            return $currentUrl;
+        }
+
+        $ext = match ($mime) {
+            'image/jpeg' => 'jpg',
+            'image/png'  => 'png',
+            'image/webp' => 'webp',
+        };
+
+        // Move file
+        $uploadDir = BASE_PATH . '/public/uploads/hubs/';
+        if (!is_dir($uploadDir)) {
+            @mkdir($uploadDir, 0775, true);
+        }
+        $filename = $field . '_' . $tenantId . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+        $destPath = $uploadDir . $filename;
+
+        if (!move_uploaded_file($file['tmp_name'], $destPath)) {
+            flash('danger', ucfirst($field) . ': errore salvataggio file.');
+            return $currentUrl;
+        }
+
+        // Delete old file (success path: replace)
+        $this->deleteOldFile($currentUrl);
+
+        return url('uploads/hubs/' . $filename);
+    }
+
+    private function deleteOldFile(?string $url): void
+    {
+        if (!$url) return;
+        // Only delete if it's a local upload URL
+        $base = url('uploads/hubs/');
+        if (!str_starts_with($url, $base)) return;
+        $filename = basename(parse_url($url, PHP_URL_PATH) ?: '');
+        if (!$filename) return;
+        $path = BASE_PATH . '/public/uploads/hubs/' . $filename;
+        if (is_file($path)) @unlink($path);
     }
 
     private function cleanHex(string $hex): ?string

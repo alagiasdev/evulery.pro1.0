@@ -16,6 +16,57 @@
 /* Greyed-out blocks when hub is disabled */
 .hub-greyed { opacity: .45; pointer-events: none; user-select: none; transition: opacity .2s; }
 
+/* File uploader (logo + cover) */
+.hub-uploader { position: relative; }
+.hub-uploader-preview {
+    position: relative;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: .65rem;
+    background: #fafbfc;
+    margin-bottom: .5rem;
+    text-align: center;
+}
+.hub-uploader-thumb {
+    max-width: 100%;
+    max-height: 110px;
+    border-radius: 6px;
+    display: block;
+    margin: 0 auto;
+}
+.hub-uploader-thumb.logo { max-height: 80px; max-width: 80px; }
+.hub-uploader-thumb.cover { max-height: 90px; width: auto; object-fit: cover; }
+.hub-uploader-remove {
+    position: absolute; top: 6px; right: 6px;
+    background: rgba(220, 53, 69, .92); color: #fff;
+    border: none; border-radius: 6px;
+    padding: 3px 8px; font-size: .68rem; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 3px;
+    font-family: inherit; font-weight: 600;
+}
+.hub-uploader-remove:hover { background: #b02a37; }
+.hub-uploader-drop {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: .25rem;
+    padding: 1rem;
+    border: 2px dashed #cbd0d4;
+    border-radius: 8px;
+    background: #fafbfc;
+    cursor: pointer;
+    text-align: center;
+    transition: border-color .15s, background .15s;
+    margin: 0;
+}
+.hub-uploader-drop:hover, .hub-uploader-drop.is-dragging {
+    border-color: var(--brand);
+    background: var(--brand-light);
+}
+.hub-uploader-drop i { font-size: 1.25rem; color: #6c757d; }
+.hub-uploader-drop:hover i, .hub-uploader-drop.is-dragging i { color: var(--brand); }
+.hub-uploader-text { font-size: .82rem; color: #495057; }
+.hub-uploader-text strong { color: var(--brand); }
+.hub-uploader-meta { font-size: .68rem; color: #adb5bd; }
+
 .hub-switch { position: relative; display: inline-block; width: 46px; height: 26px; flex-shrink: 0; }
 .hub-switch input { opacity: 0; width: 0; height: 0; }
 .hub-switch-slider {

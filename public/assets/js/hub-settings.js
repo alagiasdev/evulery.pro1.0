@@ -10,6 +10,83 @@
 (function() {
     'use strict';
 
+    // -------- File uploaders (logo + cover) --------
+    document.querySelectorAll('.hub-uploader').forEach(function(uploader) {
+        var field = uploader.dataset.field; // 'logo' | 'cover'
+        var dropZone = uploader.querySelector('.hub-uploader-drop');
+        var fileInput = uploader.querySelector('input[type="file"]');
+        var removeCheckbox = uploader.querySelector('input[name="' + field + '_remove"]');
+        var preview = uploader.querySelector('.hub-uploader-preview');
+        var removeBtn = uploader.querySelector('.hub-uploader-remove');
+        if (!dropZone || !fileInput) return;
+
+        // Drag visual feedback
+        ['dragenter', 'dragover'].forEach(function(ev) {
+            dropZone.addEventListener(ev, function(e) {
+                e.preventDefault(); e.stopPropagation();
+                dropZone.classList.add('is-dragging');
+            });
+        });
+        ['dragleave', 'drop'].forEach(function(ev) {
+            dropZone.addEventListener(ev, function(e) {
+                e.preventDefault(); e.stopPropagation();
+                dropZone.classList.remove('is-dragging');
+            });
+        });
+        dropZone.addEventListener('drop', function(e) {
+            if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileChange();
+            }
+        });
+
+        // File chosen via picker → show preview
+        fileInput.addEventListener('change', handleFileChange);
+
+        function handleFileChange() {
+            var f = fileInput.files && fileInput.files[0];
+            if (!f) return;
+            // Client-side size guard (server validates anyway)
+            if (f.size > 2 * 1024 * 1024) {
+                alert('File troppo grande (max 2 MB).');
+                fileInput.value = '';
+                return;
+            }
+            // If "remove" was checked previously, uncheck it
+            if (removeCheckbox) removeCheckbox.checked = false;
+            // Show inline preview
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                replacePreview(ev.target.result);
+            };
+            reader.readAsDataURL(f);
+        }
+
+        function replacePreview(dataUrl) {
+            // Build or update the preview block
+            var existing = uploader.querySelector('.hub-uploader-preview');
+            if (existing) existing.remove();
+            var div = document.createElement('div');
+            div.className = 'hub-uploader-preview';
+            var img = document.createElement('img');
+            img.className = 'hub-uploader-thumb ' + field;
+            img.src = dataUrl;
+            img.alt = field;
+            div.appendChild(img);
+            uploader.insertBefore(div, dropZone);
+        }
+
+        // Remove existing image
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+                if (!confirm('Rimuovere ' + (field === 'logo' ? 'il logo' : 'la copertina') + '? La modifica diventa effettiva al salvataggio.')) return;
+                if (preview) preview.remove();
+                fileInput.value = '';
+                if (removeCheckbox) removeCheckbox.checked = true;
+            });
+        }
+    });
+
     // -------- Master enable toggle: grey out config blocks live --------
     var masterToggle = document.getElementById('hub-enabled-toggle');
     var masterCard = document.getElementById('hub-master-card');

@@ -3,6 +3,7 @@
 /storage/logs/*.log
 /storage/cache/*
 /public/uploads/tenants/*
+/public/uploads/hubs/*
 !.gitkeep
 NUL
 

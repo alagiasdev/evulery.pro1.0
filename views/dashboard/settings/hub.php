@@ -43,7 +43,7 @@ $enabled = !empty($settings['enabled']);
     </div>
 </div>
 
-<form method="POST" action="<?= url('dashboard/settings/hub') ?>" id="hub-form">
+<form method="POST" action="<?= url('dashboard/settings/hub') ?>" id="hub-form" enctype="multipart/form-data">
     <?= csrf_field() ?>
 
     <div class="row g-3">
@@ -78,15 +78,47 @@ $enabled = !empty($settings['enabled']);
                     <input type="text" name="subtitle" value="<?= e($settings['subtitle'] ?? '') ?>" placeholder="Es. Trattoria moderna · Roma" maxlength="150">
                 </div>
                 <div class="hub-grid-2">
-                    <div class="hub-field">
-                        <label>URL del logo</label>
-                        <input type="url" name="logo_url" value="<?= e($settings['logo_url'] ?? '') ?>" placeholder="https://.../logo.png">
-                        <div class="hub-hint">PNG/JPG · 200x200 min · sfondo trasparente consigliato</div>
+                    <!-- Logo uploader -->
+                    <div class="hub-field" style="margin-bottom:0;">
+                        <label>Logo</label>
+                        <div class="hub-uploader" data-field="logo">
+                            <?php if (!empty($settings['logo_url'])): ?>
+                            <div class="hub-uploader-preview">
+                                <img src="<?= e($settings['logo_url']) ?>" alt="Logo" class="hub-uploader-thumb logo">
+                                <button type="button" class="hub-uploader-remove" data-target="logo">
+                                    <i class="bi bi-trash"></i> Rimuovi
+                                </button>
+                            </div>
+                            <?php endif; ?>
+                            <label class="hub-uploader-drop" for="hub-logo-file">
+                                <i class="bi bi-cloud-upload"></i>
+                                <span class="hub-uploader-text">Trascina qui o <strong>sfoglia</strong></span>
+                                <span class="hub-uploader-meta">PNG/JPG/WebP · 200x200 min · max 2 MB</span>
+                            </label>
+                            <input type="file" id="hub-logo-file" name="logo" accept="image/jpeg,image/png,image/webp" hidden>
+                            <input type="checkbox" name="logo_remove" value="1" id="hub-logo-remove" hidden>
+                        </div>
                     </div>
-                    <div class="hub-field">
-                        <label>URL della copertina</label>
-                        <input type="url" name="cover_url" value="<?= e($settings['cover_url'] ?? '') ?>" placeholder="https://.../cover.jpg">
-                        <div class="hub-hint">1200x400 consigliato · se vuoto usa gradient della palette</div>
+                    <!-- Cover uploader -->
+                    <div class="hub-field" style="margin-bottom:0;">
+                        <label>Copertina</label>
+                        <div class="hub-uploader" data-field="cover">
+                            <?php if (!empty($settings['cover_url'])): ?>
+                            <div class="hub-uploader-preview">
+                                <img src="<?= e($settings['cover_url']) ?>" alt="Cover" class="hub-uploader-thumb cover">
+                                <button type="button" class="hub-uploader-remove" data-target="cover">
+                                    <i class="bi bi-trash"></i> Rimuovi
+                                </button>
+                            </div>
+                            <?php endif; ?>
+                            <label class="hub-uploader-drop" for="hub-cover-file">
+                                <i class="bi bi-image"></i>
+                                <span class="hub-uploader-text">Trascina qui o <strong>sfoglia</strong></span>
+                                <span class="hub-uploader-meta">1200x400 consigliato · max 2 MB · se vuoto usa gradient della palette</span>
+                            </label>
+                            <input type="file" id="hub-cover-file" name="cover" accept="image/jpeg,image/png,image/webp" hidden>
+                            <input type="checkbox" name="cover_remove" value="1" id="hub-cover-remove" hidden>
+                        </div>
                     </div>
                 </div>
             </div>
