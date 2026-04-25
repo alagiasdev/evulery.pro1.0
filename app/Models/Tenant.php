@@ -28,6 +28,24 @@ class Tenant
         return $stmt->fetch() ?: null;
     }
 
+    /**
+     * Returns the current plan name (Starter/Professional/Enterprise) for a tenant,
+     * or empty string if not found. Used per gating di feature plan-tier-specifiche.
+     */
+    public function getPlanName(int $tenantId): string
+    {
+        $stmt = $this->db->prepare(
+            'SELECT p.name FROM tenants t JOIN plans p ON p.id = t.plan_id WHERE t.id = :tid LIMIT 1'
+        );
+        $stmt->execute(['tid' => $tenantId]);
+        return (string)$stmt->fetchColumn();
+    }
+
+    public function isEnterprise(int $tenantId): bool
+    {
+        return strcasecmp($this->getPlanName($tenantId), 'Enterprise') === 0;
+    }
+
     public function findByDomain(string $domain): ?array
     {
         $stmt = $this->db->prepare('SELECT * FROM tenants WHERE custom_domain = :domain AND is_active = 1 LIMIT 1');

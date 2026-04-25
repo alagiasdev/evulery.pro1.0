@@ -6,7 +6,6 @@ use App\Core\Auth;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\TenantResolver;
-use App\Core\Database;
 use App\Models\HubAction;
 use App\Models\HubSettings;
 use App\Models\Tenant;
@@ -188,12 +187,7 @@ class HubController
 
     private function isEnterprise(int $tenantId): bool
     {
-        $stmt = Database::getInstance()->prepare(
-            'SELECT p.name FROM tenants t JOIN plans p ON p.id = t.plan_id WHERE t.id = :tid LIMIT 1'
-        );
-        $stmt->execute(['tid' => $tenantId]);
-        $name = (string)$stmt->fetchColumn();
-        return strcasecmp($name, 'Enterprise') === 0;
+        return (new Tenant())->isEnterprise($tenantId);
     }
 
     private function validPalette(string $key): string

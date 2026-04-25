@@ -42,6 +42,19 @@ class HubPublicController
 
         $hubService = new HubService();
         $rendered = $hubService->getRenderableActions($tenant, $settings);
+
+        // Plan gating: feature Enterprise-only (colori custom, white-label, custom
+        // links). Se il tenant ha fatto downgrade, le impostazioni restano in DB
+        // ma NON vengono applicate finché non torna Enterprise.
+        $isEnterprise = $tenantModel->isEnterprise((int)$tenant['id']);
+        if (!$isEnterprise) {
+            $settings['custom_colors_enabled'] = 0;
+            $settings['hide_branding']         = 0;
+            $rendered['items'] = array_values(array_filter(
+                $rendered['items'],
+                fn($i) => ($i['type'] ?? '') !== 'custom'
+            ));
+        }
         $colors = (new HubSettings())->resolveColors($settings);
 
         // Standalone view (2-arg view = no layout)

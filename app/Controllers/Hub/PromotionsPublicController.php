@@ -60,6 +60,13 @@ class PromotionsPublicController
 
         // Branding: usa lo stesso colore/cover/logo della Vetrina (se hub abilitato)
         $settings = (new HubSettings())->findByTenant((int)$tenant['id']) ?? [];
+
+        // Plan gating: custom colors + white-label sono Enterprise-only.
+        // Al downgrade il flag resta in DB ma non viene applicato.
+        if (!$tenantModel->isEnterprise((int)$tenant['id'])) {
+            $settings['custom_colors_enabled'] = 0;
+            $settings['hide_branding']         = 0;
+        }
         $colors = (new HubSettings())->resolveColors($settings);
 
         view('hub/promotions', [
