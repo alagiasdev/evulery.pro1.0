@@ -1,17 +1,4 @@
 <?php
-$settingsTabs = [
-    ['url' => url('dashboard/settings'),                'icon' => 'bi-gear',          'label' => 'Generali',         'key' => 'settings'],
-    ['url' => url('dashboard/settings/slots'),          'icon' => 'bi-clock',         'label' => 'Orari e Coperti',  'key' => 'slots'],
-    ['url' => url('dashboard/settings/meal-categories'),'icon' => 'bi-tags',          'label' => 'Categorie Pasto',  'key' => 'meal-categories'],
-    ['url' => url('dashboard/settings/closures'),       'icon' => 'bi-calendar-x',    'label' => 'Chiusure',         'key' => 'closures'],
-    ['url' => url('dashboard/settings/promotions'),     'icon' => 'bi-percent',       'label' => 'Promozioni',       'key' => 'promotions'],
-    ['url' => url('dashboard/settings/notifications'),  'icon' => 'bi-bell',          'label' => 'Notifiche',        'key' => 'settings-notifications'],
-    ['url' => url('dashboard/settings/deposit'),        'icon' => 'bi-cash',          'label' => 'Caparra',          'key' => 'deposit'],
-    ['url' => url('dashboard/settings/ordering'),       'icon' => 'bi-bag-check',     'label' => 'Ordini online',    'key' => 'settings-ordering'],
-    ['url' => url('dashboard/settings/reviews'),       'icon' => 'bi-star',       'label' => 'Recensioni',       'key' => 'settings-reviews'],
-    ["url" => url("dashboard/settings/hub"),            "icon" => "bi-grid-3x3-gap", "label" => "Vetrina Digitale", "key" => "settings-hub"],
-    ['url' => url('dashboard/settings/domain'),         'icon' => 'bi-globe',         'label' => 'Dominio',          'key' => 'domain'],
-];
 $orderingHours = json_decode($tenant['ordering_hours'] ?? '{}', true) ?: [];
 $dayNames = ['1' => 'Lunedì', '2' => 'Martedì', '3' => 'Mercoledì', '4' => 'Giovedì', '5' => 'Venerdì', '6' => 'Sabato', '7' => 'Domenica'];
 $payments = explode(',', $tenant['ordering_payment_methods'] ?? 'cash');
@@ -22,14 +9,7 @@ $isZones = ($tenant['delivery_mode'] ?? '') === 'zones';
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
 <p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
 
-<!-- Settings tabs -->
-<div class="settings-tabs-wrap"><div class="scroll-hint"><i class="bi bi-arrows"></i></div><div class="settings-tabs">
-    <?php foreach ($settingsTabs as $tab): ?>
-    <a href="<?= $tab['url'] ?>" class="settings-tab <?= $tab['key'] === 'settings-ordering' ? 'active' : '' ?>">
-        <i class="bi <?= $tab['icon'] ?>"></i> <span class="tab-label"><?= $tab['label'] ?></span>
-    </a>
-    <?php endforeach; ?>
-</div></div>
+<?php $activeKey = 'settings-ordering'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
 <?php if (!$canUse): ?>
     <?php $lockedTitle = 'Ordini online'; include BASE_PATH . '/views/partials/service-locked.php'; ?>

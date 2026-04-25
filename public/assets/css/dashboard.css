@@ -1049,6 +1049,7 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     display: flex; gap: .1rem; margin-bottom: 1.5rem;
     border-bottom: 2px solid #e9ecef; padding-bottom: 0;
     overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
+    align-items: flex-end;
 }
 .settings-tabs::-webkit-scrollbar { display: none; }
 .settings-tab {
@@ -1062,6 +1063,24 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 .settings-tab.active { color: var(--brand); border-bottom-color: var(--brand); font-weight: 700; }
 .settings-tab i { font-size: .9rem; }
 .settings-tab .tab-label { display: inline; }
+
+/* Group label inline + divider verticali (variante B) */
+.settings-tabs-grouplabel {
+    font-size: .62rem; font-weight: 700; color: #adb5bd;
+    text-transform: uppercase; letter-spacing: .6px;
+    padding: 0 .55rem 0 .35rem;
+    align-self: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-bottom: 4px;
+}
+.settings-tabs-divider {
+    width: 1px;
+    background: #e9ecef;
+    align-self: stretch;
+    margin: 6px .35rem 6px .35rem;
+    flex-shrink: 0;
+}
 
 /* ===== Section card (settings) ===== */
 .section-card {
@@ -1928,6 +1947,8 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     .settings-tab { padding: .65rem .85rem; flex-shrink: 0; }
     .settings-tab .tab-label { display: none; }
     .settings-tab i { font-size: 1.15rem; }
+    .settings-tabs-grouplabel { display: none; }
+    .settings-tabs-divider { margin: 6px .15rem; }
     .settings-tabs-wrap .scroll-hint {
         display: flex; justify-content: flex-end; color: #adb5bd;
         margin-bottom: .15rem; padding-right: .25rem;
