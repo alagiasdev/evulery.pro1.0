@@ -66,7 +66,7 @@ class HubService
             return [
                 'type'    => 'custom',
                 'label'   => $row['custom_label'],
-                'sub'     => null,
+                'sub'     => $row['custom_sub'] ?? null,
                 'icon'    => $row['custom_icon'] ?: 'bi-link-45deg',
                 'url'     => $row['custom_url'],
                 'is_hero' => false,

@@ -186,7 +186,7 @@ class HubAction
         }
     }
 
-    public function createCustom(int $tenantId, string $label, string $url, string $icon = 'bi-link-45deg'): int
+    public function createCustom(int $tenantId, string $label, string $url, string $icon = 'bi-link-45deg', ?string $sub = null): int
     {
         $stmt = $this->db->prepare(
             'SELECT COALESCE(MAX(sort_order), 0) + 1 AS s FROM tenant_hub_actions WHERE tenant_id = :tid'
@@ -196,29 +196,31 @@ class HubAction
 
         $stmt = $this->db->prepare(
             'INSERT INTO tenant_hub_actions
-                (tenant_id, action_type, custom_label, custom_url, custom_icon, is_active, sort_order)
-             VALUES (:tid, "custom", :label, :url, :icon, 1, :sort)'
+                (tenant_id, action_type, custom_label, custom_url, custom_sub, custom_icon, is_active, sort_order)
+             VALUES (:tid, "custom", :label, :url, :sub, :icon, 1, :sort)'
         );
         $stmt->execute([
             'tid'   => $tenantId,
             'label' => $label,
             'url'   => $url,
+            'sub'   => $sub,
             'icon'  => $icon,
             'sort'  => $sort,
         ]);
         return (int)$this->db->lastInsertId();
     }
 
-    public function updateCustom(int $actionId, int $tenantId, string $label, string $url, string $icon): void
+    public function updateCustom(int $actionId, int $tenantId, string $label, string $url, string $icon, ?string $sub = null): void
     {
         $stmt = $this->db->prepare(
             'UPDATE tenant_hub_actions
-             SET custom_label = :label, custom_url = :url, custom_icon = :icon
+             SET custom_label = :label, custom_url = :url, custom_sub = :sub, custom_icon = :icon
              WHERE id = :id AND tenant_id = :tid AND action_type = "custom"'
         );
         $stmt->execute([
             'label' => $label,
             'url'   => $url,
+            'sub'   => $sub,
             'icon'  => $icon,
             'id'    => $actionId,
             'tid'   => $tenantId,

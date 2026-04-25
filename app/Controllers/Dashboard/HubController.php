@@ -149,6 +149,7 @@ class HubController
         $label = trim((string)$request->input('label', ''));
         $url   = trim((string)$request->input('url', ''));
         $icon  = trim((string)$request->input('icon', 'bi-link-45deg'));
+        $sub   = trim((string)$request->input('sub', ''));
 
         if ($label === '' || $url === '') {
             flash('danger', 'Etichetta e URL del link sono obbligatori.');
@@ -160,7 +161,13 @@ class HubController
             Response::redirect(url('dashboard/settings/hub'));
         }
 
-        (new HubAction())->createCustom($tenantId, mb_substr($label, 0, 100), $url, $icon);
+        (new HubAction())->createCustom(
+            $tenantId,
+            mb_substr($label, 0, 100),
+            $url,
+            $icon,
+            $sub !== '' ? mb_substr($sub, 0, 100) : null
+        );
         flash('success', 'Link aggiunto.');
         Response::redirect(url('dashboard/settings/hub'));
     }

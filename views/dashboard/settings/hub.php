@@ -223,7 +223,8 @@ $enabled = !empty($settings['enabled']);
                         $presetDef = $isPreset ? ($presets[$action['preset_key']] ?? null) : null;
                         $label = $isPreset ? ($presetDef['label'] ?? $action['preset_key']) : $action['custom_label'];
                         $icon = $isPreset ? ($presetDef['icon'] ?? 'bi-link-45deg') : ($action['custom_icon'] ?: 'bi-link-45deg');
-                        $sub = $isPreset ? ($presetDef['sub'] ?? null) : $action['custom_url'];
+                        // Per i custom: sub è la descrizione opzionale (custom_sub); il URL appare separato sotto.
+                        $sub = $isPreset ? ($presetDef['sub'] ?? null) : ($action['custom_sub'] ?? null);
                         $locked = $isPreset && !empty($presetDef['locked_position']);
                     ?>
                     <li class="hub-action-item" data-id="<?= (int)$action['id'] ?>" data-locked="<?= $locked ? '1' : '0' ?>">
@@ -279,8 +280,9 @@ $enabled = !empty($settings['enabled']);
                 </div>
                 <?php if ($isEnterprise): ?>
                 <div class="hub-add-link-row">
-                    <input type="text" id="custom-link-label" placeholder="Es. Eventi privati" maxlength="100">
+                    <input type="text" id="custom-link-label" placeholder="Etichetta · es. Eventi privati" maxlength="100">
                     <input type="url" id="custom-link-url" placeholder="https://...">
+                    <input type="text" id="custom-link-sub" placeholder="Descrizione opzionale · es. Compleanni, lauree, aziendali" maxlength="100">
                     <select id="custom-link-icon">
                         <option value="bi-link-45deg">🔗 Link generico</option>
                         <option value="bi-calendar-event">📅 Evento</option>
@@ -416,6 +418,7 @@ $enabled = !empty($settings['enabled']);
     <?= csrf_field() ?>
     <input type="hidden" name="label" id="add-link-label">
     <input type="hidden" name="url" id="add-link-url">
+    <input type="hidden" name="sub" id="add-link-sub">
     <input type="hidden" name="icon" id="add-link-icon">
 </form>
 <?php endif; ?>

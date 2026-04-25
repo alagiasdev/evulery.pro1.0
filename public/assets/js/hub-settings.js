@@ -337,6 +337,7 @@
         addLinkBtn.addEventListener('click', function() {
             var label = document.getElementById('custom-link-label').value.trim();
             var url   = document.getElementById('custom-link-url').value.trim();
+            var sub   = document.getElementById('custom-link-sub').value.trim();
             var icon  = document.getElementById('custom-link-icon').value;
             if (!label || !url) {
                 alert('Inserisci etichetta e URL del link.');
@@ -344,6 +345,7 @@
             }
             document.getElementById('add-link-label').value = label;
             document.getElementById('add-link-url').value = url;
+            document.getElementById('add-link-sub').value = sub;
             document.getElementById('add-link-icon').value = icon;
             document.getElementById('add-custom-link-form').submit();
         });
