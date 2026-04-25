@@ -6,6 +6,7 @@ use App\Core\Auth;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\TenantResolver;
+use App\Core\Database;
 use App\Models\HubAction;
 use App\Models\HubSettings;
 use App\Models\Tenant;
@@ -79,8 +80,8 @@ class HubController
             $data['hide_branding']  = $request->input('hide_branding') ? 1 : 0;
         }
 
-        // Ensure settings row exists
-        (new HubSettings())->findOrCreate($tenantId);
+        // Ensure settings row + preset actions exist (idempotent safety net)
+        (new HubService())->ensureInitialized($tenantId);
         (new HubSettings())->update($tenantId, $data);
 
         // Toggle individual preset actions on/off
@@ -161,7 +162,7 @@ class HubController
 
     private function isEnterprise(int $tenantId): bool
     {
-        $stmt = \App\Core\Database::getInstance()->prepare(
+        $stmt = Database::getInstance()->prepare(
             'SELECT p.name FROM tenants t JOIN plans p ON p.id = t.plan_id WHERE t.id = :tid LIMIT 1'
         );
         $stmt->execute(['tid' => $tenantId]);

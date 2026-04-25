@@ -331,3 +331,68 @@
 .hub-public-social a { color: #6c757d; text-decoration: none; transition: color .12s; }
 .hub-public-social a:hover { color: var(--hub-primary); }
 .hub-evulery-mark { font-size: .68rem; opacity: .8; margin-top: .35rem; }
+/* ============ Hub — mobile/tablet refinements ============ */
+/* Fixes applied after first round of mobile testing */
+
+/* Tablet (under 992px): the right sidebar stops being sticky and stacks below */
+@media (max-width: 991px) {
+    .hub-sticky { position: static; }
+    .hub-vurl-card { margin-top: 1rem; }
+}
+
+/* Phone (under 700px): tighter layout */
+@media (max-width: 700px) {
+    /* Cards: less padding to gain horizontal space */
+    .hub-card { padding: .85rem 1rem; }
+
+    /* Action items: drag handle + icon + text + delete + switch all on one row stays OK
+       but on very narrow screens the URL sub-text wraps too much; truncate it */
+    .hub-action-text { min-width: 0; overflow: hidden; }
+    .hub-action-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Add custom link row: stacked single column already from the existing rule, OK */
+
+    /* URL card: smaller font for the URL itself if it overflows */
+    .hub-vurl-url { font-size: .76rem; }
+    .hub-vurl-actions { flex-wrap: wrap; }
+
+    /* Save bar: don't crush save hint */
+    .save-bar { flex-wrap: wrap; gap: .5rem; }
+    .save-bar .save-hint { flex-basis: 100%; order: 2; }
+
+    /* Phone preview: shrink a bit more on really narrow screens */
+    .hub-preview-phone { max-width: 200px; }
+    .hub-preview-screen { min-height: 340px; font-size: 8px; }
+    .ppm-name { font-size: 11px; }
+    .ppm-tag { font-size: 7px; }
+
+    /* Color picker rows: don't shrink picker when text wraps */
+    .hub-color-row input[type=color] { flex-shrink: 0; }
+}
+
+/* Very small screens (under 380px): stack action items vertically */
+@media (max-width: 380px) {
+    .hub-action-item {
+        flex-wrap: wrap;
+        padding: .55rem .65rem;
+        gap: .5rem;
+    }
+    .hub-action-text { flex-basis: calc(100% - 88px); }
+
+    /* QR card: smaller on tiny screens */
+    .hub-qr-card #hub-qr-canvas { width: 150px; height: 150px; }
+}
+
+/* Public hub mobile: ensure max-width is respected on all sizes */
+@media (max-width: 480px) {
+    .hub-public-cover { height: 140px; }
+    .hub-public-logo { width: 72px; height: 72px; bottom: -34px; font-size: 1.5rem; }
+    .hub-public-body { padding: 2.85rem 1rem 1.25rem; }
+    .hub-public-name { font-size: 1.4rem; }
+    .hub-public-cta { padding: .95rem .85rem; }
+    .hub-public-cta-label { font-size: 1rem; }
+    .hub-public-cta i { font-size: 1.4rem; }
+    .hub-public-row { padding: .8rem .9rem; }
+    .hub-public-row-label { font-size: .88rem; }
+    .hub-public-row-sub { font-size: .72rem; }
+}

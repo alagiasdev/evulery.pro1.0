@@ -21,26 +21,22 @@ class HubPublicController
         $tenantModel = new Tenant();
         $tenant = $tenantModel->findBySlug($slug);
 
+        // Tenant inesistente: 404 (caso vero "non esiste")
         if (!$tenant || !$tenant['is_active']) {
             Response::notFound();
             return;
         }
 
-        // Service gating: same as menu/order/etc — show graceful unavailable page
-        if (!$tenantModel->canUseService((int)$tenant['id'], 'vetrina_digitale')) {
-            Response::notFound();
-            return;
-        }
-
-        // Subscription expiry check (same pattern as MenuPageController)
-        if ($tenantModel->getExpiredSubscription((int)$tenant['id'])) {
-            Response::notFound();
-            return;
-        }
-
+        // Tenant senza servizio attivo (Starter, sospeso, hub OFF):
+        // mostriamo una pagina "torna al sito" friendly invece di 404.
+        // Chi scansiona il QR vede comunque qualcosa, non un errore.
+        $hasService = $tenantModel->canUseService((int)$tenant['id'], 'vetrina_digitale');
+        $expired = (bool)$tenantModel->getExpiredSubscription((int)$tenant['id']);
         $settings = (new HubSettings())->findByTenant((int)$tenant['id']);
-        if (!$settings || !$settings['enabled']) {
-            Response::notFound();
+        $isEnabled = $settings && !empty($settings['enabled']);
+
+        if (!$hasService || $expired || !$isEnabled) {
+            $this->renderUnavailable($tenant);
             return;
         }
 
@@ -68,5 +64,21 @@ class HubPublicController
             'inter'        => "'Inter', system-ui, sans-serif",
             default        => "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
         };
+    }
+
+    /**
+     * Friendly "Vetrina non attiva" page with CTA to booking widget.
+     * Used when the tenant is on Starter, subscription expired, or hub disabled.
+     */
+    private function renderUnavailable(array $tenant): void
+    {
+        $bookingUrl = url($tenant['slug']);
+        view('hub/unavailable', [
+            'tenantName'    => $tenant['name'],
+            'tenantPhone'   => $tenant['phone'] ?? '',
+            'tenantEmail'   => $tenant['email'] ?? '',
+            'tenantAddress' => $tenant['address'] ?? '',
+            'bookingUrl'    => $bookingUrl,
+        ]);
     }
 }
