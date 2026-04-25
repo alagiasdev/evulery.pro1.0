@@ -9,6 +9,7 @@ $settingsTabs = [
     ['url' => url('dashboard/settings/deposit'),        'icon' => 'bi-cash',          'label' => 'Caparra',          'key' => 'deposit'],
     ['url' => url('dashboard/settings/ordering'),       'icon' => 'bi-bag-check',     'label' => 'Ordini online',    'key' => 'settings-ordering'],
     ['url' => url('dashboard/settings/reviews'),        'icon' => 'bi-star',          'label' => 'Recensioni',       'key' => 'settings-reviews'],
+    ["url" => url("dashboard/settings/hub"),            "icon" => "bi-grid-3x3-gap", "label" => "Vetrina Digitale", "key" => "settings-hub"],
     ['url' => url('dashboard/settings/domain'),         'icon' => 'bi-globe',         'label' => 'Dominio',          'key' => 'domain'],
 ];
 $reviewEnabled = (int)($tenant['review_enabled'] ?? 0);
@@ -23,6 +24,7 @@ $platformLabel = $tenant['review_platform_label'] ?? '';
 <div class="settings-tabs-wrap"><div class="scroll-hint"><i class="bi bi-arrows"></i></div><div class="settings-tabs">
     <?php foreach ($settingsTabs as $tab): ?>
     <a href="<?= $tab['url'] ?>" class="settings-tab <?= $tab['key'] === 'settings-reviews' ? 'active' : '' ?>">
+    ["url" => url("dashboard/settings/hub"),            "icon" => "bi-grid-3x3-gap", "label" => "Vetrina Digitale", "key" => "settings-hub"],
         <i class="bi <?= $tab['icon'] ?>"></i> <span class="tab-label"><?= $tab['label'] ?></span>
     </a>
     <?php endforeach; ?>
@@ -297,3 +299,4 @@ $platformLabel = $tenant['review_platform_label'] ?? '';
 <?php endif; ?>
 
 <?php $pageScripts = ['js/settings-reviews.js']; ?>
+    ["url" => url("dashboard/settings/hub"),            "icon" => "bi-grid-3x3-gap", "label" => "Vetrina Digitale", "key" => "settings-hub"],
