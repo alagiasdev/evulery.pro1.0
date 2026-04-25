@@ -52,18 +52,21 @@ $enabled = !empty($settings['enabled']);
         <div class="col-lg-7">
 
             <!-- Master enable toggle -->
-            <div class="card hub-card">
+            <div class="card hub-card hub-master-card <?= $enabled ? 'enabled' : 'disabled' ?>" id="hub-master-card">
                 <div class="hub-toggle-row">
                     <div style="flex:1;">
                         <div class="hub-toggle-label"><i class="bi bi-grid-3x3-gap me-1" style="color:var(--brand);"></i> Attiva la Vetrina Digitale</div>
-                        <div class="hub-toggle-sub">Spegnendola, la pagina pubblica restituisce 404 e il QR non funziona.</div>
+                        <div class="hub-toggle-sub">Disattivata, chi visita il link pubblico vede una pagina con CTA "Prenota un tavolo".</div>
                     </div>
                     <label class="hub-switch">
-                        <input type="checkbox" name="enabled" value="1" <?= $enabled ? 'checked' : '' ?>>
+                        <input type="checkbox" name="enabled" id="hub-enabled-toggle" value="1" <?= $enabled ? 'checked' : '' ?>>
                         <span class="hub-switch-slider"></span>
                     </label>
                 </div>
             </div>
+
+            <!-- Config block (greyed when hub disabled) -->
+            <div class="hub-config-block <?= $enabled ? '' : 'hub-greyed' ?>" id="hub-config-block">
 
             <!-- Identità -->
             <div class="card hub-card">
@@ -291,7 +294,9 @@ $enabled = !empty($settings['enabled']);
                 </div>
             </div>
 
-            <!-- Save bar -->
+            </div><!-- /.hub-config-block -->
+
+            <!-- Save bar (always active, also when hub disabled — needed to re-enable) -->
             <div class="card hub-card" style="padding: 0;">
                 <div class="save-bar">
                     <span class="save-hint">
@@ -306,7 +311,7 @@ $enabled = !empty($settings['enabled']);
 
         <!-- RIGHT COLUMN — Sticky URL + QR + Preview -->
         <div class="col-lg-5">
-            <div class="hub-sticky">
+            <div class="hub-sticky <?= $enabled ? '' : 'hub-greyed' ?>" id="hub-sticky-block">
 
                 <!-- URL share card -->
                 <div class="hub-vurl-card">

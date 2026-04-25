@@ -10,6 +10,23 @@
 (function() {
     'use strict';
 
+    // -------- Master enable toggle: grey out config blocks live --------
+    var masterToggle = document.getElementById('hub-enabled-toggle');
+    var masterCard = document.getElementById('hub-master-card');
+    var configBlock = document.getElementById('hub-config-block');
+    var stickyBlock = document.getElementById('hub-sticky-block');
+    if (masterToggle) {
+        masterToggle.addEventListener('change', function() {
+            var enabled = masterToggle.checked;
+            if (configBlock) configBlock.classList.toggle('hub-greyed', !enabled);
+            if (stickyBlock) stickyBlock.classList.toggle('hub-greyed', !enabled);
+            if (masterCard) {
+                masterCard.classList.toggle('enabled', enabled);
+                masterCard.classList.toggle('disabled', !enabled);
+            }
+        });
+    }
+
     // -------- Palette card click highlights --------
     document.querySelectorAll('.hub-palette-card').forEach(function(card) {
         card.addEventListener('click', function() {

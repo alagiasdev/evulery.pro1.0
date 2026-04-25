@@ -8,6 +8,14 @@
 .hub-toggle-label { font-weight: 600; font-size: .9rem; color: #212529; }
 .hub-toggle-sub { font-size: .75rem; color: #6c757d; margin-top: .15rem; }
 
+/* Master card visual cue when disabled */
+.hub-master-card { border-left: 3px solid #cbd0d4; transition: border-color .15s; }
+.hub-master-card.enabled { border-left-color: var(--brand); }
+.hub-master-card.disabled { border-left-color: #dc3545; }
+
+/* Greyed-out blocks when hub is disabled */
+.hub-greyed { opacity: .45; pointer-events: none; user-select: none; transition: opacity .2s; }
+
 .hub-switch { position: relative; display: inline-block; width: 46px; height: 26px; flex-shrink: 0; }
 .hub-switch input { opacity: 0; width: 0; height: 0; }
 .hub-switch-slider {
