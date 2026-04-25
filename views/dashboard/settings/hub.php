@@ -196,15 +196,6 @@ $enabled = !empty($settings['enabled']);
                         </div>
                     </div>
 
-                    <div class="hub-field" style="margin-top:.85rem;">
-                        <label>Font del titolo ristorante</label>
-                        <select name="custom_font" class="form-select form-select-sm">
-                            <option value="">— predefinito —</option>
-                            <?php foreach ($fonts as $fkey => $fname): ?>
-                            <option value="<?= e($fkey) ?>" <?= ($settings['custom_font'] ?? '') === $fkey ? 'selected' : '' ?>><?= e($fname) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
                     <div class="hub-toggle-row" style="margin-top:.75rem; padding-top:.75rem; border-top:1px solid #FFE082;">
                         <div style="flex:1;">
                             <div class="hub-toggle-label"><i class="bi bi-eye-slash me-1"></i> White-label</div>

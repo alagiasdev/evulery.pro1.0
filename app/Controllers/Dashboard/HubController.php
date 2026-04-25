@@ -85,7 +85,8 @@ class HubController
             $data['custom_accent']  = $this->cleanHex($request->input('custom_accent', ''));
             $data['custom_dark']    = $this->cleanHex($request->input('custom_dark', ''));
             $data['custom_bg']      = $this->cleanHex($request->input('custom_bg', ''));
-            $data['custom_font']    = $this->validFont($request->input('custom_font', ''));
+            // custom_font: UI temporaneamente nascosta — non scriviamo per non
+            // azzerare valori esistenti. Il public hub forza Inter di default.
             $data['hide_branding']  = $request->input('hide_branding') ? 1 : 0;
         }
 

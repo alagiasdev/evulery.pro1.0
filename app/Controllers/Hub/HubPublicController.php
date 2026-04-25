@@ -57,13 +57,10 @@ class HubPublicController
 
     private function resolveFontFamily(?string $key): string
     {
-        return match ($key) {
-            'serif'        => "'Playfair Display', Georgia, serif",
-            'merriweather' => "'Merriweather', Georgia, serif",
-            'caveat'       => "'Caveat', cursive",
-            // Default: Inter (font dell'identità Evulery, coerente con landing/marchio)
-            default        => "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
-        };
+        // UI scelta font temporaneamente nascosta — forziamo Inter come default per tutti.
+        // Per riabilitare: ripristinare il match originale (serif/merriweather/caveat) e
+        // riesporre la <select> in views/dashboard/settings/hub.php.
+        return "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
     }
 
     /**

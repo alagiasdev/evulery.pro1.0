@@ -49,20 +49,10 @@ $wa = $settings['whatsapp_number'] ?? '';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="<?= asset('css/hub.css') ?>">
 
-    <!-- Inter (default, font dell'identità Evulery) + eventuale font custom scelto dal ristoratore -->
+    <!-- Inter — font dell'identità Evulery, applicato a tutta la Vetrina -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <?php
-        // Sempre Inter come base, anche se è impostato un display font (serif/caveat),
-        // perché il display font si applica solo al nome del ristorante.
-        $fontFamilies = ['family=Inter:wght@400;500;600;700;800'];
-        switch ($settings['custom_font'] ?? null) {
-            case 'serif':        $fontFamilies[] = 'family=Playfair+Display:wght@700;800;900'; break;
-            case 'merriweather': $fontFamilies[] = 'family=Merriweather:wght@700;900'; break;
-            case 'caveat':       $fontFamilies[] = 'family=Caveat:wght@700'; break;
-        }
-    ?>
-    <link href="https://fonts.googleapis.com/css2?<?= implode('&', $fontFamilies) ?>&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         body.hub-public-page {
