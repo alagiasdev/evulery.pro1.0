@@ -50,13 +50,14 @@ class EmailCampaign
     public function create(array $data): int
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO email_campaigns (tenant_id, subject, body_text, segment_filter, inactive_days, created_by, created_at)
-             VALUES (:tid, :subject, :body, :segment, :inactive_days, :created_by, NOW())'
+            'INSERT INTO email_campaigns (tenant_id, subject, body_text, include_booking_cta, segment_filter, inactive_days, created_by, created_at)
+             VALUES (:tid, :subject, :body, :cta, :segment, :inactive_days, :created_by, NOW())'
         );
         $stmt->execute([
             'tid'           => $data['tenant_id'],
             'subject'       => $data['subject'],
             'body'          => $data['body_text'],
+            'cta'           => !empty($data['include_booking_cta']) ? 1 : 0,
             'segment'       => $data['segment_filter'],
             'inactive_days' => $data['inactive_days'] ?? null,
             'created_by'    => $data['created_by'] ?? null,

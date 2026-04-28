@@ -183,6 +183,7 @@ class CommunicationsController
         $segment = $request->input('segment_filter', 'all');
         $inactiveDays = $request->input('inactive_days', null);
         $inactiveDays = $inactiveDays !== null ? (int)$inactiveDays : null;
+        $includeBookingCta = $request->input('include_booking_cta') ? 1 : 0;
 
         // Validation
         if (empty($subject) || mb_strlen($subject) > 255) {
@@ -230,12 +231,13 @@ class CommunicationsController
 
         // Create campaign
         $campaignId = $campaignModel->create([
-            'tenant_id'      => $tenantId,
-            'subject'        => $subject,
-            'body_text'      => $bodyText,
-            'segment_filter' => $segment,
-            'inactive_days'  => $segment === 'inactive' ? $inactiveDays : null,
-            'created_by'     => Auth::id(),
+            'tenant_id'           => $tenantId,
+            'subject'             => $subject,
+            'body_text'           => $bodyText,
+            'include_booking_cta' => $includeBookingCta,
+            'segment_filter'      => $segment,
+            'inactive_days'       => $segment === 'inactive' ? $inactiveDays : null,
+            'created_by'          => Auth::id(),
         ]);
 
         // Insert recipients
@@ -442,7 +444,12 @@ class CommunicationsController
             foreach ($recipients as $recipient) {
                 $token = BroadcastService::generateUnsubscribeToken($tenantId, $recipient['email']);
                 $unsubscribeUrl = rtrim(env('APP_URL', ''), '/') . '/email/unsubscribe/' . $token;
-                $html = BroadcastService::buildEmailHtml($campaign['body_text'], $tenant, $unsubscribeUrl);
+                $html = BroadcastService::buildEmailHtml(
+                    $campaign['body_text'],
+                    $tenant,
+                    $unsubscribeUrl,
+                    !empty($campaign['include_booking_cta'])
+                );
 
                 $ok = BroadcastService::sendOne(
                     $mailer,
@@ -523,7 +530,12 @@ class CommunicationsController
             foreach ($recipients as $recipient) {
                 $token = BroadcastService::generateUnsubscribeToken($tenantId, $recipient['email']);
                 $unsubscribeUrl = rtrim(env('APP_URL', ''), '/') . '/email/unsubscribe/' . $token;
-                $html = BroadcastService::buildEmailHtml($campaign['body_text'], $tenant, $unsubscribeUrl);
+                $html = BroadcastService::buildEmailHtml(
+                    $campaign['body_text'],
+                    $tenant,
+                    $unsubscribeUrl,
+                    !empty($campaign['include_booking_cta'])
+                );
 
                 $ok = BroadcastService::sendOne(
                     $mailer,

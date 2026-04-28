@@ -114,7 +114,12 @@ foreach ($campaigns as $campaign) {
             $unsubscribeUrl = rtrim(env('APP_URL', ''), '/') . '/email/unsubscribe/' . $token;
 
             // Build HTML
-            $html = BroadcastService::buildEmailHtml($campaign['body_text'], $tenant, $unsubscribeUrl);
+            $html = BroadcastService::buildEmailHtml(
+                $campaign['body_text'],
+                $tenant,
+                $unsubscribeUrl,
+                !empty($campaign['include_booking_cta'])
+            );
 
             // Send
             $ok = BroadcastService::sendOne(

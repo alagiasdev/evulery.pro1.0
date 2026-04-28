@@ -27,6 +27,22 @@
                     </div>
                 </div>
 
+                <!-- Booking CTA toggle -->
+                <div style="margin-bottom:1rem;padding:.75rem .9rem;border:1px solid #e9ecef;border-radius:8px;background:#fafbfc;">
+                    <label style="display:flex;align-items:flex-start;gap:.65rem;cursor:pointer;margin:0;">
+                        <input type="checkbox" name="include_booking_cta" value="1" id="include-booking-cta" style="margin-top:.2rem;accent-color:#00844A;width:18px;height:18px;flex-shrink:0;">
+                        <div style="flex:1;">
+                            <div style="font-weight:600;font-size:.85rem;color:#1a1d23;">
+                                <i class="bi bi-calendar-check me-1" style="color:#00844A;"></i>
+                                Includi pulsante &ldquo;Prenota ora&rdquo;
+                            </div>
+                            <div style="font-size:.75rem;color:#6c757d;margin-top:.15rem;line-height:1.4;">
+                                Aggiunge un bottone CTA nel corpo dell&rsquo;email che porta al tuo widget di prenotazione. Utile per eventi, feste, promozioni.
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
                 <!-- Segment selection -->
                 <div style="margin-bottom:.5rem;">
                     <label style="font-weight:600;font-size:.85rem;margin-bottom:.5rem;display:block;">Destinatari</label>

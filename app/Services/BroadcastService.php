@@ -86,8 +86,11 @@ class BroadcastService
 
     /**
      * Build the HTML email for a broadcast message.
+     *
+     * @param bool $includeBookingCta Se true, aggiunge un pulsante "Prenota ora"
+     *                                 dopo il body che punta al booking widget del tenant.
      */
-    public static function buildEmailHtml(string $bodyText, array $tenant, string $unsubscribeUrl): string
+    public static function buildEmailHtml(string $bodyText, array $tenant, string $unsubscribeUrl, bool $includeBookingCta = false): string
     {
         $restaurantName = e($tenant['name'] ?? '');
         $restaurantAddress = e($tenant['address'] ?? '');
@@ -101,6 +104,17 @@ class BroadcastService
             $bodyHtml
         );
         $bodyHtml = nl2br($bodyHtml);
+
+        // Booking CTA button (opzionale, gating per singola campagna)
+        $bookingCtaHtml = '';
+        if ($includeBookingCta && !empty($tenant['slug'])) {
+            $bookingUrl = htmlspecialchars(url($tenant['slug']), ENT_QUOTES, 'UTF-8');
+            $bookingCtaHtml = <<<HTML
+            <div style="padding:0 32px 24px;text-align:center;">
+                <a href="{$bookingUrl}" style="display:inline-block;background:#00844A;color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;padding:14px 32px;border-radius:8px;letter-spacing:.3px;">Prenota ora</a>
+            </div>
+            HTML;
+        }
 
         // Restaurant info
         $restaurantInfoHtml = '';
@@ -135,6 +149,8 @@ class BroadcastService
                 <div style="padding:28px 32px;font-size:15px;color:#1a1d23;line-height:1.65;">
                     {$bodyHtml}
                 </div>
+
+                {$bookingCtaHtml}
 
                 <div style="border-top:1px solid #f0f0f0;margin:0 32px;"></div>
 
