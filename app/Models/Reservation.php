@@ -245,7 +245,7 @@ class Reservation
 
     public function markDepositRefunded(int $id): bool
     {
-        $stmt = $this->db->prepare('UPDATE reservations SET deposit_refunded = 1 WHERE id = :id');
+        $stmt = $this->db->prepare('UPDATE reservations SET deposit_refunded = 1, deposit_refunded_at = NOW() WHERE id = :id');
         return $stmt->execute(['id' => $id]);
     }
 

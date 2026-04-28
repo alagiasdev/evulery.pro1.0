@@ -177,6 +177,9 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
             <div style="font-size:.85rem;color:#2E7D32;">
                 <i class="bi bi-check-circle-fill me-1"></i>
                 Caparra di <strong>&euro;<?= number_format($reservation['deposit_amount'], 2) ?></strong> rimborsata
+                <?php if (!empty($reservation['deposit_refunded_at'])): ?>
+                    <span style="color:#558B2F;">il <?= date('d/m/Y', strtotime($reservation['deposit_refunded_at'])) ?> alle <?= date('H:i', strtotime($reservation['deposit_refunded_at'])) ?></span>
+                <?php endif; ?>
             </div>
         <?php else: ?>
             <div style="font-size:.85rem;color:#E65100;">
