@@ -49,12 +49,13 @@
                     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;" id="segment-radios">
                         <?php
                         $segments = [
-                            'all'          => ['Tutti i clienti', 'bi-people-fill', '#6c757d'],
-                            'nuovo'        => ['Nuovi', 'bi-person-plus', '#0dcaf0'],
-                            'occasionale'  => ['Occasionali', 'bi-person', '#ffc107'],
-                            'abituale'     => ['Abituali', 'bi-person-check', '#198754'],
-                            'vip'          => ['VIP', 'bi-star-fill', '#E65100'],
-                            'inactive'     => ['Inattivi', 'bi-person-x', '#dc3545'],
+                            'all'            => ['Tutti i clienti', 'bi-people-fill', '#6c757d'],
+                            'nuovo'          => ['Nuovi', 'bi-person-plus', '#0dcaf0'],
+                            'occasionale'    => ['Occasionali', 'bi-person', '#ffc107'],
+                            'abituale'       => ['Abituali', 'bi-person-check', '#198754'],
+                            'vip'            => ['VIP', 'bi-star-fill', '#E65100'],
+                            'inactive'       => ['Inattivi', 'bi-person-x', '#dc3545'],
+                            'birthday_month' => ['Compleanno questo mese', 'bi-gift-fill', '#D81B60'],
                         ];
                         foreach ($segments as $key => $seg): ?>
                         <label class="segment-option" style="display:flex;align-items:center;gap:.5rem;padding:.6rem .75rem;border:2px solid #dee2e6;border-radius:8px;cursor:pointer;font-size:.82rem;transition:all .15s;">

@@ -161,7 +161,7 @@ class CommunicationsController
         $tenant = TenantResolver::current();
         $thresholds = $this->getThresholds($tenant);
 
-        $validSegments = ['all', 'nuovo', 'occasionale', 'abituale', 'vip', 'inactive'];
+        $validSegments = ['all', 'nuovo', 'occasionale', 'abituale', 'vip', 'inactive', 'birthday_month'];
         if (!in_array($segment, $validSegments)) {
             $segment = 'all';
         }
@@ -198,7 +198,7 @@ class CommunicationsController
             return;
         }
 
-        $validSegments = ['all', 'nuovo', 'occasionale', 'abituale', 'vip', 'inactive'];
+        $validSegments = ['all', 'nuovo', 'occasionale', 'abituale', 'vip', 'inactive', 'birthday_month'];
         if (!in_array($segment, $validSegments)) {
             $segment = 'all';
         }
