@@ -772,6 +772,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function customerLookup(email) {
+        // Race-condition guard: cattura l'email che ha originato la request.
+        // Se l'utente cambia/cancella l'email mentre il fetch è in volo,
+        // la risposta viene scartata per evitare desync UI.
+        var requestEmail = email;
         fetch(apiUrl + '/tenants/' + slug + '/customers/lookup?email=' + encodeURIComponent(email), {
             method: 'GET',
             headers: { 'Accept': 'application/json' }
@@ -779,6 +783,9 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(function(r) { return r.json(); })
         .then(function(data) {
             if (!data || typeof data !== 'object') return;
+            // Verifica che l'email corrente sia ancora la stessa che ha generato la query
+            var currentEmail = emailEl ? emailEl.value.trim().toLowerCase() : '';
+            if (currentEmail !== requestEmail) return; // utente ha cambiato email, ignoriamo
             applyLookupState(data.has_birthday === true, data.marketing_consent);
         })
         .catch(function() {

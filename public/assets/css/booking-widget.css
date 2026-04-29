@@ -791,6 +791,18 @@
     .bw-form-row { grid-template-columns: 1fr; }
     .bw-slot-btn { min-width: 64px; padding: 8px 12px; font-size: 0.85rem; }
     .bw-conf-grid { grid-template-columns: 1fr 1fr; }
+
+    /* V2.3 birthday + privacy blocks: tighten on mobile */
+    .bw-optional-block { padding: 12px; }
+    .bw-birthday-row { gap: 10px; }
+    .bw-birthday-icon { font-size: 22px; }
+    .bw-birthday-content label { font-size: 0.82rem; }
+    .bw-birthday-hint { font-size: 0.7rem; }
+    .bw-privacy-checkbox { padding: 9px 11px; }
+    .bw-privacy-checkbox-text { font-size: 0.78rem; }
+    .bw-privacy-checkbox-text small { font-size: 0.66rem; }
+    .bw-privacy-consent { padding: 9px 11px; }
+    .bw-privacy-consent-text { font-size: 0.78rem; }
 }
 
 /* ==============================================

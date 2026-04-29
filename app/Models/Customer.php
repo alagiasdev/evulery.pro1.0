@@ -255,8 +255,9 @@ class Customer
                 if ($shouldUpdate) {
                     $sets[] = 'marketing_consent = :mc';
                     $sets[] = 'marketing_consent_at = NOW()';
-                    $sets[] = "marketing_consent_source = 'booking_widget'";
-                    $params['mc'] = (int)$consent;
+                    $sets[] = 'marketing_consent_source = :mcsrc';
+                    $params['mc']    = (int)$consent;
+                    $params['mcsrc'] = 'booking_widget';
                     $existing['marketing_consent'] = (int)$consent;
                 }
             }
@@ -290,8 +291,9 @@ class Customer
             $cols[] = 'marketing_consent_source';
             $vals[] = ':mc';
             $vals[] = 'NOW()';
-            $vals[] = "'booking_widget'";
-            $params['mc'] = (int)$consent;
+            $vals[] = ':mcsrc';
+            $params['mc']    = (int)$consent;
+            $params['mcsrc'] = 'booking_widget';
         }
         $sql = 'INSERT INTO customers (' . implode(', ', $cols) . ') VALUES (' . implode(', ', $vals) . ')';
         $stmt = $this->db->prepare($sql);
