@@ -67,12 +67,32 @@ class ReservationApiController
             Response::error("Le prenotazioni sono possibili fino a {$advanceMax} giorni in anticipo.", 'DATE_TOO_FAR', 422);
         }
 
+        // Birthday: validazione opzionale (data nel passato, max 120 anni fa)
+        $birthday = null;
+        if (!empty($data['birthday'])) {
+            $bdTs = strtotime($data['birthday']);
+            $minTs = strtotime('-120 years');
+            $maxTs = strtotime('today');
+            if ($bdTs && $bdTs >= $minTs && $bdTs < $maxTs) {
+                $birthday = date('Y-m-d', $bdTs);
+            }
+            // Se non valido, lo ignoriamo silenziosamente (è un campo opzionale)
+        }
+
+        // Marketing consent: 0/1 dal payload, null se non presente
+        $marketingConsent = null;
+        if (array_key_exists('marketing_consent', $data)) {
+            $marketingConsent = !empty($data['marketing_consent']) ? 1 : 0;
+        }
+
         // Find or create customer (before locking to minimize transaction duration)
         $customer = (new Customer())->findOrCreate($tenant['id'], [
-            'first_name' => $data['first_name'],
-            'last_name'  => $data['last_name'],
-            'email'      => $data['email'],
-            'phone'      => $data['phone'],
+            'first_name'        => $data['first_name'],
+            'last_name'         => $data['last_name'],
+            'email'             => $data['email'],
+            'phone'             => $data['phone'],
+            'birthday'          => $birthday,
+            'marketing_consent' => $marketingConsent,
         ]);
 
         // Block blacklisted customers

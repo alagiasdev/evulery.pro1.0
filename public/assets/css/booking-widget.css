@@ -487,6 +487,124 @@
 
 .bw-policy i { margin-right: 4px; }
 
+/* ============= Optional birthday block (V2.3) ============= */
+.bw-optional-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.66rem; font-weight: 700;
+    color: #B26500;
+    text-transform: uppercase; letter-spacing: 1px;
+    margin: 18px 0 10px;
+}
+.bw-optional-label::after {
+    content: ''; flex: 1; height: 1px; background: #FFD180;
+    opacity: .5;
+}
+.bw-optional-block {
+    background: #fff8f0;
+    border: 1px solid #FFD180;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+}
+.bw-birthday-row {
+    display: flex; gap: 12px; align-items: flex-start;
+}
+.bw-birthday-icon {
+    font-size: 26px; flex-shrink: 0;
+    line-height: 1.2; margin-top: 2px;
+}
+.bw-birthday-content { flex: 1; min-width: 0; }
+.bw-birthday-content label {
+    display: block;
+    font-size: 0.85rem; font-weight: 600;
+    color: var(--bw-text);
+    margin-bottom: 6px;
+}
+.bw-opt-tag {
+    color: var(--bw-text-muted); font-style: italic; font-weight: 500;
+    margin-left: 4px; font-size: 0.78rem;
+}
+.bw-birthday-content input[type="date"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    background: #fff;
+    color: var(--bw-text);
+}
+.bw-birthday-content input[type="date"]:focus {
+    outline: none; border-color: var(--bw-primary);
+    box-shadow: 0 0 0 3px rgba(0,132,74,.1);
+}
+.bw-birthday-hint {
+    font-size: 0.74rem; color: #B26500;
+    margin-top: 6px;
+    display: flex; align-items: center; gap: 4px;
+}
+.bw-birthday-hint i { color: var(--bw-primary); font-size: 11px; }
+
+/* ============= Privacy + marketing consent (V2.3) ============= */
+.bw-privacy { margin-bottom: 18px; }
+.bw-privacy-info {
+    font-size: 0.72rem; color: var(--bw-text-muted);
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+.bw-privacy-info a {
+    color: var(--bw-primary); text-decoration: underline; font-weight: 600;
+}
+.bw-privacy-checkbox {
+    display: flex; gap: 8px; align-items: flex-start;
+    cursor: pointer;
+    padding: 10px 12px;
+    background: #fafbfc;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    transition: border-color .15s, background .15s;
+}
+.bw-privacy-checkbox:hover { border-color: #c8d0d6; background: #f5f6f8; }
+.bw-privacy-checkbox input[type="checkbox"] {
+    margin-top: 2px;
+    width: 16px; height: 16px;
+    accent-color: var(--bw-primary);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.bw-privacy-checkbox-text {
+    font-size: 0.82rem; color: var(--bw-text); line-height: 1.45;
+}
+.bw-privacy-checkbox-text strong { font-weight: 600; }
+.bw-privacy-checkbox-text small {
+    display: block;
+    font-size: 0.68rem; color: var(--bw-text-muted);
+    margin-top: 2px;
+}
+
+/* Stato B: cliente già consenziente — riga sobria verde */
+.bw-privacy-consent {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px 12px;
+    background: #f0faf4;
+    border: 1px solid #A5D6A7;
+    border-radius: 8px;
+}
+.bw-privacy-consent-icon {
+    color: #2E7D32;
+    font-size: 16px; flex-shrink: 0;
+    margin-top: 1px;
+}
+.bw-privacy-consent-text {
+    font-size: 0.82rem; color: #2E7D32; line-height: 1.45;
+}
+.bw-privacy-consent-text strong { font-weight: 600; color: #1B5E20; }
+.bw-privacy-consent-text small {
+    display: block;
+    font-size: 0.68rem; color: #558B2F;
+    margin-top: 2px;
+}
+
 .bw-deposit-info {
     background: #EDE7F6;
     border-radius: var(--bw-radius-xs);

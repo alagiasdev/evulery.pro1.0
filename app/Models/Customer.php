@@ -218,34 +218,84 @@ class Customer
     {
         $existing = $this->findByTenantAndEmail($tenantId, $data['email']);
 
+        // Birthday: se passato e non nullo, lo persistiamo. Per i clienti esistenti
+        // NON sovrascriviamo un birthday già valorizzato in DB (potrebbe averlo
+        // dato in una prenotazione precedente).
+        $birthday = !empty($data['birthday']) ? $data['birthday'] : null;
+
+        // Marketing consent: regole intelligenti per non perdere consensi esistenti.
+        //   - se esistente con consenso=1 → NON tocchiamo (consenso permanente fino a revoca)
+        //   - se esistente con consenso=0 → aggiorniamo solo se cliente fa nuovo opt-in (1)
+        //   - se nuovo → settiamo quello che arriva dal payload (0 o 1)
+        // Il source identifica l'origine per audit GDPR.
+        $consent = array_key_exists('marketing_consent', $data) ? $data['marketing_consent'] : null;
+
         if ($existing) {
-            // Update name/phone if changed
-            $stmt = $this->db->prepare(
-                'UPDATE customers SET first_name = :first_name, last_name = :last_name, phone = :phone WHERE id = :id'
-            );
-            $stmt->execute([
+            $sets = ['first_name = :first_name', 'last_name = :last_name', 'phone = :phone'];
+            $params = [
                 'id'         => $existing['id'],
                 'first_name' => $data['first_name'],
                 'last_name'  => $data['last_name'],
                 'phone'      => $data['phone'],
-            ]);
+            ];
+
+            // Birthday: scrivi solo se non già valorizzato e arriva un nuovo valore
+            if ($birthday !== null && empty($existing['birthday'])) {
+                $sets[] = 'birthday = :birthday';
+                $params['birthday'] = $birthday;
+                $existing['birthday'] = $birthday;
+            }
+
+            // Marketing consent: scrivi solo se cambia in modo "additivo"
+            // (NULL→0/1, oppure 0→1 = re-opt-in). Mai 1→0 da questo flow
+            // (la revoca avviene solo via unsubscribe link nelle email).
+            if ($consent !== null) {
+                $cur = $existing['marketing_consent'] ?? null;
+                $shouldUpdate = ($cur === null) || ($cur === 0 && $consent === 1) || ($cur === '0' && $consent === 1);
+                if ($shouldUpdate) {
+                    $sets[] = 'marketing_consent = :mc';
+                    $sets[] = 'marketing_consent_at = NOW()';
+                    $sets[] = "marketing_consent_source = 'booking_widget'";
+                    $params['mc'] = (int)$consent;
+                    $existing['marketing_consent'] = (int)$consent;
+                }
+            }
+
+            $stmt = $this->db->prepare('UPDATE customers SET ' . implode(', ', $sets) . ' WHERE id = :id');
+            $stmt->execute($params);
             $existing['first_name'] = $data['first_name'];
             $existing['last_name'] = $data['last_name'];
             $existing['phone'] = $data['phone'];
             return $existing;
         }
 
-        $stmt = $this->db->prepare(
-            'INSERT INTO customers (tenant_id, first_name, last_name, email, phone)
-             VALUES (:tenant_id, :first_name, :last_name, :email, :phone)'
-        );
-        $stmt->execute([
+        // Nuovo customer
+        $cols = ['tenant_id', 'first_name', 'last_name', 'email', 'phone'];
+        $vals = [':tenant_id', ':first_name', ':last_name', ':email', ':phone'];
+        $params = [
             'tenant_id'  => $tenantId,
             'first_name' => $data['first_name'],
             'last_name'  => $data['last_name'],
             'email'      => $data['email'],
             'phone'      => $data['phone'],
-        ]);
+        ];
+        if ($birthday !== null) {
+            $cols[] = 'birthday';
+            $vals[] = ':birthday';
+            $params['birthday'] = $birthday;
+        }
+        if ($consent !== null) {
+            $cols[] = 'marketing_consent';
+            $cols[] = 'marketing_consent_at';
+            $cols[] = 'marketing_consent_source';
+            $vals[] = ':mc';
+            $vals[] = 'NOW()';
+            $vals[] = "'booking_widget'";
+            $params['mc'] = (int)$consent;
+        }
+        $sql = 'INSERT INTO customers (' . implode(', ', $cols) . ') VALUES (' . implode(', ', $vals) . ')';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
 
         return $this->findById((int)$this->db->lastInsertId());
     }

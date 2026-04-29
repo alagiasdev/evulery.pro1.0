@@ -17,7 +17,7 @@ class BroadcastService
     {
         $db = Database::getInstance();
         $sql = 'SELECT id, email, first_name, last_name FROM customers
-                WHERE tenant_id = :tid AND is_blocked = 0 AND unsubscribed = 0';
+                WHERE tenant_id = :tid AND is_blocked = 0 AND unsubscribed = 0 AND marketing_consent = 1';
         $params = ['tid' => $tenantId];
 
         $sql .= self::segmentWhere($segment, $inactiveDays, $thresholds);
@@ -35,7 +35,7 @@ class BroadcastService
     {
         $db = Database::getInstance();
         $sql = 'SELECT COUNT(*) FROM customers
-                WHERE tenant_id = :tid AND is_blocked = 0 AND unsubscribed = 0';
+                WHERE tenant_id = :tid AND is_blocked = 0 AND unsubscribed = 0 AND marketing_consent = 1';
         $params = ['tid' => $tenantId];
 
         $sql .= self::segmentWhere($segment, $inactiveDays, $thresholds);

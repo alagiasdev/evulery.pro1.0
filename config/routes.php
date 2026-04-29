@@ -227,6 +227,7 @@ $router->group('/admin', ['auth', 'admin', 'csrf', 'dashboard-ratelimit'], funct
 $router->group('/api/v1', ['ratelimit'], function ($r) {
     $r->get('/tenants/{slug}/availability', [AvailabilityController::class, 'check']);
     $r->get('/tenants/{slug}/closures', [AvailabilityController::class, 'closedDates']);
+    $r->get('/tenants/{slug}/customers/lookup', [\App\Controllers\Api\CustomerLookupController::class, 'lookup']);
     $r->post('/tenants/{slug}/reservations', [ReservationApiController::class, 'store']);
     $r->get('/tenants/{slug}/reservations/{id}', [ReservationApiController::class, 'show']);
     $r->post('/tenants/{slug}/reservations/{id}/cancel', [ReservationApiController::class, 'cancel']);

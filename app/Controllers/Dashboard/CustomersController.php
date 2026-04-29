@@ -425,11 +425,15 @@ class CustomersController
                     }
                 }
 
-                // Marketing consent: CSV "1" = subscribed → unsubscribed=0; CSV "0" → unsubscribed=1
+                // Marketing consent: CSV "1" = subscribed; "0" = unsubscribed.
+                // Aggiorniamo entrambe le colonne per coerenza GDPR (filtro broadcast usa marketing_consent).
                 if ($mapping['marketing_consent'] >= 0) {
                     $consent = trim($row[$mapping['marketing_consent']] ?? '');
                     if ($consent !== '') {
-                        $data['unsubscribed'] = in_array(strtolower($consent), ['1', 'true', 'si', 'sì', 'yes'], true) ? 0 : 1;
+                        $isSub = in_array(strtolower($consent), ['1', 'true', 'si', 'sì', 'yes'], true);
+                        $data['unsubscribed'] = $isSub ? 0 : 1;
+                        $data['marketing_consent'] = $isSub ? 1 : 0;
+                        $data['marketing_consent_source'] = 'csv_import';
                     }
                 }
 
@@ -589,9 +593,16 @@ class CustomersController
         }
 
         if (!empty($customer['unsubscribed'])) {
+            // Re-iscrizione manuale: ripristina anche marketing_consent per coerenza GDPR.
+            // Source 'manual' indica che è stato il ristoratore a riattivare (audit trail).
             $db = \App\Core\Database::getInstance();
-            $db->prepare('UPDATE customers SET unsubscribed = 0, unsubscribed_at = NULL WHERE id = :id')
-               ->execute(['id' => $id]);
+            $db->prepare(
+                "UPDATE customers
+                 SET unsubscribed = 0, unsubscribed_at = NULL,
+                     marketing_consent = 1, marketing_consent_at = NOW(),
+                     marketing_consent_source = 'manual'
+                 WHERE id = :id"
+            )->execute(['id' => $id]);
             flash('success', $customer['first_name'] . ' ' . $customer['last_name'] . ' è stato re-iscritto alle comunicazioni.');
         }
 

@@ -27,10 +27,13 @@ class UnsubscribeController
             $tenantName = $record['tenant_name'];
             $success = true;
 
-            // Mark customer as unsubscribed
+            // Mark customer as unsubscribed AND revoke marketing consent (GDPR)
             $db->prepare(
-                'UPDATE customers SET unsubscribed = 1, unsubscribed_at = NOW()
-                 WHERE tenant_id = :tid AND email = :email AND unsubscribed = 0'
+                "UPDATE customers
+                 SET unsubscribed = 1, unsubscribed_at = NOW(),
+                     marketing_consent = 0, marketing_consent_at = NOW(),
+                     marketing_consent_source = 'unsubscribe_link'
+                 WHERE tenant_id = :tid AND email = :email"
             )->execute(['tid' => $record['tenant_id'], 'email' => $record['email']]);
         }
 

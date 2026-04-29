@@ -125,6 +125,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Controllers\\Admin\\TenantsController' => __DIR__ . '/../..' . '/app/Controllers/Admin/TenantsController.php',
         'App\\Controllers\\Admin\\UsersController' => __DIR__ . '/../..' . '/app/Controllers/Admin/UsersController.php',
         'App\\Controllers\\Api\\AvailabilityController' => __DIR__ . '/../..' . '/app/Controllers/Api/AvailabilityController.php',
+        'App\\Controllers\\Api\\CustomerLookupController' => __DIR__ . '/../..' . '/app/Controllers/Api/CustomerLookupController.php',
         'App\\Controllers\\Api\\DemoRequestController' => __DIR__ . '/../..' . '/app/Controllers/Api/DemoRequestController.php',
         'App\\Controllers\\Api\\MenuApiController' => __DIR__ . '/../..' . '/app/Controllers/Api/MenuApiController.php',
         'App\\Controllers\\Api\\OrderApiController' => __DIR__ . '/../..' . '/app/Controllers/Api/OrderApiController.php',

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe V2.3 — Step 4 con stato consenso intelligente</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-light: #E8F5E9;
+    --brand-dark: #006837;
+    --ink: #1a1d23;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --bg: #f8f9fa;
+    --info-bg: #f0f4f8;
+    --required: #dc3545;
+    --opt-bg: #fff8f0;
+    --opt-border: #FFD180;
+    --opt-text: #B26500;
+    --consent-bg: #f0faf4;
+    --consent-border: #A5D6A7;
+    --consent-text: #2E7D32;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+}
+
+.wireframe-badge {
+    position: fixed; top: 12px; right: 12px; background: #FF9800; color: #fff;
+    padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 999;
+}
+
+.page-header {
+    text-align: center;
+    padding: 40px 16px 16px;
+    background: var(--bg);
+}
+.page-header h1 { font-size: 1.5rem; font-weight: 800; margin: 0 0 4px; }
+.page-header p { color: var(--muted); margin: 0; font-size: .9rem; }
+
+.container {
+    max-width: 1280px; margin: 0 auto; padding: 24px 16px;
+}
+
+.section-title {
+    font-size: .9rem; font-weight: 700;
+    margin: 24px 0 12px;
+    color: var(--ink);
+    display: flex; align-items: center; gap: 8px;
+}
+.section-title .num {
+    background: var(--brand); color: #fff;
+    width: 22px; height: 22px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800;
+}
+
+/* ============= Widget card ============= */
+.widget-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.05);
+    padding: 28px 32px;
+    max-width: 600px;
+    margin: 0 auto 24px;
+}
+
+.bw-progress {
+    display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 28px;
+}
+.bw-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    background: var(--brand-light);
+    color: var(--brand-dark);
+    border-radius: 20px;
+    font-size: .8rem; font-weight: 600;
+}
+.bw-pill .bw-chip {
+    background: var(--brand-dark); color: #fff;
+    padding: 1px 8px; border-radius: 10px;
+    font-size: .7rem; font-weight: 700;
+}
+.bw-pill.active { background: var(--brand); color: #fff; }
+.bw-pill.active .bw-chip { display: none; }
+.bw-arrow { color: #ced4da; font-size: 12px; }
+
+.bw-back {
+    color: var(--brand); font-size: .85rem; font-weight: 600;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-bottom: 12px;
+}
+
+.bw-step-title { font-size: 1.1rem; font-weight: 800; margin: 0 0 20px; }
+
+/* Form */
+.bw-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.bw-group { margin-bottom: 14px; }
+.bw-group label, .bw-row label {
+    display: block;
+    font-size: .7rem; font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 6px;
+}
+.bw-group label .req, .bw-row label .req { color: var(--required); }
+.bw-group input, .bw-row input, .bw-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: .9rem;
+    font-family: inherit;
+    background: #fff;
+    color: var(--ink);
+}
+.bw-group input:focus, .bw-row input:focus, .bw-group textarea:focus {
+    outline: none; border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(0,132,74,.1);
+}
+.bw-group input::placeholder, .bw-row input::placeholder, .bw-group textarea::placeholder { color: #adb5bd; }
+.bw-group textarea { resize: vertical; min-height: 90px; }
+
+/* Birthday optional block */
+.optional-section-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: .68rem; font-weight: 700;
+    color: var(--opt-text);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin: 18px 0 10px;
+}
+.optional-section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--opt-border);
+    opacity: .5;
+}
+.optional-block {
+    background: var(--opt-bg);
+    border: 1px solid var(--opt-border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+}
+.birthday-row {
+    display: flex; gap: 12px; align-items: flex-start;
+}
+.birthday-icon {
+    font-size: 28px; flex-shrink: 0;
+    line-height: 1.2; margin-top: 2px;
+}
+.birthday-content { flex: 1; }
+.birthday-content label {
+    display: block;
+    font-size: .85rem; font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+    text-transform: none;
+    letter-spacing: normal;
+}
+.birthday-content label .opt {
+    color: var(--muted); font-style: italic; font-weight: 500;
+    margin-left: 4px;
+}
+.birthday-content input[type="date"] {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    font-size: .9rem;
+    font-family: inherit;
+    background: #fff;
+}
+.birthday-hint {
+    font-size: .75rem; color: var(--opt-text);
+    margin-top: 6px;
+    display: flex; align-items: center; gap: 4px;
+}
+.birthday-hint i { color: var(--brand); font-size: 11px; }
+
+/* Cancellation policy */
+.bw-policy {
+    background: var(--info-bg);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    font-size: .82rem; color: var(--muted);
+    display: flex; align-items: flex-start; gap: 8px;
+}
+.bw-policy i { color: var(--muted); margin-top: 2px; }
+
+/* ============= Privacy block — 3 stati ============= */
+.bw-privacy { margin-bottom: 18px; }
+.bw-privacy-info {
+    font-size: .72rem; color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+.bw-privacy-info a { color: var(--brand); text-decoration: underline; font-weight: 600; }
+
+/* STATO 1 + 3: checkbox per opt-in */
+.bw-privacy-checkbox {
+    display: flex; gap: 8px; align-items: flex-start;
+    cursor: pointer;
+    padding: 10px 12px;
+    background: #fafbfc;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    transition: border-color .15s, background .15s;
+}
+.bw-privacy-checkbox:hover { border-color: #c8d0d6; background: #f5f6f8; }
+.bw-privacy-checkbox input[type="checkbox"] {
+    margin-top: 2px;
+    width: 16px; height: 16px;
+    accent-color: var(--brand);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.bw-privacy-checkbox-text { font-size: .82rem; color: var(--ink); line-height: 1.45; }
+.bw-privacy-checkbox-text strong { font-weight: 600; }
+.bw-privacy-checkbox-text small {
+    display: block;
+    font-size: .68rem; color: var(--muted);
+    margin-top: 2px;
+}
+
+/* STATO 2: già consenziente — riga sobria */
+.bw-privacy-consent {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px 12px;
+    background: var(--consent-bg);
+    border: 1px solid var(--consent-border);
+    border-radius: 8px;
+}
+.bw-privacy-consent-icon {
+    color: var(--consent-text);
+    font-size: 16px; flex-shrink: 0;
+    margin-top: 1px;
+}
+.bw-privacy-consent-text {
+    font-size: .82rem; color: var(--consent-text);
+    line-height: 1.45;
+}
+.bw-privacy-consent-text strong { font-weight: 600; color: var(--brand-dark); }
+.bw-privacy-consent-text small {
+    display: block;
+    font-size: .68rem; color: #558B2F;
+    margin-top: 2px;
+}
+
+/* Submit */
+.bw-submit {
+    width: 100%;
+    background: var(--brand); color: #fff;
+    border: none; border-radius: 8px;
+    padding: 14px;
+    font-size: .95rem; font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,132,74,.25);
+}
+
+/* ============= 3 scenarios zoom (solo Privacy block) ============= */
+.scenarios-zoom {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    margin-top: 14px;
+}
+.scenario-zoom-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+}
+.scenario-zoom-label {
+    font-size: 11px; font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.scenario-zoom-label .badge {
+    width: 20px; height: 20px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #fff;
+}
+.scenario-zoom-label .badge.new { background: #1976D2; }
+.scenario-zoom-label .badge.consent { background: var(--brand); }
+.scenario-zoom-label .badge.revoked { background: #E65100; }
+.scenario-zoom-state {
+    display: inline-block;
+    padding: 2px 8px; border-radius: 4px;
+    font-size: 10px; font-family: monospace;
+    background: #f0f0f0; color: #C2185B;
+    margin-bottom: 10px;
+}
+.scenario-zoom-notes {
+    font-size: .75rem; color: #495057;
+    line-height: 1.55;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+}
+.scenario-zoom-notes strong { color: var(--ink); }
+
+/* Tech */
+.tech-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 14px;
+}
+.tech-card h3 {
+    font-size: .9rem; font-weight: 700;
+    margin: 0 0 12px;
+    display: flex; align-items: center; gap: 6px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.tech-card h3 i { color: var(--brand); }
+.tech-card code {
+    background: #f0f0f0; padding: 1px 5px; border-radius: 3px;
+    font-size: .75rem; color: #C2185B;
+}
+.tech-table {
+    width: 100%; border-collapse: collapse; font-size: .82rem;
+}
+.tech-table th, .tech-table td {
+    padding: 8px 10px; text-align: left;
+    border-bottom: 1px solid var(--line);
+}
+.tech-table th {
+    font-weight: 700; background: #fafbfc;
+    font-size: .72rem; text-transform: uppercase; letter-spacing: .5px;
+}
+
+@media (max-width: 980px) {
+    .scenarios-zoom { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="wireframe-badge">WIREFRAME V2.3 — Stato consenso intelligente</div>
+
+<div class="page-header">
+    <h1>Trattoria Da Mario</h1>
+    <p>Prenota un tavolo</p>
+</div>
+
+<div class="container">
+
+    <!-- =============== Widget completo (esempio: cliente nuovo) =============== -->
+    <h2 class="section-title">
+        <span class="num">1</span> Form completo (esempio: cliente nuovo · primo consenso)
+    </h2>
+
+    <div class="widget-card">
+        <div class="bw-progress">
+            <span class="bw-pill"><i class="bi bi-calendar3"></i> Data <span class="bw-chip">Oggi</span></span>
+            <i class="bi bi-chevron-right bw-arrow"></i>
+            <span class="bw-pill"><i class="bi bi-people"></i> Persone <span class="bw-chip">2 Pers.</span></span>
+            <i class="bi bi-chevron-right bw-arrow"></i>
+            <span class="bw-pill"><i class="bi bi-clock"></i> Orario <span class="bw-chip">18:00</span></span>
+            <i class="bi bi-chevron-right bw-arrow"></i>
+            <span class="bw-pill active"><i class="bi bi-person-lines-fill"></i> Dati</span>
+        </div>
+
+        <a href="#" class="bw-back"><i class="bi bi-chevron-left"></i> Indietro</a>
+        <h2 class="bw-step-title">I tuoi dati</h2>
+
+        <div class="bw-row">
+            <div>
+                <label>Nome <span class="req">*</span></label>
+                <input type="text" placeholder="Mario">
+            </div>
+            <div>
+                <label>Cognome <span class="req">*</span></label>
+                <input type="text" placeholder="Rossi">
+            </div>
+        </div>
+
+        <div class="bw-group">
+            <label>Telefono <span class="req">*</span></label>
+            <input type="tel" placeholder="+39 333 1234567">
+        </div>
+
+        <div class="bw-group">
+            <label>Email <span class="req">*</span></label>
+            <input type="email" placeholder="mario@email.it">
+        </div>
+
+        <div class="bw-group">
+            <label>Note e richieste</label>
+            <textarea placeholder="Es: Allergie, intolleranze, seggiolone, compleanno, richieste particolari..."></textarea>
+        </div>
+
+        <!-- Birthday opzionale (V2.2) -->
+        <div class="optional-section-label">
+            <i class="bi bi-gift-fill"></i>
+            Opzionale &middot; aiutaci a personalizzare il servizio
+        </div>
+        <div class="optional-block">
+            <div class="birthday-row">
+                <div class="birthday-icon">🎂</div>
+                <div class="birthday-content">
+                    <label>Data di nascita <span class="opt">(opzionale)</span></label>
+                    <input type="date" placeholder="gg/mm/aaaa">
+                    <div class="birthday-hint">
+                        <i class="bi bi-info-circle"></i>
+                        Per inviarti gli auguri il giorno del tuo compleanno
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cancellation policy -->
+        <div class="bw-policy">
+            <i class="bi bi-info-circle"></i>
+            <span>Cancellazione gratuita fino a <strong>2 ore prima</strong> della prenotazione.</span>
+        </div>
+
+        <!-- Privacy: STATO 1 (cliente nuovo) -->
+        <div class="bw-privacy">
+            <div class="bw-privacy-info">
+                Prenotando accetti il trattamento dei tuoi dati per la gestione della prenotazione, come descritto nella nostra <a href="#">privacy policy</a>.
+            </div>
+            <label class="bw-privacy-checkbox">
+                <input type="checkbox">
+                <div class="bw-privacy-checkbox-text">
+                    <strong>Voglio ricevere comunicazioni promozionali</strong> da Trattoria Da Mario.
+                    <small>Offerte, eventi, auguri di compleanno. Niente spam, mai a terzi. Cancellazione in ogni momento.</small>
+                </div>
+            </label>
+        </div>
+
+        <button class="bw-submit">Conferma Prenotazione</button>
+    </div>
+
+
+    <!-- =============== Zoom 3 stati blocco Privacy =============== -->
+    <h2 class="section-title">
+        <span class="num">2</span> Zoom sul blocco Privacy &mdash; 3 stati possibili
+    </h2>
+    <p style="font-size:.85rem;color:var(--muted);margin:0 0 16px;">In base allo stato del consenso del cliente (riconosciuto via email match sul tenant), il blocco Privacy si adatta automaticamente. <strong>Solo questo blocco cambia</strong>, il resto del form è identico nei 3 scenari.</p>
+
+    <div class="scenarios-zoom">
+
+        <!-- STATO 1: Nuovo / NULL -->
+        <div class="scenario-zoom-card">
+            <div class="scenario-zoom-label">
+                <span class="badge new">A</span>
+                CLIENTE NUOVO
+            </div>
+            <div class="scenario-zoom-state">marketing_consent = NULL</div>
+
+            <div class="bw-privacy">
+                <div class="bw-privacy-info">
+                    Prenotando accetti il trattamento dei tuoi dati per la gestione della prenotazione, come descritto nella nostra <a href="#">privacy policy</a>.
+                </div>
+                <label class="bw-privacy-checkbox">
+                    <input type="checkbox">
+                    <div class="bw-privacy-checkbox-text">
+                        <strong>Voglio ricevere comunicazioni promozionali</strong> da Trattoria Da Mario.
+                        <small>Offerte, eventi, auguri di compleanno. Niente spam, mai a terzi.</small>
+                    </div>
+                </label>
+            </div>
+
+            <div class="scenario-zoom-notes">
+                <strong>Cosa fa il backend al submit:</strong> se l'utente flagga, salvo <code>marketing_consent=1</code> + <code>marketing_consent_at=NOW()</code> + <code>source='booking_widget'</code>. Se non flagga, <code>marketing_consent=0</code> esplicito (ha avuto modo di scegliere).
+            </div>
+        </div>
+
+        <!-- STATO 2: Già consenziente -->
+        <div class="scenario-zoom-card">
+            <div class="scenario-zoom-label">
+                <span class="badge consent">B</span>
+                GIÀ CONSENZIENTE
+            </div>
+            <div class="scenario-zoom-state">marketing_consent = 1</div>
+
+            <div class="bw-privacy">
+                <div class="bw-privacy-info">
+                    Prenotando accetti il trattamento dei tuoi dati per la gestione della prenotazione, come descritto nella nostra <a href="#">privacy policy</a>.
+                </div>
+                <div class="bw-privacy-consent">
+                    <i class="bi bi-check-circle-fill bw-privacy-consent-icon"></i>
+                    <div class="bw-privacy-consent-text">
+                        <strong>Sei iscritto alle comunicazioni promozionali</strong> di Trattoria Da Mario.
+                        <small>Per disiscriverti usa il link presente in ogni email.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scenario-zoom-notes">
+                <strong>Cosa fa il backend al submit:</strong> niente. Il consenso è già acquisito. <strong>Niente checkbox = niente friction</strong>. Il cliente ricorda la situazione, sa come revocare. Stato resta intatto in DB.
+            </div>
+        </div>
+
+        <!-- STATO 3: Revocato -->
+        <div class="scenario-zoom-card">
+            <div class="scenario-zoom-label">
+                <span class="badge revoked">C</span>
+                REVOCATO IN PASSATO
+            </div>
+            <div class="scenario-zoom-state">marketing_consent = 0 (esplicito)</div>
+
+            <div class="bw-privacy">
+                <div class="bw-privacy-info">
+                    Prenotando accetti il trattamento dei tuoi dati per la gestione della prenotazione, come descritto nella nostra <a href="#">privacy policy</a>.
+                </div>
+                <label class="bw-privacy-checkbox">
+                    <input type="checkbox">
+                    <div class="bw-privacy-checkbox-text">
+                        <strong>Voglio ricevere comunicazioni promozionali</strong> da Trattoria Da Mario.
+                        <small>Offerte, eventi, auguri di compleanno. Niente spam, mai a terzi.</small>
+                    </div>
+                </label>
+            </div>
+
+            <div class="scenario-zoom-notes">
+                <strong>Cosa fa il backend al submit:</strong> identico allo stato A. Se l'utente cambia idea e flagga, <code>marketing_consent=1</code> + nuovo timestamp. Se non flagga, resta a 0. <strong>Opportunità di re-opt-in</strong> senza forzature.
+            </div>
+        </div>
+
+    </div>
+
+    <!-- =============== Tabella decisione backend =============== -->
+    <h2 class="section-title">
+        <span class="num">3</span> Logica backend per la decisione
+    </h2>
+
+    <div class="tech-card">
+        <h3><i class="bi bi-diagram-3"></i> Algoritmo step 4 widget</h3>
+        <p style="font-size:.82rem;color:#495057;margin:0 0 12px;">Quando il cliente arriva allo step 4, il backend cerca <code>customers WHERE tenant_id=X AND email=:email</code> (al primo input dell'email scatta una verifica AJAX).</p>
+
+        <table class="tech-table">
+            <thead>
+                <tr>
+                    <th>Risultato lookup</th>
+                    <th>marketing_consent</th>
+                    <th>UI mostrata</th>
+                    <th>Birthday box</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Email non trovata</td>
+                    <td>—</td>
+                    <td><strong>Stato A</strong> (checkbox vuoto)</td>
+                    <td>Mostrato</td>
+                </tr>
+                <tr>
+                    <td>Email trovata, NULL</td>
+                    <td><code>NULL</code></td>
+                    <td><strong>Stato A</strong> (checkbox vuoto)</td>
+                    <td>Mostrato (se birth_date NULL)</td>
+                </tr>
+                <tr>
+                    <td>Email trovata, consenso attivo</td>
+                    <td><code>1</code></td>
+                    <td><strong>Stato B</strong> (riga sobria verde)</td>
+                    <td>Nascosto (se birth_date già popolato)</td>
+                </tr>
+                <tr>
+                    <td>Email trovata, consenso revocato</td>
+                    <td><code>0</code></td>
+                    <td><strong>Stato C</strong> (checkbox vuoto, opportunità re-opt-in)</td>
+                    <td>Nascosto (se birth_date già popolato)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tech-card">
+        <h3><i class="bi bi-shield-check"></i> Coerenza GDPR</h3>
+        <ul style="font-size:.82rem;color:#495057;line-height:1.7;margin:0;padding-left:20px;">
+            <li><strong>Consenso non riacquisito ad ogni interazione</strong>: best practice e conforme a GDPR (il consenso valido è permanente fino a revoca)</li>
+            <li><strong>Diritto all'informazione</strong>: lo stato B comunica chiaramente "sei iscritto" e indica il canale di revoca (link unsubscribe nelle email broadcast, già implementato)</li>
+            <li><strong>Audit trail</strong>: <code>marketing_consent_at</code> resta valorizzato dalla prima volta. Se rinegoziato (es. revoca → re-opt-in), il timestamp si aggiorna</li>
+            <li><strong>Right to be forgotten</strong>: se il customer chiede cancellazione, settiamo <code>marketing_consent=0</code> + svuotiamo birth_date, mantenendo il record principale per audit del rapporto contrattuale</li>
+        </ul>
+    </div>
+
+    <div class="tech-card">
+        <h3><i class="bi bi-code-slash"></i> Implementazione concreta</h3>
+        <ul style="font-size:.82rem;color:#495057;line-height:1.7;margin:0;padding-left:20px;">
+            <li>Endpoint nuovo: <code>GET /api/customers/lookup?email=...&tenant_id=...</code> → ritorna <code>{has_birthday: bool, marketing_consent: int|null}</code></li>
+            <li>Step 4 widget: al blur dell'input email, fa la chiamata e adatta UI in tempo reale (skeleton loading durante la fetch)</li>
+            <li>Fallback se chiamata fallisce: mostra Stato A (checkbox vuoto) — atteggiamento conservativo, peggio chiedere 2 volte che 0 volte</li>
+            <li><code>BookingController::store()</code>: legge il flag dal payload solo se non era già a 1 (per non sovrascrivere un consenso esistente con un default 0 in caso di edge case)</li>
+        </ul>
+    </div>
+
+</div>
+
+</body>
+</html>

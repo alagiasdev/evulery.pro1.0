@@ -100,12 +100,57 @@
                 <textarea id="booking-notes" class="bw-textarea" rows="3" placeholder="Es: Allergie, intolleranze, seggiolone, compleanno, richieste particolari..."></textarea>
             </div>
 
+            <!-- Optional: birthday section (highlight box arancione) -->
+            <div class="bw-optional-label" id="bw-birthday-section">
+                <i class="bi bi-gift-fill"></i>
+                Opzionale &middot; aiutaci a personalizzare il servizio
+            </div>
+            <div class="bw-optional-block" id="bw-birthday-block">
+                <div class="bw-birthday-row">
+                    <div class="bw-birthday-icon">&#127874;</div>
+                    <div class="bw-birthday-content">
+                        <label for="booking-birthday">Data di nascita <span class="bw-opt-tag">(opzionale)</span></label>
+                        <input type="date" id="booking-birthday" autocomplete="bday">
+                        <div class="bw-birthday-hint">
+                            <i class="bi bi-info-circle"></i>
+                            Per inviarti gli auguri il giorno del tuo compleanno
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <?php if (!empty($tenant['cancellation_policy'])): ?>
             <div class="bw-policy">
                 <i class="bi bi-info-circle"></i>
                 <?= e($tenant['cancellation_policy']) ?>
             </div>
             <?php endif; ?>
+
+            <!-- Privacy + Marketing consent — 3 stati possibili (gestiti via JS) -->
+            <div class="bw-privacy" id="bw-privacy-block">
+                <div class="bw-privacy-info">
+                    Prenotando accetti il trattamento dei tuoi dati per la gestione della prenotazione, come descritto nella nostra
+                    <a href="<?= url('privacy') ?>" target="_blank" rel="noopener">privacy policy</a>.
+                </div>
+
+                <!-- Stato A/C: checkbox per opt-in (default visibile) -->
+                <label class="bw-privacy-checkbox" id="bw-privacy-checkbox-wrap">
+                    <input type="checkbox" id="booking-marketing-consent">
+                    <span class="bw-privacy-checkbox-text">
+                        <strong>Voglio ricevere comunicazioni promozionali</strong> da <?= e($tenant['name'] ?? 'questo ristorante') ?>.
+                        <small>Offerte, eventi, auguri di compleanno. Niente spam, mai a terzi. Cancellazione in ogni momento.</small>
+                    </span>
+                </label>
+
+                <!-- Stato B: già consenziente (riga sobria, hidden by default) -->
+                <div class="bw-privacy-consent" id="bw-privacy-consent-wrap" style="display:none;">
+                    <i class="bi bi-check-circle-fill bw-privacy-consent-icon"></i>
+                    <div class="bw-privacy-consent-text">
+                        <strong>Sei iscritto alle comunicazioni promozionali</strong> di <?= e($tenant['name'] ?? 'questo ristorante') ?>.
+                        <small>Per disiscriverti usa il link presente in ogni email.</small>
+                    </div>
+                </div>
+            </div>
 
             <?php if ($tenant['deposit_enabled'] && $tenant['deposit_amount']): ?>
             <div class="bw-deposit-info" id="deposit-info">

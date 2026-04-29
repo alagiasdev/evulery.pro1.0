@@ -574,6 +574,15 @@ document.addEventListener('DOMContentLoaded', function() {
         var phone = getEl('booking-phone').value.trim();
         var email = getEl('booking-email').value.trim();
         var notes = getEl('booking-notes').value.trim();
+        var birthdayEl = getEl('booking-birthday');
+        var birthday = birthdayEl ? birthdayEl.value.trim() : '';
+        var consentEl = getEl('booking-marketing-consent');
+        var consentVisible = document.getElementById('bw-privacy-checkbox-wrap');
+        // Stato B (cliente già consenziente, checkbox non visibile): non inviamo il flag
+        // → il backend mantiene il consenso esistente (modello "no overwrite").
+        var marketingConsent = (consentEl && consentVisible && consentVisible.style.display !== 'none')
+            ? (consentEl.checked ? 1 : 0)
+            : null;
 
         if (!validateAllFields()) {
             return;
@@ -594,6 +603,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (notes) {
             body.notes = notes;
+        }
+        if (birthday) {
+            body.birthday = birthday;
+        }
+        if (marketingConsent !== null) {
+            body.marketing_consent = marketingConsent;
         }
 
         if (forceDuplicate) {
@@ -738,6 +753,64 @@ document.addEventListener('DOMContentLoaded', function() {
     getEl('btn-submit').addEventListener('click', function() {
         submitBooking(false);
     });
+
+    // ===== Customer lookup at email blur (V2.3) =====
+    // Quando l'utente lascia l'input email, controlla se il cliente esiste già
+    // sul tenant per adattare il blocco privacy (3 stati: nuovo / consenziente / revocato)
+    // e nascondere il box compleanno se già presente in DB.
+    var emailEl = getEl('booking-email');
+    var lastLookupEmail = '';
+    if (emailEl) {
+        emailEl.addEventListener('blur', function() {
+            var em = emailEl.value.trim().toLowerCase();
+            if (!em || em === lastLookupEmail) return;
+            // Validazione minima formato email prima di chiamare il backend
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) return;
+            lastLookupEmail = em;
+            customerLookup(em);
+        });
+    }
+
+    function customerLookup(email) {
+        fetch(apiUrl + '/tenants/' + slug + '/customers/lookup?email=' + encodeURIComponent(email), {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (!data || typeof data !== 'object') return;
+            applyLookupState(data.has_birthday === true, data.marketing_consent);
+        })
+        .catch(function() {
+            // In caso di errore rete: lascio Stato A (default) — atteggiamento conservativo
+        });
+    }
+
+    function applyLookupState(hasBirthday, consent) {
+        // Birthday block: nascondi se già presente in DB (no doppia richiesta)
+        var bdSection = document.getElementById('bw-birthday-section');
+        var bdBlock = document.getElementById('bw-birthday-block');
+        if (bdSection && bdBlock) {
+            var hide = !!hasBirthday;
+            bdSection.style.display = hide ? 'none' : '';
+            bdBlock.style.display = hide ? 'none' : '';
+        }
+
+        // Privacy block: tre stati
+        var checkboxWrap = document.getElementById('bw-privacy-checkbox-wrap');
+        var consentWrap = document.getElementById('bw-privacy-consent-wrap');
+        if (!checkboxWrap || !consentWrap) return;
+
+        if (consent === 1) {
+            // Stato B: già consenziente — riga sobria verde, checkbox nascosto
+            checkboxWrap.style.display = 'none';
+            consentWrap.style.display = '';
+        } else {
+            // Stato A (NULL/nuovo) o C (revocato 0): checkbox visibile, riga nascosta
+            checkboxWrap.style.display = '';
+            consentWrap.style.display = 'none';
+        }
+    }
 
     // ===== DUPLICATE WARNING MODAL =====
     var duplicateModal = getEl('duplicate-modal');

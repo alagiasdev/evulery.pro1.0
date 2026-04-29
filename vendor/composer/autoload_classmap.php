@@ -12,6 +12,7 @@ return array(
     'App\\Controllers\\Admin\\TenantsController' => $baseDir . '/app/Controllers/Admin/TenantsController.php',
     'App\\Controllers\\Admin\\UsersController' => $baseDir . '/app/Controllers/Admin/UsersController.php',
     'App\\Controllers\\Api\\AvailabilityController' => $baseDir . '/app/Controllers/Api/AvailabilityController.php',
+    'App\\Controllers\\Api\\CustomerLookupController' => $baseDir . '/app/Controllers/Api/CustomerLookupController.php',
     'App\\Controllers\\Api\\DemoRequestController' => $baseDir . '/app/Controllers/Api/DemoRequestController.php',
     'App\\Controllers\\Api\\MenuApiController' => $baseDir . '/app/Controllers/Api/MenuApiController.php',
     'App\\Controllers\\Api\\OrderApiController' => $baseDir . '/app/Controllers/Api/OrderApiController.php',
