@@ -379,6 +379,70 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
             </div>
         </div>
 
+        <!-- Compleanni in arrivo -->
+        <div class="card bd-card">
+            <div class="card-header bd-card-header">
+                <h6>🎂 Compleanni · 30 gg</h6>
+                <?php if (!empty($birthdays)): ?>
+                <span class="bd-count"><?= count($birthdays) ?></span>
+                <?php endif; ?>
+            </div>
+            <?php if (empty($birthdays)): ?>
+            <div class="bd-empty">
+                <i class="bi bi-cake2"></i>
+                <div class="bd-empty-title">Nessun compleanno nei prossimi 30 giorni</div>
+                <div class="bd-empty-text">Quando i tuoi clienti lasceranno la data di nascita durante la prenotazione, comparir&agrave; qui.</div>
+            </div>
+            <?php else:
+                $MONTHS_IT = ['','GEN','FEB','MAR','APR','MAG','GIU','LUG','AGO','SET','OTT','NOV','DIC'];
+                $segOcc = (int)($tenant['segment_occasionale'] ?? 2);
+                $segAbi = (int)($tenant['segment_abituale'] ?? 4);
+                $segVip = (int)($tenant['segment_vip'] ?? 10);
+            ?>
+            <div class="bd-list">
+                <?php foreach ($birthdays as $b):
+                    $days = (int)$b['days_until'];
+                    $rowClass = $days === 0 ? 'is-today' : ($days <= 3 ? 'is-soon' : '');
+                    $bdTs = strtotime($b['next_birthday']);
+                    $dayNum = (int)date('j', $bdTs);
+                    $monthAbbr = $MONTHS_IT[(int)date('n', $bdTs)];
+                    // Segmento basato su total_bookings
+                    $tb = (int)$b['total_bookings'];
+                    $segLabel = '';
+                    $segClass = '';
+                    if ($tb >= $segVip) { $segLabel = 'VIP'; $segClass = 'vip'; }
+                    elseif ($tb >= $segAbi) { $segLabel = 'ABIT'; $segClass = 'abituale'; }
+                    elseif ($tb >= $segOcc) { $segLabel = 'OCC'; $segClass = 'occasionale'; }
+                    // "Quando" label
+                    if ($days === 0) $whenLabel = '🎉 OGGI';
+                    elseif ($days === 1) $whenLabel = 'domani';
+                    else $whenLabel = 'tra ' . $days . ' gg';
+                ?>
+                <a href="<?= url('dashboard/customers/' . (int)$b['id']) ?>" class="bd-row <?= $rowClass ?>">
+                    <div class="bd-day-chip">
+                        <div class="bd-day-chip-day"><?= $dayNum ?></div>
+                        <div class="bd-day-chip-month"><?= $monthAbbr ?></div>
+                    </div>
+                    <div class="bd-info">
+                        <div class="bd-name">
+                            <?= e($b['first_name'] . ' ' . $b['last_name']) ?>
+                            <?php if ($segLabel): ?>
+                            <span class="bd-segment-tag <?= $segClass ?>"><?= $segLabel ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <div class="bd-meta">
+                            <span class="when"><?= $whenLabel ?></span> &middot; <?= (int)$b['age_turning'] ?> anni
+                        </div>
+                    </div>
+                </a>
+                <?php endforeach; ?>
+            </div>
+            <div class="bd-footer">
+                <a href="<?= url('dashboard/customers') ?>?birthday_filter=upcoming">Vedi tutti i clienti &rarr;</a>
+            </div>
+            <?php endif; ?>
+        </div>
+
     </div>
 </div>
 

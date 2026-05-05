@@ -419,6 +419,83 @@ class Customer
                  ->execute(['id' => $id, 'birthday' => $birthday]);
     }
 
+    /**
+     * Trova i clienti del tenant con compleanno nei prossimi N giorni.
+     *
+     * Calcola "next_birthday" come la prossima occorrenza del compleanno
+     * (anno corrente se non ancora passato, anno successivo se già passato).
+     * Gestisce edge case 29 febbraio in anni non bisestili (cade il 28).
+     *
+     * NON filtra su marketing_consent: è uso operativo interno
+     * (chiamata/messaggio diretto), non broadcast email marketing.
+     *
+     * @return array<array{id:int, first_name:string, last_name:string, birthday:string,
+     *                     phone:string, email:string, total_bookings:int,
+     *                     next_birthday:string, days_until:int, age_turning:int}>
+     */
+    public function findUpcomingBirthdays(int $tenantId, int $daysAhead = 30, int $limit = 20): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT id, first_name, last_name, birthday, phone, email, total_bookings
+             FROM customers
+             WHERE tenant_id = :tid
+               AND birthday IS NOT NULL
+               AND is_blocked = 0'
+        );
+        $stmt->execute(['tid' => $tenantId]);
+        $rows = $stmt->fetchAll();
+
+        $today = new \DateTimeImmutable('today');
+        $cutoff = $today->modify('+' . max(1, $daysAhead) . ' days');
+        $upcoming = [];
+
+        foreach ($rows as $row) {
+            $bd = \DateTimeImmutable::createFromFormat('Y-m-d', $row['birthday']);
+            if (!$bd) continue;
+
+            // Calcola prossima occorrenza del compleanno (anno corrente o successivo)
+            $year = (int)$today->format('Y');
+            $next = $this->birthdayInYear($bd, $year);
+            if ($next < $today) {
+                $next = $this->birthdayInYear($bd, $year + 1);
+            }
+
+            // Skippa se fuori dalla finestra
+            if ($next > $cutoff) continue;
+
+            $daysUntil = (int)$today->diff($next)->days;
+            $row['next_birthday'] = $next->format('Y-m-d');
+            $row['days_until']    = $daysUntil;
+            $row['age_turning']   = (int)$next->format('Y') - (int)$bd->format('Y');
+            $upcoming[] = $row;
+        }
+
+        // Ordine: dal compleanno più vicino al più lontano
+        usort($upcoming, fn($a, $b) => $a['days_until'] <=> $b['days_until']);
+
+        return array_slice($upcoming, 0, $limit);
+    }
+
+    /**
+     * Helper: ritorna la data del compleanno per un anno specifico,
+     * gestendo 29 febbraio in anni non bisestili (cade il 28).
+     */
+    private function birthdayInYear(\DateTimeImmutable $birthday, int $year): \DateTimeImmutable
+    {
+        $month = (int)$birthday->format('n');
+        $day   = (int)$birthday->format('j');
+        // 29 feb in anno non bisestile → 28 feb
+        if ($month === 2 && $day === 29 && !$this->isLeapYear($year)) {
+            $day = 28;
+        }
+        return new \DateTimeImmutable(sprintf('%04d-%02d-%02d', $year, $month, $day));
+    }
+
+    private function isLeapYear(int $year): bool
+    {
+        return ($year % 4 === 0 && $year % 100 !== 0) || $year % 400 === 0;
+    }
+
     public function updateLastVisit(int $id, string $date): void
     {
         $this->db->prepare('UPDATE customers SET last_visit = :d WHERE id = :id')

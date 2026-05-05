@@ -7,6 +7,7 @@ use App\Core\Cache;
 use App\Core\Database;
 use App\Core\Request;
 use App\Core\TenantResolver;
+use App\Models\Customer;
 use App\Models\Reservation;
 
 class HomeController
@@ -74,6 +75,9 @@ class HomeController
             fn() => $this->getSourceBreakdown($db, $tenantId)
         );
 
+        // --- Compleanni nei prossimi 30 giorni (sidebar) ---
+        $birthdays = (new Customer())->findUpcomingBirthdays($tenantId, 30, 10);
+
         // --- User & tenant info for greeting ---
         $user = Auth::user();
         $tenant = TenantResolver::current();
@@ -92,6 +96,7 @@ class HomeController
             'upcoming'      => $upcoming,
             'noshow'        => $noshow,
             'sources'       => $sources,
+            'birthdays'     => $birthdays,
             'userName'      => $userName,
             'tenantName'    => $tenant['name'] ?? '',
         ], 'dashboard');
