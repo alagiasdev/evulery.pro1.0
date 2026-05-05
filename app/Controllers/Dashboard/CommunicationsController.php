@@ -174,6 +174,24 @@ class CommunicationsController
     {
         if ($this->gate()) return;
 
+        try {
+            $this->doStore($request);
+        } catch (\Throwable $e) {
+            // Log dettagliato per diagnosticare 500 in produzione (era opaco nel log applicativo)
+            app_log('error', sprintf(
+                'Broadcast store FAILED: %s | File: %s:%d | Trace: %s',
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine(),
+                substr($e->getTraceAsString(), 0, 800)
+            ));
+            flash('danger', 'Errore tecnico nell\'invio. Riprova o contatta il supporto.');
+            Response::redirect(url('dashboard/communications/create'));
+        }
+    }
+
+    private function doStore(Request $request): void
+    {
         $tenantId = Auth::tenantId();
         $tenant = TenantResolver::current();
         $thresholds = $this->getThresholds($tenant);
