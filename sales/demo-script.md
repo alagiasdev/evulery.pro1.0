@@ -158,12 +158,16 @@ Queste info ti servono per **personalizzare** la demo (slide 8 case study lo tra
 
 **"È tanto, €79 al mese."**
 > "Il caso medio recupera 5-7.000€/mese di tavoli persi. Anche prendendo solo il 10% di quel valore, l'investimento si ripaga in 2 settimane. Vuoi che facciamo un calcolo veloce sul tuo locale?"
+> *(leva chiusura)* "Tra l'altro, se paghi annuale anticipato hai il 12% di sconto: il Professional ti costa €69,52/mese invece che €79. Ti faccio vedere il conto?"
+
+**"C'è un setup o costo di attivazione?"**
+> "Sì, l'attivazione è €249 una-tantum. Include il primo mese di servizio + l'onboarding dedicato (call di setup, training del tuo staff, migrazione dati da TheFork/Quandoo se ce l'hai). In pratica paghi €249 e parti con tutto già configurato e funzionante. Niente sorprese dopo."
 
 **"Ho già TheFork, perché cambiare?"**
 > "TheFork ha un modello a commissione: 2-3€ a coperto. Su 60 coperti/sera per 25 giorni al mese sono €4-5.000 all'anno solo di commissioni. Con noi paghi €79/mese fissi, indipendentemente da quanti coperti fai. Più cresci, più conviene."
 
 **"Non sono digitale, ho paura sia complicato."**
-> "Ti seguiamo personalmente nei primi 3 giorni: una call iniziale di setup di 60 minuti, poi training del tuo staff, poi assistenza chat tutto il primo mese. La dashboard è progettata per camerieri non tecnici."
+> "Ti seguiamo personalmente nei primi 3 giorni: una call iniziale di setup di 60 minuti, poi training del tuo staff, poi assistenza chat tutto il primo mese. È esattamente quello che fa parte dell'attivazione. La dashboard è progettata per camerieri non tecnici."
 
 **"Devo pensarci."**
 > "Certo, prenditi il tempo. Ti propongo questo: ti mando l'one-pager con i piani, e ti riscrivo io tra 3 giorni con il calcolo specifico per il tuo locale. Va bene venerdì alle 11?" *(sempre proporre data fissa, mai "fammi sapere")*
@@ -222,7 +226,8 @@ VEDIAMO COSA TI HA INTERESSATO:
 NUMERI SUL TUO CASO (60 coperti, scontrino €35):
 - Stima recupero coperti: +180/mese
 - Equivalente: ~€6.300/mese
-- Costo Evulery Professional: €79/mese
+- Costo Evulery Professional: €79/mese (€69,52 con pagamento annuale)
+- Attivazione una-tantum: €249 (include primo mese + onboarding)
 
 ALLEGATI:
 - One-pager Evulery (PDF)
