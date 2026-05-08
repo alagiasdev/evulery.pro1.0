@@ -44,6 +44,7 @@ ul, ol { padding-left: 1.5rem; }
 }
 .lg-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.2rem; color: var(--text); }
 .lg-logo:hover { text-decoration: none; }
+.lg-logo-img { height: 30px; width: auto; display: block; }
 .lg-logo-mark {
     width: 36px; height: 36px; border-radius: 10px;
     background: var(--brand); color: #fff;

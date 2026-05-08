@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($title ?? 'Admin') ?> - <?= e(env('APP_NAME', 'Evulery')) ?></title>
+    <link rel="icon" type="image/png" href="<?= asset('img/Favicon.png') ?>">
+    <link rel="apple-touch-icon" href="<?= asset('img/Favicon.png') ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
     <link href="<?= asset('css/admin.css') ?>" rel="stylesheet">
@@ -32,7 +34,7 @@
     </div>
     <!-- Desktop: brand -->
     <div class="sidebar-brand d-none d-md-block">
-        <div class="sidebar-brand-name"><?= e(env('APP_NAME', 'Evulery')) ?></div>
+        <img src="<?= asset('img/Logo_evulery_footer.png') ?>" alt="Evulery" class="sidebar-brand-logo">
         <div class="sidebar-brand-role">Super Admin</div>
     </div>
     <nav class="sidebar-nav">

@@ -88,6 +88,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
     height: 72px;
 }
 .ev-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.2rem; }
+.ev-logo-img { height: 30px; width: auto; display: block; }
 .ev-logo-mark {
     width: 36px; height: 36px; border-radius: 10px;
     background: var(--brand); color: #fff;

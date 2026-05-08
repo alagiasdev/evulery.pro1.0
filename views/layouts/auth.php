@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($title ?? 'Login') ?> - <?= e(env('APP_NAME', 'Evulery')) ?></title>
+    <link rel="icon" type="image/png" href="<?= asset('img/Favicon.png') ?>">
+    <link rel="apple-touch-icon" href="<?= asset('img/Favicon.png') ?>">
     <style nonce="<?= csp_nonce() ?>">
         :root { --brand: #00844A; --brand-dark: #006837; --brand-light: #E8F5E9; }
         *, *::before, *::after { box-sizing: border-box; }
@@ -40,14 +42,8 @@
         .alert .btn-close::before { content: '×'; }
         .auth-wrapper { width: 100%; max-width: 420px; padding: 2rem 1rem; }
         .auth-logo { text-align: center; margin-bottom: 1.75rem; }
-        .auth-logo-icon {
-            width: 48px; height: 48px; border-radius: 12px;
-            background: var(--brand); color: #fff;
-            display: inline-flex; align-items: center; justify-content: center;
-            font-size: 1.4rem; margin-bottom: .65rem;
-        }
-        .auth-logo-name { font-size: 1.5rem; font-weight: 700; color: #1a1d23; margin: 0; line-height: 1.2; }
-        .auth-logo-sub { font-size: .82rem; color: #6c757d; margin-top: .25rem; }
+        .auth-logo-img { height: 48px; width: auto; display: inline-block; }
+        .auth-logo-sub { font-size: .82rem; color: #6c757d; margin-top: .65rem; }
         .auth-card {
             background: #fff; border-radius: 12px;
             box-shadow: 0 1px 3px rgba(0,0,0,.06);
@@ -102,16 +98,14 @@
         @media (max-width: 576px) {
             .auth-wrapper { padding: 1.5rem 1rem; }
             .auth-card { padding: 1.25rem; }
-            .auth-logo-name { font-size: 1.3rem; }
-            .auth-logo-icon { width: 42px; height: 42px; font-size: 1.2rem; }
+            .auth-logo-img { height: 40px; }
         }
     </style>
 </head>
 <body>
     <div class="auth-wrapper">
         <div class="auth-logo">
-            <div class="auth-logo-icon"><?= bi_icon('calendar-check') ?></div>
-            <div class="auth-logo-name"><?= e(env('APP_NAME', 'Evulery')) ?></div>
+            <img src="<?= asset('img/Logo_evulery.png') ?>" alt="<?= e(env('APP_NAME', 'Evulery')) ?>" class="auth-logo-img">
             <div class="auth-logo-sub">by alagias. - Soluzioni per il web</div>
         </div>
 
