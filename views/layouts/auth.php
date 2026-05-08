@@ -42,7 +42,7 @@
         .alert .btn-close::before { content: '×'; }
         .auth-wrapper { width: 100%; max-width: 420px; padding: 2rem 1rem; }
         .auth-logo { text-align: center; margin-bottom: 1.75rem; }
-        .auth-logo-img { height: 48px; width: auto; display: inline-block; }
+        .auth-logo-img { height: 36px; width: auto; display: inline-block; }
         .auth-logo-sub { font-size: .82rem; color: #6c757d; margin-top: .65rem; }
         .auth-card {
             background: #fff; border-radius: 12px;
@@ -98,7 +98,7 @@
         @media (max-width: 576px) {
             .auth-wrapper { padding: 1.5rem 1rem; }
             .auth-card { padding: 1.25rem; }
-            .auth-logo-img { height: 40px; }
+            .auth-logo-img { height: 32px; }
         }
     </style>
 </head>
