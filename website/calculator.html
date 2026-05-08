@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore commissioni ristorante — Quanto stai pagando agli aggregatori? | Evulery</title>
+    <meta name="description" content="Calcolatore gratuito: scopri in 30 secondi quanto stai pagando in commissioni agli aggregatori di prenotazioni e quanto risparmieresti con Evulery a canone fisso.">
+    <meta name="keywords" content="calcolatore commissioni ristorante, costo aggregatori prenotazioni, ROI software ristorazione, quanto costa thefork, alternativa thefork, risparmio commissioni ristorante">
+    <meta name="author" content="Evulery">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Calcolatore commissioni ristorante — Evulery">
+    <meta property="og:description" content="Quanto stai pagando in commissioni? Calcolalo in 30 secondi.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://evulery.it/calculator.html">
+    <meta property="og:image" content="https://evulery.it/img/og-image.png">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://evulery.it/calculator.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="img/Favicon.png">
+    <link rel="apple-touch-icon" href="img/Favicon.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <!-- Shared landing styles -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Calculator-specific styles -->
+    <style>
+    /* ========== CALCULATOR PAGE ========== */
+    .calc-page { padding-top: 80px; background: var(--bg); }
+
+    /* Hero */
+    .calc-hero {
+        background: linear-gradient(180deg, var(--brand-light) 0%, #fff 100%);
+        padding: 80px 0 60px 0;
+        text-align: center;
+    }
+    .calc-hero-badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: #fff; border: 1px solid var(--brand);
+        color: var(--brand-dark);
+        padding: 8px 16px; border-radius: 100px;
+        font-size: .85rem; font-weight: 700;
+        letter-spacing: .5px;
+        margin-bottom: 24px;
+        box-shadow: var(--shadow-sm);
+    }
+    .calc-hero h1 {
+        font-size: clamp(2rem, 5vw, 3.4rem);
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        line-height: 1.1;
+        max-width: 820px;
+        margin: 0 auto 20px auto;
+    }
+    .calc-hero h1 .accent { color: var(--brand); }
+    .calc-hero-sub {
+        font-size: 1.15rem;
+        color: var(--text-secondary);
+        max-width: 680px;
+        margin: 0 auto 40px auto;
+        line-height: 1.55;
+    }
+
+    /* Calculator container */
+    .calc-section { padding: 60px 0; }
+    .calc-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: stretch;
+    }
+    .calc-card {
+        background: #fff;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 40px;
+        border: 1px solid var(--border);
+    }
+
+    /* Inputs panel */
+    .calc-input-group { margin-bottom: 32px; }
+    .calc-input-group:last-child { margin-bottom: 0; }
+    .calc-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 12px;
+    }
+    .calc-label-text {
+        font-weight: 700;
+        font-size: .95rem;
+        color: var(--text);
+    }
+    .calc-label-value {
+        font-weight: 800;
+        font-size: 1.4rem;
+        color: var(--brand);
+        font-variant-numeric: tabular-nums;
+    }
+    .calc-label-value .unit { font-size: 1rem; color: var(--text-secondary); margin-left: 2px; }
+
+    .calc-slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: linear-gradient(to right, var(--brand) 0%, var(--brand) var(--pct, 50%), #e8e8ef var(--pct, 50%), #e8e8ef 100%);
+        outline: none;
+        margin: 4px 0;
+    }
+    .calc-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        background: var(--brand);
+        cursor: pointer;
+        border: 3px solid #fff;
+        box-shadow: 0 2px 8px rgba(0,132,74,.4);
+        transition: transform .15s;
+    }
+    .calc-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    .calc-slider::-moz-range-thumb {
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        background: var(--brand);
+        cursor: pointer;
+        border: 3px solid #fff;
+        box-shadow: 0 2px 8px rgba(0,132,74,.4);
+    }
+    .calc-slider-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: .78rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+    }
+
+    .calc-hint {
+        font-size: .85rem;
+        color: var(--text-muted);
+        margin-top: 8px;
+        line-height: 1.45;
+    }
+
+    /* Plan selector */
+    .calc-plans {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    .calc-plan-opt {
+        background: #fff;
+        border: 2px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all .15s;
+    }
+    .calc-plan-opt:hover { border-color: var(--brand); }
+    .calc-plan-opt.active {
+        border-color: var(--brand);
+        background: var(--brand-light);
+    }
+    .calc-plan-opt-name {
+        font-weight: 700; font-size: .85rem;
+        color: var(--text);
+    }
+    .calc-plan-opt-price {
+        font-weight: 800; font-size: 1.1rem;
+        color: var(--brand);
+        margin-top: 2px;
+    }
+    .calc-plan-opt-price .unit { font-size: .8rem; color: var(--text-secondary); font-weight: 600; }
+
+    /* Output panel */
+    .calc-output { background: linear-gradient(180deg, #042418 0%, #00844A 100%); color: #fff; }
+    .calc-output-eyebrow {
+        font-size: .75rem; font-weight: 700; letter-spacing: 2px;
+        text-transform: uppercase; opacity: .7;
+        margin-bottom: 16px;
+    }
+    .calc-output-headline {
+        font-size: 1.05rem;
+        font-weight: 600;
+        opacity: .9;
+        margin-bottom: 8px;
+    }
+    .calc-output-amount {
+        font-size: clamp(2.6rem, 6vw, 4.2rem);
+        font-weight: 900;
+        letter-spacing: -2px;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+        margin-bottom: 12px;
+    }
+    .calc-output-amount .currency { font-size: .65em; vertical-align: top; line-height: 1.3; opacity: .85; margin-right: 4px; }
+    .calc-output-amount.savings { color: #4ade80; }
+    .calc-output-period {
+        font-size: 1rem;
+        opacity: .75;
+        margin-bottom: 32px;
+    }
+
+    .calc-bars {
+        background: rgba(255,255,255,.06);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 24px 0;
+    }
+    .calc-bar {
+        margin-bottom: 18px;
+    }
+    .calc-bar:last-child { margin-bottom: 0; }
+    .calc-bar-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 8px;
+        font-size: .9rem;
+        font-weight: 600;
+    }
+    .calc-bar-label .name { opacity: .85; }
+    .calc-bar-label .value { font-weight: 800; font-variant-numeric: tabular-nums; }
+    .calc-bar-track {
+        height: 8px;
+        background: rgba(255,255,255,.1);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .calc-bar-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width .4s cubic-bezier(.4,0,.2,1);
+    }
+    .calc-bar-fill.them { background: #ff8a80; }
+    .calc-bar-fill.us { background: #4ade80; }
+
+    .calc-savings-box {
+        background: rgba(74, 222, 128, .12);
+        border: 1px solid rgba(74, 222, 128, .3);
+        border-radius: 12px;
+        padding: 24px;
+        margin-top: 20px;
+        text-align: center;
+    }
+    .calc-savings-box-label {
+        font-size: .85rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #4ade80;
+        margin-bottom: 8px;
+    }
+    .calc-savings-box-value {
+        font-size: clamp(2.4rem, 5.5vw, 3.6rem);
+        font-weight: 900;
+        letter-spacing: -1.5px;
+        line-height: 1;
+        color: #fff;
+        font-variant-numeric: tabular-nums;
+    }
+    .calc-savings-box-value .currency { font-size: .6em; vertical-align: top; line-height: 1.3; opacity: .85; }
+    .calc-savings-box-pct {
+        margin-top: 10px;
+        font-size: 1rem;
+        color: #4ade80;
+        font-weight: 700;
+    }
+
+    .calc-disclaimer {
+        font-size: .8rem;
+        color: rgba(255,255,255,.55);
+        margin-top: 24px;
+        text-align: center;
+        line-height: 1.5;
+    }
+
+    /* What you could buy */
+    .calc-what {
+        padding: 80px 0;
+        background: var(--bg-alt);
+    }
+    .calc-what h2 {
+        font-size: clamp(1.8rem, 4vw, 2.4rem);
+        font-weight: 800;
+        letter-spacing: -1px;
+        text-align: center;
+        margin-bottom: 16px;
+    }
+    .calc-what-sub {
+        text-align: center;
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        max-width: 580px;
+        margin: 0 auto 56px auto;
+        line-height: 1.55;
+    }
+    .calc-what-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+    .calc-what-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 28px;
+        text-align: left;
+        transition: all .2s;
+    }
+    .calc-what-card:hover {
+        border-color: var(--brand);
+        box-shadow: var(--shadow);
+        transform: translateY(-2px);
+    }
+    .calc-what-icon {
+        width: 56px; height: 56px;
+        border-radius: 14px;
+        background: var(--brand-light);
+        color: var(--brand);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 28px;
+        margin-bottom: 16px;
+    }
+    .calc-what-card h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+        line-height: 1.3;
+    }
+    .calc-what-card p {
+        font-size: .92rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+    }
+
+    /* Method box */
+    .calc-method {
+        max-width: 760px;
+        margin: 60px auto 0 auto;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--brand);
+        border-radius: 12px;
+        padding: 28px 32px;
+    }
+    .calc-method h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: var(--text);
+    }
+    .calc-method p {
+        font-size: .92rem;
+        color: var(--text-secondary);
+        line-height: 1.65;
+        margin-bottom: 8px;
+    }
+    .calc-method code {
+        background: var(--brand-light);
+        color: var(--brand-dark);
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-family: 'SF Mono', Menlo, monospace;
+        font-size: .85em;
+    }
+
+    /* CTA section */
+    .calc-cta {
+        padding: 90px 0;
+        background: linear-gradient(135deg, #042418 0%, #00844A 100%);
+        color: #fff;
+        text-align: center;
+    }
+    .calc-cta h2 {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 800;
+        letter-spacing: -1px;
+        margin-bottom: 20px;
+        line-height: 1.15;
+    }
+    .calc-cta p {
+        font-size: 1.15rem;
+        opacity: .9;
+        max-width: 600px;
+        margin: 0 auto 36px auto;
+        line-height: 1.55;
+    }
+    .calc-cta .ev-btn--white {
+        font-size: 1.05rem;
+        padding: 16px 32px;
+    }
+
+    /* Mini footer */
+    .calc-footer {
+        padding: 32px 0;
+        background: var(--bg-dark);
+        color: rgba(255,255,255,.65);
+        text-align: center;
+        font-size: .85rem;
+    }
+    .calc-footer a { color: rgba(255,255,255,.85); }
+    .calc-footer a:hover { color: #fff; }
+
+    /* Responsive */
+    @media (max-width: 880px) {
+        .calc-grid { grid-template-columns: 1fr; gap: 24px; }
+        .calc-card { padding: 28px 24px; }
+        .calc-hero { padding: 56px 0 40px 0; }
+        .calc-section { padding: 40px 0; }
+    }
+    @media (max-width: 480px) {
+        .calc-plans { grid-template-columns: 1fr; }
+        .calc-card { padding: 24px 20px; }
+    }
+    </style>
+</head>
+<body class="calc-page">
+
+<!-- ========== NAVBAR ========== -->
+<nav class="ev-navbar" id="navbar" style="background: #fff; border-bottom: 1px solid var(--border);">
+    <div class="ev-container ev-navbar-inner">
+        <a href="/" class="ev-logo">
+            <img src="img/Logo_evulery.png" alt="Evulery" class="ev-logo-img">
+        </a>
+        <div class="ev-nav-actions">
+            <a href="/" class="ev-btn ev-btn--ghost">← Torna al sito</a>
+            <a href="/#demo" class="ev-btn ev-btn--primary">Richiedi una demo</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ========== HERO ========== -->
+<section class="calc-hero">
+    <div class="ev-container">
+        <div class="calc-hero-badge">
+            <i class="bi bi-calculator"></i>
+            CALCOLATORE COMMISSIONI · GRATUITO
+        </div>
+        <h1>Quanto stai pagando in commissioni<br>per le prenotazioni del tuo ristorante?<br><span class="accent">Calcolalo in 30 secondi.</span></h1>
+        <p class="calc-hero-sub">Inserisci i dati del tuo ristorante e scopri quanto risparmieresti passando da un aggregatore al canone fisso di Evulery. Nessun dato viene salvato — il calcolo avviene direttamente nel tuo browser.</p>
+    </div>
+</section>
+
+<!-- ========== CALCULATOR ========== -->
+<section class="calc-section">
+    <div class="ev-container">
+        <div class="calc-grid">
+
+            <!-- INPUTS -->
+            <div class="calc-card">
+                <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 28px; letter-spacing: -.5px;">I tuoi dati</h2>
+
+                <!-- Coperti totali -->
+                <div class="calc-input-group">
+                    <div class="calc-label">
+                        <span class="calc-label-text">Coperti totali al mese</span>
+                        <span class="calc-label-value" id="coverti-display">800</span>
+                    </div>
+                    <input type="range" min="100" max="3000" step="50" value="800" class="calc-slider" id="coverti">
+                    <div class="calc-slider-meta">
+                        <span>100</span>
+                        <span>3.000</span>
+                    </div>
+                    <p class="calc-hint">Il numero medio di coperti serviti in un mese (somma di pranzi e cene di tutti i giorni di apertura).</p>
+                </div>
+
+                <!-- % aggregatore -->
+                <div class="calc-input-group">
+                    <div class="calc-label">
+                        <span class="calc-label-text">% prenotazioni da aggregatore</span>
+                        <span class="calc-label-value"><span id="pct-display">30</span><span class="unit">%</span></span>
+                    </div>
+                    <input type="range" min="5" max="80" step="1" value="30" class="calc-slider" id="pct">
+                    <div class="calc-slider-meta">
+                        <span>5%</span>
+                        <span>80%</span>
+                    </div>
+                    <p class="calc-hint">La percentuale di prenotazioni che arriva tramite piattaforme con commissione (TheFork, Quandoo, ecc.). Tipico: 20-40%.</p>
+                </div>
+
+                <!-- Scontrino medio -->
+                <div class="calc-input-group">
+                    <div class="calc-label">
+                        <span class="calc-label-text">Scontrino medio per coperto</span>
+                        <span class="calc-label-value"><span class="unit">€</span><span id="scontrino-display">35</span></span>
+                    </div>
+                    <input type="range" min="10" max="120" step="1" value="35" class="calc-slider" id="scontrino">
+                    <div class="calc-slider-meta">
+                        <span>€10</span>
+                        <span>€120</span>
+                    </div>
+                    <p class="calc-hint">La spesa media di un singolo cliente, tutto incluso (cibo + bevande + coperto).</p>
+                </div>
+
+                <!-- Commissione % -->
+                <div class="calc-input-group">
+                    <div class="calc-label">
+                        <span class="calc-label-text">Commissione media aggregatore</span>
+                        <span class="calc-label-value"><span id="commissione-display">15</span><span class="unit">%</span></span>
+                    </div>
+                    <input type="range" min="5" max="30" step="0.5" value="15" class="calc-slider" id="commissione">
+                    <div class="calc-slider-meta">
+                        <span>5%</span>
+                        <span>30%</span>
+                    </div>
+                    <p class="calc-hint">La commissione applicata sul valore del coperto. Le piattaforme principali si muovono tra 8% e 24% a seconda del piano.</p>
+                </div>
+
+                <!-- Plan -->
+                <div class="calc-input-group">
+                    <div class="calc-label">
+                        <span class="calc-label-text">Piano Evulery di confronto</span>
+                    </div>
+                    <div class="calc-plans">
+                        <div class="calc-plan-opt" data-plan="49">
+                            <div class="calc-plan-opt-name">Starter</div>
+                            <div class="calc-plan-opt-price">€49<span class="unit">/mese</span></div>
+                        </div>
+                        <div class="calc-plan-opt active" data-plan="79">
+                            <div class="calc-plan-opt-name">Professional</div>
+                            <div class="calc-plan-opt-price">€79<span class="unit">/mese</span></div>
+                        </div>
+                        <div class="calc-plan-opt" data-plan="129">
+                            <div class="calc-plan-opt-name">Enterprise</div>
+                            <div class="calc-plan-opt-price">€129<span class="unit">/mese</span></div>
+                        </div>
+                    </div>
+                    <p class="calc-hint">Tutti i piani Evulery sono a canone fisso. Zero commissioni sui coperti, indipendentemente dal volume.</p>
+                </div>
+            </div>
+
+            <!-- OUTPUT -->
+            <div class="calc-card calc-output">
+                <div class="calc-output-eyebrow">Risultato del calcolo</div>
+
+                <div class="calc-output-headline">Stai pagando in commissioni:</div>
+                <div class="calc-output-amount">
+                    <span class="currency">€</span><span id="comm-anno">15.120</span>
+                </div>
+                <div class="calc-output-period">all'anno · €<span id="comm-mese">1.260</span> al mese</div>
+
+                <div class="calc-bars">
+                    <div class="calc-bar">
+                        <div class="calc-bar-label">
+                            <span class="name">Aggregatore (commissioni)</span>
+                            <span class="value">€<span id="bar-them">15.120</span></span>
+                        </div>
+                        <div class="calc-bar-track">
+                            <div class="calc-bar-fill them" id="bar-them-fill" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    <div class="calc-bar">
+                        <div class="calc-bar-label">
+                            <span class="name">Evulery (canone fisso)</span>
+                            <span class="value">€<span id="bar-us">948</span></span>
+                        </div>
+                        <div class="calc-bar-track">
+                            <div class="calc-bar-fill us" id="bar-us-fill" style="width: 6%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calc-savings-box">
+                    <div class="calc-savings-box-label">Risparmio annuo con Evulery</div>
+                    <div class="calc-savings-box-value">
+                        <span class="currency">€</span><span id="savings">14.172</span>
+                    </div>
+                    <div class="calc-savings-box-pct" id="savings-pct">−94% sul costo attuale</div>
+                </div>
+
+                <div class="calc-disclaimer">
+                    Calcolo indicativo basato sui dati che hai inserito. Le commissioni effettive variano in base al piano dell'aggregatore (8-24%). Per un confronto esatto sui tuoi dati reali, prenota una demo.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Method explanation -->
+        <div class="calc-method">
+            <h3><i class="bi bi-info-circle" style="color: var(--brand);"></i> Come funziona il calcolo</h3>
+            <p><strong>Costo aggregatore =</strong> <code>coperti × % aggregatore × scontrino medio × commissione %</code> moltiplicato per 12 mesi.</p>
+            <p><strong>Costo Evulery =</strong> <code>canone mensile × 12</code>. Punto. Nessuna variabile, nessuna commissione, nessuna sorpresa a fine mese.</p>
+            <p style="margin-bottom: 0;">I valori di default sono ricavati da medie di mercato per ristoranti indipendenti italiani. Aggiusta gli slider sui tuoi numeri reali per un calcolo personalizzato.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ========== WHAT YOU COULD BUY ========== -->
+<section class="calc-what">
+    <div class="ev-container">
+        <h2>Cosa potresti fare con il risparmio</h2>
+        <p class="calc-what-sub">Quello che spendi in commissioni non è perso solo in soldi — è perso in opportunità per il tuo ristorante. Ecco cosa potresti finanziare con il risparmio annuo.</p>
+
+        <div class="calc-what-grid" id="what-grid">
+            <!-- Cards iniettate da JS in base al risparmio -->
+        </div>
+    </div>
+</section>
+
+<!-- ========== CTA ========== -->
+<section class="calc-cta">
+    <div class="ev-container">
+        <h2>Pronto a smettere di pagare commissioni?</h2>
+        <p>Una demo di 30 minuti, in italiano, senza obbligo. Ti facciamo vedere come Evulery funziona sui dati del tuo ristorante e ti diciamo se fa per te.</p>
+        <a href="/#demo" class="ev-btn ev-btn--white ev-btn--lg">
+            Richiedi una demo gratuita
+            <i class="bi bi-arrow-right"></i>
+        </a>
+        <div style="margin-top: 28px; display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; font-size: .9rem; opacity: .85;">
+            <span><i class="bi bi-check-circle"></i> In italiano</span>
+            <span><i class="bi bi-check-circle"></i> Senza obbligo</span>
+            <span><i class="bi bi-check-circle"></i> Niente follow-up insistenti</span>
+        </div>
+    </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="calc-footer">
+    <div class="ev-container">
+        <p>
+            © 2026 Evulery · by alagias. — Soluzioni per il web ·
+            <a href="/privacy.html">Privacy</a> ·
+            <a href="/terms.html">Termini</a> ·
+            <a href="/cookies.html">Cookie</a>
+        </p>
+    </div>
+</footer>
+
+<script>
+(function() {
+    'use strict';
+
+    // ==== Elements ====
+    const inputs = {
+        coverti:    document.getElementById('coverti'),
+        pct:        document.getElementById('pct'),
+        scontrino:  document.getElementById('scontrino'),
+        commissione:document.getElementById('commissione'),
+    };
+    const displays = {
+        coverti:    document.getElementById('coverti-display'),
+        pct:        document.getElementById('pct-display'),
+        scontrino:  document.getElementById('scontrino-display'),
+        commissione:document.getElementById('commissione-display'),
+    };
+    const outputs = {
+        commMese:    document.getElementById('comm-mese'),
+        commAnno:    document.getElementById('comm-anno'),
+        barThem:     document.getElementById('bar-them'),
+        barUs:       document.getElementById('bar-us'),
+        barThemFill: document.getElementById('bar-them-fill'),
+        barUsFill:   document.getElementById('bar-us-fill'),
+        savings:     document.getElementById('savings'),
+        savingsPct:  document.getElementById('savings-pct'),
+        whatGrid:    document.getElementById('what-grid'),
+    };
+    const planOpts = document.querySelectorAll('.calc-plan-opt');
+    let selectedPlan = 79;
+
+    // ==== Format number with Italian thousand separator ====
+    function fmt(n) {
+        return Math.round(n).toLocaleString('it-IT');
+    }
+
+    // ==== Update slider gradient ====
+    function updateSlider(input) {
+        const min = parseFloat(input.min);
+        const max = parseFloat(input.max);
+        const val = parseFloat(input.value);
+        const pct = ((val - min) / (max - min)) * 100;
+        input.style.setProperty('--pct', pct + '%');
+    }
+
+    // ==== Compute and render ====
+    function compute() {
+        const coverti     = parseFloat(inputs.coverti.value);
+        const pct         = parseFloat(inputs.pct.value);
+        const scontrino   = parseFloat(inputs.scontrino.value);
+        const commissione = parseFloat(inputs.commissione.value);
+
+        // Update displays
+        displays.coverti.textContent     = fmt(coverti);
+        displays.pct.textContent         = pct.toFixed(0);
+        displays.scontrino.textContent   = fmt(scontrino);
+        displays.commissione.textContent = (commissione % 1 === 0) ? commissione.toFixed(0) : commissione.toFixed(1);
+
+        Object.values(inputs).forEach(updateSlider);
+
+        // Math
+        const covertiAggregatore = coverti * (pct / 100);
+        const fatturatoMese = covertiAggregatore * scontrino;
+        const commMese = fatturatoMese * (commissione / 100);
+        const commAnno = commMese * 12;
+        const evuleryAnno = selectedPlan * 12;
+        const savings = Math.max(0, commAnno - evuleryAnno);
+        const savingsPct = commAnno > 0 ? Math.round((savings / commAnno) * 100) : 0;
+
+        // Render
+        outputs.commMese.textContent  = fmt(commMese);
+        outputs.commAnno.textContent  = fmt(commAnno);
+        outputs.barThem.textContent   = fmt(commAnno);
+        outputs.barUs.textContent     = fmt(evuleryAnno);
+        outputs.savings.textContent   = fmt(savings);
+        outputs.savingsPct.textContent = savings > 0
+            ? `−${savingsPct}% sul costo attuale`
+            : `Stai già spendendo poco, ma con Evulery hai dati e clienti tuoi`;
+
+        // Bar widths (relative to commAnno)
+        const themPct = 100;
+        const usPct = commAnno > 0 ? Math.max(2, (evuleryAnno / commAnno) * 100) : 0;
+        outputs.barThemFill.style.width = themPct + '%';
+        outputs.barUsFill.style.width = usPct + '%';
+
+        // What you could buy cards
+        renderWhatCards(savings);
+    }
+
+    // ==== "What you could buy" card library ====
+    // Each card has minSavings (€) requirement to appear
+    const whatCards = [
+        { min: 1500,  icon: 'bi-megaphone',          title: 'Una campagna social mirata',        body: 'Sei mesi di promozione su Instagram + Facebook con grafiche professionali. Per riempire le sere lente.' },
+        { min: 2500,  icon: 'bi-wrench-adjustable',  title: 'Manutenzione cucina annuale',        body: 'Revisione completa attrezzature di cucina + manutenzione straordinaria. Quella che rimandi sempre a "il prossimo anno".' },
+        { min: 3500,  icon: 'bi-cup-hot',            title: 'Un nuovo menu stagionale',           body: 'Creazione carta, food photography, stampa qualità, formazione personale. Il rilancio che hai in testa da mesi.' },
+        { min: 5000,  icon: 'bi-snow',               title: 'Impianto di climatizzazione nuovo',  body: 'Sostituzione completa per una sala da 60 coperti. La differenza tra "stiamo bene" e "stiamo da Dio" d\'estate.' },
+        { min: 7000,  icon: 'bi-person-badge',       title: 'Tre mesi di un commis di sala',      body: 'Lo stipendio + contributi di un secondo cameriere stagionale. Il sabato sera senza più affanno.' },
+        { min: 10000, icon: 'bi-display',            title: 'Restyling del sito + nuovo brand',   body: 'Sito web professionale, identità visiva rifatta, foto del locale. Quello che ti rappresenta davvero, online.' },
+        { min: 15000, icon: 'bi-tools',              title: 'Rinnovo della sala (parziale)',      body: 'Sedie, tavoli, illuminazione, qualche tocco di design. Il refresh che cambia la percezione del locale.' },
+        { min: 20000, icon: 'bi-people',             title: 'Un dipendente full-time per 6 mesi', body: 'Un cuoco esperto o un maître stagionale, costo aziendale completo. La crescita che pensavi di non poterti permettere.' },
+        { min: 30000, icon: 'bi-building-add',       title: 'Un dipendente full-time, tutto l\'anno', body: 'Lordo + contributi minimi di un cameriere o cuoco full-time. La struttura che ti permette di scalare.' },
+        { min: 50000, icon: 'bi-shop',               title: 'Apertura di un secondo locale (capitale)', body: 'Una bella fetta dell\'investimento iniziale per un secondo punto vendita. Il sogno che diventa piano.' },
+    ];
+
+    function renderWhatCards(savings) {
+        // Pick top 3-4 cards with min ≤ savings
+        const eligible = whatCards.filter(c => c.min <= savings);
+
+        let toShow;
+        if (eligible.length === 0) {
+            toShow = [
+                { icon: 'bi-shield-check',   title: 'Dati e clienti tuoi al 100%',     body: 'Anche con un risparmio piccolo, con Evulery ottieni qualcosa di non quantificabile in euro: anagrafica, contatti, storico visite. Tutto tuo.' },
+                { icon: 'bi-chat-dots',      title: 'Un supporto che parla italiano',   body: 'Quando qualcosa non va, rispondiamo in italiano entro un giorno lavorativo. Senza ticket, senza chatbot.' },
+                { icon: 'bi-graph-up-arrow', title: 'Strumenti per crescere',           body: 'Email marketing, programma fedeltà, recensioni verificate, analytics. Tutto incluso, niente upgrade nascosti.' },
+            ];
+        } else {
+            // Take last 3-4 (the most expensive that fit)
+            toShow = eligible.slice(-4);
+        }
+
+        outputs.whatGrid.innerHTML = toShow.map(c => `
+            <div class="calc-what-card">
+                <div class="calc-what-icon"><i class="bi ${c.icon}"></i></div>
+                <h3>${c.title}</h3>
+                <p>${c.body}</p>
+            </div>
+        `).join('');
+    }
+
+    // ==== Plan selector ====
+    planOpts.forEach(opt => {
+        opt.addEventListener('click', () => {
+            planOpts.forEach(o => o.classList.remove('active'));
+            opt.classList.add('active');
+            selectedPlan = parseInt(opt.getAttribute('data-plan'));
+            compute();
+        });
+    });
+
+    // ==== Wire up inputs ====
+    Object.values(inputs).forEach(input => {
+        input.addEventListener('input', compute);
+    });
+
+    // ==== Initial compute ====
+    compute();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Box compleanni dashboard (prossimi 30 gg)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-light: #E8F5E9;
+    --brand-dark: #006837;
+    --ink: #1a1d23;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --bg: #f8f9fa;
+    --warning: #E65100;
+    --warning-light: #FFF3E0;
+    --info: #1565C0;
+    --info-light: #E3F2FD;
+    --vip: #E65100;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+}
+
+.wireframe-badge {
+    position: fixed; top: 12px; right: 12px; background: #FF9800; color: #fff;
+    padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 999;
+}
+
+.page-wrap { max-width: 1400px; margin: 0 auto; padding: 32px 16px; }
+.page-title { font-size: 1.4rem; font-weight: 800; margin: 0 0 4px; }
+.page-sub { font-size: .85rem; color: var(--muted); margin: 0 0 24px; }
+
+.section-title {
+    font-size: 1rem; font-weight: 700; margin: 32px 0 12px;
+    display: flex; align-items: center; gap: 8px;
+}
+.section-title .num {
+    background: var(--brand); color: #fff;
+    width: 22px; height: 22px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800;
+}
+
+.scenarios {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+}
+
+.scenario-card {
+    background: #fff; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.05);
+    padding: 18px;
+    border: 1px solid var(--line);
+}
+
+.scenario-label {
+    font-size: 11px; font-weight: 700;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 6px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+}
+
+/* ============= Card "Compleanni" ============= */
+.card-bd {
+    background: #fff; border-radius: 10px;
+    border: 1px solid var(--line);
+    overflow: hidden;
+}
+.card-bd-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #FFF8E1 0%, #FFFDE7 100%);
+    border-bottom: 1px solid var(--line);
+}
+.card-bd-header h6 {
+    font-size: .92rem; font-weight: 700; margin: 0;
+    display: flex; align-items: center; gap: 6px;
+    color: var(--ink);
+}
+.card-bd-header .count {
+    background: var(--brand); color: #fff;
+    font-size: .68rem; font-weight: 700;
+    padding: 2px 8px; border-radius: 10px;
+}
+.card-bd-header .filter {
+    font-size: .72rem; color: var(--muted);
+}
+
+.card-bd-body { padding: 6px; }
+
+/* Lista compleanni */
+.bd-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #f5f5f5;
+    text-decoration: none;
+    color: inherit;
+    transition: background .12s;
+}
+.bd-row:last-child { border-bottom: none; }
+.bd-row:hover { background: #fafbfc; }
+
+.bd-day-chip {
+    flex-shrink: 0;
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: var(--info-light);
+    color: var(--info);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    line-height: 1;
+}
+.bd-day-chip-day {
+    font-size: 1.05rem; font-weight: 800;
+}
+.bd-day-chip-month {
+    font-size: .58rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .5px;
+    margin-top: 2px;
+}
+.bd-row.is-today .bd-day-chip {
+    background: var(--brand); color: #fff;
+}
+.bd-row.is-soon .bd-day-chip {
+    background: var(--warning-light); color: var(--warning);
+}
+
+.bd-info {
+    flex: 1; min-width: 0;
+}
+.bd-name {
+    font-size: .9rem; font-weight: 600; color: var(--ink);
+    display: flex; align-items: center; gap: 6px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.bd-segment-tag {
+    font-size: .58rem; font-weight: 700;
+    padding: 1px 6px; border-radius: 8px;
+    text-transform: uppercase; letter-spacing: .3px;
+    flex-shrink: 0;
+}
+.bd-segment-tag.vip { background: var(--warning-light); color: var(--vip); }
+.bd-segment-tag.abituale { background: var(--brand-light); color: var(--brand-dark); }
+.bd-segment-tag.occasionale { background: #FFF8E1; color: #F57F17; }
+
+.bd-meta {
+    font-size: .72rem; color: var(--muted);
+    margin-top: 1px;
+    display: flex; align-items: center; gap: 8px;
+}
+.bd-meta .age { font-weight: 600; color: #495057; }
+.bd-meta .when {
+    color: var(--info); font-weight: 600;
+}
+.bd-row.is-today .bd-meta .when { color: var(--brand); }
+.bd-row.is-soon .bd-meta .when { color: var(--warning); }
+
+.bd-actions {
+    flex-shrink: 0;
+    display: flex; gap: 4px;
+}
+.bd-action-btn {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: #f5f6f8;
+    color: #495057;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none;
+    font-size: 14px;
+    border: 1px solid var(--line);
+    transition: all .12s;
+}
+.bd-action-btn:hover {
+    background: var(--brand-light);
+    color: var(--brand);
+    border-color: var(--brand-light);
+}
+.bd-action-btn.wa:hover { background: #d4f3dc; color: #128C7E; }
+
+/* Footer */
+.card-bd-footer {
+    padding: 10px 16px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+    background: #fafbfc;
+}
+.card-bd-footer a {
+    font-size: .78rem; color: var(--brand); text-decoration: none; font-weight: 600;
+}
+.card-bd-footer a:hover { text-decoration: underline; }
+
+/* Empty state */
+.bd-empty {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--muted);
+}
+.bd-empty i { font-size: 36px; color: #cbd0d4; margin-bottom: 8px; display: block; }
+.bd-empty-title { font-size: .92rem; font-weight: 600; color: #495057; margin-bottom: 4px; }
+.bd-empty-text { font-size: .78rem; line-height: 1.5; }
+
+/* === Variant B: card più ricca === */
+.bd-row-rich {
+    display: grid;
+    grid-template-columns: 50px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #f5f5f5;
+}
+.bd-row-rich:last-child { border-bottom: none; }
+.bd-row-rich:hover { background: #fafbfc; }
+
+/* Compact version (sidebar) */
+.bd-compact .bd-row {
+    padding: 8px 10px;
+    gap: 8px;
+}
+.bd-compact .bd-day-chip {
+    width: 36px; height: 36px;
+}
+.bd-compact .bd-day-chip-day { font-size: .9rem; }
+.bd-compact .bd-day-chip-month { font-size: .54rem; }
+.bd-compact .bd-name { font-size: .82rem; }
+.bd-compact .bd-meta { font-size: .68rem; }
+.bd-compact .bd-actions { display: none; } /* Niente azioni inline su sidebar compact */
+
+.notes {
+    background: #fffde7;
+    border-left: 3px solid #FFD600;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-top: 16px;
+    font-size: .8rem;
+    color: #5D4037;
+    line-height: 1.5;
+}
+.notes strong { color: var(--ink); }
+.notes ul { margin: 6px 0 0 18px; padding: 0; }
+
+.tech-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-top: 14px;
+}
+.tech-card h3 {
+    font-size: .9rem; font-weight: 700; margin: 0 0 12px;
+    display: flex; align-items: center; gap: 6px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.tech-card h3 i { color: var(--brand); }
+.tech-card ul { margin: 0; padding-left: 18px; font-size: .82rem; line-height: 1.55; color: #495057; }
+.tech-card code { background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-size: .75rem; color: #C2185B; }
+
+@media (max-width: 980px) {
+    .scenarios { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="wireframe-badge">WIREFRAME — Compleanni dashboard (prossimi 30 gg)</div>
+
+<div class="page-wrap">
+
+    <h1 class="page-title">Box "Compleanni in arrivo" nella dashboard</h1>
+    <p class="page-sub">Widget per il ristoratore: vede a colpo d'occhio chi compie gli anni nei prossimi 30 giorni e può contattarlo (chiamata / WhatsApp / email / profilo CRM).</p>
+
+    <!-- ============ VARIANTI A E B ============ -->
+    <div class="section-title"><span class="num">1</span> Due varianti a confronto</div>
+
+    <div class="scenarios">
+
+        <!-- ============ VARIANTE A — RIGHT SIDEBAR (compatta) ============ -->
+        <div class="scenario-card">
+            <div class="scenario-label">
+                <i class="bi bi-layout-sidebar"></i>
+                VARIANTE A · sidebar destra (compatta)
+            </div>
+
+            <div class="card-bd bd-compact" style="max-width: 320px; margin: 0 auto;">
+                <div class="card-bd-header">
+                    <h6>🎂 Compleanni · 30 gg</h6>
+                    <span class="count">5</span>
+                </div>
+                <div class="card-bd-body">
+                    <a href="#" class="bd-row is-today">
+                        <div class="bd-day-chip">
+                            <div class="bd-day-chip-day">5</div>
+                            <div class="bd-day-chip-month">MAG</div>
+                        </div>
+                        <div class="bd-info">
+                            <div class="bd-name">Mario Rossi <span class="bd-segment-tag vip">VIP</span></div>
+                            <div class="bd-meta"><span class="when">OGGI</span> · <span class="age">52 anni</span></div>
+                        </div>
+                    </a>
+                    <a href="#" class="bd-row is-soon">
+                        <div class="bd-day-chip">
+                            <div class="bd-day-chip-day">8</div>
+                            <div class="bd-day-chip-month">MAG</div>
+                        </div>
+                        <div class="bd-info">
+                            <div class="bd-name">Anna Verdi <span class="bd-segment-tag abituale">ABIT</span></div>
+                            <div class="bd-meta"><span class="when">tra 3 gg</span> · <span class="age">36 anni</span></div>
+                        </div>
+                    </a>
+                    <a href="#" class="bd-row">
+                        <div class="bd-day-chip">
+                            <div class="bd-day-chip-day">14</div>
+                            <div class="bd-day-chip-month">MAG</div>
+                        </div>
+                        <div class="bd-info">
+                            <div class="bd-name">Luca Bianchi</div>
+                            <div class="bd-meta"><span class="when">tra 9 gg</span> · <span class="age">28 anni</span></div>
+                        </div>
+                    </a>
+                    <a href="#" class="bd-row">
+                        <div class="bd-day-chip">
+                            <div class="bd-day-chip-day">22</div>
+                            <div class="bd-day-chip-month">MAG</div>
+                        </div>
+                        <div class="bd-info">
+                            <div class="bd-name">Giulia Neri <span class="bd-segment-tag occasionale">OCC</span></div>
+                            <div class="bd-meta"><span class="when">tra 17 gg</span> · <span class="age">45 anni</span></div>
+                        </div>
+                    </a>
+                    <a href="#" class="bd-row">
+                        <div class="bd-day-chip">
+                            <div class="bd-day-chip-day">3</div>
+                            <div class="bd-day-chip-month">GIU</div>
+                        </div>
+                        <div class="bd-info">
+                            <div class="bd-name">Paolo Conti <span class="bd-segment-tag vip">VIP</span></div>
+                            <div class="bd-meta"><span class="when">tra 29 gg</span> · <span class="age">61 anni</span></div>
+                        </div>
+                    </a>
+                </div>
+                <div class="card-bd-footer">
+                    <a href="#">Vedi tutti i compleanni →</a>
+                </div>
+            </div>
+
+            <div class="notes">
+                <strong>Pro Variante A (sidebar)</strong>
+                <ul>
+                    <li>Posizione: <strong>colonna destra dashboard</strong>, dopo "Quick actions"</li>
+                    <li>Widget compatto: 320px largo, 5-7 righe visibili senza scroll</li>
+                    <li>Sempre visibile mentre il ristoratore opera, senza distrarre</li>
+                    <li>Niente bottoni inline: il click sulla riga porta al <strong>profilo cliente CRM</strong> dove ha già telefono, email, storico</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ============ VARIANTE B — BOX PRINCIPALE (con azioni rapide) ============ -->
+        <div class="scenario-card">
+            <div class="scenario-label">
+                <i class="bi bi-grid-1x2"></i>
+                VARIANTE B · box centrale (con azioni rapide)
+            </div>
+
+            <div class="card-bd">
+                <div class="card-bd-header">
+                    <h6>🎂 Compleanni in arrivo</h6>
+                    <span class="filter">Prossimi 30 giorni · 5 clienti</span>
+                </div>
+                <div class="card-bd-body">
+                    <div class="bd-row is-today">
+                        <div class="bd-day-chip">
+                            <div class="bd-day-chip-day">5</div>
+                            <div class="bd-day-chip-month">MAG</div>
+                        </div>
+                        <div class="bd-info">
+                            <div class="bd-name">Mario Rossi <span class="bd-segment-tag vip">VIP</span></div>
+                            <div class="bd-meta"><span class="when">🎉 OGGI</span> · <span class="age">52 anni</span> · 18 visite</div>
+                        </div>
+                        <div class="bd-actions">
+                            <a href="tel:+393331234567" class="bd-action-btn" title="Chiama"><i class="bi bi-telephone"></i></a>
+                            <a href="https://wa.me/393331234567" class="bd-action-btn wa" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                            <a href="#" class="bd-action-btn" title="Profilo cliente"><i class="bi bi-person"></i></a>
+                        </div>
+                    </div>
+                    <div class="bd-row is-soon">
+                        <div class="bd-day-chip">
+                            <div class="bd-day-chip-day">8</div>
+                            <div class="bd-day-chip-month">MAG</div>
+                        </div>
+                        <div class="bd-info">
+                            <div class="bd-name">Anna Verdi <span class="bd-segment-tag abituale">ABIT</span></div>
+                            <div class="bd-meta"><span class="when">tra 3 giorni</span> · <span class="age">36 anni</span> · 7 visite</div>
+                        </div>
+                        <div class="bd-actions">
+                            <a href="tel:+393339876543" class="bd-action-btn" title="Chiama"><i class="bi bi-telephone"></i></a>
+                            <a href="https://wa.me/393339876543" class="bd-action-btn wa" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                            <a href="#" class="bd-action-btn" title="Profilo cliente"><i class="bi bi-person"></i></a>
+                        </div>
+                    </div>
+                    <div class="bd-row">
+                        <div class="bd-day-chip">
+                            <div class="bd-day-chip-day">14</div>
+                            <div class="bd-day-chip-month">MAG</div>
+                        </div>
+                        <div class="bd-info">
+                            <div class="bd-name">Luca Bianchi</div>
+                            <div class="bd-meta"><span class="when">tra 9 giorni</span> · <span class="age">28 anni</span> · 1 visita</div>
+                        </div>
+                        <div class="bd-actions">
+                            <a href="tel:+393338887766" class="bd-action-btn" title="Chiama"><i class="bi bi-telephone"></i></a>
+                            <a href="https://wa.me/393338887766" class="bd-action-btn wa" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                            <a href="#" class="bd-action-btn" title="Profilo cliente"><i class="bi bi-person"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-bd-footer">
+                    <a href="#">Vedi tutti i compleanni →</a>
+                </div>
+            </div>
+
+            <div class="notes">
+                <strong>Pro Variante B (box centrale)</strong>
+                <ul>
+                    <li>Posizione: <strong>colonna sinistra dashboard</strong>, dopo "No-show + Fonte" (sotto)</li>
+                    <li>Più ricco: età, n° visite, azioni rapide inline (chiama, WhatsApp, profilo)</li>
+                    <li>Pensato per uso operativo: il ristoratore può chiamare/scrivere senza cliccare sulla riga</li>
+                    <li>Più spazio occupato (~380px alto), ma alta densità informativa</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============ STATI VISIVI ============ -->
+    <div class="section-title"><span class="num">2</span> Stati visivi (highlight per urgenza)</div>
+
+    <div class="scenarios">
+        <div class="scenario-card">
+            <div class="scenario-label">📅 Stati delle righe</div>
+            <div class="card-bd">
+                <div class="card-bd-body">
+                    <a href="#" class="bd-row is-today">
+                        <div class="bd-day-chip">
+                            <div class="bd-day-chip-day">5</div>
+                            <div class="bd-day-chip-month">MAG</div>
+                        </div>
+                        <div class="bd-info">
+                            <div class="bd-name">Mario Rossi <span class="bd-segment-tag vip">VIP</span></div>
+                            <div class="bd-meta"><span class="when">🎉 OGGI</span> · 52 anni</div>
+                        </div>
+                    </a>
+                    <a href="#" class="bd-row is-soon">
+                        <div class="bd-day-chip">
+                            <div class="bd-day-chip-day">8</div>
+                            <div class="bd-day-chip-month">MAG</div>
+                        </div>
+                        <div class="bd-info">
+                            <div class="bd-name">Anna Verdi</div>
+                            <div class="bd-meta"><span class="when">tra 3 gg</span> · 36 anni</div>
+                        </div>
+                    </a>
+                    <a href="#" class="bd-row">
+                        <div class="bd-day-chip">
+                            <div class="bd-day-chip-day">22</div>
+                            <div class="bd-day-chip-month">MAG</div>
+                        </div>
+                        <div class="bd-info">
+                            <div class="bd-name">Giulia Neri</div>
+                            <div class="bd-meta"><span class="when">tra 17 gg</span> · 45 anni</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="notes">
+                <strong>3 livelli di urgenza:</strong>
+                <ul>
+                    <li><strong style="color:var(--brand);">Verde (oggi)</strong>: cliente compie OGGI gli anni — chip verde brand, "🎉 OGGI"</li>
+                    <li><strong style="color:var(--warning);">Arancione (entro 3 gg)</strong>: chip arancione tenue, "tra X gg" — per agire con anticipo</li>
+                    <li><strong style="color:var(--info);">Blu neutro (4-30 gg)</strong>: chip azzurra default — informativo, non urgente</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="scenario-card">
+            <div class="scenario-label">🪦 Stato vuoto (nessun compleanno)</div>
+            <div class="card-bd">
+                <div class="card-bd-header">
+                    <h6>🎂 Compleanni · 30 gg</h6>
+                    <span class="count" style="background:#cbd0d4;">0</span>
+                </div>
+                <div class="card-bd-body">
+                    <div class="bd-empty">
+                        <i class="bi bi-cake2"></i>
+                        <div class="bd-empty-title">Nessun compleanno nei prossimi 30 giorni</div>
+                        <div class="bd-empty-text">Quando i tuoi clienti lasceranno la data di nascita durante la prenotazione, comparirà qui.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="notes">
+                <strong>Empty state esplicativo</strong>
+                <ul>
+                    <li>Non semplicemente "vuoto" — spiega il motivo (servono date di nascita raccolte)</li>
+                    <li>Educa il ristoratore al valore della raccolta dati birthday nel widget</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ NOTE TECNICHE ============ -->
+    <div class="section-title"><span class="num">3</span> Note tecniche d'implementazione</div>
+
+    <div class="tech-card">
+        <h3><i class="bi bi-database"></i> Query SQL</h3>
+        <ul>
+            <li>Database: la colonna <code>customers.birthday</code> esiste già (nessuna migration)</li>
+            <li>Filtro: clienti del tenant con <code>birthday IS NOT NULL</code> e compleanno nei prossimi 30 giorni</li>
+            <li>Cross-year: gestire il caso dicembre→gennaio (es. nato 28-12-1985, oggi 5-12-2026 → tra 23 gg)</li>
+            <li>SQL pseudo: <code>WHERE DATE_FORMAT(birthday, '%m-%d') BETWEEN ... AND ...</code> oppure calcolato a livello app per più chiarezza</li>
+            <li>Query NON filtra su <code>marketing_consent</code>: è uso operativo interno, non broadcast email. Il ristoratore può chiamare anche chi non ha dato consenso marketing</li>
+        </ul>
+    </div>
+
+    <div class="tech-card">
+        <h3><i class="bi bi-server"></i> Backend</h3>
+        <ul>
+            <li><code>app/Models/Customer.php</code>: nuovo metodo <code>findUpcomingBirthdays(int $tenantId, int $daysAhead = 30): array</code></li>
+            <li>Ritorna: id, first_name, last_name, birthday, phone, email, total_bookings, segment (calcolato)</li>
+            <li>Calcolo "tra X giorni": preferibilmente in PHP per chiarezza, no SQL DATEDIFF complicate</li>
+            <li>Limit 10-20 in pagina dashboard, link "Vedi tutti" per pagina dedicata</li>
+            <li>Ordine: prima il compleanno più vicino</li>
+        </ul>
+    </div>
+
+    <div class="tech-card">
+        <h3><i class="bi bi-eye"></i> Frontend</h3>
+        <ul>
+            <li>View: <code>views/dashboard/home.php</code> — aggiungere nuovo card box dove scelto (sidebar destra o left column)</li>
+            <li>CSS: nuove classi <code>.bd-*</code> in <code>dashboard.css</code></li>
+            <li>Mobile: collassa in lista 1-col, azioni inline restano, chip data più piccolo</li>
+            <li>Action buttons: link <code>tel:</code>, <code>https://wa.me/</code> (numero pulito), profilo cliente</li>
+            <li>Empty state: card resta visibile con messaggio esplicativo (non scompare)</li>
+        </ul>
+    </div>
+
+    <div class="tech-card">
+        <h3><i class="bi bi-lightbulb"></i> Decisioni di scope</h3>
+        <ul>
+            <li><strong>Solo visualizzazione</strong>: nessuna campagna automatica auguri da questo widget. È un trampolino per l'azione manuale.</li>
+            <li><strong>No filtro marketing_consent</strong>: uso operativo interno (non sta mandando broadcast). Anche clienti che hanno revocato consenso vengono mostrati per consentire chiamata diretta.</li>
+            <li><strong>Limite default 30 giorni</strong>: configurabile in futuro se richiesto, ma 30 è il giusto equilibrio.</li>
+            <li><strong>Posizione</strong>: vedi punto 4 sotto.</li>
+        </ul>
+    </div>
+
+    <!-- ============ MIA RACCOMANDAZIONE ============ -->
+    <div class="section-title"><span class="num">4</span> Mia raccomandazione</div>
+
+    <div class="tech-card">
+        <h3><i class="bi bi-check-circle-fill"></i> Variante A (sidebar compatta)</h3>
+        <ul style="font-size: .85rem;">
+            <li><strong>Perché A</strong>: la dashboard ha già molti box centrali (Prossimi in arrivo, Riepilogo servizi, Confronto settimana, No-show). Mettere "Compleanni" nella colonna sinistra rende la pagina più affollata. La sidebar destra ha già "Quick actions" — il box "Compleanni" si innesta naturalmente lì.</li>
+            <li><strong>Trade-off accettato</strong>: niente azioni rapide inline. Si clicca sulla riga → profilo cliente CRM dove ci sono telefono, email, WhatsApp, storico, note. Non perdi nulla, fai 1 click in più.</li>
+            <li><strong>Densità informativa</strong>: 5-7 righe visibili senza scroll = giusto compromesso tra visibilità e ingombro.</li>
+            <li><strong>Tempo implementazione</strong>: ~2.5h (query, view, CSS, link al profilo).</li>
+        </ul>
+    </div>
+
+</div>
+
+</body>
+</html>

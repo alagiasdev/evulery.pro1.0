@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evulery — Brand Guidelines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #006837;
+    --brand-light: #E8F5E9;
+    --brand-accent: #4ade80;
+    --ink: #0a0e14;
+    --ink-soft: #495057;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --bg: #ffffff;
+    --bg-soft: #fafbfc;
+    --warning: #E65100;
+    --warning-light: #FFF3E0;
+    --danger: #dc3545;
+    --danger-light: #fde8ea;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f6f8;
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.book {
+    max-width: 980px;
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 4px 32px rgba(0,0,0,.06);
+}
+
+/* ============ Cover ============ */
+.cover {
+    background: linear-gradient(135deg, #042418 0%, #00844A 50%, #00b86b 100%);
+    color: #fff;
+    padding: 96px 64px;
+    text-align: center;
+}
+.cover-eyebrow {
+    text-transform: uppercase; letter-spacing: 2px; font-size: 12px;
+    font-weight: 700; opacity: .8; margin-bottom: 24px;
+}
+.cover-logo {
+    font-size: 72px; font-weight: 900; letter-spacing: -3px;
+    margin-bottom: 24px; color: #fff;
+}
+.cover-logo .dot { color: var(--brand-accent); }
+.cover-title {
+    font-size: 42px; font-weight: 800; line-height: 1.15;
+    margin: 0 0 16px 0; letter-spacing: -1px;
+}
+.cover-sub { font-size: 18px; opacity: .9; max-width: 600px; margin: 0 auto; }
+.cover-meta {
+    margin-top: 56px; font-size: 13px; opacity: .75; letter-spacing: .5px;
+}
+
+/* ============ Sections ============ */
+.section {
+    padding: 80px 64px;
+    border-bottom: 1px solid var(--line);
+}
+.section:last-of-type { border-bottom: 0; }
+.section-num {
+    font-size: 13px; font-weight: 700; letter-spacing: 2px;
+    color: var(--brand); text-transform: uppercase;
+    margin-bottom: 16px; display: block;
+}
+.section-title {
+    font-size: 36px; font-weight: 800; letter-spacing: -1px;
+    margin: 0 0 8px 0; line-height: 1.15;
+}
+.section-lead {
+    font-size: 18px; color: var(--ink-soft);
+    max-width: 720px; margin: 0 0 48px 0;
+}
+
+h3 {
+    font-size: 22px; font-weight: 700; letter-spacing: -.3px;
+    margin: 48px 0 16px 0;
+}
+h4 {
+    font-size: 16px; font-weight: 700; letter-spacing: 0;
+    margin: 32px 0 12px 0; text-transform: uppercase;
+    color: var(--ink-soft); letter-spacing: 1px;
+}
+p { margin: 0 0 16px 0; }
+
+.muted { color: var(--muted); }
+.brand-text { color: var(--brand); }
+.small { font-size: 13px; line-height: 1.5; }
+
+/* ============ Brand Essence ============ */
+.essence {
+    background: var(--bg-soft);
+    border-radius: 16px;
+    padding: 40px;
+    margin: 32px 0;
+}
+.essence-row { display: grid; grid-template-columns: 180px 1fr; gap: 32px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.essence-row:last-child { border-bottom: 0; }
+.essence-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted);
+    padding-top: 4px;
+}
+.essence-value { font-size: 18px; line-height: 1.5; font-weight: 500; }
+.essence-value strong { color: var(--brand-dark); font-weight: 700; }
+
+/* ============ Payoff bank ============ */
+.payoff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+.payoff {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--brand);
+    border-radius: 8px;
+    padding: 20px 24px;
+}
+.payoff.hero { border-left-color: var(--brand); background: var(--brand-light); }
+.payoff-text { font-size: 18px; font-weight: 700; line-height: 1.3; margin: 0 0 6px 0; }
+.payoff-meta { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+/* ============ Logomark ============ */
+.logo-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px;
+    margin: 32px 0;
+}
+.logo-card {
+    background: var(--bg-soft);
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    padding: 32px 24px;
+    text-align: center;
+    position: relative;
+}
+.logo-card.preferred {
+    border-color: var(--brand);
+    background: linear-gradient(180deg, var(--brand-light) 0%, #fff 60%);
+}
+.logo-card .badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--brand); color: #fff;
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    padding: 4px 10px; border-radius: 12px;
+    text-transform: uppercase;
+}
+.logo-card svg { width: 96px; height: 96px; display: block; margin: 0 auto 16px auto; }
+.logo-card h4 { margin: 0 0 8px 0; text-transform: none; letter-spacing: 0; color: var(--ink); font-size: 16px; }
+.logo-card p { font-size: 13px; color: var(--ink-soft); margin: 0; }
+
+/* ============ Lockups ============ */
+.lockup-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    margin: 24px 0;
+}
+.lockup {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 48px 32px;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 180px;
+}
+.lockup-h {
+    display: flex; align-items: center; gap: 14px;
+    font-size: 36px; font-weight: 900; letter-spacing: -1.5px;
+    color: var(--ink);
+}
+.lockup-h svg { width: 48px; height: 48px; flex-shrink: 0; }
+.lockup-h .dot { color: var(--brand); }
+.lockup-v {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    text-align: center;
+}
+.lockup-v svg { width: 64px; height: 64px; }
+.lockup-v .word {
+    font-size: 28px; font-weight: 900; letter-spacing: -1px;
+}
+.lockup-v .word .dot { color: var(--brand); }
+
+.lockup-dark { background: var(--ink); }
+.lockup-dark .lockup-h, .lockup-dark .lockup-v .word { color: #fff; }
+.lockup-dark .lockup-h .dot, .lockup-dark .lockup-v .word .dot { color: var(--brand-accent); }
+
+/* ============ Don't grid ============ */
+.dont-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
+.dont {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+}
+.dont .preview {
+    display: flex; align-items: center; justify-content: center;
+    height: 80px; margin-bottom: 12px;
+    font-weight: 900; font-size: 22px; letter-spacing: -1px;
+    color: var(--ink); position: relative;
+}
+.dont .preview::after {
+    content: ""; position: absolute;
+    top: 50%; left: 10%; right: 10%; height: 2px; background: var(--danger);
+    transform: rotate(-8deg);
+    transform-origin: center;
+}
+.dont .label {
+    font-size: 12px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
+}
+
+/* ============ Color palette ============ */
+.palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 24px 0 40px 0; }
+.swatch {
+    border-radius: 10px; padding: 24px 20px;
+    border: 1px solid rgba(0,0,0,.05);
+    min-height: 160px;
+    display: flex; flex-direction: column; justify-content: space-between;
+}
+.swatch .name { font-size: 13px; font-weight: 700; }
+.swatch .hex { font-size: 12px; font-family: 'SF Mono', Menlo, monospace; opacity: .85; }
+.swatch .role { font-size: 11px; opacity: .75; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+.sw-brand { background: var(--brand); color: #fff; }
+.sw-brand-dark { background: var(--brand-dark); color: #fff; }
+.sw-brand-light { background: var(--brand-light); color: var(--brand-dark); }
+.sw-ink { background: var(--ink); color: #fff; }
+.sw-ink-soft { background: var(--ink-soft); color: #fff; }
+.sw-muted { background: var(--muted); color: #fff; }
+.sw-line { background: var(--line); color: var(--ink); border: 1px solid #d4d8dd; }
+.sw-warning { background: var(--warning); color: #fff; }
+
+.palette-secondary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 16px 0; }
+
+/* ============ Typography ============ */
+.type-spec { display: flex; align-items: baseline; gap: 24px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.type-spec:last-child { border-bottom: 0; }
+.type-spec .meta { width: 180px; flex-shrink: 0; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+.type-spec .sample { flex: 1; }
+
+.type-display { font-size: 56px; font-weight: 900; letter-spacing: -2px; line-height: 1.1; }
+.type-h1 { font-size: 36px; font-weight: 800; letter-spacing: -1px; line-height: 1.15; }
+.type-h2 { font-size: 24px; font-weight: 700; letter-spacing: -.3px; line-height: 1.25; }
+.type-body { font-size: 16px; font-weight: 400; line-height: 1.6; }
+.type-small { font-size: 13px; font-weight: 500; line-height: 1.5; color: var(--ink-soft); }
+.type-mono { font-family: 'SF Mono', Menlo, monospace; font-size: 13px; }
+
+/* ============ Voice ============ */
+.voice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
+.voice-col { padding: 24px 28px; border-radius: 12px; }
+.voice-do { background: var(--brand-light); border-left: 3px solid var(--brand); }
+.voice-dont { background: var(--danger-light); border-left: 3px solid var(--danger); }
+.voice-col h4 { margin-top: 0; color: var(--ink); }
+.voice-do h4 { color: var(--brand-dark); }
+.voice-dont h4 { color: #b71c1c; }
+.voice-item { padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,.05); }
+.voice-item:last-child { border-bottom: 0; }
+.voice-item .quote { font-size: 15px; font-weight: 600; line-height: 1.4; margin-bottom: 4px; }
+.voice-item .why { font-size: 12px; color: var(--ink-soft); line-height: 1.4; }
+
+/* ============ Glossary ============ */
+.glossary {
+    background: var(--bg-soft);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 24px 0;
+}
+.glossary-row {
+    display: grid; grid-template-columns: 1fr 24px 1fr; gap: 16px;
+    padding: 12px 0; border-bottom: 1px solid var(--line);
+    align-items: center;
+}
+.glossary-row:last-child { border-bottom: 0; }
+.glossary-no { color: var(--danger); font-weight: 600; text-decoration: line-through; }
+.glossary-arrow { color: var(--muted); text-align: center; }
+.glossary-yes { color: var(--brand-dark); font-weight: 600; }
+
+/* ============ Stationery ============ */
+.station {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 24px 0;
+}
+.station-row { padding: 16px 0; border-bottom: 1px solid var(--line); }
+.station-row:last-child { border-bottom: 0; }
+.station-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 8px; }
+.station-value { font-family: 'SF Mono', Menlo, monospace; font-size: 14px; background: #fff; padding: 12px 16px; border-radius: 6px; border: 1px solid var(--line); }
+
+/* ============ Footer ============ */
+.book-footer {
+    background: var(--ink);
+    color: rgba(255,255,255,.7);
+    padding: 48px 64px;
+    text-align: center;
+    font-size: 13px;
+}
+.book-footer strong { color: #fff; font-weight: 700; }
+
+@media print {
+    body { background: #fff; }
+    .book { box-shadow: none; max-width: 100%; }
+    .section { page-break-inside: avoid; }
+}
+
+@media (max-width: 768px) {
+    .section { padding: 56px 32px; }
+    .cover { padding: 64px 32px; }
+    .cover-logo { font-size: 56px; }
+    .cover-title { font-size: 32px; }
+    .essence-row { grid-template-columns: 1fr; gap: 8px; }
+    .palette, .palette-secondary { grid-template-columns: 1fr 1fr; }
+    .logo-grid, .lockup-grid, .voice-grid, .payoff-grid, .dont-grid { grid-template-columns: 1fr; }
+    .type-spec { flex-direction: column; gap: 8px; }
+    .type-spec .meta { width: 100%; }
+    .glossary-row { grid-template-columns: 1fr; gap: 4px; }
+    .glossary-arrow { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="book">
+
+<!-- ====================== COVER ====================== -->
+<div class="cover">
+    <div class="cover-eyebrow">Brand Guidelines · v1.0</div>
+    <div class="cover-logo">evulery<span class="dot">.</span></div>
+    <div class="cover-title">Pieni la sera, felici la mattina.</div>
+    <div class="cover-sub">Linee guida brand per chi comunica Evulery: copy, design, social, partnership.</div>
+    <div class="cover-meta">Maggio 2026 · Documento interno · alagias.</div>
+</div>
+
+<!-- ====================== 1. ESSENZA ====================== -->
+<div class="section">
+    <span class="section-num">01 · Essenza</span>
+    <h2 class="section-title">Chi siamo, cosa diciamo</h2>
+    <p class="section-lead">L'essenza è il punto fermo. Quando un nuovo collaboratore scrive una mail o disegna una slide, deve poterci tornare in 30 secondi e capire la rotta.</p>
+
+    <div class="essence">
+        <div class="essence-row">
+            <div class="essence-label">Purpose</div>
+            <div class="essence-value">Aiutare i ristoratori indipendenti italiani a <strong>riprendere il controllo della loro accoglienza</strong>, senza dipendere da aggregatori che li mettono uno contro l'altro.</div>
+        </div>
+        <div class="essence-row">
+            <div class="essence-label">Posizionamento</div>
+            <div class="essence-value">Non siamo una piattaforma che vi porta clienti. Siamo <strong>il software che vi aiuta ad accoglierli meglio</strong>. Un sistema che funziona, in sala e online.</div>
+        </div>
+        <div class="essence-row">
+            <div class="essence-label">Promessa</div>
+            <div class="essence-value">Prenotazioni online, calendario in tempo reale, supporto italiano che risponde davvero. <strong>La sala piena, la testa libera.</strong></div>
+        </div>
+        <div class="essence-row">
+            <div class="essence-label">Pubblico primario</div>
+            <div class="essence-value">Ristoranti, pizzerie, pub, trattorie indipendenti italiani (1-3 sale, 30-150 coperti) che vogliono digitalizzare senza svendersi.</div>
+        </div>
+        <div class="essence-row">
+            <div class="essence-label">Personalità</div>
+            <div class="essence-value">Concreta · Diretta · Italiana · Collega che sa il mestiere. Mai patinata, mai venditore.</div>
+        </div>
+        <div class="essence-row">
+            <div class="essence-label">Antagonisti</div>
+            <div class="essence-value">Aggregatori che si fanno pagare ogni cliente. Software stranieri scollegati dalla ristorazione italiana. Carta e WhatsApp che fanno perdere prenotazioni.</div>
+        </div>
+    </div>
+
+    <h3>Banca payoff</h3>
+    <p class="muted">Il primo è il <strong>payoff principale</strong>. Gli altri sono varianti per contesti specifici (cover slide, social, headline campagne). Non inventarne di nuovi senza prima verificare in questa lista.</p>
+
+    <div class="payoff-grid">
+        <div class="payoff hero">
+            <div class="payoff-text">"Pieni la sera, felici la mattina."</div>
+            <div class="payoff-meta">Payoff principale · landing, cover, signature</div>
+        </div>
+        <div class="payoff">
+            <div class="payoff-text">"La sala piena, la testa libera."</div>
+            <div class="payoff-meta">Variante operativa · email, social</div>
+        </div>
+        <div class="payoff">
+            <div class="payoff-text">"Un sistema che funziona, in sala e online."</div>
+            <div class="payoff-meta">Variante razionale · pitch, demo</div>
+        </div>
+        <div class="payoff">
+            <div class="payoff-text">"La prenotazione è un gesto ospitale."</div>
+            <div class="payoff-meta">Variante manifesto · about, intro deck</div>
+        </div>
+        <div class="payoff">
+            <div class="payoff-text">"Parliamo come un collega che sa il mestiere."</div>
+            <div class="payoff-meta">Voice statement · interno, onboarding</div>
+        </div>
+        <div class="payoff">
+            <div class="payoff-text">"Software italiano per ristoranti italiani."</div>
+            <div class="payoff-meta">Variante anti-aggregatori · battlecard</div>
+        </div>
+    </div>
+</div>
+
+<!-- ====================== 2. LOGOMARK ====================== -->
+<div class="section">
+    <span class="section-num">02 · Logomark</span>
+    <h2 class="section-title">Il segno</h2>
+    <p class="section-lead">Tre direzioni concettuali. Quella raccomandata è la <strong>"e con punto"</strong>: nasce dal logotype esistente (<em>evulery<span class="brand-text">.</span></em>) e funziona alle piccole dimensioni come icona social/favicon.</p>
+
+    <div class="logo-grid">
+        <div class="logo-card preferred">
+            <span class="badge">Raccomandato</span>
+            <svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="48" cy="48" r="44" fill="#00844A"/>
+                <path d="M30 48 Q30 32 48 32 Q66 32 66 48 L36 48 Q38 60 50 60 Q58 60 62 56" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none"/>
+                <circle cx="68" cy="62" r="5" fill="#4ade80"/>
+            </svg>
+            <h4>e con punto</h4>
+            <p>Cerchio verde (ospitalità, completezza), "e" stilizzata (Evulery), punto chiaro (il "·" del footer e dell'identità).</p>
+        </div>
+        <div class="logo-card">
+            <svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+                <rect x="14" y="36" width="68" height="28" rx="14" fill="#00844A"/>
+                <circle cx="34" cy="50" r="3.5" fill="#fff"/>
+                <circle cx="48" cy="50" r="3.5" fill="#fff"/>
+                <circle cx="62" cy="50" r="3.5" fill="#fff"/>
+                <circle cx="76" cy="22" r="6" fill="#4ade80"/>
+            </svg>
+            <h4>tavolata</h4>
+            <p>Tavolo apparecchiato visto dall'alto con tre commensali. Più narrativo, ma rischia di sembrare un bottone UI.</p>
+        </div>
+        <div class="logo-card">
+            <svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 20 L20 76 L76 76" stroke="#00844A" stroke-width="10" stroke-linecap="round" fill="none"/>
+                <path d="M20 48 L52 48" stroke="#00844A" stroke-width="10" stroke-linecap="round"/>
+                <path d="M58 48 L70 48" stroke="#4ade80" stroke-width="10" stroke-linecap="round"/>
+            </svg>
+            <h4>e aperta</h4>
+            <p>Lettera "E" con il segmento centrale spezzato/aperto: porta che si apre, accoglienza. Più astratta, meno immediata.</p>
+        </div>
+    </div>
+
+    <h3>Lockup orizzontale e verticale</h3>
+    <p class="muted">Il lockup orizzontale è il default per landing, email, social cover. Il verticale per favicon, profili, app icon.</p>
+
+    <div class="lockup-grid">
+        <div class="lockup">
+            <div class="lockup-h">
+                <svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="48" cy="48" r="44" fill="#00844A"/>
+                    <path d="M30 48 Q30 32 48 32 Q66 32 66 48 L36 48 Q38 60 50 60 Q58 60 62 56" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none"/>
+                    <circle cx="68" cy="62" r="5" fill="#4ade80"/>
+                </svg>
+                <span>evulery<span class="dot">.</span></span>
+            </div>
+        </div>
+        <div class="lockup">
+            <div class="lockup-v">
+                <svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="48" cy="48" r="44" fill="#00844A"/>
+                    <path d="M30 48 Q30 32 48 32 Q66 32 66 48 L36 48 Q38 60 50 60 Q58 60 62 56" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none"/>
+                    <circle cx="68" cy="62" r="5" fill="#4ade80"/>
+                </svg>
+                <span class="word">evulery<span class="dot">.</span></span>
+            </div>
+        </div>
+        <div class="lockup lockup-dark">
+            <div class="lockup-h">
+                <svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="48" cy="48" r="44" fill="#00b86b"/>
+                    <path d="M30 48 Q30 32 48 32 Q66 32 66 48 L36 48 Q38 60 50 60 Q58 60 62 56" stroke="#0a0e14" stroke-width="6" stroke-linecap="round" fill="none"/>
+                    <circle cx="68" cy="62" r="5" fill="#4ade80"/>
+                </svg>
+                <span>evulery<span class="dot">.</span></span>
+            </div>
+        </div>
+        <div class="lockup">
+            <div class="lockup-h" style="color: #0a0e14;">
+                <svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="48" cy="48" r="44" fill="#0a0e14"/>
+                    <path d="M30 48 Q30 32 48 32 Q66 32 66 48 L36 48 Q38 60 50 60 Q58 60 62 56" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none"/>
+                    <circle cx="68" cy="62" r="5" fill="#fff"/>
+                </svg>
+                <span>evulery<span style="color: #0a0e14;">.</span></span>
+            </div>
+        </div>
+    </div>
+
+    <h3>Cosa non fare</h3>
+    <div class="dont-grid">
+        <div class="dont">
+            <div class="preview"><span style="background: linear-gradient(45deg, #f00, #00f); -webkit-background-clip: text; background-clip: text; color: transparent;">evulery<span class="brand-text">.</span></span></div>
+            <div class="label">Niente gradient arcobaleno</div>
+        </div>
+        <div class="dont">
+            <div class="preview"><span style="font-family: 'Times New Roman', serif;">evulery<span class="brand-text">.</span></span></div>
+            <div class="label">Niente serif o decorativo</div>
+        </div>
+        <div class="dont">
+            <div class="preview"><span style="text-transform: uppercase;">EVULERY<span class="brand-text">.</span></span></div>
+            <div class="label">Logotype mai in maiuscolo</div>
+        </div>
+        <div class="dont">
+            <div class="preview"><span style="font-style: italic;">evulery<span class="brand-text">.</span></span></div>
+            <div class="label">Niente corsivo</div>
+        </div>
+        <div class="dont">
+            <div class="preview"><span style="letter-spacing: 8px;">evulery<span class="brand-text">.</span></span></div>
+            <div class="label">Spaziatura mai aumentata</div>
+        </div>
+        <div class="dont">
+            <div class="preview" style="background: var(--brand); color: #fff; padding: 16px 24px; border-radius: 4px;"><span>evulery<span style="color: #ffeb3b;">.</span></span></div>
+            <div class="label">Punto sempre verde, mai giallo/altri</div>
+        </div>
+    </div>
+
+    <h4>Spazi e dimensioni minime</h4>
+    <ul style="line-height: 1.8; padding-left: 20px;">
+        <li><strong>Clear space:</strong> almeno l'altezza della "e" su tutti e 4 i lati del logotype. Per il logomark da solo, almeno 1/4 del diametro del cerchio.</li>
+        <li><strong>Dimensione minima logotype:</strong> 80px di larghezza per schermo, 24mm per stampa.</li>
+        <li><strong>Dimensione minima logomark:</strong> 24px per favicon, 16px in casi eccezionali (taskbar).</li>
+    </ul>
+</div>
+
+<!-- ====================== 3. COLORI ====================== -->
+<div class="section">
+    <span class="section-num">03 · Colori</span>
+    <h2 class="section-title">La palette</h2>
+    <p class="section-lead">Verde brand come unico colore primario. Tutto il resto è funzione: leggibilità, allarmi, neutri. Niente giallo, niente blu, niente palette stagionale.</p>
+
+    <h4>Primario</h4>
+    <div class="palette">
+        <div class="swatch sw-brand">
+            <div>
+                <div class="name">Brand Green</div>
+                <div class="role">Primary action, brand</div>
+            </div>
+            <div class="hex">#00844A · RGB 0 132 74</div>
+        </div>
+        <div class="swatch sw-brand-dark">
+            <div>
+                <div class="name">Brand Dark</div>
+                <div class="role">Hover, focus, depth</div>
+            </div>
+            <div class="hex">#006837 · RGB 0 104 55</div>
+        </div>
+        <div class="swatch sw-brand-light">
+            <div>
+                <div class="name">Brand Light</div>
+                <div class="role">Backgrounds, highlights</div>
+            </div>
+            <div class="hex">#E8F5E9 · RGB 232 245 233</div>
+        </div>
+        <div class="swatch" style="background: #4ade80; color: #0a0e14;">
+            <div>
+                <div class="name">Brand Accent</div>
+                <div class="role">Dot, accent on dark</div>
+            </div>
+            <div class="hex">#4ade80 · RGB 74 222 128</div>
+        </div>
+    </div>
+
+    <h4>Neutri</h4>
+    <div class="palette-secondary">
+        <div class="swatch sw-ink"><div><div class="name">Ink</div><div class="role">Headings, body</div></div><div class="hex">#0a0e14</div></div>
+        <div class="swatch sw-ink-soft"><div><div class="name">Ink Soft</div><div class="role">Body soft</div></div><div class="hex">#495057</div></div>
+        <div class="swatch sw-muted"><div><div class="name">Muted</div><div class="role">Captions</div></div><div class="hex">#6c757d</div></div>
+        <div class="swatch sw-line"><div><div class="name">Line</div><div class="role">Borders, dividers</div></div><div class="hex">#e9ecef</div></div>
+    </div>
+
+    <h4>Funzionali</h4>
+    <div class="palette-secondary">
+        <div class="swatch sw-warning"><div><div class="name">Warning</div><div class="role">Avvisi, urgenza</div></div><div class="hex">#E65100</div></div>
+        <div class="swatch" style="background: #FFF3E0; color: #b71c1c;"><div><div class="name">Warning Light</div><div class="role">Banner sfondi</div></div><div class="hex">#FFF3E0</div></div>
+        <div class="swatch" style="background: #dc3545; color: #fff;"><div><div class="name">Danger</div><div class="role">Errori, distruzione</div></div><div class="hex">#dc3545</div></div>
+        <div class="swatch" style="background: #fde8ea; color: #b71c1c;"><div><div class="name">Danger Light</div><div class="role">Errori sfondo</div></div><div class="hex">#fde8ea</div></div>
+    </div>
+
+    <h4>Regole d'uso</h4>
+    <ul style="line-height: 1.8; padding-left: 20px;">
+        <li><strong>Mai bottoni blu</strong> (Bootstrap default). CTA principali = <code>btn-success</code> o <code>btn-outline-success</code>.</li>
+        <li>Sfondi grandi: bianco o <em>brand-light</em>. Mai verde pieno per blocchi &gt; 50% schermo (stanca l'occhio).</li>
+        <li>Su sfondo scuro/foto: usa <em>brand-accent</em> (#4ade80) per il punto e i CTA, non il verde primario (basso contrasto).</li>
+        <li>Warning solo per scadenze, sospensioni, avvisi tempo-critici. Mai come decorazione.</li>
+    </ul>
+</div>
+
+<!-- ====================== 4. TIPOGRAFIA ====================== -->
+<div class="section">
+    <span class="section-num">04 · Tipografia</span>
+    <h2 class="section-title">Font: Inter, sempre</h2>
+    <p class="section-lead">Inter è il font istituzionale Evulery. Pesi disponibili: 400, 500, 600, 700, 800, 900. Mai usare Helvetica, Arial, o sostituti "simili". Inter è gratuito e disponibile su Google Fonts.</p>
+
+    <div class="type-spec">
+        <div class="meta">Display · 56/-2/900</div>
+        <div class="sample"><div class="type-display">Pieni la sera, felici la mattina.</div></div>
+    </div>
+    <div class="type-spec">
+        <div class="meta">H1 · 36/-1/800</div>
+        <div class="sample"><div class="type-h1">La sala piena, la testa libera.</div></div>
+    </div>
+    <div class="type-spec">
+        <div class="meta">H2 · 24/-.3/700</div>
+        <div class="sample"><div class="type-h2">Un sistema che funziona, in sala e online.</div></div>
+    </div>
+    <div class="type-spec">
+        <div class="meta">Body · 16/0/400</div>
+        <div class="sample"><div class="type-body">Prenotazioni online, calendario in tempo reale, supporto italiano che risponde davvero. Per ristoranti, pizzerie, pub.</div></div>
+    </div>
+    <div class="type-spec">
+        <div class="meta">Small · 13/0/500</div>
+        <div class="sample"><div class="type-small">© 2026 Evulery · by alagias. — Soluzioni per il web</div></div>
+    </div>
+    <div class="type-spec">
+        <div class="meta">Mono · SF Mono / Menlo</div>
+        <div class="sample"><div class="type-mono">curl https://api.evulery.it/v1/availability</div></div>
+    </div>
+
+    <h4>Regole d'uso</h4>
+    <ul style="line-height: 1.8; padding-left: 20px;">
+        <li><strong>Logotype "evulery."</strong>: sempre minuscolo, peso 900, letter-spacing -2px (display) o -1px (small).</li>
+        <li><strong>Headings:</strong> peso 700/800. Mai "thin" o "light".</li>
+        <li><strong>Body:</strong> peso 400. Line-height 1.5–1.6 per leggibilità.</li>
+        <li><strong>Mai</strong>: corsivi, sottolineature decorative, ALL CAPS oltre 16px, font alternativi senza approvazione.</li>
+    </ul>
+</div>
+
+<!-- ====================== 5. VOCE ====================== -->
+<div class="section">
+    <span class="section-num">05 · Voce</span>
+    <h2 class="section-title">Come parliamo</h2>
+    <p class="section-lead">Diretto-colloquiale. Italiano vero. Voce di un collega che sa il mestiere — non un venditore, non un consulente patinato. Chi legge una nostra mail deve dire "questi mi capiscono".</p>
+
+    <h3>Pilastri</h3>
+    <ol style="line-height: 1.8; padding-left: 20px;">
+        <li><strong>Concretezza prima di tutto.</strong> Numero, beneficio, esempio. Mai aggettivi vaghi ("innovativo", "rivoluzionario", "all'avanguardia").</li>
+        <li><strong>Italiano vero.</strong> Niente anglicismi quando esiste la parola italiana. <em>Prenotazione</em> non <em>booking</em>. <em>Coperti</em> non <em>seats</em>. <em>Caparra</em> non <em>deposit</em> (in dashboard sì, in marketing no).</li>
+        <li><strong>Frasi corte, una idea per frase.</strong> Se serve un punto e virgola, probabilmente sono due frasi.</li>
+        <li><strong>Tu, non Lei.</strong> Parliamo a un collega ristoratore, non a un cliente VIP. Il "Lei" allontana.</li>
+        <li><strong>Mai la promessa magica.</strong> Non garantiamo "il 30% di clienti in più", garantiamo "che la sera la sala è piena perché tu hai gestito le prenotazioni come si deve".</li>
+    </ol>
+
+    <h3>Do / Don't</h3>
+    <div class="voice-grid">
+        <div class="voice-col voice-do">
+            <h4>✓ Sì</h4>
+            <div class="voice-item">
+                <div class="quote">"Le prenotazioni della sera prossima? Le hai già tutte sul telefono."</div>
+                <div class="why">Concreto, scena familiare, "tu" diretto.</div>
+            </div>
+            <div class="voice-item">
+                <div class="quote">"Caparra opzionale. Tu decidi quando chiederla."</div>
+                <div class="why">Mette il ristoratore al centro della decisione.</div>
+            </div>
+            <div class="voice-item">
+                <div class="quote">"Supporto italiano che risponde davvero."</div>
+                <div class="why">Una promessa concreta, anti-aggregatori.</div>
+            </div>
+            <div class="voice-item">
+                <div class="quote">"Niente percentuali su ogni prenotazione."</div>
+                <div class="why">Differenziazione esplicita, parla al portafoglio.</div>
+            </div>
+        </div>
+        <div class="voice-col voice-dont">
+            <h4>✗ No</h4>
+            <div class="voice-item">
+                <div class="quote">"La piattaforma all-in-one più innovativa per il food&beverage."</div>
+                <div class="why">Vaga, anglicismi, suona da agenzia.</div>
+            </div>
+            <div class="voice-item">
+                <div class="quote">"Boost your bookings con il nostro engine smart."</div>
+                <div class="why">Inglese gratuito, vuoto. Mai.</div>
+            </div>
+            <div class="voice-item">
+                <div class="quote">"Egregio Ristoratore, La invitiamo a scoprire..."</div>
+                <div class="why">"Lei" formale, distanza. Sembra una raccomandata bancaria.</div>
+            </div>
+            <div class="voice-item">
+                <div class="quote">"Aumenta le tue prenotazioni del 47% in 30 giorni!"</div>
+                <div class="why">Promessa magica, numero non verificabile, da info-marketer.</div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Glossario italiano</h3>
+    <div class="glossary">
+        <div class="glossary-row">
+            <span class="glossary-no">Booking</span>
+            <span class="glossary-arrow">→</span>
+            <span class="glossary-yes">Prenotazione</span>
+        </div>
+        <div class="glossary-row">
+            <span class="glossary-no">No-show</span>
+            <span class="glossary-arrow">→</span>
+            <span class="glossary-yes">Mancata presentazione</span>
+        </div>
+        <div class="glossary-row">
+            <span class="glossary-no">Engagement</span>
+            <span class="glossary-arrow">→</span>
+            <span class="glossary-yes">Relazione con il cliente</span>
+        </div>
+        <div class="glossary-row">
+            <span class="glossary-no">Customer journey</span>
+            <span class="glossary-arrow">→</span>
+            <span class="glossary-yes">Esperienza del cliente</span>
+        </div>
+        <div class="glossary-row">
+            <span class="glossary-no">Onboarding</span>
+            <span class="glossary-arrow">→</span>
+            <span class="glossary-yes">Attivazione (in marketing) · Onboarding (in dashboard)</span>
+        </div>
+        <div class="glossary-row">
+            <span class="glossary-no">Insight</span>
+            <span class="glossary-arrow">→</span>
+            <span class="glossary-yes">Statistiche · numeri</span>
+        </div>
+        <div class="glossary-row">
+            <span class="glossary-no">Real-time</span>
+            <span class="glossary-arrow">→</span>
+            <span class="glossary-yes">In tempo reale</span>
+        </div>
+        <div class="glossary-row">
+            <span class="glossary-no">Smart</span>
+            <span class="glossary-arrow">→</span>
+            <span class="glossary-yes">(eliminare. Quasi sempre vuoto)</span>
+        </div>
+    </div>
+    <p class="small muted">Eccezioni accettate: termini tecnici dashboard (deposit, slot, override), termini API (token, webhook), nomi prodotti terzi (Google My Business, TheFork).</p>
+</div>
+
+<!-- ====================== 6. STATIONERY ====================== -->
+<div class="section">
+    <span class="section-num">06 · Stationery</span>
+    <h2 class="section-title">Firme, footer, profili</h2>
+    <p class="section-lead">Pezzi pratici copia-incolla per email, social, documenti. Tieni questa sezione come sorgente unica di verità.</p>
+
+    <div class="station">
+        <div class="station-row">
+            <div class="station-label">Footer landing & app</div>
+            <div class="station-value">© {{anno}} Evulery · by alagias. — Soluzioni per il web</div>
+        </div>
+        <div class="station-row">
+            <div class="station-label">Sede legale (privacy, contratti, legal)</div>
+            <div class="station-value">alagias. di Stefano Alagia · P.IVA 01855570766<br>C.da Menavoli, 29 · 85044 Lauria (PZ)</div>
+        </div>
+        <div class="station-row">
+            <div class="station-label">Email firma standard</div>
+            <div class="station-value">Stefano Alagia<br>Founder · Evulery<br>—<br>📧 stefano@evulery.it · 🌐 evulery.it<br>alagias. — Soluzioni per il web · P.IVA 01855570766</div>
+        </div>
+        <div class="station-row">
+            <div class="station-label">Tagline 1 riga (social bio, signature corta)</div>
+            <div class="station-value">Pieni la sera, felici la mattina.</div>
+        </div>
+        <div class="station-row">
+            <div class="station-label">Tagline 2 righe (presentazioni, pdf)</div>
+            <div class="station-value">Il software italiano per le prenotazioni del tuo ristorante.<br>Pieni la sera, felici la mattina.</div>
+        </div>
+        <div class="station-row">
+            <div class="station-label">Boilerplate corto (press, partner)</div>
+            <div class="station-value">Evulery è il software italiano per la gestione delle prenotazioni e dell'accoglienza dei ristoranti indipendenti. Niente percentuali sui clienti, supporto italiano, conforme alla Legge 34/2026 sulle recensioni online. Sviluppato da alagias. (Lauria, PZ).</div>
+        </div>
+    </div>
+</div>
+
+<!-- ====================== 7. ASSET ====================== -->
+<div class="section">
+    <span class="section-num">07 · Asset</span>
+    <h2 class="section-title">Dove pescare</h2>
+    <p class="section-lead">Tutti i mockup logomark in questa pagina sono SVG inline: tasto destro → "Salva immagine come..." per esportarli, oppure copia il codice direttamente dal sorgente HTML di questo documento.</p>
+
+    <ul style="line-height: 1.8; padding-left: 20px;">
+        <li><strong>Logomark SVG</strong>: 3 concept inline qui sopra, pronti per essere copiati nel codice o salvati come file.</li>
+        <li><strong>Logotype</strong>: Inter 900, lowercase, letter-spacing -2px / -1px. Riproducibile via CSS.</li>
+        <li><strong>Color tokens</strong>: già in <code>public/assets/css/dashboard.css</code> (variabili <code>--brand</code>, <code>--brand-dark</code>, <code>--brand-light</code>).</li>
+        <li><strong>Inter font</strong>: <code>https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap</code></li>
+        <li><strong>Pitch deck</strong>: <code>sales/pitch-deck.html</code> e <code>.pdf</code></li>
+        <li><strong>One-pager</strong>: <code>sales/onepager.html</code> e <code>.pdf</code></li>
+        <li><strong>Demo script</strong>: <code>sales/demo-script.md</code></li>
+    </ul>
+
+    <p class="small muted">Quando un terzo (designer freelance, agenzia social) deve produrre asset per Evulery, condividi questo file. È la versione 1.0 ed è autoritativa.</p>
+</div>
+
+<!-- ====================== FOOTER ====================== -->
+<div class="book-footer">
+    <strong>Evulery Brand Guidelines · v1.0 · Maggio 2026</strong><br>
+    © 2026 Evulery · by alagias. — Soluzioni per il web<br>
+    Documento interno · alagias. di Stefano Alagia · P.IVA 01855570766
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe — Impostazioni (Card Grid)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-light: #e8f5e9;
+            --brand-dark: #006837;
+        }
+        body { background: #f5f6f8; font-family: system-ui, -apple-system, sans-serif; }
+
+        .wireframe-badge {
+            position: fixed; top: 12px; right: 12px; background: #FF9800; color: #fff;
+            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 999;
+        }
+
+        .page-wrap { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+
+        /* Page header */
+        .page-title { font-size: 1.35rem; font-weight: 700; margin-bottom: .15rem; }
+        .page-subtitle { font-size: .82rem; color: #6c757d; margin-bottom: 1.5rem; }
+
+        /* Setup progress (opzionale ma utile) */
+        .setup-progress {
+            background: #fff; border: 1px solid #e9ecef; border-radius: 12px;
+            padding: 1.1rem 1.35rem; margin-bottom: 1.75rem;
+            display: grid; grid-template-columns: 1fr auto; gap: 1.5rem; align-items: center;
+        }
+        .setup-progress-info { font-size: .85rem; }
+        .setup-progress-info strong { color: #1a1d23; }
+        .setup-progress-info span { color: #6c757d; }
+        .setup-progress-bar {
+            margin-top: .5rem; height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden;
+        }
+        .setup-progress-bar-fill {
+            height: 100%; background: linear-gradient(90deg, var(--brand), #4caf50);
+            width: 73%; transition: width .3s;
+        }
+        .setup-progress-stat {
+            font-size: 1.5rem; font-weight: 800; color: var(--brand); line-height: 1;
+        }
+        .setup-progress-stat-label {
+            font-size: .68rem; color: #6c757d; text-transform: uppercase; letter-spacing: .4px;
+            margin-top: .15rem;
+        }
+
+        /* Search bar */
+        .settings-search-wrap {
+            position: relative; margin-bottom: 2rem;
+        }
+        .settings-search {
+            width: 100%; padding: .75rem 1rem .75rem 2.75rem;
+            border: 1px solid #e0e0e0; border-radius: 10px;
+            font-size: .9rem; background: #fff;
+        }
+        .settings-search:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(0,132,74,.1); }
+        .settings-search-icon {
+            position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+            color: #adb5bd; font-size: 1rem;
+        }
+
+        /* Category */
+        .settings-category {
+            margin-bottom: 2.5rem;
+        }
+        .settings-category-header {
+            display: flex; align-items: center; gap: .6rem;
+            margin-bottom: 1rem;
+        }
+        .settings-category-icon {
+            width: 28px; height: 28px; border-radius: 7px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: .8rem;
+        }
+        .settings-category-title {
+            font-size: .82rem; font-weight: 700; color: #1a1d23;
+            text-transform: uppercase; letter-spacing: .5px;
+        }
+        .settings-category-line { flex: 1; height: 1px; background: #e9ecef; margin-left: .5rem; }
+
+        /* Card grid */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .settings-card {
+            background: #fff; border-radius: 12px;
+            padding: 1.2rem; border: 1px solid #f0f0f0;
+            box-shadow: 0 1px 4px rgba(0,0,0,.04);
+            cursor: pointer; text-decoration: none; color: inherit;
+            transition: all .15s ease;
+            display: flex; flex-direction: column;
+            position: relative;
+        }
+        .settings-card:hover {
+            border-color: var(--brand);
+            box-shadow: 0 4px 16px rgba(0, 132, 74, .12);
+            transform: translateY(-2px);
+            color: inherit;
+        }
+        .settings-card-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1.05rem;
+            margin-bottom: .65rem;
+        }
+        .settings-card-title {
+            font-size: .92rem; font-weight: 700; color: #1a1d23;
+            margin: 0 0 .25rem 0;
+        }
+        .settings-card-desc {
+            font-size: .76rem; color: #6c757d; line-height: 1.5;
+            flex: 1;
+        }
+        .settings-card-status {
+            display: inline-flex; align-items: center; gap: .25rem;
+            font-size: .68rem; font-weight: 600;
+            padding: 3px 9px; border-radius: 10px;
+            margin-top: .85rem; align-self: flex-start;
+        }
+        .settings-card-status.ok { background: #E8F5E9; color: #2E7D32; }
+        .settings-card-status.warning { background: #FFF3E0; color: #E65100; }
+        .settings-card-status.off { background: #f5f5f5; color: #6c757d; }
+        .settings-card-status.locked { background: #FFF8E1; color: #F57F17; }
+
+        /* Card "spento" stile leggermente smorzato */
+        .settings-card.is-off { opacity: .85; }
+        .settings-card.is-off .settings-card-icon { background: #ECEFF1 !important; color: #90A4AE !important; }
+
+        /* Card locked Enterprise */
+        .settings-card.is-locked .settings-card-icon { background: #FFF8E1 !important; color: #F57F17 !important; }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .settings-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 576px) {
+            .settings-grid { grid-template-columns: 1fr; }
+            .setup-progress { grid-template-columns: 1fr; text-align: center; }
+        }
+
+        /* Hint sotto */
+        .settings-foot-hint {
+            background: #f0faf4; border: 1px solid var(--brand-light); border-radius: 10px;
+            padding: 1rem 1.25rem; margin-top: 1.5rem;
+            display: flex; align-items: center; gap: .85rem;
+            font-size: .82rem; color: #495057;
+        }
+        .settings-foot-hint i { color: var(--brand); font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+<div class="wireframe-badge">WIREFRAME — Settings Card Grid</div>
+
+<div class="page-wrap">
+
+    <!-- Header -->
+    <div>
+        <h2 class="page-title"><i class="bi bi-gear" style="color:var(--brand);"></i> Impostazioni</h2>
+        <p class="page-subtitle">Configura come funziona il tuo ristorante su Evulery.</p>
+    </div>
+
+    <!-- Setup progress (opzionale: si può togliere se ingombrante) -->
+    <div class="setup-progress">
+        <div class="setup-progress-info">
+            <div><strong>Configurazione attiva: 8 di 11</strong> · <span>Mancano 3 sezioni</span></div>
+            <div class="setup-progress-bar"><div class="setup-progress-bar-fill"></div></div>
+        </div>
+        <div style="text-align:center;">
+            <div class="setup-progress-stat">73%</div>
+            <div class="setup-progress-stat-label">Completato</div>
+        </div>
+    </div>
+
+    <!-- Ricerca veloce (opzionale ma utile con 11+ card) -->
+    <div class="settings-search-wrap">
+        <i class="bi bi-search settings-search-icon"></i>
+        <input type="text" class="settings-search" placeholder="Cerca un'impostazione…">
+    </div>
+
+    <!-- =============== CATEGORIA: OPERATIVITÀ =============== -->
+    <div class="settings-category">
+        <div class="settings-category-header">
+            <div class="settings-category-icon" style="background:#00844A;"><i class="bi bi-calendar-check"></i></div>
+            <div class="settings-category-title">Operatività</div>
+            <div class="settings-category-line"></div>
+        </div>
+        <div class="settings-grid">
+
+            <a href="#" class="settings-card">
+                <div class="settings-card-icon" style="background:#00844A;"><i class="bi bi-shop"></i></div>
+                <div class="settings-card-title">Generali</div>
+                <div class="settings-card-desc">Nome, indirizzo, contatti, lingua, fuso orario, capacità sale.</div>
+                <span class="settings-card-status ok"><i class="bi bi-check-circle-fill"></i> Configurato</span>
+            </a>
+
+            <a href="#" class="settings-card">
+                <div class="settings-card-icon" style="background:#1976D2;"><i class="bi bi-clock"></i></div>
+                <div class="settings-card-title">Orari e coperti</div>
+                <div class="settings-card-desc">Slot di prenotazione, pasti del giorno, capacità per fascia oraria.</div>
+                <span class="settings-card-status ok"><i class="bi bi-check-circle-fill"></i> Configurato</span>
+            </a>
+
+            <a href="#" class="settings-card">
+                <div class="settings-card-icon" style="background:#7B1FA2;"><i class="bi bi-tags"></i></div>
+                <div class="settings-card-title">Categorie pasto</div>
+                <div class="settings-card-desc">Pranzo, cena, brunch — definisci come si articola la giornata.</div>
+                <span class="settings-card-status ok"><i class="bi bi-check-circle-fill"></i> Configurato</span>
+            </a>
+
+            <a href="#" class="settings-card">
+                <div class="settings-card-icon" style="background:#D84315;"><i class="bi bi-calendar-x"></i></div>
+                <div class="settings-card-title">Chiusure</div>
+                <div class="settings-card-desc">Giorni di chiusura, ferie, eventi privati. Bloccano le prenotazioni.</div>
+                <span class="settings-card-status warning"><i class="bi bi-exclamation-circle-fill"></i> Nessuna chiusura impostata</span>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- =============== CATEGORIA: SERVIZI AI CLIENTI =============== -->
+    <div class="settings-category">
+        <div class="settings-category-header">
+            <div class="settings-category-icon" style="background:#F57C00;"><i class="bi bi-people"></i></div>
+            <div class="settings-category-title">Servizi ai clienti</div>
+            <div class="settings-category-line"></div>
+        </div>
+        <div class="settings-grid">
+
+            <a href="#" class="settings-card">
+                <div class="settings-card-icon" style="background:#E65100;"><i class="bi bi-percent"></i></div>
+                <div class="settings-card-title">Promozioni</div>
+                <div class="settings-card-desc">Sconti ricorrenti o per data: martedì sconto, early bird, eventi.</div>
+                <span class="settings-card-status ok"><i class="bi bi-check-circle-fill"></i> 2 attive</span>
+            </a>
+
+            <a href="#" class="settings-card">
+                <div class="settings-card-icon" style="background:#388E3C;"><i class="bi bi-cash-coin"></i></div>
+                <div class="settings-card-title">Caparra</div>
+                <div class="settings-card-desc">Richiedi pagamento anticipato per ridurre i no-show.</div>
+                <span class="settings-card-status off"><i class="bi bi-pause-circle"></i> Disattivata</span>
+            </a>
+
+            <a href="#" class="settings-card">
+                <div class="settings-card-icon" style="background:#0277BD;"><i class="bi bi-bag-check"></i></div>
+                <div class="settings-card-title">Ordini online</div>
+                <div class="settings-card-desc">Asporto e consegna a domicilio direttamente dal tuo sito.</div>
+                <span class="settings-card-status ok"><i class="bi bi-check-circle-fill"></i> Attivo · 8 ordini oggi</span>
+            </a>
+
+            <a href="#" class="settings-card">
+                <div class="settings-card-icon" style="background:#FBC02D;"><i class="bi bi-star"></i></div>
+                <div class="settings-card-title">Recensioni</div>
+                <div class="settings-card-desc">Richiesta automatica post-visita e pagina pubblica feedback.</div>
+                <span class="settings-card-status ok"><i class="bi bi-check-circle-fill"></i> Attivo</span>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- =============== CATEGORIA: COMUNICAZIONE & BRAND =============== -->
+    <div class="settings-category">
+        <div class="settings-category-header">
+            <div class="settings-category-icon" style="background:#5E35B1;"><i class="bi bi-megaphone"></i></div>
+            <div class="settings-category-title">Comunicazione e brand</div>
+            <div class="settings-category-line"></div>
+        </div>
+        <div class="settings-grid">
+
+            <a href="#" class="settings-card">
+                <div class="settings-card-icon" style="background:#5E35B1;"><i class="bi bi-bell"></i></div>
+                <div class="settings-card-title">Notifiche</div>
+                <div class="settings-card-desc">Email/SMS reminder ai clienti, alert per il ristoratore.</div>
+                <span class="settings-card-status ok"><i class="bi bi-check-circle-fill"></i> Configurato</span>
+            </a>
+
+            <a href="#" class="settings-card">
+                <div class="settings-card-icon" style="background:#00897B;"><i class="bi bi-grid-3x3-gap"></i></div>
+                <div class="settings-card-title">Vetrina digitale</div>
+                <div class="settings-card-desc">Pagina pubblica con QR per menu, prenotazioni, offerte, social.</div>
+                <span class="settings-card-status ok"><i class="bi bi-check-circle-fill"></i> Online</span>
+            </a>
+
+            <a href="#" class="settings-card is-locked">
+                <div class="settings-card-icon"><i class="bi bi-globe"></i></div>
+                <div class="settings-card-title">Dominio personalizzato</div>
+                <div class="settings-card-desc">Usa il tuo dominio (tuoristorante.it) invece di evulery.it.</div>
+                <span class="settings-card-status locked"><i class="bi bi-stars"></i> Solo Enterprise</span>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Hint footer -->
+    <div class="settings-foot-hint">
+        <i class="bi bi-lightbulb"></i>
+        <div>
+            <strong>Suggerimento:</strong>
+            le sezioni con il badge <span style="color:#E65100; font-weight:600;">arancione</span> richiedono attenzione. Configurale per offrire un servizio completo ai tuoi clienti.
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Filtro live ricerca
+    document.querySelector('.settings-search').addEventListener('input', function(e) {
+        var q = e.target.value.toLowerCase().trim();
+        document.querySelectorAll('.settings-card').forEach(function(card) {
+            var title = card.querySelector('.settings-card-title').textContent.toLowerCase();
+            var desc = card.querySelector('.settings-card-desc').textContent.toLowerCase();
+            card.style.display = (!q || title.includes(q) || desc.includes(q)) ? '' : 'none';
+        });
+        // nascondi categorie senza card visibili
+        document.querySelectorAll('.settings-category').forEach(function(cat) {
+            var visible = Array.from(cat.querySelectorAll('.settings-card')).some(c => c.style.display !== 'none');
+            cat.style.display = visible ? '' : 'none';
+        });
+    });
+</script>
+
+</body>
+</html>

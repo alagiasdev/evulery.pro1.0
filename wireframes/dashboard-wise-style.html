@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Evulery — Wise-inspired</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --near-black: #0e0f0c;
+            --wise-green: #9fe870;
+            --dark-green: #163300;
+            --light-mint: #e2f6d5;
+            --pastel-green: #cdffad;
+            --positive: #054d28;
+            --danger: #d03238;
+            --warning: #ffd11a;
+            --warm-dark: #454745;
+            --gray: #868685;
+            --light-surface: #e8ebe6;
+            --canvas: #f7f6f3;  /* warm off-white */
+            --white: #ffffff;
+        }
+        * { box-sizing: border-box; font-feature-settings: "calt" 1; }
+        body {
+            margin: 0;
+            background: var(--canvas);
+            font-family: 'Inter', Helvetica, Arial, sans-serif;
+            font-weight: 600;  /* Inter weight 600 as body default */
+            color: var(--near-black);
+            font-size: 18px;
+            line-height: 1.44;
+            letter-spacing: 0.18px;
+        }
+
+        /* ============ Display typography ============ */
+        .display-mega { font-size: 96px; font-weight: 900; line-height: 0.85; letter-spacing: -3px; }
+        .display-hero { font-size: 72px; font-weight: 900; line-height: 0.85; letter-spacing: -2px; }
+        .display-sect { font-size: 48px; font-weight: 900; line-height: 0.88; letter-spacing: -1.4px; }
+        .display-sub  { font-size: 32px; font-weight: 900; line-height: 0.9;  letter-spacing: -0.8px; }
+        .alt-heading  { font-size: 42px; font-weight: 600; line-height: 1.1;  letter-spacing: -1.5px; }
+        .card-title   { font-size: 22px; font-weight: 600; line-height: 1.25; letter-spacing: -0.39px; }
+        .feature-title{ font-size: 18px; font-weight: 600; line-height: 1.3;  letter-spacing: -0.2px; }
+        .body-text    { font-size: 16px; font-weight: 400; line-height: 1.5;  letter-spacing: 0.1px; }
+        .body-sb      { font-size: 16px; font-weight: 600; line-height: 1.5;  letter-spacing: -0.1px; }
+        .caption      { font-size: 13px; font-weight: 500; line-height: 1.5;  letter-spacing: -0.08px; color: var(--gray); }
+        .small-num    { font-size: 12px; font-weight: 600; line-height: 1;   text-transform: uppercase; letter-spacing: .5px; }
+
+        /* ============ Layout ============ */
+        .app { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+
+        /* Sidebar */
+        .side {
+            background: var(--near-black);
+            color: #cfcfc9;
+            padding: 1.5rem 1rem;
+            position: sticky; top: 0; height: 100vh; overflow-y: auto;
+        }
+        .brand {
+            display: flex; align-items: center; gap: .6rem;
+            margin-bottom: 2rem; padding: 0 .5rem;
+        }
+        .brand-dot {
+            width: 40px; height: 40px; border-radius: 9999px;
+            background: var(--wise-green); color: var(--dark-green);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 20px;
+        }
+        .brand-name { font-weight: 900; font-size: 20px; color: #fff; letter-spacing: -0.5px; }
+        .side-user {
+            padding: .75rem 1rem;
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: .6rem;
+        }
+        .side-user-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--wise-green); color: var(--dark-green);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 13px; flex-shrink: 0;
+        }
+        .side-user-text { font-size: 13px; color: #cfcfc9; }
+        .side-user-text b { color: #fff; font-weight: 700; display: block; font-size: 14px; }
+        .side-nav { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .15rem; }
+        .side-nav li a {
+            display: flex; align-items: center; gap: .75rem;
+            padding: .65rem .85rem;
+            border-radius: 9999px;  /* pill nav */
+            color: #cfcfc9; text-decoration: none;
+            font-size: 15px; font-weight: 600;
+            transition: all .15s;
+        }
+        .side-nav li a:hover { background: rgba(159,232,112,0.14); color: var(--wise-green); }
+        .side-nav li a.active {
+            background: var(--wise-green); color: var(--dark-green); font-weight: 700;
+        }
+        .side-section { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6a6a68; padding: 1rem .85rem .5rem; font-weight: 700; }
+
+        /* Main */
+        .main { padding: 2rem 2.5rem; max-width: 1400px; }
+        .main-head {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            gap: 2rem; margin-bottom: 2rem;
+        }
+        .greeting-chip {
+            display: inline-flex; align-items: center; gap: .4rem;
+            padding: .35rem .7rem;
+            background: var(--light-mint);
+            border-radius: 9999px;
+            font-size: 13px; font-weight: 600; color: var(--dark-green);
+            margin-bottom: 1rem;
+        }
+        .greeting-chip svg { width: 14px; height: 14px; fill: currentColor; }
+        .day-pill-row { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+        /* Buttons */
+        .btn { font-family: inherit; font-size: 16px; font-weight: 600; cursor: pointer;
+               letter-spacing: -0.1px; border: none;
+               display: inline-flex; align-items: center; gap: .4rem;
+               transition: transform .12s ease, background .15s; }
+        .btn:hover { transform: scale(1.05); }
+        .btn:active { transform: scale(0.95); }
+        .btn-primary {
+            background: var(--wise-green); color: var(--dark-green);
+            padding: 10px 18px; border-radius: 9999px;
+        }
+        .btn-primary:hover { background: var(--pastel-green); }
+        .btn-sub {
+            background: rgba(22,51,0,0.08); color: var(--near-black);
+            padding: 8px 14px 8px 16px; border-radius: 9999px;
+            font-size: 14px;
+        }
+        .btn-dark {
+            background: var(--near-black); color: var(--wise-green);
+            padding: 10px 18px; border-radius: 9999px;
+        }
+        .btn-sm { padding: 6px 14px; font-size: 13px; }
+
+        /* Hero KPI */
+        .hero-kpi {
+            background: var(--near-black);
+            color: #fff;
+            border-radius: 40px;
+            padding: 2.5rem 3rem;
+            display: grid; grid-template-columns: 1.3fr 1fr; gap: 2rem;
+            align-items: center;
+            box-shadow: rgba(14,15,12,0.12) 0px 0px 0px 1px;
+            margin-bottom: 2rem;
+            position: relative; overflow: hidden;
+        }
+        .hero-kpi::before {
+            content: ''; position: absolute; right: -80px; top: -80px;
+            width: 280px; height: 280px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(159,232,112,0.4), transparent 70%);
+            pointer-events: none;
+        }
+        .hero-left h1 { margin: 0 0 .5rem; color: #fff; }
+        .hero-left .numb { color: var(--wise-green); }
+        .hero-sub { color: #a8aca5; max-width: 380px; margin-bottom: 1.25rem; font-weight: 500; }
+        .hero-cta-row { display: flex; gap: .75rem; }
+        .hero-right-numbers { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+        .hero-stat { background: rgba(255,255,255,.06); padding: 1.1rem 1.25rem; border-radius: 20px; }
+        .hero-stat-num { font-size: 36px; font-weight: 900; line-height: 1; color: var(--wise-green); letter-spacing: -1px; margin-bottom: .25rem; }
+        .hero-stat-lab { font-size: 13px; font-weight: 500; color: #a8aca5; }
+
+        /* KPI grid */
+        .kpi-row {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .kpi-card {
+            background: var(--white);
+            border-radius: 30px;
+            padding: 1.5rem 1.75rem;
+            box-shadow: rgba(14,15,12,0.12) 0px 0px 0px 1px;
+        }
+        .kpi-card.accent {
+            background: var(--wise-green);
+            box-shadow: rgba(22,51,0,0.12) 0px 0px 0px 1px;
+            color: var(--dark-green);
+        }
+        .kpi-label {
+            font-size: 14px; font-weight: 600; color: var(--gray);
+            text-transform: uppercase; letter-spacing: 1.2px;
+            margin-bottom: .75rem;
+        }
+        .kpi-card.accent .kpi-label { color: var(--dark-green); opacity: .75; }
+        .kpi-val {
+            font-size: 56px; font-weight: 900; line-height: 0.85;
+            letter-spacing: -2px; margin: 0 0 .4rem;
+        }
+        .kpi-trend {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 13px; font-weight: 600;
+            padding: 2px 8px; border-radius: 9999px;
+            background: var(--light-mint); color: var(--positive);
+        }
+        .kpi-trend.down { background: #ffe4e6; color: var(--danger); }
+        .kpi-card.accent .kpi-trend { background: var(--dark-green); color: var(--wise-green); }
+        .kpi-icon-bg {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: var(--light-mint); color: var(--positive);
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 1rem;
+        }
+        .kpi-card.accent .kpi-icon-bg { background: var(--dark-green); color: var(--wise-green); }
+        .kpi-icon-bg svg { width: 18px; height: 18px; fill: currentColor; }
+
+        /* Content grid */
+        .content-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+
+        /* Reservations card (next arrivals) */
+        .res-card {
+            background: var(--white);
+            border-radius: 40px;
+            padding: 2rem;
+            box-shadow: rgba(14,15,12,0.12) 0px 0px 0px 1px;
+        }
+        .res-head {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 1.25rem;
+        }
+        .res-head h2 { margin: 0; }
+        .res-row {
+            display: grid;
+            grid-template-columns: 60px 40px 1fr auto auto;
+            gap: 1rem; align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(14,15,12,0.08);
+        }
+        .res-row:last-child { border-bottom: none; }
+        .res-time {
+            font-size: 22px; font-weight: 900; letter-spacing: -0.5px;
+            color: var(--near-black);
+        }
+        .res-status-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--positive);
+        }
+        .res-status-dot.pending { background: var(--warning); }
+        .res-info-name { font-weight: 700; font-size: 16px; }
+        .res-info-meta { font-size: 13px; color: var(--gray); margin-top: 2px; }
+        .res-pax-chip {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: var(--light-mint); color: var(--dark-green);
+            padding: 4px 12px; border-radius: 9999px;
+            font-size: 14px; font-weight: 700;
+        }
+
+        /* Sidebar cards */
+        .mini-card {
+            background: var(--white);
+            border-radius: 30px;
+            padding: 1.5rem;
+            box-shadow: rgba(14,15,12,0.12) 0px 0px 0px 1px;
+            margin-bottom: 1rem;
+        }
+        .mini-card h3 { margin: 0 0 .5rem; font-size: 14px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 1.2px; }
+        .mini-card .big-num { font-size: 48px; font-weight: 900; line-height: 0.85; margin-bottom: .75rem; letter-spacing: -1.5px; }
+
+        /* Capacity progress */
+        .capacity-bar {
+            height: 8px; background: var(--light-surface); border-radius: 9999px; overflow: hidden;
+            margin: .5rem 0 .25rem;
+        }
+        .capacity-fill { height: 100%; background: var(--near-black); border-radius: 9999px; }
+        .capacity-fill.green { background: var(--wise-green); }
+        .capacity-fill.warn { background: var(--warning); }
+        .capacity-fill.full { background: var(--danger); }
+        .capacity-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--gray); font-weight: 600; margin-top: .3rem; }
+        .meal-row { margin-bottom: 1.25rem; }
+        .meal-row:last-child { margin-bottom: 0; }
+        .meal-name { font-weight: 700; font-size: 16px; margin-bottom: .5rem; display: flex; justify-content: space-between; align-items: center; }
+        .meal-percent { font-size: 13px; color: var(--gray); font-weight: 600; }
+
+        /* Bar chart — upcoming 7 days */
+        .bar-chart {
+            display: flex; align-items: flex-end; gap: .5rem;
+            height: 140px; margin-top: 1.25rem;
+        }
+        .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: .4rem; }
+        .bar-fill {
+            width: 100%;
+            background: var(--wise-green);
+            border-radius: 9999px 9999px 6px 6px;
+            min-height: 8px;
+            position: relative;
+        }
+        .bar-fill.today { background: var(--near-black); }
+        .bar-fill:hover { background: var(--pastel-green); }
+        .bar-fill.today:hover { background: var(--dark-green); }
+        .bar-fill[data-count]::before {
+            content: attr(data-count);
+            position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+            font-size: 13px; font-weight: 800; color: var(--near-black);
+        }
+        .bar-label { font-size: 12px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: .5px; }
+        .bar-label.today { color: var(--near-black); font-weight: 700; }
+
+        /* Source breakdown */
+        .source-row {
+            display: grid; grid-template-columns: 1fr 60px 40px;
+            gap: .75rem; align-items: center;
+            padding: .6rem 0;
+        }
+        .source-bar-wrap { background: var(--light-surface); height: 8px; border-radius: 9999px; overflow: hidden; position: relative; min-width: 0; }
+        .source-bar-fill { height: 100%; background: var(--wise-green); border-radius: 9999px; }
+        .source-bar-fill.alt { background: var(--near-black); }
+        .source-name { font-weight: 700; font-size: 15px; }
+        .source-pct { text-align: right; font-weight: 700; font-size: 14px; }
+        .source-count { text-align: right; color: var(--gray); font-size: 13px; font-weight: 600; }
+
+        /* Notes */
+        .design-note {
+            background: var(--light-mint);
+            border-radius: 16px; padding: 1rem 1.25rem;
+            font-size: 13px; color: var(--dark-green); font-weight: 600;
+            max-width: 1200px; margin: 0 auto 1.5rem; display: flex; gap: .75rem; align-items: flex-start;
+        }
+        .design-note svg { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; margin-top: 2px; }
+
+        @media (max-width: 1100px) {
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+            .content-grid { grid-template-columns: 1fr; }
+            .hero-kpi { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 700px) {
+            .app { grid-template-columns: 1fr; }
+            .side { position: static; height: auto; }
+            .main { padding: 1.5rem 1rem; }
+            .kpi-row { grid-template-columns: 1fr 1fr; }
+            .display-mega { font-size: 56px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="design-note">
+    <svg viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+    <div>
+        <strong>Wireframe — dashboard stile Wise.</strong> Inter al posto di Wise Sans (proprietario di Wise): uso weight 900 + line-height 0.85 per display. Canvas warm off-white, lime green (#9fe870) solo su CTA/accenti, dark green text on green, pill buttons, 30-40px card radius, ring shadows. Scale hover/active implementato.
+    </div>
+</div>
+
+<div class="app">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="side">
+        <div class="brand">
+            <div class="brand-dot">e</div>
+            <div class="brand-name">evulery</div>
+        </div>
+
+        <div class="side-user">
+            <div class="side-user-avatar">MR</div>
+            <div class="side-user-text">
+                <b>Mario Rossi</b>
+                Trattoria Nuok
+            </div>
+        </div>
+
+        <ul class="side-nav">
+            <li><a class="active" href="#">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/></svg>
+                Dashboard
+            </a></li>
+            <li><a href="#">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/><path d="M10.854 7.854a.5.5 0 0 0-.708-.708L7.5 9.793 6.354 8.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"/></svg>
+                Prenotazioni
+            </a></li>
+            <li><a href="#">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg>
+                Clienti
+            </a></li>
+            <li><a href="#">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 2A3.5 3.5 0 0 0 2 5.5v5A3.5 3.5 0 0 0 5.5 14h5a3.5 3.5 0 0 0 3.5-3.5V8a.5.5 0 0 1 1 0v2.5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 1 10.5v-5A4.5 4.5 0 0 1 5.5 1H8a.5.5 0 0 1 0 1H5.5z"/><path d="M16 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
+                Ordini
+            </a></li>
+
+            <li class="side-section">Contenuti</li>
+            <li><a href="#">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
+                Menu
+            </a></li>
+            <li><a href="#">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/></svg>
+                Recensioni
+            </a></li>
+            <li><a href="#">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M15.854 6.146a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0L9.354 5.232a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708 0l2.792-2.794zM4 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
+                Vetrina Digitale
+            </a></li>
+
+            <li class="side-section">Sistema</li>
+            <li><a href="#">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/></svg>
+                Impostazioni
+            </a></li>
+            <li><a href="#">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/></svg>
+                Guida
+            </a></li>
+        </ul>
+    </aside>
+
+    <!-- ============ MAIN ============ -->
+    <main class="main">
+
+        <!-- Top bar -->
+        <div class="main-head">
+            <div>
+                <div class="greeting-chip">
+                    <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg>
+                    Venerdì 25 aprile
+                </div>
+                <div class="display-sect">Buongiorno,<br>Mario.</div>
+            </div>
+            <div style="display:flex; gap:.5rem;">
+                <button class="btn btn-sub">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM8 4a1 1 0 0 0-1 1v3H5a1 1 0 0 0 0 2h2v2a1 1 0 1 0 2 0v-2h2a1 1 0 1 0 0-2H9V5a1 1 0 0 0-1-1z"/></svg>
+                    Esporta
+                </button>
+                <button class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>
+                    Nuova prenotazione
+                </button>
+            </div>
+        </div>
+
+        <!-- HERO — massive bold number -->
+        <div class="hero-kpi">
+            <div class="hero-left">
+                <h1 class="display-hero"><span class="numb">7</span> prenotazioni<br>per oggi.</h1>
+                <p class="hero-sub">26 coperti attesi · 2 in attesa di conferma · sei sopra la media settimanale di +12%.</p>
+                <div class="hero-cta-row">
+                    <button class="btn btn-dark">Vedi lista completa</button>
+                </div>
+            </div>
+            <div class="hero-right-numbers">
+                <div class="hero-stat">
+                    <div class="hero-stat-num">26</div>
+                    <div class="hero-stat-lab">Coperti oggi</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-num">5</div>
+                    <div class="hero-stat-lab">Confermate</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-num">2</div>
+                    <div class="hero-stat-lab">In attesa</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-num">0</div>
+                    <div class="hero-stat-lab">Arrivati</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI row -->
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-icon-bg"><svg viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5z"/></svg></div>
+                <div class="kpi-label">Settimana</div>
+                <div class="kpi-val">42</div>
+                <span class="kpi-trend">↑ +18% vs scorsa</span>
+            </div>
+            <div class="kpi-card accent">
+                <div class="kpi-icon-bg"><svg viewBox="0 0 16 16"><path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8z"/></svg></div>
+                <div class="kpi-label">Coperti 30 gg</div>
+                <div class="kpi-val">168</div>
+                <span class="kpi-trend">↑ +12% vs mese</span>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon-bg"><svg viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14z"/></svg></div>
+                <div class="kpi-label">No-show rate</div>
+                <div class="kpi-val">3,2%</div>
+                <span class="kpi-trend down">↓ -0.4p vs mese</span>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon-bg"><svg viewBox="0 0 16 16"><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/></svg></div>
+                <div class="kpi-label">Clienti abituali</div>
+                <div class="kpi-val">47</div>
+                <span class="kpi-trend">↑ +5 nuovi</span>
+            </div>
+        </div>
+
+        <!-- Content grid -->
+        <div class="content-grid">
+
+            <!-- Next arrivals list -->
+            <div class="res-card">
+                <div class="res-head">
+                    <div>
+                        <div class="caption">PROSSIMI ARRIVI</div>
+                        <h2 class="display-sub">Oggi al ristorante.</h2>
+                    </div>
+                    <button class="btn btn-sub">Tutte →</button>
+                </div>
+
+                <div class="res-row">
+                    <div class="res-time">20:00</div>
+                    <div class="res-status-dot"></div>
+                    <div>
+                        <div class="res-info-name">Francesca Bianchi</div>
+                        <div class="res-info-meta">+39 347 1234567 · Confermata · Vetrina</div>
+                    </div>
+                    <span class="res-pax-chip">👥 4</span>
+                    <button class="btn btn-sub btn-sm">Segna arrivo</button>
+                </div>
+                <div class="res-row">
+                    <div class="res-time">20:15</div>
+                    <div class="res-status-dot"></div>
+                    <div>
+                        <div class="res-info-name">Luca Ferrari <span style="display:inline-block; margin-left: 6px; background: linear-gradient(135deg, #ffd700, #f57f17); color: #fff; padding: 2px 8px; border-radius: 9999px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px;">VIP</span></div>
+                        <div class="res-info-meta">+39 333 8890123 · Confermata · Dashboard</div>
+                    </div>
+                    <span class="res-pax-chip">👥 2</span>
+                    <button class="btn btn-sub btn-sm">Segna arrivo</button>
+                </div>
+                <div class="res-row">
+                    <div class="res-time">20:30</div>
+                    <div class="res-status-dot pending"></div>
+                    <div>
+                        <div class="res-info-name">Marco Russo</div>
+                        <div class="res-info-meta">+39 340 1122334 · In attesa · Widget</div>
+                    </div>
+                    <span class="res-pax-chip">👥 6</span>
+                    <button class="btn btn-primary btn-sm">Conferma</button>
+                </div>
+                <div class="res-row">
+                    <div class="res-time">21:00</div>
+                    <div class="res-status-dot"></div>
+                    <div>
+                        <div class="res-info-name">Giulia Moretti</div>
+                        <div class="res-info-meta">+39 388 5544221 · Confermata · Widget</div>
+                    </div>
+                    <span class="res-pax-chip">👥 3</span>
+                    <button class="btn btn-sub btn-sm">Segna arrivo</button>
+                </div>
+                <div class="res-row">
+                    <div class="res-time">21:30</div>
+                    <div class="res-status-dot pending"></div>
+                    <div>
+                        <div class="res-info-name">Anna Verdi</div>
+                        <div class="res-info-meta">+39 335 7788990 · In attesa · Telefono</div>
+                    </div>
+                    <span class="res-pax-chip">👥 2</span>
+                    <button class="btn btn-primary btn-sm">Conferma</button>
+                </div>
+            </div>
+
+            <!-- Right column: capacity + source -->
+            <div>
+                <div class="mini-card">
+                    <h3>Capienza oggi</h3>
+                    <div class="meal-row">
+                        <div class="meal-name">Pranzo <span class="meal-percent">12 / 30</span></div>
+                        <div class="capacity-bar"><div class="capacity-fill green" style="width:40%;"></div></div>
+                        <div class="capacity-row"><span>40% occupato</span><span>18 liberi</span></div>
+                    </div>
+                    <div class="meal-row">
+                        <div class="meal-name">Cena <span class="meal-percent">14 / 30</span></div>
+                        <div class="capacity-bar"><div class="capacity-fill warn" style="width:47%;"></div></div>
+                        <div class="capacity-row"><span>47% occupato</span><span>16 liberi</span></div>
+                    </div>
+                </div>
+
+                <div class="mini-card">
+                    <h3>Canali ultimi 30 gg</h3>
+                    <div class="source-row">
+                        <div class="source-name">Widget online</div>
+                        <div class="source-bar-wrap"><div class="source-bar-fill" style="width: 68%;"></div></div>
+                        <div class="source-pct">68%</div>
+                    </div>
+                    <div class="source-row">
+                        <div class="source-name">Vetrina Digitale</div>
+                        <div class="source-bar-wrap"><div class="source-bar-fill" style="width: 21%;"></div></div>
+                        <div class="source-pct">21%</div>
+                    </div>
+                    <div class="source-row">
+                        <div class="source-name">Telefono</div>
+                        <div class="source-bar-wrap"><div class="source-bar-fill alt" style="width: 8%;"></div></div>
+                        <div class="source-pct">8%</div>
+                    </div>
+                    <div class="source-row">
+                        <div class="source-name">Walk-in</div>
+                        <div class="source-bar-wrap"><div class="source-bar-fill alt" style="width: 3%;"></div></div>
+                        <div class="source-pct">3%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bar chart card -->
+        <div class="res-card" style="margin-bottom: 2rem;">
+            <div class="res-head">
+                <div>
+                    <div class="caption">PROSSIMI 7 GIORNI</div>
+                    <h2 class="display-sub">Andamento settimanale.</h2>
+                </div>
+                <button class="btn btn-sub">Dettaglio</button>
+            </div>
+            <div class="bar-chart">
+                <div class="bar-col">
+                    <div class="bar-fill today" data-count="7" style="height: 35%;"></div>
+                    <div class="bar-label today">Oggi</div>
+                </div>
+                <div class="bar-col">
+                    <div class="bar-fill" data-count="14" style="height: 70%;"></div>
+                    <div class="bar-label">Sab</div>
+                </div>
+                <div class="bar-col">
+                    <div class="bar-fill" data-count="18" style="height: 90%;"></div>
+                    <div class="bar-label">Dom</div>
+                </div>
+                <div class="bar-col">
+                    <div class="bar-fill" data-count="3" style="height: 15%;"></div>
+                    <div class="bar-label">Lun</div>
+                </div>
+                <div class="bar-col">
+                    <div class="bar-fill" data-count="5" style="height: 25%;"></div>
+                    <div class="bar-label">Mar</div>
+                </div>
+                <div class="bar-col">
+                    <div class="bar-fill" data-count="8" style="height: 40%;"></div>
+                    <div class="bar-label">Mer</div>
+                </div>
+                <div class="bar-col">
+                    <div class="bar-fill" data-count="11" style="height: 55%;"></div>
+                    <div class="bar-label">Gio</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

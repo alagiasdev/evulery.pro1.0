@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evulery — Social Posts Pack #1 · V2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #006837;
+    --brand-darker: #042418;
+    --brand-light: #E8F5E9;
+    --brand-accent: #4ade80;
+    --ink: #0a0e14;
+    --ink-soft: #495057;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --warning: #E65100;
+    --warning-light: #FFF3E0;
+    --danger: #dc3545;
+    --gold: #b89358;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f6f8;
+    color: var(--ink);
+    line-height: 1.55;
+    padding: 32px 16px;
+}
+
+.guide { max-width: 1200px; margin: 0 auto; }
+
+/* ============= INTRO ============= */
+.intro {
+    background: #fff;
+    border-radius: 16px;
+    padding: 48px 56px;
+    margin-bottom: 48px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.06);
+    border-top: 4px solid var(--brand);
+}
+.intro .v-pill {
+    display: inline-block;
+    background: var(--ink); color: #fff;
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    padding: 4px 12px; border-radius: 100px;
+    margin-bottom: 16px;
+}
+.intro h1 { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin: 0 0 12px 0; }
+.intro .lead { font-size: 17px; color: var(--ink-soft); margin: 0 0 32px 0; line-height: 1.5; }
+.intro h3 { font-size: 16px; font-weight: 700; margin: 32px 0 12px 0; letter-spacing: -.2px; }
+.intro ul { margin: 12px 0 0 0; padding-left: 22px; line-height: 1.75; }
+.intro li { margin-bottom: 4px; }
+.intro code { background: var(--brand-light); padding: 2px 8px; border-radius: 4px; font-size: 13px; color: var(--brand-dark); font-family: 'SF Mono', Menlo, monospace; }
+.intro .changelog {
+    background: var(--brand-light);
+    border-left: 3px solid var(--brand);
+    padding: 20px 24px;
+    border-radius: 8px;
+    margin: 24px 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+.intro .changelog strong { color: var(--brand-dark); }
+.intro .warn {
+    background: var(--warning-light);
+    border-left: 3px solid var(--warning);
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin: 16px 0;
+    font-size: 14px;
+}
+.intro .warn strong { color: var(--warning); }
+
+/* ============= POST BLOCKS ============= */
+.post-block {
+    background: #fff;
+    border-radius: 16px;
+    margin-bottom: 48px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.06);
+    overflow: hidden;
+}
+.post-header {
+    padding: 28px 36px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+.post-id { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand); text-transform: uppercase; }
+.post-title { font-size: 22px; font-weight: 700; margin: 6px 0 4px 0; letter-spacing: -.3px; }
+.post-meta { font-size: 13px; color: var(--muted); }
+.post-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.pill { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; letter-spacing: .5px; }
+.pill-type-manifesto { background: var(--brand-light); color: var(--brand-dark); }
+.pill-type-educativo { background: #e3f2fd; color: #0d47a1; }
+.pill-type-prova { background: #fff3e0; color: #b71c1c; }
+.pill-type-feature { background: #f3e5f5; color: #4a148c; }
+.pill-type-cta { background: #fce4ec; color: #b71c1c; }
+.pill-format { background: #f5f5f5; color: var(--ink-soft); }
+
+.post-body { padding: 32px 36px; }
+
+/* ============= CARDS ============= */
+.cards-strip {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    margin: 0 -8px 0 -8px;
+    padding-left: 8px;
+}
+.card-wrapper {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.card-label {
+    font-size: 11px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1.5px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.card {
+    width: 540px; height: 540px;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 8px 32px rgba(0,0,0,.12);
+    border: 1px solid var(--line);
+}
+.card.portrait { height: 675px; }
+
+.card-inner {
+    width: 1080px; height: 1080px;
+    position: absolute; top: 0; left: 0;
+    transform: scale(0.5); transform-origin: top left;
+    padding: 80px;
+}
+.card.portrait .card-inner { height: 1350px; }
+
+/* ============= CARD THEMES ============= */
+.theme-brand { background: var(--brand); color: #fff; }
+.theme-brand-dark { background: linear-gradient(135deg, var(--brand-darker) 0%, var(--brand) 100%); color: #fff; }
+.theme-brand-deep { background: linear-gradient(180deg, var(--brand-dark) 0%, var(--brand-darker) 100%); color: #fff; }
+.theme-ink { background: var(--ink); color: #fff; }
+.theme-ink-warm { background: linear-gradient(135deg, #1a1f2e 0%, #0a0e14 100%); color: #fff; }
+.theme-light { background: var(--brand-light); color: var(--ink); }
+.theme-cream { background: #faf8f3; color: var(--ink); }
+.theme-white { background: #fff; color: var(--ink); }
+.theme-split-l { background: linear-gradient(90deg, var(--brand) 50%, var(--ink) 50%); color: #fff; }
+
+.card-logo {
+    font-size: 32px; font-weight: 900; letter-spacing: -1px; line-height: 1;
+}
+.card-logo .dot { color: var(--brand-accent); }
+.theme-white .card-logo, .theme-light .card-logo, .theme-cream .card-logo { color: var(--ink); }
+.theme-white .card-logo .dot, .theme-light .card-logo .dot, .theme-cream .card-logo .dot { color: var(--brand); }
+
+.card-foot {
+    position: absolute; bottom: 80px; left: 80px; right: 80px;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.card-site {
+    font-size: 18px; font-weight: 600; opacity: .85;
+}
+.card-step {
+    font-size: 14px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; opacity: .7;
+}
+.theme-light .card-step, .theme-white .card-step, .theme-cream .card-step { opacity: 1; color: var(--brand); }
+
+/* Headlines */
+.h-display { font-size: 96px; font-weight: 900; letter-spacing: -3px; line-height: .98; }
+.h-xl { font-size: 80px; font-weight: 900; letter-spacing: -2.5px; line-height: 1; }
+.h-lg { font-size: 64px; font-weight: 800; letter-spacing: -2px; line-height: 1.05; }
+.h-md { font-size: 48px; font-weight: 800; letter-spacing: -1px; line-height: 1.15; }
+.h-sm { font-size: 36px; font-weight: 700; letter-spacing: -.5px; line-height: 1.2; }
+
+.body-lg { font-size: 28px; font-weight: 500; line-height: 1.4; opacity: .9; }
+.body-md { font-size: 22px; font-weight: 500; line-height: 1.5; opacity: .85; }
+
+.eyebrow {
+    display: inline-block;
+    font-size: 14px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; opacity: .85;
+    border: 1.5px solid currentColor;
+    padding: 8px 18px;
+    border-radius: 100px;
+}
+.eyebrow-flat {
+    display: inline-block;
+    font-size: 13px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--brand);
+    margin-bottom: 16px;
+}
+
+/* ============= PROMISE CARDS (Post 1) ============= */
+.promise-num {
+    font-size: 240px; font-weight: 900; line-height: 1;
+    letter-spacing: -10px;
+    color: var(--brand);
+    opacity: .12;
+    position: absolute;
+    top: 60px; right: 80px;
+}
+.promise-headline {
+    font-size: 76px; font-weight: 900; letter-spacing: -2.5px; line-height: 1;
+    margin-top: 220px;
+}
+.promise-body {
+    font-size: 26px; font-weight: 500; line-height: 1.45;
+    color: var(--ink-soft);
+    margin-top: 32px;
+    max-width: 760px;
+}
+.theme-brand .promise-body { color: rgba(255,255,255,.92); }
+
+/* ============= COST CARD (Post 2) ============= */
+.cost-eyebrow { font-size: 24px; font-weight: 600; opacity: .6; margin-top: 80px; }
+.cost-amount {
+    margin-top: 40px;
+    font-size: 320px; font-weight: 900; line-height: .9;
+    letter-spacing: -16px;
+    color: var(--brand);
+}
+.cost-amount .euro { font-size: 200px; vertical-align: top; line-height: 1.1; margin-right: -10px; }
+.cost-label {
+    font-size: 32px; font-weight: 700; margin-top: 16px;
+    color: var(--ink);
+}
+.cost-math {
+    margin-top: 56px;
+    background: var(--brand-light);
+    border-radius: 16px;
+    padding: 32px 40px;
+    font-size: 26px; font-weight: 600;
+    color: var(--ink);
+    line-height: 1.5;
+}
+.cost-math strong { color: var(--brand); font-weight: 800; }
+
+/* ============= STORY CARD (Post 3) ============= */
+.story-tag {
+    display: inline-block;
+    background: var(--gold); color: #fff;
+    font-size: 13px; font-weight: 700; letter-spacing: 2px;
+    padding: 6px 14px; border-radius: 4px;
+    text-transform: uppercase;
+}
+.story-headline {
+    font-size: 60px; font-weight: 900; letter-spacing: -2px; line-height: 1.05;
+    margin-top: 32px;
+}
+.story-headline .accent { color: var(--brand); }
+.story-block {
+    margin-top: 48px;
+    padding: 28px 32px;
+    border-radius: 12px;
+    background: rgba(0,0,0,.04);
+    border-left: 4px solid var(--ink-soft);
+}
+.story-block.after {
+    background: var(--brand-light);
+    border-left-color: var(--brand);
+    margin-top: 20px;
+}
+.story-block-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 2.5px;
+    text-transform: uppercase; opacity: .7;
+    margin-bottom: 8px;
+}
+.story-block.after .story-block-label { color: var(--brand-dark); opacity: 1; }
+.story-block-text {
+    font-size: 24px; font-weight: 500; line-height: 1.45;
+}
+.story-byline {
+    margin-top: 36px;
+    font-size: 18px; font-weight: 600; opacity: .65;
+    font-style: italic;
+}
+
+/* ============= LAW CAROUSEL (Post 4) ============= */
+.law-cover-tag {
+    display: inline-block; padding: 6px 14px;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 100px;
+    font-size: 13px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 200px;
+}
+.law-list {
+    margin-top: 40px;
+    list-style: none; padding: 0;
+}
+.law-list li {
+    padding: 22px 0;
+    border-bottom: 1px solid rgba(0,0,0,.08);
+    font-size: 28px; font-weight: 600;
+    display: flex; align-items: flex-start; gap: 24px;
+    line-height: 1.3;
+}
+.theme-brand .law-list li, .theme-ink .law-list li, .theme-brand-dark .law-list li { border-bottom-color: rgba(255,255,255,.15); }
+.law-list .icon {
+    flex-shrink: 0; font-size: 32px;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900;
+    line-height: 1;
+}
+.law-list .icon.no { background: rgba(220, 53, 69, .15); color: #c62828; }
+.law-list .icon.yes { background: var(--brand-light); color: var(--brand); }
+.law-list .icon.yes-dark { background: rgba(74, 222, 128, .2); color: var(--brand-accent); }
+.theme-ink .law-list .icon.yes, .theme-brand-dark .law-list .icon.yes { background: rgba(74, 222, 128, .2); color: var(--brand-accent); }
+
+.law-stat-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 32px; margin-top: 80px;
+}
+.law-stat-cell {
+    background: rgba(255,255,255,.08);
+    border-radius: 16px;
+    padding: 32px;
+}
+.law-stat-num {
+    font-size: 96px; font-weight: 900; letter-spacing: -3px; line-height: 1;
+    color: var(--brand-accent);
+}
+.law-stat-text { font-size: 22px; margin-top: 16px; opacity: .9; line-height: 1.3; }
+
+/* ============= INSIGHTS CARD (Post 5) ============= */
+.insights-eye {
+    margin-top: 100px;
+    font-size: 14px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; opacity: .7;
+}
+.insights-headline {
+    font-size: 64px; font-weight: 900; letter-spacing: -2px; line-height: 1.05;
+    margin-top: 32px;
+}
+.insight-quote {
+    margin-top: 40px;
+    padding: 28px 32px;
+    background: rgba(0,0,0,.04);
+    border-radius: 12px;
+    position: relative;
+}
+.insight-quote::before {
+    content: '"';
+    position: absolute;
+    top: -16px; left: 24px;
+    font-size: 80px; line-height: 1;
+    color: var(--brand);
+    font-family: Georgia, serif;
+    font-weight: 900;
+}
+.insight-quote-text {
+    font-size: 22px; font-weight: 600; line-height: 1.4;
+    color: var(--ink);
+    padding-top: 16px;
+}
+.insight-quote-source {
+    font-size: 14px; font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-top: 16px;
+}
+
+/* ============= NUMBERS CAROUSEL (Post 6) ============= */
+.metric-num {
+    font-size: 280px; font-weight: 900; line-height: 1;
+    letter-spacing: -12px;
+    color: var(--brand);
+    margin-top: 60px;
+}
+.metric-num.dark { color: var(--brand-accent); }
+.metric-num .pct { font-size: 180px; vertical-align: super; line-height: 1; }
+.metric-label {
+    font-size: 36px; font-weight: 800; letter-spacing: -.5px;
+    margin-top: 20px;
+}
+.metric-explain {
+    font-size: 24px; font-weight: 500; line-height: 1.45;
+    margin-top: 28px;
+    opacity: .85;
+    max-width: 740px;
+}
+
+/* ============= COMPARE (Post 7) ============= */
+.compare-cover-h {
+    font-size: 88px; font-weight: 900; letter-spacing: -3px; line-height: .98;
+    margin-top: 100px;
+}
+.compare-cover-h .strike {
+    text-decoration: line-through;
+    text-decoration-thickness: 6px;
+    text-decoration-color: rgba(255,255,255,.3);
+    opacity: .55;
+}
+.compare-cover-h .accent { color: var(--brand-accent); }
+.compare-grid {
+    margin-top: 80px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 16px 48px rgba(0,0,0,.25);
+}
+.compare-cell {
+    padding: 48px 36px;
+}
+.compare-cell.them { background: rgba(255,255,255,.06); }
+.compare-cell.us { background: var(--brand); }
+.compare-cell-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: .65;
+    margin-bottom: 12px;
+}
+.compare-cell-title {
+    font-size: 36px; font-weight: 900; letter-spacing: -1px;
+    margin-bottom: 28px;
+}
+.compare-list {
+    list-style: none; padding: 0; margin: 0;
+}
+.compare-list li {
+    padding: 14px 0;
+    font-size: 22px; font-weight: 500;
+    line-height: 1.35;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    display: flex; gap: 14px; align-items: flex-start;
+}
+.compare-list li:last-child { border-bottom: 0; }
+.compare-list .x { color: #ff8a80; font-weight: 900; flex-shrink: 0; line-height: 1.4; }
+.compare-list .ok { color: var(--brand-accent); font-weight: 900; flex-shrink: 0; line-height: 1.4; }
+
+/* ============= DEPOSIT FEATURE (Post 8) ============= */
+.deposit-headline {
+    font-size: 60px; font-weight: 900; letter-spacing: -2px; line-height: 1.05;
+    margin-top: 80px;
+}
+.deposit-options {
+    margin-top: 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.deposit-opt {
+    display: flex; align-items: center; gap: 24px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 16px;
+    padding: 24px 28px;
+}
+.deposit-opt.featured {
+    background: rgba(74, 222, 128, .15);
+    border-color: var(--brand-accent);
+}
+.deposit-opt-num {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--brand-accent);
+    color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 900;
+    flex-shrink: 0;
+}
+.deposit-opt-text { flex: 1; }
+.deposit-opt-title { font-size: 26px; font-weight: 800; }
+.deposit-opt-desc { font-size: 18px; opacity: .8; margin-top: 6px; line-height: 1.4; }
+
+/* ============= TRANSPARENCY (Post 9) ============= */
+.tr-headline {
+    font-size: 64px; font-weight: 900; letter-spacing: -2px; line-height: 1.05;
+    margin-top: 80px;
+}
+.tr-headline .x { color: #ff8a80; }
+.tr-headline .ok { color: var(--brand-accent); }
+.tr-cols {
+    margin-top: 60px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+.tr-col {
+    background: rgba(255,255,255,.05);
+    border-radius: 16px;
+    padding: 32px 28px;
+    border-top: 4px solid;
+}
+.tr-col.no { border-top-color: #ff8a80; }
+.tr-col.yes { border-top-color: var(--brand-accent); }
+.tr-col-label {
+    font-size: 13px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: .65;
+    margin-bottom: 16px;
+}
+.tr-col.no .tr-col-label { color: #ff8a80; opacity: .85; }
+.tr-col.yes .tr-col-label { color: var(--brand-accent); opacity: .9; }
+.tr-col ul { list-style: none; padding: 0; margin: 0; }
+.tr-col li {
+    padding: 12px 0;
+    font-size: 20px; font-weight: 600;
+    line-height: 1.35;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.tr-col li:last-child { border-bottom: 0; }
+
+/* ============= CTA (Post 10) ============= */
+.cta-tag {
+    display: inline-block;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.3);
+    padding: 10px 20px;
+    border-radius: 100px;
+    font-size: 13px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 100px;
+}
+.cta-headline-v2 {
+    font-size: 116px; font-weight: 900; letter-spacing: -3.5px; line-height: .98;
+    margin-top: 32px;
+}
+.cta-disclaim {
+    margin-top: 48px;
+    font-size: 22px; font-weight: 500; line-height: 1.5;
+    opacity: .9;
+    max-width: 720px;
+}
+.cta-button-v2 {
+    display: inline-flex; align-items: center; gap: 16px;
+    background: var(--brand-accent);
+    color: var(--ink);
+    padding: 26px 52px;
+    border-radius: 100px;
+    font-size: 30px; font-weight: 900;
+    margin-top: 56px;
+    box-shadow: 0 12px 40px rgba(74, 222, 128, .35);
+    letter-spacing: -.5px;
+}
+.cta-rules {
+    margin-top: 36px;
+    display: flex; gap: 24px; flex-wrap: wrap;
+    font-size: 16px; font-weight: 600;
+    opacity: .85;
+}
+.cta-rule { display: inline-flex; align-items: center; gap: 8px; }
+.cta-rule::before { content: '✓'; color: var(--brand-accent); font-weight: 900; }
+
+/* ============= CAPTION & META ============= */
+.caption-box {
+    margin-top: 28px;
+    background: #fafbfc;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px;
+}
+.caption-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.caption-text {
+    font-size: 15px; line-height: 1.65;
+    white-space: pre-wrap;
+    background: #fff;
+    padding: 18px 22px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+}
+.copy-btn {
+    margin-top: 8px;
+    background: var(--brand);
+    color: #fff;
+    border: 0;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+}
+.copy-btn:hover { background: var(--brand-dark); }
+.copy-btn.copied { background: #2e7d32; }
+
+.hashtag-row {
+    margin-top: 16px;
+    display: flex; flex-wrap: wrap; gap: 6px;
+}
+.tag {
+    background: var(--brand-light); color: var(--brand-dark);
+    font-size: 13px; font-weight: 500;
+    padding: 4px 10px; border-radius: 100px;
+}
+
+.notes {
+    margin-top: 16px;
+    background: #fff8e1;
+    border-left: 3px solid #f9a825;
+    padding: 14px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #5d4037;
+}
+.notes strong { color: #4e342e; }
+
+.export-btn {
+    margin-top: 12px;
+    background: var(--ink);
+    color: #fff;
+    border: 0;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+}
+.export-btn:hover { background: #333; }
+
+@media (max-width: 720px) {
+    .card { width: 320px; height: 320px; }
+    .card.portrait { height: 400px; }
+    .card-inner { transform: scale(0.296); }
+    .card.portrait .card-inner { transform: scale(0.296); }
+    .post-body { padding: 20px; }
+    .intro { padding: 28px 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="guide">
+
+<!-- ============= INTRO ============= -->
+<div class="intro">
+    <span class="v-pill">VERSION 2.0 · IMPERSONALE</span>
+    <h1>📱 Evulery — Social Posts Pack #1 · V2</h1>
+    <p class="lead">10 post completamente nuovi rispetto al V1. Voce di brand strutturato ("noi"), zero riferimenti personali, copy stratificati e angoli di attacco diversi. 24 card scaricabili in PNG.</p>
+
+    <div class="changelog">
+        <strong>Cosa è cambiato dal V1</strong>
+        <ul style="margin: 8px 0 0 0;">
+            <li>Voce <strong>"noi" / impersonale</strong>: zero riferimenti personali ("io", persone fisiche, firme)</li>
+            <li>Post 5 ripensato: da "presentazione del singolo" → "3 cose ascoltate dai ristoratori"</li>
+            <li>Post 6 ripensato: da "3 errori sabato sera" → "5 numeri del sabato sera" (più operativo, più data-driven)</li>
+            <li>Post 8 ripensato: da "widget in 3 minuti" → "caparra a 3 livelli" (feature meno ovvia, più valore)</li>
+            <li>Post 9 ripensato: da "X clienti" → "le metriche che NON pubblichiamo" (trasparenza inversa, brand più maturo)</li>
+            <li>Post 10 senza firma personale</li>
+            <li>Tutti gli angoli e i copy sono nuovi: niente parafrasi del V1</li>
+        </ul>
+    </div>
+
+    <h3>Come si usa</h3>
+    <ul>
+        <li>Pulsante <code>⬇ Scarica PNG</code> sotto ogni card → file 1080×1080 (square) o 1080×1350 (portrait)</li>
+        <li>Pulsante <code>📋 Copia caption</code> sotto ogni post → testo pronto per IG/FB</li>
+        <li>Caption <strong>identica</strong> funziona su Instagram + Facebook (cross-post diretto)</li>
+        <li>LinkedIn (fase B): riformulare le caption in tono leggermente più "B2B" mantenendo gli stessi visual</li>
+    </ul>
+
+    <h3>Ordine di pubblicazione consigliato (4 settimane)</h3>
+    <ul>
+        <li><strong>Settimana 1</strong> · Post 1 (manifesto carosello) · Post 5 (insights ristoratori)</li>
+        <li><strong>Settimana 2</strong> · Post 2 (vero costo) · Post 8 (caparra 3 livelli)</li>
+        <li><strong>Settimana 3</strong> · Post 4 (Legge 34/2026 carosello) · Post 6 (5 numeri sabato sera)</li>
+        <li><strong>Settimana 4</strong> · Post 7 (affittare vs avere) · Post 9 (metriche che non pubblichiamo) · Post 10 (CTA demo)</li>
+        <li><strong>Quando hai testimonianza vera</strong> · Post 3 (storia di una serata)</li>
+    </ul>
+
+    <div class="warn">
+        <strong>⚠️ Placeholder da sostituire prima di pubblicare:</strong>
+        <ul style="margin: 8px 0 0 0;">
+            <li><strong>Post 3</strong> — la "Storia di una serata" è un format generico onesto: usalo solo dopo che un cliente reale ti ha autorizzato a raccontare la sua. Adatta nome ristorante (es. "Trattoria Lo Schiaccianoci · Bologna") e dettagli reali</li>
+            <li><strong>Post 10</strong> — assicurati che <code>evulery.it/demo</code> esista e funzioni prima di pubblicare</li>
+        </ul>
+    </div>
+</div>
+
+
+<!-- ====================== POST 1 — 4 PROMESSE ====================== -->
+<div class="post-block" data-post="1">
+    <div class="post-header">
+        <div>
+            <div class="post-id">Post 01 · Manifesto</div>
+            <div class="post-title">"4 promesse che possiamo permetterci di fare"</div>
+            <div class="post-meta">Carosello 5 slide · obiettivo: trust + posizionamento · settimana 1</div>
+        </div>
+        <div class="post-pills">
+            <span class="pill pill-type-manifesto">Manifesto</span>
+            <span class="pill pill-format">Carosello 5x</span>
+            <span class="pill pill-format">1080×1080</span>
+        </div>
+    </div>
+    <div class="post-body">
+        <div class="cards-strip">
+            <!-- 1.1 Cover -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 1 / 5 — Cover</div>
+                <div class="card square" id="v2-card-1-1">
+                    <div class="card-inner theme-brand-deep">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="eyebrow" style="margin-top: 200px;">Manifesto</div>
+                        <div class="h-display" style="margin-top: 32px;">4 promesse<br>che possiamo<br>permetterci<br>di fare.</div>
+                        <div class="card-foot">
+                            <div class="card-step">Scorri →</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-1-1" data-name="v2-post-01-promesse-1.png">⬇ Scarica PNG</button>
+            </div>
+            <!-- 1.2 Promise 1 -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 2 / 5 — Promessa 1</div>
+                <div class="card square" id="v2-card-1-2">
+                    <div class="card-inner theme-white">
+                        <div class="promise-num">01</div>
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="promise-headline">Niente<br>percentuali.<br><span style="color: var(--brand);">Mai.</span></div>
+                        <div class="promise-body">Canone fisso, conosciuto a inizio mese. Le commissioni sui coperti restano a casa loro.</div>
+                        <div class="card-foot">
+                            <div class="card-step">02 / 05</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-1-2" data-name="v2-post-01-promesse-2.png">⬇ Scarica PNG</button>
+            </div>
+            <!-- 1.3 Promise 2 -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 3 / 5 — Promessa 2</div>
+                <div class="card square" id="v2-card-1-3">
+                    <div class="card-inner theme-cream">
+                        <div class="promise-num">02</div>
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="promise-headline">Il supporto<br>parla<br><span style="color: var(--brand);">italiano.</span></div>
+                        <div class="promise-body">Risposta entro un giorno lavorativo. Persone, non chatbot. Lessico ristorazione, non glossario tech.</div>
+                        <div class="card-foot">
+                            <div class="card-step">03 / 05</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-1-3" data-name="v2-post-01-promesse-3.png">⬇ Scarica PNG</button>
+            </div>
+            <!-- 1.4 Promise 3 -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 4 / 5 — Promessa 3</div>
+                <div class="card square" id="v2-card-1-4">
+                    <div class="card-inner theme-white">
+                        <div class="promise-num">03</div>
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="promise-headline">I tuoi<br>clienti<br><span style="color: var(--brand);">restano tuoi.</span></div>
+                        <div class="promise-body">Anagrafica, contatti, storico visite. Sono dati del tuo ristorante. Non li condividiamo, non li vendiamo, non li usiamo.</div>
+                        <div class="card-foot">
+                            <div class="card-step">04 / 05</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-1-4" data-name="v2-post-01-promesse-4.png">⬇ Scarica PNG</button>
+            </div>
+            <!-- 1.5 Promise 4 + CTA -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 5 / 5 — Promessa 4</div>
+                <div class="card square" id="v2-card-1-5">
+                    <div class="card-inner theme-brand">
+                        <div class="promise-num" style="color: rgba(255,255,255,.15); opacity: 1;">04</div>
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="promise-headline" style="color: #fff;">Se non<br>fa per te,<br>te lo<br>diciamo.</div>
+                        <div class="promise-body">Mezza giornata di onboarding e una telefonata onesta a fine prima settimana. Se Evulery non è la cosa giusta per il tuo ristorante, lo capirete entrambi prima di firmare un anno.</div>
+                        <div class="card-foot">
+                            <div class="card-step">05 / 05</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-1-5" data-name="v2-post-01-promesse-5.png">⬇ Scarica PNG</button>
+            </div>
+        </div>
+
+        <div class="caption-box">
+            <div class="caption-label">Caption</div>
+            <div class="caption-text" id="v2-caption-1">4 promesse che possiamo permetterci di fare. Perché abbiamo costruito Evulery in modo da poterle mantenere.
+
+→ Niente percentuali sui coperti. Mai. Canone fisso, fine.
+→ Supporto italiano, persone vere, lessico da chi sa cosa significa "fare le 23".
+→ I clienti che prenotano da te restano tuoi. Anagrafica, contatti, storico: roba tua, punto.
+→ Se Evulery non fa per te, te lo diciamo a fine prima settimana. Senza giri.
+
+Le promesse facili sono quelle che le grandi piattaforme non possono permettersi: non possono rinunciare alle commissioni, non possono garantire supporto in italiano, non possono trattare i tuoi clienti come tuoi.
+
+Noi sì. Per costruzione.
+
+Demo gratuita di 30 minuti, senza impegno → link in bio.</div>
+            <button class="copy-btn" data-target="v2-caption-1">📋 Copia caption</button>
+            <div class="hashtag-row">
+                <span class="tag">#ristorante</span>
+                <span class="tag">#ristoratori</span>
+                <span class="tag">#ristorazioneitaliana</span>
+                <span class="tag">#prenotazioniristorante</span>
+                <span class="tag">#softwareristorazione</span>
+                <span class="tag">#trattoria</span>
+                <span class="tag">#pizzeria</span>
+                <span class="tag">#gestioneristorante</span>
+            </div>
+            <div class="notes">
+                <strong>Note operative:</strong> primo post per il presidio brand. La quarta slide (la "promessa onesta" di dirti se non fa per te) è quella che genera commenti — perché è la promessa che nessuno fa. Aspettati commenti tipo "magari!" o "vorrei vederlo": rispondi a tutti, è il segnale ad Instagram che vale la pena spingere il post.
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ====================== POST 2 — VERO COSTO ====================== -->
+<div class="post-block" data-post="2">
+    <div class="post-header">
+        <div>
+            <div class="post-id">Post 02 · Educativo</div>
+            <div class="post-title">"Il vero costo di una prenotazione su un aggregatore"</div>
+            <div class="post-meta">Singolo post · obiettivo: rendere il costo invisibile visibile · settimana 2</div>
+        </div>
+        <div class="post-pills">
+            <span class="pill pill-type-educativo">Educativo</span>
+            <span class="pill pill-format">Singolo</span>
+            <span class="pill pill-format">1080×1080</span>
+        </div>
+    </div>
+    <div class="post-body">
+        <div class="cards-strip">
+            <div class="card-wrapper">
+                <div class="card-label">Singola</div>
+                <div class="card square" id="v2-card-2">
+                    <div class="card-inner theme-white">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="cost-eyebrow">Quanto stai pagando ogni mese, davvero?</div>
+                        <div class="cost-amount"><span class="euro">€</span>2.520</div>
+                        <div class="cost-label">in commissioni invisibili.</div>
+                        <div class="cost-math">300 coperti/mese × scontrino medio €35 × <strong>commissione 24%</strong> = €2.520. Ogni mese. Per 12 mesi: <strong>€30.240</strong>.</div>
+                        <div class="card-foot">
+                            <div class="card-step" style="color: var(--muted);">Fai i tuoi conti</div>
+                            <div class="card-site" style="color: var(--ink);">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-2" data-name="v2-post-02-costo.png">⬇ Scarica PNG</button>
+            </div>
+        </div>
+
+        <div class="caption-box">
+            <div class="caption-label">Caption</div>
+            <div class="caption-text" id="v2-caption-2">"Sì ma in fondo costa poco". È quello che ci sentiamo dire spesso quando confrontiamo Evulery con gli aggregatori.
+
+Allora facciamo un esempio concreto. Ristorante medio italiano, indipendente.
+→ 300 coperti al mese arrivati tramite l'aggregatore (su 800-1.000 totali)
+→ Scontrino medio €35
+→ Commissione 24% — sì, abbiamo letto bene, succede
+
+Conto: 300 × 35 × 0,24 = €2.520 al mese. Ogni mese.
+
+Su 12 mesi: oltre €30.000 di commissioni. Più o meno il costo di un secondo dipendente part-time. O di un impianto di climatizzazione nuovo. O di tre weekend chiusi a fine stagione.
+
+Evulery costa una frazione di quella cifra ed è canone fisso, quindi è anche prevedibile.
+
+Non stiamo dicendo che gli aggregatori non servano a nulla. Stiamo dicendo che il prezzo non è quello che vedi sulla bolletta — è quello che esce ogni volta che un cliente ti prenota tramite loro invece che da te.
+
+Il calcolo lo trovi anche sul nostro sito → link in bio.</div>
+            <button class="copy-btn" data-target="v2-caption-2">📋 Copia caption</button>
+            <div class="hashtag-row">
+                <span class="tag">#ristorante</span>
+                <span class="tag">#ristoratori</span>
+                <span class="tag">#commissioni</span>
+                <span class="tag">#costiristorante</span>
+                <span class="tag">#aggregatori</span>
+                <span class="tag">#prenotazioniristorante</span>
+                <span class="tag">#gestioneristorante</span>
+            </div>
+            <div class="notes">
+                <strong>Note operative:</strong> post "calcolatore mentale". Funziona perché chiunque legge fa il proprio conto in tempo reale. Aspettati DM tipo "ma davvero il 24%?". Rispondi: "I tassi variano 8-24% a seconda del piano. Quello base si aggira sul 12-18%, ma con l'algoritmo che ti spinge sui giorni lenti finisci più in alto". Mai dire nomi propri di competitor in pubblico. Per la versione "fai-il-tuo-calcolo" considera di costruire un calcolatore vero su evulery.it (post #ROI calculator nella roadmap).
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ====================== POST 3 — STORIA SERATA ====================== -->
+<div class="post-block" data-post="3">
+    <div class="post-header">
+        <div>
+            <div class="post-id">Post 03 · Prova sociale</div>
+            <div class="post-title">"Storia di una serata"</div>
+            <div class="post-meta">Singolo post portrait · obiettivo: trust narrativo · pubblicare quando hai cliente reale</div>
+        </div>
+        <div class="post-pills">
+            <span class="pill pill-type-prova">Prova sociale</span>
+            <span class="pill pill-format">Singolo</span>
+            <span class="pill pill-format">1080×1350</span>
+        </div>
+    </div>
+    <div class="post-body">
+        <div class="cards-strip">
+            <div class="card-wrapper">
+                <div class="card-label">⚠️ Placeholder — adatta a cliente reale</div>
+                <div class="card portrait" id="v2-card-3">
+                    <div class="card-inner theme-cream">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="story-tag" style="margin-top: 60px;">Storia di una serata</div>
+                        <div class="story-headline">Sabato sera.<br><span class="accent">Stessa sala,<br>due mondi.</span></div>
+                        <div class="story-block">
+                            <div class="story-block-label">Prima · 6 mesi fa</div>
+                            <div class="story-block-text">"Foglio cartaceo dietro al bancone. Telefono che squilla mentre serviamo. Tre tavoli no-show su 12. La sera finisce, mi siedo a fare i conti delle prenotazioni mancate."</div>
+                        </div>
+                        <div class="story-block after">
+                            <div class="story-block-label">Adesso · sabato 26 aprile</div>
+                            <div class="story-block-text">"Tutto sul telefono. Promemoria automatici. Zero no-show su 14 prenotazioni. Sera che fila come deve filare. La mattina dopo ho già le prenotazioni della prossima settimana."</div>
+                        </div>
+                        <div class="story-byline">— Trattoria [Nome] · [Città]</div>
+                        <div class="card-foot">
+                            <div class="card-step" style="color: var(--brand);">Cliente Evulery</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-3" data-name="v2-post-03-storia.png">⬇ Scarica PNG</button>
+            </div>
+        </div>
+
+        <div class="caption-box">
+            <div class="caption-label">Caption · ⚠️ adatta al cliente reale</div>
+            <div class="caption-text" id="v2-caption-3">Storia di una serata. Stessa sala, sei mesi di differenza.
+
+PRIMA — 6 mesi fa. Foglio cartaceo dietro al bancone, telefono che squilla mentre i ragazzi servono, tre tavoli no-show su dodici prenotazioni. La sera finisce e ci si siede a fare il conto delle cene perse.
+
+ADESSO — sabato scorso. Stessa sala, stessa cucina, stesse 14 prenotazioni. Promemoria automatico al cliente la mattina, conferma in 1 click, zero mancate presentazioni. Tutto sul telefono. La sera fila come deve filare. La mattina dopo, le prenotazioni della settimana prossima sono già lì.
+
+Non è cambiata la cucina. Non è cambiato il personale. È cambiato il modo di gestire le prenotazioni.
+
+Quando il sistema fa il suo lavoro, tu fai il tuo.
+
+Vuoi vedere come funziona anche da te? Demo gratuita → link in bio.</div>
+            <button class="copy-btn" data-target="v2-caption-3">📋 Copia caption</button>
+            <div class="hashtag-row">
+                <span class="tag">#testimonial</span>
+                <span class="tag">#ristorante</span>
+                <span class="tag">#ristoratori</span>
+                <span class="tag">#trattoria</span>
+                <span class="tag">#primaedopo</span>
+                <span class="tag">#successostory</span>
+                <span class="tag">#prenotazioniristorante</span>
+            </div>
+            <div class="notes">
+                <strong>⚠️ Importante:</strong> non pubblicare con dati inventati. Il format "prima/adesso" funziona solo se i numeri sono veri. Quando avrai un cliente disposto a raccontarsi:
+                <br>1) Sostituisci nome ristorante e città
+                <br>2) Adatta i numeri reali (anche se sono "9 su 10 invece di 12 su 12", la trasparenza vale di più)
+                <br>3) Chiedi al cliente una riga di approvazione del testo (basta uno screenshot WhatsApp salvato)
+                <br>4) Se hai una sua foto pubblicabile, considera versione carosello con foto + screenshot dashboard
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ====================== POST 4 — LEGGE 34/2026 (NEW ANGLE) ====================== -->
+<div class="post-block" data-post="4">
+    <div class="post-header">
+        <div>
+            <div class="post-id">Post 04 · Educativo</div>
+            <div class="post-title">"Recensioni online: la guida che il tuo commercialista non ti ha dato"</div>
+            <div class="post-meta">Carosello 7 slide · obiettivo: differenziazione + autorità · settimana 3</div>
+        </div>
+        <div class="post-pills">
+            <span class="pill pill-type-educativo">Educativo</span>
+            <span class="pill pill-format">Carosello 7x</span>
+            <span class="pill pill-format">1080×1080</span>
+        </div>
+    </div>
+    <div class="post-body">
+        <div class="cards-strip">
+            <!-- 4.1 Cover -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 1 / 7 — Cover</div>
+                <div class="card square" id="v2-card-4-1">
+                    <div class="card-inner theme-ink-warm">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="law-cover-tag">Compliance · L. 34/2026</div>
+                        <div class="h-display" style="margin-top: 40px; font-size: 84px;">Recensioni<br>online:<br>la guida che<br><span style="color: var(--brand-accent);">nessuno</span><br>ti ha dato.</div>
+                        <div class="card-foot">
+                            <div class="card-step">Scorri →</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-4-1" data-name="v2-post-04-legge-1.png">⬇ Scarica PNG</button>
+            </div>
+            <!-- 4.2 Cosa è cambiato -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 2 / 7 — Cosa è cambiato</div>
+                <div class="card square" id="v2-card-4-2">
+                    <div class="card-inner theme-white">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="eyebrow-flat" style="margin-top: 100px;">Cosa è cambiato dal 2026</div>
+                        <div class="h-md">Le recensioni anonime<br>non sono più ammesse<br>per legge.</div>
+                        <div class="body-md" style="margin-top: 32px; color: var(--ink-soft);">Solo chi ha effettuato la visita può lasciare una recensione tracciabile. Le piattaforme devono dimostrare il legame visita ↔ autore.</div>
+                        <div class="card-foot">
+                            <div class="card-step">02 / 07</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-4-2" data-name="v2-post-04-legge-2.png">⬇ Scarica PNG</button>
+            </div>
+            <!-- 4.3 NON puoi più -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 3 / 7 — Non puoi più</div>
+                <div class="card square" id="v2-card-4-3">
+                    <div class="card-inner theme-white">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="eyebrow-flat" style="margin-top: 80px; color: var(--danger);">Le 3 cose che NON puoi più fare</div>
+                        <ul class="law-list">
+                            <li><span class="icon no">✗</span><span>Comprare recensioni positive a pacchetti</span></li>
+                            <li><span class="icon no">✗</span><span>Far recensire da personale o familiari</span></li>
+                            <li><span class="icon no">✗</span><span>Lasciare recensioni "fantasma" senza visita verificata</span></li>
+                        </ul>
+                        <div class="card-foot">
+                            <div class="card-step">03 / 07</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-4-3" data-name="v2-post-04-legge-3.png">⬇ Scarica PNG</button>
+            </div>
+            <!-- 4.4 DEVI fare -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 4 / 7 — Devi fare</div>
+                <div class="card square" id="v2-card-4-4">
+                    <div class="card-inner theme-white">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="eyebrow-flat" style="margin-top: 80px; color: var(--brand);">Le 4 cose che DEVI fare</div>
+                        <ul class="law-list">
+                            <li><span class="icon yes">✓</span><span>Tracciare ogni prenotazione con dati identificabili</span></li>
+                            <li><span class="icon yes">✓</span><span>Collegare la richiesta di recensione alla visita</span></li>
+                            <li><span class="icon yes">✓</span><span>Conservare la prova del legame visita-recensione</span></li>
+                            <li><span class="icon yes">✓</span><span>Permettere al cliente di rifiutare la pubblicazione</span></li>
+                        </ul>
+                        <div class="card-foot">
+                            <div class="card-step">04 / 07</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-4-4" data-name="v2-post-04-legge-4.png">⬇ Scarica PNG</button>
+            </div>
+            <!-- 4.5 Cosa rischi -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 5 / 7 — Cosa rischi</div>
+                <div class="card square" id="v2-card-4-5">
+                    <div class="card-inner theme-ink-warm">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="eyebrow-flat" style="margin-top: 100px; color: var(--warning);">Cosa rischi davvero</div>
+                        <div class="law-stat-row">
+                            <div class="law-stat-cell">
+                                <div class="law-stat-num">€10K+</div>
+                                <div class="law-stat-text">Sanzioni amministrative per recensioni manipolate</div>
+                            </div>
+                            <div class="law-stat-cell">
+                                <div class="law-stat-num">100%</div>
+                                <div class="law-stat-text">Recensioni rimosse dalle piattaforme non conformi</div>
+                            </div>
+                        </div>
+                        <div class="card-foot">
+                            <div class="card-step">05 / 07</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-4-5" data-name="v2-post-04-legge-5.png">⬇ Scarica PNG</button>
+            </div>
+            <!-- 4.6 Come Evulery -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 6 / 7 — Soluzione</div>
+                <div class="card square" id="v2-card-4-6">
+                    <div class="card-inner theme-brand">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="eyebrow-flat" style="margin-top: 80px; color: rgba(255,255,255,.85);">Come Evulery ti mette in regola</div>
+                        <ul class="law-list">
+                            <li><span class="icon yes-dark">→</span><span>Ogni recensione collegata a una prenotazione tracciata</span></li>
+                            <li><span class="icon yes-dark">→</span><span>Visita verificata prima di poter recensire</span></li>
+                            <li><span class="icon yes-dark">→</span><span>Audit trail completo, conservato e esportabile</span></li>
+                            <li><span class="icon yes-dark">→</span><span>Conformità nativa, già attiva su tutti i piani</span></li>
+                        </ul>
+                        <div class="card-foot">
+                            <div class="card-step">06 / 07</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-4-6" data-name="v2-post-04-legge-6.png">⬇ Scarica PNG</button>
+            </div>
+            <!-- 4.7 CTA -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 7 / 7 — CTA</div>
+                <div class="card square" id="v2-card-4-7">
+                    <div class="card-inner theme-brand-deep">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="h-display" style="margin-top: 200px; font-size: 86px;">Il tuo<br>ristorante<br>è in regola?</div>
+                        <div class="cta-button-v2" style="margin-top: 48px; font-size: 24px; padding: 22px 44px;">Verifica con noi →</div>
+                        <div class="card-foot">
+                            <div class="card-step">07 / 07</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-4-7" data-name="v2-post-04-legge-7.png">⬇ Scarica PNG</button>
+            </div>
+        </div>
+
+        <div class="caption-box">
+            <div class="caption-label">Caption</div>
+            <div class="caption-text" id="v2-caption-4">Dal 2026 le recensioni online dei ristoranti devono essere verificabili. Tradotto: solo chi è davvero stato da te può recensirti, e la piattaforma deve poterlo dimostrare.
+
+Buona notizia per chi lavora seriamente. Brutta notizia per chi sopravviveva grazie a recensioni gonfiate.
+
+Cosa cambia in pratica:
+
+NON PUOI PIÙ
+→ Comprare recensioni a pacchetti
+→ Farti recensire da personale o familiari
+→ Avere recensioni "fantasma" senza visita verificata
+
+DEVI FARE
+→ Tracciare ogni prenotazione con dati identificabili
+→ Collegare la richiesta di recensione a una visita reale
+→ Conservare la prova del legame visita ↔ recensione
+→ Permettere al cliente di rifiutare la pubblicazione
+
+Le sanzioni partono da diverse migliaia di euro. Le piattaforme che non si adeguano stanno già rimuovendo recensioni a tappeto.
+
+Evulery è conforme nativamente. Ogni recensione raccolta tramite il sistema è collegata a una prenotazione tracciata, a una visita verificata, a un cliente identificabile.
+
+Vuoi sapere se sei già in regola o se devi correre? Demo di 30 minuti → link in bio.
+
+Salva il post: a fine anno ti ringrazi.</div>
+            <button class="copy-btn" data-target="v2-caption-4">📋 Copia caption</button>
+            <div class="hashtag-row">
+                <span class="tag">#legge34</span>
+                <span class="tag">#recensioniverificate</span>
+                <span class="tag">#compliance</span>
+                <span class="tag">#ristorante</span>
+                <span class="tag">#ristoratori</span>
+                <span class="tag">#ristorazioneitaliana</span>
+                <span class="tag">#trattoria</span>
+                <span class="tag">#pizzeria</span>
+            </div>
+            <div class="notes">
+                <strong>Note operative:</strong> formato "checklist legale" che genera molti salvataggi (KPI Instagram chiave). Pubblicalo di lunedì o martedì — i ristoratori scorrono di più all'inizio settimana, mentre venerdì e sabato sono operativi. Su LinkedIn (fase B) questo post funziona benissimo riformulato: aggiungi un paragrafo introduttivo con dati Confindustria/AGCM e il post diventa autorevole anche per consulenti/agenzie.
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ====================== POST 5 — INSIGHTS RISTORATORI ====================== -->
+<div class="post-block" data-post="5">
+    <div class="post-header">
+        <div>
+            <div class="post-id">Post 05 · Origine</div>
+            <div class="post-title">"3 cose che ci hanno ripetuto 30 ristoratori in 6 mesi"</div>
+            <div class="post-meta">Singolo post portrait · obiettivo: legittimazione + ascolto · settimana 1</div>
+        </div>
+        <div class="post-pills">
+            <span class="pill pill-type-manifesto">Manifesto</span>
+            <span class="pill pill-format">Singolo</span>
+            <span class="pill pill-format">1080×1350</span>
+        </div>
+    </div>
+    <div class="post-body">
+        <div class="cards-strip">
+            <div class="card-wrapper">
+                <div class="card-label">Singola portrait</div>
+                <div class="card portrait" id="v2-card-5">
+                    <div class="card-inner theme-cream">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="insights-eye">Cosa abbiamo ascoltato</div>
+                        <div class="insights-headline">3 cose che ci hanno<br>ripetuto <span style="color: var(--brand);">30 ristoratori</span><br>prima di scrivere<br>una riga di codice.</div>
+                        <div class="insight-quote">
+                            <div class="insight-quote-text">"Pago per portarmi i clienti, e poi quei clienti diventano i loro. Non sono più miei, sono affittati."</div>
+                            <div class="insight-quote-source">Trattoria · Centro Italia</div>
+                        </div>
+                        <div class="insight-quote">
+                            <div class="insight-quote-text">"Quando chiamo l'assistenza, mi rispondono in inglese. Io non parlo inglese, e il problema è in italiano."</div>
+                            <div class="insight-quote-source">Pizzeria · Lombardia</div>
+                        </div>
+                        <div class="insight-quote">
+                            <div class="insight-quote-text">"Voglio un sistema che mi semplifichi la sera, non che me la complichi. Niente di più."</div>
+                            <div class="insight-quote-source">Pub · Sicilia</div>
+                        </div>
+                        <div class="card-foot">
+                            <div class="card-step">Le radici di Evulery</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-5" data-name="v2-post-05-insights.png">⬇ Scarica PNG</button>
+            </div>
+        </div>
+
+        <div class="caption-box">
+            <div class="caption-label">Caption</div>
+            <div class="caption-text" id="v2-caption-5">Prima di scrivere una riga di codice, abbiamo passato sei mesi a parlare con 30 ristoratori italiani. Trattorie di paese, pizzerie napoletane, pub di provincia, osterie storiche. Indipendenti tutti.
+
+Tre cose ci sono state ripetute, in forme diverse, da quasi tutti.
+
+UNO. "Pago commissioni per portarmi i clienti, e poi quei clienti diventano dell'aggregatore. Non sono più miei. Sono affittati."
+
+DUE. "Quando chiamo l'assistenza dei software stranieri, parlano inglese. Io non parlo inglese. Il problema è in italiano."
+
+TRE. "Voglio un sistema che mi semplifichi la sera, non che me la complichi. Niente di più."
+
+Evulery è la risposta a queste tre frasi. Niente commissioni. Supporto in italiano da persone vere. Un'interfaccia che fa quello che serve, non quello che fa scena nelle slide.
+
+Non siamo nati in un garage di Silicon Valley. Siamo nati in cucina, durante un servizio del sabato sera, con un ristoratore che ci spiegava come gestiva 60 coperti su un foglio di carta.
+
+Demo gratuita di 30 minuti → link in bio.</div>
+            <button class="copy-btn" data-target="v2-caption-5">📋 Copia caption</button>
+            <div class="hashtag-row">
+                <span class="tag">#ristorazioneitaliana</span>
+                <span class="tag">#ristoratori</span>
+                <span class="tag">#madeinitaly</span>
+                <span class="tag">#startupitaliana</span>
+                <span class="tag">#ristorante</span>
+                <span class="tag">#trattoria</span>
+                <span class="tag">#imprenditori</span>
+            </div>
+            <div class="notes">
+                <strong>Note operative:</strong> post di "legittimazione narrativa" — racconta da dove viene il prodotto senza personalizzare il brand. Le tre quote sono volutamente regionali e di formati diversi (trattoria/pizzeria/pub) per coprire il triangolo di pubblico. Funziona molto bene come <strong>secondo post in assoluto</strong>: dopo il manifesto delle 4 promesse, il pubblico vuole sapere "chi sono questi qui". Questa è la risposta senza esporre persone fisiche.
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ====================== POST 6 — 5 NUMERI SABATO SERA ====================== -->
+<div class="post-block" data-post="6">
+    <div class="post-header">
+        <div>
+            <div class="post-id">Post 06 · Tip operativo</div>
+            <div class="post-title">"5 numeri che ti dicono se il tuo sabato sera funziona"</div>
+            <div class="post-meta">Carosello 5 slide · obiettivo: valore data-driven · settimana 3</div>
+        </div>
+        <div class="post-pills">
+            <span class="pill pill-type-educativo">Educativo</span>
+            <span class="pill pill-format">Carosello 5x</span>
+            <span class="pill pill-format">1080×1080</span>
+        </div>
+    </div>
+    <div class="post-body">
+        <div class="cards-strip">
+            <!-- 6.1 Cover -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 1 / 5 — Cover</div>
+                <div class="card square" id="v2-card-6-1">
+                    <div class="card-inner theme-white">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="eyebrow-flat" style="margin-top: 180px;">Tip ristoratori · 3 min lettura</div>
+                        <div class="h-display" style="font-size: 88px;">5 numeri<br>che ti dicono<br>se il tuo<br><span style="color: var(--brand);">sabato sera</span><br>funziona.</div>
+                        <div class="card-foot">
+                            <div class="card-step" style="color: var(--muted);">Scorri →</div>
+                            <div class="card-site" style="color: var(--ink);">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-6-1" data-name="v2-post-06-numeri-1.png">⬇ Scarica PNG</button>
+            </div>
+            <!-- 6.2 Numero 1 -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 2 / 5 — Numero 1</div>
+                <div class="card square" id="v2-card-6-2">
+                    <div class="card-inner theme-white">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="eyebrow-flat" style="margin-top: 80px;">Numero 01</div>
+                        <div class="metric-num">2,3</div>
+                        <div class="metric-label">Rotazione tavoli</div>
+                        <div class="metric-explain">Sotto 1,8 stai sotto-utilizzando la sala. Sopra 2,5 stai correndo troppo: i clienti se ne accorgono.</div>
+                        <div class="card-foot">
+                            <div class="card-step">02 / 05</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-6-2" data-name="v2-post-06-numeri-2.png">⬇ Scarica PNG</button>
+            </div>
+            <!-- 6.3 Numero 2 -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 3 / 5 — Numero 2</div>
+                <div class="card square" id="v2-card-6-3">
+                    <div class="card-inner theme-cream">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="eyebrow-flat" style="margin-top: 80px;">Numero 02</div>
+                        <div class="metric-num">12<span class="pct">%</span></div>
+                        <div class="metric-label">No-show medio</div>
+                        <div class="metric-explain">Italia: media 12-18% senza promemoria. Sopra il 15% perdi più di 1 cena su 8 prenotate. Con promemoria automatici scende sotto il 5%.</div>
+                        <div class="card-foot">
+                            <div class="card-step">03 / 05</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-6-3" data-name="v2-post-06-numeri-3.png">⬇ Scarica PNG</button>
+            </div>
+            <!-- 6.4 Numero 3 -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 4 / 5 — Numero 3</div>
+                <div class="card square" id="v2-card-6-4">
+                    <div class="card-inner theme-white">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="eyebrow-flat" style="margin-top: 80px;">Numero 03</div>
+                        <div class="metric-num">38<span class="pct">%</span></div>
+                        <div class="metric-label">Clienti che tornano</div>
+                        <div class="metric-explain">Sopra il 35% sei un punto di riferimento. Sotto il 20% c'è qualcosa che non quadra: prima di pubblicità nuova, indaga lì.</div>
+                        <div class="card-foot">
+                            <div class="card-step">04 / 05</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-6-4" data-name="v2-post-06-numeri-4.png">⬇ Scarica PNG</button>
+            </div>
+            <!-- 6.5 Numeri 4+5 + CTA -->
+            <div class="card-wrapper">
+                <div class="card-label">Slide 5 / 5 — Numeri 4+5 + CTA</div>
+                <div class="card square" id="v2-card-6-5">
+                    <div class="card-inner theme-brand">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="eyebrow-flat" style="margin-top: 80px; color: rgba(255,255,255,.8);">+ 2 numeri bonus</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 40px;">
+                            <div style="background: rgba(255,255,255,.1); border-radius: 16px; padding: 28px;">
+                                <div style="font-size: 24px; font-weight: 700; opacity: .8;">04</div>
+                                <div style="font-size: 80px; font-weight: 900; line-height: 1; margin-top: 8px; color: var(--brand-accent);">€38</div>
+                                <div style="font-size: 22px; font-weight: 600; margin-top: 12px;">Scontrino medio</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,.1); border-radius: 16px; padding: 28px;">
+                                <div style="font-size: 24px; font-weight: 700; opacity: .8;">05</div>
+                                <div style="font-size: 80px; font-weight: 900; line-height: 1; margin-top: 8px; color: var(--brand-accent);">68<span style="font-size: 56px;">%</span></div>
+                                <div style="font-size: 22px; font-weight: 600; margin-top: 12px;">Tasso di occupazione</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 60px; font-size: 32px; font-weight: 800; line-height: 1.25;">Tutti e 5 li trovi nella<br>dashboard di Evulery.</div>
+                        <div class="cta-button-v2" style="margin-top: 32px; font-size: 22px; padding: 18px 36px;">Vedi la demo →</div>
+                        <div class="card-foot">
+                            <div class="card-step">05 / 05</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-6-5" data-name="v2-post-06-numeri-5.png">⬇ Scarica PNG</button>
+            </div>
+        </div>
+
+        <div class="caption-box">
+            <div class="caption-label">Caption</div>
+            <div class="caption-text" id="v2-caption-6">Quanti ristoratori sanno davvero come è andato sabato sera, oltre al "siamo stati pieni"? Pochi. Perché "pieno" è un'impressione, non un dato.
+
+Cinque numeri che dovresti avere in tasca ogni domenica mattina:
+
+1️⃣ ROTAZIONE TAVOLI · 2,3 (sano)
+Sotto 1,8 sotto-utilizzi la sala. Sopra 2,5 corri troppo: i clienti percepiscono fretta.
+
+2️⃣ NO-SHOW · 12% (media italiana senza promemoria)
+Sopra il 15% perdi più di una cena su otto prenotate. Con promemoria automatici scende sotto il 5%.
+
+3️⃣ CLIENTI CHE TORNANO · 38% (target sano)
+Sotto il 20% non hai un problema di acquisizione, hai un problema di esperienza. Investi lì prima che in pubblicità.
+
+4️⃣ SCONTRINO MEDIO · €38 (esempio)
+Trend sul mensile: cala? Hai cambiato carta da poco? Cresce solo perché hai alzato i prezzi o perché vendi più del menu degustazione?
+
+5️⃣ TASSO DI OCCUPAZIONE · 68%
+Quanti coperti hai servito vs. coperti disponibili. Il numero che dice se la sera ha pagato.
+
+Senza questi numeri, gestisci il ristorante a sensazione. Con questi numeri, lo gestisci.
+
+Tutti e 5 sono nella dashboard di Evulery, automaticamente. Vuoi vederli sui dati del tuo ristorante? Demo → link in bio.
+
+Salva il post se vuoi tornarci.</div>
+            <button class="copy-btn" data-target="v2-caption-6">📋 Copia caption</button>
+            <div class="hashtag-row">
+                <span class="tag">#ristorante</span>
+                <span class="tag">#ristoratori</span>
+                <span class="tag">#gestioneristorante</span>
+                <span class="tag">#kpi</span>
+                <span class="tag">#datiristorazione</span>
+                <span class="tag">#trattoria</span>
+                <span class="tag">#pizzeria</span>
+                <span class="tag">#sabatosera</span>
+            </div>
+            <div class="notes">
+                <strong>Note operative:</strong> post "data-driven", uno dei più salvabili in assoluto perché ogni numero è un mini-benchmark. I numeri citati (2,3 / 12% / 38% / €38 / 68%) sono valori realistici ma non specifici di Evulery — funzionano da riferimento generale. Se in futuro vuoi pubblicare benchmark veri raccolti dai clienti, attento alla privacy: solo aggregati, mai dati di singoli ristoranti.
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ====================== POST 7 — AFFITTARE VS AVERE ====================== -->
+<div class="post-block" data-post="7">
+    <div class="post-header">
+        <div>
+            <div class="post-id">Post 07 · Manifesto</div>
+            <div class="post-title">"Affittare i clienti vs. averli"</div>
+            <div class="post-meta">Singolo post · obiettivo: differenziazione (anti-aggregatore implicito) · settimana 4</div>
+        </div>
+        <div class="post-pills">
+            <span class="pill pill-type-manifesto">Manifesto</span>
+            <span class="pill pill-format">Singolo</span>
+            <span class="pill pill-format">1080×1080</span>
+        </div>
+    </div>
+    <div class="post-body">
+        <div class="cards-strip">
+            <div class="card-wrapper">
+                <div class="card-label">Singola</div>
+                <div class="card square" id="v2-card-7">
+                    <div class="card-inner theme-ink-warm">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="compare-cover-h"><span class="strike">Affittare</span><br>i clienti.<br><span class="accent">Averli.</span></div>
+                        <div class="compare-grid">
+                            <div class="compare-cell them">
+                                <div class="compare-cell-label">Aggregatori</div>
+                                <div class="compare-cell-title">Li affitti</div>
+                                <ul class="compare-list">
+                                    <li><span class="x">✗</span> Paghi per ogni coperto, ogni volta</li>
+                                    <li><span class="x">✗</span> I dati restano alla piattaforma</li>
+                                    <li><span class="x">✗</span> Compari con 50 vicini di casa</li>
+                                </ul>
+                            </div>
+                            <div class="compare-cell us">
+                                <div class="compare-cell-label" style="color: rgba(255,255,255,.85);">Evulery</div>
+                                <div class="compare-cell-title">Li hai</div>
+                                <ul class="compare-list">
+                                    <li><span class="ok">✓</span> Canone fisso mensile</li>
+                                    <li><span class="ok">✓</span> Anagrafica, contatti, storico tuoi</li>
+                                    <li><span class="ok">✓</span> Una sola vetrina: la tua</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-foot">
+                            <div class="card-step" style="opacity: .8;">Posizionamento</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-7" data-name="v2-post-07-affitto.png">⬇ Scarica PNG</button>
+            </div>
+        </div>
+
+        <div class="caption-box">
+            <div class="caption-label">Caption</div>
+            <div class="caption-text" id="v2-caption-7">C'è una differenza che non si racconta abbastanza tra affittare i clienti e averli.
+
+Quando passi tramite una piattaforma di prenotazioni con commissioni, stai affittando ogni cliente a tariffa concordata. Ogni cena è una transazione separata. Quel cliente è "tuo" per quella sera, e poi torna ad essere della piattaforma.
+
+Quando invece il cliente prenota direttamente con un sistema che è tuo:
+→ Il suo nome è nella tua anagrafica
+→ Le sue preferenze sono nelle tue note
+→ Lo storico delle sue visite è tuo
+→ Puoi mandargli auguri di compleanno, promozioni, comunicazioni — perché ti ha scelto e ti ha dato il consenso
+
+È la differenza tra prendere in affitto una sala per fare una festa, e averne una propria. Si vede sul lungo periodo.
+
+Evulery non è un'agenzia che ti porta clienti. È il sistema che ti permette di tenere quelli che hai e farli tornare.
+
+Demo gratuita → link in bio.</div>
+            <button class="copy-btn" data-target="v2-caption-7">📋 Copia caption</button>
+            <div class="hashtag-row">
+                <span class="tag">#ristorante</span>
+                <span class="tag">#ristoratori</span>
+                <span class="tag">#fidelizzazione</span>
+                <span class="tag">#crm</span>
+                <span class="tag">#prenotazioniristorante</span>
+                <span class="tag">#imprenditori</span>
+                <span class="tag">#ristorazioneitaliana</span>
+            </div>
+            <div class="notes">
+                <strong>Note operative:</strong> post "concettuale" che funziona perché propone un frame che il pubblico può portarsi via ("affitto vs proprietà"). Mai nominare aggregatori specifici nel post o nei commenti — il frame è già sufficientemente esplicito. Se compaiono commenti polemici di chi difende gli aggregatori, rispondi con dati ("le commissioni medie sono pubbliche, fai il conto") e non con polemica.
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ====================== POST 8 — CAPARRA 3 LIVELLI ====================== -->
+<div class="post-block" data-post="8">
+    <div class="post-header">
+        <div>
+            <div class="post-id">Post 08 · Feature</div>
+            <div class="post-title">"La caparra come gesto di rispetto reciproco"</div>
+            <div class="post-meta">Singolo post · obiettivo: spotlight feature differenziante · settimana 2</div>
+        </div>
+        <div class="post-pills">
+            <span class="pill pill-type-feature">Feature</span>
+            <span class="pill pill-format">Singolo</span>
+            <span class="pill pill-format">1080×1080</span>
+        </div>
+    </div>
+    <div class="post-body">
+        <div class="cards-strip">
+            <div class="card-wrapper">
+                <div class="card-label">Singola</div>
+                <div class="card square" id="v2-card-8">
+                    <div class="card-inner theme-brand-deep">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="deposit-headline">La caparra<br>come gesto<br>di rispetto<br><span style="color: var(--brand-accent);">reciproco.</span></div>
+                        <div class="deposit-options">
+                            <div class="deposit-opt">
+                                <div class="deposit-opt-num" style="background: rgba(255,255,255,.2); color: #fff;">1</div>
+                                <div class="deposit-opt-text">
+                                    <div class="deposit-opt-title">Solo informativa</div>
+                                    <div class="deposit-opt-desc">Importo concordato, da pagare in loco</div>
+                                </div>
+                            </div>
+                            <div class="deposit-opt">
+                                <div class="deposit-opt-num" style="background: rgba(255,255,255,.2); color: #fff;">2</div>
+                                <div class="deposit-opt-text">
+                                    <div class="deposit-opt-title">Link Stripe esterno</div>
+                                    <div class="deposit-opt-desc">Bonifico o pagamento via link inviato</div>
+                                </div>
+                            </div>
+                            <div class="deposit-opt featured">
+                                <div class="deposit-opt-num">3</div>
+                                <div class="deposit-opt-text">
+                                    <div class="deposit-opt-title">Stripe integrato</div>
+                                    <div class="deposit-opt-desc">Caparra al momento della prenotazione, automatica</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-foot">
+                            <div class="card-step">Feature spotlight</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-8" data-name="v2-post-08-caparra.png">⬇ Scarica PNG</button>
+            </div>
+        </div>
+
+        <div class="caption-box">
+            <div class="caption-label">Caption</div>
+            <div class="caption-text" id="v2-caption-8">"La caparra fa scappare i clienti." È vero — quando è gestita male.
+
+Una caparra non è una barriera. È un patto: il ristorante riserva tavolo e cucina, il cliente conferma di esserci. Se gestita con il giusto tono, è un segnale di serietà reciproca.
+
+Per questo Evulery ti dà 3 modalità, da scegliere in base al tipo di servizio.
+
+LIVELLO 1 — INFORMATIVA
+La caparra è prevista, l'importo è concordato, ma il pagamento avviene direttamente in ristorante. Niente attriti tecnici, ma il cliente sa che è un impegno serio. Perfetto per ristoranti di vicinato dove il rapporto umano regola tutto.
+
+LIVELLO 2 — LINK STRIPE
+Mandi un link al cliente, lui paga online quando vuole nelle 24 ore successive. Il tavolo si conferma al pagamento. Adatto a serate speciali, gruppi numerosi, eventi.
+
+LIVELLO 3 — STRIPE INTEGRATO
+La caparra è incassata automaticamente al momento della prenotazione, dentro al widget. Zero passaggi manuali. Adatto a ristoranti gourmet, fine dining, situazioni in cui il no-show è un costo grande.
+
+Tre livelli, perché un ristorante di paese non ha gli stessi problemi di un ristorante stellato. E un sistema che fa una taglia unica, non aiuta nessuno.
+
+Vuoi vedere come si attiva? Demo gratuita → link in bio.</div>
+            <button class="copy-btn" data-target="v2-caption-8">📋 Copia caption</button>
+            <div class="hashtag-row">
+                <span class="tag">#caparra</span>
+                <span class="tag">#noshow</span>
+                <span class="tag">#ristorante</span>
+                <span class="tag">#ristoratori</span>
+                <span class="tag">#prenotazioniristorante</span>
+                <span class="tag">#stripe</span>
+                <span class="tag">#gestioneristorante</span>
+                <span class="tag">#finedining</span>
+            </div>
+            <div class="notes">
+                <strong>Note operative:</strong> post "feature spotlight" che è anche un mini-manifesto. La caparra è uno dei temi più caldi tra ristoratori: aspettati commenti polarizzanti ("io non la chiederò mai" vs "io la chiedo sempre"). Il post non prende posizione assoluta — proprio per questo funziona. Risponde a entrambe le scuole di pensiero. Considera di sponsorizzarlo (10-20€) verso ristoranti gourmet/fine dining: è il post più tecnico-rilevante per loro.
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ====================== POST 9 — METRICHE CHE NON PUBBLICHIAMO ====================== -->
+<div class="post-block" data-post="9">
+    <div class="post-header">
+        <div>
+            <div class="post-id">Post 09 · Trasparenza</div>
+            <div class="post-title">"Le metriche che NON pubblichiamo (e perché)"</div>
+            <div class="post-meta">Singolo post · obiettivo: brand maturo + trust · settimana 4</div>
+        </div>
+        <div class="post-pills">
+            <span class="pill pill-type-prova">Prova sociale</span>
+            <span class="pill pill-format">Singolo</span>
+            <span class="pill pill-format">1080×1080</span>
+        </div>
+    </div>
+    <div class="post-body">
+        <div class="cards-strip">
+            <div class="card-wrapper">
+                <div class="card-label">Singola</div>
+                <div class="card square" id="v2-card-9">
+                    <div class="card-inner theme-ink">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div class="tr-headline">Le metriche<br>che <span class="x">non</span> pubblichiamo.<br>E quelle che <span class="ok">guardiamo</span><br>davvero.</div>
+                        <div class="tr-cols">
+                            <div class="tr-col no">
+                                <div class="tr-col-label">Mai</div>
+                                <ul>
+                                    <li>"Utenti registrati"</li>
+                                    <li>"Coperti gestiti"</li>
+                                    <li>"Restaurant on platform"</li>
+                                    <li>"Crescita YoY"</li>
+                                </ul>
+                            </div>
+                            <div class="tr-col yes">
+                                <div class="tr-col-label">Sì, ogni mese</div>
+                                <ul>
+                                    <li>Clienti che rinnovano</li>
+                                    <li>Tempo per rispondere</li>
+                                    <li>Bug aperti / chiusi</li>
+                                    <li>Soddisfazione (NPS)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-foot">
+                            <div class="card-step" style="opacity: .8;">Trasparenza</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-9" data-name="v2-post-09-metriche.png">⬇ Scarica PNG</button>
+            </div>
+        </div>
+
+        <div class="caption-box">
+            <div class="caption-label">Caption</div>
+            <div class="caption-text" id="v2-caption-9">"100.000 utenti registrati". "200.000 coperti gestiti". "Crescita del 300%".
+
+Sono i numeri che leggi sui post delle piattaforme tech. E sono i numeri che noi, di proposito, non pubblichiamo. Non perché siano bassi — non avrebbe senso comunque. Perché sono vanity metrics: gonfi, manipolabili, e dicono poco di chi siamo.
+
+Ecco le metriche che invece guardiamo ogni mese:
+
+→ CLIENTI CHE RINNOVANO
+Nessuno ti firma il rinnovo se il prodotto non funziona. Quanti restano dopo 12 mesi è il numero più onesto che esista.
+
+→ TEMPO PER RISPONDERE
+Quanto impieghiamo a tornare a un'email di un cliente. Quanto a risolvere un bug. Quanto a rispondere a un commento qui sotto.
+
+→ BUG APERTI E CHIUSI
+Pubblichiamo il backlog interno trimestralmente. Niente "sviluppo agile" raccontato — solo issue chiusi.
+
+→ SODDISFAZIONE (NPS)
+Quanto i clienti consiglierebbero Evulery a un altro ristoratore. Numero singolo, non manipolabile, da -100 a +100.
+
+Quando avremo numeri da raccontare, li racconteremo con questi. Non con quelli da slide di pitch.
+
+Trasparenza > marketing. Per noi è una scelta di costruzione.
+
+Se ti suona giusto → link in bio.</div>
+            <button class="copy-btn" data-target="v2-caption-9">📋 Copia caption</button>
+            <div class="hashtag-row">
+                <span class="tag">#trasparenza</span>
+                <span class="tag">#startup</span>
+                <span class="tag">#kpi</span>
+                <span class="tag">#vanitymetrics</span>
+                <span class="tag">#ristorazioneitaliana</span>
+                <span class="tag">#imprenditori</span>
+                <span class="tag">#community</span>
+            </div>
+            <div class="notes">
+                <strong>Note operative:</strong> post "anti-marketing" che fa marketing meglio del marketing. Funziona per posizionarsi come brand maturo, anche all'inizio. Aspettati share da altri imprenditori italiani: questo tipo di post viene ri-condiviso tra peer. Considera versione LinkedIn (fase B) leggermente più articolata — diventa thought leadership di brand senza esporre persone fisiche.
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ====================== POST 10 — CTA DEMO ====================== -->
+<div class="post-block" data-post="10">
+    <div class="post-header">
+        <div>
+            <div class="post-id">Post 10 · Call to action</div>
+            <div class="post-title">"30 minuti. Senza commerciali. Mai."</div>
+            <div class="post-meta">Singolo post portrait · obiettivo: lead generation · settimana 4</div>
+        </div>
+        <div class="post-pills">
+            <span class="pill pill-type-cta">Call to action</span>
+            <span class="pill pill-format">Singolo</span>
+            <span class="pill pill-format">1080×1350</span>
+        </div>
+    </div>
+    <div class="post-body">
+        <div class="cards-strip">
+            <div class="card-wrapper">
+                <div class="card-label">Singola portrait</div>
+                <div class="card portrait" id="v2-card-10">
+                    <div class="card-inner theme-brand-deep">
+                        <div class="card-logo">evulery<span class="dot">.</span></div>
+                        <div style="margin-top: 80px;">
+                            <span class="cta-tag">Demo gratuita</span>
+                            <div class="cta-headline-v2">30 minuti.<br>Senza<br>commerciali.<br><span style="color: var(--brand-accent);">Mai.</span></div>
+                        </div>
+                        <div class="cta-disclaim">Una persona del team ti mostra Evulery sui dati del tuo ristorante. Risponde alle tue domande. Ti dice se fa per te o se non fa per te.</div>
+                        <div class="cta-button-v2">Prenota la demo →</div>
+                        <div class="cta-rules">
+                            <div class="cta-rule">In italiano</div>
+                            <div class="cta-rule">Senza obbligo</div>
+                            <div class="cta-rule">Niente follow-up insistenti</div>
+                        </div>
+                        <div class="card-foot">
+                            <div class="card-step" style="opacity: .9;">evulery.it/demo</div>
+                            <div class="card-site">evulery.it</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-btn" data-target="v2-card-10" data-name="v2-post-10-cta.png">⬇ Scarica PNG</button>
+            </div>
+        </div>
+
+        <div class="caption-box">
+            <div class="caption-label">Caption</div>
+            <div class="caption-text" id="v2-caption-10">30 minuti. Una sola chiamata. Una persona del team Evulery.
+
+Cosa succede in mezz'ora:
+→ Ti facciamo qualche domanda sul tuo ristorante (coperti, prenotazioni medie, problemi attuali)
+→ Apriamo Evulery e ti mostriamo come funziona sui tuoi dati di esempio
+→ Ti diciamo onestamente se Evulery è la cosa giusta per te, o se non lo è
+
+Cosa NON succede:
+→ Niente "specialista commerciale" che ti chiama 10 volte nei giorni successivi
+→ Niente prezzo "scontato solo per oggi"
+→ Niente raggiri da contratto in piccolo
+
+Se Evulery non fa per il tuo ristorante, ce lo diciamo a fine demo. Se invece fa per te, ti aiutiamo a partire — con calma, senza pressione, al ritmo del tuo ristorante.
+
+Per prenotare la demo → link in bio.</div>
+            <button class="copy-btn" data-target="v2-caption-10">📋 Copia caption</button>
+            <div class="hashtag-row">
+                <span class="tag">#demogratuita</span>
+                <span class="tag">#ristoratori</span>
+                <span class="tag">#prenotazioniristorante</span>
+                <span class="tag">#softwareristorazione</span>
+                <span class="tag">#consulenzaristoranti</span>
+                <span class="tag">#ristorante</span>
+                <span class="tag">#trattoria</span>
+                <span class="tag">#pizzeria</span>
+            </div>
+            <div class="notes">
+                <strong>Note operative:</strong> CTA puro, posizionato a fine ciclo. Funziona molto meglio se preceduto da almeno 6-8 post di valore già pubblicati (manifesto, educativo, prova sociale). Pubblicato a freddo su un account giovane converte poco — il fiume del feed deve aver già dato fiducia. Verifica che <code>evulery.it/demo</code> esista e funzioni: il bottone "Prenota la demo" deve portare a un form vero. Se non c'è ancora il form, valuta Calendly come ponte temporaneo.
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+<script>
+// ============= COPY CAPTION =============
+document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-target');
+        const text = document.getElementById(target).innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const original = btn.textContent;
+            btn.classList.add('copied');
+            btn.textContent = '✓ Copiato!';
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.textContent = original;
+            }, 1800);
+        });
+    });
+});
+
+// ============= EXPORT PNG =============
+document.querySelectorAll('.export-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const targetId = btn.getAttribute('data-target');
+        const name = btn.getAttribute('data-name');
+        const card = document.getElementById(targetId);
+        const isPortrait = card.classList.contains('portrait');
+
+        const w = 1080;
+        const h = isPortrait ? 1350 : 1080;
+
+        const original = btn.textContent;
+        btn.textContent = '⏳ Esporto...';
+        btn.disabled = true;
+
+        const clone = card.cloneNode(true);
+        const cloneInner = clone.querySelector('.card-inner');
+        cloneInner.style.transform = 'none';
+        cloneInner.style.position = 'relative';
+        clone.style.width = w + 'px';
+        clone.style.height = h + 'px';
+        clone.style.position = 'absolute';
+        clone.style.left = '-99999px';
+        clone.style.top = '0';
+        clone.style.boxShadow = 'none';
+        clone.style.borderRadius = '0';
+        document.body.appendChild(clone);
+
+        try {
+            const canvas = await html2canvas(clone, {
+                width: w,
+                height: h,
+                scale: 2,
+                useCORS: true,
+                backgroundColor: null
+            });
+            const link = document.createElement('a');
+            link.download = name;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            btn.textContent = '✓ Scaricato';
+            setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 1800);
+        } catch (err) {
+            console.error('Export failed:', err);
+            btn.textContent = '✗ Errore';
+            setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 1800);
+        } finally {
+            document.body.removeChild(clone);
+        }
+    });
+});
+</script>
+
+</body>
+</html>

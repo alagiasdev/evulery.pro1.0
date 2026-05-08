@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe — Impostazioni (Tab raggruppate)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-light: #e8f5e9;
+            --brand-dark: #006837;
+        }
+        body { background: #f5f6f8; font-family: system-ui, -apple-system, sans-serif; }
+
+        .wireframe-badge {
+            position: fixed; top: 12px; right: 12px; background: #FF9800; color: #fff;
+            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 999;
+        }
+
+        .page-wrap { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+
+        /* Header */
+        .page-title { font-size: 1.35rem; font-weight: 700; margin-bottom: .15rem; }
+        .page-subtitle { font-size: .82rem; color: #6c757d; margin-bottom: 1.25rem; }
+
+        /* ===== Tabs raggruppate (variante A: con label di gruppo sopra) ===== */
+        .stg-tabs-wrap {
+            background: #fff;
+            border-radius: 12px;
+            padding: .85rem 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.04);
+            margin-bottom: 1.25rem;
+            overflow-x: auto;
+        }
+        .stg-tabs {
+            display: flex;
+            gap: 1.5rem;
+            min-width: max-content;
+        }
+        .stg-group {
+            display: flex; flex-direction: column; gap: .35rem;
+        }
+        .stg-group-label {
+            font-size: .62rem;
+            font-weight: 700;
+            color: #adb5bd;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            padding: 0 .25rem;
+            display: flex; align-items: center; gap: .25rem;
+        }
+        .stg-group-tabs {
+            display: flex;
+            gap: .25rem;
+            background: #f5f6f8;
+            border-radius: 8px;
+            padding: 4px;
+        }
+        .stg-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            padding: .5rem .75rem;
+            font-size: .82rem;
+            color: #495057;
+            text-decoration: none;
+            border-radius: 6px;
+            white-space: nowrap;
+            font-weight: 500;
+            transition: all .15s;
+        }
+        .stg-tab:hover {
+            background: #fff;
+            color: #1a1d23;
+        }
+        .stg-tab.active {
+            background: #fff;
+            color: var(--brand);
+            font-weight: 700;
+            box-shadow: 0 1px 3px rgba(0,0,0,.08);
+        }
+        .stg-tab i { font-size: .92rem; opacity: .85; }
+        .stg-tab.active i { opacity: 1; }
+
+        /* Group divider (variant B alternativa: stesso row, separatori) */
+        .stg-divider {
+            width: 1px;
+            background: #e9ecef;
+            align-self: stretch;
+            margin: 0 .35rem;
+        }
+
+        /* Status dots inline (opzionale: pallino arancione su tab da configurare) */
+        .stg-tab .stg-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #FF9800;
+            margin-left: .15rem;
+        }
+
+        /* Contenuto sotto */
+        .placeholder-content {
+            background: #fff; border-radius: 12px;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            color: #adb5bd;
+            border: 1px dashed #e0e0e0;
+        }
+
+        /* ============ VARIANTE B: tab in una riga con separatori ============ */
+        .stg-flat {
+            background: #fff;
+            border-radius: 12px;
+            padding: .5rem .75rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.04);
+            margin-bottom: 1.25rem;
+            overflow-x: auto;
+        }
+        .stg-flat-row {
+            display: flex;
+            gap: .15rem;
+            align-items: center;
+            min-width: max-content;
+        }
+        .stg-flat .stg-tab {
+            padding: .55rem .85rem;
+        }
+
+        .label-mini {
+            font-size: .6rem; font-weight: 700; color: #adb5bd;
+            text-transform: uppercase; letter-spacing: .6px;
+            padding: 0 .35rem;
+            white-space: nowrap;
+        }
+
+        /* Sezione titolo della variante */
+        .variant-title {
+            font-size: .95rem; font-weight: 700; color: #1a1d23;
+            margin: 2rem 0 .5rem 0;
+            display: flex; align-items: center; gap: .5rem;
+        }
+        .variant-title .badge-letter {
+            background: var(--brand); color: #fff;
+            width: 24px; height: 24px; border-radius: 6px;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: .75rem; font-weight: 700;
+        }
+        .variant-desc { font-size: .8rem; color: #6c757d; margin-bottom: 1rem; }
+
+        @media (max-width: 768px) {
+            .stg-group-label { display: none; } /* su mobile etichette sparirono per spazio */
+            .stg-group-tabs { background: transparent; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wireframe-badge">WIREFRAME — Tabs Raggruppate</div>
+
+<div class="page-wrap">
+
+    <h2 class="page-title"><i class="bi bi-gear" style="color:var(--brand);"></i> Impostazioni</h2>
+    <p class="page-subtitle">Configura il tuo ristorante</p>
+
+    <!-- ============================================== -->
+    <!-- VARIANTE A: Gruppi visibili con label sopra -->
+    <!-- ============================================== -->
+    <div class="variant-title">
+        <span class="badge-letter">A</span>
+        Gruppi visibili con etichetta sopra
+    </div>
+    <p class="variant-desc">Le 3 categorie hanno un'etichetta dedicata e uno sfondo "pillola" che le racchiude. Più gerarchia, più spazio occupato.</p>
+
+    <div class="stg-tabs-wrap">
+        <div class="stg-tabs">
+
+            <div class="stg-group">
+                <div class="stg-group-label"><i class="bi bi-calendar-check"></i> Operatività</div>
+                <div class="stg-group-tabs">
+                    <a href="#" class="stg-tab active"><i class="bi bi-shop"></i> Generali</a>
+                    <a href="#" class="stg-tab"><i class="bi bi-clock"></i> Orari e Coperti</a>
+                    <a href="#" class="stg-tab"><i class="bi bi-tags"></i> Categorie Pasto</a>
+                    <a href="#" class="stg-tab"><i class="bi bi-calendar-x"></i> Chiusure <span class="stg-dot" title="Da configurare"></span></a>
+                </div>
+            </div>
+
+            <div class="stg-group">
+                <div class="stg-group-label"><i class="bi bi-people"></i> Servizi clienti</div>
+                <div class="stg-group-tabs">
+                    <a href="#" class="stg-tab"><i class="bi bi-percent"></i> Promozioni</a>
+                    <a href="#" class="stg-tab"><i class="bi bi-cash-coin"></i> Caparra</a>
+                    <a href="#" class="stg-tab"><i class="bi bi-bag-check"></i> Ordini online</a>
+                    <a href="#" class="stg-tab"><i class="bi bi-star"></i> Recensioni</a>
+                </div>
+            </div>
+
+            <div class="stg-group">
+                <div class="stg-group-label"><i class="bi bi-megaphone"></i> Brand & Comunicazione</div>
+                <div class="stg-group-tabs">
+                    <a href="#" class="stg-tab"><i class="bi bi-bell"></i> Notifiche</a>
+                    <a href="#" class="stg-tab"><i class="bi bi-grid-3x3-gap"></i> Vetrina Digitale</a>
+                    <a href="#" class="stg-tab"><i class="bi bi-globe"></i> Dominio</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="placeholder-content">[ Contenuto del tab "Generali" ]</div>
+
+
+    <!-- ============================================== -->
+    <!-- VARIANTE B: Tab in riga con divider verticali e mini-label -->
+    <!-- ============================================== -->
+    <div class="variant-title">
+        <span class="badge-letter">B</span>
+        Riga unica con separatori e mini-label
+    </div>
+    <p class="variant-desc">Più compatta: i gruppi sono separati da un divider verticale e una mini-etichetta inline. Occupa meno spazio verticale ma è meno "evidente".</p>
+
+    <div class="stg-flat">
+        <div class="stg-flat-row">
+            <span class="label-mini">Operatività</span>
+            <a href="#" class="stg-tab active"><i class="bi bi-shop"></i> Generali</a>
+            <a href="#" class="stg-tab"><i class="bi bi-clock"></i> Orari e Coperti</a>
+            <a href="#" class="stg-tab"><i class="bi bi-tags"></i> Categorie Pasto</a>
+            <a href="#" class="stg-tab"><i class="bi bi-calendar-x"></i> Chiusure <span class="stg-dot"></span></a>
+
+            <div class="stg-divider"></div>
+
+            <span class="label-mini">Servizi clienti</span>
+            <a href="#" class="stg-tab"><i class="bi bi-percent"></i> Promozioni</a>
+            <a href="#" class="stg-tab"><i class="bi bi-cash-coin"></i> Caparra</a>
+            <a href="#" class="stg-tab"><i class="bi bi-bag-check"></i> Ordini online</a>
+            <a href="#" class="stg-tab"><i class="bi bi-star"></i> Recensioni</a>
+
+            <div class="stg-divider"></div>
+
+            <span class="label-mini">Brand</span>
+            <a href="#" class="stg-tab"><i class="bi bi-bell"></i> Notifiche</a>
+            <a href="#" class="stg-tab"><i class="bi bi-grid-3x3-gap"></i> Vetrina Digitale</a>
+            <a href="#" class="stg-tab"><i class="bi bi-globe"></i> Dominio</a>
+        </div>
+    </div>
+
+    <div class="placeholder-content">[ Contenuto del tab "Generali" ]</div>
+
+
+    <!-- ============================================== -->
+    <!-- VARIANTE C: Solo divider, nessuna label (minimal) -->
+    <!-- ============================================== -->
+    <div class="variant-title">
+        <span class="badge-letter">C</span>
+        Solo divider verticali (minimal)
+    </div>
+    <p class="variant-desc">Versione più discreta: niente etichette di gruppo, solo separatori verticali. Modifica minima rispetto allo stato attuale.</p>
+
+    <div class="stg-flat">
+        <div class="stg-flat-row">
+            <a href="#" class="stg-tab active"><i class="bi bi-shop"></i> Generali</a>
+            <a href="#" class="stg-tab"><i class="bi bi-clock"></i> Orari e Coperti</a>
+            <a href="#" class="stg-tab"><i class="bi bi-tags"></i> Categorie Pasto</a>
+            <a href="#" class="stg-tab"><i class="bi bi-calendar-x"></i> Chiusure <span class="stg-dot"></span></a>
+
+            <div class="stg-divider"></div>
+
+            <a href="#" class="stg-tab"><i class="bi bi-percent"></i> Promozioni</a>
+            <a href="#" class="stg-tab"><i class="bi bi-cash-coin"></i> Caparra</a>
+            <a href="#" class="stg-tab"><i class="bi bi-bag-check"></i> Ordini online</a>
+            <a href="#" class="stg-tab"><i class="bi bi-star"></i> Recensioni</a>
+
+            <div class="stg-divider"></div>
+
+            <a href="#" class="stg-tab"><i class="bi bi-bell"></i> Notifiche</a>
+            <a href="#" class="stg-tab"><i class="bi bi-grid-3x3-gap"></i> Vetrina Digitale</a>
+            <a href="#" class="stg-tab"><i class="bi bi-globe"></i> Dominio</a>
+        </div>
+    </div>
+
+    <div class="placeholder-content">[ Contenuto del tab "Generali" ]</div>
+
+
+    <!-- ============================================== -->
+    <!-- LEGENDA -->
+    <!-- ============================================== -->
+    <div style="margin-top: 3rem; padding: 1.25rem; background: #fff; border-radius: 12px; border: 1px solid #e9ecef;">
+        <h6 style="font-size:.92rem; font-weight:700; margin:0 0 .65rem 0;">Legenda</h6>
+        <div style="display:flex; flex-direction:column; gap:.5rem; font-size:.8rem;">
+            <div><span class="stg-dot" style="display:inline-block; vertical-align:middle;"></span> &nbsp; <strong>Pallino arancione</strong>: la sezione richiede attenzione (es. Chiusure mai impostate)</div>
+            <div>Le 3 varianti differiscono solo per quanto sono "marcati" i gruppi. Stessa struttura tab — stessa logica.</div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

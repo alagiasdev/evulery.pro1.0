@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evulery — Battlecard competitiva (uso interno)</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #006837;
+    --brand-darker: #042418;
+    --brand-light: #E8F5E9;
+    --brand-accent: #4ade80;
+    --ink: #0a0e14;
+    --ink-soft: #495057;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --bg: #ffffff;
+    --bg-soft: #fafbfc;
+    --warning: #E65100;
+    --warning-light: #FFF3E0;
+    --danger: #dc3545;
+    --danger-light: #fde8ea;
+    --gold: #b89358;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f6f8;
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.book {
+    max-width: 1080px;
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 4px 32px rgba(0,0,0,.06);
+}
+
+/* ============= COVER ============= */
+.cover {
+    background: linear-gradient(135deg, var(--brand-darker) 0%, var(--brand) 100%);
+    color: #fff;
+    padding: 80px 64px;
+    text-align: left;
+    position: relative;
+}
+.cover::before {
+    content: "";
+    position: absolute; top: 0; right: 0;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, var(--brand-accent) 0%, transparent 70%);
+    opacity: .12; pointer-events: none;
+}
+.cover-classification {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.25);
+    padding: 6px 14px; border-radius: 100px;
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+}
+.cover-eyebrow {
+    text-transform: uppercase; letter-spacing: 3px; font-size: 12px;
+    font-weight: 700; opacity: .85; margin-bottom: 16px;
+}
+.cover h1 {
+    font-size: 56px; font-weight: 900; letter-spacing: -2px;
+    line-height: 1.05; margin: 0 0 24px 0;
+    max-width: 720px;
+}
+.cover h1 .accent { color: var(--brand-accent); }
+.cover-sub {
+    font-size: 19px; opacity: .9; line-height: 1.5;
+    max-width: 680px;
+}
+.cover-meta {
+    margin-top: 48px;
+    display: flex; gap: 24px; flex-wrap: wrap;
+    font-size: 13px; opacity: .8; letter-spacing: .5px;
+}
+.cover-meta span { display: inline-flex; align-items: center; gap: 8px; }
+
+/* ============= GENERAL SECTIONS ============= */
+.section {
+    padding: 80px 64px;
+    border-bottom: 1px solid var(--line);
+}
+.section:last-of-type { border-bottom: 0; }
+.section-num {
+    font-size: 13px; font-weight: 700; letter-spacing: 2.5px;
+    color: var(--brand); text-transform: uppercase;
+    margin-bottom: 16px; display: block;
+}
+.section-title {
+    font-size: 36px; font-weight: 800; letter-spacing: -1px;
+    margin: 0 0 12px 0; line-height: 1.15;
+}
+.section-lead {
+    font-size: 17px; color: var(--ink-soft);
+    max-width: 760px; margin: 0 0 48px 0;
+    line-height: 1.55;
+}
+
+h3 { font-size: 22px; font-weight: 700; letter-spacing: -.3px; margin: 48px 0 16px 0; }
+h4 {
+    font-size: 13px; font-weight: 800; letter-spacing: 2px;
+    margin: 32px 0 12px 0; text-transform: uppercase;
+    color: var(--ink-soft);
+}
+p { margin: 0 0 14px 0; }
+
+.muted { color: var(--muted); }
+.brand-text { color: var(--brand); }
+.small { font-size: 13px; line-height: 1.5; }
+
+/* ============= HOW TO USE ============= */
+.howto {
+    background: var(--brand-light);
+    border-radius: 16px;
+    padding: 32px 40px;
+    margin: 24px 0 48px 0;
+    border-left: 4px solid var(--brand);
+}
+.howto h4 {
+    margin-top: 0; color: var(--brand-dark); font-size: 13px;
+}
+.howto ol {
+    margin: 0; padding-left: 20px; line-height: 1.8;
+}
+.howto strong { color: var(--brand-dark); }
+
+/* ============= LEGEND ============= */
+.legend {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin: 24px 0 0 0;
+}
+.legend-item {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.legend-item-tag {
+    display: inline-block;
+    font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+    padding: 3px 8px; border-radius: 4px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+.tag-hot { background: var(--danger-light); color: var(--danger); }
+.tag-medium { background: var(--warning-light); color: var(--warning); }
+.tag-objection { background: #e3f2fd; color: #0d47a1; }
+.tag-close { background: var(--brand-light); color: var(--brand-dark); }
+.tag-power { background: #ede7f6; color: #4527a0; }
+
+/* ============= COMPETITIVE TABLE ============= */
+.compete-wrap {
+    overflow-x: auto;
+    margin: 24px 0;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+}
+.compete-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: #fff;
+}
+.compete-table th, .compete-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+}
+.compete-table thead th {
+    background: var(--ink);
+    color: #fff;
+    font-size: 11px; font-weight: 800; letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-bottom: 0;
+}
+.compete-table thead th.us {
+    background: var(--brand);
+}
+.compete-table tbody td:first-child {
+    background: var(--bg-soft);
+    font-weight: 700;
+    color: var(--ink);
+    width: 220px;
+}
+.compete-table tbody td.us {
+    background: var(--brand-light);
+    font-weight: 600;
+    color: var(--brand-dark);
+}
+.compete-table .check { color: var(--brand); font-weight: 900; }
+.compete-table .cross { color: var(--danger); font-weight: 900; }
+.compete-table .partial { color: var(--warning); font-weight: 700; }
+.compete-table tbody tr:last-child td { border-bottom: 0; }
+.compete-table .small-note { font-size: 11px; color: var(--muted); display: block; margin-top: 4px; line-height: 1.3; }
+
+/* ============= OBJECTIONS ============= */
+.objection {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    margin: 24px 0;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+.objection-header {
+    padding: 24px 28px;
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.objection-meta {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.objection-meta .pill {
+    display: inline-block;
+    font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+    padding: 3px 8px; border-radius: 4px;
+    text-transform: uppercase;
+}
+.objection-quote {
+    font-size: 22px; font-weight: 700; letter-spacing: -.3px;
+    line-height: 1.3;
+    color: var(--ink);
+}
+.objection-quote::before {
+    content: '"'; color: var(--brand); margin-right: 4px;
+    font-family: Georgia, serif; font-weight: 900;
+}
+.objection-quote::after {
+    content: '"'; color: var(--brand); margin-left: 4px;
+    font-family: Georgia, serif; font-weight: 900;
+}
+.objection-body { padding: 24px 28px; }
+
+.obj-row {
+    display: grid; grid-template-columns: 140px 1fr;
+    gap: 24px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+}
+.obj-row:last-child { border-bottom: 0; }
+.obj-label {
+    font-size: 11px; font-weight: 800; letter-spacing: 2px;
+    color: var(--muted); text-transform: uppercase;
+    padding-top: 4px;
+}
+.obj-real {
+    background: var(--warning-light);
+    border-left: 3px solid var(--warning);
+    padding: 14px 18px;
+    border-radius: 6px;
+    font-size: 15px; font-style: italic;
+    color: #4e342e;
+    line-height: 1.5;
+}
+.obj-short {
+    background: var(--brand-light);
+    border-left: 3px solid var(--brand);
+    padding: 16px 20px;
+    border-radius: 6px;
+    font-size: 16px; font-weight: 600;
+    color: var(--brand-dark);
+    line-height: 1.5;
+}
+.obj-long { font-size: 15px; line-height: 1.65; color: var(--ink); }
+.obj-long p { margin: 0 0 12px 0; }
+.obj-long p:last-child { margin: 0; }
+.obj-reframe {
+    background: #ede7f6;
+    border-left: 3px solid #5e35b1;
+    padding: 14px 18px;
+    border-radius: 6px;
+    font-size: 14px; line-height: 1.55;
+    color: #311b92;
+}
+.obj-reframe strong { color: #4527a0; }
+
+/* ============= POWER PHRASES ============= */
+.power-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin: 24px 0;
+}
+.power {
+    background: linear-gradient(135deg, #fff 0%, #faf8ff 100%);
+    border: 1px solid #d1c4e9;
+    border-left: 4px solid #5e35b1;
+    border-radius: 12px;
+    padding: 24px 28px;
+}
+.power-context {
+    font-size: 11px; font-weight: 800; letter-spacing: 1.5px;
+    color: #4527a0; text-transform: uppercase;
+    margin-bottom: 8px;
+}
+.power-quote {
+    font-size: 18px; font-weight: 700; line-height: 1.3;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+.power-quote::before { content: '"'; color: #5e35b1; margin-right: 2px; }
+.power-quote::after { content: '"'; color: #5e35b1; }
+.power-when {
+    font-size: 13px; color: var(--ink-soft);
+    line-height: 1.45;
+}
+
+/* ============= NOT FOR YOU ============= */
+.not-for {
+    background: var(--warning-light);
+    border-left: 4px solid var(--warning);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0;
+}
+.not-for h4 {
+    margin-top: 0; color: var(--warning);
+}
+.not-for-list {
+    list-style: none; padding: 0; margin: 0;
+}
+.not-for-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(230, 81, 0, .15);
+    font-size: 15px; line-height: 1.5;
+    display: flex; gap: 16px; align-items: flex-start;
+}
+.not-for-list li:last-child { border-bottom: 0; }
+.not-for-list .num {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--warning); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 900;
+}
+.not-for-list strong { color: #b71c1c; }
+
+/* ============= STATS ============= */
+.stats-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+    margin: 24px 0;
+}
+.stat-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+}
+.stat-num {
+    font-size: 48px; font-weight: 900; letter-spacing: -2px;
+    color: var(--brand); line-height: 1;
+}
+.stat-label {
+    font-size: 16px; font-weight: 700;
+    margin-top: 8px;
+    line-height: 1.3;
+}
+.stat-source {
+    font-size: 12px; color: var(--muted);
+    margin-top: 12px; line-height: 1.4;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+}
+
+/* ============= NEVER SAY ============= */
+.never {
+    background: var(--danger-light);
+    border-left: 4px solid var(--danger);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0;
+}
+.never h4 { margin-top: 0; color: var(--danger); }
+.never-list {
+    list-style: none; padding: 0; margin: 0;
+}
+.never-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(220, 53, 69, .15);
+}
+.never-list li:last-child { border-bottom: 0; }
+.never-list .quote {
+    font-size: 16px; font-weight: 600;
+    color: #b71c1c;
+    margin-bottom: 4px;
+    text-decoration: line-through;
+    text-decoration-thickness: 1.5px;
+    text-decoration-color: rgba(183, 28, 28, .4);
+}
+.never-list .why { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+
+/* ============= CHEAT SHEET ============= */
+.cheat {
+    background: var(--ink);
+    color: #fff;
+    border-radius: 16px;
+    padding: 40px;
+    margin: 24px 0;
+    page-break-inside: avoid;
+}
+.cheat h3 { color: var(--brand-accent); margin-top: 0; }
+.cheat-cols {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+    margin-top: 24px;
+}
+.cheat-col h4 { color: var(--brand-accent); letter-spacing: 1.5px; }
+.cheat ul { list-style: none; padding: 0; margin: 0; }
+.cheat li {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    font-size: 14px; line-height: 1.45;
+}
+.cheat li:last-child { border-bottom: 0; }
+.cheat li strong { color: var(--brand-accent); }
+
+/* ============= FOOTER ============= */
+.book-footer {
+    background: var(--ink);
+    color: rgba(255,255,255,.65);
+    padding: 48px 64px;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.book-footer strong { color: #fff; font-weight: 700; }
+.book-footer .warn-band {
+    background: rgba(230, 81, 0, .15);
+    border: 1px solid rgba(230, 81, 0, .3);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    color: #ffab40;
+}
+
+@media print {
+    body { background: #fff; font-size: 12px; }
+    .book { box-shadow: none; max-width: 100%; }
+    .section { page-break-inside: avoid; padding: 40px 32px; }
+    .objection { page-break-inside: avoid; }
+    .cheat { page-break-inside: avoid; }
+    .compete-wrap { overflow: visible; }
+}
+
+@media (max-width: 768px) {
+    .section, .cover { padding: 56px 28px; }
+    .section-title, .cover h1 { font-size: 28px; }
+    .compete-table { font-size: 12px; }
+    .compete-table th, .compete-table td { padding: 10px 12px; }
+    .obj-row { grid-template-columns: 1fr; gap: 8px; }
+    .legend, .power-grid, .stats-grid, .cheat-cols { grid-template-columns: 1fr; }
+    .objection-quote { font-size: 18px; }
+}
+</style>
+</head>
+<body>
+<div class="book">
+
+<!-- ============= COVER ============= -->
+<div class="cover">
+    <div class="cover-classification">
+        <i class="bi bi-shield-lock-fill"></i>
+        Documento interno · Solo per uso commerciale Evulery
+    </div>
+    <div class="cover-eyebrow">Battlecard competitiva · v1.0</div>
+    <h1>Come gestire le obiezioni<br>su <span class="accent">aggregatori, prezzo, fiducia.</span></h1>
+    <p class="cover-sub">10 obiezioni ricorrenti, risposta breve da memorizzare e risposta lunga da modulare. Tabella comparativa con i 3 competitor principali. Dati di settore citabili. Frasi-chiave per chiudere.</p>
+    <div class="cover-meta">
+        <span><i class="bi bi-calendar3"></i> Maggio 2026</span>
+        <span><i class="bi bi-people"></i> Per uso interno</span>
+        <span><i class="bi bi-shield-lock"></i> Non condividere a clienti</span>
+    </div>
+</div>
+
+<!-- ============= 1. COME USARLA ============= -->
+<div class="section">
+    <span class="section-num">01 · Come usarla</span>
+    <h2 class="section-title">Istruzioni rapide</h2>
+    <p class="section-lead">Questa è una battlecard, non un manuale. Le risposte non vanno lette parola per parola — vanno memorizzate per concetto, modulate sul tono del cliente e adattate al suo ristorante. Il tono giusto è "collega che conosce il mestiere", non "venditore con script".</p>
+
+    <div class="howto">
+        <h4>Flusso consigliato durante una demo</h4>
+        <ol>
+            <li><strong>Lascia parlare il cliente.</strong> Le obiezioni vengono fuori naturalmente nei primi 5 minuti. Non anticiparle: rispondi solo a quelle che lui solleva davvero.</li>
+            <li><strong>Identifica la categoria</strong> (le 10 qui sotto sono mappate). Nessuna obiezione veramente nuova esiste in questo settore.</li>
+            <li><strong>Risposta breve prima.</strong> Una o due frasi. Se la sua reazione è "ah ok", chiudi. Se chiede di più, vai sulla risposta lunga.</li>
+            <li><strong>Apri il calcolatore</strong> (<code>evulery.it/calculator-v2.html</code>) per le obiezioni di prezzo. Niente è più potente di una cifra calcolata sui suoi dati.</li>
+            <li><strong>Sai quando NON proporre.</strong> Sezione 5 — onestà costruisce credibilità. Mai forzare la vendita.</li>
+        </ol>
+    </div>
+
+    <h4>Legenda dei tag</h4>
+    <div class="legend">
+        <div class="legend-item">
+            <span class="legend-item-tag tag-hot">Top</span>
+            Le 3 obiezioni più frequenti. Memorizza queste prima di tutte.
+        </div>
+        <div class="legend-item">
+            <span class="legend-item-tag tag-medium">Medium</span>
+            Obiezioni regolari, da gestire con sicurezza ma non sempre presenti.
+        </div>
+        <div class="legend-item">
+            <span class="legend-item-tag tag-close">Closing</span>
+            Obiezioni che arrivano in fase di chiusura — il cliente è quasi convinto.
+        </div>
+        <div class="legend-item">
+            <span class="legend-item-tag tag-power">Power</span>
+            Frasi che spostano il framing della conversazione.
+        </div>
+    </div>
+</div>
+
+<!-- ============= 2. CONFRONTO COMPETITOR ============= -->
+<div class="section">
+    <span class="section-num">02 · Snapshot competitivo</span>
+    <h2 class="section-title">Evulery vs i 3 competitor principali</h2>
+    <p class="section-lead">Tabella ad uso interno. Da NON mostrare al cliente: le tabelle comparative dirette su PowerPoint sembrano sempre cattive a chi guarda — sembri il piccolo che attacca. Usa i dati di questa tabella per rispondere alle domande, non per fare slide.</p>
+
+    <div class="compete-wrap">
+        <table class="compete-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th class="us">Evulery</th>
+                    <th>TheFork</th>
+                    <th>Quandoo</th>
+                    <th>CoverManager</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Modello pricing</td>
+                    <td class="us">Canone fisso<br>€49/€79/€129 al mese</td>
+                    <td>Ibrido: piano base + commissioni 8-12% + fee variabile<br><span class="small-note">Yums Manager Plus può raggiungere il 24% effettivo</span></td>
+                    <td>Commissioni a coperto + canone variabile<br><span class="small-note">€2-€5 a coperto secondo volume</span></td>
+                    <td>Canone fisso<br>~€100-€300/mese<span class="small-note">Pricing su richiesta, scalato per dimensione</span></td>
+                </tr>
+                <tr>
+                    <td>Costo annuo medio<br>(ristorante 800 coperti/mese)</td>
+                    <td class="us">€948 - €1.548</td>
+                    <td>€7.000 - €15.000+<br><span class="small-note">Stima range, con 30% prenotazioni dalla piattaforma</span></td>
+                    <td>€4.800 - €8.000<br><span class="small-note">Stima su €2/coperto medio</span></td>
+                    <td>€1.200 - €3.600</td>
+                </tr>
+                <tr>
+                    <td>Cliente ristorante = di chi?</td>
+                    <td class="us"><span class="check">✓</span> Del ristorante. Anagrafica, contatti, storico tutti del tenant.</td>
+                    <td><span class="cross">✗</span> Del network TheFork primariamente. Esportazione contatti limitata.</td>
+                    <td><span class="cross">✗</span> Della piattaforma. Esportazione possibile ma macchinosa.</td>
+                    <td><span class="check">✓</span> Del ristorante (modello simile a Evulery).</td>
+                </tr>
+                <tr>
+                    <td>Vetrina condivisa<br>(competitor sulla stessa pagina)</td>
+                    <td class="us"><span class="check">✓</span> No. Solo il tuo ristorante, sul tuo sito.</td>
+                    <td><span class="cross">✗</span> Sì. Ricerca e piattaforma con altri 50 ristoranti vicini.</td>
+                    <td><span class="cross">✗</span> Sì. Stessa logica.</td>
+                    <td><span class="check">✓</span> No. Widget standalone.</td>
+                </tr>
+                <tr>
+                    <td>Promozioni "Yums" / sconto forzato</td>
+                    <td class="us"><span class="check">✓</span> Mai. Tu decidi se e quando fare promo.</td>
+                    <td><span class="cross">✗</span> Yums spinti dall'algoritmo per riempire giorni lenti</td>
+                    <td><span class="partial">~</span> Promo opzionali, ma incentivate</td>
+                    <td><span class="check">✓</span> Nessuna pressione promozionale</td>
+                </tr>
+                <tr>
+                    <td>Conformità nativa<br>L. 34/2026 recensioni</td>
+                    <td class="us"><span class="check">✓</span> Sì, by design</td>
+                    <td><span class="partial">~</span> In adeguamento</td>
+                    <td><span class="partial">~</span> In adeguamento</td>
+                    <td><span class="partial">~</span> Variabile</td>
+                </tr>
+                <tr>
+                    <td>Email broadcast nativo<br>(con consenso GDPR)</td>
+                    <td class="us"><span class="check">✓</span> Incluso, con crediti</td>
+                    <td><span class="cross">✗</span> Comunicazioni gestite dalla piattaforma</td>
+                    <td><span class="cross">✗</span> Limitato</td>
+                    <td><span class="partial">~</span> Solo piano superiore</td>
+                </tr>
+                <tr>
+                    <td>Online ordering<br>(takeaway + delivery)</td>
+                    <td class="us"><span class="check">✓</span> Incluso da Professional</td>
+                    <td><span class="cross">✗</span> Non incluso</td>
+                    <td><span class="cross">✗</span> Non incluso</td>
+                    <td><span class="cross">✗</span> Non incluso</td>
+                </tr>
+                <tr>
+                    <td>Menu digitale</td>
+                    <td class="us"><span class="check">✓</span> Incluso tutti i piani</td>
+                    <td><span class="cross">✗</span> Non incluso</td>
+                    <td><span class="cross">✗</span> Non incluso</td>
+                    <td><span class="cross">✗</span> Non incluso</td>
+                </tr>
+                <tr>
+                    <td>Caparra a 3 livelli<br>(info / link / Stripe integrato)</td>
+                    <td class="us"><span class="check">✓</span> Sì, scelta per prenotazione</td>
+                    <td><span class="partial">~</span> Solo carta a garanzia</td>
+                    <td><span class="partial">~</span> Modello fisso</td>
+                    <td><span class="check">✓</span> Sì</td>
+                </tr>
+                <tr>
+                    <td>Supporto in italiano</td>
+                    <td class="us"><span class="check">✓</span> Italiano, persone vere, &lt;1 giorno lavorativo</td>
+                    <td><span class="partial">~</span> Italiano, ma chatbot/ticket prevalente</td>
+                    <td><span class="partial">~</span> Italiano via ticket</td>
+                    <td><span class="partial">~</span> Spagnolo/inglese principalmente</td>
+                </tr>
+                <tr>
+                    <td>Vincolo contrattuale</td>
+                    <td class="us"><span class="check">✓</span> Mensile, disdetta libera</td>
+                    <td><span class="cross">✗</span> Annuale tipico, vincolo 12 mesi</td>
+                    <td><span class="cross">✗</span> Annuale tipico</td>
+                    <td><span class="partial">~</span> Variabile</td>
+                </tr>
+                <tr>
+                    <td>Ti porta clienti dal proprio network</td>
+                    <td class="us"><span class="cross">✗</span> No. Non è quello che facciamo.</td>
+                    <td><span class="check">✓</span> Sì (il loro punto di forza)</td>
+                    <td><span class="check">✓</span> Sì</td>
+                    <td><span class="cross">✗</span> No</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p class="small muted"><strong>Nota onestà:</strong> l'unica colonna in cui un aggregatore "vince" è l'ultima — porta clienti dal proprio network. È vero, è un valore reale. La nostra risposta non è negarlo, è dire che il prezzo di quel valore (commissioni del 12-24% per anni) è quasi sempre superiore al beneficio.</p>
+</div>
+
+<!-- ============= 3. OBIEZIONI ============= -->
+<div class="section">
+    <span class="section-num">03 · Obiezioni</span>
+    <h2 class="section-title">Le 10 obiezioni più comuni</h2>
+    <p class="section-lead">Ogni obiezione segue lo stesso schema: <strong>cosa dice</strong> → <strong>quando arriva</strong> → <strong>cosa pensa davvero</strong> → <strong>risposta breve</strong> → <strong>risposta lunga</strong> → <strong>tecnica di reframe</strong>. Memorizza la risposta breve. Le altre vengono in automatico se conosci il prodotto.</p>
+
+
+    <!-- ============= OBIEZIONE 1 ============= -->
+    <div class="objection">
+        <div class="objection-header">
+            <div class="objection-meta">
+                <span class="pill tag-hot">Top</span>
+                <span class="pill tag-objection">Fiducia / Credibilità</span>
+            </div>
+            <div class="objection-quote">Non vi conosco. Siete nuovi. Come faccio a fidarmi?</div>
+        </div>
+        <div class="objection-body">
+            <div class="obj-row">
+                <div class="obj-label">Quando arriva</div>
+                <div>Tipicamente nei primi 5-10 minuti, dopo il primo "wow" iniziale. È la prima reazione razionale dopo la curiosità.</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Cosa pensa davvero</div>
+                <div class="obj-real">"Se vi pago €79 al mese e domani chiudete o non funzionate bene, ho perso tempo, dati, clienti. Non posso permettermi un esperimento."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta breve</div>
+                <div class="obj-short">"Giusto chiederlo. Per questo non chiediamo vincoli annuali — paghi mese per mese, e se in due settimane non sei convinto smetti senza penali. Il rischio è nostro, non tuo."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta lunga</div>
+                <div class="obj-long">
+                    <p>"Hai ragione a chiedertelo, ed è esattamente la domanda che farei io al tuo posto. Tre cose pratiche che ti rispondo:"</p>
+                    <p><strong>1.</strong> "Non c'è vincolo contrattuale annuale. Disdici quando vuoi, mese per mese. Se in 2 settimane vedi che non fa per te, smetti — senza penali, senza fatica. Il modello degli aggregatori che ti vincolano 12 mesi è fatto perché loro hanno bisogno di trattenerti, noi no."</p>
+                    <p><strong>2.</strong> "I dati restano tuoi. Anagrafica, prenotazioni, storico clienti — esportabili in CSV in qualsiasi momento. Anche se domani non vuoi più Evulery, ti porti via tutto quello che hai costruito."</p>
+                    <p><strong>3.</strong> "Sì, siamo nuovi. È un trade-off vero. Ti diamo in cambio: contatto diretto con il team che costruisce il prodotto (no call center), risposta in italiano in &lt;1 giorno lavorativo, e un onboarding seguito personalmente. Le grandi piattaforme non possono permetterselo."</p>
+                </div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Reframe</div>
+                <div class="obj-reframe"><strong>Sposta la conversazione da "fiducia" a "rischio".</strong> Le obiezioni di fiducia diventano gestibili quando il rischio è asimmetrico: tu rischi €79 di un mese, noi rischiamo l'intero rapporto. Far vedere che il rischio è dalla nostra parte cambia tutto.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============= OBIEZIONE 2 ============= -->
+    <div class="objection">
+        <div class="objection-header">
+            <div class="objection-meta">
+                <span class="pill tag-hot">Top</span>
+                <span class="pill tag-objection">Acquisizione clienti</span>
+            </div>
+            <div class="objection-quote">TheFork mi porta clienti che altrimenti non avrei.</div>
+        </div>
+        <div class="objection-body">
+            <div class="obj-row">
+                <div class="obj-label">Quando arriva</div>
+                <div>Quando il cliente è già attivo su un aggregatore. È l'obiezione più comune e — onestamente — è quella in cui il competitor ha una ragione vera. Va riconosciuta, non negata.</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Cosa pensa davvero</div>
+                <div class="obj-real">"Se passo a Evulery, perdo i clienti che oggi mi arrivano dall'aggregatore. Sono soldi sicuri che non posso permettermi di buttare."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta breve</div>
+                <div class="obj-short">"Non ti chiediamo di abbandonare TheFork. Ti chiediamo di smettere di pagarli per i clienti che già ti conoscono. Quelli nuovi? Continua a prenderli da loro, finché conviene."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta lunga</div>
+                <div class="obj-long">
+                    <p>"Ti rispondo onestamente: sì, gli aggregatori portano clienti nuovi. È quello per cui sono fatti, e fanno bene il loro lavoro su quel pezzo. La domanda non è 'aggregatori sì o no'. La domanda è: <strong>che percentuale dei tuoi clienti aggregatore sono davvero nuovi?</strong>"</p>
+                    <p>"Qui i dati ci sorprendono sempre: il 60-70% dei clienti che prenotano tramite TheFork sono persone che <em>ti conoscevano già</em>. Hanno cenato da te, sono passati davanti, hanno visto un'amica taggata. La piattaforma è il primo Google che usano — non perché serva, ma perché è comodo. Quindi paghi il 12-15% di commissione su clienti che <strong>sarebbero venuti comunque</strong>, anche solo con un widget di prenotazione tuo."</p>
+                    <p>"Strategia che proponiamo a chi inizia con noi: <strong>tieni TheFork attivo i primi mesi</strong>. Metti Evulery sul tuo sito e sui tuoi canali (Google, Instagram, biglietto da visita). Vedi cosa succede al tuo flusso — ti accorgi rapidamente quale percentuale di clienti TheFork erano davvero clienti acquisiti, e quale stavi pagando inutilmente."</p>
+                    <p>"Dopo 3-6 mesi di dati reali decidi se TheFork ti serve ancora o no. Senza fede. Solo numeri."</p>
+                </div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Reframe</div>
+                <div class="obj-reframe"><strong>Non opporre Evulery a TheFork. Posiziona Evulery sotto/accanto a TheFork.</strong> Le aziende mature usano entrambi: aggregatore per acquisizione fredda, sistema proprietario per fidelizzazione. Il tuo cliente vuole essere maturo — assecondalo.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============= OBIEZIONE 3 ============= -->
+    <div class="objection">
+        <div class="objection-header">
+            <div class="objection-meta">
+                <span class="pill tag-hot">Top</span>
+                <span class="pill tag-objection">Pricing</span>
+            </div>
+            <div class="objection-quote">€79 al mese mi sembrano tanti.</div>
+        </div>
+        <div class="objection-body">
+            <div class="obj-row">
+                <div class="obj-label">Quando arriva</div>
+                <div>A metà demo, dopo aver visto le funzionalità. È un'obiezione da "valutazione razionale" — non rifiuto, è il momento del bilancio.</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Cosa pensa davvero</div>
+                <div class="obj-real">"€79 × 12 = quasi €1.000 all'anno. Mi compro 30 buoni vino. Mi pago 2 mesi della corrente. Devo essere sicuro che valga la pena."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta breve</div>
+                <div class="obj-short">"Ti faccio una domanda: quanto stai pagando in commissioni adesso? Se non lo sai, in 30 secondi te lo calcolo. Spoiler: quasi sempre il costo Evulery è meno di una settimana di commissioni aggregatore."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta lunga</div>
+                <div class="obj-long">
+                    <p>"Apri questo con me." <em>(Apri evulery.it/calculator-v2.html)</em> "Mettiamo i tuoi numeri reali: quanti coperti al mese fai? Più o meno quale percentuale viene da aggregatore? Scontrino medio?"</p>
+                    <p>"Vediamo il risultato insieme."</p>
+                    <p><em>(Lascia che la cifra parli. Nei 9 casi su 10, il risparmio annuo è di 5-10x il canone Evulery.)</em></p>
+                    <p>"Quindi non stai scegliendo se spendere €79 al mese o non spenderli. Stai scegliendo se spendere €79 al mese o continuare a spendere €1.200 al mese in commissioni nascoste. Fra le due, la decisione si prende da sola."</p>
+                    <p>"Se i numeri reali del tuo ristorante non ti danno questo risparmio — perché magari prendi pochissime prenotazioni dall'aggregatore — Evulery probabilmente non è la priorità. E te lo dico io stesso."</p>
+                </div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Reframe</div>
+                <div class="obj-reframe"><strong>Non difendere il prezzo Evulery. Espone il prezzo che già paga.</strong> Le commissioni aggregatori sono invisibili — il ristoratore non ha mai fatto la somma annua. Quando vede €15.000 di commissioni vs €948 di canone, il framing si capovolge: Evulery non è una spesa, è un risparmio quantificato.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============= OBIEZIONE 4 ============= -->
+    <div class="objection">
+        <div class="objection-header">
+            <div class="objection-meta">
+                <span class="pill tag-medium">Medium</span>
+                <span class="pill tag-objection">Scope prodotto</span>
+            </div>
+            <div class="objection-quote">Voi siete solo prenotazioni. Mi serve un sistema completo.</div>
+        </div>
+        <div class="objection-body">
+            <div class="obj-row">
+                <div class="obj-label">Quando arriva</div>
+                <div>Quando il ristorante ha già un cassetto fiscale, un gestionale magazzino, o sta valutando una soluzione "all-in-one" tipo Plateform/Sevenrooms.</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Cosa pensa davvero</div>
+                <div class="obj-real">"Non voglio mettere su 5 software diversi. Voglio una cosa che faccia tutto."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta breve</div>
+                <div class="obj-short">"Evulery non è solo prenotazioni. Sono prenotazioni + menu digitale + ordini takeaway/delivery + email marketing + recensioni + caparre. È completo sull'esperienza cliente. Se ti serve cassa o magazzino, te lo dico chiaro: noi lì non siamo. Va integrato a parte."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta lunga</div>
+                <div class="obj-long">
+                    <p>"Stiamo dicendo lo stesso, ma diversamente. Ti elenco cosa Evulery copre, così vediamo insieme:"</p>
+                    <p><strong>Esperienza cliente:</strong> "prenotazioni online, menu digitale QR-code, ordini takeaway+delivery con kanban, caparre 3 modalità, programma fedeltà, email marketing GDPR-compliant, recensioni verificate L.34/2026, vetrina digitale aggregatrice. Tutto incluso, integrato, con un solo login."</p>
+                    <p><strong>Cosa NON copriamo:</strong> "cassa fiscale, magazzino, contabilità, gestione personale (turni e cedolini), inventario forniture. Per quelli ti consigliamo software dedicati, e lavoriamo bene a fianco di tutti."</p>
+                    <p>"La differenza tra noi e i 'tutto in uno' è onesta: chi promette tutto fa il 30% bene tutto. Noi facciamo il 90% bene la parte cliente. Per il resto, l'ecosistema italiano ha già soluzioni eccellenti — meglio integrarci con loro che reinventare la ruota male."</p>
+                </div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Reframe</div>
+                <div class="obj-reframe"><strong>Espandi la percezione dello scope, ma resta onesto sui limiti.</strong> Mostra la lista completa di feature (è più ampia di quanto immagini il cliente). Ma sii il primo a dire cosa NON facciamo — è disarmante e crea fiducia. La frase "te lo dico chiaro" è quella che vince.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============= OBIEZIONE 5 ============= -->
+    <div class="objection">
+        <div class="objection-header">
+            <div class="objection-meta">
+                <span class="pill tag-medium">Medium</span>
+                <span class="pill tag-objection">Switching cost</span>
+            </div>
+            <div class="objection-quote">Già uso TheFork da 5 anni. Cambiare è uno sbattimento.</div>
+        </div>
+        <div class="objection-body">
+            <div class="obj-row">
+                <div class="obj-label">Quando arriva</div>
+                <div>Da clienti TheFork strutturati, con flusso operativo consolidato. La paura non è il costo — è la rottura della routine.</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Cosa pensa davvero</div>
+                <div class="obj-real">"Ho speso anni a far prendere la mano al personale. Non voglio rivivere quel periodo."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta breve</div>
+                <div class="obj-short">"Non ti chiediamo di togliere TheFork dal giorno uno. Ti chiediamo di affiancare Evulery al tuo flusso attuale per 60 giorni. Poi decidi tu."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta lunga</div>
+                <div class="obj-small obj-long">
+                    <p>"Cambiare è una rottura, hai ragione. Per questo non ti chiediamo di cambiare. Ti chiediamo di <strong>aggiungere</strong>, e poi vedrai tu se vuoi togliere qualcosa."</p>
+                    <p>"Il piano standard di partenza è questo:"</p>
+                    <p><strong>Settimana 1:</strong> "onboarding Evulery, configurazione orari/sale/categorie, formazione 1 ora con il cameriere/maitre principale. Importiamo l'anagrafica clienti che hai già — basta un export."</p>
+                    <p><strong>Settimana 2-4:</strong> "Evulery è online sul tuo sito + canali tuoi. TheFork resta attivo. Le prenotazioni dirette arrivano da Evulery, quelle TheFork continuano nel loro flusso. Il personale ha 2 fonti, ma le vedi entrambe sulla dashboard Evulery."</p>
+                    <p><strong>Mese 2-3:</strong> "guardiamo i numeri. Quanti coperti reali sono arrivati da Evulery diretto? Quanti TheFork? Decidi tu se ridurre il piano TheFork (tagli le commissioni) o se per ora ti conviene tenere entrambi."</p>
+                    <p>"Niente strappi. Niente rivoluzioni. Ci vediamo i dati e decidi tu."</p>
+                </div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Reframe</div>
+                <div class="obj-reframe"><strong>Trasforma la migrazione in coesistenza.</strong> Il cliente teme il "salto", non la decisione. Offrigli un periodo di sovrapposizione di 60 giorni: il rischio percepito si dimezza, e quasi sempre dopo 2 mesi la decisione si prende da sola.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============= OBIEZIONE 6 ============= -->
+    <div class="objection">
+        <div class="objection-header">
+            <div class="objection-meta">
+                <span class="pill tag-medium">Medium</span>
+                <span class="pill tag-objection">Lock-in utente</span>
+            </div>
+            <div class="objection-quote">I miei clienti sono abituati a TheFork. Non useranno il vostro widget.</div>
+        </div>
+        <div class="objection-body">
+            <div class="obj-row">
+                <div class="obj-label">Quando arriva</div>
+                <div>Da ristoranti urbani, con clientela giovane e abituale di app. Spesso è una scusa che nasconde "non ho voglia di spiegare un cambiamento ai miei clienti".</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Cosa pensa davvero</div>
+                <div class="obj-real">"Se i clienti non trovano la prenotazione su TheFork, vanno in panico, mi chiamano, e io devo gestire confusione. Meglio lasciare le cose come stanno."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta breve</div>
+                <div class="obj-short">"I tuoi clienti non sono abituati a TheFork. Sono abituati a prenotare. Se sul tuo sito trovano un pulsante 'Prenota ora' che funziona, lo usano. Te lo garantiamo dai dati."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta lunga</div>
+                <div class="obj-long">
+                    <p>"Capisco la preoccupazione, e te la sciolgo con due osservazioni reali:"</p>
+                    <p><strong>1.</strong> "Quando un cliente prenota su TheFork, non lo fa <em>perché ama TheFork</em>. Lo fa perché è quello che gli arriva primo nei risultati Google quando cerca il tuo nome. Se sul tuo sito c'è un pulsante 'Prenota' chiaro e veloce, prenota direttamente — gli risparmi un click. Anzi, di solito gli piace prenotare 'direttamente con il ristorante' invece di passare da una piattaforma."</p>
+                    <p><strong>2.</strong> "Il widget Evulery si configura in modo che il cliente non si renda quasi conto del cambio: stessa esperienza fluida, conferma istantanea, promemoria automatico. La differenza è che lui paga 0 commissioni e tu hai i suoi dati."</p>
+                    <p>"E la chiave: TheFork resta lì comunque. Non lo togliamo. Quindi se qualcuno proprio insiste a usarlo, lo trova. Ma il 80% dei prenotanti diretti usa il primo widget che vede sul tuo sito. Lo abbiamo testato su tutti i clienti che sono partiti con noi."</p>
+                </div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Reframe</div>
+                <div class="obj-reframe"><strong>Smonta il falso "amore per la piattaforma".</strong> I clienti non amano gli aggregatori — usano quello che funziona di più. Far vedere che il ristoratore confonde "abitudine all'app" con "preferenza dichiarata" è disarmante e libera la decisione.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============= OBIEZIONE 7 ============= -->
+    <div class="objection">
+        <div class="objection-header">
+            <div class="objection-meta">
+                <span class="pill tag-medium">Medium</span>
+                <span class="pill tag-objection">Effort / tempo</span>
+            </div>
+            <div class="objection-quote">Non ho tempo di fare onboarding. Ho il ristorante da gestire.</div>
+        </div>
+        <div class="objection-body">
+            <div class="obj-row">
+                <div class="obj-label">Quando arriva</div>
+                <div>Soprattutto da ristoratori operativi (chef-patron, locali familiari). È una preoccupazione vera: non hanno mezza giornata libera.</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Cosa pensa davvero</div>
+                <div class="obj-real">"Se mi tocca dedicare 5 ore a configurare il sistema mentre cerco di tenere aperto, dimentico tutto e tra una settimana torno a fare come prima."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta breve</div>
+                <div class="obj-short">"L'onboarding lo facciamo noi. Tu mi dai 90 minuti totali, divisi in due call. Da lì in poi è solo gestione quotidiana — meno tempo di quello che dedichi al telefono in una sera."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta lunga</div>
+                <div class="obj-long">
+                    <p>"L'effort che ti chiediamo è minimo, e te lo strutturo:"</p>
+                    <p><strong>Call 1 (60 min) — setup iniziale</strong>: "Insieme configuriamo orari, sale, capacità, slot. Mi dici come funziona il tuo ristorante, io configuro mentre parliamo. Alla fine della call, hai un sistema pronto a ricevere prenotazioni."</p>
+                    <p><strong>Call 2 (30 min) — formazione personale</strong>: "Ci colleghiamo con il cameriere/maitre principale e gli mostriamo come usare la dashboard sul telefono. È più facile di WhatsApp."</p>
+                    <p><strong>Settimana successiva — supporto sul campo</strong>: "Sono raggiungibile via WhatsApp/email per qualsiasi dubbio nei primi 14 giorni. Se qualcosa non torna, lo aggiustiamo insieme in 15 minuti."</p>
+                    <p>"Totale tempo tuo: 90 minuti per partire, 0 dopo. Tutto il resto lo faccio io."</p>
+                </div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Reframe</div>
+                <div class="obj-reframe"><strong>Quantifica l'effort in tempo, non in attività.</strong> "Onboarding" è una parola spaventosa. "90 minuti di tempo tuo" è una decisione. Riportare l'investimento di tempo a una cifra concreta lo rende minuscolo rispetto al beneficio.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============= OBIEZIONE 8 ============= -->
+    <div class="objection">
+        <div class="objection-header">
+            <div class="objection-meta">
+                <span class="pill tag-close">Closing</span>
+                <span class="pill tag-objection">Tech anxiety</span>
+            </div>
+            <div class="objection-quote">Non sono molto digitale. Mi sembra complesso.</div>
+        </div>
+        <div class="objection-body">
+            <div class="obj-row">
+                <div class="obj-label">Quando arriva</div>
+                <div>Da ristoratori senior (50+ anni), o da chi ha avuto esperienze frustranti con software del passato (gestionali anni 2000, sistemi italiani di prenotazione mal fatti).</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Cosa pensa davvero</div>
+                <div class="obj-real">"Ho 55 anni, vado bene con WhatsApp e Facebook, ma le 'dashboard' mi confondono. Se è troppo complesso, non lo userò mai e avrò sprecato i soldi."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta breve</div>
+                <div class="obj-short">"Se sai usare WhatsApp, sai usare Evulery. Sul telefono. Te lo faccio vedere ora in 30 secondi."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta lunga</div>
+                <div class="obj-long">
+                    <p>"Apri il telefono, te la mostro." <em>(Mostra la dashboard mobile reale.)</em></p>
+                    <p>"Vedi questa schermata? Sono le prenotazioni di oggi. In ordine di orario. Tap su una prenotazione → vedi i dettagli e i contatti del cliente. Tap su un altro pulsante → conferma arrivata. Più semplice di WhatsApp."</p>
+                    <p>"Niente dashboard complesse. Niente menu nascosti. Le 4 cose che fai 100 volte al giorno (vedi prenotazioni, conferma arrivata, contatta cliente, blocca slot) sono nella prima schermata, sempre."</p>
+                    <p>"In più: il cameriere o chi ti aiuta lo userà ancora più di te. Si abituano in 2 sere. Te lo garantiscono i ristoranti che sono con noi."</p>
+                </div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Reframe</div>
+                <div class="obj-reframe"><strong>Mostra, non spiegare.</strong> Le obiezioni di tech anxiety si dissolvono quando il cliente vede la cosa funzionante sul suo schermo. La frase "te lo faccio vedere ora" è 10 volte più forte di qualsiasi descrizione. Tieni il telefono pronto in demo.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============= OBIEZIONE 9 ============= -->
+    <div class="objection">
+        <div class="objection-header">
+            <div class="objection-meta">
+                <span class="pill tag-close">Closing</span>
+                <span class="pill tag-objection">Free trial</span>
+            </div>
+            <div class="objection-quote">Voglio prima provare gratis. Avete un free trial?</div>
+        </div>
+        <div class="objection-body">
+            <div class="obj-row">
+                <div class="obj-label">Quando arriva</div>
+                <div>Tipicamente in chiusura. Spesso è una richiesta di "concessione" che il cliente fa per sentirsi in posizione di forza, non un vero bisogno di test.</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Cosa pensa davvero</div>
+                <div class="obj-real">"Voglio capire se vale la pena prima di tirare fuori soldi. Anche solo 1 mese gratis mi tranquillizza."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta breve</div>
+                <div class="obj-short">"Free trial classico no — perché un mese non basta a vedere se funziona davvero. Quello che facciamo: i primi 30 giorni paghi €1. Se in 30 giorni non sei soddisfatto, disdici e finita lì."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta lunga</div>
+                <div class="obj-long">
+                    <p>"Te lo dico onestamente: i free trial nel nostro settore non funzionano bene. Trenta giorni gratis è un periodo in cui il cliente prova, ma non fa abbastanza prenotazioni reali per giudicare. Risultato: a fine trial molti decidono 'no' senza aver davvero provato."</p>
+                    <p>"Quello che proponiamo è diverso e migliore: <strong>primo mese a €1</strong>. Hai tutto il prodotto, tutto il supporto, l'onboarding completo. Se in 30 giorni non sei soddisfatto, disdici — il €1 te lo regaliamo come storia. Niente domande, niente penali."</p>
+                    <p>"Vantaggio per te: fai il test reale a costo zero. Vantaggio per noi: chi parte lo fa con l'attitudine giusta — vuole far funzionare la cosa, non 'provare e basta'. È un patto di serietà reciproca."</p>
+                    <p><em>(Nota interna: questa è una concessione strategica. Non è una promessa standard scritta nei contratti. Da usare solo quando senti che è l'unica leva per chiudere e il cliente è di buon profilo. Verifica con [team] se vuoi formalizzarla per più clienti.)</em></p>
+                </div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Reframe</div>
+                <div class="obj-reframe"><strong>Sostituisci il "gratis" con "quasi gratis"</strong>. Un €1 simbolico è psicologicamente diverso da gratis: chi paga €1 ha skin in the game e usa il prodotto. Chi non paga niente, raramente lo usa davvero. La concessione è quasi identica per noi, ma il risultato di adozione cambia drammaticamente.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============= OBIEZIONE 10 ============= -->
+    <div class="objection">
+        <div class="objection-header">
+            <div class="objection-meta">
+                <span class="pill tag-close">Closing</span>
+                <span class="pill tag-objection">Stallo / rinvio</span>
+            </div>
+            <div class="objection-quote">Ci penso e ti faccio sapere.</div>
+        </div>
+        <div class="objection-body">
+            <div class="obj-row">
+                <div class="obj-label">Quando arriva</div>
+                <div>Alla fine della demo. Suona educata ma è quasi sempre un "no" mascherato — il cliente non vuole dirlo direttamente.</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Cosa pensa davvero</div>
+                <div class="obj-real">"Non sono convinto, ma non voglio dirti di no in faccia. Diciamoci che ci penso e poi non rispondo più ai tuoi follow-up."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta breve</div>
+                <div class="obj-short">"Certo, ci pensi quanto vuoi. Una domanda però: cosa esattamente ti serve riflettere? Se è il prezzo, posso risponderti subito. Se è una feature mancante, dimmela. Se è 'mi serve discuterne con un socio', va benissimo — fissiamo già adesso quando ne riparliamo."</div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Risposta lunga</div>
+                <div class="obj-long">
+                    <p>"È giusto pensarci, è una decisione che prendi una volta e te la porti per anni. Ma fammi una cortesia: mentre ci pensi, dammi una mano a capire <strong>su cosa</strong> ci stai pensando, perché potrei aiutarti a sciogliere il dubbio in 30 secondi."</p>
+                    <p>"Le possibilità sono solo 3:"</p>
+                    <p><strong>1.</strong> "Se è il prezzo: apriamo il calcolatore e ti faccio vedere perché €948/anno è probabilmente il pezzo più piccolo del tuo budget marketing — già lo stai spendendo, solo invisibile."</p>
+                    <p><strong>2.</strong> "Se è una feature che non hai visto e ti serve: dimmela, e ti rispondo se c'è (probabile, abbiamo coperto solo il 60% del prodotto in 30 minuti) o se è in roadmap."</p>
+                    <p><strong>3.</strong> "Se è 'mi devo confrontare con un socio o con il commercialista': perfetto, fissiamo già adesso una call a 3 venerdì o lunedì. Mando io l'invito."</p>
+                    <p>"Se invece sei già convinto che non fa per te, dimmelo direttamente. Non mi offendo — anzi, mi aiuti a capire se c'è qualcosa da migliorare. Le 'no' chiare sono più utili dei 'forse'."</p>
+                </div>
+            </div>
+            <div class="obj-row">
+                <div class="obj-label">Reframe</div>
+                <div class="obj-reframe"><strong>Forza il cliente a esplicitare l'obiezione vera.</strong> "Ci penso" è quasi sempre una scorciatoia educata. Mostrargli le 3 ipotesi possibili gli toglie la via di fuga: deve scegliere una, e qualunque scelga, hai una mossa successiva. Anche un "sei un no" diventa utile — almeno è dato e puoi ottimizzare la prossima demo.</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ============= 4. POWER PHRASES ============= -->
+<div class="section">
+    <span class="section-num">04 · Power phrases</span>
+    <h2 class="section-title">Frasi che spostano la conversazione</h2>
+    <p class="section-lead">Memorizzane 3-4. Sono i "punti di gravità" della conversazione: una frase ben piazzata cambia il framing per i 10 minuti successivi.</p>
+
+    <div class="power-grid">
+        <div class="power">
+            <div class="power-context">Anti-aggregatore · Reframe</div>
+            <div class="power-quote">Voi non state spendendo €79 al mese: state già spendendo €1.200 al mese in commissioni, solo che è invisibile.</div>
+            <div class="power-when"><strong>Quando usarla:</strong> obiezione di prezzo + cliente attivo su aggregatore. Ribalta la domanda da "spendere o no" a "smettere di spendere male".</div>
+        </div>
+        <div class="power">
+            <div class="power-context">Acquisizione · Reframe</div>
+            <div class="power-quote">Gli aggregatori sono bravi a portarti clienti nuovi. Sono pessimi a tenerteli tuoi. Per quello servi tu, e ti serviamo noi.</div>
+            <div class="power-when"><strong>Quando usarla:</strong> obiezione "TheFork mi porta clienti". Riconosci il valore (acquisizione) e separi i due mestieri.</div>
+        </div>
+        <div class="power">
+            <div class="power-context">Onestà · Trust</div>
+            <div class="power-quote">Se Evulery non fa per te, te lo dico io stesso a fine prima settimana. Non firmo un anno per soldi che non meritiamo.</div>
+            <div class="power-when"><strong>Quando usarla:</strong> obiezione di fiducia. Inverte la dinamica: di solito il commerciale spinge, qui frena. Genera fiducia istantanea.</div>
+        </div>
+        <div class="power">
+            <div class="power-context">Cliente come asset · Posizionamento</div>
+            <div class="power-quote">Il tuo cliente è il bene più prezioso del tuo ristorante. Affittarlo a un terzo non ti rende ricco, ti rende dipendente.</div>
+            <div class="power-when"><strong>Quando usarla:</strong> obiezione "TheFork mi porta clienti" o "i miei clienti sono lì". Reframe da "convenienza" a "indipendenza imprenditoriale".</div>
+        </div>
+        <div class="power">
+            <div class="power-context">Switching cost · Coesistenza</div>
+            <div class="power-quote">Non ti chiediamo di cambiare. Ti chiediamo di aggiungere. Poi i numeri ti diranno cosa togliere.</div>
+            <div class="power-when"><strong>Quando usarla:</strong> obiezione "ho già un sistema". Trasforma la decisione binaria in un esperimento controllato.</div>
+        </div>
+        <div class="power">
+            <div class="power-context">Tech anxiety · Disarmo</div>
+            <div class="power-quote">Se sai usare WhatsApp, sai usare Evulery. Te lo faccio vedere in 30 secondi sul tuo telefono.</div>
+            <div class="power-when"><strong>Quando usarla:</strong> obiezione di complessità tecnica. Non descrive — promette una dimostrazione concreta. Tieni il telefono pronto.</div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============= 5. NOT FOR YOU ============= -->
+<div class="section">
+    <span class="section-num">05 · Quando NON vendere</span>
+    <h2 class="section-title">Casi in cui Evulery non è la cosa giusta</h2>
+    <p class="section-lead">Onestà strategica. Se il cliente non rientra nei nostri casi d'uso ideali, dirgli "non sei per noi" costruisce credibilità — e ti risparmia un cliente che farà churn nei primi 3 mesi (peggio della demo persa).</p>
+
+    <div class="not-for">
+        <h4>I 5 profili a cui dire "non siamo per te"</h4>
+        <ul class="not-for-list">
+            <li>
+                <span class="num">1</span>
+                <div>
+                    <strong>Catene grandi (5+ sedi)</strong> con esigenze di consolidamento multi-tenant complesse, controllo accessi avanzato, integrazioni ERP. <em>Perché:</em> il nostro modello multi-tenant è pensato per ristoranti indipendenti — su catene grosse perdi il vantaggio di "supporto personale" e l'integrazione manca. <strong>Reindirizza:</strong> Sevenrooms, Plateform, soluzioni enterprise.
+                </div>
+            </li>
+            <li>
+                <span class="num">2</span>
+                <div>
+                    <strong>Ristoranti che fanno 80%+ del volume su aggregatori</strong> (es. ghost kitchen, dark kitchen, attività che vivono di Deliveroo/Glovo+TheFork). <em>Perché:</em> per loro il modello commissioni È il modello di business. Eliminarlo è suicidio. <strong>Reindirizza:</strong> "Tieni quello che hai, considera Evulery quando avrai un flusso diretto".
+                </div>
+            </li>
+            <li>
+                <span class="num">3</span>
+                <div>
+                    <strong>Clienti che cercano "delega totale"</strong> ("voglio pagare e basta, non voglio fare niente"). <em>Perché:</em> Evulery richiede un minimo di engagement (90 minuti onboarding + 5 minuti al giorno per gestire prenotazioni). Chi non ha quel minimo, non userà mai il prodotto e farà churn frustrato. <strong>Reindirizza:</strong> "Forse ti serve un consulente o un'agenzia che gestisca la presenza online — Evulery è uno strumento, non un servizio".
+                </div>
+            </li>
+            <li>
+                <span class="num">4</span>
+                <div>
+                    <strong>Locali con &lt;100 coperti/mese</strong> (es. piccolissime trattorie di paese a basso volume). <em>Perché:</em> il ROI vs commissioni non si fa — non spendono abbastanza in commissioni per giustificare un canone fisso. <strong>Reindirizza:</strong> "Per il tuo volume basta WhatsApp + Google Business. Quando crescerai oltre 200 coperti/mese, ne riparliamo".
+                </div>
+            </li>
+            <li>
+                <span class="num">5</span>
+                <div>
+                    <strong>Clienti che vogliono customizzazioni profonde</strong> (es. integrare con il loro gestionale custom, layout sale modificabile pixel-per-pixel, branding completo white-label). <em>Perché:</em> non siamo un'agenzia di sviluppo. Il nostro valore è proprio nella semplicità del prodotto standard. <strong>Reindirizza:</strong> "Per quel livello di customizzazione ti serve un sistema custom o un sistema enterprise. Possiamo discutere il piano Enterprise se le esigenze rientrano".
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <p class="small muted"><strong>Regola:</strong> dire "non siamo per te" presto è meglio di firmare un cliente che farà churn nei primi 3 mesi. Il churn precoce costa più di una vendita persa: tempo onboarding, perdita di fiducia, recensione negativa. Chi entra in questi 5 profili va orientato altrove con un sorriso — magari diventa una segnalazione futura.</p>
+</div>
+
+
+<!-- ============= 6. NEVER SAY ============= -->
+<div class="section">
+    <span class="section-num">06 · Da NON dire mai</span>
+    <h2 class="section-title">Frasi e atteggiamenti che bruciano la demo</h2>
+    <p class="section-lead">Errori specifici da evitare. Tutti questi sono stati commessi da venditori prima di te in qualche call con clienti veri.</p>
+
+    <div class="never">
+        <h4>Mai dire queste cose</h4>
+        <ul class="never-list">
+            <li>
+                <div class="quote">"TheFork è una truffa."</div>
+                <div class="why">Anche se ci credi (o se è in parte vero), insultare un competitor in pubblico ti fa sembrare piccolo, polemico e poco professionale. Inoltre il cliente potrebbe averli amati per anni — sembra che gli stai dicendo "sei stato uno scemo a usarli". Mai bashing diretto. Sempre dati.</div>
+            </li>
+            <li>
+                <div class="quote">"Garantiamo +30% di prenotazioni."</div>
+                <div class="why">Promesse magiche con numeri non verificabili sono il marchio degli info-marketer. Distruggono fiducia. Mai numeri di "crescita garantita" — solo numeri reali su <em>costi</em> (commissioni, no-show ridotto con promemoria) che dipendono dai dati del cliente.</div>
+            </li>
+            <li>
+                <div class="quote">"Offerta limitata, solo se firmi oggi."</div>
+                <div class="why">Tecniche di pressione retroattive a 30 anni fa. I ristoratori italiani sono stati bruciati da telemarketing aggressivi: la frase scatta subito un campanello "questo mi sta fregando". L'urgenza vera, se c'è, va spiegata (es. limite tecnico di onboarding). Mai inventarla.</div>
+            </li>
+            <li>
+                <div class="quote">"Lei è un imprenditore moderno..."</div>
+                <div class="why">Lessico da agenzia patinata. Non dire "Lei", non chiamare "imprenditori moderni". Il pubblico Evulery è "ristoratore" e "tu". Voce concreta, non venditore.</div>
+            </li>
+            <li>
+                <div class="quote">"Non c'è nulla di simile sul mercato."</div>
+                <div class="why">Falso (CoverManager esiste, modelli ibridi esistono) e suona disperato. Sempre riconoscere che ci sono alternative — quello che ti differenzia è il combinato di scelte, non una caratteristica unica.</div>
+            </li>
+            <li>
+                <div class="quote">"Ci pensi e poi mi richiama lei."</div>
+                <div class="why">La probabilità che il cliente richiami è bassissima. Sempre tu fissi il follow-up: "ti scrivo io martedì alle 11, va bene?". Mai delegare al cliente l'iniziativa. È una regola di vendita banale ma viene violata 9 volte su 10.</div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<!-- ============= 7. DATI CITABILI ============= -->
+<div class="section">
+    <span class="section-num">07 · Dati di settore</span>
+    <h2 class="section-title">Numeri citabili in demo</h2>
+    <p class="section-lead">Stime di mercato su settore ristorazione italiano. Sono numeri "ragionevoli" che vengono usati nel settore — non hanno fonte unica certificata. Usali con il preambolo "secondo le stime di settore..." per essere onesto.</p>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-num">8-24%</div>
+            <div class="stat-label">Range commissione TheFork</div>
+            <div class="stat-source">Range pubblico TheFork.it: dal piano base (~8-12%) al Yums Manager Plus (~24% effettivo includendo Yums e fee variabili). Verifica al momento — i piani cambiano.</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num">12-18%</div>
+            <div class="stat-label">No-show medio Italia</div>
+            <div class="stat-source">Stima settore restaurant tech. Senza promemoria automatici, una prenotazione su 6 non si presenta. Con promemoria scende sotto il 5%.</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num">€7K-15K</div>
+            <div class="stat-label">Spesa annua media commissioni aggregatori<br><small>(ristorante 800 coperti/mese)</small></div>
+            <div class="stat-source">Calcolo: 800 × 30% × €35 × 12-18% commissione × 12 mesi. Range realistico per ristorante indipendente medio italiano.</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num">~30%</div>
+            <div class="stat-label">% prenotazioni medie da aggregatore<br><small>(ristoranti indipendenti italiani)</small></div>
+            <div class="stat-source">Stima settore. Range realistico 20-40%, varia per zona urbana/rurale e per intensità della presenza dell'aggregatore. Ristoranti più legati al territorio: percentuale più bassa.</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num">60-70%</div>
+            <div class="stat-label">% clienti aggregatore "non veramente nuovi"<br><small>(già conoscevano il ristorante)</small></div>
+            <div class="stat-source">Survey informale settore — il dato non è autoritativo, va detto come "stima". L'idea: la maggior parte dei clienti aggregatore avrebbe cenato comunque, se avesse trovato un widget di prenotazione tuo.</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num">12 mesi</div>
+            <div class="stat-label">Vincolo contrattuale tipico aggregatori</div>
+            <div class="stat-source">Standard di mercato: i contratti TheFork/Quandoo sono annuali con tacito rinnovo. Disdetta richiede preavviso (verifica condizioni specifiche del cliente — variano nel tempo).</div>
+        </div>
+    </div>
+
+    <p class="small muted"><strong>⚠️ Disclaimer:</strong> i numeri sopra sono indicativi e basati su stime di settore. Le commissioni e i piani dei competitor cambiano nel tempo. Quando li citi in demo, usa formula del tipo "secondo le stime di settore" o "il range pubblico è...". Mai citare numeri specifici come fatti certificati senza verifica.</p>
+</div>
+
+
+<!-- ============= 8. CHEAT SHEET ============= -->
+<div class="section">
+    <span class="section-num">08 · Cheat sheet</span>
+    <h2 class="section-title">Riassunto da stampare</h2>
+    <p class="section-lead">Una pagina sola. Da tenere a portata di mano (o stampare e mettere accanto al monitor) durante le prime demo finché non hai memorizzato il flusso.</p>
+
+    <div class="cheat">
+        <h3>🎯 Evulery Battlecard · Cheat Sheet</h3>
+
+        <div class="cheat-cols">
+            <div class="cheat-col">
+                <h4>Le 3 risposte da memorizzare</h4>
+                <ul>
+                    <li><strong>"Non vi conosco":</strong><br>Niente vincolo annuale. Disdici quando vuoi. Dati esportabili sempre.</li>
+                    <li><strong>"TheFork mi porta clienti":</strong><br>Non opporti. Affianca. 60-70% sono già tuoi.</li>
+                    <li><strong>"€79 sono tanti":</strong><br>Apri calcolatore. Ribalta in "stai già spendendo €1.200/mese in commissioni invisibili".</li>
+                </ul>
+
+                <h4 style="margin-top: 24px;">Frasi di gravità</h4>
+                <ul>
+                    <li>"Non state spendendo €79, state già spendendo €1.200 invisibili."</li>
+                    <li>"Affittare clienti non vi rende ricchi, vi rende dipendenti."</li>
+                    <li>"Se sai usare WhatsApp, sai usare Evulery."</li>
+                    <li>"Se non fa per te, te lo dico io stesso."</li>
+                </ul>
+            </div>
+
+            <div class="cheat-col">
+                <h4>Mai dire</h4>
+                <ul>
+                    <li>"TheFork è una truffa" → mai bashing competitor</li>
+                    <li>"+30% prenotazioni garantito" → mai promesse magiche</li>
+                    <li>"Solo se firmi oggi" → mai pressione finta</li>
+                    <li>"Lei è un imprenditore moderno" → mai voce patinata</li>
+                </ul>
+
+                <h4 style="margin-top: 24px;">Quando NON vendere</h4>
+                <ul>
+                    <li>Catene 5+ sedi (no fit)</li>
+                    <li>80%+ volume da aggregatore (suicidio)</li>
+                    <li>Vuole "delega totale" (no engagement)</li>
+                    <li>&lt;100 coperti/mese (no ROI)</li>
+                    <li>Customizzazioni profonde (no scope)</li>
+                </ul>
+
+                <h4 style="margin-top: 24px;">Strumenti pronti</h4>
+                <ul>
+                    <li><strong>ROI calc:</strong> evulery.it/calculator-v2.html</li>
+                    <li><strong>Brand book:</strong> sales/brand-guidelines.html</li>
+                    <li><strong>Pitch deck:</strong> sales/pitch-deck.html</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============= FOOTER ============= -->
+<div class="book-footer">
+    <div class="warn-band">
+        <strong>⚠️ Documento interno.</strong> Le informazioni sui competitor (commissioni, feature, vincoli contrattuali) sono indicative e basate su dati pubblici disponibili al momento della stesura. <strong>Verifica sempre prima di citarle al cliente.</strong> I piani TheFork, Quandoo, CoverManager cambiano frequentemente. Una citazione sbagliata di un dato competitor in demo può costare credibilità.
+    </div>
+    <strong>Evulery Battlecard · v1.0 · Maggio 2026</strong><br>
+    Documento di uso interno · Non condividere con clienti o terzi<br>
+    © 2026 Evulery · by alagias. — Soluzioni per il web
+</div>
+
+</div>
+</body>
+</html>

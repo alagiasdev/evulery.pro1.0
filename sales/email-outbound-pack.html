@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evulery — Email Outbound Pack (uso interno)</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #006837;
+    --brand-darker: #042418;
+    --brand-light: #E8F5E9;
+    --brand-accent: #4ade80;
+    --ink: #0a0e14;
+    --ink-soft: #495057;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --bg: #ffffff;
+    --bg-soft: #fafbfc;
+    --warning: #E65100;
+    --warning-light: #FFF3E0;
+    --danger: #dc3545;
+    --danger-light: #fde8ea;
+    --info: #0277bd;
+    --info-light: #e3f2fd;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f6f8;
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.book {
+    max-width: 1080px;
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 4px 32px rgba(0,0,0,.06);
+}
+
+/* ============= COVER ============= */
+.cover {
+    background: linear-gradient(135deg, var(--brand-darker) 0%, var(--brand) 100%);
+    color: #fff;
+    padding: 80px 64px;
+    position: relative;
+    overflow: hidden;
+}
+.cover::before {
+    content: "";
+    position: absolute; top: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, var(--brand-accent) 0%, transparent 70%);
+    opacity: .12; pointer-events: none;
+}
+.cover-classification {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.25);
+    padding: 6px 14px; border-radius: 100px;
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+}
+.cover-eyebrow {
+    text-transform: uppercase; letter-spacing: 3px; font-size: 12px;
+    font-weight: 700; opacity: .85; margin-bottom: 16px;
+}
+.cover h1 {
+    font-size: 56px; font-weight: 900; letter-spacing: -2px;
+    line-height: 1.05; margin: 0 0 24px 0;
+    max-width: 760px;
+}
+.cover h1 .accent { color: var(--brand-accent); }
+.cover-sub {
+    font-size: 19px; opacity: .9; line-height: 1.5;
+    max-width: 720px;
+}
+.cover-meta {
+    margin-top: 48px;
+    display: flex; gap: 24px; flex-wrap: wrap;
+    font-size: 13px; opacity: .8; letter-spacing: .5px;
+}
+.cover-meta span { display: inline-flex; align-items: center; gap: 8px; }
+
+/* ============= SECTIONS ============= */
+.section {
+    padding: 80px 64px;
+    border-bottom: 1px solid var(--line);
+}
+.section:last-of-type { border-bottom: 0; }
+.section-num {
+    font-size: 13px; font-weight: 700; letter-spacing: 2.5px;
+    color: var(--brand); text-transform: uppercase;
+    margin-bottom: 16px; display: block;
+}
+.section-title {
+    font-size: 36px; font-weight: 800; letter-spacing: -1px;
+    margin: 0 0 12px 0; line-height: 1.15;
+}
+.section-lead {
+    font-size: 17px; color: var(--ink-soft);
+    max-width: 760px; margin: 0 0 48px 0;
+    line-height: 1.55;
+}
+h3 { font-size: 22px; font-weight: 700; letter-spacing: -.3px; margin: 48px 0 16px 0; }
+h4 {
+    font-size: 13px; font-weight: 800; letter-spacing: 2px;
+    margin: 32px 0 12px 0; text-transform: uppercase;
+    color: var(--ink-soft);
+}
+p { margin: 0 0 14px 0; }
+.muted { color: var(--muted); }
+.brand-text { color: var(--brand); }
+.small { font-size: 13px; line-height: 1.5; }
+
+/* ============= LEGAL BOX ============= */
+.legal-box {
+    background: var(--info-light);
+    border-left: 4px solid var(--info);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 24px 0 48px 0;
+}
+.legal-box h4 {
+    margin-top: 0; color: var(--info); font-size: 13px;
+}
+.legal-box p:last-child { margin-bottom: 0; }
+.legal-box strong { color: #01579b; }
+
+/* ============= SEQUENCE PLAYBOOK ============= */
+.seq {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 32px 0;
+}
+.seq-header { margin-bottom: 24px; }
+.seq-title { font-size: 18px; font-weight: 700; }
+.seq-sub { font-size: 14px; color: var(--ink-soft); margin-top: 4px; }
+.seq-steps { display: flex; align-items: flex-start; gap: 0; flex-wrap: wrap; }
+.seq-step {
+    flex: 1; min-width: 140px;
+    text-align: center;
+    padding: 16px 12px;
+    position: relative;
+}
+.seq-step::after {
+    content: "→";
+    position: absolute;
+    right: -12px; top: 28px;
+    color: var(--muted); font-size: 22px; font-weight: 600;
+}
+.seq-step:last-child::after { display: none; }
+.seq-day {
+    display: inline-block;
+    background: var(--brand);
+    color: #fff;
+    font-size: 11px; font-weight: 800; letter-spacing: 1px;
+    padding: 4px 10px; border-radius: 100px;
+    text-transform: uppercase;
+}
+.seq-step.skip .seq-day { background: var(--muted); }
+.seq-name {
+    font-size: 14px; font-weight: 700;
+    margin-top: 10px;
+    color: var(--ink);
+}
+.seq-action { font-size: 12px; color: var(--ink-soft); margin-top: 4px; line-height: 1.4; }
+
+/* ============= BEST PRACTICES ============= */
+.bp-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+    margin: 24px 0;
+}
+.bp {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--brand);
+    border-radius: 12px;
+    padding: 20px 24px;
+}
+.bp-title {
+    font-size: 15px; font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+}
+.bp-title .num {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--brand-light); color: var(--brand-dark);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 900;
+    flex-shrink: 0;
+}
+.bp-body { font-size: 13.5px; line-height: 1.55; color: var(--ink-soft); }
+
+/* ============= SUBJECTS LIST ============= */
+.subj-cat {
+    margin: 28px 0;
+}
+.subj-cat-label {
+    font-size: 11px; font-weight: 800; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--brand);
+    margin-bottom: 12px;
+}
+.subj-list {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 8px 8px;
+}
+.subj {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    background: #fff;
+    border: 1px solid var(--line);
+    font-size: 14.5px; line-height: 1.4;
+}
+.subj-text { flex: 1; }
+.subj-text strong { color: var(--brand); font-weight: 700; }
+.subj-meta {
+    font-size: 11px; color: var(--muted);
+    margin-left: 12px;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+.subj-copy {
+    margin-left: 12px; flex-shrink: 0;
+    background: transparent; color: var(--brand);
+    border: 1px solid var(--brand);
+    padding: 4px 10px; border-radius: 6px;
+    font-size: 11px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+}
+.subj-copy:hover { background: var(--brand); color: #fff; }
+.subj-copy.copied { background: var(--brand); color: #fff; }
+
+/* ============= EMAIL TEMPLATE ============= */
+.tpl {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    margin: 32px 0;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,.04);
+}
+.tpl-header {
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--line);
+    padding: 24px 32px;
+}
+.tpl-meta {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.pill {
+    display: inline-block;
+    font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+    padding: 3px 8px; border-radius: 4px;
+    text-transform: uppercase;
+}
+.pill-cold { background: #e3f2fd; color: #0277bd; }
+.pill-followup { background: var(--warning-light); color: var(--warning); }
+.pill-trigger { background: #ede7f6; color: #4527a0; }
+.pill-referral { background: var(--brand-light); color: var(--brand-dark); }
+.pill-revival { background: #fce4ec; color: #c2185b; }
+.pill-day { background: var(--ink); color: #fff; }
+.pill-len { background: #f5f5f5; color: var(--ink-soft); }
+
+.tpl-name { font-size: 22px; font-weight: 800; letter-spacing: -.3px; line-height: 1.2; }
+.tpl-purpose { font-size: 14px; color: var(--ink-soft); margin-top: 6px; line-height: 1.45; }
+
+/* Email-style preview */
+.tpl-email {
+    padding: 28px 32px;
+    background: #fff;
+    font-family: 'Inter', sans-serif;
+}
+.email-headers {
+    background: #fafafa;
+    border: 1px solid var(--line);
+    border-radius: 8px 8px 0 0;
+    padding: 14px 18px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.email-headers .row {
+    display: flex; gap: 12px;
+    padding: 4px 0;
+}
+.email-headers .row .label {
+    font-weight: 700; color: var(--ink-soft);
+    width: 70px; flex-shrink: 0;
+    font-size: 12px; letter-spacing: .5px;
+    text-transform: uppercase;
+    padding-top: 2px;
+}
+.email-headers .row .value { font-weight: 500; color: var(--ink); flex: 1; }
+.email-headers .row.subject .value {
+    font-weight: 700; font-size: 14.5px;
+    color: var(--ink);
+}
+
+.email-body {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-top: 0;
+    border-radius: 0 0 8px 8px;
+    padding: 24px 28px;
+    font-size: 15px; line-height: 1.7;
+    color: var(--ink);
+    white-space: pre-wrap;
+    font-family: 'Inter', sans-serif;
+}
+.email-body .signature {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.5;
+}
+.email-body .placeholder {
+    background: var(--warning-light);
+    color: var(--warning);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.tpl-actions {
+    padding: 16px 32px;
+    background: var(--bg-soft);
+    border-top: 1px solid var(--line);
+    display: flex; gap: 12px; flex-wrap: wrap;
+    align-items: center;
+}
+.copy-btn {
+    background: var(--brand); color: #fff;
+    border: 0;
+    padding: 8px 14px; border-radius: 6px;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.copy-btn:hover { background: var(--brand-dark); }
+.copy-btn.copied { background: #2e7d32; }
+.copy-btn.secondary { background: transparent; color: var(--brand); border: 1px solid var(--brand); }
+.copy-btn.secondary:hover { background: var(--brand); color: #fff; }
+
+.tpl-notes {
+    padding: 20px 32px 28px 32px;
+    background: #fff8e1;
+    border-top: 1px solid #ffe082;
+}
+.tpl-notes h5 {
+    font-size: 11px; font-weight: 800; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #5d4037;
+    margin: 0 0 10px 0;
+}
+.tpl-notes ul {
+    margin: 0; padding-left: 18px;
+    font-size: 13px; line-height: 1.6;
+    color: #5d4037;
+}
+.tpl-notes li { margin-bottom: 4px; }
+.tpl-notes strong { color: #4e342e; }
+
+/* ============= NEVER ============= */
+.never {
+    background: var(--danger-light);
+    border-left: 4px solid var(--danger);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0;
+}
+.never h4 { margin-top: 0; color: var(--danger); }
+.never-list { list-style: none; padding: 0; margin: 0; }
+.never-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(220, 53, 69, .15);
+}
+.never-list li:last-child { border-bottom: 0; }
+.never-list .quote {
+    font-size: 15px; font-weight: 600;
+    color: #b71c1c;
+    margin-bottom: 4px;
+}
+.never-list .why { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+
+/* ============= KPI ============= */
+.kpi-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+    margin: 24px 0;
+}
+.kpi {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+}
+.kpi-label {
+    font-size: 12px; font-weight: 800; letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+}
+.kpi-range {
+    font-size: 36px; font-weight: 900;
+    color: var(--brand);
+    letter-spacing: -1.5px;
+    line-height: 1;
+}
+.kpi-desc {
+    font-size: 13px; color: var(--ink-soft);
+    margin-top: 12px;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+    line-height: 1.5;
+}
+
+/* ============= FOOTER ============= */
+.book-footer {
+    background: var(--ink);
+    color: rgba(255,255,255,.65);
+    padding: 48px 64px;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.book-footer strong { color: #fff; font-weight: 700; }
+.book-footer .warn-band {
+    background: rgba(230, 81, 0, .15);
+    border: 1px solid rgba(230, 81, 0, .3);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    color: #ffab40;
+    text-align: left;
+}
+
+@media print {
+    body { background: #fff; font-size: 12px; }
+    .book { box-shadow: none; max-width: 100%; }
+    .section, .cover { page-break-inside: avoid; padding: 40px 32px; }
+    .tpl, .seq { page-break-inside: avoid; }
+}
+
+@media (max-width: 768px) {
+    .section, .cover { padding: 56px 28px; }
+    .section-title, .cover h1 { font-size: 28px; }
+    .bp-grid, .kpi-grid { grid-template-columns: 1fr; }
+    .seq-step::after { display: none; }
+    .email-headers .row { flex-direction: column; gap: 2px; }
+    .email-headers .row .label { width: auto; }
+}
+</style>
+</head>
+<body>
+<div class="book">
+
+<!-- ============= COVER ============= -->
+<div class="cover">
+    <div class="cover-classification">
+        <i class="bi bi-shield-lock-fill"></i>
+        Documento interno · Solo per uso commerciale Evulery
+    </div>
+    <div class="cover-eyebrow">Email Outbound Pack · v1.0</div>
+    <h1>7 template per arrivare nelle inbox<br>dei <span class="accent">ristoratori giusti.</span></h1>
+    <p class="cover-sub">Cold outreach + sequence di follow-up + email trigger-based. Subject line testabili, voice impersonale "Team Evulery", tutto in italiano. Pronto da copiare-incollare.</p>
+    <div class="cover-meta">
+        <span><i class="bi bi-calendar3"></i> Maggio 2026</span>
+        <span><i class="bi bi-people"></i> Per uso interno</span>
+        <span><i class="bi bi-shield-check"></i> GDPR-aware</span>
+    </div>
+</div>
+
+<!-- ============= 1. ISTRUZIONI E LEGAL ============= -->
+<div class="section">
+    <span class="section-num">01 · Istruzioni</span>
+    <h2 class="section-title">Come usare questo pack</h2>
+    <p class="section-lead">Questo pack è uno strumento, non uno script. Le email vanno personalizzate per ogni ristorante target — copiare-incollare-inviare in massa è il modo più veloce per finire in spam e bruciare il dominio.</p>
+
+    <h4>Prima di partire</h4>
+    <ol style="line-height: 1.8; padding-left: 20px;">
+        <li><strong>Lista contatti pulita</strong> — solo email B2B aziendali (no personali). Verificare con tool tipo Hunter.io / Snov.io / NeverBounce per rimuovere indirizzi morti.</li>
+        <li><strong>Mittente dedicato</strong> — usa un alias commerciale (es. <code>commerciale@evulery.it</code>) con nome operatore. Mai inviare da info@ o noreply@.</li>
+        <li><strong>Volumi controllati</strong> — primo mese: max 30-40 email/giorno da nuovo dominio per non triggerare antispam. Crescere gradualmente.</li>
+        <li><strong>Tracking minimo</strong> — pixel di apertura ok, ma niente link tracker complessi che si vedono nell'URL (riducono fiducia).</li>
+        <li><strong>Reply-friendly</strong> — il successo si misura in <em>reply</em>, non in click. Ogni email deve essere facile da rispondere.</li>
+    </ol>
+
+    <div class="legal-box">
+        <h4><i class="bi bi-shield-check"></i> Considerazioni legali e GDPR</h4>
+        <p><strong>L'invio di email B2B a freddo è generalmente lecito</strong> in Italia ai sensi della normativa privacy, sulla base dell'<strong>interesse legittimo</strong>, purché il destinatario sia un'attività commerciale (P.IVA visibile) e non un consumatore privato.</p>
+        <p>Requisiti operativi minimi:</p>
+        <ul style="margin: 0; padding-left: 18px;">
+            <li>Includere sempre <strong>opt-out chiaro</strong> in ogni email ("Se non ti interessa, dimmelo direttamente: niente follow-up.")</li>
+            <li>Dati ottenuti da fonti pubbliche (siti web, registri camera commercio, directory pubbliche)</li>
+            <li>Mai utilizzare liste acquistate da broker non verificati</li>
+            <li>Conservare le risposte negative per non ricontattare</li>
+            <li>In caso di contestazione: cancellare l'indirizzo entro 24h e confermare</li>
+        </ul>
+        <p style="margin-top: 16px;"><strong>Disclaimer:</strong> questa nota è un orientamento operativo, non un parere legale. Prima di scalare l'attività di outbound (oltre 500 email/mese), valutare consulto con un legale specializzato in privacy.</p>
+    </div>
+</div>
+
+<!-- ============= 2. SEQUENCE PLAYBOOK ============= -->
+<div class="section">
+    <span class="section-num">02 · Sequence playbook</span>
+    <h2 class="section-title">La sequenza standard, in un colpo d'occhio</h2>
+    <p class="section-lead">4 email su 14 giorni. Non di più. Dopo il giorno 14, se il contatto non risponde, va archiviato. Ricontatti successivi solo con nuovo trigger (recensione, articolo, evento, segnalazione).</p>
+
+    <div class="seq">
+        <div class="seq-header">
+            <div class="seq-title">📨 Sequence cold outreach standard</div>
+            <div class="seq-sub">Per ristoranti contattati a freddo, senza connessione precedente</div>
+        </div>
+        <div class="seq-steps">
+            <div class="seq-step">
+                <span class="seq-day">Giorno 0</span>
+                <div class="seq-name">Cold outreach</div>
+                <div class="seq-action">Template 01<br>Apertura, problema, link calculator</div>
+            </div>
+            <div class="seq-step">
+                <span class="seq-day">Giorno 3</span>
+                <div class="seq-name">Follow-up #1</div>
+                <div class="seq-action">Template 02<br>"Hai visto?" + nuovo angolo</div>
+            </div>
+            <div class="seq-step">
+                <span class="seq-day">Giorno 7</span>
+                <div class="seq-name">Valore aggiunto</div>
+                <div class="seq-action">Template 03<br>Contenuto utile (post Legge 34, dato)</div>
+            </div>
+            <div class="seq-step">
+                <span class="seq-day">Giorno 14</span>
+                <div class="seq-name">Last call</div>
+                <div class="seq-action">Template 04<br>Educato, breve, archive policy</div>
+            </div>
+            <div class="seq-step skip">
+                <span class="seq-day">Stop</span>
+                <div class="seq-name">Archive</div>
+                <div class="seq-action">Niente nuovi contatti senza nuovo trigger</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="seq">
+        <div class="seq-header">
+            <div class="seq-title">🎯 Trigger-based (non sequenza)</div>
+            <div class="seq-sub">Email singole, una-tantum, in risposta a un trigger specifico</div>
+        </div>
+        <div class="seq-steps">
+            <div class="seq-step">
+                <span class="seq-day">Trigger</span>
+                <div class="seq-name">Referral</div>
+                <div class="seq-action">Template 05<br>Quando hai contatto comune</div>
+            </div>
+            <div class="seq-step">
+                <span class="seq-day">Trigger</span>
+                <div class="seq-name">Post-demo non chiusa</div>
+                <div class="seq-action">Template 06<br>30 giorni dopo, riapertura soft</div>
+            </div>
+            <div class="seq-step">
+                <span class="seq-day">Trigger</span>
+                <div class="seq-name">Legge 34/2026</div>
+                <div class="seq-action">Template 07<br>Per ristoranti con review recenti</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============= 3. BEST PRACTICES ============= -->
+<div class="section">
+    <span class="section-num">03 · Best practices</span>
+    <h2 class="section-title">Le 8 regole che fanno la differenza</h2>
+    <p class="section-lead">Dopo aver visto le metriche di centinaia di campagne outbound, queste sono le regole che spostano realmente i numeri. Sembrano ovvie. Vengono violate ogni giorno.</p>
+
+    <div class="bp-grid">
+        <div class="bp">
+            <div class="bp-title"><span class="num">1</span>Subject corto, sotto 40 caratteri</div>
+            <div class="bp-body">Le email lette su mobile mostrano i primi 30-40 caratteri. Subject lunghi vengono troncati. Domanda diretta o personalizzazione = +20% open rate. Esempio: "Quante prenotazioni perdi al mese?" (32 char) batte "Una soluzione completa per la gestione delle prenotazioni del vostro ristorante" (78 char).</div>
+        </div>
+        <div class="bp">
+            <div class="bp-title"><span class="num">2</span>Body sotto 130 parole</div>
+            <div class="bp-body">Cold outreach lunghi non vengono letti. La regola: 1 hook, 1 motivo per credere, 1 CTA. Niente di più. La conversazione si fa in reply, non nella prima email.</div>
+        </div>
+        <div class="bp">
+            <div class="bp-title"><span class="num">3</span>Personalizzazione visibile</div>
+            <div class="bp-body">Nominare il ristorante (e meglio: una cosa specifica visibile sul loro sito o Instagram) raddoppia l'engagement. "Ho visto il vostro menu primaverile" è 10x più potente di "buongiorno". Mai personalizzazione fake.</div>
+        </div>
+        <div class="bp">
+            <div class="bp-title"><span class="num">4</span>Un link, mai due</div>
+            <div class="bp-body">Più link = più filtri spam attivati. Un solo link, possibilmente al ROI calculator (calculator-v2.html) o alla landing. Mai PDF allegati: trigger di spam quasi automatico in cold outreach.</div>
+        </div>
+        <div class="bp">
+            <div class="bp-title"><span class="num">5</span>Plain text, niente HTML pesante</div>
+            <div class="bp-body">Le email in HTML rich (loghi, banner, colonne) finiscono nella tab "Promozioni" di Gmail. Plain text con 1-2 link inline arriva in inbox. Sembra meno "professionale" — è più efficace.</div>
+        </div>
+        <div class="bp">
+            <div class="bp-title"><span class="num">6</span>Niente parole spam-trigger</div>
+            <div class="bp-body">Da evitare: "GRATIS", "OFFERTA", simboli $$$, ALL CAPS, "100%", "garanzia", troppi punti esclamativi. Sono filtri ovvi ma dimenticati spesso. Anche "promo limitata" e "sconto" alzano lo spam score.</div>
+        </div>
+        <div class="bp">
+            <div class="bp-title"><span class="num">7</span>Opt-out integrato, esplicito</div>
+            <div class="bp-body">Una riga finale tipo "Se non ti interessa, dimmelo direttamente — non ti scrivo più" costruisce fiducia E è formalmente conforme. Mai "unsubscribe link" stile newsletter (tradisce automation di massa).</div>
+        </div>
+        <div class="bp">
+            <div class="bp-title"><span class="num">8</span>PS strategico</div>
+            <div class="bp-body">Il P.S. è la seconda cosa più letta dopo la subject line. Va usato per: domanda extra, riferimento personale, link calculator, riferimento a una recensione recente. Mai sprecarlo.</div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============= 4. SUBJECT LINES ============= -->
+<div class="section">
+    <span class="section-num">04 · Subject lines</span>
+    <h2 class="section-title">15 varianti da testare</h2>
+    <p class="section-lead">Le subject line vanno testate. Quella che funziona meglio per te dipende dal pubblico locale e dal momento. Inizia con 3-4 varianti, monitora gli open rate, raffina dopo 100 invii.</p>
+
+    <h3>Domande dirette</h3>
+    <div class="subj-cat">
+        <div class="subj-cat-label">Funzionano perché creano curiosità immediata</div>
+        <div class="subj-list">
+            <div class="subj"><div class="subj-text">Quante prenotazioni perdete al mese?</div><span class="subj-meta">32 char</span><button class="subj-copy" data-text="Quante prenotazioni perdete al mese?">📋</button></div>
+            <div class="subj"><div class="subj-text">Quanto vi costa davvero TheFork?</div><span class="subj-meta">31 char</span><button class="subj-copy" data-text="Quanto vi costa davvero TheFork?">📋</button></div>
+            <div class="subj"><div class="subj-text">Una domanda sulle vostre commissioni</div><span class="subj-meta">36 char</span><button class="subj-copy" data-text="Una domanda sulle vostre commissioni">📋</button></div>
+        </div>
+    </div>
+
+    <h3>Personalizzate</h3>
+    <div class="subj-cat">
+        <div class="subj-cat-label">Nome ristorante = +20% open rate (sostituire prima di inviare)</div>
+        <div class="subj-list">
+            <div class="subj"><div class="subj-text"><strong>{{nome_ristorante}}</strong>, ho una proposta</div><span class="subj-meta">var.</span><button class="subj-copy" data-text="{{nome_ristorante}}, ho una proposta">📋</button></div>
+            <div class="subj"><div class="subj-text">Ho cenato da <strong>{{nome_ristorante}}</strong> (o ne ho sentito parlare)</div><span class="subj-meta">var.</span><button class="subj-copy" data-text="Ho cenato da {{nome_ristorante}} (o ne ho sentito parlare)">📋</button></div>
+            <div class="subj"><div class="subj-text">Per <strong>{{nome_ristorante}}</strong>: 30 secondi di lettura</div><span class="subj-meta">var.</span><button class="subj-copy" data-text="Per {{nome_ristorante}}: 30 secondi di lettura">📋</button></div>
+        </div>
+    </div>
+
+    <h3>Pain-driven</h3>
+    <div class="subj-cat">
+        <div class="subj-cat-label">Tocca un dolore concreto del ristoratore</div>
+        <div class="subj-list">
+            <div class="subj"><div class="subj-text">Il problema delle telefonate perse</div><span class="subj-meta">33 char</span><button class="subj-copy" data-text="Il problema delle telefonate perse">📋</button></div>
+            <div class="subj"><div class="subj-text">No-show del 15%? Si può fare meglio</div><span class="subj-meta">35 char</span><button class="subj-copy" data-text="No-show del 15%? Si può fare meglio">📋</button></div>
+            <div class="subj"><div class="subj-text">Affittate o avete i vostri clienti?</div><span class="subj-meta">35 char</span><button class="subj-copy" data-text="Affittate o avete i vostri clienti?">📋</button></div>
+        </div>
+    </div>
+
+    <h3>Locale / di prossimità</h3>
+    <div class="subj-cat">
+        <div class="subj-cat-label">Funzionano per outreach geografico mirato</div>
+        <div class="subj-list">
+            <div class="subj"><div class="subj-text">Sto contattando 10 ristoranti di <strong>{{citta}}</strong></div><span class="subj-meta">var.</span><button class="subj-copy" data-text="Sto contattando 10 ristoranti di {{citta}}">📋</button></div>
+            <div class="subj"><div class="subj-text">Da un altro ristoratore italiano</div><span class="subj-meta">31 char</span><button class="subj-copy" data-text="Da un altro ristoratore italiano">📋</button></div>
+        </div>
+    </div>
+
+    <h3>Trigger-based</h3>
+    <div class="subj-cat">
+        <div class="subj-cat-label">Quando c'è un evento esterno specifico</div>
+        <div class="subj-list">
+            <div class="subj"><div class="subj-text">Sulla nuova legge recensioni 2026</div><span class="subj-meta">33 char</span><button class="subj-copy" data-text="Sulla nuova legge recensioni 2026">📋</button></div>
+            <div class="subj"><div class="subj-text">Ho visto la vostra recensione su Google</div><span class="subj-meta">39 char</span><button class="subj-copy" data-text="Ho visto la vostra recensione su Google">📋</button></div>
+            <div class="subj"><div class="subj-text">A proposito di <strong>{{nome_ristorante}}</strong>...</div><span class="subj-meta">var.</span><button class="subj-copy" data-text="A proposito di {{nome_ristorante}}...">📋</button></div>
+        </div>
+    </div>
+
+    <h3>Follow-up specifici</h3>
+    <div class="subj-cat">
+        <div class="subj-cat-label">Per le email 2-3-4 della sequenza</div>
+        <div class="subj-list">
+            <div class="subj"><div class="subj-text">Re: <strong>{{subject_email_precedente}}</strong></div><span class="subj-meta">var.</span><button class="subj-copy" data-text="Re: {{subject_email_precedente}}">📋</button></div>
+            <div class="subj"><div class="subj-text">Solo un'ultima cosa, poi vi lascio</div><span class="subj-meta">34 char</span><button class="subj-copy" data-text="Solo un'ultima cosa, poi vi lascio">📋</button></div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============= 5. TEMPLATES ============= -->
+<div class="section">
+    <span class="section-num">05 · Template</span>
+    <h2 class="section-title">7 email pronte da personalizzare</h2>
+    <p class="section-lead">Ogni template ha header (con subject preselezionata), corpo email, e note operative. I campi tra <span class="placeholder">{{ }}</span> vanno sostituiti prima dell'invio. Il pulsante "Copia tutto" copia subject + body in un colpo solo.</p>
+
+
+    <!-- ============ TEMPLATE 01 — COLD OUTREACH ============ -->
+    <div class="tpl">
+        <div class="tpl-header">
+            <div class="tpl-meta">
+                <span class="pill pill-cold">Cold outreach</span>
+                <span class="pill pill-day">Giorno 0</span>
+                <span class="pill pill-len">98 parole</span>
+            </div>
+            <div class="tpl-name">01 · Cold outreach iniziale</div>
+            <div class="tpl-purpose">Prima email a freddo a un ristorante target. Apre la conversazione con un dolore concreto e un invito a calcolare il proprio risparmio.</div>
+        </div>
+        <div class="tpl-email">
+            <div class="email-headers">
+                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;commerciale@evulery.it&gt;</div></div>
+                <div class="row"><div class="label">A:</div><div class="value">{{email_ristorante}}</div></div>
+                <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-1">Quanto vi costa davvero TheFork?</div></div>
+            </div>
+            <div class="email-body" id="body-1">Buongiorno <span class="placeholder">{{nome_ristorante}}</span>,
+
+scrivo dal team di Evulery, una piattaforma italiana per la gestione delle prenotazioni dei ristoranti indipendenti.
+
+Una domanda diretta: nel vostro ristorante, quante prenotazioni al mese arrivano da TheFork o piattaforme simili? Se sono 200-300 con scontrino medio €30-€40, in un anno state pagando tra 7.000 e 15.000 euro in commissioni. Soldi che spariscono ogni mese in modo invisibile.
+
+Evulery offre lo stesso servizio (prenotazioni online dal vostro sito, dashboard, gestione tavoli) a canone fisso da €49 al mese. Niente percentuali sui coperti.
+
+Vi lascio il calcolatore — è online e ci mettete 30 secondi:
+👉 evulery.it/calculator-v2.html
+
+Se vi interessa una demo (in italiano, senza obbligo) rispondete a questa email.<div class="signature">In caso non vi interessi, ditemelo direttamente: niente follow-up.
+
+— Team Evulery
+evulery.it · info@evulery.it
+
+P.S. Conformi alla Legge 34/2026 sulle recensioni online, nativamente.</div></div>
+        </div>
+        <div class="tpl-actions">
+            <button class="copy-btn" data-target="body-1" data-subject="subj-1">📋 Copia subject + body</button>
+            <button class="copy-btn secondary" data-target="body-1">📋 Copia solo body</button>
+            <button class="copy-btn secondary" data-target="subj-1">📋 Copia solo subject</button>
+        </div>
+        <div class="tpl-notes">
+            <h5>Note operative</h5>
+            <ul>
+                <li><strong>Sostituire prima di inviare:</strong> <code>{{nome_ristorante}}</code> e <code>{{email_ristorante}}</code></li>
+                <li><strong>Personalizzazione consigliata:</strong> se hai 2 minuti, sostituisci la prima riga con un'osservazione concreta sul loro ristorante (menu visto online, post Instagram recente, recensione che hai notato). Triplica le risposte.</li>
+                <li><strong>Quando inviare:</strong> martedì o mercoledì mattina ore 8-10. Lunedì è troppo affollato, venerdì pomeriggio si perde nel weekend.</li>
+                <li><strong>NON usare per:</strong> ristoranti che non hanno P.IVA visibile sul sito (probabilmente non sono attività registrate o sono in fase di apertura).</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- ============ TEMPLATE 02 — FOLLOW-UP #1 ============ -->
+    <div class="tpl">
+        <div class="tpl-header">
+            <div class="tpl-meta">
+                <span class="pill pill-followup">Follow-up</span>
+                <span class="pill pill-day">Giorno 3</span>
+                <span class="pill pill-len">62 parole</span>
+            </div>
+            <div class="tpl-name">02 · Follow-up #1 — "ho visto?"</div>
+            <div class="tpl-purpose">3 giorni dopo la prima email. Riapre il thread con un nuovo angolo: l'idea che la maggior parte dei clienti aggregatore sono già "loro".</div>
+        </div>
+        <div class="tpl-email">
+            <div class="email-headers">
+                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;commerciale@evulery.it&gt;</div></div>
+                <div class="row"><div class="label">A:</div><div class="value">{{email_ristorante}}</div></div>
+                <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-2">Re: Quanto vi costa davvero TheFork?</div></div>
+            </div>
+            <div class="email-body" id="body-2">Buongiorno <span class="placeholder">{{nome_ristorante}}</span>,
+
+vi scrivo solo per aggiungere una cosa che ho dimenticato l'altro giorno.
+
+Spesso i ristoratori ci dicono "TheFork mi porta clienti". È vero in parte. Ma dai dati di settore, il 60-70% di chi prenota su TheFork sono persone che <em>vi conoscevano già</em> — vi avrebbero cercato comunque su Google, e con un widget di prenotazione vostro avrebbero prenotato direttamente.
+
+Quindi state pagando commissioni per la maggior parte dei vostri clienti già acquisiti.
+
+Vale la pena calcolare quanto sarebbe?
+👉 evulery.it/calculator-v2.html<div class="signature">— Team Evulery
+evulery.it</div></div>
+        </div>
+        <div class="tpl-actions">
+            <button class="copy-btn" data-target="body-2" data-subject="subj-2">📋 Copia subject + body</button>
+            <button class="copy-btn secondary" data-target="body-2">📋 Copia solo body</button>
+        </div>
+        <div class="tpl-notes">
+            <h5>Note operative</h5>
+            <ul>
+                <li><strong>Subject "Re:"</strong>: rispondi alla tua stessa email precedente per mantenere il thread visibile in inbox. Aumenta open rate del 15-30%.</li>
+                <li><strong>Tono:</strong> casual, breve, "mi è venuto in mente". Non sembrare automation.</li>
+                <li><strong>NON inviare se:</strong> il primo template è stato risposto (anche con "non ci interessa"). Risposta = stop sequence.</li>
+                <li><strong>Timing:</strong> stesso giorno della settimana del primo invio (es. martedì → martedì successivo non funziona, +3 giorni → venerdì sì).</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- ============ TEMPLATE 03 — VALORE AGGIUNTO ============ -->
+    <div class="tpl">
+        <div class="tpl-header">
+            <div class="tpl-meta">
+                <span class="pill pill-followup">Follow-up</span>
+                <span class="pill pill-day">Giorno 7</span>
+                <span class="pill pill-len">88 parole</span>
+            </div>
+            <div class="tpl-name">03 · Valore aggiunto — Legge 34/2026</div>
+            <div class="tpl-purpose">7 giorni dopo. Niente vendita: passiamo informazione utile. Cambia il framing della conversazione da "mi vendi" a "mi aiuti a capire qualcosa".</div>
+        </div>
+        <div class="tpl-email">
+            <div class="email-headers">
+                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;commerciale@evulery.it&gt;</div></div>
+                <div class="row"><div class="label">A:</div><div class="value">{{email_ristorante}}</div></div>
+                <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-3">Sulla nuova legge recensioni 2026</div></div>
+            </div>
+            <div class="email-body" id="body-3">Buongiorno <span class="placeholder">{{nome_ristorante}}</span>,
+
+cambio argomento, perché potrebbe interessarvi.
+
+Dal 2026 le recensioni online dei ristoranti devono essere verificabili: solo chi ha effettuato la visita può lasciare recensione, e le piattaforme devono dimostrare il legame visita ↔ autore. Le sanzioni partono da diverse migliaia di euro per chi non si adegua, e Google sta già rimuovendo recensioni non conformi a tappeto.
+
+Se gestite le recensioni in modo "informale" (chiedete a clienti abituali di lasciarvene, ricevete commenti senza traccia di prenotazione), c'è da fare un check.
+
+Vi lascio una guida che abbiamo scritto noi, niente di promozionale:
+[Link alla guida pubblica sul vostro sito o blog]
+
+Buon lavoro,<div class="signature">— Team Evulery
+evulery.it</div></div>
+        </div>
+        <div class="tpl-actions">
+            <button class="copy-btn" data-target="body-3" data-subject="subj-3">📋 Copia subject + body</button>
+            <button class="copy-btn secondary" data-target="body-3">📋 Copia solo body</button>
+        </div>
+        <div class="tpl-notes">
+            <h5>Note operative</h5>
+            <ul>
+                <li><strong>Sostituire</strong>: link alla guida — possiamo creare una pagina pubblica dedicata su evulery.it (es. <code>/guida-recensioni-2026.html</code>) che spiega la legge senza CTA aggressivi. Asset SEO+outbound a doppio uso.</li>
+                <li><strong>Filosofia:</strong> giorno 7 = giorno di valore puro. Niente CTA forte. Mostri che porti utilità reale, non solo proposte commerciali.</li>
+                <li><strong>NON inviare se:</strong> hai già ricevuto risposta (positiva o negativa) alle email precedenti.</li>
+                <li><strong>Variante:</strong> se il ristorante ha avuto recensioni recenti, sostituisci il body con il template 07 (trigger-based) che è più mirato.</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- ============ TEMPLATE 04 — LAST CALL ============ -->
+    <div class="tpl">
+        <div class="tpl-header">
+            <div class="tpl-meta">
+                <span class="pill pill-followup">Last call</span>
+                <span class="pill pill-day">Giorno 14</span>
+                <span class="pill pill-len">54 parole</span>
+            </div>
+            <div class="tpl-name">04 · Last call — chiudo il thread</div>
+            <div class="tpl-purpose">Ultima email della sequence. Educata, breve, dichiara la chiusura. Spesso fa rispondere chi era indeciso ("ah scusa, mi era sfuggita").</div>
+        </div>
+        <div class="tpl-email">
+            <div class="email-headers">
+                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;commerciale@evulery.it&gt;</div></div>
+                <div class="row"><div class="label">A:</div><div class="value">{{email_ristorante}}</div></div>
+                <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-4">Solo un'ultima cosa, poi vi lascio</div></div>
+            </div>
+            <div class="email-body" id="body-4">Buongiorno <span class="placeholder">{{nome_ristorante}}</span>,
+
+questa è la mia ultima email — promesso. Non vi scriverò più senza un motivo nuovo.
+
+Se Evulery non fa per voi adesso, va benissimo. Se invece avete avuto solo poco tempo per leggere le mail precedenti, sappiate che siamo qui — basta una riga di risposta.
+
+Buon lavoro e buona sera,<div class="signature">— Team Evulery
+evulery.it · info@evulery.it</div></div>
+        </div>
+        <div class="tpl-actions">
+            <button class="copy-btn" data-target="body-4" data-subject="subj-4">📋 Copia subject + body</button>
+            <button class="copy-btn secondary" data-target="body-4">📋 Copia solo body</button>
+        </div>
+        <div class="tpl-notes">
+            <h5>Note operative</h5>
+            <ul>
+                <li><strong>Funziona perché</strong>: la psicologia dell'ultima chance + la promessa esplicita di smettere = combina urgenza onesta e dignità. Reply rate inaspettatamente alto.</li>
+                <li><strong>Mantieni la promessa:</strong> dopo questa email, archivia il contatto. Nuovo contatto solo con trigger nuovo (recensione, articolo su di loro, contatto comune).</li>
+                <li><strong>Non aggiungere PS commerciale:</strong> rovina l'effetto "soft close". L'email deve sembrare una pacata stretta di mano.</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- ============ TEMPLATE 05 — REFERRAL ============ -->
+    <div class="tpl">
+        <div class="tpl-header">
+            <div class="tpl-meta">
+                <span class="pill pill-referral">Referral</span>
+                <span class="pill pill-day">Trigger</span>
+                <span class="pill pill-len">75 parole</span>
+            </div>
+            <div class="tpl-name">05 · Referral — contatto comune</div>
+            <div class="tpl-purpose">Quando hai una persona in comune (cliente, fornitore, conoscente). Il referral è la chiave: open rate 5-10x rispetto a cold outreach puro.</div>
+        </div>
+        <div class="tpl-email">
+            <div class="email-headers">
+                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;commerciale@evulery.it&gt;</div></div>
+                <div class="row"><div class="label">A:</div><div class="value">{{email_ristorante}}</div></div>
+                <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-5">Da {{nome_referrer}}, vi presento Evulery</div></div>
+            </div>
+            <div class="email-body" id="body-5">Buongiorno <span class="placeholder">{{nome_titolare_o_ristorante}}</span>,
+
+vi scrivo su consiglio di <span class="placeholder">{{nome_referrer}}</span>, che ci ha detto che potreste essere interessati a una piattaforma italiana di prenotazioni a canone fisso (no commissioni sui coperti).
+
+Sintetizzo in 30 secondi: Evulery gestisce prenotazioni online, calendario tavoli, email marketing, recensioni e ordini takeaway/delivery. Tutto incluso, da €49 al mese. Stesso lavoro di TheFork e simili, senza percentuali su ogni cliente.
+
+Se vi va di vederlo dal vivo, fissiamo 30 minuti? Scegliete voi quando.
+
+Grazie,<div class="signature">— Team Evulery
+evulery.it</div></div>
+        </div>
+        <div class="tpl-actions">
+            <button class="copy-btn" data-target="body-5" data-subject="subj-5">📋 Copia subject + body</button>
+            <button class="copy-btn secondary" data-target="body-5">📋 Copia solo body</button>
+        </div>
+        <div class="tpl-notes">
+            <h5>Note operative</h5>
+            <ul>
+                <li><strong>Sostituire:</strong> <code>{{nome_referrer}}</code> e <code>{{nome_titolare_o_ristorante}}</code></li>
+                <li><strong>Verifica con il referrer:</strong> sempre chiedere prima alla persona referral se può citare il suo nome. Mai mentire sul referrer — controllabile in 1 chiamata.</li>
+                <li><strong>Open rate atteso:</strong> 60-80% (vs 25-35% di cold outreach). Reply rate 25-40% (vs 3-8%).</li>
+                <li><strong>Niente sequence:</strong> referral è una shot. Se non risponde in 7 giorni, una sola gentle reminder, poi stop.</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- ============ TEMPLATE 06 — REVIVAL POST-DEMO ============ -->
+    <div class="tpl">
+        <div class="tpl-header">
+            <div class="tpl-meta">
+                <span class="pill pill-revival">Revival</span>
+                <span class="pill pill-day">+30 giorni</span>
+                <span class="pill pill-len">82 parole</span>
+            </div>
+            <div class="tpl-name">06 · Revival post-demo non chiusa</div>
+            <div class="tpl-purpose">30 giorni dopo una demo che non si è chiusa. Niente pressione: chiede semplicemente "come va?" con un valore aggiunto. Spesso riapre conversazioni dormienti.</div>
+        </div>
+        <div class="tpl-email">
+            <div class="email-headers">
+                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;commerciale@evulery.it&gt;</div></div>
+                <div class="row"><div class="label">A:</div><div class="value">{{email_ristorante}}</div></div>
+                <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-6">A proposito di {{nome_ristorante}}...</div></div>
+            </div>
+            <div class="email-body" id="body-6">Buongiorno <span class="placeholder">{{nome_titolare_o_ristorante}}</span>,
+
+ci eravamo sentiti circa un mese fa per una demo di Evulery. Mi pare di ricordare che ci stavate pensando.
+
+Volevo solo dire che siamo ancora qui. Nel frattempo abbiamo aggiunto <span class="placeholder">{{una_feature_recente}}</span>, che potrebbe interessarvi.
+
+Se la situazione è cambiata e vi va di riprendere, basta una riga.
+Se invece avete deciso di andare in altra direzione, ditemelo lo stesso: mi togliete dalla lista dei "ci penso" e finita lì.
+
+Grazie e buon lavoro,<div class="signature">— Team Evulery
+evulery.it</div></div>
+        </div>
+        <div class="tpl-actions">
+            <button class="copy-btn" data-target="body-6" data-subject="subj-6">📋 Copia subject + body</button>
+            <button class="copy-btn secondary" data-target="body-6">📋 Copia solo body</button>
+        </div>
+        <div class="tpl-notes">
+            <h5>Note operative</h5>
+            <ul>
+                <li><strong>Sostituire:</strong> <code>{{una_feature_recente}}</code> con qualcosa di vero (es. "i pulsanti Prenota nella mail broadcast", "il box compleanni nella dashboard"). Mai inventare.</li>
+                <li><strong>Tono:</strong> casual, no-pressure. La frase "mi togliete dalla lista dei ci penso" sblocca il senso di colpa di chi non ha risposto.</li>
+                <li><strong>NON inviare a:</strong> contatti che hanno detto esplicitamente "no". Solo a quelli che hanno detto "ci penso" e poi sono spariti.</li>
+                <li><strong>Frequenza:</strong> max 1 revival ogni 60 giorni. Oltre, diventi stalker.</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- ============ TEMPLATE 07 — TRIGGER LEGGE 34 ============ -->
+    <div class="tpl">
+        <div class="tpl-header">
+            <div class="tpl-meta">
+                <span class="pill pill-trigger">Trigger</span>
+                <span class="pill pill-day">Quando</span>
+                <span class="pill pill-len">94 parole</span>
+            </div>
+            <div class="tpl-name">07 · Trigger Legge 34/2026 — recensione recente</div>
+            <div class="tpl-purpose">Per ristoranti che hanno avuto una recensione (positiva o negativa) recente su Google/TheFork/altro. Aggancio specifico, non a freddo puro.</div>
+        </div>
+        <div class="tpl-email">
+            <div class="email-headers">
+                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;commerciale@evulery.it&gt;</div></div>
+                <div class="row"><div class="label">A:</div><div class="value">{{email_ristorante}}</div></div>
+                <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-7">Ho visto la vostra recensione su {{piattaforma}}</div></div>
+            </div>
+            <div class="email-body" id="body-7">Buongiorno <span class="placeholder">{{nome_ristorante}}</span>,
+
+ho visto la vostra recensione recente su <span class="placeholder">{{piattaforma}}</span> (<span class="placeholder">{{breve_riferimento_specifico}}</span>). Ottimo segnale.
+
+Una domanda concreta: dal 2026 le recensioni online devono essere verificabili — solo chi ha effettivamente prenotato e visitato può lasciarne una. Le piattaforme stanno aggiornando i sistemi e Google sta già rimuovendo recensioni non conformi. Se non hai un sistema di prenotazione tracciato, rischi che le tue prossime recensioni vengano filtrate.
+
+Evulery è conforme nativamente: ogni recensione raccolta tramite il sistema è collegata a una visita verificata.
+
+Se ti va di vederlo: evulery.it/calculator-v2.html (per il costo) o rispondi a questa email per una demo di 30 minuti.<div class="signature">— Team Evulery
+evulery.it</div></div>
+        </div>
+        <div class="tpl-actions">
+            <button class="copy-btn" data-target="body-7" data-subject="subj-7">📋 Copia subject + body</button>
+            <button class="copy-btn secondary" data-target="body-7">📋 Copia solo body</button>
+        </div>
+        <div class="tpl-notes">
+            <h5>Note operative</h5>
+            <ul>
+                <li><strong>Sostituire:</strong> <code>{{piattaforma}}</code> (Google / TripAdvisor / TheFork), <code>{{breve_riferimento_specifico}}</code> (es. "complimenti per la carbonara segnalata da Lucia"). Personalizzazione = trust.</li>
+                <li><strong>Trigger ideali:</strong> ristoranti con 1-3 recensioni nuove negli ultimi 7 giorni. Cerca via Google "{{nome_ristorante}} recensioni" filtrato a "ultima settimana".</li>
+                <li><strong>Tono di passaggio dal "tu" al "voi":</strong> in questo template misto, perché parte parla del ristorante (voi/i tuoi) e parte del titolare (tu/ti). Adatta in base a quanto sai del destinatario.</li>
+                <li><strong>NON inviare se:</strong> la recensione era molto negativa e potrebbe essere ancora sensibile. Aspetta 2-3 settimane.</li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ============= 6. ERRORI ============= -->
+<div class="section">
+    <span class="section-num">06 · Da NON fare</span>
+    <h2 class="section-title">8 errori che bruciano il dominio</h2>
+    <p class="section-lead">Outbound mal fatta non genera 0 risultati: genera risultati negativi. Bounce rate alto + report spam = il tuo dominio finisce nelle blacklist e tutte le tue email future (anche quelle a clienti) vanno in junk.</p>
+
+    <div class="never">
+        <h4>Mai e poi mai</h4>
+        <ul class="never-list">
+            <li>
+                <div class="quote">Inviare a indirizzi non verificati</div>
+                <div class="why">Bounce rate &gt;5% = penalty severa da Gmail/Outlook. Sempre validare la lista con tool tipo NeverBounce/ZeroBounce prima di inviare. Costo: pochi centesimi a indirizzo. Risparmio: il tuo dominio.</div>
+            </li>
+            <li>
+                <div class="quote">Inviare 200+ email lo stesso giorno da nuovo dominio</div>
+                <div class="why">I provider antispam guardano il warm-up: un dominio nuovo che invia 200 email il giorno 1 è chiaro segno di spam. Crescere gradualmente: 30/giorno settimana 1, 50/giorno settimana 2, ecc.</div>
+            </li>
+            <li>
+                <div class="quote">Allegare PDF o presentazioni</div>
+                <div class="why">Cold outreach + allegato = 80% probabilità di finire in spam. Il primo contatto deve essere puro testo + 1 link. Allegati arrivano dopo, in risposta a un interesse esplicito.</div>
+            </li>
+            <li>
+                <div class="quote">Usare ALL CAPS o "GRATIS!!!"</div>
+                <div class="why">Spam filter degli anni '90 ancora attivi. Anche solo "OFFERTA" o 3 punti esclamativi alzano lo spam score. Linguaggio normale, italiano professionale, niente urlato.</div>
+            </li>
+            <li>
+                <div class="quote">Falsificare il nome ("Marco da Evulery" se non c'è nessun Marco)</div>
+                <div class="why">In risposta il cliente potrebbe scrivere "ciao Marco posso parlarti?" — e tu sei senza Marco. Crollo immediato di credibilità. Usa nome reale di chi gestisce la casella o "Team Evulery" senza nomi finti.</div>
+            </li>
+            <li>
+                <div class="quote">Continuare a scrivere a chi ha detto "non mi interessa"</div>
+                <div class="why">Penalty automatica + segnalazione spam quasi certa. Una risposta negativa va onorata: stop sequence, contatto archiviato, niente nuovi tentativi.</div>
+            </li>
+            <li>
+                <div class="quote">Usare "Egregio" o "Spettabile"</div>
+                <div class="why">Lessico da banca anni '80. Crea distanza, segnala mass mailing. Il "Buongiorno {{nome}}" semplice funziona 10x meglio. Mai linguaggio ipo-formale.</div>
+            </li>
+            <li>
+                <div class="quote">Tracciare tutto in modo aggressivo</div>
+                <div class="why">Pixel di apertura va bene. Link tracker con UTM lunghissimi visibili nell'URL = "questi mi tracciano alla virgola, non mi piace". Se devi tracciare, usa shortener interno o link puliti tipo evulery.it/c (con redirect).</div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<!-- ============= 7. KPI ============= -->
+<div class="section">
+    <span class="section-num">07 · KPI</span>
+    <h2 class="section-title">Metriche che ti dicono se funziona</h2>
+    <p class="section-lead">Range realistici per outbound B2B verso ristoratori italiani. Sotto il minimo = qualcosa non va (lista, copy, deliverability). Sopra il massimo = stai facendo benissimo o hai un campione piccolo.</p>
+
+    <div class="kpi-grid">
+        <div class="kpi">
+            <div class="kpi-label">Open rate</div>
+            <div class="kpi-range">25–45%</div>
+            <div class="kpi-desc">% email aperte. Sotto 20%: subject deboli o spam folder. Sopra 50%: lista molto qualificata o referral.</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-label">Reply rate</div>
+            <div class="kpi-range">3–8%</div>
+            <div class="kpi-desc">% risposte (positive + negative). È la metrica che conta. Sotto 2%: copy o targeting da rivedere. Sopra 10%: copy ottimo (raro).</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-label">Demo book rate</div>
+            <div class="kpi-range">1–3%</div>
+            <div class="kpi-desc">% di prenotazioni demo dirette dalla email. Su 100 email inviate, aspettati 1-3 demo prenotate. Realistico.</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-label">Demo → cliente</div>
+            <div class="kpi-range">15–30%</div>
+            <div class="kpi-desc">% demo che chiudono in cliente. Dipende molto da targeting + competenze commerciali. La battlecard aiuta a stare nel range alto.</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-label">Bounce rate</div>
+            <div class="kpi-range">&lt;3%</div>
+            <div class="kpi-desc">% email rimbalzate. Sopra 5%: lista da pulire urgentemente. Sopra 10%: rischio blacklist immediato.</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-label">Spam complaint</div>
+            <div class="kpi-range">&lt;0.1%</div>
+            <div class="kpi-desc">% destinatari che segnalano spam. Sopra 0.3%: penalty grave da Gmail/Outlook. Va monitorato attivamente.</div>
+        </div>
+    </div>
+
+    <h3>Calcolo realistico mensile</h3>
+    <p>Esempio: <strong>500 email inviate al mese</strong> con KPI medi del range:</p>
+    <ul style="line-height: 1.8; padding-left: 20px;">
+        <li>~150-200 aperture</li>
+        <li>~20-30 risposte (positive + negative)</li>
+        <li>~8-12 demo prenotate</li>
+        <li>~2-4 nuovi clienti chiusi</li>
+    </ul>
+    <p style="margin-top: 16px;">A €79 di canone medio × 12 mesi: <strong>~€2.000-€4.000 di MRR ricorrente generato</strong> da 500 email. Se il tempo investito è ~10-15h al mese, è un ritorno onesto. Va comparato con altri canali (social organic, referral, SEO) per capire dove allocare ore.</p>
+</div>
+
+
+<!-- ============= FOOTER ============= -->
+<div class="book-footer">
+    <div class="warn-band">
+        <strong>⚠️ Documento interno.</strong> I template e i dati di settore (KPI, commissioni competitor) sono indicativi. La normativa privacy può evoluzionare — prima di scalare oltre 500 email/mese, consultare un legale. Conservare le risposte negative per non ricontattare.
+    </div>
+    <strong>Evulery Email Outbound Pack · v1.0 · Maggio 2026</strong><br>
+    Documento di uso interno · Non condividere con clienti o terzi<br>
+    © 2026 Evulery · by alagias. — Soluzioni per il web
+</div>
+
+</div>
+
+<script>
+// ============= COPY SUBJECT LINES =============
+document.querySelectorAll('.subj-copy').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const text = btn.getAttribute('data-text');
+        navigator.clipboard.writeText(text).then(() => {
+            const original = btn.textContent;
+            btn.classList.add('copied');
+            btn.textContent = '✓';
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.textContent = original;
+            }, 1500);
+        });
+    });
+});
+
+// ============= COPY EMAIL BODY/SUBJECT =============
+function getInnerText(el) {
+    // Read text preserving line breaks (including signature/placeholder spans)
+    const clone = el.cloneNode(true);
+    // Replace placeholder spans with bare text
+    clone.querySelectorAll('.placeholder').forEach(p => {
+        const t = document.createTextNode(p.textContent);
+        p.replaceWith(t);
+    });
+    // Convert <div> children (like signature) to text with line breaks
+    const sig = clone.querySelector('.signature');
+    if (sig) {
+        const sigText = '\n\n' + sig.innerText.trim();
+        sig.replaceWith(document.createTextNode(sigText));
+    }
+    return clone.innerText.trim();
+}
+
+document.querySelectorAll('.copy-btn[data-target]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-target');
+        const subjId = btn.getAttribute('data-subject');
+        const target = document.getElementById(targetId);
+        if (!target) return;
+
+        let text = '';
+        if (subjId) {
+            const subj = document.getElementById(subjId);
+            if (subj) text += 'Oggetto: ' + subj.textContent + '\n\n';
+        }
+        if (target.classList.contains('email-body')) {
+            text += getInnerText(target);
+        } else {
+            text += target.textContent.trim();
+        }
+
+        navigator.clipboard.writeText(text).then(() => {
+            const original = btn.textContent;
+            btn.classList.add('copied');
+            btn.textContent = '✓ Copiato!';
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.textContent = original;
+            }, 1800);
+        });
+    });
+});
+</script>
+
+</body>
+</html>
