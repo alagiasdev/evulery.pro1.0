@@ -29,7 +29,6 @@ class CustomerLookupController
     /** Rate limit: max 10 chiamate al minuto per IP. */
     private const LOOKUP_MAX_PER_MIN = 10;
     private const LOOKUP_WINDOW_SEC  = 60;
-    /** Chiave breve per stare nel limite VARCHAR(10) di rate_limits.endpoint. */
     private const LOOKUP_KEY         = 'cust_lkp';
 
     public function lookup(Request $request): void
