@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evulery — Guida Targeting & Lista Contatti Outbound</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #006837;
+    --brand-darker: #042418;
+    --brand-light: #E8F5E9;
+    --brand-accent: #4ade80;
+    --ink: #0a0e14;
+    --ink-soft: #495057;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --bg: #ffffff;
+    --bg-soft: #fafbfc;
+    --warning: #E65100;
+    --warning-light: #FFF3E0;
+    --danger: #dc3545;
+    --danger-light: #fde8ea;
+    --info: #0277bd;
+    --info-light: #e3f2fd;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f6f8;
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 16px;
+}
+.book {
+    max-width: 1080px;
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 4px 32px rgba(0,0,0,.06);
+}
+
+/* COVER */
+.cover {
+    background: linear-gradient(135deg, var(--brand-darker) 0%, var(--brand) 100%);
+    color: #fff;
+    padding: 80px 64px;
+    position: relative;
+    overflow: hidden;
+}
+.cover::before {
+    content: "";
+    position: absolute; top: -120px; right: -120px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, var(--brand-accent) 0%, transparent 70%);
+    opacity: .12; pointer-events: none;
+}
+.cover-classification {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.25);
+    padding: 6px 14px; border-radius: 100px;
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+}
+.cover-eyebrow {
+    text-transform: uppercase; letter-spacing: 3px; font-size: 12px;
+    font-weight: 700; opacity: .85; margin-bottom: 16px;
+}
+.cover h1 {
+    font-size: 52px; font-weight: 900; letter-spacing: -2px;
+    line-height: 1.05; margin: 0 0 24px 0;
+    max-width: 760px;
+}
+.cover h1 .accent { color: var(--brand-accent); }
+.cover-sub {
+    font-size: 18px; opacity: .9; line-height: 1.5;
+    max-width: 720px;
+}
+.cover-meta {
+    margin-top: 48px;
+    display: flex; gap: 24px; flex-wrap: wrap;
+    font-size: 13px; opacity: .8; letter-spacing: .5px;
+}
+.cover-meta span { display: inline-flex; align-items: center; gap: 8px; }
+
+/* SECTIONS */
+.section {
+    padding: 72px 64px;
+    border-bottom: 1px solid var(--line);
+}
+.section:last-of-type { border-bottom: 0; }
+.section-num {
+    font-size: 13px; font-weight: 700; letter-spacing: 2.5px;
+    color: var(--brand); text-transform: uppercase;
+    margin-bottom: 16px; display: block;
+}
+.section-title {
+    font-size: 34px; font-weight: 800; letter-spacing: -1px;
+    margin: 0 0 12px 0; line-height: 1.15;
+}
+.section-lead {
+    font-size: 16px; color: var(--ink-soft);
+    max-width: 760px; margin: 0 0 40px 0;
+    line-height: 1.55;
+}
+h3 { font-size: 20px; font-weight: 700; letter-spacing: -.2px; margin: 40px 0 14px 0; }
+h4 {
+    font-size: 12px; font-weight: 800; letter-spacing: 1.5px;
+    margin: 28px 0 10px 0; text-transform: uppercase;
+    color: var(--ink-soft);
+}
+p { margin: 0 0 12px 0; }
+.muted { color: var(--muted); }
+
+/* BLOCKS */
+.callout {
+    background: var(--brand-light);
+    border-left: 4px solid var(--brand);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    font-size: 14.5px;
+    line-height: 1.6;
+}
+.callout strong { color: var(--brand-dark); }
+
+.callout-warn {
+    background: var(--warning-light);
+    border-left: 4px solid var(--warning);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    font-size: 14.5px;
+    line-height: 1.6;
+}
+.callout-warn strong { color: #b71c1c; }
+
+/* ICP CARDS */
+.icp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+.icp-col { border-radius: 12px; padding: 24px 28px; }
+.icp-yes { background: var(--brand-light); border-left: 4px solid var(--brand); }
+.icp-no  { background: var(--danger-light); border-left: 4px solid var(--danger); }
+.icp-col h4 { margin-top: 0; font-size: 13px; }
+.icp-yes h4 { color: var(--brand-dark); }
+.icp-no  h4 { color: #b71c1c; }
+.icp-list { list-style: none; padding: 0; margin: 0; }
+.icp-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0,0,0,.06);
+    font-size: 14px;
+    line-height: 1.45;
+    display: flex; gap: 10px; align-items: flex-start;
+}
+.icp-list li:last-child { border-bottom: 0; }
+.icp-list .icon { flex-shrink: 0; font-weight: 900; font-size: 14px; line-height: 1.6; }
+.icp-yes .icon { color: var(--brand); }
+.icp-no  .icon { color: var(--danger); }
+
+/* TABLE */
+.tbl-wrap { overflow-x: auto; margin: 20px 0; border-radius: 10px; border: 1px solid var(--line); }
+.tbl { width: 100%; border-collapse: collapse; font-size: 14px; background: #fff; }
+.tbl th, .tbl td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+.tbl thead th {
+    background: var(--ink); color: #fff;
+    font-size: 11px; font-weight: 800; letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-bottom: 0;
+}
+.tbl tbody tr:last-child td { border-bottom: 0; }
+.tbl .col-name { font-weight: 700; color: var(--ink); }
+.tbl .badge {
+    display: inline-block;
+    font-size: 10px; font-weight: 800; letter-spacing: 1px;
+    padding: 2px 8px; border-radius: 4px;
+    text-transform: uppercase;
+}
+.b-free { background: var(--brand-light); color: var(--brand-dark); }
+.b-paid { background: #fff3e0; color: #b71c1c; }
+.b-rec  { background: #e3f2fd; color: #0d47a1; }
+
+/* SOURCING CARDS */
+.src-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 16px 0;
+}
+.src-card h3 { margin-top: 0; }
+.src-card .src-meta {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    font-size: 12px; color: var(--muted); margin-bottom: 14px;
+}
+.src-card .src-meta span { display: inline-flex; align-items: center; gap: 5px; }
+.src-card .src-meta .priority {
+    background: var(--brand); color: #fff;
+    padding: 2px 8px; border-radius: 4px;
+    font-weight: 700; letter-spacing: .5px;
+}
+.steps { margin: 12px 0; padding-left: 20px; line-height: 1.7; }
+.steps li { margin-bottom: 6px; }
+
+/* SHEET TEMPLATE */
+.sheet-tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: #fff;
+    margin: 16px 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+}
+.sheet-tbl th {
+    background: var(--brand-light);
+    color: var(--brand-dark);
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .5px;
+}
+.sheet-tbl td {
+    padding: 10px 14px;
+    border-top: 1px solid var(--line);
+    font-family: 'SF Mono', Menlo, monospace;
+    font-size: 12.5px;
+}
+
+.statuses { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.status {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-size: 13px; font-weight: 600;
+    border: 1.5px solid;
+}
+.s-new      { color: #0d47a1; border-color: #0d47a1; background: #e3f2fd; }
+.s-contacted{ color: #b71c1c; border-color: #b71c1c; background: var(--warning-light); }
+.s-replied  { color: #4527a0; border-color: #4527a0; background: #ede7f6; }
+.s-demo     { color: var(--brand-dark); border-color: var(--brand); background: var(--brand-light); }
+.s-customer { color: #fff; border-color: var(--brand); background: var(--brand); }
+.s-lost     { color: var(--muted); border-color: var(--muted); background: #f5f5f5; }
+
+/* WEEK PLAN */
+.week-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 24px 0; }
+.week-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--brand);
+    border-radius: 10px;
+    padding: 18px 20px;
+}
+.week-num { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: var(--brand); text-transform: uppercase; }
+.week-title { font-size: 16px; font-weight: 700; margin: 6px 0 8px; }
+.week-list { list-style: none; padding: 0; margin: 0; font-size: 13px; line-height: 1.55; }
+.week-list li { padding: 5px 0; }
+
+/* KPI */
+.kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 20px 0; }
+.kpi {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 22px;
+}
+.kpi-num {
+    font-size: 32px; font-weight: 900; letter-spacing: -1px;
+    color: var(--brand); line-height: 1;
+}
+.kpi-label { font-size: 13px; font-weight: 700; margin-top: 6px; color: var(--ink); }
+.kpi-desc { font-size: 12.5px; color: var(--ink-soft); margin-top: 8px; line-height: 1.5; }
+
+/* FOOTER */
+.book-footer {
+    background: var(--ink);
+    color: rgba(255,255,255,.65);
+    padding: 36px 64px;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.book-footer strong { color: #fff; }
+
+@media (max-width: 768px) {
+    .section, .cover { padding: 56px 28px; }
+    .section-title, .cover h1 { font-size: 26px; }
+    .icp-grid, .kpi-grid { grid-template-columns: 1fr; }
+    .week-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="book">
+
+<!-- COVER -->
+<div class="cover">
+    <div class="cover-classification">
+        <i class="bi bi-shield-lock-fill"></i>
+        Documento interno · Solo per uso commerciale Evulery
+    </div>
+    <div class="cover-eyebrow">Outbound Targeting Guide · v1.0</div>
+    <h1>A chi mandare le email <span class="accent">e come trovarli</span> in modo legale ed efficace.</h1>
+    <p class="cover-sub">Manuale operativo per costruire la prima lista di 100-200 ristoratori target italiani: profilo cliente ideale, fonti di sourcing concrete, tool consigliati con prezzi, template pipeline Google Sheet, workflow settimanale, KPI realistici.</p>
+    <div class="cover-meta">
+        <span><i class="bi bi-calendar3"></i> Maggio 2026</span>
+        <span><i class="bi bi-people"></i> Per uso interno</span>
+        <span><i class="bi bi-shield-check"></i> GDPR-aware B2B</span>
+    </div>
+</div>
+
+
+<!-- 1. ICP -->
+<div class="section">
+    <span class="section-num">01 · ICP</span>
+    <h2 class="section-title">Chi è il ristoratore target ideale</h2>
+    <p class="section-lead">Prima di trovare contatti, devi avere chiaro chi cerchi. L'ICP (Ideal Customer Profile) è la descrizione del cliente per cui Evulery è la cosa giusta. Spendere ore su prospect fuori target è il modo più veloce di bruciare il dominio email senza concludere niente.</p>
+
+    <h3>Profilo target</h3>
+    <div class="icp-grid">
+        <div class="icp-col icp-yes">
+            <h4>✓ Sì, target Evulery</h4>
+            <ul class="icp-list">
+                <li><span class="icon">→</span><span><strong>Tipologia</strong>: trattoria, pizzeria, osteria, pub, bistrot, ristorante indipendente</span></li>
+                <li><span class="icon">→</span><span><strong>Dimensione</strong>: 40-200 coperti / 1-3 sale</span></li>
+                <li><span class="icon">→</span><span><strong>Volume</strong>: 200-1500 coperti/mese (ROI calcolatore positivo)</span></li>
+                <li><span class="icon">→</span><span><strong>Presenza online</strong>: ha già un sito web e/o scheda Google Business attiva</span></li>
+                <li><span class="icon">→</span><span><strong>Identità</strong>: P.IVA visibile, indirizzo fisico, telefono</span></li>
+                <li><span class="icon">→</span><span><strong>Reputazione</strong>: rating Google ≥ 4.0 (segnale di qualità + cura)</span></li>
+                <li><span class="icon">→</span><span><strong>Recensioni</strong>: 30-500 recensioni Google (target indicativo)</span></li>
+                <li><span class="icon">→</span><span><strong>Geografia</strong>: città medie e grandi (vedi sezione 02)</span></li>
+            </ul>
+        </div>
+        <div class="icp-col icp-no">
+            <h4>✗ NO, fuori target</h4>
+            <ul class="icp-list">
+                <li><span class="icon">→</span><span><strong>Catene</strong>: 5+ sedi, modello franchising consolidato</span></li>
+                <li><span class="icon">→</span><span><strong>Ghost kitchen / dark kitchen</strong>: vivono di Glovo/Deliveroo, niente sala</span></li>
+                <li><span class="icon">→</span><span><strong>Bar/caffetterie</strong>: niente prenotazioni, niente coperti</span></li>
+                <li><span class="icon">→</span><span><strong>Mense / catering</strong>: modello B2B aziendale, no consumer</span></li>
+                <li><span class="icon">→</span><span><strong>Ristoranti senza sito né GMB</strong>: troppo presto, mancano basi digitali</span></li>
+                <li><span class="icon">→</span><span><strong>Ristoranti micro</strong> (&lt;30 coperti): ROI calcolatore non torna</span></li>
+                <li><span class="icon">→</span><span><strong>Aperture recenti</strong> (&lt;6 mesi): hanno altre priorità, basso fit</span></li>
+                <li><span class="icon">→</span><span><strong>Stelle Michelin / fine dining alto</strong>: scelgono CoverManager o sistemi enterprise</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <h3>Score di qualifica (1-10)</h3>
+    <p class="muted" style="font-size:14px;">Per ogni prospect compili rapidamente uno score. Sotto 5 → scarta. 5-7 → coda standard. 8-10 → priorità alta, personalizza l'email.</p>
+    <div class="tbl-wrap">
+        <table class="tbl">
+            <thead><tr><th>Criterio</th><th>+1 punto se</th><th>Bonus +2 se</th></tr></thead>
+            <tbody>
+                <tr><td class="col-name">Sito web</td><td>Esiste</td><td>È moderno (responsive, foto recenti)</td></tr>
+                <tr><td class="col-name">Google Business</td><td>Profilo attivo</td><td>Risponde alle recensioni</td></tr>
+                <tr><td class="col-name">Recensioni</td><td>50-500 recensioni</td><td>Rating ≥ 4.3</td></tr>
+                <tr><td class="col-name">Social</td><td>Instagram attivo</td><td>Posta ≥ 1 volta/settimana</td></tr>
+                <tr><td class="col-name">Prenotazioni</td><td>Già prende prenotazioni online (anche solo TheFork)</td><td>Solo telefono → opportunità grande</td></tr>
+                <tr><td class="col-name">Email business</td><td>Email del ristorante (es. info@nomecamera.it) trovabile</td><td>Email del titolare diretta</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- 2. GEOGRAFIA -->
+<div class="section">
+    <span class="section-num">02 · Geografia</span>
+    <h2 class="section-title">Dove cercare in Italia (le città giuste)</h2>
+    <p class="section-lead">L'Italia ha oltre 320.000 attività di ristorazione (ISTAT). Non puoi contattarle tutte. Concentra l'effort sulle città dove la concentrazione di ristoranti indipendenti di qualità è alta e il ricarico medio sostiene i piani Evulery.</p>
+
+    <h3>Tier A — priorità massima (mese 1-2)</h3>
+    <div class="callout">
+        <strong>Roma · Milano · Bologna · Firenze · Torino · Napoli · Verona · Genova · Bari</strong><br>
+        Alta densità di ristoranti indipendenti, scontrino medio €30-50, cultura digitale dei ristoratori più matura, presenza già attiva di TheFork (lead caldi che pagano commissioni).
+    </div>
+
+    <h3>Tier B — priorità media (mese 3-4)</h3>
+    <div class="callout">
+        <strong>Padova · Bergamo · Brescia · Modena · Parma · Catania · Palermo · Cagliari · Trento · Pescara</strong><br>
+        Densità minore ma stesso profilo qualitativo. Concorrenza outbound competitor minore = open rate più alti.
+    </div>
+
+    <h3>Tier C — campagne mirate stagionali</h3>
+    <div class="callout">
+        <strong>Località turistiche</strong>: Costa Amalfitana, Lago di Garda, Lago di Como, Cinque Terre, Ostuni, Taormina, Polignano, Alghero.<br>
+        <strong>Quando contattarli</strong>: gennaio-febbraio (preparano la stagione estiva). Aprile-maggio = troppo tardi.
+    </div>
+
+    <div class="callout-warn">
+        <strong>⚠️ Da evitare nelle prime campagne</strong>: piccoli paesi (&lt;30k abitanti). Volume insufficiente, ROI calcolatore stentato, retention bassa. Riconsidera quando hai una macchina commerciale rodata e cerchi nicchie.
+    </div>
+</div>
+
+
+<!-- 3. SOURCING -->
+<div class="section">
+    <span class="section-num">03 · Sourcing</span>
+    <h2 class="section-title">Dove trovare i contatti</h2>
+    <p class="section-lead">5 fonti, in ordine di efficacia. La fonte #1 (Google Maps + scraper) è quella che genera l'80% dei contatti utili nelle prime settimane.</p>
+
+    <div class="src-card">
+        <div class="src-meta">
+            <span class="priority">Priorità #1</span>
+            <span><i class="bi bi-database"></i> Volume: ALTO</span>
+            <span><i class="bi bi-cash"></i> Costo: 30-50€/mese</span>
+            <span><i class="bi bi-clock"></i> Effort: BASSO</span>
+        </div>
+        <h3>📍 Google Maps + scraper (Apify / Outscraper)</h3>
+        <p style="font-size:14px;">La fonte primaria. Esporti con un click 200-500 ristoranti per città, con nome, indirizzo, telefono, sito web, rating, numero recensioni.</p>
+        <h4>Workflow</h4>
+        <ol class="steps">
+            <li>Vai su <strong>apify.com</strong> → cerca "Google Maps Scraper" (actor pubblico)</li>
+            <li>Imposta query: <code style="background:#f5f5f5;padding:2px 6px;border-radius:4px;">"ristorante Roma"</code> (poi cambia città)</li>
+            <li>Filtri consigliati: max risultati 200, rating min 4.0</li>
+            <li>Avvia → output CSV con 200 ristoranti in 5-10 minuti</li>
+            <li>Costo: ~5-10€ per esecuzione (Apify free tier 5$/mese)</li>
+        </ol>
+        <p style="font-size:13px; color:var(--ink-soft); font-style: italic;">Alternativa più economica: <strong>Outscraper.com</strong> — €0,002 per risultato, perfetto per esecuzioni mirate. €10 = 5000 ristoranti.</p>
+    </div>
+
+    <div class="src-card">
+        <div class="src-meta">
+            <span class="priority">Priorità #2</span>
+            <span><i class="bi bi-database"></i> Volume: MEDIO</span>
+            <span><i class="bi bi-cash"></i> Costo: 49€/mese</span>
+            <span><i class="bi bi-clock"></i> Effort: MEDIO</span>
+        </div>
+        <h3>📧 Email finder (Hunter.io / Snov.io)</h3>
+        <p style="font-size:14px;">Una volta che hai il CSV con domini sito (es. <code>trattoriadamario.it</code>), usi un tool email finder per trovare email business associate al dominio.</p>
+        <h4>Workflow</h4>
+        <ol class="steps">
+            <li>Hunter.io o Snov.io: carichi il CSV con i domini</li>
+            <li>Tool ti restituisce email business trovate (info@, prenotazioni@, nome@) + score di affidabilità</li>
+            <li>Filtra per score &gt; 80 (verde): sono affidabili</li>
+            <li>Email score 50-80 (giallo): richiedono validazione (vedi tool successivo)</li>
+            <li>Email score &lt; 50: scarta</li>
+        </ol>
+        <p style="font-size:13px;color:var(--ink-soft);"><strong>Hunter.io</strong>: free tier 25 ricerche/mese (per testare), Starter $49/mese 500 ricerche. Per partire: free tier basta.<br>
+        <strong>Snov.io</strong>: $30/mese 1000 crediti. Più economico se vai oltre il free tier.</p>
+    </div>
+
+    <div class="src-card">
+        <div class="src-meta">
+            <span class="priority">Priorità #3</span>
+            <span><i class="bi bi-database"></i> Volume: BASSO</span>
+            <span><i class="bi bi-cash"></i> Costo: 0-10€</span>
+            <span><i class="bi bi-clock"></i> Effort: BASSO</span>
+        </div>
+        <h3>🔗 LinkedIn (per titolari di ristoranti strutturati)</h3>
+        <p style="font-size:14px;">Funziona meglio per ristoranti di fascia medio-alta dove il titolare è attivo professionalmente su LinkedIn. Cerca "ristoratore + città" o "owner restaurant + città".</p>
+        <h4>Workflow</h4>
+        <ol class="steps">
+            <li>LinkedIn ricerca persone: "Ristoratore" + filtro Località</li>
+            <li>Filtra per "Currently working at" → ristorante target</li>
+            <li>Connection request con messaggio personalizzato (no template)</li>
+            <li>Dopo accettazione: messaggio in DM, NO link diretto, NO pitch</li>
+        </ol>
+        <p style="font-size:13px;color:var(--ink-soft);"><strong>Tasso accettazione</strong> ~30-40%. <strong>Reply DM</strong>: 10-15%. Più alto del cold email ma volume basso (max 50 connection request/settimana senza Premium).</p>
+    </div>
+
+    <div class="src-card">
+        <div class="src-meta">
+            <span class="priority">Priorità #4</span>
+            <span><i class="bi bi-database"></i> Volume: BASSO-MEDIO</span>
+            <span><i class="bi bi-cash"></i> Costo: 0€</span>
+            <span><i class="bi bi-clock"></i> Effort: ALTO</span>
+        </div>
+        <h3>🎪 Eventi e fiere di settore</h3>
+        <p style="font-size:14px;">Conoscenza diretta del titolare. Conversion rate molto alto, ma effort altissimo per contatto raccolto. Da fare per costruire 5-10 contatti caldi, non per volume.</p>
+        <h4>Eventi italiani da considerare</h4>
+        <ul class="steps">
+            <li><strong>Host Milano</strong> (ottobre, biennale) — la più grande</li>
+            <li><strong>Sigep Rimini</strong> (gennaio) — fascia gelateria/pasticceria/caffè</li>
+            <li><strong>Tuttofood Milano</strong> (maggio) — anche ristorazione tradizionale</li>
+            <li><strong>Beer&Food Attraction Rimini</strong> (febbraio) — birrerie/pub/pizzerie</li>
+            <li><strong>Eventi locali</strong>: associazioni cuochi/sommelier regionali</li>
+        </ul>
+    </div>
+
+    <div class="src-card">
+        <div class="src-meta">
+            <span class="priority">Priorità #5</span>
+            <span><i class="bi bi-database"></i> Volume: BASSO</span>
+            <span><i class="bi bi-cash"></i> Costo: 0€</span>
+            <span><i class="bi bi-clock"></i> Effort: BASSO</span>
+        </div>
+        <h3>🤝 Referral del network</h3>
+        <p style="font-size:14px;">Il canale con conversion rate più alto in assoluto. Chi sta in quel mondo conosce 10 colleghi.</p>
+        <h4>Modalità</h4>
+        <ul class="steps">
+            <li>Ogni cliente firmato → chiedere "conosci 2 colleghi che potrei contattare?"</li>
+            <li>Web agency, consulenti ristorazione, fornitori cucina → chiedere referral</li>
+            <li>Programma referral cliente→cliente (sconto reciproco) → da implementare in prodotto in futuro</li>
+        </ul>
+    </div>
+
+    <div class="callout-warn">
+        <strong>⛔ Da NON usare mai:</strong>
+        <ul style="margin: 8px 0 0 0; padding-left: 18px;">
+            <li>Liste comprate da broker non verificati (alta % bounce, risk legale, danno reputazione dominio)</li>
+            <li>Database "scraped" venduti illegalmente su Telegram/forum</li>
+            <li>Estrazioni da Pagine Gialle/Pagine Bianche senza verifica (dati spesso obsoleti, P.IVA fittizie)</li>
+        </ul>
+    </div>
+</div>
+
+
+<!-- 4. TOOL -->
+<div class="section">
+    <span class="section-num">04 · Tool consigliati</span>
+    <h2 class="section-title">Stack tecnologico minimo per partire</h2>
+    <p class="section-lead">Per fare outbound serio in Italia con 100-500 contatti/mese servono 3-4 tool. Sotto la lista con prezzi reali a maggio 2026 e raccomandazione operativa.</p>
+
+    <div class="tbl-wrap">
+        <table class="tbl">
+            <thead>
+                <tr>
+                    <th>Categoria</th>
+                    <th>Tool consigliato</th>
+                    <th>Prezzo</th>
+                    <th>Quando comprarlo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-name">Scraping Google Maps</td>
+                    <td><strong>Outscraper.com</strong> <span class="badge b-rec">Consigliato</span></td>
+                    <td>~€0,002/risultato (€10 = 5000 ristoranti)</td>
+                    <td>Subito · pay-per-use</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Apify (Google Maps Scraper)</td>
+                    <td>$5/mese free tier · $49/mese</td>
+                    <td>Alternativa con free tier</td>
+                </tr>
+                <tr>
+                    <td class="col-name">Email finder</td>
+                    <td><strong>Hunter.io</strong> <span class="badge b-free">Free tier</span></td>
+                    <td>Free 25/mese · $49/mese 500/mese</td>
+                    <td>Subito (free tier per primo test)</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Snov.io</td>
+                    <td>Free 50/mese · $30/mese 1000</td>
+                    <td>Quando esci dal free tier Hunter</td>
+                </tr>
+                <tr>
+                    <td class="col-name">Email validator</td>
+                    <td><strong>NeverBounce</strong> <span class="badge b-rec">Consigliato</span></td>
+                    <td>$0,008/email · $5 per 600 email</td>
+                    <td>Prima del primo invio</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>ZeroBounce</td>
+                    <td>$16 per 2000 email</td>
+                    <td>Alternativa equivalente</td>
+                </tr>
+                <tr>
+                    <td class="col-name">CRM lead</td>
+                    <td><strong>Google Sheet</strong> <span class="badge b-free">Free</span></td>
+                    <td>Gratis</td>
+                    <td>Subito (template in sezione 06)</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Airtable</td>
+                    <td>Free fino a 1000 record · $10/mese</td>
+                    <td>Quando supera 500 lead attivi</td>
+                </tr>
+                <tr>
+                    <td class="col-name">Email sender outbound</td>
+                    <td><strong>Smartlead</strong> <span class="badge b-rec">Consigliato</span></td>
+                    <td>$39/mese (1 sender, warm-up incluso)</td>
+                    <td>Quando arrivi a 50+ email/giorno</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Lemlist</td>
+                    <td>$49/mese</td>
+                    <td>Alternativa più nota ma più cara</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Gmail/Workspace nativo</td>
+                    <td>€6/mese</td>
+                    <td>Per i primi 30-50 invii/giorno totali (limite naturale)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>Stack minimo consigliato per partire (~€20-30/mese)</h3>
+    <div class="callout">
+        1. <strong>Outscraper</strong> (€10 iniziali) — sourcing<br>
+        2. <strong>Hunter.io free</strong> — email finder (25/mese basta per testare)<br>
+        3. <strong>NeverBounce</strong> (€5 iniziali) — validation<br>
+        4. <strong>Google Sheet</strong> — pipeline (free)<br>
+        5. <strong>Gmail/Workspace</strong> (€6/mese) — invio diretto manuale (max 30 email/giorno)<br>
+        <br>
+        <strong>Costo iniziale</strong>: ~€20-25 per testare. Se i KPI mensili (sezione 08) tengono, scala con Smartlead + piano Hunter pro.
+    </div>
+</div>
+
+
+<!-- 5. PIPELINE -->
+<div class="section">
+    <span class="section-num">05 · Pipeline</span>
+    <h2 class="section-title">Template Google Sheet pronto da copiare</h2>
+    <p class="section-lead">Crea un nuovo Google Sheet con queste colonne. È più che sufficiente per gestire 100-500 lead. Quando supera quel volume valuti CRM dedicato (Airtable o Notion).</p>
+
+    <h3>Struttura colonne</h3>
+    <div class="tbl-wrap">
+        <table class="sheet-tbl">
+            <thead>
+                <tr>
+                    <th>Colonna</th>
+                    <th>Esempio</th>
+                    <th>Uso</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>id</td><td>R001</td><td>ID univoco progressivo</td></tr>
+                <tr><td>nome_ristorante</td><td>Trattoria Da Mario</td><td>Personalizzazione email</td></tr>
+                <tr><td>citta</td><td>Bologna</td><td>Filtri geografici, segmentazione</td></tr>
+                <tr><td>indirizzo</td><td>Via Roma 12</td><td>Verifica esistenza fisica</td></tr>
+                <tr><td>sito_web</td><td>trattoriadamario.it</td><td>Email finder, qualifica</td></tr>
+                <tr><td>email</td><td>info@trattoriadamario.it</td><td>Destinatario invio</td></tr>
+                <tr><td>email_score</td><td>verde / giallo / rosso</td><td>Hunter.io / Snov.io affidabilità</td></tr>
+                <tr><td>telefono</td><td>+39 051 123456</td><td>Backup follow-up</td></tr>
+                <tr><td>rating_google</td><td>4.5</td><td>Score qualifica</td></tr>
+                <tr><td>recensioni_google</td><td>187</td><td>Score qualifica</td></tr>
+                <tr><td>score_qualifica</td><td>8</td><td>Da 1-10 (sezione 01)</td></tr>
+                <tr><td>status</td><td>contacted</td><td>Stato attuale (vedi sotto)</td></tr>
+                <tr><td>data_primo_contatto</td><td>2026-05-08</td><td>Calcolo follow-up</td></tr>
+                <tr><td>data_ultimo_contatto</td><td>2026-05-15</td><td>Calcolo timing</td></tr>
+                <tr><td>email_inviate</td><td>2</td><td>Counter sequenza</td></tr>
+                <tr><td>note</td><td>Risposto: vuole sapere prezzi</td><td>Personali, breve</td></tr>
+                <tr><td>fonte</td><td>Google Maps · Outscraper</td><td>Tracking sourcing efficace</td></tr>
+                <tr><td>codice_partner</td><td>(vuoto)</td><td>Compilato se via reseller</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>Stati lead (con codifica colore)</h3>
+    <div class="statuses">
+        <span class="status s-new"><i class="bi bi-circle"></i> new</span>
+        <span class="status s-contacted"><i class="bi bi-envelope"></i> contacted</span>
+        <span class="status s-replied"><i class="bi bi-chat-dots"></i> replied</span>
+        <span class="status s-demo"><i class="bi bi-calendar-check"></i> demo</span>
+        <span class="status s-customer"><i class="bi bi-trophy"></i> customer</span>
+        <span class="status s-lost"><i class="bi bi-x-circle"></i> lost</span>
+    </div>
+    <p style="font-size:14px;">
+        <strong>new</strong> = appena scrapato, da contattare<br>
+        <strong>contacted</strong> = email 1+ inviata, in attesa risposta<br>
+        <strong>replied</strong> = ha risposto (positivo o negativo)<br>
+        <strong>demo</strong> = demo prenotata o effettuata<br>
+        <strong>customer</strong> = ha firmato e attivato Evulery<br>
+        <strong>lost</strong> = ha detto "no" esplicito, archiviato 60 giorni
+    </p>
+
+    <h3>Formula utile (Google Sheet)</h3>
+    <p style="font-size:14px;">In una colonna "follow_up_dovuto" puoi mettere:</p>
+    <pre style="background:#f5f5f5;padding:12px 16px;border-radius:6px;font-size:13px;font-family:'SF Mono',Menlo,monospace;overflow-x:auto;">=IF(AND(status="contacted", TODAY()-data_ultimo_contatto>=3, email_inviate&lt;4), "DA INVIARE", "")</pre>
+    <p style="font-size:13px;color:var(--ink-soft);">Ti mostra automaticamente i lead che richiedono il follow-up successivo, in base alla sequence definita nell'email pack.</p>
+</div>
+
+
+<!-- 6. WORKFLOW -->
+<div class="section">
+    <span class="section-num">06 · Workflow settimanale</span>
+    <h2 class="section-title">Cosa fai concretamente ogni settimana</h2>
+    <p class="section-lead">Outbound serio richiede consistenza. Meglio 50 email/settimana per 6 mesi che 500 in una settimana e poi nulla. Sotto un piano operativo realistico per chi ha 5-8 ore/settimana da dedicare.</p>
+
+    <div class="week-grid">
+        <div class="week-card">
+            <div class="week-num">Lunedì</div>
+            <div class="week-title">Sourcing</div>
+            <ul class="week-list">
+                <li>2h scraping città target</li>
+                <li>Output: 100-150 nuovi prospect</li>
+                <li>Import in Google Sheet</li>
+                <li>Score qualifica veloce</li>
+            </ul>
+        </div>
+        <div class="week-card">
+            <div class="week-num">Martedì</div>
+            <div class="week-title">Email finder + invio</div>
+            <ul class="week-list">
+                <li>1h email finder sui prospect</li>
+                <li>30 min validation</li>
+                <li>Invio Email 1 (40-50 prospect)</li>
+                <li>Update status → contacted</li>
+            </ul>
+        </div>
+        <div class="week-card">
+            <div class="week-num">Mer-Gio</div>
+            <div class="week-title">Risposte + follow-up</div>
+            <ul class="week-list">
+                <li>30 min/giorno gestione risposte</li>
+                <li>Invio Email 2 (giorno 3)</li>
+                <li>Invio Email 3 (giorno 7)</li>
+                <li>Calendario demo</li>
+            </ul>
+        </div>
+        <div class="week-card">
+            <div class="week-num">Venerdì</div>
+            <div class="week-title">Demo + revisione</div>
+            <ul class="week-list">
+                <li>2-3 demo programmate</li>
+                <li>Last call (giorno 14)</li>
+                <li>Update KPI settimana</li>
+                <li>Pianificazione settimana successiva</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3>Volumi target settimanali realistici</h3>
+    <div class="callout">
+        <strong>Settimana tipo per 1 persona, 5-8h/settimana</strong><br>
+        • Nuovi prospect aggiunti: <strong>40-60</strong><br>
+        • Email iniziali inviate: <strong>40-50</strong><br>
+        • Follow-up inviati: <strong>30-40</strong><br>
+        • Risposte ricevute: <strong>2-4</strong> (3-8% reply rate)<br>
+        • Demo prenotate: <strong>0,5-1,5</strong><br>
+        • Demo effettuate: <strong>0-1</strong><br>
+        <br>
+        <strong>Su 4 settimane (1 mese)</strong>: ~200 prospect, ~180 email iniziali, ~10 risposte, <strong>2-4 demo</strong>, <strong>0,5-1 cliente firmato</strong>.
+    </div>
+
+    <div class="callout-warn">
+        <strong>⚠️ Attenzione al warming</strong>: se da nuovo dominio Evulery non hai mai inviato email outbound, parti con max 20-30 email/giorno per la prima settimana, poi cresci di 10/giorno a settimana fino al limite del provider (50-100/giorno per Gmail Workspace). Smartlead e altri sender hanno warming integrato.
+    </div>
+</div>
+
+
+<!-- 7. KPI -->
+<div class="section">
+    <span class="section-num">07 · KPI</span>
+    <h2 class="section-title">Numeri target e segnali di allarme</h2>
+    <p class="section-lead">Monitora questi 6 numeri ogni settimana. Se uno scende sotto la soglia minima → fermati e indaga prima di continuare a inviare.</p>
+
+    <div class="kpi-grid">
+        <div class="kpi">
+            <div class="kpi-num">25-45%</div>
+            <div class="kpi-label">Open rate</div>
+            <div class="kpi-desc">% email aperte. Sotto 20% → subject deboli o spam folder. Sopra 50% → audience qualificata.</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-num">3-8%</div>
+            <div class="kpi-label">Reply rate</div>
+            <div class="kpi-desc">% risposte (positive + negative). La metrica chiave. Sotto 2% → copy o targeting da rivedere.</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-num">1-3%</div>
+            <div class="kpi-label">Demo book rate</div>
+            <div class="kpi-desc">% prospect che prenotano demo. Su 100 email: 1-3 demo prenotate. Realistico.</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-num">15-30%</div>
+            <div class="kpi-label">Demo → cliente</div>
+            <div class="kpi-desc">% demo che chiudono. Dipende dalla battlecard + ROI calculator. Range alto = leve usate bene.</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-num">&lt;3%</div>
+            <div class="kpi-label">Bounce rate</div>
+            <div class="kpi-desc">Email non recapitate. Sopra 5% → lista da pulire urgentemente. Sopra 10% → rischio blacklist.</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-num">&lt;0,1%</div>
+            <div class="kpi-label">Spam complaint</div>
+            <div class="kpi-desc">Segnalazioni spam. Sopra 0,3% = penalty Gmail/Outlook grave. Sopra 0,5% = blacklist.</div>
+        </div>
+    </div>
+
+    <h3>Conversione attesa: dalla email al cliente</h3>
+    <div class="callout">
+        <strong>Esempio funnel realistico su 200 email iniziali (1 mese):</strong><br>
+        200 email inviate → 60-90 aperture → <strong>~10 risposte</strong> (positive + negative) → <strong>3-5 demo prenotate</strong> → <strong>2-3 demo effettuate</strong> → <strong>0,5-1 cliente firmato</strong><br>
+        <br>
+        Per portare a casa <strong>1 cliente al mese</strong> in modo affidabile servono ~200-300 email iniziali nuove. Per 3-5 clienti/mese servono ~1000 email iniziali (ritmo "macchina rodata", 6+ mesi di esecuzione).
+    </div>
+</div>
+
+
+<!-- 8. LEGAL -->
+<div class="section">
+    <span class="section-num">08 · GDPR & legalità</span>
+    <h2 class="section-title">Cosa è lecito (e cosa no) in Italia</h2>
+    <p class="section-lead">L'outbound B2B in Italia è generalmente lecito sotto la base giuridica dell'<strong>interesse legittimo</strong> (art. 6 GDPR), purché il destinatario sia un'attività commerciale (P.IVA visibile) e siano rispettati alcuni requisiti minimi.</p>
+
+    <div class="callout">
+        <strong>✅ È lecito (con cautele)</strong>
+        <ul style="margin: 8px 0 0 0; padding-left: 18px;">
+            <li>Email a P.IVA visibile (sito, Google Business, registri pubblici camera commercio)</li>
+            <li>Contenuto pertinente all'attività del destinatario (proposta professionale)</li>
+            <li>Opt-out chiaro in ogni email ("se non ti interessa, dimmelo: niente follow-up")</li>
+            <li>Conservazione delle risposte negative per non ricontattare</li>
+            <li>Volume ragionevole (50-100 email/giorno è "professionale", 1000/giorno è "spam")</li>
+        </ul>
+    </div>
+
+    <div class="callout-warn">
+        <strong>❌ Non è lecito</strong>
+        <ul style="margin: 8px 0 0 0; padding-left: 18px;">
+            <li>Email a indirizzi di privati (anche se "rubati" da forum, social, ecc.)</li>
+            <li>Liste comprate da broker non identificati (anche se "B2B")</li>
+            <li>Volume eccessivo non giustificato (spam puro)</li>
+            <li>Mascheramento del mittente o falsificazione subject</li>
+            <li>Contattare chi ha già detto esplicitamente "non scrivermi più"</li>
+        </ul>
+    </div>
+
+    <h3>Documentazione minima da conservare</h3>
+    <ul style="line-height: 1.8; padding-left: 20px; font-size: 14px;">
+        <li><strong>Source log</strong>: per ogni lead, da dove viene il dato (es. "Google Maps · Apify · 2026-05-08")</li>
+        <li><strong>Opt-out registry</strong>: lista degli indirizzi che hanno chiesto di non essere ricontattati. Mai più contattabili.</li>
+        <li><strong>Audit trail email</strong>: copia delle email inviate (Smartlead/Lemlist lo fanno automaticamente)</li>
+    </ul>
+
+    <p style="font-size:13px;color:var(--ink-soft);font-style:italic;">Disclaimer: questa è una linea guida operativa basata su prassi comune e art. 6 GDPR. Non sostituisce un parere legale. Prima di scalare oltre 1000 email/mese, valuta consulto con un legale specializzato in privacy.</p>
+</div>
+
+
+<!-- 9. PIANO 30 GIORNI -->
+<div class="section">
+    <span class="section-num">09 · Action plan 30 giorni</span>
+    <h2 class="section-title">Cosa fare nei prossimi 4 weekend</h2>
+    <p class="section-lead">Programma concreto per partire da zero. Ogni settimana ha 1 obiettivo principale e 2-3 task. Se completi tutto, in 30 giorni hai una macchina commerciale operativa.</p>
+
+    <div class="src-card">
+        <h3>Settimana 1 — Setup infrastruttura</h3>
+        <ul class="steps">
+            <li>Crea Google Sheet pipeline con le colonne della sezione 05</li>
+            <li>Apri account Outscraper.com (carica €10) + Hunter.io free + NeverBounce (carica €5)</li>
+            <li>Setup Gmail/Workspace alias commerciale@evulery.it (se non esiste)</li>
+            <li>Stampa la mappa città Tier A (sezione 02) e scegli 1 città per partire (consiglio: Bologna o Verona — densità giusta, no troppo competitive)</li>
+            <li>Tempo stimato: 3-4 ore</li>
+        </ul>
+    </div>
+
+    <div class="src-card">
+        <h3>Settimana 2 — Primo sourcing + qualifica</h3>
+        <ul class="steps">
+            <li>Lancia su Outscraper la prima query: "ristorante {tua città scelta}" → 200 risultati</li>
+            <li>Importa CSV in Google Sheet</li>
+            <li>Score di qualifica veloce sui primi 50 (priorità alti)</li>
+            <li>Email finder Hunter.io sui top 50 → estrai email business</li>
+            <li>Validation NeverBounce sui 50 contatti</li>
+            <li>Tempo stimato: 4-5 ore</li>
+        </ul>
+    </div>
+
+    <div class="src-card">
+        <h3>Settimana 3 — Primo invio</h3>
+        <ul class="steps">
+            <li>Invia Email 1 (template 01 dell'email pack) a 25-30 prospect dei più qualificati</li>
+            <li>Mai inviare 50+ email da nuovo alias in 1 giorno: warming graduale</li>
+            <li>Imposta reminder per follow-up giorno 3, 7, 14</li>
+            <li>Apri tracking KPI settimanali (open rate, reply rate)</li>
+            <li>Tempo stimato: 2-3 ore</li>
+        </ul>
+    </div>
+
+    <div class="src-card">
+        <h3>Settimana 4 — Sequenza + prima demo</h3>
+        <ul class="steps">
+            <li>Invia follow-up 2 + 3 (giorno 7 + 10) ai non-rispondenti</li>
+            <li>Gestisci risposte: probabilmente 1-2 risposte positive a questo punto</li>
+            <li>Calendarizza prima demo (consulta battlecard + ROI calculator)</li>
+            <li>Aggiungi 30-50 nuovi prospect dalla seconda città</li>
+            <li>Bilancio mese 1: KPI vs target. Se in linea → continua. Se sotto → indaga prima di scalare.</li>
+            <li>Tempo stimato: 4-5 ore</li>
+        </ul>
+    </div>
+
+    <div class="callout" style="margin-top:32px;">
+        <strong>Risultato atteso fine mese 1</strong>: ~80-100 email iniziali inviate, 4-8 risposte, 1-3 demo prenotate, 0-1 cliente firmato.<br>
+        Mese 2 con macchina rodata: il volume può raddoppiare (200 email, 10-15 risposte, 4-6 demo, 1-2 clienti).
+    </div>
+</div>
+
+
+<!-- FOOTER -->
+<div class="book-footer">
+    <strong>Evulery Outbound Targeting Guide · v1.0 · Maggio 2026</strong><br>
+    Documento di uso interno · Non condividere con clienti o terzi<br>
+    © 2026 Evulery · by alagias. — Soluzioni per il web
+</div>
+
+</div>
+</body>
+</html>
