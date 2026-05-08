@@ -83,8 +83,6 @@ $tabs = [
         $planForCalc = array_merge($s, ['price' => $s['plan_price'] ?? $s['price']]);
         $s['_calcPrice'] = \App\Models\Plan::calculatePrice($planForCalc, $s['_cycle'], $s['_extraDisc']);
         $s['_cycleLabel'] = $s['_cycle'] === 'semiannual' ? '6 mesi' : '12 mesi';
-        $s['_ec'] = (int)$s['email_credits'];
-        $s['_sc'] = (int)$s['sms_credits'];
         // Status badge
         if ($s['status'] === 'active') {
             $endTs2 = $s['current_period_end'] ? strtotime($s['current_period_end']) : null;
@@ -145,10 +143,6 @@ $tabs = [
                     <span class="adm-sub-card-value">&euro;<?= number_format($s['_calcPrice']['monthly'], 2, ',', '.') ?>/mese</span>
                 </div>
                 <div class="adm-sub-card-detail">
-                    <span class="adm-sub-card-label">Email</span>
-                    <span class="adm-sub-card-value" style="font-weight:600;color:<?= $s['_ec'] <= 0 ? '#adb5bd' : ($s['_ec'] < 50 ? '#E65100' : '#1a1d23') ?>;"><?= $s['_ec'] ?></span>
-                </div>
-                <div class="adm-sub-card-detail">
                     <span class="adm-sub-card-label">Scadenza</span>
                     <span class="adm-sub-card-value"><?= $s['_expiryHtml'] ?></span>
                 </div>
@@ -169,8 +163,6 @@ $tabs = [
                     <th>Ristorante</th>
                     <th>Piano</th>
                     <th>Prezzo ciclo</th>
-                    <th>Crediti Email</th>
-                    <th>Crediti SMS</th>
                     <th>Stato</th>
                     <th>Scadenza</th>
                     <th style="text-align:right;">Azioni</th>
@@ -191,16 +183,6 @@ $tabs = [
                         <div style="font-weight:600;">&euro;<?= number_format($s['_calcPrice']['total'], 2, ',', '.') ?></div>
                         <div style="font-size:.68rem;color:#6c757d;"><?= $s['_cycleLabel'] ?><?php if ($s['_extraDisc'] > 0): ?> &middot; <span style="color:#2E7D32;">-<?= number_format($s['_extraDisc'], 0) ?>%</span><?php endif; ?></div>
                         <div style="font-size:.65rem;color:#adb5bd;">&euro;<?= number_format($s['_calcPrice']['monthly'], 2, ',', '.') ?>/mese</div>
-                    </td>
-                    <td>
-                        <?php $ecColor = $s['_ec'] <= 0 ? '#adb5bd' : ($s['_ec'] < 50 ? '#E65100' : '#1a1d23'); ?>
-                        <span style="font-weight:600;color:<?= $ecColor ?>;"><?= $s['_ec'] ?></span>
-                        <span style="font-size:.68rem;color:<?= $s['_ec'] < 50 && $s['_ec'] > 0 ? '#E65100' : '#adb5bd' ?>;"><?= $s['_ec'] <= 0 ? 'esauriti' : ($s['_ec'] < 50 ? 'quasi esauriti!' : 'rimasti') ?></span>
-                    </td>
-                    <td>
-                        <?php $scColor = $s['_sc'] <= 0 ? '#adb5bd' : ($s['_sc'] < 20 ? '#E65100' : '#1a1d23'); ?>
-                        <span style="font-weight:600;color:<?= $scColor ?>;"><?= $s['_sc'] ?></span>
-                        <span style="font-size:.68rem;color:<?= $s['_sc'] < 20 && $s['_sc'] > 0 ? '#E65100' : '#adb5bd' ?>;"><?= $s['_sc'] <= 0 ? 'esauriti' : ($s['_sc'] < 20 ? 'quasi esauriti!' : 'rimasti') ?></span>
                     </td>
                     <td><?= $s['_statusBadge'] ?></td>
                     <td class="cell-date"><?= $s['_expiryHtml'] ?></td>

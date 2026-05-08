@@ -288,8 +288,9 @@ class TenantsController
         $tenantId = (int)$request->param('id');
         $amount = (int)$request->input('credits_amount', 0);
 
-        if ($amount < 1 || $amount > 10000) {
-            flash('danger', 'Inserisci un numero di crediti valido (1-10000).');
+        // Validazione: 0 esplicito non valido, range -10000 a 10000
+        if ($amount === 0 || $amount < -10000 || $amount > 10000) {
+            flash('danger', 'Inserisci un numero di crediti valido tra -10000 e 10000 (escluso 0).');
             Response::redirect(url("admin/tenants/{$tenantId}/edit"));
             return;
         }
@@ -302,9 +303,24 @@ class TenantsController
             return;
         }
 
+        // Validazione bilancio: il saldo non può scendere sotto 0
+        $currentBalance = (int)($tenant['email_credits_balance'] ?? 0);
+        if ($currentBalance + $amount < 0) {
+            flash('danger', "Operazione non consentita: il saldo scenderebbe sotto zero. Saldo attuale: {$currentBalance}, richiesta: {$amount}.");
+            Response::redirect(url("admin/tenants/{$tenantId}/edit"));
+            return;
+        }
+
         $tenantModel->addCredits($tenantId, $amount);
 
-        // Log transaction
+        // Description e flash dinamici in base al segno
+        $isAdd = $amount > 0;
+        $absAmount = abs($amount);
+        $description = $isAdd
+            ? "Assegnazione manuale di {$absAmount} crediti"
+            : "Rimozione manuale di {$absAmount} crediti";
+
+        // Log transaction (amount mantiene il segno per audit corretto)
         $db = Database::getInstance();
         $db->prepare(
             'INSERT INTO email_credit_transactions (tenant_id, amount, type, description, assigned_by, created_at)
@@ -313,17 +329,20 @@ class TenantsController
             'tid'    => $tenantId,
             'amount' => $amount,
             'type'   => 'assignment',
-            'desc'   => "Assegnazione manuale di {$amount} crediti",
+            'desc'   => $description,
             'by'     => Auth::id(),
         ]);
 
         AuditLog::log(
             AuditLog::EMAIL_CREDITS_ASSIGNED,
-            "Assegnati {$amount} crediti a {$tenant['name']}",
+            $description . " a {$tenant['name']}",
             Auth::id()
         );
 
-        flash('success', "Assegnati {$amount} crediti email a {$tenant['name']}.");
+        $flashMsg = $isAdd
+            ? "Assegnati {$absAmount} crediti email a {$tenant['name']}."
+            : "Rimossi {$absAmount} crediti email da {$tenant['name']}.";
+        flash('success', $flashMsg);
         Response::redirect(url("admin/tenants/{$tenantId}/edit"));
     }
 }

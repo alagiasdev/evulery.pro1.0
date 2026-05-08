@@ -129,21 +129,24 @@
                     <span style="font-size:.82rem;color:#6c757d;">Saldo attuale</span>
                     <span style="font-size:1.1rem;font-weight:700;color:#00844A;"><?= number_format((int)($tenant['email_credits_balance'] ?? 0), 0, ',', '.') ?></span>
                 </div>
-                <form method="POST" action="<?= url("admin/tenants/{$tenant['id']}/credits") ?>" style="display:flex;gap:.5rem;margin-bottom:.75rem;">
+                <form method="POST" action="<?= url("admin/tenants/{$tenant['id']}/credits") ?>" style="display:flex;gap:.5rem;margin-bottom:.5rem;">
                     <?= csrf_field() ?>
-                    <input type="number" name="credits_amount" min="1" max="10000" placeholder="Quantità" required
+                    <input type="number" name="credits_amount" min="-10000" max="10000" placeholder="Es. 1000 oppure -500" required
                            style="flex:1;padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
                     <button type="submit" class="adm-btn adm-btn-primary" style="padding:.3rem .7rem;font-size:.75rem;white-space:nowrap;">
-                        <i class="bi bi-plus-circle"></i> Assegna
+                        <i class="bi bi-check2"></i> Conferma
                     </button>
                 </form>
+                <div style="font-size:.7rem;color:#adb5bd;margin-bottom:.75rem;line-height:1.4;">
+                    Inserisci un numero positivo per ricaricare, negativo per rimuovere (es. <code>-500</code>).
+                </div>
                 <?php if (!empty($creditHistory)): ?>
                 <div style="border-top:1px solid #eee;padding-top:.5rem;">
                     <div style="font-size:.72rem;color:#adb5bd;margin-bottom:.4rem;text-transform:uppercase;font-weight:600;">Ultime transazioni</div>
                     <?php foreach (array_slice($creditHistory, 0, 5) as $tx): ?>
                     <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:.25rem 0;border-bottom:1px solid #f5f5f5;">
                         <span style="color:#6c757d;">
-                            <?= $tx['type'] === 'assignment' ? '<i class="bi bi-plus-circle" style="color:#00844A;"></i>' : '<i class="bi bi-dash-circle" style="color:#dc3545;"></i>' ?>
+                            <?= (int)$tx['amount'] >= 0 ? '<i class="bi bi-plus-circle" style="color:#00844A;"></i>' : '<i class="bi bi-dash-circle" style="color:#dc3545;"></i>' ?>
                             <?= e(substr($tx['description'] ?? $tx['type'], 0, 40)) ?>
                         </span>
                         <span style="font-weight:600;color:<?= $tx['amount'] > 0 ? '#00844A' : '#dc3545' ?>;">

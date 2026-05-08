@@ -47,16 +47,6 @@
                 <input type="date" name="period_end" class="adm-form-input"
                        value="<?= $s['current_period_end'] ? date('Y-m-d', strtotime($s['current_period_end'])) : '' ?>">
             </div>
-            <div>
-                <label class="adm-form-label">Crediti Email</label>
-                <input type="number" name="email_credits" class="adm-form-input" min="0"
-                       value="<?= (int)$s['email_credits'] ?>">
-            </div>
-            <div>
-                <label class="adm-form-label">Crediti SMS</label>
-                <input type="number" name="sms_credits" class="adm-form-input" min="0"
-                       value="<?= (int)$s['sms_credits'] ?>">
-            </div>
         </div>
         <div class="adm-sub-edit-actions">
             <button type="submit" class="adm-btn adm-btn-primary">

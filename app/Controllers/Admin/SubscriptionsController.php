@@ -106,8 +106,6 @@ class SubscriptionsController
         $status        = $request->input('status', 'active');
         $periodStart   = $request->input('period_start', '') ?: null;
         $periodEnd     = $request->input('period_end', '') ?: null;
-        $emailCredits  = (int)$request->input('email_credits', 0);
-        $smsCredits    = (int)$request->input('sms_credits', 0);
         $billingCycle  = $request->input('billing_cycle', 'annual');
         $extraDiscount = (float)$request->input('extra_discount', 0);
 
@@ -128,13 +126,12 @@ class SubscriptionsController
         // Calculate effective price for the cycle
         $calc = Plan::calculatePrice($plan, $billingCycle, $extraDiscount);
 
-        // Update subscription
+        // Update subscription (i crediti email/SMS sono gestiti separatamente dal piano)
         $db->prepare(
             "UPDATE subscriptions
              SET plan_id = :pid, price = :price, billing_cycle = :bc,
                  extra_discount = :ed, status = :status,
-                 current_period_start = :ps, current_period_end = :pe,
-                 email_credits = :ec, sms_credits = :sc
+                 current_period_start = :ps, current_period_end = :pe
              WHERE id = :id"
         )->execute([
             'pid'    => $planId,
@@ -144,30 +141,12 @@ class SubscriptionsController
             'status' => $status,
             'ps'     => $periodStart,
             'pe'     => $periodEnd,
-            'ec'     => $emailCredits,
-            'sc'     => $smsCredits,
             'id'     => $subId,
         ]);
 
-        // Update tenant plan_id + sync email credits balance
-        $db->prepare("UPDATE tenants SET plan_id = :pid, email_credits_balance = :ecb WHERE id = :tid")
-            ->execute(['pid' => $planId, 'ecb' => $emailCredits, 'tid' => $sub['tenant_id']]);
-
-        // Log credit transaction if credits changed
-        $oldCredits = (int)($sub['email_credits'] ?? 0);
-        if ($emailCredits !== $oldCredits) {
-            $diff = $emailCredits - $oldCredits;
-            $db->prepare(
-                'INSERT INTO email_credit_transactions (tenant_id, amount, type, description, assigned_by, created_at)
-                 VALUES (:tid, :amount, :type, :desc, :by, NOW())'
-            )->execute([
-                'tid'    => $sub['tenant_id'],
-                'amount' => $diff,
-                'type'   => 'assignment',
-                'desc'   => "Modifica da abbonamento: {$oldCredits} → {$emailCredits}",
-                'by'     => Auth::id(),
-            ]);
-        }
+        // Sync tenant.plan_id with subscription (i crediti vivi NON vengono toccati: si gestiscono dalla scheda Ristorante)
+        $db->prepare("UPDATE tenants SET plan_id = :pid WHERE id = :tid")
+            ->execute(['pid' => $planId, 'tid' => $sub['tenant_id']]);
 
         AuditLog::log(AuditLog::SUBSCRIPTION_CHANGED, "Tenant: {$sub['tenant_id']}, Piano: {$plan['name']}, Ciclo: {$billingCycle}", Auth::id());
 
