@@ -8,7 +8,10 @@
  * Logic:
  *   - Find reservations with status "arrived"
  *   - Tenant has review_enabled=1, review_url not empty
- *   - Reservation time + delay_hours < NOW
+ *   - Reservation time + delay_hours < NOW (lower bound)
+ *   - Reservation time within last 7 days (upper bound — evita review
+ *     request tardive su cene "vecchie", es. quando un ristoratore
+ *     marca arrived in ritardo o per import retroattivi)
  *   - No existing review_request for this reservation
  *   - Customer not emailed in last 30 days (per tenant)
  *   - Customer not unsubscribed
@@ -87,6 +90,7 @@ $stmt = $db->prepare(
        AND c.email IS NOT NULL AND c.email != ''
        AND c.unsubscribed = 0
        AND TIMESTAMP(r.reservation_date, r.reservation_time) < DATE_SUB(NOW(), INTERVAL t.review_delay_hours HOUR)
+       AND TIMESTAMP(r.reservation_date, r.reservation_time) > DATE_SUB(NOW(), INTERVAL 7 DAY)
        AND NOT EXISTS (
            SELECT 1 FROM review_requests rr WHERE rr.reservation_id = r.id
        )
