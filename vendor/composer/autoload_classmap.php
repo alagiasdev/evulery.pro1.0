@@ -70,6 +70,7 @@ return array(
     'App\\Middleware\\TenantMiddleware' => $baseDir . '/app/Middleware/TenantMiddleware.php',
     'App\\Models\\Customer' => $baseDir . '/app/Models/Customer.php',
     'App\\Models\\DeliveryZone' => $baseDir . '/app/Models/DeliveryZone.php',
+    'App\\Models\\DemoRequest' => $baseDir . '/app/Models/DemoRequest.php',
     'App\\Models\\EmailCampaign' => $baseDir . '/app/Models/EmailCampaign.php',
     'App\\Models\\HubAction' => $baseDir . '/app/Models/HubAction.php',
     'App\\Models\\HubSettings' => $baseDir . '/app/Models/HubSettings.php',

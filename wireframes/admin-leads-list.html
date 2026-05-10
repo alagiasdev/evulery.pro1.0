@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Admin Leads List</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #006837;
+    --brand-light: #E8F5E9;
+    --ink: #1a1d23;
+    --ink-soft: #495057;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --bg: #f5f6f8;
+    --bg-card: #ffffff;
+    --sidebar-bg: #1a1d23;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Layout */
+.layout { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar {
+    background: var(--sidebar-bg);
+    color: #fff;
+    display: flex; flex-direction: column;
+}
+.sidebar-brand {
+    padding: 1.1rem 1.25rem;
+    border-bottom: 1px solid #2a2d33;
+}
+.sidebar-brand-logo {
+    color: #fff;
+    font-size: 1.4rem; font-weight: 900; letter-spacing: -1px;
+}
+.sidebar-brand-logo .dot { color: #4ade80; }
+.sidebar-brand-role {
+    font-size: .68rem; color: #ffc107; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .5px;
+    margin-top: 4px;
+}
+.sidebar-nav { padding: .75rem .5rem; flex: 1; }
+.sidebar-section {
+    font-size: .62rem; font-weight: 600; color: #6c757d;
+    text-transform: uppercase; letter-spacing: .8px;
+    padding: .75rem .85rem .35rem; margin-top: .25rem;
+}
+.sidebar-link {
+    display: flex; align-items: center; gap: .65rem;
+    padding: .55rem .85rem; border-radius: 6px;
+    color: #adb5bd; text-decoration: none;
+    font-size: .85rem; font-weight: 500;
+    margin-bottom: 2px;
+}
+.sidebar-link:hover { background: #2a2d33; color: #fff; }
+.sidebar-link.active { background: var(--brand); color: #fff; }
+.sidebar-link i { font-size: 1rem; width: 18px; }
+.sidebar-link .badge {
+    margin-left: auto;
+    background: #ffc107;
+    color: #1a1d23;
+    padding: 1px 7px;
+    border-radius: 100px;
+    font-size: .68rem;
+    font-weight: 700;
+}
+
+/* Main */
+.main { padding: 0; }
+.topbar {
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    padding: 1rem 1.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.topbar-title { font-weight: 700; font-size: 1.1rem; }
+.topbar-user {
+    display: flex; align-items: center; gap: .5rem;
+    font-size: .85rem; color: var(--ink-soft);
+}
+.topbar-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--brand); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .8rem;
+}
+.page { padding: 1.5rem; }
+.page-header {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; margin-bottom: 1.5rem;
+}
+.page-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -.5px; }
+.page-sub { font-size: .85rem; color: var(--muted); margin-top: 4px; }
+
+/* Stats counter */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+.stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    border-top: 3px solid;
+}
+.stat-card .num { font-size: 1.6rem; font-weight: 800; line-height: 1; }
+.stat-card .label { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-top: 6px; font-weight: 600; }
+.st-new { border-top-color: #0277bd; }
+.st-new .num { color: #0277bd; }
+.st-contacted { border-top-color: #f57c00; }
+.st-contacted .num { color: #f57c00; }
+.st-demo-sched { border-top-color: #7b1fa2; }
+.st-demo-sched .num { color: #7b1fa2; }
+.st-demo-done { border-top-color: #1976d2; }
+.st-demo-done .num { color: #1976d2; }
+.st-negot { border-top-color: #c2185b; }
+.st-negot .num { color: #c2185b; }
+.st-customer { border-top-color: var(--brand); }
+.st-customer .num { color: var(--brand); }
+.st-lost { border-top-color: #757575; }
+.st-lost .num { color: #757575; }
+
+/* Filters */
+.filters {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 1rem;
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+}
+.search-box {
+    position: relative; flex: 1; min-width: 240px;
+}
+.search-box i {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--muted); font-size: .9rem;
+}
+.search-box input {
+    width: 100%;
+    padding: .55rem .55rem .55rem 2.2rem;
+    border: 1px solid var(--line);
+    border-radius: 6px; font-size: .85rem;
+    font-family: inherit;
+}
+.search-box input:focus { outline: none; border-color: var(--brand); }
+.filter-group { display: flex; align-items: center; gap: 8px; }
+.filter-label { font-size: .78rem; font-weight: 600; color: var(--ink-soft); }
+.filter-select {
+    padding: .5rem .8rem;
+    border: 1px solid var(--line);
+    border-radius: 6px; font-size: .85rem;
+    font-family: inherit;
+    background: #fff;
+}
+
+/* Table */
+.table-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+}
+.table-wrap { overflow-x: auto; }
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl thead th {
+    background: #fafbfc;
+    padding: 12px 14px;
+    text-align: left;
+    font-size: .68rem; font-weight: 700;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    border-bottom: 1px solid var(--line);
+}
+.tbl tbody td {
+    padding: 14px;
+    border-bottom: 1px solid var(--line);
+    font-size: .85rem;
+    vertical-align: middle;
+}
+.tbl tbody tr:last-child td { border-bottom: 0; }
+.tbl tbody tr:hover { background: #fafbfc; cursor: pointer; }
+
+.cell-name { font-weight: 700; color: var(--ink); }
+.cell-restaurant {
+    font-weight: 500; color: var(--ink);
+    font-size: .9rem;
+}
+.cell-restaurant .secondary {
+    display: block; font-size: .75rem; color: var(--muted);
+    font-weight: 400; margin-top: 2px;
+}
+.cell-contact { font-size: .8rem; color: var(--ink-soft); }
+.cell-contact .email { display: block; font-weight: 500; color: var(--ink); }
+.cell-contact .phone { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+.cell-date {
+    font-size: .8rem; color: var(--ink-soft);
+}
+.cell-date .secondary {
+    display: block; font-size: .7rem; color: var(--muted); margin-top: 2px;
+}
+.cell-actions { text-align: right; white-space: nowrap; }
+.cell-actions .btn-action {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: .8rem;
+    margin-left: 4px;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 4px;
+}
+.cell-actions .btn-action:hover { border-color: var(--brand); color: var(--brand); }
+
+/* Status badges */
+.badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-size: .72rem;
+    font-weight: 700;
+    border: 1.5px solid;
+}
+.badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+.b-new { color: #0277bd; border-color: #0277bd; background: #e3f2fd; }
+.b-contacted { color: #f57c00; border-color: #f57c00; background: #fff3e0; }
+.b-demo-sched { color: #7b1fa2; border-color: #7b1fa2; background: #f3e5f5; }
+.b-demo-done { color: #1976d2; border-color: #1976d2; background: #e3f2fd; }
+.b-negot { color: #c2185b; border-color: #c2185b; background: #fce4ec; }
+.b-customer { color: #fff; border-color: var(--brand); background: var(--brand); }
+.b-lost { color: #757575; border-color: #adb5bd; background: #f5f5f5; }
+
+.assigned-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #f5f5f5;
+    padding: 3px 8px;
+    border-radius: 100px;
+    font-size: .75rem;
+    color: var(--ink);
+}
+.assigned-pill .avatar {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--brand); color: #fff;
+    font-size: .65rem; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+.assigned-pill.unassigned {
+    background: #fff3e0;
+    color: #f57c00;
+    font-weight: 600;
+}
+
+/* Pagination */
+.tbl-footer {
+    display: flex; justify-content: space-between;
+    align-items: center;
+    padding: 12px 18px;
+    background: #fafbfc;
+    border-top: 1px solid var(--line);
+    font-size: .78rem; color: var(--ink-soft);
+}
+.pagination { display: flex; gap: 4px; }
+.pagination button {
+    background: #fff;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: .78rem;
+    cursor: pointer;
+    font-family: inherit;
+}
+.pagination button.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+/* Wireframe annotation (sticky note) */
+.wf-banner {
+    background: #fff8e1;
+    border-left: 4px solid #ffc107;
+    padding: 12px 18px;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: .82rem;
+    color: #5d4037;
+}
+.wf-banner strong { color: #4e342e; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-logo">evulery<span class="dot">.</span></div>
+            <div class="sidebar-brand-role">Super Admin</div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-section">Principale</div>
+            <a class="sidebar-link" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a class="sidebar-link" href="#"><i class="bi bi-shop"></i> Ristoranti</a>
+            <a class="sidebar-link" href="#"><i class="bi bi-people"></i> Utenti</a>
+            <a class="sidebar-link active" href="#"><i class="bi bi-funnel"></i> Lead <span class="badge">3</span></a>
+
+            <div class="sidebar-section">Business</div>
+            <a class="sidebar-link" href="#"><i class="bi bi-credit-card-2-front"></i> Abbonamenti</a>
+
+            <div class="sidebar-section">Sistema</div>
+            <a class="sidebar-link" href="#"><i class="bi bi-clock-history"></i> Log Attività</a>
+            <a class="sidebar-link" href="#"><i class="bi bi-gear"></i> Impostazioni</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <div class="topbar">
+            <div class="topbar-title">Admin Panel</div>
+            <div class="topbar-user">
+                <span>Stefano</span>
+                <div class="topbar-avatar">S</div>
+            </div>
+        </div>
+
+        <div class="page">
+
+            <div class="wf-banner">
+                <strong>📐 WIREFRAME — Lista Lead Admin</strong> · Pagina principale del Mini CRM. Mostra tutti i lead, con filtri, contatori per stato, azioni rapide. Click sulla riga → dettaglio lead.
+            </div>
+
+            <div class="page-header">
+                <div>
+                    <div class="page-title">Lead</div>
+                    <div class="page-sub">Gestione richieste demo dal sito + assegnazione reseller</div>
+                </div>
+                <a href="#" style="background:var(--brand);color:#fff;padding:.55rem 1rem;border-radius:6px;font-weight:600;font-size:.85rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+                    <i class="bi bi-download"></i> Esporta CSV
+                </a>
+            </div>
+
+            <!-- Stats counter -->
+            <div class="stats-grid">
+                <div class="stat-card st-new">
+                    <div class="num">3</div>
+                    <div class="label">Nuovi</div>
+                </div>
+                <div class="stat-card st-contacted">
+                    <div class="num">5</div>
+                    <div class="label">Contattati</div>
+                </div>
+                <div class="stat-card st-demo-sched">
+                    <div class="num">2</div>
+                    <div class="label">Demo prog.</div>
+                </div>
+                <div class="stat-card st-demo-done">
+                    <div class="num">4</div>
+                    <div class="label">Demo eff.</div>
+                </div>
+                <div class="stat-card st-negot">
+                    <div class="num">1</div>
+                    <div class="label">In trattativa</div>
+                </div>
+                <div class="stat-card st-customer">
+                    <div class="num">7</div>
+                    <div class="label">Clienti</div>
+                </div>
+                <div class="stat-card st-lost">
+                    <div class="num">3</div>
+                    <div class="label">Persi</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Cerca per nome, ristorante o email...">
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">Stato:</span>
+                    <select class="filter-select">
+                        <option>Tutti</option>
+                        <option>Nuovo</option>
+                        <option>Contattato</option>
+                        <option>Demo programmata</option>
+                        <option>Demo effettuata</option>
+                        <option>In trattativa</option>
+                        <option>Cliente</option>
+                        <option>Perso</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">Assegnato a:</span>
+                    <select class="filter-select">
+                        <option>Tutti</option>
+                        <option>Non assegnati</option>
+                        <option>House (Stefano)</option>
+                        <option>Reseller Genova</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">Periodo:</span>
+                    <select class="filter-select">
+                        <option>Ultimi 30 giorni</option>
+                        <option>Ultimi 7 giorni</option>
+                        <option>Questo mese</option>
+                        <option>Sempre</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-card">
+                <div class="table-wrap">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Lead</th>
+                                <th>Ristorante</th>
+                                <th>Contatti</th>
+                                <th>Stato</th>
+                                <th>Assegnato a</th>
+                                <th>Ricevuto</th>
+                                <th>Ultimo contatto</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="cell-name">Marco Rossi</td>
+                                <td class="cell-restaurant">Trattoria Da Mario<span class="secondary">Bologna</span></td>
+                                <td class="cell-contact">
+                                    <span class="email">marco@damario.it</span>
+                                    <span class="phone">+39 051 234567</span>
+                                </td>
+                                <td><span class="badge b-new">Nuovo</span></td>
+                                <td><span class="assigned-pill unassigned"><i class="bi bi-exclamation-circle"></i> Non assegnato</span></td>
+                                <td class="cell-date">10 mag · 09:42<span class="secondary">2h fa</span></td>
+                                <td class="cell-date">—</td>
+                                <td class="cell-actions">
+                                    <a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="cell-name">Luca Bianchi</td>
+                                <td class="cell-restaurant">Pizzeria Da Gennaro<span class="secondary">Napoli</span></td>
+                                <td class="cell-contact">
+                                    <span class="email">info@dagennaro.it</span>
+                                    <span class="phone">+39 081 9876543</span>
+                                </td>
+                                <td><span class="badge b-new">Nuovo</span></td>
+                                <td><span class="assigned-pill unassigned"><i class="bi bi-exclamation-circle"></i> Non assegnato</span></td>
+                                <td class="cell-date">10 mag · 08:15<span class="secondary">3h fa</span></td>
+                                <td class="cell-date">—</td>
+                                <td class="cell-actions">
+                                    <a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="cell-name">Elena Romano</td>
+                                <td class="cell-restaurant">Osteria Il Vicolo<span class="secondary">Genova</span></td>
+                                <td class="cell-contact">
+                                    <span class="email">elena@osteriailvicolo.it</span>
+                                    <span class="phone">+39 010 555432</span>
+                                </td>
+                                <td><span class="badge b-contacted">Contattato</span></td>
+                                <td><span class="assigned-pill"><span class="avatar">G</span> Reseller Genova</span></td>
+                                <td class="cell-date">9 mag · 16:30<span class="secondary">ieri</span></td>
+                                <td class="cell-date">10 mag · 10:15<span class="secondary">1h fa</span></td>
+                                <td class="cell-actions">
+                                    <a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="cell-name">Giovanni Esposito</td>
+                                <td class="cell-restaurant">Pub Tre Birre<span class="secondary">Roma</span></td>
+                                <td class="cell-contact">
+                                    <span class="email">giovanni@trebirre.it</span>
+                                    <span class="phone">+39 06 123987</span>
+                                </td>
+                                <td><span class="badge b-demo-sched">Demo programmata</span></td>
+                                <td><span class="assigned-pill"><span class="avatar">S</span> House (Stefano)</span></td>
+                                <td class="cell-date">8 mag · 14:20<span class="secondary">2 gg fa</span></td>
+                                <td class="cell-date">9 mag · 11:00<span class="secondary">ieri</span></td>
+                                <td class="cell-actions">
+                                    <a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="cell-name">Francesca Greco</td>
+                                <td class="cell-restaurant">Bistrot La Lanterna<span class="secondary">Milano</span></td>
+                                <td class="cell-contact">
+                                    <span class="email">francesca@lalanterna.com</span>
+                                    <span class="phone">+39 02 9988776</span>
+                                </td>
+                                <td><span class="badge b-demo-done">Demo effettuata</span></td>
+                                <td><span class="assigned-pill"><span class="avatar">S</span> House (Stefano)</span></td>
+                                <td class="cell-date">5 mag · 11:00<span class="secondary">5 gg fa</span></td>
+                                <td class="cell-date">9 mag · 15:45<span class="secondary">ieri</span></td>
+                                <td class="cell-actions">
+                                    <a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="cell-name">Antonio Conti</td>
+                                <td class="cell-restaurant">Ristorante Belvedere<span class="secondary">Verona</span></td>
+                                <td class="cell-contact">
+                                    <span class="email">antonio@belvedere.it</span>
+                                    <span class="phone">+39 045 8877665</span>
+                                </td>
+                                <td><span class="badge b-negot">In trattativa</span></td>
+                                <td><span class="assigned-pill"><span class="avatar">S</span> House (Stefano)</span></td>
+                                <td class="cell-date">3 mag · 17:50<span class="secondary">7 gg fa</span></td>
+                                <td class="cell-date">8 mag · 09:30<span class="secondary">2 gg fa</span></td>
+                                <td class="cell-actions">
+                                    <a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="cell-name">Sofia Marini</td>
+                                <td class="cell-restaurant">Trattoria Buonissimo<span class="secondary">Firenze</span></td>
+                                <td class="cell-contact">
+                                    <span class="email">sofia@trattoriabuonissimo.it</span>
+                                    <span class="phone">+39 055 776655</span>
+                                </td>
+                                <td><span class="badge b-customer">Cliente</span></td>
+                                <td><span class="assigned-pill"><span class="avatar">S</span> House (Stefano)</span></td>
+                                <td class="cell-date">28 apr · 12:00<span class="secondary">12 gg fa</span></td>
+                                <td class="cell-date">7 mag · 14:00<span class="secondary">3 gg fa</span></td>
+                                <td class="cell-actions">
+                                    <a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="cell-name">Daniele Pirelli</td>
+                                <td class="cell-restaurant">Pizzeria Spaccanapoli<span class="secondary">Torino</span></td>
+                                <td class="cell-contact">
+                                    <span class="email">daniele@spaccanapoli.it</span>
+                                    <span class="phone">+39 011 5544332</span>
+                                </td>
+                                <td><span class="badge b-lost">Perso</span></td>
+                                <td><span class="assigned-pill"><span class="avatar">S</span> House (Stefano)</span></td>
+                                <td class="cell-date">25 apr · 10:00<span class="secondary">15 gg fa</span></td>
+                                <td class="cell-date">2 mag · 11:30<span class="secondary">8 gg fa</span></td>
+                                <td class="cell-actions">
+                                    <a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="tbl-footer">
+                    <div>Mostrando 1-8 di 25 lead</div>
+                    <div class="pagination">
+                        <button>‹</button>
+                        <button class="active">1</button>
+                        <button>2</button>
+                        <button>3</button>
+                        <button>›</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</div>
+
+</body>
+</html>

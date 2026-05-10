@@ -4,17 +4,26 @@ namespace App\Controllers\Api;
 
 use App\Core\Request;
 use App\Core\Response;
+use App\Models\DemoRequest;
 use App\Services\MailService;
+use App\Services\RateLimit;
 
 class DemoRequestController
 {
     /**
      * POST /api/v1/demo-request
-     * Validates reCAPTCHA, sends email to support.
+     *
+     * Pipeline lead:
+     *   1. Valida campi + email format + reCAPTCHA
+     *   2. Rate limit IP-based (max 3 richieste/ora)
+     *   3. Anti-duplicato visibile (stessa email entro 24h)
+     *   4. Salva in DB (demo_requests + activity log "created")
+     *   5. Email notifica admin (a SUPPORT_EMAIL)
+     *   6. Email conferma cliente ("Ti contattiamo a breve")
      */
     public function store(Request $request): void
     {
-        // CORS for landing page (evulery.it → dash.evulery.it)
+        // CORS per landing page (evulery.it -> dash.evulery.it)
         $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
         $allowed = ['https://evulery.it', 'https://www.evulery.it', 'http://localhost'];
         if (in_array($origin, $allowed)) {
@@ -30,7 +39,7 @@ class DemoRequestController
 
         $data = $request->all();
 
-        // Validate required fields
+        // 1. Validazione campi obbligatori
         $name       = trim($data['name'] ?? '');
         $restaurant = trim($data['restaurant'] ?? '');
         $email      = trim($data['email'] ?? '');
@@ -46,7 +55,17 @@ class DemoRequestController
             Response::json(['success' => false, 'error' => 'Indirizzo email non valido.'], 422);
         }
 
-        // Verify reCAPTCHA v3
+        // 2. Rate limit IP-based: max 3 richieste/ora per IP
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $limiter = new RateLimit();
+        if (!$limiter->checkCustom($ip, 'demo_form', 3, 3600)) {
+            Response::json([
+                'success' => false,
+                'error'   => 'Troppe richieste dal tuo dispositivo. Riprova tra qualche minuto.',
+            ], 429);
+        }
+
+        // 3. Verifica reCAPTCHA v3
         $secretKey = env('RECAPTCHA_SECRET_KEY', '');
         if ($secretKey && $token) {
             $verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
@@ -63,31 +82,94 @@ class DemoRequestController
             }
         }
 
-        // Send email to support
-        $supportEmail = env('SUPPORT_EMAIL', 'info@evulery.it');
+        // 4. Anti-duplicato visibile: stessa email negli ultimi 24h
+        $leadModel = new DemoRequest();
+        if ($leadModel->findRecentDuplicate($email, 24)) {
+            // Comunque registriamo il record per non perderlo + recorda il rate limit
+            $limiter->recordCustom($ip, 'demo_form');
+            Response::json([
+                'success' => true,
+                'duplicate' => true,
+                'message' => 'Hai già inviato una richiesta nelle ultime 24 ore. Ti contattiamo a breve!',
+            ]);
+        }
 
-        $subject = "Nuova richiesta demo — {$restaurant}";
-        $body = "Nuova richiesta demo dal sito evulery.it\n\n"
+        // 5. Salva nel DB
+        $referrer = $_SERVER['HTTP_REFERER'] ?? null;
+        $utmSource = trim($data['utm_source'] ?? '');
+
+        try {
+            $leadId = $leadModel->create([
+                'name'       => $name,
+                'restaurant' => $restaurant,
+                'email'      => $email,
+                'phone'      => $phone,
+                'message'    => $message ?: null,
+                'ip_address' => $ip,
+                'referrer'   => $referrer,
+                'utm_source' => $utmSource ?: null,
+            ]);
+
+            $leadModel->logActivity(
+                $leadId,
+                'created',
+                'Lead ricevuto dal form pubblico evulery.it',
+                null
+            );
+        } catch (\Throwable $e) {
+            app_log('Demo request DB save failed: ' . $e->getMessage(), 'error');
+            Response::json(['success' => false, 'error' => 'Errore interno. Riprova tra poco.'], 500);
+        }
+
+        // Registra nel rate limit DOPO il successo (prima del rate limit per evitare di bloccare il primo invio)
+        $limiter->recordCustom($ip, 'demo_form');
+
+        // 6. Email notifica admin
+        $supportEmail = env('SUPPORT_EMAIL', 'info@evulery.it');
+        $adminSubject = "Nuova richiesta demo - {$restaurant}";
+        $adminBody = "Nuova richiesta demo dal sito evulery.it\n\n"
             . "Nome: {$name}\n"
             . "Ristorante: {$restaurant}\n"
             . "Email: {$email}\n"
             . "Telefono: {$phone}\n"
             . ($message ? "Messaggio: {$message}\n" : '')
-            . "\nData: " . date('d/m/Y H:i') . "\n"
-            . "IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown') . "\n";
+            . "\nLead ID: #{$leadId}\n"
+            . "Data: " . date('d/m/Y H:i') . "\n"
+            . "IP: {$ip}\n"
+            . ($referrer ? "Referrer: {$referrer}\n" : '')
+            . "\nGestisci il lead: " . url("admin/leads/{$leadId}") . "\n";
 
-        $sent = MailService::sendRawEmail($supportEmail, $subject, $body, $email, $name);
-
-        if (!$sent) {
-            app_log("Demo request email failed: {$email} — {$restaurant}", 'error');
-            Response::json(['success' => false, 'error' => 'Errore nell\'invio. Riprova o contattaci direttamente.'], 500);
+        $adminSent = MailService::sendRawEmail($supportEmail, $adminSubject, $adminBody, $email, $name);
+        if (!$adminSent) {
+            app_log("Demo request: admin email failed for lead #{$leadId} ({$email})", 'warning');
         }
 
-        app_log("Demo request received: {$name} — {$restaurant} — {$email}", 'info');
+        // 7. Email conferma cliente
+        $clientSubject = "Abbiamo ricevuto la tua richiesta - Evulery";
+        $clientBody = "Ciao {$name},\n\n"
+            . "grazie per averci contattato.\n\n"
+            . "Abbiamo ricevuto la tua richiesta di demo per {$restaurant} e ti contattiamo a breve "
+            . "per organizzare una chiamata di 30 minuti, in italiano e senza impegno.\n\n"
+            . "Nel frattempo, se vuoi farti un'idea concreta del risparmio rispetto agli aggregatori "
+            . "del tuo ristorante, abbiamo un calcolatore online: https://evulery.it\n\n"
+            . "A presto,\n"
+            . "Il team Evulery\n\n"
+            . "---\n"
+            . "Evulery - Il software italiano per le prenotazioni del tuo ristorante\n"
+            . "Pieni la sera, felici la mattina.\n"
+            . "https://evulery.it";
+
+        $clientSent = MailService::sendRawEmail($email, $clientSubject, $clientBody, $supportEmail, 'Evulery');
+        if (!$clientSent) {
+            app_log("Demo request: client confirmation email failed for lead #{$leadId} ({$email})", 'warning');
+        }
+
+        app_log("Demo request received: lead #{$leadId} | {$name} - {$restaurant} - {$email}", 'info');
 
         Response::json([
             'success' => true,
-            'message' => 'Richiesta inviata! Ti contatteremo entro 24 ore.',
+            'lead_id' => $leadId,
+            'message' => 'Richiesta ricevuta! Ti contattiamo a breve. Controlla la tua email.',
         ]);
     }
 }

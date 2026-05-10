@@ -183,6 +183,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Middleware\\TenantMiddleware' => __DIR__ . '/../..' . '/app/Middleware/TenantMiddleware.php',
         'App\\Models\\Customer' => __DIR__ . '/../..' . '/app/Models/Customer.php',
         'App\\Models\\DeliveryZone' => __DIR__ . '/../..' . '/app/Models/DeliveryZone.php',
+        'App\\Models\\DemoRequest' => __DIR__ . '/../..' . '/app/Models/DemoRequest.php',
         'App\\Models\\EmailCampaign' => __DIR__ . '/../..' . '/app/Models/EmailCampaign.php',
         'App\\Models\\HubAction' => __DIR__ . '/../..' . '/app/Models/HubAction.php',
         'App\\Models\\HubSettings' => __DIR__ . '/../..' . '/app/Models/HubSettings.php',
