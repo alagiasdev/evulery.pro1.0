@@ -219,6 +219,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Services\\AuditLog' => __DIR__ . '/../..' . '/app/Services/AuditLog.php',
         'App\\Services\\AvailabilityService' => __DIR__ . '/../..' . '/app/Services/AvailabilityService.php',
         'App\\Services\\BroadcastService' => __DIR__ . '/../..' . '/app/Services/BroadcastService.php',
+        'App\\Services\\CommissionCalculator' => __DIR__ . '/../..' . '/app/Services/CommissionCalculator.php',
         'App\\Services\\HubService' => __DIR__ . '/../..' . '/app/Services/HubService.php',
         'App\\Services\\LoginThrottle' => __DIR__ . '/../..' . '/app/Services/LoginThrottle.php',
         'App\\Services\\MailService' => __DIR__ . '/../..' . '/app/Services/MailService.php',

@@ -7,6 +7,7 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Models\DemoRequest;
 use App\Models\ResellerProfile;
+use App\Services\CommissionCalculator;
 use PDO;
 
 /**
@@ -21,13 +22,7 @@ class DashboardController
         $userId = Auth::id();
         $db = Database::getInstance();
 
-        $profile = (new ResellerProfile())->findByUserId($userId)
-            ?? [
-                'commission_setup'        => ResellerProfile::DEFAULT_COMMISSION_SETUP,
-                'commission_starter'      => ResellerProfile::DEFAULT_COMMISSION_STARTER,
-                'commission_professional' => ResellerProfile::DEFAULT_COMMISSION_PROFESSIONAL,
-                'commission_enterprise'   => ResellerProfile::DEFAULT_COMMISSION_ENTERPRISE,
-            ];
+        $profile = (new ResellerProfile())->findByUserId($userId) ?? CommissionCalculator::defaultProfile();
 
         // --- Lead aperti (assigned to me, not customer/lost) ---
         $stmt = $db->prepare(
@@ -173,9 +168,9 @@ class DashboardController
             if (empty($r['plan_name']) || empty($r['billing_cycle'])) {
                 continue;
             }
-            $annualCommission = $this->commissionForPlan($r['plan_name'], $profile);
-            $billingMonths = ($r['billing_cycle'] === 'semiannual') ? 6 : 12;
-            $commissionPerPayment = $annualCommission * ($billingMonths / 12);
+            $commissionPerPayment = CommissionCalculator::commissionPerPayment(
+                $r['plan_name'], $r['billing_cycle'], $profile
+            );
 
             // Setup
             $setupTotal += $setupAmount;
@@ -184,8 +179,9 @@ class DashboardController
             }
 
             // Pagamenti completati: ogni billing_months si genera un pagamento
-            $months = max(0, (int)$r['months_since_start']);
-            $numPayments = intdiv($months, $billingMonths) + 1;
+            $numPayments = CommissionCalculator::paymentsCompleted(
+                (int)$r['months_since_start'], $r['billing_cycle']
+            );
             $licenseTotal += $commissionPerPayment * $numPayments;
 
             // Pagamento questo mese?
@@ -209,16 +205,5 @@ class DashboardController
         ];
     }
 
-    /**
-     * Ritorna la commissione ANNUALE configurata per il piano dato.
-     */
-    private function commissionForPlan(string $planName, array $profile): float
-    {
-        return match (strtolower($planName)) {
-            'starter'      => (float)$profile['commission_starter'],
-            'professional' => (float)$profile['commission_professional'],
-            'enterprise'   => (float)$profile['commission_enterprise'],
-            default        => 0.0,
-        };
-    }
+    // commissionForPlan() spostata in App\Services\CommissionCalculator (2026-05-11)
 }

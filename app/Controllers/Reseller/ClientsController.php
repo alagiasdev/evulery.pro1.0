@@ -6,6 +6,7 @@ use App\Core\Auth;
 use App\Core\Database;
 use App\Core\Request;
 use App\Models\ResellerProfile;
+use App\Services\CommissionCalculator;
 
 /**
  * Lista clienti acquisiti dal reseller.
@@ -20,13 +21,7 @@ class ClientsController
         $userId = Auth::id();
         $db = Database::getInstance();
 
-        $profile = (new ResellerProfile())->findByUserId($userId)
-            ?? [
-                'commission_setup'        => ResellerProfile::DEFAULT_COMMISSION_SETUP,
-                'commission_starter'      => ResellerProfile::DEFAULT_COMMISSION_STARTER,
-                'commission_professional' => ResellerProfile::DEFAULT_COMMISSION_PROFESSIONAL,
-                'commission_enterprise'   => ResellerProfile::DEFAULT_COMMISSION_ENTERPRISE,
-            ];
+        $profile = (new ResellerProfile())->findByUserId($userId) ?? CommissionCalculator::defaultProfile();
 
         $stmt = $db->prepare(
             "SELECT t.id, t.name, t.slug, t.is_active, t.created_at,
@@ -47,7 +42,7 @@ class ClientsController
 
         // Arricchisco con commissione annuale e stato calcolato
         foreach ($clients as &$c) {
-            $c['annual_commission'] = $this->commissionForPlan($c['plan_name'] ?? '', $profile);
+            $c['annual_commission'] = CommissionCalculator::commissionForPlan($c['plan_name'] ?? '', $profile);
             $c['status_label']      = $this->resolveStatus($c);
         }
         unset($c);
@@ -69,15 +64,7 @@ class ClientsController
         ], 'reseller');
     }
 
-    private function commissionForPlan(string $planName, array $profile): float
-    {
-        return match (strtolower($planName)) {
-            'starter'      => (float)$profile['commission_starter'],
-            'professional' => (float)$profile['commission_professional'],
-            'enterprise'   => (float)$profile['commission_enterprise'],
-            default        => 0.0,
-        };
-    }
+    // commissionForPlan() spostata in App\Services\CommissionCalculator (2026-05-11)
 
     private function resolveStatus(array $c): array
     {

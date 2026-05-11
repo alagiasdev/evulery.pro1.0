@@ -6,6 +6,7 @@ use App\Core\Auth;
 use App\Core\Database;
 use App\Core\Request;
 use App\Models\ResellerProfile;
+use App\Services\CommissionCalculator;
 
 /**
  * Pagina commissioni dettagliata.
@@ -23,13 +24,7 @@ class CommissionsController
         $userId = Auth::id();
         $db = Database::getInstance();
 
-        $profile = (new ResellerProfile())->findByUserId($userId)
-            ?? [
-                'commission_setup'        => ResellerProfile::DEFAULT_COMMISSION_SETUP,
-                'commission_starter'      => ResellerProfile::DEFAULT_COMMISSION_STARTER,
-                'commission_professional' => ResellerProfile::DEFAULT_COMMISSION_PROFESSIONAL,
-                'commission_enterprise'   => ResellerProfile::DEFAULT_COMMISSION_ENTERPRISE,
-            ];
+        $profile = (new ResellerProfile())->findByUserId($userId) ?? CommissionCalculator::defaultProfile();
 
         // Stessa source-of-truth del DashboardController: filtra tenant attivi,
         // include months_since_start calcolato da MySQL (TIMESTAMPDIFF) per
@@ -86,9 +81,8 @@ class CommissionsController
             if (empty($t['plan_name']) || empty($t['billing_cycle'])) {
                 continue;
             }
-            $annualCommission = $this->commissionForPlan($t['plan_name'], $profile);
-            $billingMonths = ($t['billing_cycle'] === 'semiannual') ? 6 : 12;
-            $perPayment = $annualCommission * ($billingMonths / 12);
+            $perPayment = CommissionCalculator::commissionPerPayment($t['plan_name'], $t['billing_cycle'], $profile);
+            $billingMonths = CommissionCalculator::billingMonthsFor($t['billing_cycle']);
 
             $startMonth = date('Y-m', strtotime($t['created_at']));
             // Setup nel mese di attivazione
@@ -101,8 +95,7 @@ class CommissionsController
             ];
 
             // Numero pagamenti completati (stessa formula del DashboardController)
-            $monthsSince = max(0, (int)$t['months_since_start']);
-            $numPayments = intdiv($monthsSince, $billingMonths) + 1;
+            $numPayments = CommissionCalculator::paymentsCompleted((int)$t['months_since_start'], $t['billing_cycle']);
 
             // Distribuisce i pagamenti nei mesi corretti
             $startTs = strtotime($t['created_at']);
@@ -152,14 +145,14 @@ class CommissionsController
 
         foreach ($tenants as $t) {
             $hasPlan = !empty($t['plan_name']) && !empty($t['billing_cycle']);
-            $annualCommission = $hasPlan ? $this->commissionForPlan($t['plan_name'], $profile) : 0.0;
-            $billingMonths = ($t['billing_cycle'] === 'semiannual') ? 6 : 12;
-            $perPayment = $annualCommission * ($billingMonths / 12);
+            $annualCommission = $hasPlan ? CommissionCalculator::commissionForPlan($t['plan_name'], $profile) : 0.0;
+            $billingMonths = CommissionCalculator::billingMonthsFor($t['billing_cycle']);
+            $perPayment = $hasPlan ? CommissionCalculator::commissionPerPayment($t['plan_name'], $t['billing_cycle'], $profile) : 0.0;
 
             $createdTs = strtotime($t['created_at']);
-            // Stessa formula del DashboardController (MySQL TIMESTAMPDIFF)
-            $monthsSince = max(0, (int)$t['months_since_start']);
-            $numPayments = $hasPlan ? intdiv($monthsSince, $billingMonths) + 1 : 0;
+            $numPayments = $hasPlan
+                ? CommissionCalculator::paymentsCompleted((int)$t['months_since_start'], $t['billing_cycle'])
+                : 0;
 
             $licensesEarned = $perPayment * $numPayments;
             // Setup riconosciuto solo se il tenant ha effettivamente un piano
@@ -204,9 +197,8 @@ class CommissionsController
             if (empty($t['plan_name']) || empty($t['billing_cycle'])) {
                 continue;
             }
-            $annualCommission = $this->commissionForPlan($t['plan_name'], $profile);
-            $billingMonths = ($t['billing_cycle'] === 'semiannual') ? 6 : 12;
-            $perPayment = $annualCommission * ($billingMonths / 12);
+            $perPayment = CommissionCalculator::commissionPerPayment($t['plan_name'], $t['billing_cycle'], $profile);
+            $billingMonths = CommissionCalculator::billingMonthsFor($t['billing_cycle']);
 
             $createdTs = strtotime($t['created_at']);
             $cursor = $createdTs;
@@ -250,7 +242,7 @@ class CommissionsController
         foreach ($tenants as $t) {
             if (empty($t['plan_name']) || empty($t['billing_cycle'])) continue;
             if (isset($t['sub_status']) && !in_array($t['sub_status'], ['active', 'trialing'], true)) continue;
-            $annualExpected += $this->commissionForPlan($t['plan_name'], $profile);
+            $annualExpected += CommissionCalculator::commissionForPlan($t['plan_name'], $profile);
         }
 
         return [
@@ -261,13 +253,5 @@ class CommissionsController
         ];
     }
 
-    private function commissionForPlan(string $planName, array $profile): float
-    {
-        return match (strtolower($planName)) {
-            'starter'      => (float)$profile['commission_starter'],
-            'professional' => (float)$profile['commission_professional'],
-            'enterprise'   => (float)$profile['commission_enterprise'],
-            default        => 0.0,
-        };
-    }
+    // commissionForPlan() spostata in App\Services\CommissionCalculator (2026-05-11)
 }

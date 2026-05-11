@@ -106,6 +106,7 @@ return array(
     'App\\Services\\AuditLog' => $baseDir . '/app/Services/AuditLog.php',
     'App\\Services\\AvailabilityService' => $baseDir . '/app/Services/AvailabilityService.php',
     'App\\Services\\BroadcastService' => $baseDir . '/app/Services/BroadcastService.php',
+    'App\\Services\\CommissionCalculator' => $baseDir . '/app/Services/CommissionCalculator.php',
     'App\\Services\\HubService' => $baseDir . '/app/Services/HubService.php',
     'App\\Services\\LoginThrottle' => $baseDir . '/app/Services/LoginThrottle.php',
     'App\\Services\\MailService' => $baseDir . '/app/Services/MailService.php',
