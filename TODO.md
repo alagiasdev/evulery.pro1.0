@@ -399,26 +399,59 @@ Modello basato su **coperti illimitati** e **piani differenziati per servizi**.
 - [ ] Accesso API (servizio `api_access` gia nel catalogo)
 - [x] Email marketing con crediti (area comunicazioni + pacchetti email) → FASE 15 completata
 
-## FASE 21: Lead Management & Onboarding (Future)
+## FASE 21: Lead Management & Onboarding [COMPLETATA]
 Gestione lead da landing page evulery.it + onboarding ristoratori.
 
 ### Lead Management (CRM ristoratori)
-- [ ] Tabella `demo_requests` (name, restaurant, email, phone, message, status, notes, created_at)
-- [ ] API pubblica `POST /api/v1/demo-request` (rate limit, CORS per evulery.it)
-- [ ] Form landing invia a API backend (JS fetch)
-- [ ] Pagina admin `/admin/demo-requests` con lista, filtri (stato, data), KPI
-- [ ] Stati lead: nuovo → contattato → demo fissata → convertito → perso
-- [ ] Note interne per ogni lead + storico contatti
-- [ ] Reminder follow-up (es. "Richiamare tra 3 giorni")
+- [x] Tabella `demo_requests` (migration 051)
+- [x] API pubblica `POST /api/v1/demo-request` (rate limit, reCAPTCHA)
+- [x] Form landing invia a API backend (JS fetch)
+- [x] Pagina admin `/admin/leads` con lista, filtri (stato, data), KPI
+- [x] 7 stati lead: new, contacted, demo_scheduled, demo_done, negotiating, customer, lost
+- [x] Note interne con timestamp + storico attività (`demo_request_activities`)
+- [x] Reminder follow-up (next_followup_at, alert dashboard admin)
 
 ### Onboarding rapido
-- [ ] Da lead "convertito" → bottone "Crea ristorante" che pre-compila tenant + utente
-- [ ] Email di benvenuto automatica con credenziali
-- [ ] Assegnazione piano + periodo trial
+- [x] Da lead → bottone "Convert" che pre-compila form tenant
+- [x] Snapshot `tenants.acquired_by_reseller_id` al momento conversione
 
 ### Statistiche landing (futuro)
-- [ ] KPI: richieste/mese, tasso conversione lead → cliente
-- [ ] UTM tracking (fonte lead: Google, social, referral)
+- [ ] KPI: richieste/mese, tasso conversione lead → cliente (deferito)
+- [ ] UTM tracking (fonte lead: Google, social, referral) (deferito)
+
+## FASE 22B: Programma Reseller B2B [COMPLETATA 2026-05-11]
+Area `/reseller/*` per procacciatori B2B che vendono Evulery a ristoratori.
+
+### Backend (commits a06d6f9, 6e59291, 99e073b)
+- [x] Migration 052: ruolo `reseller`, tabella `reseller_profiles` (commissioni custom per reseller), `tenants.acquired_by_reseller_id`
+- [x] Migration 053: tabella `credit_recharge_requests` (ordini ricarica crediti email)
+- [x] Middleware `ResellerMiddleware` + login redirect basato su ruolo
+- [x] Controller area: Dashboard, Leads, Clients, Commissions, Credits, Materials, Profile
+- [x] `App\Services\CommissionCalculator` come single source of truth dei calcoli
+- [x] Email auto al reseller all'assegnazione lead (`MailService::sendLeadAssignedToReseller`)
+- [x] Email approvazione/rifiuto ricarica crediti
+
+### Frontend
+- [x] Layout `views/layouts/reseller.php` con sidebar verde brand + badge contatori
+- [x] Dashboard: KPI (lead aperti, clienti attivi, maturato mese, totale maturato con breakdown)
+- [x] Pagina commissioni dettagliata: storico mensile + breakdown per cliente + pagamenti attesi 12mo
+- [x] Pagina ricariche crediti: form richiesta + storico stati + badge
+- [x] Pagina materiali commerciali: catalogo whitelist (cliente / demo / outbound) con preview + download
+- [x] Admin: `/admin/credit-requests` con approve/reject + email + Tenant::addCredits in transazione
+
+### Hardening security (post-review)
+- [x] `User::update($id, $data, $allowPrivileged=false)` per evitare mass-assignment
+- [x] Approve credit con `SELECT ... FOR UPDATE` (no double-credit su double-click)
+- [x] Rimosso leak note admin private dalla view reseller leads/show
+- [x] Allineata formula calcolo commissioni tra Dashboard e Commissions (TIMESTAMPDIFF)
+- [x] Skip tenant senza piano/sub nei calcoli (no crash 500 su edge case)
+- [x] `realpath()` check difensivo in MaterialsController (whitelist + path traversal safety)
+- [x] Validazione `next_followup_at` via `DateTime::createFromFormat`
+
+### Pre-deploy in produzione
+- [ ] Applicare migration 052 (reseller_profiles, acquired_by_reseller_id, role VARCHAR)
+- [ ] Applicare migration 053 (credit_recharge_requests)
+- [ ] Cambiare password super admin (durante test era stata resettata ad `admin1234`)
 
 ## FASE 20A: Menu Digitale Consultivo [COMPLETATA]
 Menu digitale pubblico per i clienti del ristorante, gestibile dalla dashboard. Design v2.1 con hero, categorie, allergeni EU, QR code.
