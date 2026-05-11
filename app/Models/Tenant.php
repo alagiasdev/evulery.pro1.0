@@ -105,21 +105,22 @@ class Tenant
     public function create(array $data): int
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO tenants (slug, name, email, phone, address, plan, plan_id, plan_price, table_duration, time_step, is_active)
-             VALUES (:slug, :name, :email, :phone, :address, :plan, :plan_id, :plan_price, :table_duration, :time_step, :is_active)'
+            'INSERT INTO tenants (slug, name, email, phone, address, plan, plan_id, plan_price, table_duration, time_step, is_active, acquired_by_reseller_id)
+             VALUES (:slug, :name, :email, :phone, :address, :plan, :plan_id, :plan_price, :table_duration, :time_step, :is_active, :acquired_by_reseller_id)'
         );
         $stmt->execute([
-            'slug'           => $data['slug'],
-            'name'           => $data['name'],
-            'email'          => $data['email'],
-            'phone'          => $data['phone'] ?? null,
-            'address'        => $data['address'] ?? null,
-            'plan'           => $data['plan'] ?? 'base',
-            'plan_id'        => $data['plan_id'] ?? null,
-            'plan_price'     => $data['plan_price'] ?? 49.00,
-            'table_duration' => $data['table_duration'] ?? 90,
-            'time_step'      => $data['time_step'] ?? 30,
-            'is_active'      => $data['is_active'] ?? 0,
+            'slug'                    => $data['slug'],
+            'name'                    => $data['name'],
+            'email'                   => $data['email'],
+            'phone'                   => $data['phone'] ?? null,
+            'address'                 => $data['address'] ?? null,
+            'plan'                    => $data['plan'] ?? 'base',
+            'plan_id'                 => $data['plan_id'] ?? null,
+            'plan_price'              => $data['plan_price'] ?? 49.00,
+            'table_duration'          => $data['table_duration'] ?? 90,
+            'time_step'               => $data['time_step'] ?? 30,
+            'is_active'               => $data['is_active'] ?? 0,
+            'acquired_by_reseller_id' => $data['acquired_by_reseller_id'] ?? null,
         ]);
         return (int)$this->db->lastInsertId();
     }

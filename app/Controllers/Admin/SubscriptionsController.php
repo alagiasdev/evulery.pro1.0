@@ -18,18 +18,29 @@ class SubscriptionsController
     {
         $db = Database::getInstance();
 
-        // KPI — MRR: prezzo effettivo del ciclo / mesi del ciclo
+        // KPI — MRR totale + split (da reseller / diretto)
         $activeSubs = $db->query(
             "SELECT p.price, p.billing_months_semi, p.billing_months_annual,
-                    s.billing_cycle, s.extra_discount
-             FROM subscriptions s JOIN plans p ON p.id = s.plan_id
+                    s.billing_cycle, s.extra_discount,
+                    t.acquired_by_reseller_id
+             FROM subscriptions s
+             JOIN plans p ON p.id = s.plan_id
+             JOIN tenants t ON t.id = s.tenant_id
              WHERE s.status = 'active'"
         )->fetchAll();
 
         $mrr = 0;
+        $mrrReseller = 0;
+        $mrrDirect   = 0;
         foreach ($activeSubs as $as) {
             $calc = Plan::calculatePrice($as, $as['billing_cycle'] ?? 'annual', (float)($as['extra_discount'] ?? 0));
-            $mrr += $calc['monthly'];
+            $monthly = $calc['monthly'];
+            $mrr += $monthly;
+            if (!empty($as['acquired_by_reseller_id'])) {
+                $mrrReseller += $monthly;
+            } else {
+                $mrrDirect += $monthly;
+            }
         }
 
         $activeCount = (int)$db->query("SELECT COUNT(*) FROM subscriptions WHERE status = 'active'")->fetchColumn();
@@ -51,15 +62,20 @@ class SubscriptionsController
             $where = " AND s.status = 'active' AND s.current_period_end BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)";
         } elseif ($filter === 'cancelled') {
             $where = " AND s.status IN ('cancelled','past_due')";
+        } elseif ($filter === 'reseller') {
+            $where = " AND t.acquired_by_reseller_id IS NOT NULL";
         }
 
         $subscriptions = $db->query(
             "SELECT s.*, t.name as tenant_name, t.slug as tenant_slug,
+                    t.acquired_by_reseller_id,
                     p.name as plan_name, p.color as plan_color, p.price as plan_price,
-                    p.billing_months_semi, p.billing_months_annual
+                    p.billing_months_semi, p.billing_months_annual,
+                    u.first_name AS reseller_first_name, u.last_name AS reseller_last_name
              FROM subscriptions s
              JOIN tenants t ON t.id = s.tenant_id
              LEFT JOIN plans p ON p.id = s.plan_id
+             LEFT JOIN users u ON u.id = t.acquired_by_reseller_id
              WHERE 1=1 {$where}
              ORDER BY s.created_at DESC"
         )->fetchAll();
@@ -71,6 +87,8 @@ class SubscriptionsController
             'activeMenu'     => 'subscriptions',
             'activeTab'      => 'subscriptions',
             'mrr'            => $mrr,
+            'mrrReseller'    => $mrrReseller,
+            'mrrDirect'      => $mrrDirect,
             'activeCount'    => $activeCount,
             'trialCount'     => $trialCount,
             'expiringCount'  => $expiringCount,

@@ -1,3 +1,13 @@
+<?php
+/** @var array $prefill          Query string parameters (es. da convert lead) */
+/** @var ?array $sourceLead      Lead di origine se conversione */
+/** @var ?string $leadResellerName Nome del reseller associato al lead */
+$prefill = $prefill ?? [];
+$valOf = function(string $key, $default = '') use ($prefill) {
+    return old($key) ?: (string)($prefill[$key] ?? $default);
+};
+?>
+
 <div class="admin-page-header-left" style="margin-bottom:1.25rem;">
     <a href="<?= url('admin/tenants') ?>" class="adm-action" title="Torna alla lista">
         <i class="bi bi-arrow-left"></i>
@@ -8,9 +18,27 @@
     </div>
 </div>
 
+<?php if ($sourceLead ?? null): ?>
+<div style="max-width:720px;margin-bottom:1rem;background:#E8F5E9;border-left:4px solid #00844A;border-radius:8px;padding:14px 18px;font-size:.88rem;line-height:1.5;color:#1a1d23;">
+    <strong style="color:#006837;"><i class="bi bi-arrow-right-circle"></i> Conversione da lead #<?= (int)$sourceLead['id'] ?></strong>
+    <div style="margin-top:4px;">
+        Stai creando un tenant dal lead "<strong><?= e($sourceLead['restaurant']) ?></strong>".
+        <?php if ($leadResellerName): ?>
+            Verrà associato al reseller <strong><?= e($leadResellerName) ?></strong>.
+        <?php else: ?>
+            Nessun reseller associato al lead (verrà creato come <strong>diretto</strong>).
+        <?php endif; ?>
+        Il lead verrà marcato come <strong>Cliente</strong> al salvataggio.
+    </div>
+</div>
+<?php endif; ?>
+
 <div style="max-width:720px;">
     <form method="POST" action="<?= url('admin/tenants') ?>">
         <?= csrf_field() ?>
+        <?php if (!empty($prefill['lead_id'])): ?>
+            <input type="hidden" name="lead_id" value="<?= (int)$prefill['lead_id'] ?>">
+        <?php endif; ?>
 
         <!-- Dati Ristorante -->
         <div class="adm-card">
@@ -21,17 +49,17 @@
                 <div class="adm-form-row">
                     <div>
                         <label class="adm-form-label">Nome ristorante *</label>
-                        <input type="text" class="adm-form-input" name="name" value="<?= old('name') ?>" required>
+                        <input type="text" class="adm-form-input" name="name" value="<?= e($valOf('name')) ?>" required>
                     </div>
                     <div>
                         <label class="adm-form-label">Email ristorante *</label>
-                        <input type="email" class="adm-form-input" name="email" value="<?= old('email') ?>" required>
+                        <input type="email" class="adm-form-input" name="email" value="<?= e($valOf('email')) ?>" required>
                     </div>
                 </div>
                 <div class="adm-form-row">
                     <div>
                         <label class="adm-form-label">Telefono</label>
-                        <input type="text" class="adm-form-input" name="phone" value="<?= old('phone') ?>">
+                        <input type="text" class="adm-form-input" name="phone" value="<?= e($valOf('phone')) ?>">
                     </div>
                     <div>
                         <label class="adm-form-label">Piano</label>
@@ -64,17 +92,17 @@
                 <div class="adm-form-row">
                     <div>
                         <label class="adm-form-label">Nome *</label>
-                        <input type="text" class="adm-form-input" name="owner_first_name" value="<?= old('owner_first_name') ?>" required>
+                        <input type="text" class="adm-form-input" name="owner_first_name" value="<?= e($valOf('owner_first_name')) ?>" required>
                     </div>
                     <div>
                         <label class="adm-form-label">Cognome *</label>
-                        <input type="text" class="adm-form-input" name="owner_last_name" value="<?= old('owner_last_name') ?>" required>
+                        <input type="text" class="adm-form-input" name="owner_last_name" value="<?= e($valOf('owner_last_name')) ?>" required>
                     </div>
                 </div>
                 <div class="adm-form-row">
                     <div>
                         <label class="adm-form-label">Email login *</label>
-                        <input type="email" class="adm-form-input" name="owner_email" value="<?= old('owner_email') ?>" required>
+                        <input type="email" class="adm-form-input" name="owner_email" value="<?= e($valOf('owner_email')) ?>" required>
                     </div>
                     <div>
                         <label class="adm-form-label">Password *</label>

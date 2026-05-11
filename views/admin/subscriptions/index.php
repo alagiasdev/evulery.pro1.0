@@ -26,7 +26,14 @@ $tabs = [
         </div>
         <div>
             <div class="admin-stat-value">&euro;<?= number_format($mrr, 0, ',', '.') ?></div>
-            <div class="admin-stat-label">MRR</div>
+            <div class="admin-stat-label">MRR totale</div>
+            <?php if (($mrrReseller ?? 0) > 0 || ($mrrDirect ?? 0) > 0): ?>
+                <div style="font-size:.68rem;color:#6c757d;margin-top:4px;line-height:1.45;">
+                    <span style="color:#00844A;font-weight:600;">€<?= number_format($mrrDirect ?? 0, 0, ',', '.') ?> diretto</span>
+                    &middot;
+                    <span style="color:#7B1FA2;font-weight:600;">€<?= number_format($mrrReseller ?? 0, 0, ',', '.') ?> reseller</span>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
     <div class="admin-stat">
@@ -68,6 +75,7 @@ $tabs = [
             <a class="adm-pill <?= $filter === 'trialing' ? 'active' : '' ?>" href="<?= url('admin/subscriptions?filter=trialing') ?>">Trial</a>
             <a class="adm-pill <?= $filter === 'expiring' ? 'active' : '' ?>" href="<?= url('admin/subscriptions?filter=expiring') ?>">In scadenza</a>
             <a class="adm-pill <?= $filter === 'cancelled' ? 'active' : '' ?>" href="<?= url('admin/subscriptions?filter=cancelled') ?>">Scaduti</a>
+            <a class="adm-pill <?= $filter === 'reseller' ? 'active' : '' ?>" href="<?= url('admin/subscriptions?filter=reseller') ?>">Da reseller</a>
         </div>
     </div>
 
@@ -146,6 +154,20 @@ $tabs = [
                     <span class="adm-sub-card-label">Scadenza</span>
                     <span class="adm-sub-card-value"><?= $s['_expiryHtml'] ?></span>
                 </div>
+                <div class="adm-sub-card-detail" style="grid-column:1/-1;">
+                    <span class="adm-sub-card-label">Reseller</span>
+                    <span class="adm-sub-card-value">
+                        <?php if (!empty($s['acquired_by_reseller_id'])):
+                            $rName = trim(($s['reseller_first_name'] ?? '') . ' ' . ($s['reseller_last_name'] ?? ''));
+                        ?>
+                            <span style="display:inline-flex;align-items:center;gap:5px;background:#F3E5F5;color:#7B1FA2;padding:2px 8px;border-radius:100px;font-size:.7rem;font-weight:600;">
+                                <i class="bi bi-person-check-fill"></i> <?= e($rName ?: 'Reseller #' . $s['acquired_by_reseller_id']) ?>
+                            </span>
+                        <?php else: ?>
+                            <span style="font-size:.72rem;color:#adb5bd;">— diretto</span>
+                        <?php endif; ?>
+                    </span>
+                </div>
             </div>
             <!-- Mobile edit form -->
             <div class="collapse" id="changePlanM<?= $s['id'] ?>">
@@ -162,6 +184,7 @@ $tabs = [
                 <tr>
                     <th>Ristorante</th>
                     <th>Piano</th>
+                    <th>Reseller</th>
                     <th>Prezzo ciclo</th>
                     <th>Stato</th>
                     <th>Scadenza</th>
@@ -180,6 +203,17 @@ $tabs = [
                         <?php endif; ?>
                     </td>
                     <td>
+                        <?php if (!empty($s['acquired_by_reseller_id'])): ?>
+                            <?php $rName = trim(($s['reseller_first_name'] ?? '') . ' ' . ($s['reseller_last_name'] ?? '')); ?>
+                            <span style="display:inline-flex;align-items:center;gap:6px;background:#F3E5F5;color:#7B1FA2;padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:600;">
+                                <i class="bi bi-person-check-fill"></i>
+                                <?= e($rName ?: 'Reseller #' . $s['acquired_by_reseller_id']) ?>
+                            </span>
+                        <?php else: ?>
+                            <span style="font-size:.72rem;color:#adb5bd;">— diretto</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
                         <div style="font-weight:600;">&euro;<?= number_format($s['_calcPrice']['total'], 2, ',', '.') ?></div>
                         <div style="font-size:.68rem;color:#6c757d;"><?= $s['_cycleLabel'] ?><?php if ($s['_extraDisc'] > 0): ?> &middot; <span style="color:#2E7D32;">-<?= number_format($s['_extraDisc'], 0) ?>%</span><?php endif; ?></div>
                         <div style="font-size:.65rem;color:#adb5bd;">&euro;<?= number_format($s['_calcPrice']['monthly'], 2, ',', '.') ?>/mese</div>
@@ -194,7 +228,7 @@ $tabs = [
                     </td>
                 </tr>
                 <tr class="collapse" id="changePlanD<?= $s['id'] ?>">
-                    <td colspan="8" style="padding:0;">
+                    <td colspan="7" style="padding:0;">
                         <?php $editCollapseId = "changePlanD{$s['id']}"; include __DIR__ . '/_edit-form.php'; ?>
                     </td>
                 </tr>

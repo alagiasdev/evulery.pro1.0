@@ -63,6 +63,10 @@ class AuditLog
     public const IMPERSONATION_START = 'impersonation_start';
     public const IMPERSONATION_END   = 'impersonation_end';
 
+    // Utenti / Reseller
+    public const USER_CREATED = 'user_created';
+    public const USER_UPDATED = 'user_updated';
+
     // Stripe Connect
     public const STRIPE_CONNECTED    = 'stripe_connected';
     public const STRIPE_DISCONNECTED = 'stripe_disconnected';

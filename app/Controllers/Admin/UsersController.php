@@ -181,7 +181,7 @@ class UsersController
         ]);
 
         AuditLog::log(
-            AuditLog::USER_CREATED ?? 'user.created',
+            AuditLog::USER_CREATED,
             "Reseller creato: {$firstName} {$lastName} ({$email})",
             Auth::id()
         );
@@ -264,7 +264,7 @@ class UsersController
         ]);
 
         AuditLog::log(
-            AuditLog::USER_UPDATED ?? 'user.updated',
+            AuditLog::USER_UPDATED,
             "Reseller aggiornato: {$firstName} {$lastName} ({$email})",
             Auth::id()
         );

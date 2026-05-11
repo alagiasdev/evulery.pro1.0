@@ -12,6 +12,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Models\MealCategory;
 use App\Models\Plan;
+use App\Models\DemoRequest;
 use App\Services\AuditLog;
 
 class TenantsController
@@ -45,10 +46,30 @@ class TenantsController
     {
         $plans = (new Plan())->allActive();
 
+        // Se proviene da conversione lead: pre-compila campi e carica info reseller
+        $leadId = (int)$request->query('lead_id', 0);
+        $sourceLead = null;
+        $leadResellerName = null;
+        if ($leadId > 0) {
+            $sourceLead = (new DemoRequest())->findById($leadId);
+            if ($sourceLead && !empty($sourceLead['assigned_reseller_id'])) {
+                $db = Database::getInstance();
+                $stmt = $db->prepare("SELECT first_name, last_name FROM users WHERE id = :id LIMIT 1");
+                $stmt->execute(['id' => $sourceLead['assigned_reseller_id']]);
+                $r = $stmt->fetch();
+                if ($r) {
+                    $leadResellerName = trim(($r['first_name'] ?? '') . ' ' . ($r['last_name'] ?? ''));
+                }
+            }
+        }
+
         view('admin/tenants/create', [
-            'title'      => 'Nuovo Ristorante',
-            'activeMenu' => 'tenants',
-            'plans'      => $plans,
+            'title'            => 'Nuovo Ristorante',
+            'activeMenu'       => 'tenants',
+            'plans'            => $plans,
+            'prefill'          => $request->query(),
+            'sourceLead'       => $sourceLead,
+            'leadResellerName' => $leadResellerName,
         ], 'admin');
     }
 
@@ -93,6 +114,17 @@ class TenantsController
             $planId = $plan ? (int)$plan['id'] : 0;
         }
 
+        // Se proviene da conversione lead, recupera reseller del lead per snapshot
+        $leadId = (int)($data['lead_id'] ?? 0);
+        $acquiredByReseller = null;
+        $sourceLead = null;
+        if ($leadId > 0) {
+            $sourceLead = (new DemoRequest())->findById($leadId);
+            if ($sourceLead && !empty($sourceLead['assigned_reseller_id'])) {
+                $acquiredByReseller = (int)$sourceLead['assigned_reseller_id'];
+            }
+        }
+
         // Create tenant
         $tenantId = $tenantModel->create([
             'slug'      => $slug,
@@ -103,6 +135,7 @@ class TenantsController
             'plan'      => 'base',
             'plan_id'   => $planId,
             'is_active' => isset($data['is_active']) ? 1 : 0,
+            'acquired_by_reseller_id' => $acquiredByReseller,
         ]);
 
         // Create subscription
@@ -134,6 +167,24 @@ class TenantsController
         ]);
 
         AuditLog::log(AuditLog::TENANT_CREATED, "Tenant: {$data['name']} (ID: {$tenantId})", Auth::id());
+
+        // Se origine lead: marca il lead come convertito e logga activity
+        if ($sourceLead) {
+            $db = Database::getInstance();
+            $db->prepare(
+                "UPDATE demo_requests
+                 SET status = 'customer', converted_tenant_id = :tid, converted_at = NOW(), status_changed_at = NOW()
+                 WHERE id = :lid"
+            )->execute(['tid' => $tenantId, 'lid' => $leadId]);
+
+            (new DemoRequest())->logActivity(
+                $leadId,
+                'converted',
+                "Convertito a cliente: tenant #{$tenantId} ({$data['name']})",
+                Auth::id(),
+                ['tenant_id' => $tenantId]
+            );
+        }
 
         flash('success', "Ristorante \"{$data['name']}\" creato con successo.");
         Response::redirect(url('admin/tenants'));
