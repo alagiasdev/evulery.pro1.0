@@ -134,7 +134,8 @@ class UsersController
         $data = $request->all();
         $firstName = trim($data['first_name'] ?? '');
         $lastName  = trim($data['last_name'] ?? '');
-        $email     = trim($data['email'] ?? '');
+        // Normalizzazione email: lower + trim aggressivo (rimuove anche NBSP/zero-width)
+        $email     = strtolower(preg_replace('/[\s\x{00A0}\x{200B}-\x{200D}\x{FEFF}]+/u', '', $data['email'] ?? ''));
         $password  = $data['password'] ?? '';
 
         if (!$firstName || !$lastName || !$email || !$password) {
@@ -272,6 +273,84 @@ class UsersController
 
         flash('success', 'Reseller aggiornato.');
         Response::redirect(url("admin/users/reseller/{$userId}/edit"));
+    }
+
+    /**
+     * Eliminazione reseller (hard delete) con safety check.
+     *
+     * Pre-check: blocca se ci sono tenant ATTIVI acquisiti dal reseller
+     * (per non perdere attribuzione di clienti paganti).
+     *
+     * Cleanup orphan references (no FK CASCADE su queste colonne):
+     *  - tenants.acquired_by_reseller_id → NULL (per tenant inattivi)
+     *  - demo_requests.assigned_reseller_id → NULL
+     *
+     * Hard delete users → CASCADE su reseller_profiles + credit_recharge_requests.
+     * Lo storico ricariche viene perso (accettabile per reseller mai operativi).
+     */
+    public function destroyReseller(Request $request): void
+    {
+        $userId = (int)$request->param('id');
+        $userModel = new User();
+        $user = $userModel->findById($userId);
+
+        if (!$user || $user['role'] !== 'reseller') {
+            flash('danger', 'Reseller non trovato.');
+            Response::redirect(url('admin/users') . '?role=reseller');
+            return;
+        }
+
+        $db = \App\Core\Database::getInstance();
+
+        // Safety: blocca se ci sono tenant attivi associati
+        $stmt = $db->prepare(
+            "SELECT COUNT(*) FROM tenants WHERE acquired_by_reseller_id = :id AND is_active = 1"
+        );
+        $stmt->execute(['id' => $userId]);
+        $activeCount = (int)$stmt->fetchColumn();
+        if ($activeCount > 0) {
+            flash('danger', "Impossibile eliminare: il reseller ha {$activeCount} client" . ($activeCount === 1 ? 'e attivo' : 'i attivi') . ". Disattivalo invece dal form di modifica.");
+            Response::redirect(url("admin/users/reseller/{$userId}/edit"));
+            return;
+        }
+
+        $fullName = "{$user['first_name']} {$user['last_name']}";
+        $email = $user['email'];
+
+        $db->beginTransaction();
+        try {
+            // Stacca attribuzione tenant inattivi (storico preservato)
+            $db->prepare(
+                "UPDATE tenants SET acquired_by_reseller_id = NULL WHERE acquired_by_reseller_id = :id"
+            )->execute(['id' => $userId]);
+
+            // Stacca lead assegnati
+            $db->prepare(
+                "UPDATE demo_requests SET assigned_reseller_id = NULL WHERE assigned_reseller_id = :id"
+            )->execute(['id' => $userId]);
+
+            // Hard delete user → CASCADE su reseller_profiles + credit_recharge_requests
+            $db->prepare("DELETE FROM users WHERE id = :id")->execute(['id' => $userId]);
+
+            $db->commit();
+        } catch (\Throwable $e) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
+            app_log("Reseller delete error: " . $e->getMessage());
+            flash('danger', 'Errore durante l\'eliminazione. Riprova.');
+            Response::redirect(url("admin/users/reseller/{$userId}/edit"));
+            return;
+        }
+
+        AuditLog::log(
+            AuditLog::USER_UPDATED,
+            "Reseller eliminato: {$fullName} ({$email}) — ID {$userId}",
+            Auth::id()
+        );
+
+        flash('success', "Reseller \"{$fullName}\" eliminato.");
+        Response::redirect(url('admin/users') . '?role=reseller');
     }
 
     private function parseCommission($value, float $default): float

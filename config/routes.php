@@ -228,6 +228,7 @@ $router->group('/admin', ['auth', 'admin', 'csrf', 'dashboard-ratelimit'], funct
     $r->get('/users/reseller/create', [UsersController::class, 'createReseller']);
     $r->post('/users/reseller', [UsersController::class, 'storeReseller']);
     $r->get('/users/reseller/{id}/edit', [UsersController::class, 'editReseller']);
+    $r->post('/users/reseller/{id}/delete', [UsersController::class, 'destroyReseller']);
     $r->post('/users/reseller/{id}', [UsersController::class, 'updateReseller']);
     // Leads (mini CRM)
     $r->get('/leads', [LeadsController::class, 'index']);

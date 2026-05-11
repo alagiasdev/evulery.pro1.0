@@ -225,3 +225,26 @@ $notes  = $profile['notes'] ?? '';
     </div>
 
 </form>
+
+<?php if ($isEdit): ?>
+    <div style="margin-top:2.5rem;padding:1.25rem 1.5rem;background:#FFEBEE;border:1px solid #EF9A9A;border-radius:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
+            <div>
+                <h3 style="margin:0 0 .35rem;font-size:.95rem;font-weight:700;color:#C62828;">
+                    <i class="bi bi-exclamation-triangle"></i> Danger zone
+                </h3>
+                <p style="margin:0;font-size:.82rem;color:#5d4037;line-height:1.5;">
+                    Elimina definitivamente questo reseller. I tenant attivi a lui acquisiti bloccano l'operazione.
+                    I tenant inattivi resteranno (con attribuzione rimossa) e lo storico ricariche crediti andrà perso.
+                </p>
+            </div>
+            <form method="POST" action="<?= url('admin/users/reseller/' . (int)$user['id'] . '/delete') ?>"
+                  data-confirm="Eliminare definitivamente <?= e($user['first_name'] . ' ' . $user['last_name']) ?>? L'azione non è reversibile.">
+                <?= csrf_field() ?>
+                <button type="submit" style="background:#C62828;color:#fff;border:none;padding:.55rem 1.1rem;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">
+                    <i class="bi bi-trash"></i> Elimina reseller
+                </button>
+            </form>
+        </div>
+    </div>
+<?php endif; ?>
