@@ -94,6 +94,7 @@ class App
         $middlewareMap = [
             'auth'      => \App\Middleware\AuthMiddleware::class,
             'admin'     => \App\Middleware\AdminMiddleware::class,
+            'reseller'  => \App\Middleware\ResellerMiddleware::class,
             'tenant'    => \App\Middleware\TenantMiddleware::class,
             'csrf'      => \App\Middleware\CSRFMiddleware::class,
             'ratelimit' => \App\Middleware\RateLimitMiddleware::class,

@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Reseller Full (Opzione C)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #006837;
+    --brand-light: #E8F5E9;
+    --ink: #1a1d23;
+    --ink-soft: #495057;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --bg: #f5f6f8;
+    --sidebar-bg: #1a1d23;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.5; }
+.layout { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+
+.sidebar { background: var(--sidebar-bg); color: #fff; display: flex; flex-direction: column; }
+.sidebar-brand { padding: 1.1rem 1.25rem; border-bottom: 1px solid #2a2d33; }
+.sidebar-brand-logo { color: #fff; font-size: 1.4rem; font-weight: 900; letter-spacing: -1px; }
+.sidebar-brand-logo .dot { color: #4ade80; }
+.sidebar-brand-role { font-size: .68rem; color: #4ade80; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
+.sidebar-nav { padding: .75rem .5rem; flex: 1; }
+.sidebar-section { font-size: .62rem; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: .8px; padding: .75rem .85rem .35rem; margin-top: .25rem; }
+.sidebar-link {
+    display: flex; align-items: center; gap: .65rem;
+    padding: .55rem .85rem; border-radius: 6px;
+    color: #adb5bd; text-decoration: none;
+    font-size: .85rem; font-weight: 500;
+    margin-bottom: 2px;
+    cursor: pointer;
+}
+.sidebar-link:hover { background: #2a2d33; color: #fff; }
+.sidebar-link.active { background: var(--brand); color: #fff; }
+.sidebar-link i { font-size: 1rem; width: 18px; }
+.sidebar-link .badge { margin-left: auto; background: #ffc107; color: #1a1d23; padding: 1px 7px; border-radius: 100px; font-size: .68rem; font-weight: 700; }
+.sidebar-footer { padding: 1rem; border-top: 1px solid #2a2d33; font-size: .75rem; color: #6c757d; }
+.sidebar-user { display: flex; align-items: center; gap: 10px; margin-bottom: .5rem; }
+.sidebar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--brand); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .8rem; }
+.sidebar-logout { background: transparent; color: #6c757d; border: 1px solid #2a2d33; padding: .35rem .7rem; border-radius: 6px; cursor: pointer; font-family: inherit; width: 100%; text-align: left; font-size: .8rem; }
+
+.main { padding: 0; }
+.topbar { background: #fff; border-bottom: 1px solid var(--line); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+.topbar-title { font-weight: 700; font-size: 1.1rem; }
+.page { padding: 1.5rem; }
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }
+.page-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -.5px; }
+.page-sub { font-size: .85rem; color: var(--muted); margin-top: 4px; }
+
+/* Stats KPI */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+.kpi-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.2rem; display: flex; align-items: center; gap: 12px; }
+.kpi-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+.kpi-card .val { font-size: 1.4rem; font-weight: 800; line-height: 1; }
+.kpi-card .lbl { font-size: .72rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
+
+.row2 { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 1rem; }
+.card-hdr { padding: .85rem 1.25rem; border-bottom: 1px solid var(--line); background: #fafbfc; font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--ink-soft); display: flex; align-items: center; gap: 8px; justify-content: space-between; }
+.card-hdr i { color: var(--brand); font-size: 1rem; }
+.card-hdr-link { font-size: .7rem; color: var(--brand); text-decoration: none; font-weight: 600; text-transform: none; letter-spacing: 0; }
+.card-body { padding: 1.25rem; }
+
+/* Table */
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl thead th { background: #fafbfc; padding: 12px 14px; text-align: left; font-size: .68rem; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid var(--line); }
+.tbl tbody td { padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: .85rem; vertical-align: middle; }
+.tbl tbody tr:last-child td { border-bottom: 0; }
+.tbl tbody tr:hover { background: #fafbfc; }
+
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 100px; font-size: .72rem; font-weight: 700; border: 1.5px solid; }
+.badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.b-new { color: #0277bd; border-color: #0277bd; background: #e3f2fd; }
+.b-contacted { color: #f57c00; border-color: #f57c00; background: #fff3e0; }
+.b-demo-sched { color: #7b1fa2; border-color: #7b1fa2; background: #f3e5f5; }
+.b-customer { color: #fff; border-color: var(--brand); background: var(--brand); }
+
+.fu-overdue { color: #C62828; background: #FFEBEE; border: 1.5px solid #C62828; padding: 3px 10px; border-radius: 100px; font-size: .72rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
+.fu-today { color: #E65100; background: #FFF3E0; border: 1.5px solid #E65100; padding: 3px 10px; border-radius: 100px; font-size: .72rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
+
+.btn-action { background: transparent; border: 1px solid var(--line); color: var(--ink-soft); padding: 4px 10px; border-radius: 4px; font-size: .8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+.btn-action:hover { border-color: var(--brand); color: var(--brand); }
+
+.wf-banner { background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 18px; border-radius: 6px; margin-bottom: 1rem; font-size: .82rem; color: #5d4037; }
+.wf-banner strong { color: #4e342e; }
+
+/* Sections (mostrate via JS show/hide) */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Commissioni */
+.comm-big { background: linear-gradient(135deg, #00844A 0%, #006837 100%); color: #fff; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
+.comm-big .big-num { font-size: 2.8rem; font-weight: 900; letter-spacing: -2px; line-height: 1; }
+.comm-big .big-lbl { font-size: .85rem; opacity: .9; margin-top: 6px; }
+.comm-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 1rem; }
+.comm-row .item { background: rgba(255,255,255,.1); padding: 12px 16px; border-radius: 8px; }
+.comm-row .item .v { font-size: 1.1rem; font-weight: 700; }
+.comm-row .item .l { font-size: .68rem; opacity: .85; text-transform: uppercase; letter-spacing: .5px; margin-top: 3px; }
+
+/* Materiali grid */
+.mat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.mat-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 1.25rem; }
+.mat-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--brand-light); color: var(--brand); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 12px; }
+.mat-card h4 { font-size: .95rem; font-weight: 700; margin-bottom: 4px; }
+.mat-card p { font-size: .78rem; color: var(--muted); line-height: 1.45; margin-bottom: 12px; }
+.mat-card .dl { background: var(--brand); color: #fff; padding: .35rem .75rem; border-radius: 6px; font-size: .78rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+
+/* Profile form */
+.profile-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 1.25rem; }
+.profile-field label { font-size: .72rem; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; display: block; }
+.profile-field input { width: 100%; padding: .55rem .8rem; border: 1px solid var(--line); border-radius: 6px; font-size: .9rem; font-family: inherit; }
+.commissions-readonly { background: #fafbfc; border-radius: 8px; padding: 14px 18px; margin-top: 1rem; }
+.commissions-readonly h5 { font-size: .78rem; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+.commissions-readonly .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.commissions-readonly .row > div { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; text-align: center; }
+.commissions-readonly .row .lbl { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
+.commissions-readonly .row .val { font-size: 1.1rem; font-weight: 700; color: var(--brand); margin-top: 3px; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-logo">evulery<span class="dot">.</span></div>
+            <div class="sidebar-brand-role">Area Reseller</div>
+        </div>
+        <nav class="sidebar-nav">
+            <a class="sidebar-link active" data-tab="dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a class="sidebar-link" data-tab="leads"><i class="bi bi-funnel"></i> I miei lead <span class="badge">3</span></a>
+            <a class="sidebar-link" data-tab="clients"><i class="bi bi-shop"></i> I miei clienti</a>
+            <a class="sidebar-link" data-tab="commissions"><i class="bi bi-cash-stack"></i> Le mie commissioni</a>
+            <a class="sidebar-link" data-tab="credits"><i class="bi bi-envelope-paper"></i> Crediti email <span class="badge" style="background:#0277bd;color:#fff;">1</span></a>
+            <a class="sidebar-link" data-tab="materials"><i class="bi bi-file-earmark-text"></i> Materiali</a>
+            <div class="sidebar-section">Account</div>
+            <a class="sidebar-link" data-tab="profile"><i class="bi bi-person"></i> Profilo</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar">M</div>
+                <div>
+                    <div style="color:#fff;font-weight:600;font-size:.85rem;">Mario Genova</div>
+                    <div style="font-size:.7rem;">Reseller Liguria</div>
+                </div>
+            </div>
+            <button class="sidebar-logout"><i class="bi bi-box-arrow-left"></i> Esci</button>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <div class="topbar-title" id="page-title">Dashboard</div>
+            <div style="font-size:.85rem;color:var(--muted);">Mario Genova · Reseller Liguria</div>
+        </div>
+
+        <div class="page">
+            <div class="wf-banner">
+                <strong>📐 WIREFRAME OPZIONE C — COMPLETO</strong> · Naviga la sidebar a sinistra per vedere le 6 sezioni. Tutto incluso: dashboard, lead, clienti, commissioni, materiali commerciali, profilo.
+            </div>
+
+            <!-- ============ DASHBOARD ============ -->
+            <div class="tab-content active" id="tab-dashboard">
+                <div class="page-header">
+                    <div>
+                        <div class="page-title">Benvenuto, Mario</div>
+                        <div class="page-sub">Riepilogo della tua attività di questo mese</div>
+                    </div>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#E3F2FD;color:#0277bd;"><i class="bi bi-funnel-fill"></i></div>
+                        <div><div class="val">3</div><div class="lbl">Lead aperti</div></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#E8F5E9;color:#00844A;"><i class="bi bi-shop"></i></div>
+                        <div><div class="val">4</div><div class="lbl">Clienti attivi</div></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#FFF3E0;color:#f57c00;"><i class="bi bi-cash"></i></div>
+                        <div><div class="val">€420</div><div class="lbl">Maturato questo mese</div></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#F3E5F5;color:#7B1FA2;"><i class="bi bi-trophy"></i></div>
+                        <div><div class="val">€2.840</div><div class="lbl">Totale lifetime</div></div>
+                    </div>
+                </div>
+
+                <div class="row2">
+                    <div>
+                        <div class="card">
+                            <div class="card-hdr">
+                                <span><i class="bi bi-bell"></i> Da contattare</span>
+                                <a href="#" class="card-hdr-link">Vai ai lead →</a>
+                            </div>
+                            <table class="tbl">
+                                <tbody>
+                                    <tr>
+                                        <td style="width:50%;"><div style="font-weight:600;">Osteria Il Vicolo</div><div style="font-size:.75rem;color:var(--muted);">Elena Romano · Genova</div></td>
+                                        <td><span class="fu-today"><i class="bi bi-bell-fill"></i> Oggi</span></td>
+                                        <td><a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><div style="font-weight:600;">Osteria Antica</div><div style="font-size:.75rem;color:var(--muted);">Sofia Marchetti · Savona</div></td>
+                                        <td><span class="fu-overdue"><i class="bi bi-exclamation-circle-fill"></i> Scaduto 2gg</span></td>
+                                        <td><a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-hdr">
+                                <span><i class="bi bi-plus-circle"></i> Lead recenti</span>
+                            </div>
+                            <table class="tbl">
+                                <tbody>
+                                    <tr>
+                                        <td><div style="font-weight:600;">Trattoria Bella Vista</div><div style="font-size:.75rem;color:var(--muted);">La Spezia · 2h fa</div></td>
+                                        <td><span class="badge b-new">Nuovo</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><div style="font-weight:600;">Pizzeria Mare Blu</div><div style="font-size:.75rem;color:var(--muted);">Imperia · 4 gg fa</div></td>
+                                        <td><span class="badge b-demo-sched">Demo prog.</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="card">
+                            <div class="card-hdr">
+                                <span><i class="bi bi-graph-up"></i> Performance</span>
+                            </div>
+                            <div class="card-body">
+                                <div style="margin-bottom:1rem;">
+                                    <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;">Conversion rate</div>
+                                    <div style="font-size:1.5rem;font-weight:800;color:var(--brand);">40%</div>
+                                    <div style="font-size:.72rem;color:var(--muted);">2 clienti su 5 demo</div>
+                                </div>
+                                <div style="margin-bottom:1rem;">
+                                    <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;">Tempo medio di chiusura</div>
+                                    <div style="font-size:1.5rem;font-weight:800;color:var(--ink);">18 giorni</div>
+                                </div>
+                                <div>
+                                    <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;">Cliente medio</div>
+                                    <div style="font-size:1.5rem;font-weight:800;color:var(--ink);">Pro €79</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ LEAD ============ -->
+            <div class="tab-content" id="tab-leads">
+                <div class="page-header">
+                    <div>
+                        <div class="page-title">I miei lead</div>
+                        <div class="page-sub">Lead a te assegnati. Solo informazioni essenziali (niente IP, referrer, note admin private).</div>
+                    </div>
+                </div>
+
+                <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr);">
+                    <div class="kpi-card" style="padding:.7rem;"><div><div class="val" style="color:#0277bd;font-size:1.1rem;">3</div><div class="lbl">Nuovi</div></div></div>
+                    <div class="kpi-card" style="padding:.7rem;"><div><div class="val" style="color:#f57c00;font-size:1.1rem;">2</div><div class="lbl">Contattati</div></div></div>
+                    <div class="kpi-card" style="padding:.7rem;"><div><div class="val" style="color:#7b1fa2;font-size:1.1rem;">1</div><div class="lbl">Demo prog.</div></div></div>
+                    <div class="kpi-card" style="padding:.7rem;"><div><div class="val" style="color:#c2185b;font-size:1.1rem;">1</div><div class="lbl">Trattativa</div></div></div>
+                    <div class="kpi-card" style="padding:.7rem;"><div><div class="val" style="color:#00844A;font-size:1.1rem;">1</div><div class="lbl">Clienti</div></div></div>
+                </div>
+
+                <div class="card">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Lead</th>
+                                <th>Ristorante</th>
+                                <th>Contatti</th>
+                                <th>Stato</th>
+                                <th>Follow-up</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight:700;">Elena Romano</td>
+                                <td>Osteria Il Vicolo<div style="font-size:.75rem;color:var(--muted);">Genova</div></td>
+                                <td><div>elena@osteriailvicolo.it</div><div style="font-size:.75rem;color:var(--muted);">+39 010 555432</div></td>
+                                <td><span class="badge b-contacted">Contattato</span></td>
+                                <td><span class="fu-today"><i class="bi bi-bell-fill"></i> Oggi</span></td>
+                                <td><a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:700;">Marco Rossi</td>
+                                <td>Trattoria Bella Vista<div style="font-size:.75rem;color:var(--muted);">La Spezia</div></td>
+                                <td><div>marco@bellavista.it</div><div style="font-size:.75rem;color:var(--muted);">+39 0187 234567</div></td>
+                                <td><span class="badge b-new">Nuovo</span></td>
+                                <td><span style="color:var(--muted);">—</span></td>
+                                <td><a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ============ CLIENTI ============ -->
+            <div class="tab-content" id="tab-clients">
+                <div class="page-header">
+                    <div>
+                        <div class="page-title">I miei clienti</div>
+                        <div class="page-sub">Tenant Evulery firmati grazie a te. Generano le tue commissioni ricurring.</div>
+                    </div>
+                </div>
+
+                <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#E8F5E9;color:#00844A;"><i class="bi bi-check-circle"></i></div>
+                        <div><div class="val">4</div><div class="lbl">Clienti attivi</div></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#F3E5F5;color:#7B1FA2;"><i class="bi bi-currency-euro"></i></div>
+                        <div><div class="val">€760</div><div class="lbl">Commissioni/anno attese</div></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#FFF3E0;color:#f57c00;"><i class="bi bi-x-circle"></i></div>
+                        <div><div class="val">0</div><div class="lbl">Disdetti</div></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Ristorante</th>
+                                <th>Piano</th>
+                                <th>Attivo dal</th>
+                                <th>Status</th>
+                                <th>Comm. annua</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight:700;">Trattoria Da Mario</td>
+                                <td><span style="background:#F3E5F5;color:#7B1FA2;padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:600;">Enterprise</span></td>
+                                <td style="font-size:.85rem;">15 mar 2026</td>
+                                <td><span class="badge b-customer">Attivo</span></td>
+                                <td style="font-weight:700;color:var(--brand);">€320</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:700;">Osteria Il Verde</td>
+                                <td><span style="background:#E3F2FD;color:#0277bd;padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:600;">Professional</span></td>
+                                <td style="font-size:.85rem;">22 mar 2026</td>
+                                <td><span class="badge b-customer">Attivo</span></td>
+                                <td style="font-weight:700;color:var(--brand);">€200</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:700;">Pizzeria Bella Napoli</td>
+                                <td><span style="background:#E3F2FD;color:#0277bd;padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:600;">Professional</span></td>
+                                <td style="font-size:.85rem;">8 apr 2026</td>
+                                <td><span class="badge b-customer">Attivo</span></td>
+                                <td style="font-weight:700;color:var(--brand);">€200</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:700;">Trattoria La Marina</td>
+                                <td><span style="background:#fff;color:var(--ink-soft);padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:600;border:1px solid var(--line);">Starter</span></td>
+                                <td style="font-size:.85rem;">2 mag 2026</td>
+                                <td><span class="badge b-customer">Attivo</span></td>
+                                <td style="font-weight:700;color:var(--brand);">€120</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top:1rem;background:#E8F5E9;border-left:4px solid var(--brand);border-radius:8px;padding:14px 18px;font-size:.85rem;color:var(--ink);line-height:1.55;">
+                    <strong style="color:var(--brand-dark);"><i class="bi bi-info-circle"></i> Cosa NON vedi qui:</strong>
+                    nomi cliente / contatti / dati operativi del ristorante (prenotazioni, fatturato, ecc.). Per privacy il reseller vede solo nome ristorante + piano. Per gestire il rapporto operativo col cliente, usate email/telefono.
+                </div>
+            </div>
+
+            <!-- ============ COMMISSIONI ============ -->
+            <div class="tab-content" id="tab-commissions">
+                <div class="page-header">
+                    <div>
+                        <div class="page-title">Le mie commissioni</div>
+                        <div class="page-sub">Calcolo basato sui clienti attivi col tuo profilo commissioni</div>
+                    </div>
+                </div>
+
+                <div class="comm-big">
+                    <div class="big-num">€2.840</div>
+                    <div class="big-lbl">Totale maturato lifetime (da quando sei reseller)</div>
+                    <div class="comm-row">
+                        <div class="item">
+                            <div class="v">€420</div>
+                            <div class="l">Questo mese</div>
+                        </div>
+                        <div class="item">
+                            <div class="v">€840</div>
+                            <div class="l">Annuali attese (a regime)</div>
+                        </div>
+                        <div class="item">
+                            <div class="v">€2.000</div>
+                            <div class="l">Setup totali (storico)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-hdr">
+                        <span><i class="bi bi-list-ul"></i> Breakdown per cliente</span>
+                    </div>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Ristorante</th>
+                                <th>Piano</th>
+                                <th>Attivo dal</th>
+                                <th>Setup incassato</th>
+                                <th>Recurring annua</th>
+                                <th>Maturato finora</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight:600;">Trattoria Da Mario</td>
+                                <td>Enterprise</td>
+                                <td style="font-size:.85rem;">15 mar 2026</td>
+                                <td style="font-weight:600;">€130</td>
+                                <td style="font-weight:600;">€320/anno</td>
+                                <td style="font-weight:700;color:var(--brand);">€180</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600;">Osteria Il Verde</td>
+                                <td>Professional</td>
+                                <td style="font-size:.85rem;">22 mar 2026</td>
+                                <td style="font-weight:600;">€130</td>
+                                <td style="font-weight:600;">€200/anno</td>
+                                <td style="font-weight:700;color:var(--brand);">€100</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600;">Pizzeria Bella Napoli</td>
+                                <td>Professional</td>
+                                <td style="font-size:.85rem;">8 apr 2026</td>
+                                <td style="font-weight:600;">€130</td>
+                                <td style="font-weight:600;">€200/anno</td>
+                                <td style="font-weight:700;color:var(--brand);">€65</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600;">Trattoria La Marina</td>
+                                <td>Starter</td>
+                                <td style="font-size:.85rem;">2 mag 2026</td>
+                                <td style="font-weight:600;">€130</td>
+                                <td style="font-weight:600;">€120/anno</td>
+                                <td style="font-weight:700;color:var(--brand);">€20</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="background:#FFF3E0;border-left:4px solid #f57c00;border-radius:8px;padding:14px 18px;font-size:.85rem;color:var(--ink);line-height:1.55;margin-top:1rem;">
+                    <strong style="color:#b71c1c;"><i class="bi bi-info-circle"></i> Modalità di pagamento:</strong>
+                    le commissioni maturate vengono liquidate via bonifico il <strong>15 del mese successivo</strong> all'incasso effettivo Evulery dal cliente. Per emettere fattura, contatta info@evulery.it
+                </div>
+            </div>
+
+            <!-- ============ CREDITI EMAIL ============ -->
+            <div class="tab-content" id="tab-credits">
+                <div class="page-header">
+                    <div>
+                        <div class="page-title">Crediti email</div>
+                        <div class="page-sub">Gestisci le richieste di ricarica crediti per i tuoi clienti</div>
+                    </div>
+                    <button style="background:var(--brand);color:#fff;padding:.55rem 1rem;border-radius:6px;font-weight:600;font-size:.85rem;border:0;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;">
+                        <i class="bi bi-plus-circle"></i> Nuova richiesta ricarica
+                    </button>
+                </div>
+
+                <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#FFF3E0;color:#f57c00;"><i class="bi bi-hourglass-split"></i></div>
+                        <div><div class="val">1</div><div class="lbl">In attesa</div></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#E8F5E9;color:#00844A;"><i class="bi bi-check-circle"></i></div>
+                        <div><div class="val">8</div><div class="lbl">Approvate</div></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#FFEBEE;color:#C62828;"><i class="bi bi-x-circle"></i></div>
+                        <div><div class="val">0</div><div class="lbl">Rifiutate</div></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#F3E5F5;color:#7B1FA2;"><i class="bi bi-envelope-paper-fill"></i></div>
+                        <div><div class="val">12.500</div><div class="lbl">Crediti totali accreditati</div></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-hdr">
+                        <span><i class="bi bi-clock-history"></i> Storico richieste</span>
+                    </div>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Cliente</th>
+                                <th>Quantità</th>
+                                <th>Note</th>
+                                <th>Stato</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background:#FFF8E1;">
+                                <td style="font-size:.85rem;">11 mag · 2h fa</td>
+                                <td style="font-weight:600;">Trattoria Da Mario</td>
+                                <td style="font-weight:700;color:var(--ink);">1.000</td>
+                                <td style="font-size:.8rem;color:var(--ink-soft);">Richiesta dal cliente per campagna primavera</td>
+                                <td><span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:.72rem;font-weight:700;color:#f57c00;background:#fff3e0;border:1.5px solid #f57c00;"><i class="bi bi-hourglass-split"></i> In attesa</span></td>
+                                <td><a href="#" class="btn-action"><i class="bi bi-eye"></i> Dettagli</a></td>
+                            </tr>
+                            <tr>
+                                <td style="font-size:.85rem;">5 mag · 6 gg fa</td>
+                                <td style="font-weight:600;">Osteria Il Verde</td>
+                                <td style="font-weight:700;color:var(--ink);">2.000</td>
+                                <td style="font-size:.8rem;color:var(--ink-soft);">—</td>
+                                <td><span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:.72rem;font-weight:700;color:#fff;background:var(--brand);border:1.5px solid var(--brand);"><i class="bi bi-check-circle-fill"></i> Approvata</span></td>
+                                <td><a href="#" class="btn-action"><i class="bi bi-eye"></i> Dettagli</a></td>
+                            </tr>
+                            <tr>
+                                <td style="font-size:.85rem;">28 apr · 13 gg fa</td>
+                                <td style="font-weight:600;">Pizzeria Bella Napoli</td>
+                                <td style="font-weight:700;color:var(--ink);">1.500</td>
+                                <td style="font-size:.8rem;color:var(--ink-soft);">Cliente parte campagna newsletter</td>
+                                <td><span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:.72rem;font-weight:700;color:#fff;background:var(--brand);border:1.5px solid var(--brand);"><i class="bi bi-check-circle-fill"></i> Approvata</span></td>
+                                <td><a href="#" class="btn-action"><i class="bi bi-eye"></i> Dettagli</a></td>
+                            </tr>
+                            <tr>
+                                <td style="font-size:.85rem;">15 apr · 26 gg fa</td>
+                                <td style="font-weight:600;">Trattoria La Marina</td>
+                                <td style="font-weight:700;color:var(--ink);">500</td>
+                                <td style="font-size:.8rem;color:var(--ink-soft);">Ricarica iniziale per lancio email marketing</td>
+                                <td><span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:.72rem;font-weight:700;color:#fff;background:var(--brand);border:1.5px solid var(--brand);"><i class="bi bi-check-circle-fill"></i> Approvata</span></td>
+                                <td><a href="#" class="btn-action"><i class="bi bi-eye"></i> Dettagli</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Modal/box form nuova richiesta (mostrato sempre per wireframe) -->
+                <div class="card" style="margin-top:1rem;border-left:4px solid var(--brand);">
+                    <div class="card-hdr"><span><i class="bi bi-plus-circle"></i> Nuova richiesta ricarica (mockup form)</span></div>
+                    <div class="card-body">
+                        <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;">
+                            <div>
+                                <label style="font-size:.72rem;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Cliente *</label>
+                                <select style="width:100%;padding:.55rem .8rem;border:1px solid var(--line);border-radius:6px;font-family:inherit;font-size:.9rem;">
+                                    <option>Trattoria Da Mario (Enterprise, saldo: 240 crediti)</option>
+                                    <option>Osteria Il Verde (Professional, saldo: 1.800 crediti)</option>
+                                    <option>Pizzeria Bella Napoli (Professional, saldo: 850 crediti)</option>
+                                    <option>Trattoria La Marina (Starter, saldo: 120 crediti)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size:.72rem;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Quantità *</label>
+                                <input type="number" value="1000" min="100" max="10000" step="100" style="width:100%;padding:.55rem .8rem;border:1px solid var(--line);border-radius:6px;font-family:inherit;font-size:.9rem;">
+                            </div>
+                        </div>
+                        <div style="margin-top:14px;">
+                            <label style="font-size:.72rem;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Note (opzionali)</label>
+                            <textarea style="width:100%;padding:.55rem .8rem;border:1px solid var(--line);border-radius:6px;font-family:inherit;font-size:.9rem;min-height:70px;" placeholder="Es. Cliente richiede ricarica per campagna festività">Richiesta dal cliente per campagna primavera</textarea>
+                        </div>
+                        <div style="margin-top:14px;background:#E3F2FD;border-left:3px solid #0277bd;padding:10px 14px;border-radius:6px;font-size:.8rem;color:#1a1d23;line-height:1.5;">
+                            <strong style="color:#0277bd;"><i class="bi bi-info-circle"></i> Come funziona:</strong>
+                            la richiesta viene inviata all'amministrazione Evulery. Una volta approvata, i crediti vengono accreditati al cliente automaticamente. Riceverai un'email di conferma. Tempo medio di approvazione: 1 giorno lavorativo.
+                        </div>
+                        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line);">
+                            <button style="background:#fff;color:var(--ink-soft);padding:.55rem 1.2rem;border-radius:6px;border:1px solid var(--line);font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;">Annulla</button>
+                            <button style="background:var(--brand);color:#fff;padding:.55rem 1.2rem;border-radius:6px;border:0;font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;">
+                                <i class="bi bi-send"></i> Invia richiesta
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ MATERIALI ============ -->
+            <div class="tab-content" id="tab-materials">
+                <div class="page-header">
+                    <div>
+                        <div class="page-title">Materiali commerciali</div>
+                        <div class="page-sub">Scarica e usa con i tuoi prospect</div>
+                    </div>
+                </div>
+
+                <div class="mat-grid">
+                    <div class="mat-card">
+                        <div class="mat-icon"><i class="bi bi-palette"></i></div>
+                        <h4>Brand book</h4>
+                        <p>Linee guida brand: palette, logomark, voice, glossario italiano</p>
+                        <a href="#" class="dl"><i class="bi bi-download"></i> Scarica HTML</a>
+                    </div>
+                    <div class="mat-card">
+                        <div class="mat-icon"><i class="bi bi-easel"></i></div>
+                        <h4>Pitch deck</h4>
+                        <p>12 slide complete con prezzi, conformità L.34, casi d'uso</p>
+                        <a href="#" class="dl"><i class="bi bi-download"></i> Scarica PDF</a>
+                    </div>
+                    <div class="mat-card">
+                        <div class="mat-icon"><i class="bi bi-file-earmark-pdf"></i></div>
+                        <h4>One-pager</h4>
+                        <p>Sintesi su una pagina, da mandare in email come allegato</p>
+                        <a href="#" class="dl"><i class="bi bi-download"></i> Scarica PDF</a>
+                    </div>
+                    <div class="mat-card">
+                        <div class="mat-icon"><i class="bi bi-shield-shaded"></i></div>
+                        <h4>Battlecard</h4>
+                        <p>10 obiezioni con risposte + confronto competitor</p>
+                        <a href="#" class="dl"><i class="bi bi-download"></i> Scarica HTML</a>
+                    </div>
+                    <div class="mat-card">
+                        <div class="mat-icon"><i class="bi bi-calculator"></i></div>
+                        <h4>ROI calculator</h4>
+                        <p>Pagina web interattiva: il cliente vede quanto risparmia</p>
+                        <a href="#" class="dl"><i class="bi bi-box-arrow-up-right"></i> Apri online</a>
+                    </div>
+                    <div class="mat-card">
+                        <div class="mat-icon"><i class="bi bi-envelope"></i></div>
+                        <h4>Email outbound pack</h4>
+                        <p>7 template di email pronti per outreach a freddo</p>
+                        <a href="#" class="dl"><i class="bi bi-download"></i> Scarica HTML</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ PROFILO ============ -->
+            <div class="tab-content" id="tab-profile">
+                <div class="page-header">
+                    <div>
+                        <div class="page-title">Profilo</div>
+                        <div class="page-sub">Gestisci i tuoi dati e password</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-hdr">
+                        <span><i class="bi bi-person"></i> Dati account</span>
+                    </div>
+                    <div class="profile-form">
+                        <div class="profile-field">
+                            <label>Nome</label>
+                            <input type="text" value="Mario" readonly style="background:#fafbfc;">
+                        </div>
+                        <div class="profile-field">
+                            <label>Cognome</label>
+                            <input type="text" value="Genova" readonly style="background:#fafbfc;">
+                        </div>
+                        <div class="profile-field" style="grid-column:1/-1;">
+                            <label>Email</label>
+                            <input type="email" value="reseller-test@evulery.it" readonly style="background:#fafbfc;">
+                        </div>
+                        <div class="profile-field">
+                            <label>Nuova password</label>
+                            <input type="password" placeholder="Almeno 8 caratteri">
+                        </div>
+                        <div class="profile-field">
+                            <label>Conferma nuova password</label>
+                            <input type="password" placeholder="Ripeti password">
+                        </div>
+                        <div style="grid-column:1/-1;">
+                            <button style="background:var(--brand);color:#fff;padding:.55rem 1rem;border-radius:6px;font-weight:600;font-size:.85rem;border:0;cursor:pointer;font-family:inherit;">
+                                <i class="bi bi-check-circle"></i> Aggiorna password
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-hdr">
+                        <span><i class="bi bi-cash-stack"></i> Le tue commissioni concordate</span>
+                    </div>
+                    <div class="card-body">
+                        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">
+                            Queste sono le commissioni che Evulery applica ai clienti che porti. Per modifiche, contatta info@evulery.it.
+                        </p>
+                        <div class="commissions-readonly">
+                            <div class="row">
+                                <div><div class="lbl">Setup</div><div class="val">€130</div></div>
+                                <div><div class="lbl">Starter/anno</div><div class="val">€120</div></div>
+                                <div><div class="lbl">Pro/anno</div><div class="val">€200</div></div>
+                                <div><div class="lbl">Enterprise/anno</div><div class="val">€320</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<script>
+// Tab switching
+document.querySelectorAll('.sidebar-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const tabId = link.getAttribute('data-tab');
+        if (!tabId) return;
+        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        document.getElementById('page-title').textContent = link.innerText.replace(/\d+/g, '').trim();
+    });
+});
+</script>
+
+</body>
+</html>

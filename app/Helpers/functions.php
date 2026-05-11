@@ -229,8 +229,10 @@ function role_label(string $role): string
         'owner'       => 'Proprietario',
         'admin'       => 'Amministratore',
         'superadmin'  => 'Super Admin',
+        'super_admin' => 'Super Admin',
         'staff'       => 'Staff',
         'manager'     => 'Manager',
+        'reseller'    => 'Reseller',
         default       => ucfirst($role),
     };
 }

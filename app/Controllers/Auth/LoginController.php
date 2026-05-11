@@ -78,6 +78,9 @@ class LoginController
         if (Auth::isSuperAdmin()) {
             Response::redirect(url('admin'));
         }
+        if (Auth::role() === 'reseller') {
+            Response::redirect(url('reseller'));
+        }
         Response::redirect(url('dashboard'));
     }
 }

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Reseller MVP (Opzione B)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #006837;
+    --brand-light: #E8F5E9;
+    --ink: #1a1d23;
+    --ink-soft: #495057;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --bg: #f5f6f8;
+    --sidebar-bg: #1a1d23;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg); color: var(--ink);
+    font-size: 14px; line-height: 1.5;
+}
+.layout { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+.sidebar { background: var(--sidebar-bg); color: #fff; display: flex; flex-direction: column; }
+.sidebar-brand { padding: 1.1rem 1.25rem; border-bottom: 1px solid #2a2d33; }
+.sidebar-brand-logo { color: #fff; font-size: 1.4rem; font-weight: 900; letter-spacing: -1px; }
+.sidebar-brand-logo .dot { color: #4ade80; }
+.sidebar-brand-role { font-size: .68rem; color: #4ade80; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
+.sidebar-nav { padding: .75rem .5rem; flex: 1; }
+.sidebar-link {
+    display: flex; align-items: center; gap: .65rem;
+    padding: .55rem .85rem; border-radius: 6px;
+    color: #adb5bd; text-decoration: none;
+    font-size: .85rem; font-weight: 500;
+    margin-bottom: 2px;
+}
+.sidebar-link.active { background: var(--brand); color: #fff; }
+.sidebar-link i { font-size: 1rem; width: 18px; }
+.sidebar-footer { padding: 1rem; border-top: 1px solid #2a2d33; font-size: .75rem; color: #6c757d; }
+.sidebar-user {
+    display: flex; align-items: center; gap: 10px; margin-bottom: .5rem;
+}
+.sidebar-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--brand); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .8rem;
+}
+.sidebar-logout {
+    background: transparent; color: #6c757d;
+    border: 1px solid #2a2d33; padding: .35rem .7rem;
+    border-radius: 6px; cursor: pointer; font-family: inherit;
+    width: 100%; text-align: left; font-size: .8rem;
+}
+.sidebar-logout:hover { color: #fff; border-color: #fff; }
+
+.main { padding: 0; }
+.topbar {
+    background: #fff; border-bottom: 1px solid var(--line);
+    padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center;
+}
+.topbar-title { font-weight: 700; font-size: 1.1rem; }
+.page { padding: 1.5rem; }
+
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }
+.page-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -.5px; }
+.page-sub { font-size: .85rem; color: var(--muted); margin-top: 4px; }
+
+.stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+.stat { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; border-top: 3px solid; }
+.stat .n { font-size: 1.5rem; font-weight: 800; line-height: 1; }
+.stat .l { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-top: 5px; font-weight: 600; }
+.st-new { border-top-color: #0277bd; } .st-new .n { color: #0277bd; }
+.st-contacted { border-top-color: #f57c00; } .st-contacted .n { color: #f57c00; }
+.st-demo { border-top-color: #7b1fa2; } .st-demo .n { color: #7b1fa2; }
+.st-negot { border-top-color: #c2185b; } .st-negot .n { color: #c2185b; }
+.st-customer { border-top-color: var(--brand); } .st-customer .n { color: var(--brand); }
+
+.filters { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; margin-bottom: 1rem; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.search-box { position: relative; flex: 1; min-width: 240px; }
+.search-box input { width: 100%; padding: .55rem .55rem .55rem 2.2rem; border: 1px solid var(--line); border-radius: 6px; font-size: .85rem; }
+.search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+.filters select { padding: .5rem .8rem; border: 1px solid var(--line); border-radius: 6px; font-size: .85rem; background: #fff; font-family: inherit; }
+
+.tbl-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl thead th { background: #fafbfc; padding: 12px 14px; text-align: left; font-size: .68rem; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid var(--line); }
+.tbl tbody td { padding: 14px; border-bottom: 1px solid var(--line); font-size: .85rem; vertical-align: middle; }
+.tbl tbody tr:hover { background: #fafbfc; cursor: pointer; }
+
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 100px; font-size: .72rem; font-weight: 700; border: 1.5px solid; }
+.badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.b-new { color: #0277bd; border-color: #0277bd; background: #e3f2fd; }
+.b-contacted { color: #f57c00; border-color: #f57c00; background: #fff3e0; }
+.b-demo-sched { color: #7b1fa2; border-color: #7b1fa2; background: #f3e5f5; }
+.b-negot { color: #c2185b; border-color: #c2185b; background: #fce4ec; }
+
+.fu-overdue { color: #C62828; background: #FFEBEE; border: 1.5px solid #C62828; padding: 3px 10px; border-radius: 100px; font-size: .72rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
+.fu-today { color: #E65100; background: #FFF3E0; border: 1.5px solid #E65100; padding: 3px 10px; border-radius: 100px; font-size: .72rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
+
+.btn-action { background: transparent; border: 1px solid var(--line); color: var(--ink-soft); padding: 4px 10px; border-radius: 4px; font-size: .8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+.btn-action:hover { border-color: var(--brand); color: var(--brand); }
+
+.wf-banner { background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 18px; border-radius: 6px; margin-bottom: 1rem; font-size: .82rem; color: #5d4037; }
+.wf-banner strong { color: #4e342e; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-logo">evulery<span class="dot">.</span></div>
+            <div class="sidebar-brand-role">Area Reseller</div>
+        </div>
+        <nav class="sidebar-nav">
+            <a class="sidebar-link active" href="#"><i class="bi bi-funnel"></i> I miei lead <span style="margin-left:auto;background:#ffc107;color:#1a1d23;padding:1px 7px;border-radius:100px;font-size:.68rem;font-weight:700;">3</span></a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar">M</div>
+                <div>
+                    <div style="color:#fff;font-weight:600;font-size:.85rem;">Mario Genova</div>
+                    <div style="font-size:.7rem;">Reseller Liguria</div>
+                </div>
+            </div>
+            <button class="sidebar-logout"><i class="bi bi-box-arrow-left"></i> Esci</button>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <div class="topbar-title">I miei lead</div>
+            <div style="font-size:.85rem;color:var(--muted);">Mario Genova · Reseller Liguria</div>
+        </div>
+
+        <div class="page">
+            <div class="wf-banner">
+                <strong>📐 WIREFRAME OPZIONE B</strong> · MVP minimal: solo "I miei lead". Nessuna altra sezione. Il reseller vede solo i lead a lui assegnati con i campi essenziali (niente IP, niente referrer, niente note admin private).
+            </div>
+
+            <div class="page-header">
+                <div>
+                    <div class="page-title">I miei lead</div>
+                    <div class="page-sub">8 lead attualmente assegnati a te</div>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat st-new"><div class="n">3</div><div class="l">Nuovi</div></div>
+                <div class="stat st-contacted"><div class="n">2</div><div class="l">Contattati</div></div>
+                <div class="stat st-demo"><div class="n">1</div><div class="l">Demo prog.</div></div>
+                <div class="stat st-negot"><div class="n">1</div><div class="l">In trattativa</div></div>
+                <div class="stat st-customer"><div class="n">1</div><div class="l">Cliente</div></div>
+            </div>
+
+            <div class="filters">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Cerca per nome o ristorante...">
+                </div>
+                <select>
+                    <option>Tutti gli stati</option>
+                    <option>Nuovo</option>
+                    <option>Contattato</option>
+                </select>
+            </div>
+
+            <div class="tbl-card">
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Lead</th>
+                            <th>Ristorante</th>
+                            <th>Contatti</th>
+                            <th>Stato</th>
+                            <th>Follow-up</th>
+                            <th>Assegnato</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight:700;">Elena Romano</td>
+                            <td>Osteria Il Vicolo<div style="font-size:.75rem;color:var(--muted);">Genova</div></td>
+                            <td><div>elena@osteriailvicolo.it</div><div style="font-size:.75rem;color:var(--muted);">+39 010 555432</div></td>
+                            <td><span class="badge b-contacted">Contattato</span></td>
+                            <td><span class="fu-today"><i class="bi bi-bell-fill"></i> Oggi</span></td>
+                            <td style="font-size:.8rem;color:var(--ink-soft);">9 mag · ieri</td>
+                            <td><a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:700;">Marco Rossi</td>
+                            <td>Trattoria Bella Vista<div style="font-size:.75rem;color:var(--muted);">La Spezia</div></td>
+                            <td><div>marco@bellavista.it</div><div style="font-size:.75rem;color:var(--muted);">+39 0187 234567</div></td>
+                            <td><span class="badge b-new">Nuovo</span></td>
+                            <td><span style="color:var(--muted);">—</span></td>
+                            <td style="font-size:.8rem;color:var(--ink-soft);">10 mag · 2h fa</td>
+                            <td><a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:700;">Giuseppe Bianchi</td>
+                            <td>Pizzeria Mare Blu<div style="font-size:.75rem;color:var(--muted);">Imperia</div></td>
+                            <td><div>giuseppe@mareblu.it</div><div style="font-size:.75rem;color:var(--muted);">+39 0183 998877</div></td>
+                            <td><span class="badge b-demo-sched">Demo prog.</span></td>
+                            <td style="font-size:.8rem;color:var(--ink-soft);">tra 3 giorni<br><span style="font-size:.7rem;color:#adb5bd;">14/05/2026</span></td>
+                            <td style="font-size:.8rem;color:var(--ink-soft);">7 mag · 4 gg fa</td>
+                            <td><a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:700;">Sofia Marchetti</td>
+                            <td>Osteria Antica<div style="font-size:.75rem;color:var(--muted);">Savona</div></td>
+                            <td><div>sofia@osteriaantica.it</div><div style="font-size:.75rem;color:var(--muted);">+39 019 445566</div></td>
+                            <td><span class="badge b-negot">In trattativa</span></td>
+                            <td><span class="fu-overdue"><i class="bi bi-exclamation-circle-fill"></i> Scaduto 2gg fa</span></td>
+                            <td style="font-size:.8rem;color:var(--ink-soft);">2 mag · 9 gg fa</td>
+                            <td><a href="#" class="btn-action"><i class="bi bi-eye"></i> Apri</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top:1.5rem;background:#fff;border:1px solid var(--line);border-radius:10px;padding:1.25rem;">
+                <h3 style="font-size:.95rem;font-weight:700;margin-bottom:.5rem;color:var(--ink);"><i class="bi bi-info-circle" style="color:var(--brand);"></i> Cosa NON è disponibile in Opzione B</h3>
+                <ul style="font-size:.82rem;color:var(--ink-soft);padding-left:18px;line-height:1.6;">
+                    <li>Pagina "I miei clienti" (lista dei tenant firmati grazie a te)</li>
+                    <li>Pagina "Le mie commissioni" (riepilogo guadagni maturati)</li>
+                    <li>Pagina "Materiali commerciali" (download brand book, calculator, battlecard)</li>
+                    <li>Settings profilo (cambio password autonomamente)</li>
+                    <li>Email automatica al reseller all'assegnazione lead</li>
+                </ul>
+                <p style="font-size:.78rem;color:var(--muted);margin-top:.75rem;font-style:italic;">
+                    Per tutti questi servizi, il reseller deve chiederti via email/WhatsApp. Funziona per i primi 1-2 reseller pilota, scarso al crescere del programma.
+                </p>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

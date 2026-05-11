@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Admin Credit Requests</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #006837;
+    --brand-light: #E8F5E9;
+    --ink: #1a1d23;
+    --ink-soft: #495057;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --bg: #f5f6f8;
+    --sidebar-bg: #1a1d23;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.5; }
+.layout { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+.sidebar { background: var(--sidebar-bg); color: #fff; display: flex; flex-direction: column; }
+.sidebar-brand { padding: 1.1rem 1.25rem; border-bottom: 1px solid #2a2d33; }
+.sidebar-brand-logo { color: #fff; font-size: 1.4rem; font-weight: 900; letter-spacing: -1px; }
+.sidebar-brand-logo .dot { color: #4ade80; }
+.sidebar-brand-role { font-size: .68rem; color: #ffc107; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
+.sidebar-nav { padding: .75rem .5rem; flex: 1; }
+.sidebar-section { font-size: .62rem; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: .8px; padding: .75rem .85rem .35rem; margin-top: .25rem; }
+.sidebar-link { display: flex; align-items: center; gap: .65rem; padding: .55rem .85rem; border-radius: 6px; color: #adb5bd; text-decoration: none; font-size: .85rem; font-weight: 500; margin-bottom: 2px; }
+.sidebar-link:hover { background: #2a2d33; color: #fff; }
+.sidebar-link.active { background: var(--brand); color: #fff; }
+.sidebar-link i { font-size: 1rem; width: 18px; }
+.sidebar-link .badge { margin-left: auto; background: #ffc107; color: #1a1d23; padding: 1px 7px; border-radius: 100px; font-size: .68rem; font-weight: 700; }
+
+.main { padding: 0; }
+.topbar { background: #fff; border-bottom: 1px solid var(--line); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+.topbar-title { font-weight: 700; font-size: 1.1rem; }
+.page { padding: 1.5rem; }
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }
+.page-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -.5px; }
+.page-sub { font-size: .85rem; color: var(--muted); margin-top: 4px; }
+
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+.stat { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; border-top: 3px solid; }
+.stat .n { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+.stat .l { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-top: 6px; font-weight: 600; }
+.st-pending { border-top-color: #f57c00; } .st-pending .n { color: #f57c00; }
+.st-approved { border-top-color: var(--brand); } .st-approved .n { color: var(--brand); }
+.st-rejected { border-top-color: #C62828; } .st-rejected .n { color: #C62828; }
+.st-total { border-top-color: #7B1FA2; } .st-total .n { color: #7B1FA2; }
+
+.card { background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 1rem; }
+.card-hdr { padding: .85rem 1.25rem; border-bottom: 1px solid var(--line); background: #fafbfc; font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--ink-soft); display: flex; align-items: center; gap: 8px; }
+.card-hdr i { color: var(--brand); font-size: 1rem; }
+
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl thead th { background: #fafbfc; padding: 12px 14px; text-align: left; font-size: .68rem; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid var(--line); }
+.tbl tbody td { padding: 14px; border-bottom: 1px solid var(--line); font-size: .85rem; vertical-align: middle; }
+.tbl tbody tr:last-child td { border-bottom: 0; }
+.tbl tbody tr:hover { background: #fafbfc; }
+
+.req-pending { background: #FFF8E1 !important; }
+
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 100px; font-size: .72rem; font-weight: 700; border: 1.5px solid; }
+.b-pending { color: #f57c00; border-color: #f57c00; background: #fff3e0; }
+.b-approved { color: #fff; border-color: var(--brand); background: var(--brand); }
+.b-rejected { color: #C62828; border-color: #C62828; background: #FFEBEE; }
+
+.action-buttons { display: flex; gap: 6px; }
+.btn-approve { background: var(--brand); color: #fff; border: 0; padding: 5px 12px; border-radius: 6px; font-size: .78rem; font-weight: 600; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 5px; }
+.btn-approve:hover { background: var(--brand-dark); }
+.btn-reject { background: #fff; color: #C62828; border: 1.5px solid #C62828; padding: 4px 11px; border-radius: 6px; font-size: .78rem; font-weight: 600; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 5px; }
+.btn-reject:hover { background: #C62828; color: #fff; }
+.btn-detail { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); padding: 4px 10px; border-radius: 6px; font-size: .78rem; cursor: pointer; font-family: inherit; }
+
+.client-info { font-weight: 700; }
+.client-info .secondary { display: block; font-size: .72rem; color: var(--muted); font-weight: 400; margin-top: 2px; }
+.reseller-pill { display: inline-flex; align-items: center; gap: 6px; background: #F3E5F5; color: #7B1FA2; padding: 3px 10px; border-radius: 100px; font-size: .72rem; font-weight: 600; }
+.qty { font-size: 1.1rem; font-weight: 800; color: var(--ink); }
+.qty .lbl { font-size: .7rem; font-weight: 500; color: var(--muted); margin-top: 2px; display: block; }
+
+.wf-banner { background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 18px; border-radius: 6px; margin-bottom: 1rem; font-size: .82rem; color: #5d4037; }
+.wf-banner strong { color: #4e342e; }
+
+.notes-cell { font-size: .8rem; color: var(--ink-soft); font-style: italic; max-width: 220px; }
+
+.expand-row { background: #FAFBFC; }
+.expand-content { padding: 1.25rem; }
+.expand-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.expand-box { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.25rem; }
+.expand-box h5 { font-size: .72rem; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+.expand-box .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: .85rem; }
+.expand-box .row:last-child { border-bottom: 0; }
+.expand-box .lbl { color: var(--muted); }
+.expand-box .val { font-weight: 600; color: var(--ink); }
+.reject-form { margin-top: 12px; background: #FFEBEE; border-left: 3px solid #C62828; padding: 12px 16px; border-radius: 6px; }
+.reject-form textarea { width: 100%; padding: .5rem .8rem; border: 1px solid var(--line); border-radius: 6px; font-family: inherit; font-size: .82rem; margin-top: 6px; min-height: 50px; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-logo">evulery<span class="dot">.</span></div>
+            <div class="sidebar-brand-role">Super Admin</div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-section">Principale</div>
+            <a class="sidebar-link" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a class="sidebar-link" href="#"><i class="bi bi-shop"></i> Ristoranti</a>
+            <a class="sidebar-link" href="#"><i class="bi bi-people"></i> Utenti</a>
+            <a class="sidebar-link" href="#"><i class="bi bi-funnel"></i> Lead <span class="badge">3</span></a>
+            <a class="sidebar-link active" href="#"><i class="bi bi-envelope-paper"></i> Ricariche crediti <span class="badge">1</span></a>
+            <div class="sidebar-section">Business</div>
+            <a class="sidebar-link" href="#"><i class="bi bi-credit-card-2-front"></i> Abbonamenti</a>
+            <div class="sidebar-section">Sistema</div>
+            <a class="sidebar-link" href="#"><i class="bi bi-clock-history"></i> Log Attività</a>
+            <a class="sidebar-link" href="#"><i class="bi bi-gear"></i> Impostazioni</a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <div class="topbar-title">Admin Panel</div>
+            <div style="font-size:.85rem;color:var(--muted);">Stefano</div>
+        </div>
+
+        <div class="page">
+            <div class="wf-banner">
+                <strong>📐 WIREFRAME — Ricariche crediti email (lato admin)</strong> · Qui approvi o rifiuti le richieste dei reseller. La richiesta in attesa è evidenziata in giallo. Una volta approvata, il sistema accredita automaticamente i crediti al tenant.
+            </div>
+
+            <div class="page-header">
+                <div>
+                    <div class="page-title">Ricariche crediti</div>
+                    <div class="page-sub">Richieste di ricarica crediti email dai reseller</div>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat st-pending">
+                    <div class="n">1</div>
+                    <div class="l">In attesa</div>
+                </div>
+                <div class="stat st-approved">
+                    <div class="n">14</div>
+                    <div class="l">Approvate (mese)</div>
+                </div>
+                <div class="stat st-rejected">
+                    <div class="n">0</div>
+                    <div class="l">Rifiutate (mese)</div>
+                </div>
+                <div class="stat st-total">
+                    <div class="n">38.500</div>
+                    <div class="l">Crediti totali accreditati (mese)</div>
+                </div>
+            </div>
+
+            <!-- IN ATTESA -->
+            <div class="card">
+                <div class="card-hdr"><i class="bi bi-hourglass-split"></i> Richieste in attesa (1)</div>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Cliente</th>
+                            <th>Reseller</th>
+                            <th>Quantità</th>
+                            <th>Note</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="req-pending">
+                            <td style="font-size:.85rem;">11 mag 2026 · 11:32<br><span style="font-size:.7rem;color:var(--muted);">2 ore fa</span></td>
+                            <td class="client-info">
+                                Trattoria Da Mario
+                                <span class="secondary">Saldo attuale: 240 crediti · Piano Enterprise</span>
+                            </td>
+                            <td>
+                                <span class="reseller-pill"><i class="bi bi-person-check-fill"></i> Mario Genova</span>
+                            </td>
+                            <td><div class="qty">+1.000<span class="lbl">crediti</span></div></td>
+                            <td class="notes-cell">"Richiesta dal cliente per campagna primavera"</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-approve"><i class="bi bi-check-circle-fill"></i> Approva</button>
+                                    <button class="btn-reject"><i class="bi bi-x-circle"></i> Rifiuta</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="expand-row">
+                            <td colspan="6">
+                                <div class="expand-content">
+                                    <div class="expand-grid">
+                                        <div class="expand-box">
+                                            <h5><i class="bi bi-info-circle"></i> Dettagli richiesta</h5>
+                                            <div class="row"><span class="lbl">Richiesta ID</span><span class="val">#RCH-0015</span></div>
+                                            <div class="row"><span class="lbl">Reseller</span><span class="val">Mario Genova (reseller-test@evulery.it)</span></div>
+                                            <div class="row"><span class="lbl">Cliente</span><span class="val">Trattoria Da Mario (Enterprise)</span></div>
+                                            <div class="row"><span class="lbl">Saldo attuale</span><span class="val">240 crediti</span></div>
+                                            <div class="row"><span class="lbl">Saldo dopo approvazione</span><span class="val" style="color:var(--brand);">1.240 crediti</span></div>
+                                            <div class="row"><span class="lbl">Inviata il</span><span class="val">11 maggio 2026 · 11:32</span></div>
+                                        </div>
+                                        <div class="expand-box">
+                                            <h5><i class="bi bi-chat-dots"></i> Note del reseller</h5>
+                                            <p style="font-style:italic;color:var(--ink);font-size:.88rem;line-height:1.55;">
+                                                "Il cliente vuole partire con una campagna primavera ai suoi 800 contatti. Vuole margine per un follow-up e per i nuovi iscritti del mese. Concordata ricarica da 1000 crediti."
+                                            </p>
+                                            <div class="reject-form" style="display:none;" id="reject-form-1">
+                                                <strong style="color:#C62828;font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;"><i class="bi bi-exclamation-triangle"></i> Motivo del rifiuto</strong>
+                                                <textarea placeholder="Es. Quantità eccessiva, contattare il cliente per concordare diversamente"></textarea>
+                                                <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end;">
+                                                    <button class="btn-detail">Annulla</button>
+                                                    <button class="btn-reject">Conferma rifiuto</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- STORICO -->
+            <div class="card">
+                <div class="card-hdr"><i class="bi bi-clock-history"></i> Storico (ultime 30 giorni)</div>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Cliente</th>
+                            <th>Reseller</th>
+                            <th>Quantità</th>
+                            <th>Stato</th>
+                            <th>Elaborata da</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-size:.85rem;">9 mag · 14:20</td>
+                            <td class="client-info">Trattoria La Marina<span class="secondary">Piano Starter</span></td>
+                            <td><span class="reseller-pill"><i class="bi bi-person-check-fill"></i> Mario Genova</span></td>
+                            <td><div class="qty">+500<span class="lbl">crediti</span></div></td>
+                            <td><span class="badge b-approved"><i class="bi bi-check-circle-fill"></i> Approvata</span></td>
+                            <td style="font-size:.8rem;color:var(--ink-soft);">Stefano · 9 mag 15:30<br><span style="color:var(--muted);font-size:.72rem;">in 1h 10min</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:.85rem;">5 mag · 09:15</td>
+                            <td class="client-info">Osteria Il Verde<span class="secondary">Piano Professional</span></td>
+                            <td><span class="reseller-pill"><i class="bi bi-person-check-fill"></i> Mario Genova</span></td>
+                            <td><div class="qty">+2.000<span class="lbl">crediti</span></div></td>
+                            <td><span class="badge b-approved"><i class="bi bi-check-circle-fill"></i> Approvata</span></td>
+                            <td style="font-size:.8rem;color:var(--ink-soft);">Stefano · 5 mag 10:00<br><span style="color:var(--muted);font-size:.72rem;">in 45min</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:.85rem;">28 apr · 17:42</td>
+                            <td class="client-info">Pizzeria Bella Napoli<span class="secondary">Piano Professional</span></td>
+                            <td><span class="reseller-pill"><i class="bi bi-person-check-fill"></i> Mario Genova</span></td>
+                            <td><div class="qty">+1.500<span class="lbl">crediti</span></div></td>
+                            <td><span class="badge b-approved"><i class="bi bi-check-circle-fill"></i> Approvata</span></td>
+                            <td style="font-size:.8rem;color:var(--ink-soft);">Stefano · 29 apr 09:00<br><span style="color:var(--muted);font-size:.72rem;">il giorno dopo</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top:1.5rem;background:#fff;border:1px solid var(--line);border-radius:10px;padding:1.25rem;">
+                <h3 style="font-size:.95rem;font-weight:700;margin-bottom:.5rem;color:var(--ink);"><i class="bi bi-info-circle" style="color:var(--brand);"></i> Cosa succede al click "Approva"</h3>
+                <ol style="font-size:.82rem;color:var(--ink-soft);padding-left:18px;line-height:1.7;">
+                    <li>Sistema chiama <code style="background:#f5f5f5;padding:1px 6px;border-radius:3px;">Tenant::addCredits()</code> per accreditare la quantità richiesta</li>
+                    <li>Crea entry in <code style="background:#f5f5f5;padding:1px 6px;border-radius:3px;">email_credit_transactions</code> con type="assignment" e description "Ricarica via reseller Mario Genova"</li>
+                    <li>Aggiorna stato richiesta a <strong>"approved"</strong>, processed_by_admin_id=tu, processed_at=NOW()</li>
+                    <li>Invia email automatica al reseller: <em>"La tua richiesta per Trattoria Da Mario è stata approvata. 1000 crediti accreditati."</em></li>
+                    <li>Audit log: <code style="background:#f5f5f5;padding:1px 6px;border-radius:3px;">credit_request_approved</code></li>
+                </ol>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

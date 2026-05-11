@@ -47,6 +47,9 @@ use App\Controllers\Ordering\OrderStoreController;
 use App\Controllers\Delivery\DeliveryBoardController;
 use App\Controllers\Dashboard\ReviewController;
 use App\Controllers\ReviewLandingController;
+use App\Controllers\Reseller\DashboardController as ResellerDashboardController;
+use App\Controllers\Reseller\LeadsController as ResellerLeadsController;
+use App\Controllers\Reseller\ProfileController as ResellerProfileController;
 
 // --- AUTH ROUTES ---
 $router->group('/auth', ['csrf'], function ($r) {
@@ -232,6 +235,16 @@ $router->group('/admin', ['auth', 'admin', 'csrf', 'dashboard-ratelimit'], funct
     // Profile
     $r->get('/profile', [ProfileController::class, 'show']);
     $r->post('/profile', [ProfileController::class, 'update']);
+});
+
+// --- RESELLER AREA ---
+$router->group('/reseller', ['auth', 'reseller', 'csrf', 'dashboard-ratelimit'], function ($r) {
+    $r->get('', [ResellerDashboardController::class, 'index']);
+    $r->get('/leads', [ResellerLeadsController::class, 'index']);
+    $r->get('/leads/{id}', [ResellerLeadsController::class, 'show']);
+    $r->post('/leads/{id}', [ResellerLeadsController::class, 'update']);
+    $r->get('/profile', [ResellerProfileController::class, 'show']);
+    $r->post('/profile', [ResellerProfileController::class, 'update']);
 });
 
 // --- API ROUTES (JSON) ---
