@@ -31,6 +31,15 @@ body {
 }
 .sidebar-brand-name { font-weight: 700; font-size: 1.1rem; }
 .sidebar-brand-logo { height: 26px; width: auto; display: block; margin-bottom: .35rem; }
+.sidebar-badge {
+    margin-left: auto;
+    background: #ffc107;
+    color: #1a1d23;
+    padding: 1px 7px;
+    border-radius: 100px;
+    font-size: .68rem;
+    font-weight: 700;
+}
 .sidebar-brand-role {
     font-size: .68rem; color: #ffc107; font-weight: 600;
     text-transform: uppercase; letter-spacing: .5px;

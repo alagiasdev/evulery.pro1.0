@@ -130,6 +130,27 @@ class DemoRequest
     }
 
     /**
+     * Lead con follow-up imminenti o scaduti, esclusi quelli "chiusi"
+     * (customer/lost). Utile per widget dashboard admin.
+     * Ordinati: prima i piu' scaduti, poi quelli di oggi/prossimi.
+     */
+    public function getUpcomingFollowups(int $limit = 5): array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT id, name, restaurant, email, status, next_followup_at, assigned_reseller_id,
+                    DATEDIFF(next_followup_at, CURDATE()) AS days_diff
+             FROM demo_requests
+             WHERE next_followup_at IS NOT NULL
+               AND status NOT IN ('customer', 'lost')
+             ORDER BY next_followup_at ASC
+             LIMIT :lim"
+        );
+        $stmt->bindValue('lim', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
      * Counter per dashboard admin. Chiave = status, valore = count.
      */
     public function countByStatus(): array

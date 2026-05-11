@@ -12,6 +12,7 @@ use App\Controllers\Admin\TenantsController;
 use App\Controllers\Admin\SubscriptionsController;
 use App\Controllers\Admin\ActivityLogController;
 use App\Controllers\Admin\UsersController;
+use App\Controllers\Admin\LeadsController;
 use App\Controllers\Dashboard\HomeController;
 use App\Controllers\Dashboard\HelpController;
 use App\Controllers\Dashboard\ReservationsController;
@@ -215,6 +216,11 @@ $router->group('/admin', ['auth', 'admin', 'csrf', 'dashboard-ratelimit'], funct
     // Users
     $r->get('/users', [UsersController::class, 'index']);
     $r->post('/impersonate/{id}', [UsersController::class, 'impersonate']);
+    // Leads (mini CRM)
+    $r->get('/leads', [LeadsController::class, 'index']);
+    $r->get('/leads/{id}', [LeadsController::class, 'show']);
+    $r->post('/leads/{id}', [LeadsController::class, 'update']);
+    $r->get('/leads/{id}/convert', [LeadsController::class, 'convert']);
     // Activity Log
     $r->get('/activity-log', [ActivityLogController::class, 'index']);
     $r->post('/activity-log/purge', [ActivityLogController::class, 'purge']);

@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Core\Database;
 use App\Core\Request;
+use App\Models\DemoRequest;
 
 class DashboardController
 {
@@ -137,6 +138,12 @@ class DashboardController
             $resTrend = round((($monthReservations - $lastMonthReservations) / $lastMonthReservations) * 100);
         }
 
+        // Upcoming follow-ups (lead da contattare)
+        $upcomingFollowups = [];
+        try {
+            $upcomingFollowups = (new DemoRequest())->getUpcomingFollowups(5);
+        } catch (\Throwable $e) { /* tabella non ancora migrata */ }
+
         view('admin/dashboard', [
             'title'                 => 'Admin Dashboard',
             'activeMenu'            => 'admin-home',
@@ -154,6 +161,7 @@ class DashboardController
             'recentTenants'         => $recentTenants,
             'expiredSubs'           => $expiredSubs,
             'expiringSubs'          => $expiringSubs,
+            'upcomingFollowups'     => $upcomingFollowups,
         ], 'admin');
     }
 }

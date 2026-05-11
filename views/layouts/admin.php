@@ -37,6 +37,15 @@
         <img src="<?= asset('img/Logo_evulery_footer.png') ?>" alt="Evulery" class="sidebar-brand-logo">
         <div class="sidebar-brand-role">Super Admin</div>
     </div>
+    <?php
+        // Counter lead "nuovi" per badge sidebar
+        $newLeadsCount = 0;
+        try {
+            $newLeadsCount = (int)\App\Core\Database::getInstance()
+                ->query("SELECT COUNT(*) FROM demo_requests WHERE status = 'new'")
+                ->fetchColumn();
+        } catch (\Throwable $e) { /* tabella non ancora migrata */ }
+    ?>
     <nav class="sidebar-nav">
         <div class="sidebar-section">Principale</div>
         <a class="sidebar-link <?= ($activeMenu ?? '') === 'admin-home' ? 'active' : '' ?>" href="<?= url('admin') ?>">
@@ -47,6 +56,12 @@
         </a>
         <a class="sidebar-link <?= ($activeMenu ?? '') === 'users' ? 'active' : '' ?>" href="<?= url('admin/users') ?>">
             <i class="bi bi-people"></i> Utenti
+        </a>
+        <a class="sidebar-link <?= ($activeMenu ?? '') === 'leads' ? 'active' : '' ?>" href="<?= url('admin/leads') ?>">
+            <i class="bi bi-funnel"></i> Lead
+            <?php if ($newLeadsCount > 0): ?>
+                <span class="sidebar-badge"><?= $newLeadsCount ?></span>
+            <?php endif; ?>
         </a>
 
         <div class="sidebar-section">Business</div>

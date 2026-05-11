@@ -195,7 +195,54 @@ $defaultStyle = ['icon' => 'bi-circle', 'bg' => '#F5F5F5', 'color' => '#757575']
             <span class="adm-card-hdr-title"><i class="bi bi-exclamation-triangle me-1"></i> Avvisi</span>
         </div>
         <div class="adm-card-body">
-            <?php $hasAlerts = !empty($expiredSubs) || !empty($expiringSubs) || !empty($inactiveTenants); ?>
+            <?php $hasAlerts = !empty($expiredSubs) || !empty($expiringSubs) || !empty($inactiveTenants) || !empty($upcomingFollowups); ?>
+
+            <?php if (!empty($upcomingFollowups)): ?>
+            <?php
+                // Separa follow-up scaduti / oggi / futuri per il box
+                $followupOverdue = 0;
+                $followupToday = 0;
+                foreach ($upcomingFollowups as $f) {
+                    if ((int)$f['days_diff'] < 0) $followupOverdue++;
+                    elseif ((int)$f['days_diff'] === 0) $followupToday++;
+                }
+                $hasUrgent = $followupOverdue > 0 || $followupToday > 0;
+                $boxBg = $hasUrgent ? '#FFEBEE' : '#E3F2FD';
+                $titleColor = $hasUrgent ? '#C62828' : '#1565C0';
+                $linkColor = $titleColor;
+            ?>
+            <div class="adm-alert-box" style="background: <?= $boxBg ?>;">
+                <div class="adm-alert-title" style="color: <?= $titleColor ?>;">
+                    <i class="bi bi-telephone"></i>
+                    <?php if ($followupOverdue > 0): ?>
+                        <?= $followupOverdue ?> follow-up scaduto/i<?= $followupToday > 0 ? ' · ' . $followupToday . ' oggi' : '' ?>
+                    <?php elseif ($followupToday > 0): ?>
+                        <?= $followupToday ?> follow-up da fare oggi
+                    <?php else: ?>
+                        Prossimi follow-up
+                    <?php endif; ?>
+                </div>
+                <div class="adm-alert-detail">
+                    <?php foreach ($upcomingFollowups as $f):
+                        $diff = (int)$f['days_diff'];
+                        if ($diff < 0) {
+                            $when = '<span style="color:#C62828;font-weight:600;">scaduto ' . abs($diff) . 'gg fa</span>';
+                        } elseif ($diff === 0) {
+                            $when = '<span style="color:#E65100;font-weight:600;">oggi</span>';
+                        } elseif ($diff === 1) {
+                            $when = 'domani';
+                        } else {
+                            $when = 'tra ' . $diff . ' giorni';
+                        }
+                    ?>
+                        <a href="<?= url('admin/leads/' . (int)$f['id']) ?>" style="color:inherit;text-decoration:none;">
+                            <?= e($f['restaurant']) ?> &mdash; <?= $when ?>
+                        </a><br>
+                    <?php endforeach; ?>
+                </div>
+                <a href="<?= url('admin/leads') ?>" style="font-size:.75rem;color: <?= $linkColor ?>;font-weight:600;text-decoration:none;display:inline-block;margin-top:.35rem;">Vai ai lead &rarr;</a>
+            </div>
+            <?php endif; ?>
             <?php if (!empty($expiredSubs)): ?>
             <div class="adm-alert-box" style="background:#FFEBEE;">
                 <div class="adm-alert-title" style="color:#C62828;">
