@@ -1269,6 +1269,165 @@ class MailService
     }
 
     /**
+     * Notifica al reseller: nuovo lead assegnato dall'admin.
+     */
+    public static function sendLeadAssignedToReseller(array $reseller, array $lead, ?string $adminName = null): bool
+    {
+        $email = $reseller['email'] ?? '';
+        if (!$email) {
+            return false;
+        }
+
+        $firstName    = e($reseller['first_name'] ?? 'Reseller');
+        $leadName     = e($lead['name'] ?? '');
+        $restaurant   = e($lead['restaurant'] ?? '');
+        $leadEmail    = e($lead['email'] ?? '');
+        $leadPhone    = e($lead['phone'] ?? '');
+        $messageRaw   = trim((string)($lead['message'] ?? ''));
+        $messageHtml  = $messageRaw ? '<p style="margin:8px 0 0;color:#495057;font-style:italic;">"' . nl2br(e($messageRaw)) . '"</p>' : '';
+        $leadUrl      = url('reseller/leads/' . (int)($lead['id'] ?? 0));
+        $assignedBy   = $adminName ? ' da ' . e($adminName) : '';
+        $appName      = e(env('APP_NAME', 'Evulery'));
+
+        $html = <<<HTML
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;">
+            <div style="background:#00844A;color:#fff;padding:24px 28px;">
+                <div style="font-size:13px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Nuovo lead assegnato</div>
+                <h1 style="font-size:22px;margin:6px 0 0;font-weight:800;">{$restaurant}</h1>
+            </div>
+            <div style="padding:24px 28px;color:#1a1d23;font-size:14px;line-height:1.6;">
+                <p>Ciao <strong>{$firstName}</strong>,</p>
+                <p>ti &egrave; stato assegnato{$assignedBy} un nuovo lead: <strong>{$restaurant}</strong>.</p>
+
+                <div style="background:#fafbfc;border:1px solid #e9ecef;border-radius:10px;padding:16px 18px;margin:18px 0;">
+                    <div style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#6c757d;font-weight:700;margin-bottom:6px;">Contatti</div>
+                    <div><strong>{$leadName}</strong></div>
+                    <div style="color:#495057;">
+                        <a href="mailto:{$leadEmail}" style="color:#00844A;text-decoration:none;">{$leadEmail}</a>
+                        <br><a href="tel:{$leadPhone}" style="color:#00844A;text-decoration:none;">{$leadPhone}</a>
+                    </div>
+                    {$messageHtml}
+                </div>
+
+                <p style="text-align:center;margin:24px 0;">
+                    <a href="{$leadUrl}" style="display:inline-block;background:#00844A;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;">
+                        Apri il lead nella tua area
+                    </a>
+                </p>
+
+                <p style="color:#6c757d;font-size:13px;margin-top:24px;">
+                    Tip: contatta il lead entro 24 ore. La velocit&agrave; di risposta &egrave; il fattore pi&ugrave; correlato alla conversione.
+                </p>
+            </div>
+            <div style="background:#f5f6f8;padding:14px 28px;font-size:12px;color:#6c757d;text-align:center;">
+                Questo &egrave; un avviso automatico da {$appName}.
+            </div>
+        </div>
+        HTML;
+
+        $service = new self();
+        return $service->send($email, "Nuovo lead assegnato: {$lead['restaurant']}", $html);
+    }
+
+    /**
+     * Notifica al reseller: richiesta ricarica crediti APPROVATA.
+     */
+    public static function sendCreditRequestApproved(array $reseller, array $request): bool
+    {
+        $email = $reseller['email'] ?? '';
+        if (!$email) {
+            return false;
+        }
+
+        $firstName  = e($reseller['first_name'] ?? 'Reseller');
+        $tenantName = e($request['tenant_name'] ?? '');
+        $credits    = number_format((int)$request['credits_requested'], 0, ',', '.');
+        $newBalance = number_format((int)$request['email_credits_balance'], 0, ',', '.');
+        $url        = url('reseller/credits');
+        $appName    = e(env('APP_NAME', 'Evulery'));
+
+        $html = <<<HTML
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;">
+            <div style="background:#00844A;color:#fff;padding:24px 28px;">
+                <div style="font-size:13px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Ricarica approvata</div>
+                <h1 style="font-size:22px;margin:6px 0 0;font-weight:800;">+{$credits} crediti email</h1>
+            </div>
+            <div style="padding:24px 28px;color:#1a1d23;font-size:14px;line-height:1.6;">
+                <p>Ciao <strong>{$firstName}</strong>,</p>
+                <p>la tua richiesta di ricarica per <strong>{$tenantName}</strong> &egrave; stata approvata. I crediti sono gi&agrave; disponibili sul saldo del cliente.</p>
+
+                <div style="background:#fafbfc;border:1px solid #e9ecef;border-radius:10px;padding:16px 18px;margin:18px 0;">
+                    <div style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#6c757d;font-weight:700;margin-bottom:6px;">Saldo attuale</div>
+                    <div style="font-size:22px;font-weight:800;color:#00844A;">{$newBalance} crediti</div>
+                </div>
+
+                <p style="text-align:center;margin:24px 0;">
+                    <a href="{$url}" style="display:inline-block;background:#00844A;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;">
+                        Vai allo storico ricariche
+                    </a>
+                </p>
+            </div>
+            <div style="background:#f5f6f8;padding:14px 28px;font-size:12px;color:#6c757d;text-align:center;">
+                Avviso automatico da {$appName}.
+            </div>
+        </div>
+        HTML;
+
+        $service = new self();
+        return $service->send($email, "Ricarica approvata: +{$credits} crediti per {$request['tenant_name']}", $html);
+    }
+
+    /**
+     * Notifica al reseller: richiesta ricarica crediti RIFIUTATA.
+     */
+    public static function sendCreditRequestRejected(array $reseller, array $request, string $reason): bool
+    {
+        $email = $reseller['email'] ?? '';
+        if (!$email) {
+            return false;
+        }
+
+        $firstName  = e($reseller['first_name'] ?? 'Reseller');
+        $tenantName = e($request['tenant_name'] ?? '');
+        $credits    = number_format((int)$request['credits_requested'], 0, ',', '.');
+        $reasonHtml = nl2br(e($reason));
+        $url        = url('reseller/credits');
+        $appName    = e(env('APP_NAME', 'Evulery'));
+
+        $html = <<<HTML
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;">
+            <div style="background:#C62828;color:#fff;padding:24px 28px;">
+                <div style="font-size:13px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Ricarica rifiutata</div>
+                <h1 style="font-size:22px;margin:6px 0 0;font-weight:800;">{$credits} crediti — {$tenantName}</h1>
+            </div>
+            <div style="padding:24px 28px;color:#1a1d23;font-size:14px;line-height:1.6;">
+                <p>Ciao <strong>{$firstName}</strong>,</p>
+                <p>la tua richiesta di ricarica per <strong>{$tenantName}</strong> non &egrave; stata approvata.</p>
+
+                <div style="background:#FFF3E0;border-left:3px solid #f57c00;border-radius:6px;padding:14px 18px;margin:18px 0;">
+                    <div style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#E65100;font-weight:700;margin-bottom:6px;">Motivo</div>
+                    <div style="color:#5d4037;">{$reasonHtml}</div>
+                </div>
+
+                <p>Per dubbi o chiarimenti, contatta direttamente l'amministratore.</p>
+
+                <p style="text-align:center;margin:24px 0;">
+                    <a href="{$url}" style="display:inline-block;background:#fff;color:#00844A;padding:12px 28px;border:2px solid #00844A;border-radius:8px;text-decoration:none;font-weight:600;">
+                        Apri lo storico
+                    </a>
+                </p>
+            </div>
+            <div style="background:#f5f6f8;padding:14px 28px;font-size:12px;color:#6c757d;text-align:center;">
+                Avviso automatico da {$appName}.
+            </div>
+        </div>
+        HTML;
+
+        $service = new self();
+        return $service->send($email, "Ricarica rifiutata: {$credits} crediti per {$request['tenant_name']}", $html);
+    }
+
+    /**
      * Send a plain text email (utility for system notifications, demo requests, etc.).
      */
     public static function sendRawEmail(string $to, string $subject, string $textBody, ?string $replyTo = null, ?string $replyToName = null): bool

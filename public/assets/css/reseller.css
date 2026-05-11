@@ -166,6 +166,27 @@ body {
 .rs-b-customer      { color: #fff; border-color: var(--rs-brand); background: var(--rs-brand); }
 .rs-b-lost          { color: #6c757d; border-color: #6c757d; background: #eceff1; }
 
+/* ===== Status badge clienti ===== */
+.rs-st { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 100px; font-size: .72rem; font-weight: 700; border: 1.5px solid; }
+.rs-st::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.rs-st-active   { color: #00844A; border-color: #00844A; background: #E8F5E9; }
+.rs-st-trial    { color: #1565C0; border-color: #1565C0; background: #E3F2FD; }
+.rs-st-expired  { color: #C62828; border-color: #C62828; background: #FFEBEE; }
+.rs-st-inactive { color: #6c757d; border-color: #6c757d; background: #eceff1; }
+
+/* ===== Status badge richieste ricarica ===== */
+.rs-rq { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 100px; font-size: .72rem; font-weight: 700; border: 1.5px solid; }
+.rs-rq::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.rs-rq-pending  { color: #E65100; border-color: #E65100; background: #FFF3E0; }
+.rs-rq-approved { color: #00844A; border-color: #00844A; background: #E8F5E9; }
+.rs-rq-rejected { color: #C62828; border-color: #C62828; background: #FFEBEE; }
+
+/* ===== Plan pill ===== */
+.rs-plan { display: inline-block; padding: 2px 9px; border-radius: 100px; font-size: .72rem; font-weight: 700; border: 1.5px solid; }
+.rs-plan-starter      { color: #1565C0; border-color: #1565C0; background: #E3F2FD; }
+.rs-plan-professional { color: #6A1B9A; border-color: #6A1B9A; background: #F3E5F5; }
+.rs-plan-enterprise   { color: #B71C1C; border-color: #B71C1C; background: #FFEBEE; }
+
 /* ===== Follow-up chips ===== */
 .rs-fu-overdue { color: #C62828; background: #FFEBEE; border: 1.5px solid #C62828; padding: 3px 10px; border-radius: 100px; font-size: .72rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
 .rs-fu-today   { color: #E65100; background: #FFF3E0; border: 1.5px solid #E65100; padding: 3px 10px; border-radius: 100px; font-size: .72rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
@@ -190,6 +211,19 @@ body {
 }
 .rs-field input:focus, .rs-field textarea:focus { outline: none; border-color: var(--rs-brand); }
 .rs-field-help { font-size: .72rem; color: var(--rs-muted); margin-top: .35rem; }
+
+/* ===== Materiali grid ===== */
+.rs-mat-section { margin-bottom: 1.5rem; }
+.rs-mat-section h3 { font-size: .82rem; font-weight: 700; color: var(--rs-ink-soft); text-transform: uppercase; letter-spacing: .5px; margin: 0 0 .75rem; }
+.rs-mat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.rs-mat-card { background: #fff; border: 1px solid var(--rs-line); border-radius: 12px; padding: 1.1rem; display: flex; flex-direction: column; }
+.rs-mat-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--rs-brand-light); color: var(--rs-brand); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 12px; }
+.rs-mat-card h4 { font-size: .95rem; font-weight: 700; margin: 0 0 4px; color: var(--rs-ink); }
+.rs-mat-card p { font-size: .78rem; color: var(--rs-muted); line-height: 1.45; margin: 0 0 12px; flex: 1; }
+.rs-mat-card .rs-btn { align-self: flex-start; }
+@media (max-width: 768px) {
+    .rs-mat-grid { grid-template-columns: 1fr; }
+}
 
 /* ===== Commissioni readonly ===== */
 .rs-comm-readonly { background: linear-gradient(135deg, var(--rs-brand) 0%, var(--rs-brand-dark) 100%); color: #fff; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.25rem; }

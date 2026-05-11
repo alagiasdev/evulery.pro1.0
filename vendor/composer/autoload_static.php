@@ -120,6 +120,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
 
     public static $classMap = array (
         'App\\Controllers\\Admin\\ActivityLogController' => __DIR__ . '/../..' . '/app/Controllers/Admin/ActivityLogController.php',
+        'App\\Controllers\\Admin\\CreditRequestsController' => __DIR__ . '/../..' . '/app/Controllers/Admin/CreditRequestsController.php',
         'App\\Controllers\\Admin\\DashboardController' => __DIR__ . '/../..' . '/app/Controllers/Admin/DashboardController.php',
         'App\\Controllers\\Admin\\LeadsController' => __DIR__ . '/../..' . '/app/Controllers/Admin/LeadsController.php',
         'App\\Controllers\\Admin\\SubscriptionsController' => __DIR__ . '/../..' . '/app/Controllers/Admin/SubscriptionsController.php',
@@ -161,8 +162,12 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Controllers\\Menu\\MenuPageController' => __DIR__ . '/../..' . '/app/Controllers/Menu/MenuPageController.php',
         'App\\Controllers\\Ordering\\OrderStoreController' => __DIR__ . '/../..' . '/app/Controllers/Ordering/OrderStoreController.php',
         'App\\Controllers\\ProfileController' => __DIR__ . '/../..' . '/app/Controllers/ProfileController.php',
+        'App\\Controllers\\Reseller\\ClientsController' => __DIR__ . '/../..' . '/app/Controllers/Reseller/ClientsController.php',
+        'App\\Controllers\\Reseller\\CommissionsController' => __DIR__ . '/../..' . '/app/Controllers/Reseller/CommissionsController.php',
+        'App\\Controllers\\Reseller\\CreditsController' => __DIR__ . '/../..' . '/app/Controllers/Reseller/CreditsController.php',
         'App\\Controllers\\Reseller\\DashboardController' => __DIR__ . '/../..' . '/app/Controllers/Reseller/DashboardController.php',
         'App\\Controllers\\Reseller\\LeadsController' => __DIR__ . '/../..' . '/app/Controllers/Reseller/LeadsController.php',
+        'App\\Controllers\\Reseller\\MaterialsController' => __DIR__ . '/../..' . '/app/Controllers/Reseller/MaterialsController.php',
         'App\\Controllers\\Reseller\\ProfileController' => __DIR__ . '/../..' . '/app/Controllers/Reseller/ProfileController.php',
         'App\\Controllers\\ReviewLandingController' => __DIR__ . '/../..' . '/app/Controllers/ReviewLandingController.php',
         'App\\Controllers\\UnsubscribeController' => __DIR__ . '/../..' . '/app/Controllers/UnsubscribeController.php',
@@ -186,6 +191,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Middleware\\RateLimitMiddleware' => __DIR__ . '/../..' . '/app/Middleware/RateLimitMiddleware.php',
         'App\\Middleware\\ResellerMiddleware' => __DIR__ . '/../..' . '/app/Middleware/ResellerMiddleware.php',
         'App\\Middleware\\TenantMiddleware' => __DIR__ . '/../..' . '/app/Middleware/TenantMiddleware.php',
+        'App\\Models\\CreditRechargeRequest' => __DIR__ . '/../..' . '/app/Models/CreditRechargeRequest.php',
         'App\\Models\\Customer' => __DIR__ . '/../..' . '/app/Models/Customer.php',
         'App\\Models\\DeliveryZone' => __DIR__ . '/../..' . '/app/Models/DeliveryZone.php',
         'App\\Models\\DemoRequest' => __DIR__ . '/../..' . '/app/Models/DemoRequest.php',

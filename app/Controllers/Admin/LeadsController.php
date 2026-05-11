@@ -8,6 +8,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Models\DemoRequest;
 use App\Services\AuditLog;
+use App\Services\MailService;
 
 class LeadsController
 {
@@ -159,6 +160,27 @@ class LeadsController
                     $userId,
                     ['reseller_id' => $newAssigned]
                 );
+
+                // Notifica email al reseller (best-effort, non blocca su errori)
+                try {
+                    $stmtR = $db->prepare(
+                        "SELECT id, first_name, last_name, email
+                         FROM users
+                         WHERE id = :id AND role = 'reseller' AND is_active = 1
+                         LIMIT 1"
+                    );
+                    $stmtR->execute(['id' => $newAssigned]);
+                    $reseller = $stmtR->fetch();
+                    if ($reseller) {
+                        MailService::sendLeadAssignedToReseller(
+                            $reseller,
+                            $lead,
+                            Auth::user()['name'] ?? null
+                        );
+                    }
+                } catch (\Throwable $e) {
+                    app_log('Reseller assign email error: ' . $e->getMessage());
+                }
             }
             $changes[] = 'assegnazione';
         }

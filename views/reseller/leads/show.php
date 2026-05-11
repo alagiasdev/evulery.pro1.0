@@ -144,15 +144,11 @@
             </div>
         </div>
 
-        <?php if (!empty($lead['notes'])): ?>
-            <div class="rs-card">
-                <div class="rs-card-hdr">
-                    <span><i class="bi bi-journal-text"></i> Cronologia note</span>
-                </div>
-                <div class="rs-card-body" style="font-size:.85rem;color:var(--rs-ink-soft);white-space:pre-wrap;line-height:1.6;">
-<?= e($lead['notes']) ?>
-                </div>
-            </div>
-        <?php endif; ?>
+        <?php /*
+            Note storiche complete (blob $lead['notes']) NON mostrate al reseller:
+            contengono anche annotazioni admin private. Il reseller vede le proprie
+            note nello Storico attività qui sopra (filtrate per performed_by =
+            current_user da LeadsController::filterActivitiesForReseller).
+        */ ?>
     </div>
 </div>

@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'App\\Controllers\\Admin\\ActivityLogController' => $baseDir . '/app/Controllers/Admin/ActivityLogController.php',
+    'App\\Controllers\\Admin\\CreditRequestsController' => $baseDir . '/app/Controllers/Admin/CreditRequestsController.php',
     'App\\Controllers\\Admin\\DashboardController' => $baseDir . '/app/Controllers/Admin/DashboardController.php',
     'App\\Controllers\\Admin\\LeadsController' => $baseDir . '/app/Controllers/Admin/LeadsController.php',
     'App\\Controllers\\Admin\\SubscriptionsController' => $baseDir . '/app/Controllers/Admin/SubscriptionsController.php',
@@ -48,8 +49,12 @@ return array(
     'App\\Controllers\\Menu\\MenuPageController' => $baseDir . '/app/Controllers/Menu/MenuPageController.php',
     'App\\Controllers\\Ordering\\OrderStoreController' => $baseDir . '/app/Controllers/Ordering/OrderStoreController.php',
     'App\\Controllers\\ProfileController' => $baseDir . '/app/Controllers/ProfileController.php',
+    'App\\Controllers\\Reseller\\ClientsController' => $baseDir . '/app/Controllers/Reseller/ClientsController.php',
+    'App\\Controllers\\Reseller\\CommissionsController' => $baseDir . '/app/Controllers/Reseller/CommissionsController.php',
+    'App\\Controllers\\Reseller\\CreditsController' => $baseDir . '/app/Controllers/Reseller/CreditsController.php',
     'App\\Controllers\\Reseller\\DashboardController' => $baseDir . '/app/Controllers/Reseller/DashboardController.php',
     'App\\Controllers\\Reseller\\LeadsController' => $baseDir . '/app/Controllers/Reseller/LeadsController.php',
+    'App\\Controllers\\Reseller\\MaterialsController' => $baseDir . '/app/Controllers/Reseller/MaterialsController.php',
     'App\\Controllers\\Reseller\\ProfileController' => $baseDir . '/app/Controllers/Reseller/ProfileController.php',
     'App\\Controllers\\ReviewLandingController' => $baseDir . '/app/Controllers/ReviewLandingController.php',
     'App\\Controllers\\UnsubscribeController' => $baseDir . '/app/Controllers/UnsubscribeController.php',
@@ -73,6 +78,7 @@ return array(
     'App\\Middleware\\RateLimitMiddleware' => $baseDir . '/app/Middleware/RateLimitMiddleware.php',
     'App\\Middleware\\ResellerMiddleware' => $baseDir . '/app/Middleware/ResellerMiddleware.php',
     'App\\Middleware\\TenantMiddleware' => $baseDir . '/app/Middleware/TenantMiddleware.php',
+    'App\\Models\\CreditRechargeRequest' => $baseDir . '/app/Models/CreditRechargeRequest.php',
     'App\\Models\\Customer' => $baseDir . '/app/Models/Customer.php',
     'App\\Models\\DeliveryZone' => $baseDir . '/app/Models/DeliveryZone.php',
     'App\\Models\\DemoRequest' => $baseDir . '/app/Models/DemoRequest.php',

@@ -38,13 +38,14 @@
         <div class="sidebar-brand-role">Super Admin</div>
     </div>
     <?php
-        // Counter lead "nuovi" per badge sidebar
+        // Counter sidebar
         $newLeadsCount = 0;
+        $pendingCreditsCount = 0;
         try {
-            $newLeadsCount = (int)\App\Core\Database::getInstance()
-                ->query("SELECT COUNT(*) FROM demo_requests WHERE status = 'new'")
-                ->fetchColumn();
-        } catch (\Throwable $e) { /* tabella non ancora migrata */ }
+            $db = \App\Core\Database::getInstance();
+            $newLeadsCount = (int)$db->query("SELECT COUNT(*) FROM demo_requests WHERE status = 'new'")->fetchColumn();
+            $pendingCreditsCount = (int)$db->query("SELECT COUNT(*) FROM credit_recharge_requests WHERE status = 'pending'")->fetchColumn();
+        } catch (\Throwable $e) { /* tabelle non ancora migrate */ }
     ?>
     <nav class="sidebar-nav">
         <div class="sidebar-section">Principale</div>
@@ -67,6 +68,12 @@
         <div class="sidebar-section">Business</div>
         <a class="sidebar-link <?= ($activeMenu ?? '') === 'subscriptions' ? 'active' : '' ?>" href="<?= url('admin/subscriptions') ?>">
             <i class="bi bi-credit-card-2-front"></i> Abbonamenti
+        </a>
+        <a class="sidebar-link <?= ($activeMenu ?? '') === 'credit-requests' ? 'active' : '' ?>" href="<?= url('admin/credit-requests') ?>">
+            <i class="bi bi-envelope-paper"></i> Ricariche crediti
+            <?php if ($pendingCreditsCount > 0): ?>
+                <span class="sidebar-badge"><?= $pendingCreditsCount ?></span>
+            <?php endif; ?>
         </a>
 
         <div class="sidebar-section">Sistema</div>

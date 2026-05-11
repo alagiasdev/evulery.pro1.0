@@ -169,7 +169,11 @@ class DashboardController
         $setupAmount = (float)$profile['commission_setup'];
 
         foreach ($rows as $r) {
-            $annualCommission = $this->commissionForPlan($r['plan_name'] ?? '', $profile);
+            // Skip tenant senza piano/subscription: nessuna maturazione
+            if (empty($r['plan_name']) || empty($r['billing_cycle'])) {
+                continue;
+            }
+            $annualCommission = $this->commissionForPlan($r['plan_name'], $profile);
             $billingMonths = ($r['billing_cycle'] === 'semiannual') ? 6 : 12;
             $commissionPerPayment = $annualCommission * ($billingMonths / 12);
 

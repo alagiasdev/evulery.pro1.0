@@ -13,17 +13,27 @@
 <body>
 
 <?php
-    // Counter lead "Da contattare" del reseller (per badge sidebar)
+    // Counter sidebar
     $rsOpenLeadsCount = 0;
+    $rsPendingCreditsCount = 0;
     try {
-        $stmt = \App\Core\Database::getInstance()->prepare(
+        $db = \App\Core\Database::getInstance();
+        $uid = (int)(auth()['id'] ?? 0);
+        $stmt = $db->prepare(
             "SELECT COUNT(*) FROM demo_requests
              WHERE assigned_reseller_id = :uid
                AND status NOT IN ('customer','lost')"
         );
-        $stmt->execute(['uid' => auth()['id'] ?? 0]);
+        $stmt->execute(['uid' => $uid]);
         $rsOpenLeadsCount = (int)$stmt->fetchColumn();
-    } catch (\Throwable $e) { /* tabella non ancora migrata */ }
+
+        $stmt2 = $db->prepare(
+            "SELECT COUNT(*) FROM credit_recharge_requests
+             WHERE reseller_id = :uid AND status = 'pending'"
+        );
+        $stmt2->execute(['uid' => $uid]);
+        $rsPendingCreditsCount = (int)$stmt2->fetchColumn();
+    } catch (\Throwable $e) { /* tabelle non ancora migrate */ }
 ?>
 
 <!-- Mobile header -->
@@ -61,6 +71,23 @@
             <?php if ($rsOpenLeadsCount > 0): ?>
                 <span class="rs-sidebar-badge"><?= $rsOpenLeadsCount ?></span>
             <?php endif; ?>
+        </a>
+        <a class="rs-sidebar-link <?= ($activeMenu ?? '') === 'reseller-clients' ? 'active' : '' ?>" href="<?= url('reseller/clients') ?>">
+            <i class="bi bi-shop"></i> I miei clienti
+        </a>
+        <a class="rs-sidebar-link <?= ($activeMenu ?? '') === 'reseller-commissions' ? 'active' : '' ?>" href="<?= url('reseller/commissions') ?>">
+            <i class="bi bi-cash-stack"></i> Le mie commissioni
+        </a>
+        <a class="rs-sidebar-link <?= ($activeMenu ?? '') === 'reseller-credits' ? 'active' : '' ?>" href="<?= url('reseller/credits') ?>">
+            <i class="bi bi-envelope-paper"></i> Ricariche crediti
+            <?php if ($rsPendingCreditsCount > 0): ?>
+                <span class="rs-sidebar-badge"><?= $rsPendingCreditsCount ?></span>
+            <?php endif; ?>
+        </a>
+
+        <div class="rs-sidebar-section">Strumenti</div>
+        <a class="rs-sidebar-link <?= ($activeMenu ?? '') === 'reseller-materials' ? 'active' : '' ?>" href="<?= url('reseller/materials') ?>">
+            <i class="bi bi-file-earmark-text"></i> Materiali
         </a>
 
         <div class="rs-sidebar-section">Account</div>

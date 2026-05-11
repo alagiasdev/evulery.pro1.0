@@ -53,12 +53,26 @@ class User
         return (int)$this->db->lastInsertId();
     }
 
-    public function update(int $id, array $data): bool
+    /**
+     * Aggiorna l'utente.
+     *
+     * I campi privilegiati `role` e `is_active` sono accettati solo se
+     * `$allowPrivileged = true` (admin context). Le self-edit dal proprio
+     * profilo DEVONO chiamare con `false` (default) per impedire
+     * privilege escalation via mass-assignment.
+     */
+    public function update(int $id, array $data, bool $allowPrivileged = false): bool
     {
+        $allowedFields = ['first_name', 'last_name', 'email'];
+        if ($allowPrivileged) {
+            $allowedFields[] = 'is_active';
+            $allowedFields[] = 'role';
+        }
+
         $fields = [];
         $params = ['id' => $id];
 
-        foreach (['first_name', 'last_name', 'email', 'is_active', 'role'] as $field) {
+        foreach ($allowedFields as $field) {
             if (array_key_exists($field, $data)) {
                 $fields[] = "`{$field}` = :{$field}";
                 $params[$field] = $data[$field];

@@ -31,7 +31,7 @@ $firstName = explode(' ', (string)$userName, 2)[0] ?? 'Reseller';
             <div class="lbl">Maturato questo mese</div>
         </div>
     </div>
-    <div class="rs-kpi-card" style="align-items:flex-start;">
+    <a href="<?= url('reseller/commissions') ?>" class="rs-kpi-card" style="align-items:flex-start;text-decoration:none;color:inherit;">
         <div class="rs-kpi-icon" style="background:#F3E5F5;color:#7B1FA2;"><i class="bi bi-trophy"></i></div>
         <div style="flex:1;">
             <div class="val">€<?= number_format($lifetimeEarned, 0, ',', '.') ?></div>
@@ -40,8 +40,9 @@ $firstName = explode(' ', (string)$userName, 2)[0] ?? 'Reseller';
                 <span>Attivazioni: <strong style="color:#1a1d23;">€<?= number_format($lifetimeFromActivations, 0, ',', '.') ?></strong></span>
                 <span>Licenze: <strong style="color:#1a1d23;">€<?= number_format($lifetimeFromLicenses, 0, ',', '.') ?></strong></span>
             </div>
+            <div style="margin-top:8px;font-size:.72rem;color:#00844A;font-weight:600;">Vedi dettaglio →</div>
         </div>
-    </div>
+    </a>
 </div>
 
 <div style="background:#fff8e1;border-left:3px solid #ffc107;padding:.7rem 1rem;border-radius:6px;font-size:.8rem;color:#5d4037;margin-bottom:1.25rem;">

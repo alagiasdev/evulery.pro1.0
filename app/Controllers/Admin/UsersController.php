@@ -253,7 +253,8 @@ class UsersController
             $updateData['password'] = $password;
         }
 
-        $userModel->update($userId, $updateData);
+        // Admin context: allowPrivileged=true per is_active
+        $userModel->update($userId, $updateData, true);
 
         (new ResellerProfile())->update($userId, [
             'commission_setup'        => $this->parseCommission($data['commission_setup'] ?? null, ResellerProfile::DEFAULT_COMMISSION_SETUP),

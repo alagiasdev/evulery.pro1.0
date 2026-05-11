@@ -139,9 +139,15 @@ class LeadsController
         }
 
         if ($newFollowup !== null && $newFollowup !== '') {
-            $db->prepare('UPDATE demo_requests SET next_followup_at = :f WHERE id = :id')
-                ->execute(['f' => $newFollowup, 'id' => $id]);
-            $changes[] = 'follow-up';
+            // Accetta solo datetime-local 'Y-m-d\TH:i' o 'Y-m-d H:i'
+            $dt = \DateTime::createFromFormat('Y-m-d\TH:i', $newFollowup)
+                ?: \DateTime::createFromFormat('Y-m-d H:i', $newFollowup)
+                ?: \DateTime::createFromFormat('Y-m-d H:i:s', $newFollowup);
+            if ($dt) {
+                $db->prepare('UPDATE demo_requests SET next_followup_at = :f WHERE id = :id')
+                    ->execute(['f' => $dt->format('Y-m-d H:i:s'), 'id' => $id]);
+                $changes[] = 'follow-up';
+            }
         }
 
         if ($newNote !== '') {

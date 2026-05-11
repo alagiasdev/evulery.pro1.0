@@ -50,6 +50,11 @@ use App\Controllers\ReviewLandingController;
 use App\Controllers\Reseller\DashboardController as ResellerDashboardController;
 use App\Controllers\Reseller\LeadsController as ResellerLeadsController;
 use App\Controllers\Reseller\ProfileController as ResellerProfileController;
+use App\Controllers\Reseller\ClientsController as ResellerClientsController;
+use App\Controllers\Reseller\MaterialsController as ResellerMaterialsController;
+use App\Controllers\Reseller\CommissionsController as ResellerCommissionsController;
+use App\Controllers\Reseller\CreditsController as ResellerCreditsController;
+use App\Controllers\Admin\CreditRequestsController as AdminCreditRequestsController;
 
 // --- AUTH ROUTES ---
 $router->group('/auth', ['csrf'], function ($r) {
@@ -229,6 +234,10 @@ $router->group('/admin', ['auth', 'admin', 'csrf', 'dashboard-ratelimit'], funct
     $r->get('/leads/{id}', [LeadsController::class, 'show']);
     $r->post('/leads/{id}', [LeadsController::class, 'update']);
     $r->get('/leads/{id}/convert', [LeadsController::class, 'convert']);
+    // Credit requests
+    $r->get('/credit-requests', [AdminCreditRequestsController::class, 'index']);
+    $r->post('/credit-requests/{id}/approve', [AdminCreditRequestsController::class, 'approve']);
+    $r->post('/credit-requests/{id}/reject', [AdminCreditRequestsController::class, 'reject']);
     // Activity Log
     $r->get('/activity-log', [ActivityLogController::class, 'index']);
     $r->post('/activity-log/purge', [ActivityLogController::class, 'purge']);
@@ -243,6 +252,14 @@ $router->group('/reseller', ['auth', 'reseller', 'csrf', 'dashboard-ratelimit'],
     $r->get('/leads', [ResellerLeadsController::class, 'index']);
     $r->get('/leads/{id}', [ResellerLeadsController::class, 'show']);
     $r->post('/leads/{id}', [ResellerLeadsController::class, 'update']);
+    $r->get('/clients', [ResellerClientsController::class, 'index']);
+    $r->get('/commissions', [ResellerCommissionsController::class, 'index']);
+    $r->get('/credits', [ResellerCreditsController::class, 'index']);
+    $r->get('/credits/create', [ResellerCreditsController::class, 'create']);
+    $r->post('/credits', [ResellerCreditsController::class, 'store']);
+    $r->get('/materials', [ResellerMaterialsController::class, 'index']);
+    $r->get('/materials/{key}/preview', [ResellerMaterialsController::class, 'preview']);
+    $r->get('/materials/{key}', [ResellerMaterialsController::class, 'download']);
     $r->get('/profile', [ResellerProfileController::class, 'show']);
     $r->post('/profile', [ResellerProfileController::class, 'update']);
 });
