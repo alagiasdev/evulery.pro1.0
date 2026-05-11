@@ -3,6 +3,11 @@
         <h1 class="rs-page-title">I miei lead</h1>
         <p class="rs-page-sub">Lead a te assegnati. <?= (int)$totalCount ?> totali.</p>
     </div>
+    <div>
+        <a href="<?= url('reseller/leads/create') ?>" class="rs-btn rs-btn-primary">
+            <i class="bi bi-plus-circle"></i> Nuovo lead
+        </a>
+    </div>
 </div>
 
 <!-- Counter status -->

@@ -251,6 +251,8 @@ $router->group('/admin', ['auth', 'admin', 'csrf', 'dashboard-ratelimit'], funct
 $router->group('/reseller', ['auth', 'reseller', 'csrf', 'dashboard-ratelimit'], function ($r) {
     $r->get('', [ResellerDashboardController::class, 'index']);
     $r->get('/leads', [ResellerLeadsController::class, 'index']);
+    $r->get('/leads/create', [ResellerLeadsController::class, 'create']);
+    $r->post('/leads', [ResellerLeadsController::class, 'store']);
     $r->get('/leads/{id}', [ResellerLeadsController::class, 'show']);
     $r->post('/leads/{id}', [ResellerLeadsController::class, 'update']);
     $r->get('/clients', [ResellerClientsController::class, 'index']);

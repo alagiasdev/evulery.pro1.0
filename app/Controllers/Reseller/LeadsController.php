@@ -169,6 +169,109 @@ class LeadsController
         Response::redirect(url("reseller/leads/{$id}"));
     }
 
+    /**
+     * GET /reseller/leads/create — form aggiunta lead manuale.
+     */
+    public function create(Request $request): void
+    {
+        view('reseller/leads/create', [
+            'title'      => 'Nuovo lead',
+            'activeMenu' => 'reseller-leads',
+            'duplicate'  => null,
+            'old'        => [],
+            'force'      => false,
+        ], 'reseller');
+    }
+
+    /**
+     * POST /reseller/leads — salva nuovo lead.
+     *
+     * Auto-assigned al reseller corrente, status 'new', utm_source 'reseller_added'.
+     * Se esiste un lead recente con stessa email (30gg): avviso non bloccante,
+     * il reseller deve confermare con il flag `force` per procedere.
+     */
+    public function store(Request $request): void
+    {
+        $userId = Auth::id();
+        $data = $request->all();
+
+        $name       = trim($data['name'] ?? '');
+        $restaurant = trim($data['restaurant'] ?? '');
+        $email      = strtolower(preg_replace('/[\s\x{00A0}\x{200B}-\x{200D}\x{FEFF}]+/u', '', $data['email'] ?? ''));
+        $phone      = trim($data['phone'] ?? '');
+        $message    = trim($data['message'] ?? '') ?: null;
+        $force      = !empty($data['force']);
+
+        $old = compact('name', 'restaurant', 'email', 'phone', 'message');
+
+        if (!$name || !$restaurant || !$email) {
+            flash('danger', 'Nome, ristorante ed email sono obbligatori.');
+            $this->renderCreate($old);
+            return;
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            flash('danger', 'Email non valida.');
+            $this->renderCreate($old);
+            return;
+        }
+
+        $leadModel = new DemoRequest();
+
+        // Check duplicato negli ultimi 30 giorni — avviso non bloccante
+        if (!$force) {
+            $duplicate = $leadModel->findRecentDuplicate($email, 24 * 30);
+            if ($duplicate) {
+                view('reseller/leads/create', [
+                    'title'      => 'Nuovo lead',
+                    'activeMenu' => 'reseller-leads',
+                    'duplicate'  => $duplicate,
+                    'old'        => $old,
+                    'force'      => true,
+                ], 'reseller');
+                return;
+            }
+        }
+
+        $leadId = $leadModel->create([
+            'name'       => $name,
+            'restaurant' => $restaurant,
+            'email'      => $email,
+            'phone'      => $phone,
+            'message'    => $message,
+            'ip_address' => null,
+            'referrer'   => null,
+            'utm_source' => 'reseller_added',
+        ]);
+
+        // Auto-assignment al reseller corrente
+        // (placeholder distinti perché PDO nativo non riusa lo stesso name)
+        $db = Database::getInstance();
+        $db->prepare(
+            'UPDATE demo_requests
+             SET assigned_reseller_id = :ar, assigned_at = NOW(), assigned_by = :ab
+             WHERE id = :id'
+        )->execute(['ar' => $userId, 'ab' => $userId, 'id' => $leadId]);
+
+        // Activity log
+        $userName = Auth::user()['name'] ?? 'Reseller';
+        $leadModel->logActivity($leadId, 'created', "Lead aggiunto manualmente da {$userName}", $userId, ['source' => 'reseller_added']);
+        $leadModel->logActivity($leadId, 'assigned', "Auto-assegnato a {$userName}", $userId, ['reseller_id' => $userId]);
+
+        flash('success', "Lead \"{$restaurant}\" creato e assegnato a te.");
+        Response::redirect(url('reseller/leads/' . $leadId));
+    }
+
+    private function renderCreate(array $old): void
+    {
+        view('reseller/leads/create', [
+            'title'      => 'Nuovo lead',
+            'activeMenu' => 'reseller-leads',
+            'duplicate'  => null,
+            'old'        => $old,
+            'force'      => false,
+        ], 'reseller');
+    }
+
     private function myStatusCounts(int $userId): array
     {
         $db = Database::getInstance();
