@@ -216,6 +216,11 @@ $router->group('/admin', ['auth', 'admin', 'csrf', 'dashboard-ratelimit'], funct
     // Users
     $r->get('/users', [UsersController::class, 'index']);
     $r->post('/impersonate/{id}', [UsersController::class, 'impersonate']);
+    // Reseller CRUD (priority: rotte specifiche prima di {id})
+    $r->get('/users/reseller/create', [UsersController::class, 'createReseller']);
+    $r->post('/users/reseller', [UsersController::class, 'storeReseller']);
+    $r->get('/users/reseller/{id}/edit', [UsersController::class, 'editReseller']);
+    $r->post('/users/reseller/{id}', [UsersController::class, 'updateReseller']);
     // Leads (mini CRM)
     $r->get('/leads', [LeadsController::class, 'index']);
     $r->get('/leads/{id}', [LeadsController::class, 'show']);

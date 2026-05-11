@@ -197,6 +197,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Models\\Plan' => __DIR__ . '/../..' . '/app/Models/Plan.php',
         'App\\Models\\Promotion' => __DIR__ . '/../..' . '/app/Models/Promotion.php',
         'App\\Models\\PushSubscription' => __DIR__ . '/../..' . '/app/Models/PushSubscription.php',
+        'App\\Models\\ResellerProfile' => __DIR__ . '/../..' . '/app/Models/ResellerProfile.php',
         'App\\Models\\Reservation' => __DIR__ . '/../..' . '/app/Models/Reservation.php',
         'App\\Models\\ReservationLog' => __DIR__ . '/../..' . '/app/Models/ReservationLog.php',
         'App\\Models\\ReviewRequest' => __DIR__ . '/../..' . '/app/Models/ReviewRequest.php',

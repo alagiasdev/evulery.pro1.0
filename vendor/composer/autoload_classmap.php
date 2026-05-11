@@ -84,6 +84,7 @@ return array(
     'App\\Models\\Plan' => $baseDir . '/app/Models/Plan.php',
     'App\\Models\\Promotion' => $baseDir . '/app/Models/Promotion.php',
     'App\\Models\\PushSubscription' => $baseDir . '/app/Models/PushSubscription.php',
+    'App\\Models\\ResellerProfile' => $baseDir . '/app/Models/ResellerProfile.php',
     'App\\Models\\Reservation' => $baseDir . '/app/Models/Reservation.php',
     'App\\Models\\ReservationLog' => $baseDir . '/app/Models/ReservationLog.php',
     'App\\Models\\ReviewRequest' => $baseDir . '/app/Models/ReviewRequest.php',

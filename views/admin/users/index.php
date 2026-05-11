@@ -1,10 +1,17 @@
 <?php
-$roleLabels = ['super_admin' => 'Super Admin', 'owner' => 'Proprietario', 'staff' => 'Staff'];
-$roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#616161'];
+$roleLabels = ['super_admin' => 'Super Admin', 'owner' => 'Proprietario', 'staff' => 'Staff', 'reseller' => 'Reseller'];
+$roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#616161', 'reseller' => '#00844A'];
 ?>
 
-<h1 class="admin-page-title">Utenti</h1>
-<p class="admin-page-sub">Gestisci tutti gli utenti della piattaforma</p>
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem;">
+    <div>
+        <h1 class="admin-page-title">Utenti</h1>
+        <p class="admin-page-sub">Gestisci tutti gli utenti della piattaforma</p>
+    </div>
+    <a href="<?= url('admin/users/reseller/create') ?>" style="background:#00844A;color:#fff;padding:.55rem 1rem;border-radius:6px;font-weight:600;font-size:.85rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;">
+        <i class="bi bi-person-plus"></i> Nuovo reseller
+    </a>
+</div>
 
 <!-- Filters -->
 <div class="adm-card" style="margin-bottom:1.25rem;">
@@ -21,6 +28,7 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
                     <option value="super_admin" <?= ($filter['role'] ?? '') === 'super_admin' ? 'selected' : '' ?>>Super Admin</option>
                     <option value="owner" <?= ($filter['role'] ?? '') === 'owner' ? 'selected' : '' ?>>Proprietario</option>
                     <option value="staff" <?= ($filter['role'] ?? '') === 'staff' ? 'selected' : '' ?>>Staff</option>
+                    <option value="reseller" <?= ($filter['role'] ?? '') === 'reseller' ? 'selected' : '' ?>>Reseller</option>
                 </select>
             </div>
             <div style="flex:1;min-width:160px;">
@@ -166,7 +174,12 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
                 </td>
                 <td><?= $u['_statusBadge'] ?></td>
                 <td style="font-size:.78rem;color:#6c757d;"><?= $u['_lastLogin'] ?></td>
-                <td>
+                <td style="white-space:nowrap;">
+                    <?php if ($u['role'] === 'reseller'): ?>
+                    <a href="<?= url("admin/users/reseller/{$u['id']}/edit") ?>" class="adm-action-btn" title="Modifica reseller" style="font-size:.78rem;">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <?php endif; ?>
                     <?php if ($u['_canImpersonate']): ?>
                     <form method="POST" action="<?= url("admin/impersonate/{$u['id']}") ?>" style="display:inline;">
                         <?= csrf_field() ?>

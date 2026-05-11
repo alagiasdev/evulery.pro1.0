@@ -231,8 +231,11 @@ class LeadsController
 
     private function getResellers(): array
     {
-        // FASE 1: ritorna array vuoto. FASE 2 (quando ci saranno reseller veri):
-        // SELECT id, first_name, last_name FROM users WHERE role = 'reseller' ORDER BY first_name
-        return [];
+        return Database::getInstance()->query(
+            "SELECT id, first_name, last_name, email, is_active
+             FROM users
+             WHERE role = 'reseller' AND is_active = 1
+             ORDER BY first_name, last_name"
+        )->fetchAll();
     }
 }
