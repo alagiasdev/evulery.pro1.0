@@ -57,6 +57,20 @@ for ($i = 0; $i < 3; $i++) {
 
 $isUpcoming = !empty($isUpcoming);
 
+// Etichetta per il pill della data corrente nel page header
+$MONTHS_IT = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+$fmtDay = function (string $d) use ($DAYS_IT, $MONTHS_IT): string {
+    $dt = new DateTime($d);
+    return $DAYS_IT[(int)$dt->format('w')] . ' ' . $dt->format('d') . ' ' . $MONTHS_IT[(int)$dt->format('n') - 1] . ' ' . $dt->format('Y');
+};
+if ($isUpcoming) {
+    $headerBadge = 'Prossime in arrivo';
+} elseif ($isRange && $dateTo) {
+    $headerBadge = 'Dal ' . $fmtDay($date) . ' al ' . $fmtDay($dateTo);
+} else {
+    $headerBadge = $fmtDay($date);
+}
+
 // Frecce navigazione giorno ±1: solo per single-day (non in "Prossime" né in range)
 $prevDate = date('Y-m-d', strtotime($date . ' -1 day'));
 $nextDate = date('Y-m-d', strtotime($date . ' +1 day'));
@@ -67,6 +81,12 @@ $navQs = function (string $d) use ($status, $source): string {
     return url('dashboard/reservations') . '?' . implode('&', $parts);
 };
 ?>
+
+<!-- Page header -->
+<div class="res-page-header">
+    <h1>Prenotazioni</h1>
+    <p><span class="dh-date-badge"><?= e($headerBadge) ?></span></p>
+</div>
 
 <!-- Search bar (global) -->
 <form method="GET" action="<?= url('dashboard/reservations') ?>" class="gs-form" id="global-search-form">
