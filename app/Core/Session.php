@@ -22,15 +22,26 @@ class Session
             session_start();
 
             // Idle timeout: clear session data after 30 min of inactivity (without destroying cookie)
+            // PRESERVA il CSRF token: l'utente che torna dopo > 30 min al form login NON deve
+            // ricevere CSRF FAIL al submit (il token non è dato sensibile, è solo anti-CSRF)
             if (isset($_SESSION['_last_activity']) && (time() - $_SESSION['_last_activity']) > self::IDLE_TIMEOUT) {
+                $preservedCsrf = $_SESSION['_csrf_token'] ?? null;
                 $_SESSION = [];
                 session_regenerate_id(true);
+                if ($preservedCsrf !== null) {
+                    $_SESSION['_csrf_token'] = $preservedCsrf;
+                }
             }
 
             // Absolute timeout: clear session data after 8 hours regardless of activity
+            // Stesso preserve del CSRF token (vedi sopra)
             if (isset($_SESSION['_created_at']) && (time() - $_SESSION['_created_at']) > self::ABSOLUTE_TIMEOUT) {
+                $preservedCsrf = $_SESSION['_csrf_token'] ?? null;
                 $_SESSION = [];
                 session_regenerate_id(true);
+                if ($preservedCsrf !== null) {
+                    $_SESSION['_csrf_token'] = $preservedCsrf;
+                }
             }
 
             $_SESSION['_last_activity'] = time();
