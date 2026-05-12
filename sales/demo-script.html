@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo Script · Evulery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #006837;
+    --brand-light: #E8F5E9;
+    --ink: #1a1d23;
+    --ink-soft: #495057;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --bg: #f5f6f8;
+    --sidebar-bg: #1a1d23;
+    --warning: #f57c00;
+    --warning-light: #FFF3E0;
+    --danger: #C62828;
+    --danger-light: #FFEBEE;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+/* === Layout === */
+.ds-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+}
+
+/* === Sidebar === */
+.ds-sidebar {
+    background: var(--sidebar-bg);
+    color: #fff;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 1.5rem 0;
+}
+.ds-sidebar-brand {
+    padding: 0 1.5rem 1.25rem;
+    border-bottom: 1px solid #2a2d33;
+    margin-bottom: 1rem;
+}
+.ds-sidebar-logo {
+    font-size: 1.3rem;
+    font-weight: 900;
+    letter-spacing: -.5px;
+    color: #fff;
+}
+.ds-sidebar-logo .dot { color: #4ade80; }
+.ds-sidebar-sub {
+    font-size: .72rem;
+    color: #4ade80;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-top: 4px;
+}
+.ds-toc { padding: 0 1rem; list-style: none; }
+.ds-toc li { margin-bottom: 2px; }
+.ds-toc a {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: #adb5bd;
+    text-decoration: none;
+    font-size: .82rem;
+    font-weight: 500;
+    line-height: 1.4;
+    transition: all .15s;
+}
+.ds-toc a:hover { background: rgba(255,255,255,.06); color: #fff; }
+.ds-toc a.active { background: var(--brand); color: #fff; }
+.ds-toc .num {
+    flex-shrink: 0;
+    font-weight: 700;
+    color: #6c757d;
+    min-width: 20px;
+}
+.ds-toc a.active .num,
+.ds-toc a:hover .num { color: inherit; }
+.ds-toc .time {
+    margin-left: auto;
+    font-size: .68rem;
+    color: #6c757d;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.ds-toc a.active .time,
+.ds-toc a:hover .time { color: rgba(255,255,255,.85); }
+
+/* === Cronometro sticky === */
+.ds-timer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #fff;
+    border: 2px solid var(--brand);
+    border-radius: 12px;
+    padding: .6rem .9rem;
+    box-shadow: 0 6px 20px rgba(0,0,0,.08);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Inter', monospace;
+}
+.ds-timer.running { border-color: var(--warning); animation: pulse 2s infinite; }
+.ds-timer.over { border-color: var(--danger); }
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 6px 20px rgba(245,124,0,.15); }
+    50% { box-shadow: 0 6px 30px rgba(245,124,0,.4); }
+}
+.ds-timer-display {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -.5px;
+    min-width: 70px;
+}
+.ds-timer.running .ds-timer-display { color: var(--warning); }
+.ds-timer.over .ds-timer-display { color: var(--danger); }
+.ds-timer-controls { display: flex; gap: 4px; }
+.ds-timer-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s;
+}
+.ds-timer-btn:hover { background: var(--brand-light); border-color: var(--brand); color: var(--brand); }
+.ds-timer-label {
+    font-size: .65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+/* === Main === */
+.ds-main {
+    padding: 3rem 4rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+.ds-header {
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--line);
+    margin-bottom: 2.5rem;
+}
+.ds-header h1 {
+    font-size: 2.4rem;
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    color: var(--ink);
+    line-height: 1.1;
+}
+.ds-header p {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.6;
+}
+.ds-objective {
+    background: var(--brand-light);
+    border-left: 4px solid var(--brand);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 1rem;
+    color: var(--ink-soft);
+    font-size: .95rem;
+    line-height: 1.6;
+}
+.ds-objective strong { color: var(--brand-dark); }
+
+/* === Sezioni === */
+.ds-section { margin-bottom: 3rem; scroll-margin-top: 20px; }
+.ds-section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 1rem;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+}
+.ds-section-num {
+    background: var(--brand);
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1rem;
+    flex-shrink: 0;
+    line-height: 1;
+}
+.ds-section h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -.5px;
+    flex: 1;
+    line-height: 1.2;
+}
+.ds-section-time {
+    background: var(--warning-light);
+    color: var(--warning);
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.ds-section h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 1.5rem 0 .8rem;
+}
+.ds-section h4 {
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 1.2rem 0 .5rem;
+}
+.ds-section p { margin-bottom: .9rem; color: var(--ink-soft); }
+.ds-section ul, .ds-section ol { margin: 0 0 1rem 1.25rem; }
+.ds-section ul li, .ds-section ol li {
+    margin-bottom: .35rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+}
+.ds-section strong { color: var(--ink); }
+.ds-section code {
+    background: #f1f3f5;
+    color: var(--danger);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Inter', monospace;
+    font-size: .88em;
+}
+
+/* === Checklist interattive === */
+.ds-checklist { list-style: none; margin-left: 0 !important; }
+.ds-checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all .15s;
+}
+.ds-checklist li:hover { border-color: var(--brand); background: #fafffa; }
+.ds-checklist li.done {
+    background: var(--brand-light);
+    border-color: var(--brand);
+}
+.ds-checklist li.done .ds-check-label {
+    color: var(--muted);
+    text-decoration: line-through;
+}
+.ds-check {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--line);
+    border-radius: 5px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    transition: all .15s;
+}
+.ds-checklist li.done .ds-check {
+    background: var(--brand);
+    border-color: var(--brand);
+}
+.ds-checklist li.done .ds-check::after {
+    content: '\F26E';
+    font-family: 'bootstrap-icons';
+    font-size: .9rem;
+}
+.ds-check-label { flex: 1; line-height: 1.5; color: var(--ink-soft); }
+
+/* === Quote / script === */
+.ds-quote {
+    background: #fff;
+    border-left: 4px solid var(--brand);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 1rem 0;
+    font-style: italic;
+    color: var(--ink-soft);
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    line-height: 1.7;
+}
+.ds-script {
+    background: var(--brand-light);
+    border-left: 4px solid var(--brand);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 1rem 0;
+    color: var(--ink);
+    font-style: normal;
+    line-height: 1.7;
+}
+.ds-script::before {
+    content: '\F4A6';
+    font-family: 'bootstrap-icons';
+    color: var(--brand);
+    margin-right: 8px;
+    font-style: normal;
+}
+.ds-tip {
+    background: var(--warning-light);
+    border-left: 4px solid var(--warning);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin: 1rem 0;
+    font-size: .92rem;
+    color: #5d4037;
+    line-height: 1.6;
+}
+.ds-warn {
+    background: var(--danger-light);
+    border-left: 4px solid var(--danger);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin: 1rem 0;
+    font-size: .92rem;
+    color: #5d4037;
+    line-height: 1.6;
+}
+.ds-info {
+    background: #E3F2FD;
+    border-left: 4px solid #0277bd;
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin: 1rem 0;
+    font-size: .92rem;
+    color: #0d3550;
+    line-height: 1.6;
+}
+
+/* === Tabelle === */
+.ds-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+}
+.ds-table thead {
+    background: #fafbfc;
+}
+.ds-table th {
+    text-align: left;
+    padding: 12px 14px;
+    font-size: .72rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--ink-soft);
+    letter-spacing: .5px;
+    border-bottom: 1px solid var(--line);
+}
+.ds-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+    font-size: .9rem;
+    vertical-align: top;
+    color: var(--ink-soft);
+}
+.ds-table tr:last-child td { border-bottom: 0; }
+.ds-table tr:hover td { background: #fafbfc; }
+.ds-table strong { color: var(--ink); }
+
+/* === Obiezioni === */
+.ds-obj {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+}
+.ds-obj-q {
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+.ds-obj-q::before {
+    content: '\F4A6';
+    font-family: 'bootstrap-icons';
+    color: var(--danger);
+    margin-right: 6px;
+}
+.ds-obj-a {
+    color: var(--ink-soft);
+    font-style: italic;
+    line-height: 1.7;
+    padding-left: 12px;
+    border-left: 3px solid var(--brand);
+}
+.ds-obj-a::before {
+    content: '\F4A6';
+    font-family: 'bootstrap-icons';
+    color: var(--brand);
+    margin-right: 6px;
+    font-style: normal;
+}
+
+/* === Codice email === */
+.ds-code {
+    background: #1a1d23;
+    color: #e2e8f0;
+    padding: 16px 20px;
+    border-radius: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: .85rem;
+    line-height: 1.6;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    margin: 1rem 0;
+}
+
+/* === Variants === */
+.ds-variant {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--line);
+}
+.ds-variant.hot { border-left-color: var(--danger); }
+.ds-variant.warm { border-left-color: var(--warning); }
+.ds-variant.cold { border-left-color: #0277bd; }
+.ds-variant-label {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 6px;
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 100px;
+}
+.ds-variant.hot .ds-variant-label { background: var(--danger-light); color: var(--danger); }
+.ds-variant.warm .ds-variant-label { background: var(--warning-light); color: var(--warning); }
+.ds-variant.cold .ds-variant-label { background: #E3F2FD; color: #0277bd; }
+
+/* === Footer === */
+.ds-footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: .82rem;
+    text-align: center;
+}
+
+/* === Responsive === */
+@media (max-width: 1024px) {
+    .ds-layout { grid-template-columns: 240px 1fr; }
+    .ds-main { padding: 2rem 2rem; }
+}
+@media (max-width: 768px) {
+    .ds-layout { grid-template-columns: 1fr; }
+    .ds-sidebar {
+        position: relative;
+        height: auto;
+        padding: 1rem 0;
+    }
+    .ds-toc { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; }
+    .ds-toc li { flex-shrink: 0; }
+    .ds-main { padding: 1.5rem 1rem; }
+    .ds-header h1 { font-size: 1.8rem; }
+    .ds-timer { top: auto; bottom: 16px; right: 16px; }
+}
+
+/* === Print === */
+@media print {
+    .ds-sidebar, .ds-timer { display: none; }
+    .ds-main { padding: 1rem; max-width: 100%; }
+    body { background: #fff; }
+    .ds-section { page-break-inside: avoid; }
+    .ds-checklist li { background: #fff !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Cronometro sticky -->
+<div class="ds-timer" id="timer">
+    <div>
+        <div class="ds-timer-display" id="timer-display">00:00</div>
+        <div class="ds-timer-label">demo time</div>
+    </div>
+    <div class="ds-timer-controls">
+        <button class="ds-timer-btn" id="timer-start" title="Start/Pause">
+            <i class="bi bi-play-fill"></i>
+        </button>
+        <button class="ds-timer-btn" id="timer-reset" title="Reset">
+            <i class="bi bi-arrow-counterclockwise"></i>
+        </button>
+    </div>
+</div>
+
+<div class="ds-layout">
+
+    <!-- Sidebar TOC -->
+    <aside class="ds-sidebar">
+        <div class="ds-sidebar-brand">
+            <div class="ds-sidebar-logo">evulery<span class="dot">.</span></div>
+            <div class="ds-sidebar-sub">Demo Script</div>
+        </div>
+        <ul class="ds-toc" id="toc">
+            <li><a href="#s1"><span class="num">1.</span> Prima della demo <span class="time">15m prep</span></a></li>
+            <li><a href="#s2"><span class="num">2.</span> Apertura <span class="time">2m</span></a></li>
+            <li><a href="#s3"><span class="num">3.</span> Discovery <span class="time">5m</span></a></li>
+            <li><a href="#s4"><span class="num">4.</span> Demo guidata <span class="time">15m</span></a></li>
+            <li><a href="#s5"><span class="num">5.</span> Q&amp;A · obiezioni <span class="time">5m</span></a></li>
+            <li><a href="#s6"><span class="num">6.</span> Chiusura <span class="time">3m</span></a></li>
+            <li><a href="#s7"><span class="num">7.</span> Account demo</a></li>
+            <li><a href="#s8"><span class="num">8.</span> Reportistica</a></li>
+            <li><a href="#s9"><span class="num">9.</span> KPI</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main content -->
+    <main class="ds-main">
+
+        <header class="ds-header">
+            <h1>Demo Script</h1>
+            <p>Standardizza la demo per garantire qualità costante. Durata totale <strong>30 minuti</strong>, ottimizzata per chiusura/follow-up entro 48h.</p>
+            <div class="ds-objective">
+                <strong><i class="bi bi-lightbulb"></i> Usa il cronometro</strong> in alto a destra per tenere il ritmo: tutta la demo dovrebbe stare sotto i 30 minuti totali (25 contenuto + 5 Q&amp;A).
+            </div>
+        </header>
+
+        <!-- ====== 1. PRIMA DELLA DEMO ====== -->
+        <section class="ds-section" id="s1">
+            <div class="ds-section-header">
+                <span class="ds-section-num">1</span>
+                <h2>Prima della demo</h2>
+                <span class="ds-section-time"><i class="bi bi-clock"></i> 15m prep</span>
+            </div>
+
+            <p>Da fare <strong>almeno 1h prima</strong> dell'appuntamento.</p>
+
+            <h3>Checklist preparazione</h3>
+            <ul class="ds-checklist" data-storage-key="ds-prep">
+                <li><span class="ds-check"></span><span class="ds-check-label">Apri <strong>account demo</strong> in incognito (vedi sezione 7)</span></li>
+                <li><span class="ds-check"></span><span class="ds-check-label">Verifica che il calendario abbia prenotazioni della settimana precaricate (almeno 8-12)</span></li>
+                <li><span class="ds-check"></span><span class="ds-check-label">Apri in tab separate: Dashboard demo, Widget pubblico (<code>evulery.it/trattoria-da-mario</code>), Vetrina (<code>/hub</code>), Promo (<code>/promo</code>)</span></li>
+                <li><span class="ds-check"></span><span class="ds-check-label">Pitch deck PDF aperto in finestra separata (per sharing post-demo)</span></li>
+                <li><span class="ds-check"></span><span class="ds-check-label">Webcam ON, microfono testato</span></li>
+                <li><span class="ds-check"></span><span class="ds-check-label">One-pager PDF pronto da inviare a fine call</span></li>
+            </ul>
+
+            <h3>Ricerca rapida sul prospect <small style="color:var(--muted);font-weight:400;">(5 min)</small></h3>
+            <p>Apri Google + Maps e annota:</p>
+            <ul>
+                <li>Numero coperti (Maps "popolazione tipica")</li>
+                <li>Recensioni Google (numero + media stelle)</li>
+                <li>Già usa TheFork/Quandoo? (si vede dal sito)</li>
+                <li>Ha menù online? (sito web o solo PDF)</li>
+                <li>Ha un sito web professionale o solo Instagram?</li>
+            </ul>
+            <p>Queste info ti servono per <strong>personalizzare</strong> la demo (slide 8 case study lo trasformi in calcolo sul loro caso).</p>
+        </section>
+
+        <!-- ====== 2. APERTURA ====== -->
+        <section class="ds-section" id="s2">
+            <div class="ds-section-header">
+                <span class="ds-section-num">2</span>
+                <h2>Apertura</h2>
+                <span class="ds-section-time"><i class="bi bi-clock"></i> 2 min</span>
+            </div>
+
+            <p><strong>Tono</strong>: professionale ma rilassato. Niente "buongiorno gentile cliente".</p>
+
+            <div class="ds-script">
+                "Ciao [Nome], grazie del tempo. Mi presento velocemente: sono [Tuo nome] di Evulery, una piattaforma italiana di prenotazioni per ristoranti. Oggi ti mostro in 25 minuti come funziona, con un focus su cosa cambierebbe per il tuo locale specifico. Poi ci sono 5 minuti finali per le tue domande. Ti torna come scaletta?"
+            </div>
+
+            <p><strong>Conferma agenda</strong> prima di partire. Se interrompe → ascolta, non bloccarlo.</p>
+        </section>
+
+        <!-- ====== 3. DISCOVERY ====== -->
+        <section class="ds-section" id="s3">
+            <div class="ds-section-header">
+                <span class="ds-section-num">3</span>
+                <h2>Discovery</h2>
+                <span class="ds-section-time"><i class="bi bi-clock"></i> 5 min</span>
+            </div>
+
+            <div class="ds-objective">
+                <strong>Obiettivo</strong>: capire i suoi 2-3 dolori reali. <strong>Non venderli ancora</strong>, solo ascolta.
+            </div>
+
+            <h3>Domande chiave (in ordine di priorità)</h3>
+            <ol>
+                <li>"Come gestisci oggi le prenotazioni? Telefono, WhatsApp, TheFork, sito web?"</li>
+                <li>"Quanti coperti fai mediamente al servizio?"</li>
+                <li>"Hai un'idea di quanti no-show hai al mese? In media?"</li>
+                <li>"Le recensioni Google le gestisci tu o nessuno se ne occupa?"</li>
+                <li>"Stai usando già qualche tool tipo TheFork? Se sì, quanto stai pagando in commissioni?"</li>
+            </ol>
+
+            <h3>Segnali da catturare</h3>
+            <table class="ds-table">
+                <thead>
+                    <tr><th>Segnale</th><th>Cosa significa</th><th>Come usarlo dopo</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>"WhatsApp"</strong></td><td>Niente CRM, niente reminder, doppie prenotazioni</td><td>Slide 6 (flusso)</td></tr>
+                    <tr><td><strong>"TheFork" + commissioni</strong></td><td>Cliente ROI-driven</td><td>Slide 7 (vs concorrenti)</td></tr>
+                    <tr><td><strong>"Tante prenotazioni perse"</strong></td><td>No-show alto</td><td>Slide 3 (caparra) + slide 8 (ROI)</td></tr>
+                    <tr><td><strong>"Non gestisco recensioni"</strong></td><td>Esposto a Legge 34/2026</td><td>Slide 5 (compliance)</td></tr>
+                    <tr><td><strong>"Sito web già fatto"</strong></td><td>Embed widget rapido</td><td>Slide 4 (widget)</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Trappole da evitare</h3>
+            <div class="ds-warn">
+                <strong><i class="bi bi-x-circle-fill"></i> NON elencare le funzionalità subito</strong> ("abbiamo anche le push, le promo, gli ordini online…"). Aspetta di sapere cosa gli serve.
+            </div>
+            <div class="ds-warn">
+                <strong><i class="bi bi-x-circle-fill"></i> NON criticare il tool che usa già</strong> ("TheFork è una truffa"). Sii oggettivo: "TheFork ha un modello a commissione, noi abbiamo canone fisso. Sono modelli diversi."
+            </div>
+            <div class="ds-tip">
+                <strong><i class="bi bi-check-circle-fill"></i> Prendi appunti visibili sullo schermo</strong>, dimostra che ascolti.
+            </div>
+        </section>
+
+        <!-- ====== 4. DEMO GUIDATA ====== -->
+        <section class="ds-section" id="s4">
+            <div class="ds-section-header">
+                <span class="ds-section-num">4</span>
+                <h2>Demo guidata · 5 schermate</h2>
+                <span class="ds-section-time"><i class="bi bi-clock"></i> 15 min</span>
+            </div>
+
+            <div class="ds-objective">
+                <strong>Approccio</strong>: mostra <strong>5 schermate</strong> chiave, mai più. Una cosa alla volta. Pausa ogni 90 secondi per check.
+            </div>
+
+            <h3>Schermata 1 · Dashboard <small style="color:var(--muted);">(3 min)</small></h3>
+            <p><strong>Apri</strong>: dashboard demo (Trattoria Da Mario, oggi). Mostra in quest'ordine:</p>
+            <ol>
+                <li><strong>KPI giornata</strong> — "Vedi qui i tuoi coperti del giorno, quanti sono confermati, quanti arrivati, quanti no-show. Aggiornato in tempo reale."</li>
+                <li><strong>Lista prenotazioni</strong> — "Ordinate per orario. Ogni riga è una prenotazione. Cliccando vedi tutti i dettagli."</li>
+                <li><strong>Campanella</strong> (in alto a destra) — "Quando arriva una nuova prenotazione, suona qui. Senza dover stare con la dashboard aperta."</li>
+            </ol>
+            <div class="ds-script">
+                "Tutto questo è in tempo reale, anche da tablet o smartphone. Dopo il servizio sai esattamente quanti tavoli hai gestito e con che stato."
+            </div>
+
+            <h3>Schermata 2 · Widget cliente <small style="color:var(--muted);">(3 min)</small></h3>
+            <p><strong>Apri</strong>: <code>dash.evulery.it/trattoria-da-mario</code> in tab pulita. <strong>Fai una prenotazione finta dal vivo.</strong></p>
+            <ol>
+                <li>Scegli data, orario, persone</li>
+                <li>Mostra che il sistema <strong>propone solo orari realmente disponibili</strong></li>
+                <li>Mostra il modulo dati (nome, email, telefono)</li>
+                <li>Conferma → arriva email simulazione</li>
+            </ol>
+            <div class="ds-script">
+                "Il cliente prenota in 30 secondi. Niente account, niente registrazione. E il widget puoi metterlo dove vuoi: sul tuo sito web, nel link in bio Instagram, o come QR sul tavolo."
+            </div>
+
+            <h3>Schermata 3 · Caparra <small style="color:var(--muted);">(2 min)</small></h3>
+            <p><strong>Torna in dashboard → Impostazioni → Caparra.</strong> Mostra le 3 modalità:</p>
+            <ul>
+                <li><strong>Informativa</strong> (gratis, senza Stripe)</li>
+                <li><strong>Link di pagamento</strong> (Satispay, PayPal, ecc.)</li>
+                <li><strong>Stripe automatico</strong></li>
+            </ul>
+            <div class="ds-script">
+                "La caparra è il single best tool contro i no-show. Mediamente li riduce del 70-80%. Questo significa per un ristorante di 60 coperti circa €5-7.000 al mese di tavoli recuperati che prima andavano persi."
+            </div>
+            <div class="ds-tip">
+                <strong>Se il prospect ha già citato no-show alti</strong> in discovery → enfatizza qui. Se no, glissa veloce.
+            </div>
+
+            <h3>Schermata 4 · Vetrina Digitale <small style="color:var(--muted);">(3 min)</small></h3>
+            <p><strong>Apri</strong>: <code>dash.evulery.it/trattoria-da-mario/hub</code>. Mostra la pagina pubblica. Punta il QR code.</p>
+            <div class="ds-script">
+                "Questo è il 'link in bio' del tuo ristorante. Lo metti su Instagram, lo stampi sui biglietti, sul tavolo. Il cliente scansiona il QR e da qui può prenotare, vedere il menu, ordinare a casa, lasciarti una recensione, contattarti su WhatsApp. Una sola scansione, tutto.<br><br>
+                Stampala una volta in tipografia, le modifiche al menu o alle promozioni si vedono subito senza dover ristampare."
+            </div>
+
+            <h3>Schermata 5 · Reputazione (legge 34/2026) <small style="color:var(--muted);">(4 min)</small></h3>
+            <p><strong>Torna in dashboard → Reputazione → Panoramica.</strong> Mostra il flow:</p>
+            <ol>
+                <li>Cliente segnato come "arrivato" → trigger reminder</li>
+                <li>Email automatica chiede valutazione 1-5 stelle</li>
+                <li>Se stelle alte (4-5) → indirizzato a Google</li>
+                <li>Se stelle basse (1-3) → feedback privato, non pubblico</li>
+            </ol>
+            <div class="ds-script">
+                "Dal 7 aprile 2026 le recensioni online devono essere conformi alla Legge 34/2026: solo da clienti reali, entro 30 giorni, senza incentivi. Evulery rispetta tutti e tre i requisiti <strong>nativamente</strong>.<br><br>
+                Se uno usa metodi vecchi tipo regalare uno spritz per una recensione, oggi è fuori legge. Con noi ti adegui senza pensarci."
+            </div>
+            <div class="ds-warn">
+                <strong><i class="bi bi-exclamation-triangle-fill"></i> Questa è la slide di chiusura emotiva forte.</strong> Non la sottovalutare.
+            </div>
+        </section>
+
+        <!-- ====== 5. Q&A E OBIEZIONI ====== -->
+        <section class="ds-section" id="s5">
+            <div class="ds-section-header">
+                <span class="ds-section-num">5</span>
+                <h2>Q&amp;A e obiezioni</h2>
+                <span class="ds-section-time"><i class="bi bi-clock"></i> 5 min</span>
+            </div>
+
+            <h3>Obiezioni più frequenti</h3>
+
+            <div class="ds-obj">
+                <div class="ds-obj-q">"È tanto, €79 al mese."</div>
+                <div class="ds-obj-a">"Il caso medio recupera 5-7.000€/mese di tavoli persi. Anche prendendo solo il 10% di quel valore, l'investimento si ripaga in 2 settimane. Vuoi che facciamo un calcolo veloce sul tuo locale? Tra l'altro, se paghi annuale anticipato hai il 12% di sconto: il Professional ti costa €69,52/mese invece che €79."</div>
+            </div>
+
+            <div class="ds-obj">
+                <div class="ds-obj-q">"C'è un setup o costo di attivazione?"</div>
+                <div class="ds-obj-a">"Sì, l'attivazione è €249 una-tantum. Include il primo mese di servizio + l'onboarding dedicato (call di setup, training del tuo staff, migrazione dati da TheFork/Quandoo se ce l'hai). In pratica paghi €249 e parti con tutto già configurato e funzionante. Niente sorprese dopo."</div>
+            </div>
+
+            <div class="ds-obj">
+                <div class="ds-obj-q">"Ho già TheFork, perché cambiare?"</div>
+                <div class="ds-obj-a">"TheFork ha un modello a commissione: 2-3€ a coperto. Su 60 coperti/sera per 25 giorni al mese sono €4-5.000 all'anno solo di commissioni. Con noi paghi €79/mese fissi, indipendentemente da quanti coperti fai. Più cresci, più conviene."</div>
+            </div>
+
+            <div class="ds-obj">
+                <div class="ds-obj-q">"Non sono digitale, ho paura sia complicato."</div>
+                <div class="ds-obj-a">"Ti seguiamo personalmente nei primi 3 giorni: una call iniziale di setup di 60 minuti, poi training del tuo staff, poi assistenza chat tutto il primo mese. È esattamente quello che fa parte dell'attivazione. La dashboard è progettata per camerieri non tecnici."</div>
+            </div>
+
+            <div class="ds-obj">
+                <div class="ds-obj-q">"Devo pensarci."</div>
+                <div class="ds-obj-a">"Certo, prenditi il tempo. Ti propongo questo: ti mando l'one-pager con i piani, e ti riscrivo io tra 3 giorni con il calcolo specifico per il tuo locale. Va bene venerdì alle 11?" <em>(sempre proporre data fissa, mai "fammi sapere")</em></div>
+            </div>
+
+            <div class="ds-obj">
+                <div class="ds-obj-q">"Ho il commercialista che mi gestisce le recensioni."</div>
+                <div class="ds-obj-a">"Perfetto, e sa già come si adegua alla Legge 34/2026? Se vuoi gli giro io le specifiche tecniche, così le verifica."</div>
+            </div>
+
+            <h3>Domande tecniche frequenti</h3>
+            <table class="ds-table">
+                <thead><tr><th>Domanda</th><th>Risposta breve</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Funziona col mio sito WordPress?</strong></td><td>Sì, embed con 1 riga di codice. WordPress, Wix, Squarespace, HTML statico.</td></tr>
+                    <tr><td><strong>Posso importare i clienti da TheFork?</strong></td><td>Sì, esporti il CSV da TheFork e lo importi in 30 secondi. Incluso nel setup.</td></tr>
+                    <tr><td><strong>Quanto è il vincolo contrattuale?</strong></td><td>Zero. Cambi piano o disdici quando vuoi. Niente fee di uscita.</td></tr>
+                    <tr><td><strong>I miei dati dove sono?</strong></td><td>Server europei, GDPR compliant, backup giornalieri crittografati.</td></tr>
+                    <tr><td><strong>Il QR Code è personalizzabile?</strong></td><td>Sì, scarichi PNG ad alta risoluzione (1024×1024) per stampa tipografica.</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ====== 6. CHIUSURA ====== -->
+        <section class="ds-section" id="s6">
+            <div class="ds-section-header">
+                <span class="ds-section-num">6</span>
+                <h2>Chiusura</h2>
+                <span class="ds-section-time"><i class="bi bi-clock"></i> 3 min</span>
+            </div>
+
+            <div class="ds-objective">
+                <strong>Obiettivo</strong>: lasciare un <strong>next step concreto</strong>. Mai chiudere con "ti faccio sapere".
+            </div>
+
+            <h3>Script di chiusura per temperatura cliente</h3>
+
+            <div class="ds-variant hot">
+                <span class="ds-variant-label"><i class="bi bi-fire"></i> Cliente caldo</span>
+                <div style="font-style:italic;color:var(--ink-soft);line-height:1.7;">
+                    "Mi sembra che ci siamo capiti. Ti mando ora l'one-pager con i piani e i contatti. Vuoi partire direttamente con un setup la prossima settimana? Posso bloccarti martedì alle 10."
+                </div>
+            </div>
+
+            <div class="ds-variant warm">
+                <span class="ds-variant-label"><i class="bi bi-thermometer-half"></i> Cliente tiepido</span>
+                <div style="font-style:italic;color:var(--ink-soft);line-height:1.7;">
+                    "Capisco che vuoi confrontare. Ti mando l'one-pager + il pitch deck completo per email. Ti chiamo io venerdì mattina per rispondere alle tue domande. Va bene?"
+                </div>
+            </div>
+
+            <div class="ds-variant cold">
+                <span class="ds-variant-label"><i class="bi bi-snow"></i> Cliente freddo</span>
+                <div style="font-style:italic;color:var(--ink-soft);line-height:1.7;">
+                    "Grazie comunque del tempo. Ti mando l'one-pager. Se ti torna utile in futuro, sai dove trovarmi."
+                </div>
+            </div>
+
+            <h3>Materiale da inviare entro 30 minuti</h3>
+            <ul class="ds-checklist" data-storage-key="ds-postdemo">
+                <li><span class="ds-check"></span><span class="ds-check-label">One-pager PDF</span></li>
+                <li><span class="ds-check"></span><span class="ds-check-label">Pitch deck PDF (solo se cliente caldo, altrimenti è troppo)</span></li>
+                <li><span class="ds-check"></span><span class="ds-check-label">Email con riassunto: cosa abbiamo visto, prossimi step, data follow-up</span></li>
+                <li><span class="ds-check"></span><span class="ds-check-label">Calendar invite per il follow-up</span></li>
+            </ul>
+
+            <h3>Template email post-demo</h3>
+            <div class="ds-code">Oggetto: Evulery · Riepilogo demo
+
+Ciao [Nome],
+
+grazie per il tempo di oggi. Riassunto rapido:
+
+COSA TI HA INTERESSATO:
+- [punto 1 specifico, es. "Riduzione no-show con caparra Stripe"]
+- [punto 2 specifico, es. "Recensioni conformi L.34/2026"]
+- [punto 3 specifico, es. "Vetrina con QR per Instagram"]
+
+NUMERI SUL TUO CASO (60 coperti, scontrino €35):
+- Stima recupero coperti: +180/mese
+- Equivalente: ~€6.300/mese
+- Costo Evulery Professional: €79/mese (€69,52 con pagamento annuale)
+- Attivazione una-tantum: €249 (include primo mese + onboarding)
+
+ALLEGATI:
+- One-pager Evulery (PDF)
+- [Pitch deck completo se cliente caldo]
+
+PROSSIMI STEP:
+Ci risentiamo [data fissa]. Se nel frattempo hai dubbi, scrivimi.
+
+[Tuo nome]
+[Tel]
+info@evulery.it</div>
+        </section>
+
+        <!-- ====== 7. ACCOUNT DEMO ====== -->
+        <section class="ds-section" id="s7">
+            <div class="ds-section-header">
+                <span class="ds-section-num">7</span>
+                <h2>Credenziali account demo</h2>
+            </div>
+
+            <div class="ds-warn">
+                <strong><i class="bi bi-exclamation-triangle-fill"></i> Importante</strong>: l'account demo è <strong>condiviso</strong> tra te e i partner. Non modificare le impostazioni "strutturali" (orari, branding, prezzi). Le prenotazioni di test si possono creare/cancellare liberamente.
+            </div>
+
+            <h3>Accesso</h3>
+            <table class="ds-table">
+                <tbody>
+                    <tr><td><strong>URL dashboard</strong></td><td><code>dash.evulery.it/login</code></td></tr>
+                    <tr><td><strong>Email</strong></td><td><code>demo@evulery.it</code></td></tr>
+                    <tr><td><strong>Password</strong></td><td><em>condivisa via canale sicuro, non in repo Git</em></td></tr>
+                    <tr><td><strong>Ristorante demo</strong></td><td>Trattoria Da Mario · 60 coperti · Roma</td></tr>
+                    <tr><td><strong>Slug pubblico</strong></td><td><code>trattoria-da-mario</code></td></tr>
+                </tbody>
+            </table>
+
+            <h3>Cosa è precaricato</h3>
+            <ul>
+                <li>12 prenotazioni della settimana corrente con stati misti</li>
+                <li>50+ clienti con segmentazione varia (Nuovo, Abituale, VIP)</li>
+                <li>Menu digitale con 4 categorie e 25 piatti</li>
+                <li>2 promozioni attive (Martedì sconto + Lancio menu estivo)</li>
+                <li>Ordini online di esempio (asporto + delivery)</li>
+                <li>8 recensioni in panoramica reputazione</li>
+                <li>Vetrina Digitale online con palette Verde Bosco</li>
+            </ul>
+
+            <h3>Cosa NON modificare</h3>
+            <div class="ds-warn"><strong>Orari e coperti</strong> (il calendario è calibrato sui dati esempio)</div>
+            <div class="ds-warn"><strong>Branding</strong> (logo, copertina, palette Vetrina)</div>
+            <div class="ds-warn"><strong>Piano</strong> (è impostato su Enterprise per mostrare tutte le feature)</div>
+            <div class="ds-warn"><strong>Email del ristorante demo</strong> (riceveremmo email reali)</div>
+
+            <h3>Reset settimanale</h3>
+            <p>Ogni <strong>lunedì alle 6:00</strong> un cron resetta le prenotazioni della settimana e le ricarica con date aggiornate. Se durante la settimana il calendario "vuota troppo", scrivi su #sales-internal e lo rigenero a mano.</p>
+
+            <h3>Casi d'uso speciali</h3>
+            <table class="ds-table">
+                <thead><tr><th>Cosa vuoi mostrare</th><th>Come prepararlo</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Demo "no-show alto"</strong></td><td>Apri Reputazione → Filtri → mostra 3 no-show recenti</td></tr>
+                    <tr><td><strong>Demo "caparra Stripe"</strong></td><td>Apri prenotazioni → trova la riga "in attesa pagamento caparra"</td></tr>
+                    <tr><td><strong>Demo "campanella notifiche"</strong></td><td>Crea una prenotazione finta in altra tab → senti suono</td></tr>
+                    <tr><td><strong>Demo "ROI calcolato"</strong></td><td>Pitch deck slide 8 + personalizzala col loro N coperti</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ====== 8. REPORTISTICA ====== -->
+        <section class="ds-section" id="s8">
+            <div class="ds-section-header">
+                <span class="ds-section-num">8</span>
+                <h2>Reportistica post-demo</h2>
+            </div>
+
+            <p>Compila questo dopo ogni demo nel CRM (per ora foglio condiviso):</p>
+
+            <div class="ds-code">Data demo:
+Prospect (ristorante + città):
+Coperti dichiarati:
+Tool attuale (TheFork/WhatsApp/altro):
+3 dolori principali identificati:
+  1. ___
+  2. ___
+  3. ___
+Piano consigliato (Starter/Professional/Enterprise):
+Stato:
+  □ Caldo (chiusura prevista entro 1 settimana)
+  □ Tiepido (follow-up entro 7gg)
+  □ Freddo (re-contatto tra 30+ gg)
+Data follow-up:
+Note:</div>
+
+            <div class="ds-info">
+                <strong><i class="bi bi-graph-up"></i> Check settimanale</strong>: tasso conversione, demo medie/settimana, valore medio piano scelto.
+            </div>
+        </section>
+
+        <!-- ====== 9. KPI ====== -->
+        <section class="ds-section" id="s9">
+            <div class="ds-section-header">
+                <span class="ds-section-num">9</span>
+                <h2>KPI di riferimento</h2>
+            </div>
+
+            <table class="ds-table">
+                <thead>
+                    <tr><th>Metrica</th><th>Target</th><th>Note</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Demo/mese</strong></td><td>5</td><td>Da brief iniziale</td></tr>
+                    <tr><td><strong>Conversion rate demo → cliente</strong></td><td>30-40%</td><td>Industria SaaS B2B</td></tr>
+                    <tr><td><strong>Tempo medio sales cycle</strong></td><td>14 giorni</td><td>Inbound: 5-7gg · Outbound: 21+gg</td></tr>
+                    <tr><td><strong>Piano medio venduto</strong></td><td>Professional (€79)</td><td>Atteso 70% Pro, 20% Starter, 10% Enterprise</td></tr>
+                    <tr><td><strong>MRR target a 6 mesi</strong></td><td>€4-6k</td><td>5 demo/mese × 35% conv × €79</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <div class="ds-footer">
+            Versione 1.0 · 2026-04-25 · Manutenzione: aggiornare ogni 3 mesi sulla base dei feedback dei commerciali.
+        </div>
+
+    </main>
+</div>
+
+<script>
+/* === Cronometro === */
+(function() {
+    var seconds = 0;
+    var running = false;
+    var interval = null;
+    var display = document.getElementById('timer-display');
+    var btnStart = document.getElementById('timer-start');
+    var btnReset = document.getElementById('timer-reset');
+    var timer = document.getElementById('timer');
+
+    function format(s) {
+        var m = Math.floor(s / 60);
+        var sec = s % 60;
+        return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+    }
+    function update() {
+        display.textContent = format(seconds);
+        // Stato visivo: oltre 30 minuti → over
+        timer.classList.toggle('running', running && seconds <= 30 * 60);
+        timer.classList.toggle('over', seconds > 30 * 60);
+    }
+    btnStart.addEventListener('click', function() {
+        running = !running;
+        btnStart.innerHTML = running
+            ? '<i class="bi bi-pause-fill"></i>'
+            : '<i class="bi bi-play-fill"></i>';
+        if (running) {
+            interval = setInterval(function() { seconds++; update(); }, 1000);
+        } else {
+            clearInterval(interval);
+        }
+        update();
+    });
+    btnReset.addEventListener('click', function() {
+        if (running) {
+            running = false;
+            clearInterval(interval);
+            btnStart.innerHTML = '<i class="bi bi-play-fill"></i>';
+        }
+        seconds = 0;
+        update();
+    });
+})();
+
+/* === Checklist con persistenza === */
+(function() {
+    document.querySelectorAll('.ds-checklist').forEach(function(list) {
+        var key = list.getAttribute('data-storage-key') || 'ds-list';
+        var saved = {};
+        try { saved = JSON.parse(localStorage.getItem(key) || '{}'); } catch (e) {}
+
+        list.querySelectorAll('li').forEach(function(li, idx) {
+            if (saved[idx]) li.classList.add('done');
+            li.addEventListener('click', function() {
+                li.classList.toggle('done');
+                saved[idx] = li.classList.contains('done');
+                try { localStorage.setItem(key, JSON.stringify(saved)); } catch (e) {}
+            });
+        });
+    });
+})();
+
+/* === Scroll-spy: highlight sezione attiva in TOC === */
+(function() {
+    var sections = document.querySelectorAll('.ds-section');
+    var tocLinks = document.querySelectorAll('.ds-toc a');
+
+    function onScroll() {
+        var scrollY = window.scrollY + 100;
+        var current = null;
+        sections.forEach(function(s) {
+            if (s.offsetTop <= scrollY) current = s.id;
+        });
+        tocLinks.forEach(function(a) {
+            a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+        });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+})();
+</script>
+</body>
+</html>

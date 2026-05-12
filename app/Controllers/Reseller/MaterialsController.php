@@ -37,9 +37,9 @@ class MaterialsController
         'demo-script' => [
             'category'    => 'tools',
             'title'       => 'Demo script',
-            'description' => 'Traccia step-by-step per condurre una demo da 30 minuti. Domande, ordine, chiusura.',
+            'description' => 'Copilota interattivo per la demo: 9 fasi, cronometro, checklist persistenti. Tienilo aperto durante la chiamata.',
             'icon'        => 'mic',
-            'file'        => 'sales/demo-script.md',
+            'file'        => 'sales/demo-script.html',
         ],
         'battlecard' => [
             'category'    => 'tools',
