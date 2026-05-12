@@ -1752,6 +1752,16 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 }
 .dh-greeting h1 { font-size: 1.35rem; font-weight: 700; margin: 0; color: #1a1d23; }
 .dh-greeting p { font-size: .82rem; color: #6c757d; margin: 2px 0 0; }
+.dh-greeting .dh-date-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 100px;
+    background: var(--brand-light);
+    color: var(--brand-dark);
+    font-weight: 700;
+    font-size: .78rem;
+    margin-left: 4px;
+}
 .dh-actions { display: flex; gap: 8px; }
 .btn-brand-solid {
     display: inline-flex; align-items: center; gap: 6px;

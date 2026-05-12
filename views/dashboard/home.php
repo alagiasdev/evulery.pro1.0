@@ -36,7 +36,7 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
 <div class="dh-header">
     <div class="dh-greeting">
         <h1><?= e($greeting) ?>, <?= e($userName) ?></h1>
-        <p><?= e($tenantName) ?> &middot; <?= $formattedDate ?></p>
+        <p><?= e($tenantName) ?> &middot; <span class="dh-date-badge"><?= $formattedDate ?></span></p>
     </div>
     <div class="dh-actions">
         <a href="<?= url('dashboard/reservations/create') ?>" class="btn btn-brand-solid">
