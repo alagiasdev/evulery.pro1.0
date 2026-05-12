@@ -32,6 +32,13 @@ class MaterialsController
             'preview_file'  => 'sales/pitch-deck.html',
             'download_file' => 'sales/pitch-deck.pdf',
         ],
+        'faq-ristoratore' => [
+            'category'    => 'client',
+            'title'       => 'FAQ ristoratore',
+            'description' => 'Le 15 domande più frequenti su contratti, migrazione, dati, supporto. Invialo dopo la demo ai clienti tiepidi che dicono "ci devo pensare".',
+            'icon'        => 'patch-question',
+            'file'        => 'sales/faq-ristoratore.html',
+        ],
 
         // 2. Strumenti operativi per la demo
         'demo-script' => [
@@ -41,12 +48,19 @@ class MaterialsController
             'icon'        => 'mic',
             'file'        => 'sales/demo-script.html',
         ],
+        'roi-calculator' => [
+            'category'    => 'tools',
+            'title'       => 'ROI Calculator',
+            'description' => 'Inserisci i dati del prospect (coperti, scontrino, costi attuali, no-show) e ottieni risparmio, recupero no-show e payback in tempo reale. Riepilogo pronto da copiare in email.',
+            'icon'        => 'calculator',
+            'file'        => 'sales/roi-calculator.html',
+        ],
         'battlecard' => [
             'category'    => 'tools',
-            'title'       => 'Battlecard TheFork',
-            'description' => 'Confronto Evulery vs TheFork. Tienila aperta in demo per gestire le obiezioni.',
+            'title'       => 'Battlecard piattaforme',
+            'description' => 'Confronto Evulery vs i 3 principali competitor. Tienila aperta in demo per gestire le obiezioni più comuni.',
             'icon'        => 'shield-shaded',
-            'file'        => 'sales/battlecard-thefork.html',
+            'file'        => 'sales/battlecard-piattaforme.html',
         ],
 
         // 3. Opzionali — per outbound a freddo
