@@ -148,10 +148,28 @@ class MaterialsController
 
         header('Content-Type: ' . $mime);
         header('Content-Disposition: ' . $disposition . '; filename="' . basename($relPath) . '"');
-        header('Content-Length: ' . filesize($absPath));
         header('Cache-Control: private, max-age=0, must-revalidate');
         header('X-Content-Type-Options: nosniff');
-        readfile($absPath);
+
+        // Per gli HTML iniettiamo il CSP nonce in ogni <script> inline:
+        // l'app emette CSP con `script-src 'self' 'nonce-X'` (no 'unsafe-inline'),
+        // quindi senza nonce il browser blocca silenziosamente gli script
+        // del materiale (es. timer/checklist in demo-script.html).
+        if ($ext === 'html') {
+            $html = file_get_contents($absPath);
+            $nonce = csp_nonce();
+            // Aggiunge nonce ai tag <script> che ancora non l'hanno
+            $html = preg_replace(
+                '/<script\b(?![^>]*\bnonce=)([^>]*)>/i',
+                '<script nonce="' . $nonce . '"$1>',
+                $html
+            );
+            header('Content-Length: ' . strlen($html));
+            echo $html;
+        } else {
+            header('Content-Length: ' . filesize($absPath));
+            readfile($absPath);
+        }
         exit;
     }
 }
