@@ -1,24 +1,29 @@
 <?php
-/** @var ?array $user      Lead utente, null in modalità creazione */
-/** @var ?array $profile   Reseller profile, null se nuovo */
-/** @var ?array $defaults  Valori default commissioni (solo in creazione) */
+/** @var ?array $user         Utente in edit, null in modalità creazione */
+/** @var ?array $profile      Reseller profile, null se nuovo */
+/** @var ?array $defaults     Valori default commissioni (solo in creazione) */
+/** @var ?array $old          Valori re-inseriti dopo errore validation (creazione) */
+/** @var ?array $existingUser Account già esistente con la stessa email (creazione) */
 
 $isEdit = $user !== null;
 $action = $isEdit
     ? url("admin/users/reseller/{$user['id']}")
     : url('admin/users/reseller');
 
-// Valori da mostrare
-$firstName = $user['first_name'] ?? '';
-$lastName  = $user['last_name'] ?? '';
-$email     = $user['email'] ?? '';
-$isActive  = $user['is_active'] ?? 1;
+$old          = $old ?? [];
+$existingUser = $existingUser ?? null;
+
+// Valori da mostrare (in edit prevalgono i dati utente, in create i $old se presenti)
+$firstName = $user['first_name'] ?? ($old['first_name'] ?? '');
+$lastName  = $user['last_name']  ?? ($old['last_name']  ?? '');
+$email     = $user['email']      ?? ($old['email']      ?? '');
+$isActive  = $user['is_active']  ?? 1;
 
 $cSetup = $profile['commission_setup']        ?? $defaults['commission_setup'];
 $cSt    = $profile['commission_starter']      ?? $defaults['commission_starter'];
 $cPr    = $profile['commission_professional'] ?? $defaults['commission_professional'];
 $cEnt   = $profile['commission_enterprise']   ?? $defaults['commission_enterprise'];
-$notes  = $profile['notes'] ?? '';
+$notes  = $profile['notes'] ?? ($old['notes'] ?? '');
 ?>
 
 <style>
@@ -110,6 +115,43 @@ $notes  = $profile['notes'] ?? '';
         <i class="bi bi-arrow-left"></i> Torna ai reseller
     </a>
 </div>
+
+<?php if ($existingUser): ?>
+    <?php
+        $exFullName = trim(($existingUser['first_name'] ?? '') . ' ' . ($existingUser['last_name'] ?? ''));
+        $exRole     = role_label($existingUser['role'] ?? '');
+        $exActive   = (int)($existingUser['is_active'] ?? 0) === 1;
+        $exId       = (int)$existingUser['id'];
+        // Se è un reseller esistente possiamo linkare direttamente alla sua scheda reseller.
+        // Per altri ruoli linkiamo alla lista utenti filtrata per email.
+        $exEditUrl  = ($existingUser['role'] ?? '') === 'reseller'
+            ? url("admin/users/reseller/{$exId}/edit")
+            : url('admin/users') . '?q=' . urlencode($existingUser['email'] ?? '');
+    ?>
+    <div style="background:#FFEBEE;border-left:4px solid #C62828;border-radius:8px;padding:14px 18px;margin-bottom:1rem;font-size:.88rem;color:#1a1d23;line-height:1.6;">
+        <strong style="color:#C62828;"><i class="bi bi-exclamation-triangle-fill"></i> Esiste già un account con questa email</strong>
+        <div style="margin-top:8px;">
+            <strong><?= e($exFullName ?: '(senza nome)') ?></strong> ·
+            ruolo <strong><?= e($exRole) ?></strong> ·
+            <?php if ($exActive): ?>
+                <span style="color:#00844A;font-weight:600;">attivo</span>
+            <?php else: ?>
+                <span style="color:#6c757d;font-weight:600;">disattivato</span>
+            <?php endif; ?>
+            <?php if (!empty($existingUser['created_at'])): ?>
+                · creato il <?= format_date($existingUser['created_at'], 'd/m/Y') ?>
+            <?php endif; ?>
+        </div>
+        <div style="margin-top:10px;">
+            <a href="<?= e($exEditUrl) ?>" style="display:inline-flex;align-items:center;gap:6px;background:#C62828;color:#fff;padding:.45rem .9rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:.82rem;">
+                <i class="bi bi-arrow-up-right-circle"></i> Apri scheda utente
+            </a>
+            <span style="margin-left:8px;color:#6c757d;font-size:.78rem;">
+                Cambia l'email se vuoi davvero creare un nuovo reseller.
+            </span>
+        </div>
+    </div>
+<?php endif; ?>
 
 <?php if (!$isEdit): ?>
     <div class="rsl-summary">

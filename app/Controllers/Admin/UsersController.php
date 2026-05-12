@@ -157,9 +157,30 @@ class UsersController
         }
 
         $userModel = new User();
-        if ($userModel->findByEmail($email)) {
-            flash('danger', 'Esiste già un utente con questa email.');
-            Response::redirect(url('admin/users/reseller/create'));
+        $existing = $userModel->findByEmail($email);
+        if ($existing) {
+            // Re-render del form con alert dettagliato + valori già inseriti.
+            // Più utile della classica "esiste già": dice CHI è (nome, ruolo,
+            // attivo/disattivato) e linka direttamente alla sua scheda.
+            view('admin/users/reseller-form', [
+                'title'        => 'Nuovo Reseller',
+                'activeMenu'   => 'users',
+                'user'         => null,
+                'profile'      => null,
+                'defaults'     => [
+                    'commission_setup'        => ResellerProfile::DEFAULT_COMMISSION_SETUP,
+                    'commission_starter'      => ResellerProfile::DEFAULT_COMMISSION_STARTER,
+                    'commission_professional' => ResellerProfile::DEFAULT_COMMISSION_PROFESSIONAL,
+                    'commission_enterprise'   => ResellerProfile::DEFAULT_COMMISSION_ENTERPRISE,
+                ],
+                'old'          => [
+                    'first_name' => $firstName,
+                    'last_name'  => $lastName,
+                    'email'      => $email,
+                    'notes'      => trim($data['notes'] ?? ''),
+                ],
+                'existingUser' => $existing,
+            ], 'admin');
             return;
         }
 
