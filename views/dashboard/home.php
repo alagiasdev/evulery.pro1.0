@@ -45,8 +45,16 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
     </div>
 </div>
 
+<?php
+    // Frecce navigazione giorno ±1 (calcolate server-side, funzionano anche senza JS)
+    $prevDate = date('Y-m-d', strtotime($date . ' -1 day'));
+    $nextDate = date('Y-m-d', strtotime($date . ' +1 day'));
+?>
 <!-- Date strip -->
 <div class="date-strip" id="home-date-strip">
+    <a href="<?= url('dashboard') ?>?date=<?= e($prevDate) ?>" class="date-nav-arrow" id="home-day-prev" title="Giorno precedente (←)">
+        <i class="bi bi-chevron-left"></i>
+    </a>
     <a href="#" class="date-chip" data-offset="0">
         <span class="chip-label">Oggi</span>
         <span class="chip-sub" id="home-chip-0"></span>
@@ -79,6 +87,9 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
             <div class="dr-cal-grid" id="home-cal-grid"></div>
         </div>
     </div>
+    <a href="<?= url('dashboard') ?>?date=<?= e($nextDate) ?>" class="date-nav-arrow" id="home-day-next" title="Giorno successivo (→)">
+        <i class="bi bi-chevron-right"></i>
+    </a>
 </div>
 
 <!-- Stat cards -->
@@ -565,6 +576,16 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
     document.addEventListener('click', function(e) {
         if (!isMobile && !e.target.closest('#home-cal-dropdown') && !e.target.closest('#home-cal-toggle'))
             closeCal();
+    });
+
+    // Shortcut tastiera per le frecce giorno ±1 (ignora input/textarea attivi)
+    document.addEventListener('keydown', function(e) {
+        if (e.target.matches('input, textarea, select, [contenteditable="true"]')) return;
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        var prev = document.getElementById('home-day-prev');
+        var next = document.getElementById('home-day-next');
+        if (e.key === 'ArrowLeft' && prev) { e.preventDefault(); window.location = prev.href; }
+        else if (e.key === 'ArrowRight' && next) { e.preventDefault(); window.location = next.href; }
     });
 
     // Mini calendar (sidebar)

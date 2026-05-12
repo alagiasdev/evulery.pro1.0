@@ -56,6 +56,16 @@ for ($i = 0; $i < 3; $i++) {
 }
 
 $isUpcoming = !empty($isUpcoming);
+
+// Frecce navigazione giorno ±1: solo per single-day (non in "Prossime" né in range)
+$prevDate = date('Y-m-d', strtotime($date . ' -1 day'));
+$nextDate = date('Y-m-d', strtotime($date . ' +1 day'));
+$navQs = function (string $d) use ($status, $source): string {
+    $parts = ['date=' . urlencode($d)];
+    if ($status) $parts[] = 'status=' . urlencode($status);
+    if ($source) $parts[] = 'source=' . urlencode($source);
+    return url('dashboard/reservations') . '?' . implode('&', $parts);
+};
 ?>
 
 <!-- Search bar (global) -->
@@ -114,6 +124,11 @@ $isUpcoming = !empty($isUpcoming);
     <!-- Row 1: Quick date chips + actions -->
     <div class="filter-row">
         <div class="date-chips">
+            <?php if (!$isUpcoming && !$isRange): ?>
+            <a href="<?= e($navQs($prevDate)) ?>" class="date-nav-arrow sm" id="res-day-prev" title="Giorno precedente (←)">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+            <?php endif; ?>
             <a href="<?= url('dashboard/reservations?upcoming=1' . ($status ? '&status=' . e($status) : '') . ($source ? '&source=' . e($source) : '')) ?>"
                class="date-chip-sm <?= $isUpcoming ? 'active' : '' ?>" title="Le prossime 15 prenotazioni">
                 <i class="bi bi-fast-forward-fill me-1"></i>Prossime
@@ -124,6 +139,11 @@ $isUpcoming = !empty($isUpcoming);
                 <?= $chip['label'] ?> <span class="chip-day"><?= $chip['sub'] ?></span>
             </a>
             <?php endforeach; ?>
+            <?php if (!$isUpcoming && !$isRange): ?>
+            <a href="<?= e($navQs($nextDate)) ?>" class="date-nav-arrow sm" id="res-day-next" title="Giorno successivo (→)">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+            <?php endif; ?>
         </div>
         <div class="date-chip-cal">
             <a href="#" class="date-chip-sm" id="res-cal-toggle"><i class="bi bi-calendar3"></i></a>
@@ -431,6 +451,16 @@ $isUpcoming = !empty($isUpcoming);
             this.classList.toggle('active');
         });
     }
+
+    // Shortcut tastiera per le frecce giorno ±1 (ignora input/textarea attivi)
+    document.addEventListener('keydown', function(e) {
+        if (e.target.matches('input, textarea, select, [contenteditable="true"]')) return;
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        var prev = document.getElementById('res-day-prev');
+        var next = document.getElementById('res-day-next');
+        if (e.key === 'ArrowLeft' && prev) { e.preventDefault(); window.location = prev.href; }
+        else if (e.key === 'ArrowRight' && next) { e.preventDefault(); window.location = next.href; }
+    });
 
     // Skip filter/calendar JS when in search mode
     var toggle = document.getElementById('res-cal-toggle');
