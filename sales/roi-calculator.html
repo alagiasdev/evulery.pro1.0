@@ -390,6 +390,15 @@ body {
                         <div class="roi-hint">% dei prenotati che non si presenta. Sotto il 5% è eccellente, sopra il 10% è alto.</div>
                     </div>
 
+                    <div class="roi-field">
+                        <label class="roi-label">
+                            Riduzione no-show attesa con Evulery
+                            <span class="value"><span id="recovery-display">50</span>%</span>
+                        </label>
+                        <input type="range" min="30" max="90" step="5" value="50" class="roi-slider" id="recovery-rate">
+                        <div class="roi-hint">Conservativo 50% (consigliato in demo) · Medio 70% · Best-case 90% (clienti con caparra Stripe obbligatoria).</div>
+                    </div>
+
                 </div>
             </div>
 
@@ -460,21 +469,30 @@ body {
             </div>
 
             <div class="roi-big">
-                <div class="label">Recupero stimato no-show (Evulery + caparra)</div>
-                <div class="big-num">+€<span id="out-recovery">5.645</span></div>
-                <div class="sub">al mese · ipotesi riduzione 70% dei no-show attuali</div>
+                <div class="label">Coperti che riavresti ogni mese</div>
+                <div class="big-num">+<span id="out-recovery-covers">115</span></div>
+                <div class="sub">
+                    valore equivalente: <strong>€<span id="out-recovery">4.032</span>/mese</strong>
+                    <br>= riduzione <span id="out-recovery-rate-display">50</span>% dei no-show attuali × scontrino medio
+                </div>
             </div>
 
             <div class="roi-big warn">
-                <div class="label">Vantaggio totale stimato/mese</div>
-                <div class="big-num">+€<span id="out-total">5.925</span></div>
-                <div class="sub">risparmio diretto + recupero coperti persi</div>
+                <div class="label">Beneficio netto stimato/mese</div>
+                <div class="big-num">+€<span id="out-total">4.312</span></div>
+                <div class="sub" id="out-total-breakdown">
+                    €<span id="out-bk-savings">280</span> risparmio costi · €<span id="out-bk-recovery">4.032</span> coperti recuperati
+                </div>
             </div>
 
             <div class="roi-payback">
                 <strong><i class="bi bi-stopwatch"></i> Payback:</strong>
                 il costo di setup €249 + primo mese viene recuperato in <strong><span id="out-payback">1,3 giorni</span></strong> di servizio.
                 <br>L'investimento annuale Evulery si ripaga in <strong><span id="out-payback-year">4 giorni</span></strong>.
+            </div>
+
+            <div style="background:#FFF3E0;border-left:4px solid #f57c00;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:1rem;font-size:.82rem;color:#5d4037;line-height:1.5;">
+                <strong><i class="bi bi-exclamation-circle-fill"></i> Stima conservativa</strong> · I risultati reali variano per ristorante in base a posizionamento, tipologia clientela, abitudini di prenotazione. Usa questi numeri come ordine di grandezza in demo, non come promessa.
             </div>
         </div>
 
@@ -499,11 +517,10 @@ body {
 <script>
 (function() {
     var $ = function(id) { return document.getElementById(id); };
-    var inputs = ['restaurant','covers','services','ticket','current-cost','noshow'];
+    var inputs = ['restaurant','covers','services','ticket','current-cost','noshow','recovery-rate'];
     var planPrices = { starter: 49, professional: 79, enterprise: 129 };
     var planLabels = { starter: 'Starter', professional: 'Professional', enterprise: 'Enterprise' };
     var SETUP_FEE = 249;
-    var NOSHOW_RECOVERY_PCT = 0.70; // 70% riduzione attesa con caparra+reminder
     var ANNUAL_DISCOUNT = 0.12;     // 12% sconto annuale
 
     var selectedPlan = 'professional';
@@ -516,12 +533,13 @@ body {
     function val(id) { return parseFloat($(id).value) || 0; }
 
     function update() {
-        var covers      = val('covers');
-        var services    = val('services');
-        var ticket      = val('ticket');
-        var currentCost = val('current-cost');
-        var noshow      = val('noshow');
-        var restaurant  = $('restaurant').value.trim();
+        var covers       = val('covers');
+        var services     = val('services');
+        var ticket       = val('ticket');
+        var currentCost  = val('current-cost');
+        var noshow       = val('noshow');
+        var recoveryRate = val('recovery-rate') / 100; // 0.50 ecc.
+        var restaurant   = $('restaurant').value.trim();
 
         // Display labels live
         $('covers-display').textContent = covers;
@@ -529,12 +547,14 @@ body {
         $('ticket-display').textContent = ticket;
         $('current-cost-display').textContent = fmt(currentCost);
         $('noshow-display').textContent = noshow;
+        $('recovery-display').textContent = val('recovery-rate');
         $('restaurant-display').textContent = restaurant || '—';
 
         // Calcoli base
         var coversMonth = covers * services * 4.33; // 4.33 settimane/mese
         var revenueMonth = coversMonth * ticket;
-        var noshowLoss = revenueMonth * (noshow / 100);
+        var noshowCovers = coversMonth * (noshow / 100);     // coperti persi per no-show
+        var noshowLoss = noshowCovers * ticket;
 
         // Costo Evulery (con eventuale sconto annuale)
         var planPrice = planPrices[selectedPlan];
@@ -543,8 +563,9 @@ body {
         // Risparmio diretto (vs costo attuale)
         var directSaving = Math.max(0, currentCost - evuleryMonth);
 
-        // Recupero no-show (riduzione 70% del valore perso)
-        var noshowRecovery = noshowLoss * NOSHOW_RECOVERY_PCT;
+        // Recupero no-show: numero coperti × valore
+        var recoveryCovers = noshowCovers * recoveryRate;
+        var noshowRecovery = recoveryCovers * ticket;
 
         // Vantaggio totale
         var totalGain = directSaving + noshowRecovery;
@@ -568,8 +589,14 @@ body {
         $('out-evulery').textContent = fmt(evuleryMonth, 2);
         $('out-plan-name').textContent = '(' + planLabels[selectedPlan] + (annual ? ' annuale' : ' mensile') + ')';
         $('out-saving-month').textContent = fmt(Math.round(directSaving));
+        // Card recupero coperti (metric primaria: numero coperti)
+        $('out-recovery-covers').textContent = fmt(Math.round(recoveryCovers));
         $('out-recovery').textContent = fmt(Math.round(noshowRecovery));
+        $('out-recovery-rate-display').textContent = val('recovery-rate');
+        // Card beneficio netto (scomposizione visibile)
         $('out-total').textContent = fmt(Math.round(totalGain));
+        $('out-bk-savings').textContent = fmt(Math.round(directSaving));
+        $('out-bk-recovery').textContent = fmt(Math.round(noshowRecovery));
         $('out-payback').textContent = paybackDays !== null
             ? (paybackDays < 1 ? '<1 giorno' : (paybackDays < 30 ? fmt(paybackDays, 1) + ' giorni' : fmt(paybackDays / 30, 1) + ' mesi'))
             : 'n/a';
@@ -578,17 +605,19 @@ body {
             : 'n/a';
 
         // Email summary
+        var recRatePct = Math.round(recoveryRate * 100);
         var summary = 'Riepilogo demo' + (restaurant ? ' per ' + restaurant : '') + ':\n\n';
         summary += '• Coperti totali/mese: ' + fmt(Math.round(coversMonth)) + '\n';
         summary += '• Fatturato stimato/mese: €' + fmt(Math.round(revenueMonth)) + '\n';
-        summary += '• Perdita attuale da no-show: −€' + fmt(Math.round(noshowLoss)) + '/mese\n\n';
+        summary += '• Coperti persi oggi per no-show: ' + fmt(Math.round(noshowCovers)) + '/mese (≈ €' + fmt(Math.round(noshowLoss)) + ')\n\n';
         summary += 'Con Evulery ' + planLabels[selectedPlan] + (annual ? ' (annuale -12%)' : '') + ':\n';
         summary += '• Costo mensile: €' + fmt(evuleryMonth, 2) + (currentCost > 0 ? ' (oggi paghi €' + fmt(currentCost) + ')' : '') + '\n';
-        if (directSaving > 0) summary += '• Risparmio diretto: +€' + fmt(Math.round(directSaving)) + '/mese\n';
-        summary += '• Recupero no-show stimato: +€' + fmt(Math.round(noshowRecovery)) + '/mese (riduzione attesa 70%)\n';
-        summary += '• Vantaggio totale stimato: +€' + fmt(Math.round(totalGain)) + '/mese\n\n';
+        if (directSaving > 0) summary += '• Risparmio costi diretto: +€' + fmt(Math.round(directSaving)) + '/mese\n';
+        summary += '• Coperti recuperati (stima ' + recRatePct + '% riduzione no-show): +' + fmt(Math.round(recoveryCovers)) + '/mese ≈ €' + fmt(Math.round(noshowRecovery)) + '\n';
+        summary += '• Beneficio netto stimato totale: +€' + fmt(Math.round(totalGain)) + '/mese\n\n';
         summary += 'Setup una-tantum: €249 (include primo mese + onboarding).\n';
-        if (paybackDays !== null) summary += 'Si ripaga in ' + (paybackDays < 1 ? 'meno di 1 giorno' : fmt(paybackDays, 1) + ' giorni') + ' di servizio.';
+        if (paybackDays !== null) summary += 'Si ripaga in ' + (paybackDays < 1 ? 'meno di 1 giorno' : fmt(paybackDays, 1) + ' giorni') + ' di servizio.\n\n';
+        summary += 'NB: stima conservativa, i risultati reali variano per ristorante.';
         $('email-body').textContent = summary;
     }
 
