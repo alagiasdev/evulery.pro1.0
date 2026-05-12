@@ -109,7 +109,7 @@ a.sidebar-user:hover { color: #adb5bd; }
 
 /* Versione "sm" per la pagina prenotazioni — matcha .date-chip-sm */
 .date-nav-arrow.sm {
-    min-width: 36px;
+    min-width: 36px; padding: 0;
     border-width: 1.5px; border-radius: 8px;
     font-size: .9rem;
 }
