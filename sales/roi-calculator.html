@@ -20,7 +20,6 @@
     --bg: #f5f6f8;
     --warning: #f57c00;
     --warning-light: #FFF3E0;
-    --danger: #C62828;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -29,48 +28,38 @@ body {
     color: var(--ink);
     font-size: 15px;
     line-height: 1.55;
-    padding: 2.5rem 1.5rem 4rem;
+    padding: 2rem 1.5rem 4rem;
 }
-.roi-container { max-width: 1100px; margin: 0 auto; }
+.roi-wrap { max-width: 760px; margin: 0 auto; }
 
 /* === Header === */
 .roi-header {
     background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
     color: #fff;
     border-radius: 16px;
-    padding: 2.5rem 2rem;
+    padding: 2rem 1.75rem;
     margin-bottom: 1.5rem;
     text-align: center;
-    box-shadow: 0 8px 24px rgba(0,132,74,.15);
 }
+.roi-header .logo {
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    letter-spacing: -.3px;
+    opacity: .85;
+}
+.roi-header .logo .dot { color: #4ade80; }
 .roi-header h1 {
-    font-size: 2.2rem;
+    font-size: 1.9rem;
     font-weight: 900;
-    letter-spacing: -1px;
+    letter-spacing: -.8px;
     line-height: 1.1;
 }
 .roi-header p {
     margin-top: 8px;
     opacity: .9;
-    font-size: 1rem;
-}
-.roi-header .logo {
-    font-size: 1.1rem;
-    font-weight: 800;
-    margin-bottom: 12px;
-    letter-spacing: -.3px;
-    opacity: .85;
-}
-.roi-header .logo .dot { color: #4ade80; }
-
-/* === Grid 2 colonne === */
-.roi-grid {
-    display: grid;
-    grid-template-columns: 1fr 1.1fr;
-    gap: 1.5rem;
-}
-@media (max-width: 900px) {
-    .roi-grid { grid-template-columns: 1fr; }
+    font-size: .92rem;
+    line-height: 1.5;
 }
 
 /* === Card === */
@@ -80,9 +69,10 @@ body {
     border-radius: 14px;
     overflow: hidden;
     box-shadow: 0 2px 6px rgba(0,0,0,.03);
+    margin-bottom: 1rem;
 }
 .roi-card-hdr {
-    padding: 1rem 1.25rem;
+    padding: .95rem 1.25rem;
     border-bottom: 1px solid var(--line);
     background: #fafbfc;
     font-size: .78rem;
@@ -98,418 +88,371 @@ body {
 .roi-card-body { padding: 1.25rem; }
 
 /* === Input === */
-.roi-field { margin-bottom: 1.1rem; }
+.roi-field { margin-bottom: 1rem; }
 .roi-field:last-child { margin-bottom: 0; }
 .roi-label {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    font-size: .82rem;
+    display: block;
+    font-size: .85rem;
     font-weight: 600;
     color: var(--ink-soft);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
-.roi-label .value {
-    font-weight: 800;
-    color: var(--brand);
-    font-size: .95rem;
-    background: var(--brand-light);
-    padding: 2px 10px;
-    border-radius: 100px;
+.roi-label small { color: var(--muted); font-weight: 500; font-size: .8rem; }
+.roi-input-wrap { position: relative; }
+.roi-input-wrap .prefix {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-weight: 600;
+    pointer-events: none;
 }
 .roi-input {
     width: 100%;
-    padding: .55rem .75rem;
+    padding: .65rem .85rem;
     border: 1px solid var(--line);
     border-radius: 8px;
-    font-size: .95rem;
+    font-size: 1rem;
     font-family: inherit;
     background: #fff;
     color: var(--ink);
+    font-variant-numeric: tabular-nums;
 }
-.roi-input:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(0,132,74,.1); }
-.roi-slider {
-    width: 100%;
-    height: 6px;
-    background: var(--line);
-    border-radius: 3px;
+.roi-input.has-prefix { padding-left: 2rem; }
+.roi-input:focus {
     outline: none;
-    -webkit-appearance: none;
-    appearance: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(0,132,74,.1);
 }
-.roi-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 22px;
-    height: 22px;
-    background: var(--brand);
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0,132,74,.3);
-}
-.roi-slider::-moz-range-thumb {
-    width: 22px;
-    height: 22px;
-    background: var(--brand);
-    border-radius: 50%;
-    cursor: pointer;
-    border: 0;
-}
-.roi-hint {
-    font-size: .72rem;
-    color: var(--muted);
-    margin-top: 4px;
-    line-height: 1.4;
-}
+.roi-input::placeholder { color: #adb5bd; }
 
-/* === Plan toggle === */
+/* === Advanced fold === */
+.roi-advanced summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 12px 16px;
+    background: #fafbfc;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background .15s;
+}
+.roi-advanced summary:hover { background: var(--brand-light); color: var(--brand-dark); }
+.roi-advanced summary::-webkit-details-marker { display: none; }
+.roi-advanced summary::before {
+    content: '\F285';
+    font-family: 'bootstrap-icons';
+    transition: transform .2s;
+    color: var(--muted);
+}
+.roi-advanced[open] summary::before { transform: rotate(90deg); }
+.roi-advanced[open] summary {
+    border-radius: 10px 10px 0 0;
+    background: var(--brand-light);
+    color: var(--brand-dark);
+}
+.roi-advanced-body {
+    border: 1px solid var(--line);
+    border-top: 0;
+    border-radius: 0 0 10px 10px;
+    padding: 1.25rem;
+    background: #fff;
+}
+.roi-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+@media (max-width: 600px) { .roi-grid-2 { grid-template-columns: 1fr; } }
+
+/* Plan toggle */
 .roi-plan-group {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 6px;
+    margin-bottom: 8px;
 }
 .roi-plan-opt {
-    padding: 8px 10px;
+    padding: 8px 6px;
     border: 2px solid var(--line);
     border-radius: 8px;
     text-align: center;
     cursor: pointer;
     transition: all .15s;
     background: #fff;
+    font-size: .8rem;
 }
 .roi-plan-opt:hover { border-color: var(--brand); }
-.roi-plan-opt.active {
-    border-color: var(--brand);
-    background: var(--brand-light);
-}
-.roi-plan-opt .name { font-size: .82rem; font-weight: 700; color: var(--ink); }
-.roi-plan-opt .price { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+.roi-plan-opt.active { border-color: var(--brand); background: var(--brand-light); }
+.roi-plan-opt .name { font-weight: 700; color: var(--ink); }
+.roi-plan-opt .price { font-size: .7rem; color: var(--muted); margin-top: 1px; }
 .roi-plan-opt.active .price { color: var(--brand-dark); font-weight: 600; }
 
-/* === Output === */
-.roi-result-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding: 10px 0;
-    border-bottom: 1px dashed var(--line);
-    font-size: .92rem;
-    color: var(--ink-soft);
+/* === Results === */
+.roi-empty {
+    background: #fff;
+    border: 2px dashed var(--line);
+    border-radius: 14px;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    color: var(--muted);
+    margin-top: 1rem;
 }
-.roi-result-row:last-of-type { border-bottom: 0; }
-.roi-result-row .num {
-    font-weight: 700;
-    color: var(--ink);
-    font-size: 1rem;
-    font-variant-numeric: tabular-nums;
-}
-.roi-result-row.danger .num { color: var(--danger); }
-.roi-result-row.success .num { color: var(--brand-dark); }
+.roi-empty i { font-size: 2rem; margin-bottom: 12px; display: block; color: var(--line); }
+.roi-empty .ttl { font-weight: 700; color: var(--ink-soft); margin-bottom: 4px; font-size: 1rem; }
+.roi-empty .sub { font-size: .88rem; line-height: 1.5; }
 
-/* === Big metric === */
-.roi-big {
+.roi-result {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,.03);
+}
+.roi-result.highlight {
     background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
     color: #fff;
-    border-radius: 12px;
-    padding: 1.5rem 1.5rem;
-    text-align: center;
-    margin-top: 1.25rem;
+    border: 0;
 }
-.roi-big .label {
-    font-size: .78rem;
+.roi-result-label {
+    font-size: .75rem;
     text-transform: uppercase;
     letter-spacing: .8px;
-    opacity: .9;
     font-weight: 700;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
 }
-.roi-big .big-num {
-    font-size: 2.8rem;
+.roi-result.highlight .roi-result-label { color: #fff; opacity: .9; }
+.roi-result-value {
+    font-size: 2.4rem;
     font-weight: 900;
-    letter-spacing: -2px;
+    letter-spacing: -1px;
     line-height: 1;
-    margin: 8px 0 4px;
+    color: var(--ink);
     font-variant-numeric: tabular-nums;
 }
-.roi-big .sub {
+.roi-result.highlight .roi-result-value { color: #fff; font-size: 2.8rem; }
+.roi-result-formula {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
     font-size: .85rem;
-    opacity: .85;
+    color: var(--muted);
+    line-height: 1.55;
 }
-.roi-big.warn {
-    background: linear-gradient(135deg, var(--warning) 0%, #E65100 100%);
+.roi-result.highlight .roi-result-formula {
+    border-top-color: rgba(255,255,255,.25);
+    color: rgba(255,255,255,.9);
 }
+.roi-result-formula strong {
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+}
+.roi-result.highlight .roi-result-formula strong { color: #fff; }
 
-/* === Payback === */
-.roi-payback {
-    background: var(--brand-light);
-    border-left: 4px solid var(--brand);
-    border-radius: 0 8px 8px 0;
-    padding: 12px 16px;
-    margin-top: 1rem;
+/* Email button */
+.roi-actions {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+.roi-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
     font-size: .9rem;
-    color: var(--ink-soft);
-    line-height: 1.6;
+    transition: background .15s;
 }
-.roi-payback strong { color: var(--brand-dark); }
+.roi-btn:hover { background: var(--brand-dark); }
+.roi-btn.copied { background: var(--brand); }
+.roi-btn[disabled] { background: var(--line); color: var(--muted); cursor: not-allowed; }
 
-/* === Email summary === */
-.roi-email-card {
+.roi-email-preview {
+    display: none;
     background: #1a1d23;
     color: #e2e8f0;
     border-radius: 12px;
-    padding: 0;
-    margin-top: 1.5rem;
-    overflow: hidden;
-}
-.roi-email-hdr {
-    padding: .85rem 1.25rem;
-    background: #2a2d33;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: .78rem;
-    text-transform: uppercase;
-    letter-spacing: .5px;
-    font-weight: 700;
-    color: #adb5bd;
-}
-.roi-email-hdr i { color: #4ade80; }
-.roi-email-body {
     padding: 1.25rem;
+    margin-top: 1rem;
     font-family: 'Inter', monospace;
     font-size: .82rem;
     white-space: pre-wrap;
     line-height: 1.7;
+    text-align: left;
 }
-.roi-copy-btn {
-    background: var(--brand);
-    color: #fff;
-    border: 0;
-    padding: 5px 12px;
-    border-radius: 6px;
-    font-size: .75rem;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: inherit;
-}
-.roi-copy-btn:hover { background: var(--brand-dark); }
-.roi-copy-btn.copied { background: #2E7D32; }
+.roi-email-preview.show { display: block; }
 
-/* === Footer hint === */
+/* Footnote */
 .roi-footnote {
-    margin-top: 1.5rem;
-    font-size: .8rem;
+    margin-top: 1rem;
+    font-size: .78rem;
     color: var(--muted);
     text-align: center;
     line-height: 1.5;
 }
 
-/* === Print === */
+/* Hide utility */
+.roi-hidden { display: none !important; }
+
+/* Print */
 @media print {
     body { background: #fff; padding: 1rem; }
     .roi-header { background: #fff; color: var(--ink); border: 2px solid var(--brand); }
-    .roi-big { background: #fff !important; color: var(--ink) !important; border: 2px solid var(--brand); }
-    .roi-big.warn { border-color: var(--warning); }
-    .roi-email-card { background: #fff; color: var(--ink); border: 1px solid var(--line); }
-    .roi-copy-btn { display: none; }
+    .roi-result.highlight { background: #fff !important; color: var(--ink) !important; border: 2px solid var(--brand); }
+    .roi-actions, .roi-empty { display: none; }
 }
 </style>
 </head>
 <body>
 
-<div class="roi-container">
+<div class="roi-wrap">
 
     <header class="roi-header">
         <div class="logo">evulery<span class="dot">.</span></div>
         <h1>ROI Calculator</h1>
-        <p>Strumento per la demo. Inserisci i dati del prospect e ottieni in tempo reale risparmio, recupero no-show e payback dell'investimento.</p>
+        <p>Strumento per la demo. Inserisci i dati raccolti dal prospect in discovery: il calcolo mostra il valore concreto per il suo caso.</p>
     </header>
 
-    <div class="roi-grid">
+    <!-- ============ INPUTS ============ -->
+    <div class="roi-card">
+        <div class="roi-card-hdr"><i class="bi bi-clipboard"></i> Dati dal cliente</div>
+        <div class="roi-card-body">
 
-        <!-- ============ INPUTS ============ -->
-        <div>
-            <div class="roi-card">
-                <div class="roi-card-hdr"><i class="bi bi-shop"></i> Dati del ristorante</div>
-                <div class="roi-card-body">
+            <div class="roi-field">
+                <label class="roi-label" for="restaurant">Nome ristorante <small>(opzionale)</small></label>
+                <input type="text" id="restaurant" class="roi-input" placeholder="Es. Trattoria Bella Vista" autocomplete="off">
+            </div>
 
-                    <div class="roi-field">
-                        <label class="roi-label">Nome ristorante <span class="value" id="restaurant-display">—</span></label>
-                        <input type="text" class="roi-input" id="restaurant" placeholder="Es. Trattoria Bella Vista">
-                        <div class="roi-hint">Opzionale, serve solo per personalizzare il riepilogo email.</div>
-                    </div>
+            <div class="roi-field">
+                <label class="roi-label" for="covers">Coperti al mese <small>(somma di tutti i servizi)</small></label>
+                <input type="number" id="covers" class="roi-input" placeholder="Es. 2.500" min="0" step="50" autocomplete="off">
+            </div>
 
-                    <div class="roi-field">
-                        <label class="roi-label">
-                            Coperti medi/servizio
-                            <span class="value" id="covers-display">60</span>
-                        </label>
-                        <input type="range" min="20" max="200" step="5" value="60" class="roi-slider" id="covers">
-                        <div class="roi-hint">Coperti reali serviti in un servizio tipico (pranzo o cena).</div>
-                    </div>
-
-                    <div class="roi-field">
-                        <label class="roi-label">
-                            Servizi/settimana
-                            <span class="value" id="services-display">12</span>
-                        </label>
-                        <input type="range" min="3" max="14" step="1" value="12" class="roi-slider" id="services">
-                        <div class="roi-hint">Es. 2 servizi (pranzo+cena) × 6 giorni di apertura = 12.</div>
-                    </div>
-
-                    <div class="roi-field">
-                        <label class="roi-label">
-                            Scontrino medio
-                            <span class="value">€<span id="ticket-display">35</span></span>
-                        </label>
-                        <input type="range" min="10" max="120" step="1" value="35" class="roi-slider" id="ticket">
-                        <div class="roi-hint">Importo medio speso per coperto.</div>
-                    </div>
-
+            <div class="roi-field">
+                <label class="roi-label" for="ticket">Scontrino medio cliente</label>
+                <div class="roi-input-wrap">
+                    <span class="prefix">€</span>
+                    <input type="number" id="ticket" class="roi-input has-prefix" placeholder="Es. 30-50" min="0" step="0.50" autocomplete="off">
                 </div>
             </div>
 
-            <div class="roi-card" style="margin-top: 1rem;">
-                <div class="roi-card-hdr"><i class="bi bi-exclamation-octagon"></i> Situazione attuale</div>
-                <div class="roi-card-body">
-
-                    <div class="roi-field">
-                        <label class="roi-label">
-                            Costo mensile piattaforme attuali
-                            <span class="value">€<span id="current-cost-display">350</span></span>
-                        </label>
-                        <input type="range" min="0" max="2000" step="50" value="350" class="roi-slider" id="current-cost">
-                        <div class="roi-hint">Quanto sta pagando oggi tra commissioni, canoni di aggregatori e altri strumenti di prenotazione/recensioni. Metti 0 se non usa nulla.</div>
-                    </div>
-
-                    <div class="roi-field">
-                        <label class="roi-label">
-                            Tasso no-show attuale
-                            <span class="value"><span id="noshow-display">8</span>%</span>
-                        </label>
-                        <input type="range" min="0" max="30" step="0.5" value="8" class="roi-slider" id="noshow">
-                        <div class="roi-hint">% dei prenotati che non si presenta. Sotto il 5% è eccellente, sopra il 10% è alto.</div>
-                    </div>
-
-                    <div class="roi-field">
-                        <label class="roi-label">
-                            Riduzione no-show attesa con Evulery
-                            <span class="value"><span id="recovery-display">50</span>%</span>
-                        </label>
-                        <input type="range" min="30" max="90" step="5" value="50" class="roi-slider" id="recovery-rate">
-                        <div class="roi-hint">Conservativo 50% (consigliato in demo) · Medio 70% · Best-case 90% (clienti con caparra Stripe obbligatoria).</div>
-                    </div>
-
+            <div class="roi-field">
+                <label class="roi-label" for="current-cost">Quanto paga oggi in piattaforme/commissioni <small>(0 se non usa nulla)</small></label>
+                <div class="roi-input-wrap">
+                    <span class="prefix">€</span>
+                    <input type="number" id="current-cost" class="roi-input has-prefix" placeholder="Es. 0 oppure 450" min="0" step="10" autocomplete="off">
                 </div>
             </div>
 
-            <div class="roi-card" style="margin-top: 1rem;">
-                <div class="roi-card-hdr"><i class="bi bi-stack"></i> Piano Evulery consigliato</div>
-                <div class="roi-card-body">
-                    <div class="roi-plan-group" id="plan-group">
-                        <div class="roi-plan-opt" data-plan="starter" data-price="49">
-                            <div class="name">Starter</div>
-                            <div class="price">€49/mese</div>
-                        </div>
-                        <div class="roi-plan-opt active" data-plan="professional" data-price="79">
-                            <div class="name">Professional</div>
-                            <div class="price">€79/mese</div>
-                        </div>
-                        <div class="roi-plan-opt" data-plan="enterprise" data-price="129">
-                            <div class="name">Enterprise</div>
-                            <div class="price">€129/mese</div>
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 14px; display:flex; align-items:center; gap: 8px;">
-                        <input type="checkbox" id="annual" checked style="width: 18px; height: 18px;">
-                        <label for="annual" style="font-size: .9rem; color: var(--ink-soft); cursor: pointer;">
-                            Pagamento annuale (sconto 12% — già incluso nei calcoli)
-                        </label>
-                    </div>
-                </div>
-            </div>
         </div>
-
-        <!-- ============ OUTPUTS ============ -->
-        <div>
-            <div class="roi-card">
-                <div class="roi-card-hdr"><i class="bi bi-clipboard-data"></i> Numeri chiave</div>
-                <div class="roi-card-body">
-                    <div class="roi-result-row">
-                        <span>Coperti totali/mese</span>
-                        <span class="num" id="out-covers-month">2.880</span>
-                    </div>
-                    <div class="roi-result-row">
-                        <span>Fatturato medio/mese</span>
-                        <span class="num">€<span id="out-revenue">100.800</span></span>
-                    </div>
-                    <div class="roi-result-row danger">
-                        <span>Perdita da no-show <small id="out-noshow-rate" style="color:var(--muted);">(8%)</small></span>
-                        <span class="num">−€<span id="out-noshow-loss">8.064</span>/mese</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="roi-card" style="margin-top: 1rem;">
-                <div class="roi-card-hdr"><i class="bi bi-cash-coin"></i> Confronto costi</div>
-                <div class="roi-card-body">
-                    <div class="roi-result-row">
-                        <span>Sta pagando oggi</span>
-                        <span class="num">€<span id="out-current">350</span>/mese</span>
-                    </div>
-                    <div class="roi-result-row">
-                        <span>Costerebbe Evulery <small id="out-plan-name" style="color:var(--muted);">(Professional)</small></span>
-                        <span class="num">€<span id="out-evulery">69,52</span>/mese</span>
-                    </div>
-                    <div class="roi-result-row success">
-                        <span>Risparmio diretto</span>
-                        <span class="num">+€<span id="out-saving-month">280</span>/mese</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="roi-big">
-                <div class="label">Coperti che riavresti ogni mese</div>
-                <div class="big-num">+<span id="out-recovery-covers">115</span></div>
-                <div class="sub">
-                    valore equivalente: <strong>€<span id="out-recovery">4.032</span>/mese</strong>
-                    <br>= riduzione <span id="out-recovery-rate-display">50</span>% dei no-show attuali × scontrino medio
-                </div>
-            </div>
-
-            <div class="roi-big warn">
-                <div class="label">Beneficio netto stimato/mese</div>
-                <div class="big-num">+€<span id="out-total">4.312</span></div>
-                <div class="sub" id="out-total-breakdown">
-                    €<span id="out-bk-savings">280</span> risparmio costi · €<span id="out-bk-recovery">4.032</span> coperti recuperati
-                </div>
-            </div>
-
-            <div class="roi-payback">
-                <strong><i class="bi bi-stopwatch"></i> Payback:</strong>
-                il costo di setup €249 + primo mese viene recuperato in <strong><span id="out-payback">1,3 giorni</span></strong> di servizio.
-                <br>L'investimento annuale Evulery si ripaga in <strong><span id="out-payback-year">4 giorni</span></strong>.
-            </div>
-
-            <div style="background:#FFF3E0;border-left:4px solid #f57c00;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:1rem;font-size:.82rem;color:#5d4037;line-height:1.5;">
-                <strong><i class="bi bi-exclamation-circle-fill"></i> Stima conservativa</strong> · I risultati reali variano per ristorante in base a posizionamento, tipologia clientela, abitudini di prenotazione. Usa questi numeri come ordine di grandezza in demo, non come promessa.
-            </div>
-        </div>
-
     </div>
 
-    <!-- ============ EMAIL SUMMARY ============ -->
-    <div class="roi-email-card">
-        <div class="roi-email-hdr">
-            <span><i class="bi bi-envelope-paper"></i> Riepilogo per email post-demo</span>
-            <button class="roi-copy-btn" id="copy-btn"><i class="bi bi-clipboard"></i> Copia testo</button>
-        </div>
-        <div class="roi-email-body" id="email-body">Calcolo in corso...</div>
-    </div>
+    <!-- ============ ADVANCED ============ -->
+    <details class="roi-advanced">
+        <summary>Avanzato &mdash; no-show e piano consigliato</summary>
+        <div class="roi-advanced-body">
 
-    <div class="roi-footnote">
-        <i class="bi bi-info-circle"></i> Calcoli in tempo reale nel browser. Nessun dato salvato.
-        Recupero no-show ipotizzato al 70% basato su caparra Stripe + reminder automatici (dato statistico medio).
+            <div class="roi-grid-2">
+                <div class="roi-field">
+                    <label class="roi-label" for="noshow">Tasso no-show attuale</label>
+                    <div class="roi-input-wrap">
+                        <input type="number" id="noshow" class="roi-input" placeholder="Es. 8" min="0" max="50" step="0.5" autocomplete="off" style="padding-right: 2rem;">
+                        <span class="prefix" style="left: auto; right: 14px;">%</span>
+                    </div>
+                </div>
+                <div class="roi-field">
+                    <label class="roi-label" for="recovery-rate">Riduzione attesa con Evulery</label>
+                    <div class="roi-input-wrap">
+                        <input type="number" id="recovery-rate" class="roi-input" value="50" min="30" max="90" step="5" autocomplete="off" style="padding-right: 2rem;">
+                        <span class="prefix" style="left: auto; right: 14px;">%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="roi-field" style="margin-top: 1rem;">
+                <label class="roi-label">Piano Evulery consigliato</label>
+                <div class="roi-plan-group" id="plan-group">
+                    <div class="roi-plan-opt" data-plan="starter">
+                        <div class="name">Starter</div>
+                        <div class="price">€49/mese</div>
+                    </div>
+                    <div class="roi-plan-opt active" data-plan="professional">
+                        <div class="name">Professional</div>
+                        <div class="price">€79/mese</div>
+                    </div>
+                    <div class="roi-plan-opt" data-plan="enterprise">
+                        <div class="name">Enterprise</div>
+                        <div class="price">€129/mese</div>
+                    </div>
+                </div>
+
+                <label style="display: flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--ink-soft); margin-top: 12px; cursor: pointer;">
+                    <input type="checkbox" id="annual" checked style="width: 18px; height: 18px; cursor: pointer;">
+                    <span>Pagamento annuale (−12%, incluso nel calcolo)</span>
+                </label>
+            </div>
+
+            <div style="font-size: .78rem; color: var(--muted); margin-top: 12px; line-height: 1.5;">
+                Riduzione no-show: conservativo <strong>50%</strong> (consigliato in demo) · medio 70% · best-case 90% (caparra Stripe obbligatoria).
+            </div>
+
+        </div>
+    </details>
+
+    <!-- ============ RESULTS ============ -->
+    <div id="results">
+        <div class="roi-empty" id="empty-state">
+            <i class="bi bi-calculator"></i>
+            <div class="ttl">In attesa dei dati</div>
+            <div class="sub">Inserisci almeno <strong>coperti al mese</strong> e <strong>scontrino medio</strong> per vedere il valore.</div>
+        </div>
+
+        <!-- Card: Risparmio sui costi -->
+        <div class="roi-result roi-hidden" id="card-savings">
+            <div class="roi-result-label">Risparmi sui costi</div>
+            <div class="roi-result-value">+€<span id="out-savings">—</span><span style="font-size: 1.3rem; font-weight: 700; color: var(--muted);">/mese</span></div>
+            <div class="roi-result-formula" id="formula-savings"></div>
+        </div>
+
+        <!-- Card: Coperti recuperati -->
+        <div class="roi-result roi-hidden" id="card-recovery">
+            <div class="roi-result-label">Coperti recuperati ogni mese</div>
+            <div class="roi-result-value">+<span id="out-recovery-covers">—</span><span style="font-size: 1.3rem; font-weight: 700; color: var(--muted);"> coperti ≈ €<span id="out-recovery-value">—</span></span></div>
+            <div class="roi-result-formula" id="formula-recovery"></div>
+        </div>
+
+        <!-- Card: Annuale (highlight) -->
+        <div class="roi-result highlight roi-hidden" id="card-annual">
+            <div class="roi-result-label">In 12 mesi nelle tue tasche</div>
+            <div class="roi-result-value">+€<span id="out-annual">—</span></div>
+            <div class="roi-result-formula" id="formula-annual"></div>
+        </div>
+
+        <div class="roi-actions roi-hidden" id="actions">
+            <button class="roi-btn" id="copy-btn" type="button">
+                <i class="bi bi-clipboard"></i> Copia testo per email post-demo
+            </button>
+            <div class="roi-email-preview" id="email-preview"></div>
+        </div>
+
+        <div class="roi-footnote roi-hidden" id="footnote">
+            Stima conservativa basata sui dati che hai inserito. I risultati reali variano per ristorante in base a posizionamento, clientela e abitudini di prenotazione.
+        </div>
     </div>
 
 </div>
@@ -517,117 +460,137 @@ body {
 <script>
 (function() {
     var $ = function(id) { return document.getElementById(id); };
-    var inputs = ['restaurant','covers','services','ticket','current-cost','noshow','recovery-rate'];
-    var planPrices = { starter: 49, professional: 79, enterprise: 129 };
-    var planLabels = { starter: 'Starter', professional: 'Professional', enterprise: 'Enterprise' };
-    var SETUP_FEE = 249;
-    var ANNUAL_DISCOUNT = 0.12;     // 12% sconto annuale
+    var planPrices  = { starter: 49, professional: 79, enterprise: 129 };
+    var planLabels  = { starter: 'Starter', professional: 'Professional', enterprise: 'Enterprise' };
+    var ANNUAL_DISCOUNT = 0.12;
 
     var selectedPlan = 'professional';
-    var annual = true;
 
+    // Helpers
     function fmt(n, dec) {
         dec = dec || 0;
         return n.toLocaleString('it-IT', { minimumFractionDigits: dec, maximumFractionDigits: dec });
     }
-    function val(id) { return parseFloat($(id).value) || 0; }
+    function num(id) {
+        var v = parseFloat($(id).value);
+        return isNaN(v) ? null : v;
+    }
+    function show(el) { el.classList.remove('roi-hidden'); }
+    function hide(el) { el.classList.add('roi-hidden'); }
 
     function update() {
-        var covers       = val('covers');
-        var services     = val('services');
-        var ticket       = val('ticket');
-        var currentCost  = val('current-cost');
-        var noshow       = val('noshow');
-        var recoveryRate = val('recovery-rate') / 100; // 0.50 ecc.
-        var restaurant   = $('restaurant').value.trim();
+        var restaurant  = $('restaurant').value.trim();
+        var covers      = num('covers');
+        var ticket      = num('ticket');
+        var currentCost = num('current-cost');     // null se vuoto, 0 ammesso
+        var noshow      = num('noshow');           // null se vuoto
+        var recovery    = num('recovery-rate');    // ha default 50, ma rispetta input
+        var annual      = $('annual').checked;
 
-        // Display labels live
-        $('covers-display').textContent = covers;
-        $('services-display').textContent = services;
-        $('ticket-display').textContent = ticket;
-        $('current-cost-display').textContent = fmt(currentCost);
-        $('noshow-display').textContent = noshow;
-        $('recovery-display').textContent = val('recovery-rate');
-        $('restaurant-display').textContent = restaurant || '—';
-
-        // Calcoli base
-        var coversMonth = covers * services * 4.33; // 4.33 settimane/mese
-        var revenueMonth = coversMonth * ticket;
-        var noshowCovers = coversMonth * (noshow / 100);     // coperti persi per no-show
-        var noshowLoss = noshowCovers * ticket;
-
-        // Costo Evulery (con eventuale sconto annuale)
+        // Costo Evulery
         var planPrice = planPrices[selectedPlan];
         var evuleryMonth = annual ? planPrice * (1 - ANNUAL_DISCOUNT) : planPrice;
 
-        // Risparmio diretto (vs costo attuale)
-        var directSaving = Math.max(0, currentCost - evuleryMonth);
+        // Validazione: servono almeno coperti + scontrino per qualsiasi calcolo
+        var hasMinimum = covers !== null && covers > 0 && ticket !== null && ticket > 0;
+        if (!hasMinimum) {
+            show($('empty-state'));
+            hide($('card-savings'));
+            hide($('card-recovery'));
+            hide($('card-annual'));
+            hide($('actions'));
+            hide($('footnote'));
+            return;
+        }
+        hide($('empty-state'));
 
-        // Recupero no-show: numero coperti × valore
-        var recoveryCovers = noshowCovers * recoveryRate;
-        var noshowRecovery = recoveryCovers * ticket;
+        // === Card "Risparmio sui costi" ===
+        // Appare solo se il prospect paga effettivamente qualcosa oggi
+        var savingsMonth = 0;
+        if (currentCost !== null && currentCost > evuleryMonth) {
+            savingsMonth = currentCost - evuleryMonth;
+            $('out-savings').textContent = fmt(Math.round(savingsMonth));
+            $('formula-savings').innerHTML =
+                '= €<strong>' + fmt(currentCost) + '</strong> oggi − €<strong>' + fmt(evuleryMonth, 2) + '</strong> con Evulery ' +
+                planLabels[selectedPlan] + (annual ? ' annuale (−12%)' : ' mensile');
+            show($('card-savings'));
+        } else {
+            hide($('card-savings'));
+        }
 
-        // Vantaggio totale
-        var totalGain = directSaving + noshowRecovery;
+        // === Card "Coperti recuperati" ===
+        // Appare solo se l'utente ha inserito il tasso no-show
+        var recoveryCovers = 0;
+        var recoveryValue = 0;
+        if (noshow !== null && noshow > 0) {
+            var rate = (recovery !== null && recovery >= 30 && recovery <= 90) ? recovery : 50;
+            var noshowCovers = covers * (noshow / 100);
+            recoveryCovers = noshowCovers * (rate / 100);
+            recoveryValue = recoveryCovers * ticket;
 
-        // Payback in giorni di servizio
-        // Costo iniziale: setup (249) + primo mese (incluso nel setup) → effettivo è SETUP_FEE
-        // Quanto guadagna al giorno? totalGain / 30
-        var dailyGain = totalGain / 30;
-        var paybackDays = dailyGain > 0 ? SETUP_FEE / dailyGain : null;
+            $('out-recovery-covers').textContent = fmt(Math.round(recoveryCovers));
+            $('out-recovery-value').textContent = fmt(Math.round(recoveryValue));
+            $('formula-recovery').innerHTML =
+                '= <strong>' + fmt(covers) + '</strong> coperti × ' +
+                '<strong>' + fmt(noshow, noshow % 1 === 0 ? 0 : 1) + '%</strong> no-show × ' +
+                '<strong>' + fmt(rate) + '%</strong> riduzione attesa × ' +
+                '€<strong>' + fmt(ticket, ticket % 1 === 0 ? 0 : 2) + '</strong> scontrino';
+            show($('card-recovery'));
+        } else {
+            hide($('card-recovery'));
+        }
 
-        // Payback annuale
-        var yearlyCost = SETUP_FEE + (evuleryMonth * 12);
-        var paybackYear = dailyGain > 0 ? yearlyCost / dailyGain : null;
+        // === Card "In 12 mesi" ===
+        // Mostra solo se c'è almeno UNA delle 2 voci sopra
+        var monthTotal = savingsMonth + recoveryValue;
+        if (monthTotal > 0) {
+            var yearTotal = monthTotal * 12;
+            $('out-annual').textContent = fmt(Math.round(yearTotal));
 
-        // Output
-        $('out-covers-month').textContent = fmt(Math.round(coversMonth));
-        $('out-revenue').textContent = fmt(Math.round(revenueMonth));
-        $('out-noshow-rate').textContent = '(' + noshow + '%)';
-        $('out-noshow-loss').textContent = fmt(Math.round(noshowLoss));
-        $('out-current').textContent = fmt(currentCost);
-        $('out-evulery').textContent = fmt(evuleryMonth, 2);
-        $('out-plan-name').textContent = '(' + planLabels[selectedPlan] + (annual ? ' annuale' : ' mensile') + ')';
-        $('out-saving-month').textContent = fmt(Math.round(directSaving));
-        // Card recupero coperti (metric primaria: numero coperti)
-        $('out-recovery-covers').textContent = fmt(Math.round(recoveryCovers));
-        $('out-recovery').textContent = fmt(Math.round(noshowRecovery));
-        $('out-recovery-rate-display').textContent = val('recovery-rate');
-        // Card beneficio netto (scomposizione visibile)
-        $('out-total').textContent = fmt(Math.round(totalGain));
-        $('out-bk-savings').textContent = fmt(Math.round(directSaving));
-        $('out-bk-recovery').textContent = fmt(Math.round(noshowRecovery));
-        $('out-payback').textContent = paybackDays !== null
-            ? (paybackDays < 1 ? '<1 giorno' : (paybackDays < 30 ? fmt(paybackDays, 1) + ' giorni' : fmt(paybackDays / 30, 1) + ' mesi'))
-            : 'n/a';
-        $('out-payback-year').textContent = paybackYear !== null
-            ? (paybackYear < 30 ? fmt(paybackYear, 0) + ' giorni' : fmt(paybackYear / 30, 1) + ' mesi')
-            : 'n/a';
+            var parts = [];
+            if (savingsMonth > 0) parts.push('€<strong>' + fmt(Math.round(savingsMonth)) + '</strong> risparmio costi');
+            if (recoveryValue > 0) parts.push('€<strong>' + fmt(Math.round(recoveryValue)) + '</strong> coperti recuperati');
+            $('formula-annual').innerHTML = '= (' + parts.join(' + ') + ') × 12 mesi';
 
-        // Email summary
-        var recRatePct = Math.round(recoveryRate * 100);
-        var summary = 'Riepilogo demo' + (restaurant ? ' per ' + restaurant : '') + ':\n\n';
-        summary += '• Coperti totali/mese: ' + fmt(Math.round(coversMonth)) + '\n';
-        summary += '• Fatturato stimato/mese: €' + fmt(Math.round(revenueMonth)) + '\n';
-        summary += '• Coperti persi oggi per no-show: ' + fmt(Math.round(noshowCovers)) + '/mese (≈ €' + fmt(Math.round(noshowLoss)) + ')\n\n';
-        summary += 'Con Evulery ' + planLabels[selectedPlan] + (annual ? ' (annuale -12%)' : '') + ':\n';
-        summary += '• Costo mensile: €' + fmt(evuleryMonth, 2) + (currentCost > 0 ? ' (oggi paghi €' + fmt(currentCost) + ')' : '') + '\n';
-        if (directSaving > 0) summary += '• Risparmio costi diretto: +€' + fmt(Math.round(directSaving)) + '/mese\n';
-        summary += '• Coperti recuperati (stima ' + recRatePct + '% riduzione no-show): +' + fmt(Math.round(recoveryCovers)) + '/mese ≈ €' + fmt(Math.round(noshowRecovery)) + '\n';
-        summary += '• Beneficio netto stimato totale: +€' + fmt(Math.round(totalGain)) + '/mese\n\n';
-        summary += 'Setup una-tantum: €249 (include primo mese + onboarding).\n';
-        if (paybackDays !== null) summary += 'Si ripaga in ' + (paybackDays < 1 ? 'meno di 1 giorno' : fmt(paybackDays, 1) + ' giorni') + ' di servizio.\n\n';
-        summary += 'NB: stima conservativa, i risultati reali variano per ristorante.';
-        $('email-body').textContent = summary;
+            show($('card-annual'));
+            show($('actions'));
+            show($('footnote'));
+        } else {
+            hide($('card-annual'));
+            hide($('actions'));
+            hide($('footnote'));
+        }
+
+        // === Email preview (generata ma nascosta finché non si clicca copia) ===
+        var lines = ['Riepilogo demo' + (restaurant ? ' per ' + restaurant : '') + ':', ''];
+        lines.push('Input cliente:');
+        lines.push('• Coperti/mese: ' + fmt(covers));
+        lines.push('• Scontrino medio: €' + fmt(ticket, ticket % 1 === 0 ? 0 : 2));
+        if (currentCost !== null) lines.push('• Costo piattaforme oggi: €' + fmt(currentCost) + '/mese');
+        if (noshow !== null && noshow > 0) lines.push('• Tasso no-show: ' + fmt(noshow, noshow % 1 === 0 ? 0 : 1) + '%');
+        lines.push('');
+        lines.push('Con Evulery ' + planLabels[selectedPlan] + (annual ? ' annuale (−12%)' : ' mensile') + ' (€' + fmt(evuleryMonth, 2) + '/mese):');
+        if (savingsMonth > 0) lines.push('• Risparmio sui costi: +€' + fmt(Math.round(savingsMonth)) + '/mese');
+        if (recoveryCovers > 0) lines.push('• Coperti recuperati: +' + fmt(Math.round(recoveryCovers)) + '/mese ≈ €' + fmt(Math.round(recoveryValue)));
+        if (monthTotal > 0) {
+            lines.push('');
+            lines.push('TOTALE: +€' + fmt(Math.round(monthTotal)) + '/mese · €' + fmt(Math.round(monthTotal * 12)) + '/anno');
+        }
+        lines.push('');
+        lines.push('Setup una-tantum: €249 (include primo mese + onboarding).');
+        lines.push('');
+        lines.push('NB: stima conservativa, risultati variano per ristorante.');
+        $('email-preview').textContent = lines.join('\n');
     }
 
     // Bind input events
-    inputs.forEach(function(id) {
+    ['restaurant','covers','ticket','current-cost','noshow','recovery-rate'].forEach(function(id) {
         var el = $(id);
         if (el) el.addEventListener('input', update);
     });
+    $('annual').addEventListener('change', update);
 
-    // Plan selection
+    // Plan toggle
     document.querySelectorAll('.roi-plan-opt').forEach(function(opt) {
         opt.addEventListener('click', function() {
             document.querySelectorAll('.roi-plan-opt').forEach(function(o) { o.classList.remove('active'); });
@@ -637,27 +600,25 @@ body {
         });
     });
 
-    // Annual checkbox
-    $('annual').addEventListener('change', function() {
-        annual = this.checked;
-        update();
-    });
-
-    // Copy button
+    // Copy button — toggle visibility del preview + copia
     $('copy-btn').addEventListener('click', function() {
-        var text = $('email-body').textContent;
+        var preview = $('email-preview');
+        var btn = $('copy-btn');
+        // Prima volta: mostra anche il preview
+        if (!preview.classList.contains('show')) preview.classList.add('show');
+
+        var text = preview.textContent;
         navigator.clipboard.writeText(text).then(function() {
-            var btn = $('copy-btn');
-            btn.innerHTML = '<i class="bi bi-check2"></i> Copiato';
+            btn.innerHTML = '<i class="bi bi-check2"></i> Copiato negli appunti';
             btn.classList.add('copied');
             setTimeout(function() {
-                btn.innerHTML = '<i class="bi bi-clipboard"></i> Copia testo';
+                btn.innerHTML = '<i class="bi bi-clipboard"></i> Copia testo per email post-demo';
                 btn.classList.remove('copied');
-            }, 1800);
+            }, 2200);
         });
     });
 
-    // Initial render
+    // Initial render → empty state
     update();
 })();
 </script>
