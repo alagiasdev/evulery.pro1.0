@@ -339,7 +339,7 @@ body {
             </div>
 
             <div class="roi-field">
-                <label class="roi-label" for="covers">Coperti al mese <small>(somma di tutti i servizi)</small></label>
+                <label class="roi-label" for="covers">Coperti prenotati al mese <small>(inclusi i no-show, somma di tutti i servizi)</small></label>
                 <input type="number" id="covers" class="roi-input" placeholder="Es. 2.500" min="0" step="50" autocomplete="off">
             </div>
 
@@ -376,9 +376,9 @@ body {
                     </div>
                 </div>
                 <div class="roi-field">
-                    <label class="roi-label" for="recovery-rate">Riduzione attesa con Evulery</label>
+                    <label class="roi-label" for="recovery-rate">Riduzione attesa con Evulery <small id="recovery-hint"></small></label>
                     <div class="roi-input-wrap">
-                        <input type="number" id="recovery-rate" class="roi-input" value="50" min="30" max="90" step="5" autocomplete="off" style="padding-right: 2rem;">
+                        <input type="number" id="recovery-rate" class="roi-input" value="50" min="10" max="90" step="5" autocomplete="off" style="padding-right: 2rem;">
                         <span class="prefix" style="left: auto; right: 14px;">%</span>
                     </div>
                 </div>
@@ -407,8 +407,10 @@ body {
                 </label>
             </div>
 
-            <div style="font-size: .78rem; color: var(--muted); margin-top: 12px; line-height: 1.5;">
-                Riduzione no-show: conservativo <strong>50%</strong> (consigliato in demo) · medio 70% · best-case 90% (caparra Stripe obbligatoria).
+            <div style="font-size: .78rem; color: var(--muted); margin-top: 12px; line-height: 1.5;" id="recovery-explainer">
+                <strong>Riduzione no-show realistica per piano</strong>:<br>
+                • <strong>Starter</strong> (solo reminder email): 10-25% &mdash; default consigliato <strong>15%</strong><br>
+                • <strong>Professional / Enterprise</strong> (caparra Stripe + reminder): 30-90% &mdash; default consigliato <strong>50%</strong>
             </div>
 
         </div>
@@ -432,15 +434,22 @@ body {
         <!-- Card: Coperti recuperati -->
         <div class="roi-result roi-hidden" id="card-recovery">
             <div class="roi-result-label">Coperti recuperati ogni mese</div>
-            <div class="roi-result-value">+<span id="out-recovery-covers">—</span><span style="font-size: 1.3rem; font-weight: 700; color: var(--muted);"> coperti ≈ €<span id="out-recovery-value">—</span></span></div>
+            <div class="roi-result-value">+<span id="out-recovery-covers">—</span><span style="font-size: 1.3rem; font-weight: 700; color: var(--muted);"> coperti ≈ €<span id="out-recovery-value">—</span> di fatturato</span></div>
             <div class="roi-result-formula" id="formula-recovery"></div>
         </div>
 
-        <!-- Card: Annuale (highlight) -->
+        <!-- Card: Annuale a regime (highlight) -->
         <div class="roi-result highlight roi-hidden" id="card-annual">
-            <div class="roi-result-label">In 12 mesi nelle tue tasche</div>
+            <div class="roi-result-label">A regime, in 12 mesi nelle tue tasche</div>
             <div class="roi-result-value">+€<span id="out-annual">—</span></div>
             <div class="roi-result-formula" id="formula-annual"></div>
+        </div>
+
+        <!-- Card: Primo anno (con setup) -->
+        <div class="roi-result roi-hidden" id="card-first-year" style="background:#FFF3E0;border-color:#f57c00;">
+            <div class="roi-result-label" style="color:#E65100;">Primo anno (con setup €249)</div>
+            <div class="roi-result-value" style="color:#E65100;">+€<span id="out-first-year">—</span></div>
+            <div class="roi-result-formula" id="formula-first-year"></div>
         </div>
 
         <div class="roi-actions roi-hidden" id="actions">
@@ -451,7 +460,8 @@ body {
         </div>
 
         <div class="roi-footnote roi-hidden" id="footnote">
-            Stima conservativa basata sui dati che hai inserito. I risultati reali variano per ristorante in base a posizionamento, clientela e abitudini di prenotazione.
+            Importi netti IVA · "Fatturato recuperato" = ricavo, non utile (al lordo dei costi del coperto) · Stima conservativa basata sui dati inseriti.
+            I risultati reali variano per ristorante in base a posizionamento, clientela e abitudini di prenotazione.
         </div>
     </div>
 
@@ -463,8 +473,18 @@ body {
     var planPrices  = { starter: 49, professional: 79, enterprise: 129 };
     var planLabels  = { starter: 'Starter', professional: 'Professional', enterprise: 'Enterprise' };
     var ANNUAL_DISCOUNT = 0.12;
+    var SETUP_FEE = 249;
+    // Riduzione no-show realistica per piano (Starter = solo reminder, no caparra)
+    var RECOVERY_RANGE = {
+        starter:      { min: 10, max: 25, def: 15 },
+        professional: { min: 30, max: 90, def: 50 },
+        enterprise:   { min: 30, max: 90, def: 50 },
+    };
 
     var selectedPlan = 'professional';
+    // Flag che indica se l'utente ha modificato manualmente il recovery-rate
+    // (se sì, non lo sovrascriviamo con il default del piano al cambio piano)
+    var recoveryTouched = false;
 
     // Helpers
     function fmt(n, dec) {
@@ -520,27 +540,32 @@ body {
 
         // === Card "Coperti recuperati" ===
         // Appare solo se l'utente ha inserito il tasso no-show
+        // La % riduzione attesa varia in base al piano scelto (Starter solo reminder, niente caparra)
+        var range = RECOVERY_RANGE[selectedPlan];
+        var rate = (recovery !== null && recovery >= range.min && recovery <= range.max) ? recovery : range.def;
         var recoveryCovers = 0;
         var recoveryValue = 0;
         if (noshow !== null && noshow > 0) {
-            var rate = (recovery !== null && recovery >= 30 && recovery <= 90) ? recovery : 50;
             var noshowCovers = covers * (noshow / 100);
             recoveryCovers = noshowCovers * (rate / 100);
             recoveryValue = recoveryCovers * ticket;
 
             $('out-recovery-covers').textContent = fmt(Math.round(recoveryCovers));
             $('out-recovery-value').textContent = fmt(Math.round(recoveryValue));
+            var caveat = (selectedPlan === 'starter')
+                ? '<br><small style="color:#E65100;">Starter include solo reminder email (niente caparra Stripe), recupero realistico 10-25%.</small>'
+                : '';
             $('formula-recovery').innerHTML =
                 '= <strong>' + fmt(covers) + '</strong> coperti × ' +
                 '<strong>' + fmt(noshow, noshow % 1 === 0 ? 0 : 1) + '%</strong> no-show × ' +
                 '<strong>' + fmt(rate) + '%</strong> riduzione attesa × ' +
-                '€<strong>' + fmt(ticket, ticket % 1 === 0 ? 0 : 2) + '</strong> scontrino';
+                '€<strong>' + fmt(ticket, ticket % 1 === 0 ? 0 : 2) + '</strong> scontrino' + caveat;
             show($('card-recovery'));
         } else {
             hide($('card-recovery'));
         }
 
-        // === Card "In 12 mesi" ===
+        // === Card "A regime, in 12 mesi" ===
         // Mostra solo se c'è almeno UNA delle 2 voci sopra
         var monthTotal = savingsMonth + recoveryValue;
         if (monthTotal > 0) {
@@ -552,11 +577,20 @@ body {
             if (recoveryValue > 0) parts.push('€<strong>' + fmt(Math.round(recoveryValue)) + '</strong> coperti recuperati');
             $('formula-annual').innerHTML = '= (' + parts.join(' + ') + ') × 12 mesi';
 
+            // === Card "Primo anno (con setup)" ===
+            // Il primo anno include €249 setup una tantum
+            var firstYear = yearTotal - SETUP_FEE;
+            $('out-first-year').textContent = fmt(Math.round(firstYear));
+            $('formula-first-year').innerHTML =
+                '= €<strong>' + fmt(Math.round(yearTotal)) + '</strong> annui − €<strong>249</strong> setup (una tantum, include primo mese + onboarding)';
+
             show($('card-annual'));
+            show($('card-first-year'));
             show($('actions'));
             show($('footnote'));
         } else {
             hide($('card-annual'));
+            hide($('card-first-year'));
             hide($('actions'));
             hide($('footnote'));
         }
@@ -564,22 +598,26 @@ body {
         // === Email preview (generata ma nascosta finché non si clicca copia) ===
         var lines = ['Riepilogo demo' + (restaurant ? ' per ' + restaurant : '') + ':', ''];
         lines.push('Input cliente:');
-        lines.push('• Coperti/mese: ' + fmt(covers));
+        lines.push('• Coperti prenotati/mese (inclusi no-show): ' + fmt(covers));
         lines.push('• Scontrino medio: €' + fmt(ticket, ticket % 1 === 0 ? 0 : 2));
         if (currentCost !== null) lines.push('• Costo piattaforme oggi: €' + fmt(currentCost) + '/mese');
         if (noshow !== null && noshow > 0) lines.push('• Tasso no-show: ' + fmt(noshow, noshow % 1 === 0 ? 0 : 1) + '%');
         lines.push('');
         lines.push('Con Evulery ' + planLabels[selectedPlan] + (annual ? ' annuale (−12%)' : ' mensile') + ' (€' + fmt(evuleryMonth, 2) + '/mese):');
         if (savingsMonth > 0) lines.push('• Risparmio sui costi: +€' + fmt(Math.round(savingsMonth)) + '/mese');
-        if (recoveryCovers > 0) lines.push('• Coperti recuperati: +' + fmt(Math.round(recoveryCovers)) + '/mese ≈ €' + fmt(Math.round(recoveryValue)));
+        if (recoveryCovers > 0) {
+            var caparraNote = (selectedPlan === 'starter') ? ' (Starter: solo reminder)' : ' (caparra Stripe attiva)';
+            lines.push('• Coperti recuperati: +' + fmt(Math.round(recoveryCovers)) + '/mese ≈ €' + fmt(Math.round(recoveryValue)) + ' di fatturato' + caparraNote);
+        }
         if (monthTotal > 0) {
             lines.push('');
-            lines.push('TOTALE: +€' + fmt(Math.round(monthTotal)) + '/mese · €' + fmt(Math.round(monthTotal * 12)) + '/anno');
+            lines.push('A REGIME: +€' + fmt(Math.round(monthTotal)) + '/mese · €' + fmt(Math.round(monthTotal * 12)) + '/anno');
+            lines.push('PRIMO ANNO (con €249 setup): +€' + fmt(Math.round(monthTotal * 12 - SETUP_FEE)));
         }
         lines.push('');
         lines.push('Setup una-tantum: €249 (include primo mese + onboarding).');
         lines.push('');
-        lines.push('NB: stima conservativa, risultati variano per ristorante.');
+        lines.push('NB: importi netti IVA. "Fatturato recuperato" = ricavo, non utile. Stima conservativa, risultati variano per ristorante.');
         $('email-preview').textContent = lines.join('\n');
     }
 
@@ -590,15 +628,41 @@ body {
     });
     $('annual').addEventListener('change', update);
 
+    // Quando l'utente tocca lo slider recovery → ricorda che ha override personalizzato
+    $('recovery-rate').addEventListener('input', function() { recoveryTouched = true; });
+
+    function applyPlanDefaults() {
+        var r = RECOVERY_RANGE[selectedPlan];
+        var input = $('recovery-rate');
+        input.min = r.min;
+        input.max = r.max;
+        // Se l'utente non ha mai toccato manualmente o il valore è fuori range del nuovo piano, reset al default
+        var cur = parseFloat(input.value);
+        if (!recoveryTouched || isNaN(cur) || cur < r.min || cur > r.max) {
+            input.value = r.def;
+        }
+        // Aggiorna hint dinamico
+        var hint = $('recovery-hint');
+        if (selectedPlan === 'starter') {
+            hint.innerHTML = '<span style="color:#E65100;">(Starter: solo reminder, max 25%)</span>';
+        } else {
+            hint.innerHTML = '<span style="color:var(--muted);">(con caparra Stripe attiva, 30-90%)</span>';
+        }
+    }
+
     // Plan toggle
     document.querySelectorAll('.roi-plan-opt').forEach(function(opt) {
         opt.addEventListener('click', function() {
             document.querySelectorAll('.roi-plan-opt').forEach(function(o) { o.classList.remove('active'); });
             opt.classList.add('active');
             selectedPlan = opt.getAttribute('data-plan');
+            applyPlanDefaults();
             update();
         });
     });
+
+    // Init: applica defaults del piano iniziale
+    applyPlanDefaults();
 
     // Copy button — toggle visibility del preview + copia
     $('copy-btn').addEventListener('click', function() {
