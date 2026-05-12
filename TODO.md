@@ -449,9 +449,62 @@ Area `/reseller/*` per procacciatori B2B che vendono Evulery a ristoratori.
 - [x] Validazione `next_followup_at` via `DateTime::createFromFormat`
 
 ### Pre-deploy in produzione
-- [ ] Applicare migration 052 (reseller_profiles, acquired_by_reseller_id, role VARCHAR)
-- [ ] Applicare migration 053 (credit_recharge_requests)
+- [x] Applicare migration 052 (reseller_profiles, acquired_by_reseller_id, role VARCHAR)
+- [x] Applicare migration 053 (credit_recharge_requests)
 - [ ] Cambiare password super admin (durante test era stata resettata ad `admin1234`)
+
+## FASE 22B-bis: Reseller refinements [COMPLETATA 2026-05-12]
+Rifiniture su area reseller + materiali commerciali.
+
+### Reseller side
+- [x] Pagina `/reseller/leads/create`: il reseller aggiunge lead direttamente dal pannello
+  (auto-assignment, status `new`, utm_source `reseller_added`, anti-duplicato non bloccante 30gg)
+- [x] Bottone "Nuovo lead" verde nel page header `/reseller/leads`
+
+### Admin side
+- [x] `destroyReseller` con safety check: blocca se ha tenant attivi, altrimenti NULL su
+  `acquired_by_reseller_id` / `assigned_reseller_id` + hard delete con CASCADE
+- [x] Bottone "Elimina reseller" in danger zone del form edit
+- [x] Email duplicata in `storeReseller`: alert dettagliato con nome/ruolo/stato +
+  link diretto alla scheda esistente (no più generico "esiste già")
+- [x] Normalizzazione aggressiva email (lowercase + rimozione NBSP/zero-width)
+
+### Materiali reseller
+- [x] `sales/demo-script.html` — versione HTML interattiva (timer sticky, checklist
+  persistenti localStorage, scroll-spy TOC). Il `.md` resta come sorgente per copyediting
+- [x] `sales/roi-calculator.html` — strumento live per la demo:
+  - Input vuoti, niente numeri inventati come default
+  - Output con formule visibili sotto ogni numero
+  - Card piano-aware (Starter 10-25% recupero noshow per "solo reminder",
+    Pro/Enterprise 30-90% per "caparra Stripe attiva")
+  - Card "Primo anno (€249 setup)" + "A regime in 12 mesi"
+  - Bottone "Copia testo per email post-demo"
+  - Disclaimer IVA + "fatturato non utile" + stima conservativa
+- [x] `sales/faq-ristoratore.html` — 15 FAQ accordion in 5 categorie
+  (contratti/migrazione/uso/dati/supporto) da inviare ai prospect tiepidi
+- [x] Battlecard rinominata da `battlecard-thefork.html` a `battlecard-piattaforme.html`
+- [x] **MaterialsController** inietta nonce CSP nei `<script>` inline degli HTML serviti
+  (Lesson #19: senza nonce gli script venivano bloccati silenziosamente dalla CSP)
+- [x] View materiali gestisce card 'client' senza PDF (solo "Apri")
+
+## FASE 22C: UX dashboard navigation [COMPLETATA 2026-05-12]
+Navigazione giorno-per-giorno più rapida in `/dashboard` e `/dashboard/reservations`.
+
+- [x] Frecce ‹ › sempre visibili accanto alla date-strip (vai a `?date=±1` server-side)
+- [x] Funzionano anche senza JS, nessun limite sui salti
+- [x] Filtri stato/source preservati nei link
+- [x] In modalità "Prossime" o range le frecce non vengono renderizzate
+- [x] Shortcut tastiera ←/→ (ignora se focus in input/textarea/contenteditable)
+- [x] Page header con titolo + pill `.dh-date-badge` brand-light per visibilità
+  "quale giorno stai vedendo" (utile coordinato con le frecce)
+- [x] Layout flex: desktop riga (`Prenotazioni · Mar 12 Maggio 2026`), mobile colonna
+- [x] Stile frecce coerente con `.date-chip` / `.date-chip-sm` (border 2px / 1.5px)
+
+### Possibili refinements futuri (filter bar prenotazioni)
+- [ ] Datepicker DA/A si auto-allineano alla data attiva (oggi mostrano date stale)
+- [ ] Filtri secondari (DA/A, STATO, FONTE) collassabili sotto "Filtri" toggle
+- [ ] DA/A singolo quando from=to (UI più pulita)
+- [ ] STATO/FONTE come chip toggle invece di `<select>`
 
 ## FASE 20A: Menu Digitale Consultivo [COMPLETATA]
 Menu digitale pubblico per i clienti del ristorante, gestibile dalla dashboard. Design v2.1 con hero, categorie, allergeni EU, QR code.
