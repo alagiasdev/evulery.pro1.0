@@ -85,7 +85,7 @@ $navQs = function (string $d) use ($status, $source): string {
 <!-- Page header -->
 <div class="res-page-header">
     <h1>Prenotazioni</h1>
-    <p><span class="dh-date-badge"><?= e($headerBadge) ?></span></p>
+    <span class="dh-date-badge"><?= e($headerBadge) ?></span>
 </div>
 
 <!-- Search bar (global) -->
