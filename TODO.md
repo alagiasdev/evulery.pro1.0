@@ -399,6 +399,19 @@ Modello basato su **coperti illimitati** e **piani differenziati per servizi**.
 - [ ] Accesso API (servizio `api_access` gia nel catalogo)
 - [x] Email marketing con crediti (area comunicazioni + pacchetti email) → FASE 15 completata
 
+## 🦠 Pandemia Playbook [DEFERITO]
+Piano completo nel file dedicato: [`docs/pandemia-playbook.md`](docs/pandemia-playbook.md).
+6 feature da costruire in ~2 settimane SE scoppia una nuova pandemia / emergenza sanitaria con restrizioni ai ristoranti:
+1. Modalità "Emergenza" globale (switch settings)
+2. Tracciamento walk-in lampo
+3. Export contact tracing per ASL
+4. Cancellazione massiva con email automatica
+5. Gift card / voucher digitali (cash flow d'emergenza)
+6. Banner d'emergenza globale (vetrina + widget + menu + ordering)
+
+Trigger di attivazione: decreto/DPCM, crisi sanitaria, o 5+ clienti chiedono feature simili contemporaneamente.
+**Estendibile**: aggiungere nuove idee al file man mano che vengono in mente.
+
 ## FASE 21: Lead Management & Onboarding [COMPLETATA]
 Gestione lead da landing page evulery.it + onboarding ristoratori.
 
