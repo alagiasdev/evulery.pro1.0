@@ -506,6 +506,15 @@ Navigazione giorno-per-giorno più rapida in `/dashboard` e `/dashboard/reservat
 - [ ] DA/A singolo quando from=to (UI più pulita)
 - [ ] STATO/FONTE come chip toggle invece di `<select>`
 
+### Possibili refinements futuri (gestione lead reseller)
+- [ ] **Modifica anagrafica lead dal backend admin** (e/o dal reseller stesso?):
+  oggi il reseller può aggiornare stato/note/follow-up del lead ma non i campi
+  anagrafici (nome, email, ristorante, telefono). Caso d'uso: il reseller scrive
+  in fretta a un evento e sbaglia un'email/nome. Decidere se permettere:
+  - Solo admin → minimo accesso, ma overhead per ogni typo
+  - Anche reseller → richiede attenzione ai side effect (es. se cambia email
+    serve verificare anti-duplicato, audit log che mostra il prima/dopo)
+
 ## FASE 20A: Menu Digitale Consultivo [COMPLETATA]
 Menu digitale pubblico per i clienti del ristorante, gestibile dalla dashboard. Design v2.1 con hero, categorie, allergeni EU, QR code.
 
