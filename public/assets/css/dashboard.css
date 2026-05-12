@@ -96,16 +96,24 @@ a.sidebar-user:hover { color: #adb5bd; }
 .date-chip.active .chip-sub { opacity: .85; }
 .date-chip-cal { position: relative; }
 
-/* Frecce navigazione giorno ±1 (dashboard + reservations) */
+/* Frecce navigazione giorno ±1 — coerenti con .date-chip (grande) e .date-chip-sm */
 .date-nav-arrow {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 38px; min-width: 38px; height: auto;
+    align-self: stretch; /* altezza = stessa del chip adiacente */
+    min-width: 44px; padding: 0 .75rem;
     border: 2px solid #dee2e6; border-radius: 10px;
     background: #fff; color: #495057; text-decoration: none;
-    font-size: 1.1rem; cursor: pointer; transition: all .15s;
+    font-size: 1.05rem; cursor: pointer; transition: all .15s;
 }
 .date-nav-arrow:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
-.date-nav-arrow.sm { width: 32px; min-width: 32px; padding: .35rem 0; font-size: 1rem; border-width: 1px; border-radius: 8px; }
+
+/* Versione "sm" per la pagina prenotazioni — matcha .date-chip-sm */
+.date-nav-arrow.sm {
+    min-width: 36px; padding: .3rem .55rem;
+    border-width: 1.5px; border-radius: 8px;
+    font-size: .9rem;
+}
+.date-nav-arrow.sm:hover { background: #fff; }
 
 /* ===== Capacity banner ===== */
 .capacity-banner {
