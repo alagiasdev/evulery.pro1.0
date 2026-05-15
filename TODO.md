@@ -1,5 +1,52 @@
 # Evulery.Pro 1.0 - Prossimi Passi
 
+## 🪑 Backlog breve periodo — IN PANCHINA (revisione 2026-05-13)
+
+Task pronti, da fare quando emerge il trigger o c'è una finestra di lavoro.
+Decisione: NON costruirli in cieco, aspettare il segnale reale.
+
+### Pianificato a data
+- [ ] **Auto-migration script** `scripts/migrate.php` — ~17-18 maggio 2026, PRIMA della
+  migrazione VPS. Tabella `migrations` che traccia i file `.sql` applicati, idempotente.
+  Deploy diventa: `git pull` + `php scripts/migrate.php`. Serve per popolare il DB del
+  server nuovo con le 53 migration in sequenza.
+
+### Edge case — in attesa di segnalazione cliente reale
+- [ ] **Asporto → "Ritiro in sede"** — il termine confonde (1 segnalazione 28/04).
+  Toccare solo con 3+ segnalazioni. Globale 5-10 min, oppure `pickup_label` per tenant 3-4h.
+- [ ] **Hint "clienti esclusi dal marketing"** — il broadcast filtra `marketing_consent=1`
+  ed esclude in silenzio i clienti vecchi. Mostrare "Clienti CRM: X · Esclusi: Y" sotto
+  il preview count. ~30 min. Alla prima segnalazione "vedo 0 destinatari".
+- [ ] **Birthday overwrite** — `Customer::findOrCreate` rifiuta la modifica di un
+  compleanno già salvato. Cliente che ha sbagliato data non può correggerla dal widget.
+  ~15 min permettere update, oppure azione "Correggi compleanno" in dashboard.
+- [ ] **CTA slug warning** — email broadcast: se `include_booking_cta=1` ma `tenant.slug`
+  vuoto, il bottone "Prenota ora" viene saltato senza avviso. Warning in `store()`. ~20 min.
+
+### Quick win riempitivi (1-3h l'uno)
+- [ ] **Banner guida iOS push** — pagina Notifiche: istruzioni "Aggiungi a schermata Home"
+  (le push su iPhone funzionano solo da PWA installata).
+- [ ] **Email re-iscrizione cliente** — quando il ristoratore re-iscrive un cliente
+  disiscritto, inviargli email automatica con link disiscriviti (GDPR-friendly).
+- [ ] **Slug riservati validation** — impedire tenant con slug `admin`, `api`, `menu`,
+  `hub`, `promo`, `order`, `review`, `booking`, ecc. (igiene sicurezza URL).
+- [ ] **Routing fix `/{slug}/booking/success`** — in `config/routes.php` le 2 rotte
+  booking stanno dopo la catch-all `/{slug}`: ordine da correggere.
+
+### Progetti grossi — deferiti coi loro trigger
+- [ ] **Analytics module** — dopo 20+ clienti (servono dati aggregati reali)
+- [ ] **Loyalty Program** — validazione con clienti Professional paganti (4 wireframe pronti)
+- [ ] **Dashboard redesign UX** — 5-10 ristoranti attivi da 1+ mese + feedback strutturato
+- [ ] **Sales Kit super admin** — quando arriva il 1° reseller B2B vero
+
+### Priorità reale a breve termine (NON in panchina)
+- [ ] **Migrazione VPS** — nuovo server 8core/32GB, attesa conferma Serverplan (PHP 8.2,
+  parallelismo). Rischio #1: testare il DB dump su MariaDB 11.4 prima dello switch.
+- [ ] **Pagine legali** — completare `privacy.html`/`terms.html`/`cookies.html` con
+  P.IVA e ragione sociale prima del go-live commerciale.
+
+---
+
 ## Stato Attuale
 Fasi completate: Foundation, Auth, Admin Panel, Multi-Tenant, Slot/Capacita, Booking Widget, Dashboard Ristoratore, Security Audit (25/25), Dashboard UX improvements, Prenotazione Rapida Touch (FASE 16), Design System v3.1, Booking Widget Polish (FASE 17 parziale), Promozioni e Badge Sconto (FASE 14), Menu Digitale Consultivo (FASE 20A v2.1), Chiusure e Conferma Manuale (FASE 12), Email (FASE 13 parziale), Service Gating, Admin Backend (Activity Log, Gestione Utenti, Impersonation), **Email Broadcast con Crediti (FASE 15)**.
 Il sistema funziona end-to-end: login, gestione ristoranti, prenotazioni da widget e dashboard, menu digitale pubblico con QR code, super admin con gestione piani/abbonamenti/utenti/impersonation/activity log, email marketing broadcast con crediti e TurboSMTP.
