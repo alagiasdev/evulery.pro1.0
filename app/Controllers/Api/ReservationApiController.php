@@ -170,6 +170,13 @@ class ReservationApiController
                 : $baseAmount;
         }
 
+        // Caparra/garanzia senza importo valido (misconfigurazione) → si degrada
+        // a "nessuna caparra": la prenotazione non resta bloccata in pending.
+        if ($depositRequired && (float)$depositAmount <= 0) {
+            $depositRequired = 0;
+            $depositAmount = null;
+        }
+
         // Determine initial status: pending if deposit required OR manual confirmation mode
         if ($depositRequired) {
             $status = 'pending';
