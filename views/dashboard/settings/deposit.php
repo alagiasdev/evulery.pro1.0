@@ -6,6 +6,12 @@ $depositMode = $tenant['deposit_mode'] ?? 'per_table';
 $depositType = $tenant['deposit_type'] ?? 'info';
 $bankInfo = $tenant['deposit_bank_info'] ?? '';
 $paymentLink = $tenant['deposit_payment_link'] ?? '';
+
+// Giorni in cui la caparra è attiva (ISO 1=lun..7=dom)
+$depositDays = array_filter(array_map('intval', explode(',', (string)($tenant['deposit_days'] ?? '1,2,3,4,5,6,7'))));
+if (empty($depositDays)) $depositDays = [1, 2, 3, 4, 5, 6, 7];
+$dayLabels = [1 => 'Lun', 2 => 'Mar', 3 => 'Mer', 4 => 'Gio', 5 => 'Ven', 6 => 'Sab', 7 => 'Dom'];
+$mealCategories = $mealCategories ?? [];
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
@@ -105,6 +111,66 @@ $paymentLink = $tenant['deposit_payment_link'] ?? '';
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Quando applicare la caparra -->
+            <div class="config-section <?= $depositEnabled ? '' : 'disabled-look' ?>" id="when-section">
+                <div class="section-header">
+                    <div class="section-icon" style="background:#FF9800;"><i class="bi bi-calendar-week"></i></div>
+                    <div>
+                        <div class="section-title">Quando applicare la caparra</div>
+                        <div class="section-subtitle">Limita la caparra a giorni e fasce orarie specifici</div>
+                    </div>
+                </div>
+                <div class="config-body">
+
+                    <!-- Giorni della settimana -->
+                    <div>
+                        <label class="field-label">Giorni della settimana</label>
+                        <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
+                            <?php foreach ($dayLabels as $iso => $lbl): ?>
+                            <label class="day-pill <?= in_array($iso, $depositDays, true) ? 'active' : '' ?>">
+                                <input type="checkbox" name="deposit_days[]" value="<?= $iso ?>"
+                                       <?= in_array($iso, $depositDays, true) ? 'checked' : '' ?> style="display:none;">
+                                <?= $lbl ?>
+                            </label>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="field-hint">La caparra viene richiesta solo per le prenotazioni in questi giorni. Se non selezioni nulla, vale per tutti.</div>
+                    </div>
+
+                    <!-- Fasce orarie (meal categories) -->
+                    <?php if (!empty($mealCategories)): ?>
+                    <div style="margin-top:1.25rem;">
+                        <label class="field-label">Fasce orarie</label>
+                        <div style="display:flex;flex-direction:column;gap:.4rem;margin-top:.4rem;">
+                            <?php foreach ($mealCategories as $cat): ?>
+                            <label class="cat-check <?= (int)($cat['deposit_required'] ?? 1) === 1 ? 'active' : '' ?>">
+                                <input type="checkbox" name="deposit_categories[]" value="<?= (int)$cat['id'] ?>"
+                                       <?= (int)($cat['deposit_required'] ?? 1) === 1 ? 'checked' : '' ?>>
+                                <span class="cat-check-info">
+                                    <span class="cat-check-name">
+                                        <?= e($cat['display_name'] ?? $cat['name']) ?>
+                                        <?php if (!(int)($cat['is_active'] ?? 1)): ?>
+                                        <span class="cat-check-off">non attiva</span>
+                                        <?php endif; ?>
+                                    </span>
+                                    <span class="cat-check-time"><?= substr((string)$cat['start_time'], 0, 5) ?> &ndash; <?= substr((string)$cat['end_time'], 0, 5) ?></span>
+                                </span>
+                            </label>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="field-hint">La caparra si applica solo alle prenotazioni che ricadono nelle fasce selezionate. Se non selezioni nulla, vale per tutte.</div>
+                    </div>
+                    <?php else: ?>
+                    <div style="margin-top:1rem;font-size:.78rem;color:#6c757d;">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Non hai ancora configurato fasce orarie. Puoi crearle in
+                        <a href="<?= url('dashboard/settings/meal-categories') ?>">Impostazioni &gt; Fasce orarie</a>.
+                    </div>
+                    <?php endif; ?>
+
                 </div>
             </div>
 
@@ -331,7 +397,27 @@ document.getElementById('main-toggle').addEventListener('click', function() {
     mt.classList.toggle('disabled', !enabled);
     document.getElementById('config-section').classList.toggle('disabled-look', !enabled);
     document.getElementById('type-section').classList.toggle('disabled-look', !enabled);
+    var whenSection = document.getElementById('when-section');
+    if (whenSection) whenSection.classList.toggle('disabled-look', !enabled);
     document.getElementById('deposit-enabled-input').value = enabled ? '1' : '';
+});
+
+// Day pills (giorni della settimana)
+document.querySelectorAll('.day-pill').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+        e.preventDefault();
+        var cb = this.querySelector('input[type="checkbox"]');
+        cb.checked = !cb.checked;
+        this.classList.toggle('active', cb.checked);
+    });
+});
+
+// Category checks (fasce orarie)
+document.querySelectorAll('.cat-check').forEach(function(el) {
+    var cb = el.querySelector('input[type="checkbox"]');
+    cb.addEventListener('change', function() {
+        el.classList.toggle('active', cb.checked);
+    });
 });
 
 // Mode toggle (per_table/per_person)

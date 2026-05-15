@@ -336,6 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 state.selectedTime = this.dataset.time;
                 state.selectedDiscount = parseInt(this.dataset.discount) || 0;
                 updatePill('time', state.selectedTime);
+                updateDepositInfo();
                 setTimeout(function() { goToStep(4); }, 250);
             });
         });
@@ -358,6 +359,40 @@ document.addEventListener('DOMContentLoaded', function() {
         bindPartyClicks();
     }
 
+    // Minuti da "HH:MM"
+    function timeToMinutes(t) {
+        if (!t) return 0;
+        var p = String(t).split(':');
+        return (parseInt(p[0], 10) || 0) * 60 + (parseInt(p[1], 10) || 0);
+    }
+
+    // La caparra si applica al giorno/fascia della prenotazione selezionata?
+    function depositAppliesToDayTime() {
+        // Giorno della settimana (ISO 1=lun..7=dom)
+        if (state.selectedDate) {
+            var p = state.selectedDate.split('-');
+            var d = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+            var dow = d.getDay();          // 0=dom..6=sab
+            var iso = dow === 0 ? 7 : dow; // 1=lun..7=dom
+            var days = (config.depositDays || '1,2,3,4,5,6,7').split(',').map(function(x) {
+                return parseInt(x, 10);
+            }).filter(function(x) { return x >= 1 && x <= 7; });
+            if (days.length && days.indexOf(iso) === -1) return false;
+        }
+        // Fascia oraria: se la prenotazione cade in una categoria con req=0, niente caparra.
+        // Se non cade in nessuna fascia, manteniamo la caparra (fallback sicuro).
+        if (state.selectedTime && Array.isArray(config.depositCategories) && config.depositCategories.length) {
+            var m = timeToMinutes(state.selectedTime);
+            for (var i = 0; i < config.depositCategories.length; i++) {
+                var c = config.depositCategories[i];
+                if (m >= timeToMinutes(c.start) && m < timeToMinutes(c.end)) {
+                    return c.req === 1;
+                }
+            }
+        }
+        return true;
+    }
+
     function updateDepositInfo() {
         var el = getEl('deposit-text');
         var wrap = getEl('deposit-info');
@@ -369,6 +404,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Hide deposit info if below threshold
         if (wrap && minParty > 0 && party < minParty) {
+            wrap.style.display = 'none';
+            return;
+        }
+        // Hide deposit info se giorno/fascia non prevedono la caparra
+        if (wrap && !depositAppliesToDayTime()) {
             wrap.style.display = 'none';
             return;
         }

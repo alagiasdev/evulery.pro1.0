@@ -238,6 +238,9 @@ class SettingsController
             }
         }
 
+        // Meal categories per la caparra condizionale per fascia
+        $mealCategories = (new \App\Models\MealCategory())->findAllByTenant((int)$tenant['id']);
+
         view('dashboard/settings/deposit', [
             'title'           => 'Caparra',
             'activeMenu'      => 'deposit',
@@ -246,6 +249,7 @@ class SettingsController
             'stripeSkMasked'  => $stripeSkMasked,
             'stripePkMasked'  => $stripePkMasked,
             'stripeWhMasked'  => $stripeWhMasked,
+            'mealCategories'  => $mealCategories,
         ], 'dashboard');
     }
 
@@ -274,11 +278,21 @@ class SettingsController
         $minParty = !empty($data['deposit_min_party_size']) ? (int)$data['deposit_min_party_size'] : null;
         if ($minParty !== null && ($minParty < 2 || $minParty > 20)) $minParty = null;
 
+        // Giorni in cui la caparra è attiva (ISO 1=lun..7=dom). Vuoto → tutti (fallback sicuro).
+        $validDays = [];
+        foreach ((array)($data['deposit_days'] ?? []) as $d) {
+            $d = (int)$d;
+            if ($d >= 1 && $d <= 7) $validDays[] = $d;
+        }
+        if (empty($validDays)) $validDays = [1, 2, 3, 4, 5, 6, 7];
+        sort($validDays);
+
         $updateData = [
             'deposit_enabled' => $wantsEnabled ? 1 : 0,
             'deposit_amount'  => !empty($data['deposit_amount']) ? (float)$data['deposit_amount'] : null,
             'deposit_mode'    => $depositMode,
             'deposit_min_party_size' => $minParty,
+            'deposit_days'    => implode(',', $validDays),
             'deposit_type'    => $depositType,
             'deposit_bank_info'    => trim($data['deposit_bank_info'] ?? ''),
             'deposit_payment_link' => trim($data['deposit_payment_link'] ?? ''),
@@ -313,6 +327,15 @@ class SettingsController
         }
 
         (new Tenant())->update($tenantId, $updateData);
+
+        // Fasce orarie in cui la caparra è attiva. Il form invia gli id delle categorie
+        // su cui applicarla; vuoto → tutte (fallback sicuro, gestito dal model).
+        $selectedCats = [];
+        foreach ((array)($data['deposit_categories'] ?? []) as $catId) {
+            $catId = (int)$catId;
+            if ($catId > 0) $selectedCats[] = $catId;
+        }
+        (new \App\Models\MealCategory())->setDepositRequired($tenantId, $selectedCats);
 
         AuditLog::log(AuditLog::DEPOSIT_UPDATED, "Tipo: {$depositType}", Auth::id(), $tenantId);
 

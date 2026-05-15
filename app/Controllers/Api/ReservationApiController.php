@@ -128,6 +128,33 @@ class ReservationApiController
         if ($depositRequired && $minParty > 0 && (int)$data['party_size'] < $minParty) {
             $depositRequired = 0;
         }
+
+        // Caparra condizionale: giorno della settimana (ISO 1=lun..7=dom).
+        if ($depositRequired) {
+            $depositDays = array_filter(array_map('intval', explode(',', (string)($tenant['deposit_days'] ?? '1,2,3,4,5,6,7'))));
+            if (!empty($depositDays)) {
+                $bookingDow = (int)date('N', strtotime($data['date']));
+                if (!in_array($bookingDow, $depositDays, true)) {
+                    $depositRequired = 0;
+                }
+            }
+        }
+
+        // Caparra condizionale: fascia oraria (meal category con deposit_required = 0).
+        // Solo categorie attive (le inattive non generano slot prenotabili e
+        // sovrapponendosi falserebbero la classificazione — cfr. lezione overlap).
+        // Se la prenotazione non ricade in nessuna fascia, manteniamo la caparra (fallback sicuro).
+        if ($depositRequired) {
+            $mealCatModel = new \App\Models\MealCategory();
+            $mealCats = $mealCatModel->findActiveByTenant((int)$tenant['id']);
+            if (!empty($mealCats)) {
+                $cat = $mealCatModel->categorizeTime($mealCats, substr((string)$data['time'], 0, 5));
+                if ($cat !== null && (int)($cat['deposit_required'] ?? 1) === 0) {
+                    $depositRequired = 0;
+                }
+            }
+        }
+
         $depositType = $tenant['deposit_type'] ?? 'info';
 
         // Calculate deposit based on mode: per_table (fixed) or per_person (× party_size)

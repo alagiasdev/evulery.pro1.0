@@ -50,14 +50,19 @@ class BookingController
         $isEmbed = $request->isEmbed();
         $layout = $isEmbed ? 'embed' : 'booking';
 
+        // Fasce orarie per la caparra condizionale (il widget mostra la caparra
+        // solo per giorni/fasce in cui è attiva)
+        $mealCategories = (new \App\Models\MealCategory())->findActiveByTenant((int)$tenant['id']);
+
         view('booking/widget', [
-            'tenant'       => $tenant,
-            'tenantName'   => $tenant['name'],
-            'tenantLogo'   => $tenant['logo_url'],
-            'slug'         => $slug,
-            'isEmbed'      => $isEmbed,
-            'petFriendly'  => !empty($tenant['pet_friendly']),
-            'kidsFriendly' => !empty($tenant['kids_friendly']),
+            'tenant'         => $tenant,
+            'tenantName'     => $tenant['name'],
+            'tenantLogo'     => $tenant['logo_url'],
+            'slug'           => $slug,
+            'isEmbed'        => $isEmbed,
+            'petFriendly'    => !empty($tenant['pet_friendly']),
+            'kidsFriendly'   => !empty($tenant['kids_friendly']),
+            'mealCategories' => $mealCategories,
         ], $layout);
     }
 

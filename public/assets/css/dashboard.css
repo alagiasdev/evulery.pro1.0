@@ -1582,6 +1582,32 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 .dto-desc { display: block; font-size: .72rem; color: #adb5bd; margin-top: .2rem; padding-left: 1.75rem; }
 .deposit-type-option.active .dto-desc { color: var(--brand); opacity: .7; }
 
+/* ===== Deposit: giorni / fasce condizionali ===== */
+.day-pill {
+    min-width: 48px; padding: .45rem .6rem; border: 2px solid #dee2e6; border-radius: 8px;
+    cursor: pointer; transition: all .15s; text-align: center;
+    font-size: .78rem; font-weight: 600; color: #495057; user-select: none;
+}
+.day-pill:hover { border-color: var(--brand); }
+.day-pill.active { border-color: var(--brand); background: var(--brand-light); color: var(--brand); }
+
+.cat-check {
+    display: flex; align-items: center; gap: .6rem;
+    padding: .6rem .8rem; border: 2px solid #dee2e6; border-radius: 10px;
+    cursor: pointer; transition: all .15s;
+}
+.cat-check:hover { border-color: var(--brand); }
+.cat-check.active { border-color: var(--brand); background: var(--brand-light); }
+.cat-check input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--brand); flex-shrink: 0; }
+.cat-check-info { display: flex; flex-direction: column; }
+.cat-check-name { font-size: .82rem; font-weight: 600; color: #495057; }
+.cat-check.active .cat-check-name { color: var(--brand); }
+.cat-check-time { font-size: .72rem; color: #adb5bd; }
+.cat-check-off {
+    font-size: .65rem; font-weight: 600; color: #adb5bd;
+    background: #f1f3f5; border-radius: 4px; padding: .05rem .35rem; margin-left: .35rem;
+}
+
 /* ===== Flow card (deposit) ===== */
 .flow-card {
     background: #fff; border-radius: 12px;

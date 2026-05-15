@@ -213,6 +213,12 @@ window.BOOKING_CONFIG = {
     depositMode: '<?= e($tenant['deposit_mode'] ?? 'per_table') ?>',
     depositMinParty: <?= (int)($tenant['deposit_min_party_size'] ?? 0) ?>,
     depositType: '<?= e($tenant['deposit_type'] ?? 'info') ?>',
+    depositDays: '<?= e($tenant['deposit_days'] ?? '1,2,3,4,5,6,7') ?>',
+    depositCategories: <?= json_encode(array_map(fn($c) => [
+        'start' => substr((string)$c['start_time'], 0, 5),
+        'end'   => substr((string)$c['end_time'], 0, 5),
+        'req'   => (int)($c['deposit_required'] ?? 1),
+    ], $mealCategories ?? []), JSON_UNESCAPED_SLASHES) ?>,
     advanceMin: <?= (int)($tenant['booking_advance_min'] ?? 0) ?>,
     advanceMax: <?= (int)($tenant['booking_advance_max'] ?? 60) ?>,
     confirmationMode: '<?= e($tenant['confirmation_mode'] ?? 'auto') ?>'

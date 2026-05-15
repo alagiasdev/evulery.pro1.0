@@ -99,6 +99,37 @@ class MealCategory
         }
     }
 
+    /**
+     * Imposta il flag deposit_required: 1 per le categorie il cui id è in $selectedIds,
+     * 0 per tutte le altre del tenant. Se $selectedIds è vuoto, tutte tornano a 1
+     * (fallback sicuro: caparra applicata a tutte le fasce).
+     */
+    public function setDepositRequired(int $tenantId, array $selectedIds): void
+    {
+        $selectedIds = array_values(array_unique(array_map('intval', $selectedIds)));
+
+        if (empty($selectedIds)) {
+            $stmt = $this->db->prepare(
+                'UPDATE meal_categories SET deposit_required = 1 WHERE tenant_id = :tenant_id'
+            );
+            $stmt->execute(['tenant_id' => $tenantId]);
+            return;
+        }
+
+        // Tutte a 0, poi le selezionate a 1
+        $reset = $this->db->prepare(
+            'UPDATE meal_categories SET deposit_required = 0 WHERE tenant_id = :tenant_id'
+        );
+        $reset->execute(['tenant_id' => $tenantId]);
+
+        $placeholders = implode(',', array_fill(0, count($selectedIds), '?'));
+        $set = $this->db->prepare(
+            "UPDATE meal_categories SET deposit_required = 1
+             WHERE tenant_id = ? AND id IN ($placeholders)"
+        );
+        $set->execute(array_merge([$tenantId], $selectedIds));
+    }
+
     public function delete(int $id, int $tenantId): bool
     {
         $stmt = $this->db->prepare(
