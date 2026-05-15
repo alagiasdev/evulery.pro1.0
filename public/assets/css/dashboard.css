@@ -389,6 +389,10 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 .btn-confirm:hover { background: #2E7D32; color: #fff; }
 .btn-arrived { background: #E3F2FD; color: #1565C0; }
 .btn-arrived:hover { background: #1565C0; color: #fff; }
+/* "Arrivato" smorzato finché l'orario di prenotazione non è vicino (≤30 min).
+   Resta cliccabile: cliente in anticipo / sistemazione a fine serata. */
+.btn-arrived.is-dimmed { background: #f1f3f5; color: #adb5bd; }
+.btn-arrived.is-dimmed:hover { background: #E3F2FD; color: #1565C0; }
 
 /* ===== Pending row highlight ===== */
 .res-row.is-pending { background: #FFFDE7; }
@@ -496,6 +500,9 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 .btn-act-confirm:hover { background: #2E7D32; color: #fff; }
 .btn-act-arrived { background: #E3F2FD; color: #1565C0; }
 .btn-act-arrived:hover { background: #1565C0; color: #fff; }
+/* "Arrivato" smorzato finché l'orario non è vicino (≤30 min) — resta cliccabile */
+.btn-act-arrived.is-dimmed { background: #f1f3f5; color: #adb5bd; }
+.btn-act-arrived.is-dimmed:hover { background: #E3F2FD; color: #1565C0; }
 .btn-act-noshow { background: #FFEBEE; color: #C62828; }
 .btn-act-noshow:hover { background: #C62828; color: #fff; }
 .btn-act-cancel { background: #f5f5f5; color: #757575; }

@@ -144,10 +144,18 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
         <?php endif; ?>
 
         <?php if (in_array($reservation['status'], ['confirmed', 'pending'])): ?>
+        <?php
+            // "Arrivato" prominente da 30 min prima dell'orario; smorzato prima
+            $resTs = strtotime($reservation['reservation_date'] . ' ' . $reservation['reservation_time']);
+            $arrivalActive = time() >= ($resTs - 1800);
+        ?>
         <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/status") ?>" class="d-inline">
             <?= csrf_field() ?>
             <input type="hidden" name="status" value="arrived">
-            <button type="submit" class="btn-action btn-act-arrived"><i class="bi bi-person-check"></i> Segna Arrivato</button>
+            <button type="submit" class="btn-action btn-act-arrived<?= $arrivalActive ? '' : ' is-dimmed' ?>"
+                    title="<?= $arrivalActive ? '' : 'L\'orario di prenotazione non è ancora vicino' ?>">
+                <i class="bi bi-person-check"></i> Segna Arrivato
+            </button>
         </form>
         <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/status") ?>" class="d-inline">
             <?= csrf_field() ?>

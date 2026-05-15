@@ -387,11 +387,17 @@ $navQs = function (string $d) use ($status, $source): string {
                 </form>
                 <?php endif; ?>
                 <?php if (in_array($r['status'], ['confirmed', 'pending'])): ?>
+                <?php
+                    // "Arrivato" prominente da 30 min prima dell'orario; smorzato prima
+                    $resTs = strtotime($r['reservation_date'] . ' ' . $r['reservation_time']);
+                    $arrivalActive = time() >= ($resTs - 1800);
+                ?>
                 <form method="POST" action="<?= url("dashboard/reservations/{$r['id']}/status") ?>" class="d-inline">
                     <?= csrf_field() ?>
                     <input type="hidden" name="status" value="arrived">
                     <input type="hidden" name="redirect_back" value="<?= e($redirectBack) ?>">
-                    <button type="submit" class="btn-action-sm btn-arrived" title="Segna Arrivato">
+                    <button type="submit" class="btn-action-sm btn-arrived<?= $arrivalActive ? '' : ' is-dimmed' ?>"
+                            title="<?= $arrivalActive ? 'Segna Arrivato' : 'Segna Arrivato (orario non ancora vicino)' ?>">
                         <i class="bi bi-person-check"></i>
                     </button>
                 </form>
