@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Pagina di completamento prenotazione</title>
+<style>
+  :root { --brand:#00844A; }
+  body { margin:0; background:#eceef1; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:#1a1d23; }
+  .page { max-width:1200px; margin:0 auto; padding:32px 20px 64px; }
+  h1 { font-size:24px; margin:0 0 6px; }
+  .lead { font-size:14px; color:#5b6470; max-width:840px; line-height:1.55; margin:0 0 28px; }
+  .grid { display:flex; flex-wrap:wrap; gap:28px; }
+  .col { flex:1 1 360px; }
+  .vlabel { display:inline-block; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.4px;
+            color:#fff; padding:5px 12px; border-radius:6px; margin-bottom:10px; }
+
+  /* page mockup */
+  .scr { background:#f5f6f8; border-radius:14px; padding:34px 22px; min-height:520px;
+         display:flex; align-items:flex-start; justify-content:center; }
+  .card { background:#fff; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,.10); max-width:380px; width:100%;
+          padding:34px 28px; text-align:center; }
+  .ic { width:68px; height:68px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
+        font-size:32px; margin-bottom:16px; }
+  .ic.warn { background:#FFF3E0; color:#E65100; }
+  .ic.ok { background:#E8F5E9; color:var(--brand); }
+  .ic.load { background:#EDE7F6; color:#635BFF; }
+  .ct { font-size:20px; font-weight:700; margin:0 0 8px; }
+  .cp { font-size:14px; color:#5b6470; line-height:1.6; margin:0 0 18px; }
+  .cp b { color:#1a1d23; }
+  .recap { background:#f8f9fa; border-radius:12px; padding:6px 16px; text-align:left; margin:0 0 20px; }
+  .rr { display:flex; justify-content:space-between; padding:9px 0; font-size:13.5px; }
+  .rr + .rr { border-top:1px solid #e9ecef; }
+  .rr .k { color:#6c757d; }
+  .rr .v { font-weight:600; }
+  .btn { display:block; width:100%; box-sizing:border-box; padding:14px; border-radius:10px; font-size:15px;
+         font-weight:700; text-decoration:none; border:none; cursor:pointer; }
+  .btn.primary { background:var(--brand); color:#fff; }
+  .btn.ghost { background:#fff; color:#5b6470; border:1px solid #d6dade; margin-top:10px; }
+  .fine { font-size:12px; color:#9aa1a9; margin-top:12px; }
+  .spinner { width:34px; height:34px; border:4px solid #ddd6f5; border-top-color:#635BFF; border-radius:50%;
+             display:inline-block; }
+  .annot { font-size:12.5px; color:#7a828c; margin:12px 4px 0; line-height:1.55; }
+  .annot b { color:#1a1d23; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Pagina di completamento prenotazione — wireframe</h1>
+  <p class="lead">
+    È la pagina su cui atterra il cliente cliccando la CTA dell'email "Prenotazione in attesa"
+    (e anche tornando dalla pagina Stripe). La pagina legge lo stato reale della prenotazione e
+    mostra uno dei tre esiti qui sotto. URL basato sul token sicuro della prenotazione.
+  </p>
+
+  <div class="grid">
+
+    <!-- ===== STATO 1: SESSIONE/PRENOTAZIONE SCADUTA ===== -->
+    <div class="col">
+      <span class="vlabel" style="background:#E65100;">Stato 1 · Scaduta — il caso principale</span>
+      <div class="scr">
+        <div class="card">
+          <div class="ic warn">&#9203;</div>
+          <h2 class="ct">Prenotazione scaduta</h2>
+          <p class="cp">
+            Non hai completato la registrazione della carta entro <b>30 minuti</b>,
+            quindi la prenotazione <b>n. 63</b> è stata annullata e il tavolo è tornato
+            disponibile per altri clienti.
+          </p>
+          <div class="recap">
+            <div class="rr"><span class="k">Ristorante</span><span class="v">Trattoria Da Mario</span></div>
+            <div class="rr"><span class="k">Data</span><span class="v">Ven 15 mag 2026</span></div>
+            <div class="rr"><span class="k">Orario</span><span class="v">21:30</span></div>
+            <div class="rr"><span class="k">Persone</span><span class="v">7</span></div>
+          </div>
+          <a class="btn primary" href="#">Prenota di nuovo</a>
+          <div class="fine">La disponibilità per data e orario indicati non è garantita.</div>
+        </div>
+      </div>
+      <p class="annot">
+        <b>CTA "Prenota di nuovo"</b> &rarr; apre il widget di prenotazione del ristorante, già
+        precompilato con data, orario e coperti della prenotazione scaduta — così il cliente
+        riprova in un clic, coperti permettendo.
+      </p>
+    </div>
+
+    <!-- ===== STATO 2: ANCORA VALIDA → PROSEGUI ===== -->
+    <div class="col">
+      <span class="vlabel" style="background:#635BFF;">Stato 2 · Ancora valida (entro 30 min)</span>
+      <div class="scr">
+        <div class="card">
+          <div class="ic load"><span class="spinner"></span></div>
+          <h2 class="ct">Ti portiamo al pagamento</h2>
+          <p class="cp">
+            La prenotazione <b>n. 63</b> è ancora in attesa. Ti stiamo reindirizzando alla
+            pagina sicura per <b>registrare la carta a garanzia</b>…
+          </p>
+          <div class="recap">
+            <div class="rr"><span class="k">Data</span><span class="v">Ven 15 mag 2026</span></div>
+            <div class="rr"><span class="k">Orario</span><span class="v">21:30</span></div>
+            <div class="rr"><span class="k">Persone</span><span class="v">7</span></div>
+          </div>
+          <a class="btn primary" href="#">Continua manualmente</a>
+          <div class="fine">Reindirizzamento automatico in corso…</div>
+        </div>
+      </div>
+      <p class="annot">
+        <b>Sessione Stripe ancora valida</b> (o rigenerata se la prenotazione è ancora <i>pending</i>):
+        redirect automatico a Stripe. Il pulsante è il fallback se il redirect non parte.
+      </p>
+    </div>
+
+    <!-- ===== STATO 3: GIÀ CONFERMATA ===== -->
+    <div class="col">
+      <span class="vlabel" style="background:#00844A;">Stato 3 · Già confermata</span>
+      <div class="scr">
+        <div class="card">
+          <div class="ic ok">&#10003;</div>
+          <h2 class="ct">Prenotazione confermata</h2>
+          <p class="cp">
+            La prenotazione <b>n. 63</b> è già confermata: hai completato la registrazione
+            della carta. Non devi fare altro, ti aspettiamo!
+          </p>
+          <div class="recap">
+            <div class="rr"><span class="k">Data</span><span class="v">Ven 15 mag 2026</span></div>
+            <div class="rr"><span class="k">Orario</span><span class="v">21:30</span></div>
+            <div class="rr"><span class="k">Persone</span><span class="v">7</span></div>
+          </div>
+          <a class="btn primary" href="#">Gestisci la prenotazione</a>
+          <a class="btn ghost" href="#">Consulta il menù</a>
+        </div>
+      </div>
+      <p class="annot">
+        Caso in cui il cliente riapre l'email/link dopo aver già completato. Evita confusione e
+        rimanda alla gestione della prenotazione esistente.
+      </p>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

@@ -319,6 +319,153 @@ class MailService
     }
 
     /**
+     * Email "Prenotazione in attesa" — inviata al cliente subito dopo la prenotazione
+     * quando questa resta in pending per via della caparra/garanzia.
+     * Un solo template, riquadro azione variabile per tipo (info/link/stripe/guarantee).
+     */
+    public static function sendReservationPending(array $reservation, array $tenant): bool
+    {
+        $customerEmail = $reservation['email'] ?? '';
+        if (!$customerEmail) {
+            return false;
+        }
+
+        $firstName     = e($reservation['first_name'] ?? '');
+        $partySize     = (int)($reservation['party_size'] ?? 0);
+        $personeLabel  = $partySize === 1 ? 'persona' : 'persone';
+        $date          = $reservation['reservation_date'] ?? '';
+        $time          = substr($reservation['reservation_time'] ?? '', 0, 5);
+        $dateFormatted = self::formatDateItalian($date);
+        $restaurantName = e($tenant['name'] ?? '');
+        $bookingNumber = (int)($reservation['booking_number'] ?? 0);
+        $token         = $reservation['manage_token'] ?? '';
+        $amount        = number_format((float)($reservation['deposit_amount'] ?? 0), 2, ',', '.');
+        $depositType   = $tenant['deposit_type'] ?? 'info';
+        $completeUrl   = url('booking/complete/' . $token);
+        $year          = date('Y');
+
+        // Contenuto variabile per tipo di caparra
+        if ($depositType === 'guarantee') {
+            $circleIcon  = '&#128274;';
+            $statusTitle = 'Manca solo un passaggio';
+            $statusSub   = "Ciao {$firstName}, registra la carta per confermare";
+            $boxBg = '#ECF7EF'; $boxBorder = '#cfe8d6'; $boxColor = '#2E7D32';
+            $boxLabel = '&#128274; Carta a garanzia';
+            $boxText  = "Per confermare la prenotazione devi registrare una carta. <strong>Non verr&agrave; addebitato nulla</strong>: la carta serve solo come garanzia, salvo mancata presentazione.";
+            $ctaHtml  = '<a href="' . $completeUrl . '" style="display:inline-block;background:#00844A;color:#fff;padding:13px 32px;border-radius:9px;font-size:14px;font-weight:700;text-decoration:none;">Completa la prenotazione</a>';
+            $timerHtml = '&#9201;&#65039; Hai <strong>30 minuti</strong> dalla prenotazione per completare.<br>Se il tempo &egrave; scaduto, dalla stessa pagina potrai riprenotare il tavolo.';
+        } elseif ($depositType === 'stripe') {
+            $circleIcon  = '&#128179;';
+            $statusTitle = 'Completa il pagamento';
+            $statusSub   = "Ciao {$firstName}, paga la caparra per confermare";
+            $boxBg = '#F1F0FE'; $boxBorder = '#ddd9f5'; $boxColor = '#4b40c7';
+            $boxLabel = '&#128179; Caparra richiesta';
+            $boxText  = "Per confermare la prenotazione versa la caparra di <strong>&euro;{$amount}</strong> con pagamento sicuro (carta, Apple Pay, Google Pay). La conferma &egrave; automatica.";
+            $ctaHtml  = '<a href="' . $completeUrl . '" style="display:inline-block;background:#00844A;color:#fff;padding:13px 32px;border-radius:9px;font-size:14px;font-weight:700;text-decoration:none;">Completa la prenotazione</a>';
+            $timerHtml = '&#9201;&#65039; Hai <strong>30 minuti</strong> dalla prenotazione per pagare la caparra.<br>Se il tempo &egrave; scaduto, dalla stessa pagina potrai riprenotare il tavolo.';
+        } elseif ($depositType === 'link') {
+            $payLink = $tenant['deposit_payment_link'] ?? '';
+            $circleIcon  = '&#128279;';
+            $statusTitle = 'Completa il pagamento';
+            $statusSub   = "Ciao {$firstName}, paga la caparra per confermare";
+            $boxBg = '#FFF3E0'; $boxBorder = '#ffe0b2'; $boxColor = '#E65100';
+            $boxLabel = '&#128279; Caparra via link &mdash; &euro;' . $amount;
+            $boxText  = "Completa il pagamento della caparra di <strong>&euro;{$amount}</strong> tramite il link qui sotto. Indica nella causale: <strong>Prenotazione n. {$bookingNumber}</strong>.";
+            $ctaHtml  = $payLink
+                ? '<a href="' . e($payLink) . '" style="display:inline-block;background:#E65100;color:#fff;padding:13px 32px;border-radius:9px;font-size:14px;font-weight:700;text-decoration:none;">Vai al pagamento</a>'
+                : '';
+            $timerHtml = '&#128221; Il ristorante confermer&agrave; la prenotazione dopo aver ricevuto il pagamento.';
+        } else {
+            // info / bonifico
+            $bankInfo = trim((string)($tenant['deposit_bank_info'] ?? ''));
+            $bankBlock = $bankInfo
+                ? '<div style="background:#fff;border:1px dashed #90b8dd;border-radius:8px;padding:10px 12px;margin-top:10px;font-family:Consolas,monospace;font-size:12px;color:#0d3d66;white-space:pre-line;">' . e($bankInfo) . '</div>'
+                : '';
+            $circleIcon  = '&#127974;';
+            $statusTitle = 'In attesa del bonifico';
+            $statusSub   = "Ciao {$firstName}, completa il bonifico per confermare";
+            $boxBg = '#E3F2FD'; $boxBorder = '#c5e1f7'; $boxColor = '#1565C0';
+            $boxLabel = '&#127974; Caparra via bonifico &mdash; &euro;' . $amount;
+            $boxText  = "Effettua un bonifico di <strong>&euro;{$amount}</strong> con le coordinate qui sotto. Causale: <strong>Caparra prenotazione n. {$bookingNumber}</strong>." . $bankBlock;
+            $ctaHtml  = '';
+            $timerHtml = '&#128221; La prenotazione resta valida in attesa della verifica del pagamento.';
+        }
+
+        $ctaBlock = $ctaHtml
+            ? '<div style="text-align:center;padding:0 32px 6px;">' . $ctaHtml . '</div>'
+            : '';
+        $subjectLine = "Prenotazione in attesa - {$restaurantName}";
+
+        $html = <<<HTML
+        <!DOCTYPE html>
+        <html lang="it">
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+        <body style="margin:0;padding:0;background:#f5f6f8;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;">
+        <div style="max-width:600px;margin:0 auto;padding:24px 16px;">
+            <div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08);">
+
+                <!-- Header -->
+                <div style="background:#FF8F00;padding:32px 32px 28px;text-align:center;">
+                    <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.2);color:#fff;display:inline-block;line-height:48px;font-size:22px;margin-bottom:12px;">&#9203;</div>
+                    <h1 style="font-size:22px;font-weight:700;color:#fff;margin:0 0 4px;">{$restaurantName}</h1>
+                    <p style="font-size:13px;color:rgba(255,255,255,.85);margin:0;">Prenotazione in attesa</p>
+                </div>
+
+                <!-- Status -->
+                <div style="padding:24px 32px 8px;text-align:center;">
+                    <div style="width:56px;height:56px;border-radius:50%;background:#FFF3E0;color:#E65100;display:inline-block;line-height:56px;font-size:24px;margin-bottom:12px;">{$circleIcon}</div>
+                    <h2 style="font-size:18px;font-weight:700;color:#1a1d23;margin:0 0 4px;">{$statusTitle}</h2>
+                    <p style="font-size:14px;color:#6c757d;margin:0;">{$statusSub}</p>
+                </div>
+
+                <!-- Details card -->
+                <div style="margin:20px 32px 20px;background:#f8f9fa;border-radius:12px;padding:6px 18px;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr><td style="padding:11px 0;font-size:13px;color:#6c757d;">Prenotazione</td><td style="padding:11px 0;font-size:14px;font-weight:600;color:#1a1d23;text-align:right;">n. {$bookingNumber}</td></tr>
+                        <tr><td colspan="2" style="border-top:1px solid #e9ecef;"></td></tr>
+                        <tr><td style="padding:11px 0;font-size:13px;color:#6c757d;">Data</td><td style="padding:11px 0;font-size:14px;font-weight:600;color:#1a1d23;text-align:right;">{$dateFormatted}</td></tr>
+                        <tr><td colspan="2" style="border-top:1px solid #e9ecef;"></td></tr>
+                        <tr><td style="padding:11px 0;font-size:13px;color:#6c757d;">Orario</td><td style="padding:11px 0;font-size:14px;font-weight:600;color:#1a1d23;text-align:right;">{$time}</td></tr>
+                        <tr><td colspan="2" style="border-top:1px solid #e9ecef;"></td></tr>
+                        <tr><td style="padding:11px 0;font-size:13px;color:#6c757d;">Persone</td><td style="padding:11px 0;font-size:14px;font-weight:600;color:#1a1d23;text-align:right;">{$partySize} {$personeLabel}</td></tr>
+                    </table>
+                </div>
+
+                <!-- Action box -->
+                <div style="margin:0 32px 16px;background:{$boxBg};border:1px solid {$boxBorder};border-radius:10px;padding:16px;font-size:13px;line-height:1.55;color:{$boxColor};">
+                    <div style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;">{$boxLabel}</div>
+                    {$boxText}
+                </div>
+
+                {$ctaBlock}
+
+                <!-- Timer / note -->
+                <div style="margin:6px 32px 22px;background:#FFF3E0;border-radius:8px;padding:12px 14px;font-size:12.5px;color:#B5521A;text-align:center;line-height:1.5;">
+                    {$timerHtml}
+                </div>
+
+                <!-- Footer -->
+                <div style="background:#f8f9fa;padding:20px 32px;text-align:center;border-top:1px solid #f0f0f0;">
+                    <div style="font-size:11px;color:#adb5bd;line-height:1.5;">
+                        Hai ricevuto questa email perch&eacute; hai effettuato una prenotazione presso {$restaurantName}.
+                    </div>
+                    <div style="font-size:10px;color:#ced4da;margin-top:12px;">
+                        &copy; {$year} Evulery &middot; by alagias. - Soluzioni per il web
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </body>
+        </html>
+        HTML;
+
+        $service = new self();
+        $replyTo = $tenant['email'] ?? null;
+        return $service->send($customerEmail, $subjectLine, $html, $tenant['name'] ?? null, $replyTo);
+    }
+
+    /**
      * Send reservation reminder email.
      * @param string $type '24h' or '2h'
      */

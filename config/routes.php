@@ -295,6 +295,7 @@ $router->group('/api/v1', ['ratelimit'], function ($r) {
 $router->get('/email/unsubscribe/{token}', [UnsubscribeController::class, 'show'], ['ratelimit']);
 
 // --- MANAGE RESERVATION (magic link, public) ---
+$router->get('/booking/complete/{token}', [BookingController::class, 'complete']);
 $router->get('/manage/{token}', [ManageReservationController::class, 'show']);
 $router->post('/manage/{token}/cancel', [ManageReservationController::class, 'cancel'], ['csrf']);
 

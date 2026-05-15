@@ -977,6 +977,34 @@ document.addEventListener('DOMContentLoaded', function() {
     renderCalendar();
     renderPartyGrid();
 
+    // Pre-fill da "Prenota di nuovo" (CTA pagina prenotazione scaduta):
+    // ?rebook=1&date=YYYY-MM-DD&party=N → preseleziona data e coperti, va agli orari.
+    (function applyRebookPrefill() {
+        var qs = new URLSearchParams(window.location.search);
+        if (qs.get('rebook') !== '1') return;
+        var rbDate = qs.get('date') || '';
+        var rbParty = parseInt(qs.get('party'), 10);
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(rbDate)) return;
+        if (rbDate < formatDateISO(new Date())) return; // data passata: ignora
+
+        state.selectedDate = rbDate;
+        state.selectedTime = null;
+        state.maxPartyForDate = null;
+        updatePill('date', formatDatePill(rbDate));
+        renderCalendar();
+        fetchMaxParty(rbDate);
+
+        if (rbParty >= 1 && rbParty <= 20) {
+            state.selectedPartySize = rbParty;
+            updatePill('party', rbParty + ' Pers.');
+            var pBtn = widget.querySelector('.bw-party-btn[data-size="' + rbParty + '"]');
+            if (pBtn) pBtn.classList.add('bw-party-active');
+            goToStep(3);
+        } else {
+            goToStep(2);
+        }
+    })();
+
     // Load social proof count on page load
     fetch(apiUrl + '/tenants/' + slug + '/availability?date=' + formatDateISO(new Date()) + '&party_size=2&grouped=1')
         .then(function(r) { return checkApiResponse(r); })

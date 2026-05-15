@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Email "Prenotazione in attesa"</title>
+<style>
+  body { margin:0; background:#eceef1; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:#1a1d23; }
+  .page { max-width:1320px; margin:0 auto; padding:32px 20px 64px; }
+  h1 { font-size:24px; margin:0 0 6px; }
+  .lead { font-size:14px; color:#5b6470; max-width:820px; line-height:1.55; margin:0 0 22px; }
+  .note { background:#fff8e1; border:1px solid #ffe0b2; border-radius:10px; padding:14px 16px; font-size:13px; color:#8a5a00; margin:0 0 32px; line-height:1.55; }
+  .grid { display:flex; flex-wrap:wrap; gap:28px; }
+  .col { flex:1 1 560px; }
+  .vlabel { display:inline-block; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.4px;
+            background:#E65100; color:#fff; padding:5px 12px; border-radius:6px; margin-bottom:10px; }
+  .email { max-width:600px; }
+  .ecard { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.10); }
+  .ehead { background:#FF8F00; padding:30px 32px 26px; text-align:center; }
+  .ehead .ico { width:48px; height:48px; border-radius:12px; background:rgba(255,255,255,.22); color:#fff;
+                display:inline-block; line-height:48px; font-size:24px; margin-bottom:12px; }
+  .ehead h2 { font-size:21px; font-weight:700; color:#fff; margin:0 0 4px; }
+  .ehead p { font-size:13px; color:rgba(255,255,255,.85); margin:0; }
+  .estatus { padding:22px 32px 4px; text-align:center; }
+  .estatus .circ { width:54px; height:54px; border-radius:50%; background:#FFF3E0; color:#E65100;
+                   display:inline-block; line-height:54px; font-size:23px; margin-bottom:10px; }
+  .estatus h3 { font-size:17px; font-weight:700; margin:0 0 4px; }
+  .estatus .sub { font-size:14px; color:#6c757d; margin:0; }
+  .edetails { margin:18px 32px 20px; background:#f8f9fa; border-radius:12px; padding:8px 18px; }
+  .erow { display:flex; align-items:center; gap:12px; padding:11px 0; }
+  .erow + .erow { border-top:1px solid #e9ecef; }
+  .erow .ri { width:34px; height:34px; border-radius:9px; background:#fff; color:#E65100;
+              text-align:center; line-height:34px; font-size:15px; flex-shrink:0; }
+  .erow .rl { font-size:11px; color:#6c757d; text-transform:uppercase; letter-spacing:.3px; }
+  .erow .rv { font-size:15px; font-weight:600; }
+  .ebox { margin:0 32px 16px; border-radius:10px; padding:16px; font-size:13px; line-height:1.55; }
+  .ebox .bt { font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:.3px; margin-bottom:6px; }
+  .ebox.guar { background:#ECF7EF; border:1px solid #cfe8d6; color:#2E7D32; }
+  .ebox.stripe { background:#F1F0FE; border:1px solid #ddd9f5; color:#4b40c7; }
+  .ebox.info { background:#E3F2FD; border:1px solid #c5e1f7; color:#1565C0; }
+  .ebox.link { background:#FFF3E0; border:1px solid #ffe0b2; color:#E65100; }
+  .iban { background:#fff; border:1px dashed #90b8dd; border-radius:8px; padding:9px 11px; margin-top:9px;
+          font-family:Consolas,monospace; font-size:12px; color:#0d3d66; }
+  .ebtn { display:inline-block; color:#fff; padding:12px 30px; border-radius:9px; font-size:14px;
+          font-weight:700; text-decoration:none; }
+  .ebtn.g { background:#00844A; }
+  .ebtn.l { background:#E65100; }
+  .ecta { text-align:center; padding:0 32px 6px; }
+  .etimer { margin:6px 32px 18px; background:#FFF3E0; border-radius:8px; padding:11px 14px;
+            font-size:12.5px; color:#B5521A; text-align:center; line-height:1.5; }
+  .efoot { background:#f8f9fa; padding:18px 32px; text-align:center; border-top:1px solid #f0f0f0;
+           font-size:11px; color:#adb5bd; line-height:1.5; }
+  .annot { font-size:12px; color:#7a828c; margin:10px 2px 0; line-height:1.5; }
+  .annot b { color:#1a1d23; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Email "Prenotazione in attesa" — wireframe</h1>
+  <p class="lead">
+    Email inviata al cliente <b>subito dopo la prenotazione</b>, quando questa resta <b>In attesa</b>.
+    Un solo template; il riquadro azione cambia in base al tipo di caparra. La CTA porta sempre alla
+    <b>pagina di completamento</b> (vedi wireframe <i>pagina-completa-prenotazione.html</i>): se i 30 minuti
+    sono ancora validi prosegue verso il pagamento, se sono scaduti mostra l'esito e il pulsante per riprenotare.
+  </p>
+  <div class="note">
+    <b>Stripe e Carta a garanzia</b> hanno la finestra di <b>30 minuti</b>: oltre, il posto si libera e la
+    prenotazione va rifatta. &mdash; <b>Bonifico e Link</b> non hanno scadenza (pagamento differito, conferma
+    manuale del ristoratore): l'email serve a dare al cliente IBAN / link <b>per iscritto</b>.
+  </div>
+
+  <div class="grid">
+
+    <!-- ============ VARIANTE A: CARTA A GARANZIA ============ -->
+    <div class="col">
+      <span class="vlabel">Variante A · Carta a garanzia &nbsp;·&nbsp; finestra 30 min</span>
+      <div class="email">
+        <div class="ecard">
+          <div class="ehead">
+            <div class="ico">&#9203;</div>
+            <h2>Trattoria Da Mario</h2>
+            <p>Prenotazione in attesa</p>
+          </div>
+          <div class="estatus">
+            <div class="circ">&#128274;</div>
+            <h3>Manca solo un passaggio</h3>
+            <p class="sub">Ciao Stefano, registra la carta per confermare</p>
+          </div>
+          <div class="edetails">
+            <div class="erow"><div class="ri">&#127860;</div><div><div class="rl">Prenotazione</div><div class="rv">n. 63</div></div></div>
+            <div class="erow"><div class="ri">&#128197;</div><div><div class="rl">Data</div><div class="rv">Venerd&igrave; 15 maggio 2026</div></div></div>
+            <div class="erow"><div class="ri">&#128336;</div><div><div class="rl">Orario</div><div class="rv">21:30</div></div></div>
+            <div class="erow"><div class="ri">&#128101;</div><div><div class="rl">Persone</div><div class="rv">7 persone</div></div></div>
+          </div>
+          <div class="ebox guar">
+            <div class="bt">&#128274; Carta a garanzia</div>
+            Per confermare la prenotazione devi registrare una carta. <b>Non verr&agrave; addebitato nulla</b>:
+            la carta serve solo come garanzia, salvo mancata presentazione.
+          </div>
+          <div class="ecta"><a class="ebtn g" href="#">Completa la prenotazione</a></div>
+          <div class="etimer">
+            &#9201;&#65039; Hai <b>30 minuti</b> dalla prenotazione per completare.<br>
+            Se il tempo &egrave; scaduto, dalla stessa pagina potrai <b>riprenotare il tavolo</b>.
+          </div>
+          <div class="efoot">Hai ricevuto questa email perch&eacute; hai prenotato presso Trattoria Da Mario.</div>
+        </div>
+      </div>
+      <p class="annot"><b>CTA</b> &rarr; pagina di completamento: se la sessione &egrave; valida prosegue su Stripe, se scaduta mostra "Prenotazione scaduta" + "Prenota di nuovo".</p>
+    </div>
+
+    <!-- ============ VARIANTE B: STRIPE (ADDEBITO IMMEDIATO) ============ -->
+    <div class="col">
+      <span class="vlabel">Variante B · Caparra Stripe &nbsp;·&nbsp; finestra 30 min</span>
+      <div class="email">
+        <div class="ecard">
+          <div class="ehead">
+            <div class="ico">&#9203;</div>
+            <h2>Trattoria Da Mario</h2>
+            <p>Prenotazione in attesa</p>
+          </div>
+          <div class="estatus">
+            <div class="circ">&#128179;</div>
+            <h3>Completa il pagamento</h3>
+            <p class="sub">Ciao Stefano, paga la caparra per confermare</p>
+          </div>
+          <div class="edetails">
+            <div class="erow"><div class="ri">&#127860;</div><div><div class="rl">Prenotazione</div><div class="rv">n. 63</div></div></div>
+            <div class="erow"><div class="ri">&#128197;</div><div><div class="rl">Data</div><div class="rv">Venerd&igrave; 15 maggio 2026</div></div></div>
+            <div class="erow"><div class="ri">&#128336;</div><div><div class="rl">Orario</div><div class="rv">21:30</div></div></div>
+            <div class="erow"><div class="ri">&#128101;</div><div><div class="rl">Persone</div><div class="rv">7 persone</div></div></div>
+          </div>
+          <div class="ebox stripe">
+            <div class="bt">&#128179; Caparra richiesta</div>
+            Per confermare la prenotazione versa la caparra di <b>&euro;30,00</b> con pagamento
+            sicuro (carta, Apple Pay, Google Pay). La conferma &egrave; automatica.
+          </div>
+          <div class="ecta"><a class="ebtn g" href="#">Completa la prenotazione</a></div>
+          <div class="etimer">
+            &#9201;&#65039; Hai <b>30 minuti</b> dalla prenotazione per pagare la caparra.<br>
+            Se il tempo &egrave; scaduto, dalla stessa pagina potrai <b>riprenotare il tavolo</b>.
+          </div>
+          <div class="efoot">Hai ricevuto questa email perch&eacute; hai prenotato presso Trattoria Da Mario.</div>
+        </div>
+      </div>
+      <p class="annot"><b>CTA</b> &rarr; pagina di completamento: stessa logica della variante A (Stripe Checkout se valida, altrimenti riprenota).</p>
+    </div>
+
+    <!-- ============ VARIANTE C: BONIFICO ============ -->
+    <div class="col">
+      <span class="vlabel" style="background:#1565C0;">Variante C · Bonifico &nbsp;·&nbsp; nessuna scadenza</span>
+      <div class="email">
+        <div class="ecard">
+          <div class="ehead" style="background:#1976D2;">
+            <div class="ico">&#9203;</div>
+            <h2>Trattoria Da Mario</h2>
+            <p>Prenotazione in attesa</p>
+          </div>
+          <div class="estatus">
+            <div class="circ" style="background:#E3F2FD;color:#1565C0;">&#127974;</div>
+            <h3>In attesa del bonifico</h3>
+            <p class="sub">Ciao Stefano, completa il bonifico per confermare</p>
+          </div>
+          <div class="edetails">
+            <div class="erow"><div class="ri" style="color:#1565C0;">&#127860;</div><div><div class="rl">Prenotazione</div><div class="rv">n. 63</div></div></div>
+            <div class="erow"><div class="ri" style="color:#1565C0;">&#128197;</div><div><div class="rl">Data</div><div class="rv">Venerd&igrave; 15 maggio 2026</div></div></div>
+            <div class="erow"><div class="ri" style="color:#1565C0;">&#128336;</div><div><div class="rl">Orario</div><div class="rv">21:30</div></div></div>
+            <div class="erow"><div class="ri" style="color:#1565C0;">&#128101;</div><div><div class="rl">Persone</div><div class="rv">7 persone</div></div></div>
+          </div>
+          <div class="ebox info">
+            <div class="bt">&#127974; Caparra via bonifico — &euro;30,00</div>
+            Effettua un bonifico di <b>&euro;30,00</b> con le coordinate qui sotto. Il ristorante
+            confermer&agrave; la prenotazione dopo aver ricevuto il pagamento.
+            <div class="iban">
+              IBAN: IT60 X054 2811 1010 0000 0123 456<br>
+              Intestatario: Ristorante Da Mario<br>
+              Causale: Caparra prenotazione n. 63
+            </div>
+          </div>
+          <div class="etimer" style="background:#E3F2FD;color:#1565C0;">
+            &#128221; Nessuna scadenza automatica: la prenotazione resta valida in attesa della verifica del pagamento.
+          </div>
+          <div class="efoot">Hai ricevuto questa email perch&eacute; hai prenotato presso Trattoria Da Mario.</div>
+        </div>
+      </div>
+      <p class="annot"><b>Nessuna CTA / nessun timer:</b> il cliente ha IBAN e causale per iscritto. Conferma manuale del ristoratore.</p>
+    </div>
+
+    <!-- ============ VARIANTE D: LINK DI PAGAMENTO ============ -->
+    <div class="col">
+      <span class="vlabel">Variante D · Link di pagamento &nbsp;·&nbsp; nessuna scadenza</span>
+      <div class="email">
+        <div class="ecard">
+          <div class="ehead">
+            <div class="ico">&#9203;</div>
+            <h2>Trattoria Da Mario</h2>
+            <p>Prenotazione in attesa</p>
+          </div>
+          <div class="estatus">
+            <div class="circ">&#128279;</div>
+            <h3>Completa il pagamento</h3>
+            <p class="sub">Ciao Stefano, paga la caparra per confermare</p>
+          </div>
+          <div class="edetails">
+            <div class="erow"><div class="ri">&#127860;</div><div><div class="rl">Prenotazione</div><div class="rv">n. 63</div></div></div>
+            <div class="erow"><div class="ri">&#128197;</div><div><div class="rl">Data</div><div class="rv">Venerd&igrave; 15 maggio 2026</div></div></div>
+            <div class="erow"><div class="ri">&#128336;</div><div><div class="rl">Orario</div><div class="rv">21:30</div></div></div>
+            <div class="erow"><div class="ri">&#128101;</div><div><div class="rl">Persone</div><div class="rv">7 persone</div></div></div>
+          </div>
+          <div class="ebox link">
+            <div class="bt">&#128279; Caparra via link — &euro;30,00</div>
+            Completa il pagamento della caparra di <b>&euro;30,00</b> tramite il link sotto
+            (PayPal, Satispay, SumUp...). Indica nella causale: <b>Prenotazione n. 63</b>.
+          </div>
+          <div class="ecta"><a class="ebtn l" href="#">Vai al pagamento</a></div>
+          <div class="etimer">
+            &#128221; Nessuna scadenza automatica: il ristorante confermer&agrave; la prenotazione dopo il pagamento.
+          </div>
+          <div class="efoot">Hai ricevuto questa email perch&eacute; hai prenotato presso Trattoria Da Mario.</div>
+        </div>
+      </div>
+      <p class="annot"><b>CTA</b> &rarr; apre direttamente il link di pagamento esterno configurato dal ristoratore.</p>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

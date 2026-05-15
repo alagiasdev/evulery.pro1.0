@@ -245,6 +245,12 @@ class ReservationApiController
             if ($full) {
                 MailService::sendReservationConfirmation($full, $tenant);
             }
+        } elseif ($depositRequired) {
+            // Prenotazione pending in attesa di caparra/garanzia → email "Prenotazione in attesa"
+            $full = (new Reservation())->findWithCustomer($reservationId);
+            if ($full) {
+                MailService::sendReservationPending($full, $tenant);
+            }
         }
 
         AuditLog::log(AuditLog::RESERVATION_CREATED, "Prenotazione #{$reservationId} (API)", null, (int)$tenant['id']);

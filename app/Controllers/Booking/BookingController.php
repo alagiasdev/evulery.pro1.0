@@ -107,6 +107,122 @@ class BookingController
         ], 'booking');
     }
 
+    /**
+     * Pagina di completamento prenotazione — destinazione della CTA nell'email
+     * "Prenotazione in attesa". Legge lo stato reale della prenotazione e:
+     *  - confermata  → schermata "già confermata"
+     *  - pending     → rigenera la sessione Stripe e reindirizza (stripe/guarantee)
+     *  - scaduta     → schermata "scaduta" con CTA per riprenotare
+     */
+    public function complete(Request $request): void
+    {
+        $token = (string)$request->param('token');
+        $reservation = (new Reservation())->findByToken($token);
+        if (!$reservation) {
+            Response::notFound();
+        }
+
+        $tenant = (new Tenant())->findById((int)$reservation['tenant_id']);
+        if (!$tenant) {
+            Response::notFound();
+        }
+
+        $status = $reservation['status'];
+        $depositType = $tenant['deposit_type'] ?? 'info';
+
+        if (in_array($status, ['confirmed', 'arrived'], true)) {
+            $this->renderComplete('confirmed', $reservation, $tenant);
+            return;
+        }
+
+        if (in_array($status, ['cancelled', 'noshow'], true)) {
+            $this->renderComplete('expired', $reservation, $tenant);
+            return;
+        }
+
+        // status === 'pending': per stripe/guarantee rigenera la sessione e reindirizza
+        if (in_array($depositType, ['stripe', 'guarantee'], true) && !empty($tenant['stripe_sk'])) {
+            $url = $this->createCheckoutSession($reservation, $tenant);
+            if ($url) {
+                Response::redirect($url);
+                return;
+            }
+        }
+
+        // pending senza Stripe (bonifico/link) o sessione non creata
+        $this->renderComplete('pending', $reservation, $tenant);
+    }
+
+    private function renderComplete(string $state, array $reservation, array $tenant): void
+    {
+        view('booking/complete', [
+            'state'       => $state,
+            'reservation' => $reservation,
+            'tenant'      => $tenant,
+            'tenantName'  => $tenant['name'],
+            'tenantLogo'  => $tenant['logo_url'] ?? null,
+        ], 'booking');
+    }
+
+    /**
+     * Rigenera una Stripe Checkout Session per una prenotazione pending.
+     * payment per il tipo 'stripe', setup per 'guarantee'. Ritorna l'URL o null.
+     */
+    private function createCheckoutSession(array $reservation, array $tenant): ?string
+    {
+        $depositType = $tenant['deposit_type'] ?? 'info';
+        $amount = (float)($reservation['deposit_amount'] ?? 0);
+        $slug   = $tenant['slug'];
+        $rid    = (int)$reservation['id'];
+
+        if ($amount <= 0) {
+            return null;
+        }
+
+        try {
+            $key = decrypt_value($tenant['stripe_sk']);
+            if (!$key) {
+                return null;
+            }
+            \Stripe\Stripe::setApiKey($key);
+
+            $params = [
+                'payment_method_types' => ['card'],
+                'success_url' => url("{$slug}/booking/success") . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url'  => url("{$slug}/booking/cancel") . "?reservation_id={$rid}",
+                'metadata'    => [
+                    'reservation_id' => $rid,
+                    'tenant_id'      => $tenant['id'],
+                ],
+                'expires_at'  => time() + 1800,
+            ];
+
+            if ($depositType === 'guarantee') {
+                $params['mode'] = 'setup';
+                $params['metadata']['kind'] = 'guarantee';
+                if (!empty($reservation['email'])) {
+                    $params['customer_email'] = $reservation['email'];
+                }
+            } else {
+                $params['mode'] = 'payment';
+                $params['line_items'] = [[
+                    'price_data' => [
+                        'currency'     => 'eur',
+                        'unit_amount'  => (int)round($amount * 100),
+                        'product_data' => ['name' => "Caparra - {$tenant['name']}"],
+                    ],
+                    'quantity' => 1,
+                ]];
+            }
+
+            $session = \Stripe\Checkout\Session::create($params);
+            return $session->url;
+        } catch (\Exception $e) {
+            app_log('complete() Stripe session error: ' . $e->getMessage(), 'error');
+            return null;
+        }
+    }
+
     public function cancelPayment(Request $request): void
     {
         $slug = $request->param('slug');
