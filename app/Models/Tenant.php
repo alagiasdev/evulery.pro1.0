@@ -133,6 +133,7 @@ class Tenant
             'slug', 'name', 'email', 'phone', 'address', 'logo_url',
             'custom_domain', 'domain_status', 'cname_target',
             'plan', 'plan_id', 'plan_price', 'deposit_enabled', 'deposit_amount', 'deposit_mode', 'deposit_min_party_size',
+            'deposit_days',
             'cancellation_policy', 'booking_instructions', 'confirmation_mode',
             'table_duration', 'time_step',
             'booking_advance_min', 'booking_advance_max',
