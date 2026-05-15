@@ -1608,6 +1608,14 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     background: #f1f3f5; border-radius: 4px; padding: .05rem .35rem; margin-left: .35rem;
 }
 
+/* Fascia non attiva: grigio, niente verde anche se selezionata */
+.cat-check.is-inactive { border-color: #e3e6ea; background: #f6f7f9; }
+.cat-check.is-inactive:hover { border-color: #ced4da; }
+.cat-check.is-inactive .cat-check-name,
+.cat-check.is-inactive.active .cat-check-name { color: #adb5bd; }
+.cat-check.is-inactive .cat-check-time { color: #c4c9ce; }
+.cat-check.is-inactive input[type="checkbox"] { accent-color: #adb5bd; }
+
 /* ===== Flow card (deposit) ===== */
 .flow-card {
     background: #fff; border-radius: 12px;

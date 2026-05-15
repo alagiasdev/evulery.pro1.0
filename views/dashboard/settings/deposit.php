@@ -146,13 +146,14 @@ $mealCategories = $mealCategories ?? [];
                         <label class="field-label">Fasce orarie</label>
                         <div style="display:flex;flex-direction:column;gap:.4rem;margin-top:.4rem;">
                             <?php foreach ($mealCategories as $cat): ?>
-                            <label class="cat-check <?= (int)($cat['deposit_required'] ?? 1) === 1 ? 'active' : '' ?>">
+                            <?php $catInactive = !(int)($cat['is_active'] ?? 1); ?>
+                            <label class="cat-check <?= (int)($cat['deposit_required'] ?? 1) === 1 ? 'active' : '' ?> <?= $catInactive ? 'is-inactive' : '' ?>">
                                 <input type="checkbox" name="deposit_categories[]" value="<?= (int)$cat['id'] ?>"
                                        <?= (int)($cat['deposit_required'] ?? 1) === 1 ? 'checked' : '' ?>>
                                 <span class="cat-check-info">
                                     <span class="cat-check-name">
                                         <?= e($cat['display_name'] ?? $cat['name']) ?>
-                                        <?php if (!(int)($cat['is_active'] ?? 1)): ?>
+                                        <?php if ($catInactive): ?>
                                         <span class="cat-check-off">non attiva</span>
                                         <?php endif; ?>
                                     </span>
