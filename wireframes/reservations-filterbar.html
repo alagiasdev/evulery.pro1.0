@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Filter bar prenotazioni</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #006837;
+    --brand-light: #E8F5E9;
+    --ink: #1a1d23;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --bg: #f5f6f8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+    padding: 2rem 1.5rem 4rem;
+}
+.wf-wrap { max-width: 1000px; margin: 0 auto; }
+.wf-banner {
+    background: #fff8e1; border-left: 4px solid #ffc107;
+    padding: 12px 18px; border-radius: 6px; margin-bottom: 1.5rem;
+    font-size: .85rem; color: #5d4037;
+}
+.wf-section { margin-bottom: 2.5rem; }
+.wf-section-title {
+    font-size: 1.1rem; font-weight: 800; margin-bottom: .3rem;
+    display: flex; align-items: center; gap: 8px;
+}
+.wf-section-sub { font-size: .85rem; color: var(--muted); margin-bottom: 1rem; }
+.wf-tag {
+    font-size: .68rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .5px; padding: 2px 8px; border-radius: 100px;
+}
+.wf-tag-now { background: #eceff1; color: #6c757d; }
+.wf-tag-a { background: var(--brand-light); color: var(--brand-dark); }
+.wf-tag-b { background: #E3F2FD; color: #0277bd; }
+
+/* === Mockup dashboard frame === */
+.mock {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: 12px; padding: 1rem 1.25rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,.04);
+}
+
+/* === Filter bar elementi === */
+.fb-row {
+    display: flex; align-items: center; gap: .5rem;
+    flex-wrap: wrap; margin-bottom: .6rem;
+}
+.fb-row:last-child { margin-bottom: 0; }
+
+.chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: .35rem .7rem; border: 1.5px solid var(--line);
+    border-radius: 8px; background: #fff; font-size: .8rem;
+    font-weight: 600; color: #495057; white-space: nowrap; cursor: pointer;
+}
+.chip.active { border-color: var(--brand); background: var(--brand); color: #fff; }
+.chip .day { font-size: .68rem; font-weight: 400; opacity: .7; }
+.chip.active .day { opacity: .85; }
+
+.arrow {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 32px; height: 32px;
+    border: 1.5px solid var(--line); border-radius: 8px;
+    background: #fff; color: #495057; cursor: pointer;
+}
+.cal-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 36px; height: 32px;
+    border: 1.5px solid var(--line); border-radius: 8px;
+    background: #fff; color: #495057; cursor: pointer;
+}
+.btn-f {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: .35rem .8rem; border: 1.5px solid var(--line);
+    border-radius: 8px; background: #fff; font-size: .8rem;
+    font-weight: 600; color: #495057; cursor: pointer;
+}
+.btn-f.has-active { border-color: var(--brand); color: var(--brand-dark); }
+.btn-f-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--brand); display: inline-block;
+}
+.spacer { flex: 1; }
+
+.fb-label {
+    font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .5px; color: var(--muted); margin-right: 4px;
+}
+.fb-input {
+    padding: .35rem .6rem; border: 1.5px solid var(--line);
+    border-radius: 8px; font-size: .82rem; font-family: inherit;
+}
+.fb-select {
+    padding: .35rem 1.6rem .35rem .6rem; border: 1.5px solid var(--line);
+    border-radius: 8px; font-size: .82rem; font-family: inherit;
+    background: #fff;
+}
+.fb-divider { width: 1px; height: 22px; background: var(--line); margin: 0 .35rem; }
+
+/* Pannello filtri collassabile */
+.fb-panel {
+    border-top: 1px dashed var(--line);
+    margin-top: .7rem; padding-top: .8rem;
+}
+.fb-panel.collapsed { display: none; }
+.fb-panel-line {
+    display: flex; align-items: center; gap: .5rem;
+    flex-wrap: wrap; margin-bottom: .6rem;
+}
+.fb-panel-line:last-child { margin-bottom: 0; }
+
+/* Chip toggle (opzione B) */
+.toggle-chip {
+    padding: .3rem .65rem; border: 1.5px solid var(--line);
+    border-radius: 100px; background: #fff; font-size: .76rem;
+    font-weight: 600; color: #495057; cursor: pointer;
+}
+.toggle-chip.on { border-color: var(--brand); background: var(--brand); color: #fff; }
+
+.btn-azzera {
+    font-size: .76rem; color: var(--muted); cursor: pointer;
+    text-decoration: underline; background: none; border: none;
+}
+
+.wf-note {
+    font-size: .8rem; color: var(--muted); margin-top: .6rem;
+    line-height: 1.5;
+}
+.wf-note strong { color: var(--ink); }
+.try { font-size: .72rem; color: var(--brand); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wf-wrap">
+
+    <div class="wf-banner">
+        <strong>📐 WIREFRAME — Filter bar pagina Prenotazioni</strong><br>
+        Confronto stato attuale vs 2 proposte di polish. I bottoni "Filtri" sono cliccabili per provare l'interazione.
+    </div>
+
+    <!-- ====== ADESSO ====== -->
+    <div class="wf-section">
+        <div class="wf-section-title">
+            <span class="wf-tag wf-tag-now">Adesso</span> Come si presenta oggi
+        </div>
+        <div class="wf-section-sub">Su desktop la riga dei filtri (Da/A, Stato, Fonte) è sempre visibile, anche se non stai filtrando.</div>
+        <div class="mock">
+            <div class="fb-row">
+                <span class="arrow"><i class="bi bi-chevron-left"></i></span>
+                <span class="chip"><i class="bi bi-fast-forward-fill"></i> Prossime</span>
+                <span class="chip active">Oggi <span class="day">Mar 12/5</span></span>
+                <span class="chip">Domani <span class="day">Mer 13/5</span></span>
+                <span class="chip">Dopodomani <span class="day">Gio 14/5</span></span>
+                <span class="arrow"><i class="bi bi-chevron-right"></i></span>
+                <span class="cal-btn"><i class="bi bi-calendar3"></i></span>
+                <span class="spacer"></span>
+                <span class="btn-f"><i class="bi bi-download"></i> CSV</span>
+            </div>
+            <div class="fb-row">
+                <span class="fb-label">Da</span>
+                <input type="date" class="fb-input" value="2026-05-12">
+                <span class="fb-label">A</span>
+                <input type="date" class="fb-input" value="2026-05-12">
+                <span class="fb-divider"></span>
+                <span class="fb-label">Stato</span>
+                <select class="fb-select"><option>Tutti</option></select>
+                <span class="fb-label">Fonte</span>
+                <select class="fb-select"><option>Tutte</option></select>
+            </div>
+        </div>
+        <div class="wf-note">⚠️ La seconda riga occupa spazio fisso. I datepicker Da/A servono solo per i <strong>range</strong>, ma sono sempre lì.</div>
+    </div>
+
+    <!-- ====== OPZIONE A ====== -->
+    <div class="wf-section">
+        <div class="wf-section-title">
+            <span class="wf-tag wf-tag-a">Opzione A</span> Collasso semplice <span class="try">(consigliata)</span>
+        </div>
+        <div class="wf-section-sub">I filtri secondari collassati dietro un bottone "Filtri". Pallino verde quando un filtro è attivo.</div>
+        <div class="mock">
+            <div class="fb-row">
+                <span class="arrow"><i class="bi bi-chevron-left"></i></span>
+                <span class="chip"><i class="bi bi-fast-forward-fill"></i> Prossime</span>
+                <span class="chip active">Oggi <span class="day">Mar 12/5</span></span>
+                <span class="chip">Domani <span class="day">Mer 13/5</span></span>
+                <span class="chip">Dopodomani <span class="day">Gio 14/5</span></span>
+                <span class="arrow"><i class="bi bi-chevron-right"></i></span>
+                <span class="cal-btn"><i class="bi bi-calendar3"></i></span>
+                <span class="spacer"></span>
+                <span class="btn-f has-active" onclick="toggleA()" id="btnA">
+                    <i class="bi bi-funnel"></i> Filtri <span class="btn-f-dot"></span>
+                </span>
+                <span class="btn-f"><i class="bi bi-download"></i> CSV</span>
+            </div>
+            <div class="fb-panel collapsed" id="panelA">
+                <div class="fb-panel-line">
+                    <span class="fb-label">Periodo</span>
+                    <span class="fb-label" style="text-transform:none;font-weight:400;">Da</span>
+                    <input type="date" class="fb-input" value="2026-05-12">
+                    <span class="fb-label" style="text-transform:none;font-weight:400;">A</span>
+                    <input type="date" class="fb-input" value="2026-05-12">
+                    <span class="fb-divider"></span>
+                    <span class="fb-label">Stato</span>
+                    <select class="fb-select"><option>Tutti</option></select>
+                    <span class="fb-label">Fonte</span>
+                    <select class="fb-select"><option>Tutte</option></select>
+                    <span class="spacer"></span>
+                    <button class="btn-azzera">Azzera filtri</button>
+                </div>
+            </div>
+        </div>
+        <div class="wf-note">
+            ✅ Barra <strong>pulita di default</strong>. Click su "Filtri" espande il pannello. Coerente con il comportamento già esistente su mobile.<br>
+            <span class="try">→ Clicca il bottone "Filtri" qui sopra per provare</span>
+        </div>
+    </div>
+
+    <!-- ====== OPZIONE B ====== -->
+    <div class="wf-section">
+        <div class="wf-section-title">
+            <span class="wf-tag wf-tag-b">Opzione B</span> Collasso + chip toggle
+        </div>
+        <div class="wf-section-sub">Come A, ma Stato/Fonte diventano chip cliccabili invece di menu a tendina.</div>
+        <div class="mock">
+            <div class="fb-row">
+                <span class="arrow"><i class="bi bi-chevron-left"></i></span>
+                <span class="chip"><i class="bi bi-fast-forward-fill"></i> Prossime</span>
+                <span class="chip active">Oggi <span class="day">Mar 12/5</span></span>
+                <span class="chip">Domani <span class="day">Mer 13/5</span></span>
+                <span class="chip">Dopodomani <span class="day">Gio 14/5</span></span>
+                <span class="arrow"><i class="bi bi-chevron-right"></i></span>
+                <span class="cal-btn"><i class="bi bi-calendar3"></i></span>
+                <span class="spacer"></span>
+                <span class="btn-f has-active" onclick="toggleB()" id="btnB">
+                    <i class="bi bi-funnel"></i> Filtri <span class="btn-f-dot"></span>
+                </span>
+                <span class="btn-f"><i class="bi bi-download"></i> CSV</span>
+            </div>
+            <div class="fb-panel collapsed" id="panelB">
+                <div class="fb-panel-line">
+                    <span class="fb-label">Periodo</span>
+                    <span class="fb-label" style="text-transform:none;font-weight:400;">Da</span>
+                    <input type="date" class="fb-input" value="2026-05-12">
+                    <span class="fb-label" style="text-transform:none;font-weight:400;">A</span>
+                    <input type="date" class="fb-input" value="2026-05-12">
+                </div>
+                <div class="fb-panel-line">
+                    <span class="fb-label">Stato</span>
+                    <span class="toggle-chip on">Tutti</span>
+                    <span class="toggle-chip">Confermate</span>
+                    <span class="toggle-chip">In attesa</span>
+                    <span class="toggle-chip">Arrivati</span>
+                    <span class="toggle-chip">No-show</span>
+                    <span class="toggle-chip">Annullate</span>
+                </div>
+                <div class="fb-panel-line">
+                    <span class="fb-label">Fonte</span>
+                    <span class="toggle-chip on">Tutte</span>
+                    <span class="toggle-chip">Widget</span>
+                    <span class="toggle-chip">Dashboard</span>
+                    <span class="toggle-chip">Telefono</span>
+                    <span class="toggle-chip">Walk-in</span>
+                    <span class="spacer"></span>
+                    <button class="btn-azzera">Azzera filtri</button>
+                </div>
+            </div>
+        </div>
+        <div class="wf-note">
+            ✅ 1 click per filtrare (invece di aprire un menu). Più moderno.<br>
+            ⚠️ Occupa più spazio verticale quando il pannello è aperto.<br>
+            <span class="try">→ Clicca il bottone "Filtri" qui sopra per provare</span>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function toggleA() {
+    var p = document.getElementById('panelA');
+    p.classList.toggle('collapsed');
+    document.getElementById('btnA').classList.toggle('has-active');
+}
+function toggleB() {
+    var p = document.getElementById('panelB');
+    p.classList.toggle('collapsed');
+    document.getElementById('btnB').classList.toggle('has-active');
+}
+</script>
+</body>
+</html>
