@@ -234,7 +234,7 @@ class BookingController
             Response::notFound();
         }
 
-        // Try to retrieve the reservation for retry-payment
+        // Recupera la prenotazione per offrire il completamento (retry)
         $reservation = null;
         $canRetry = false;
         $reservationId = (int)$request->query('reservation_id', 0);

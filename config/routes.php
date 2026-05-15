@@ -279,7 +279,6 @@ $router->group('/api/v1', ['ratelimit'], function ($r) {
     $r->post('/tenants/{slug}/reservations', [ReservationApiController::class, 'store']);
     $r->get('/tenants/{slug}/reservations/{id}', [ReservationApiController::class, 'show']);
     $r->post('/tenants/{slug}/reservations/{id}/cancel', [ReservationApiController::class, 'cancel']);
-    $r->post('/tenants/{slug}/reservations/{id}/retry-payment', [ReservationApiController::class, 'retryPayment']);
     $r->get('/tenants/{slug}/menu', [MenuApiController::class, 'index']);
     $r->get('/tenants/{slug}/order-menu', [OrderApiController::class, 'menu']);
     $r->post('/tenants/{slug}/orders', [OrderApiController::class, 'store']);
