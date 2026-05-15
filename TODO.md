@@ -514,7 +514,11 @@ Navigazione giorno-per-giorno più rapida in `/dashboard` e `/dashboard/reservat
 - [x] Stile frecce coerente con `.date-chip` / `.date-chip-sm` (border 2px / 1.5px)
 
 ### Possibili refinements futuri (filter bar prenotazioni)
-- [ ] Datepicker DA/A si auto-allineano alla data attiva (oggi mostrano date stale)
+- [ ] **Datepicker DA/A "stale"** — DEFERITO in attesa di segnalazione reale da un cliente.
+  Il PHP è corretto (`value="<?= $date ?>"`), il disallineamento osservato è browser
+  form-state restore (bfcache/autofill su `<input type="date">`). Fix pronto se serve:
+  script `pageshow` che riassegna il value server-side ai 2 datepicker. Da implementare
+  SOLO quando un cliente segnala lo scenario esatto (browser + azione) per fix verificabile.
 - [ ] Filtri secondari (DA/A, STATO, FONTE) collassabili sotto "Filtri" toggle
 - [ ] DA/A singolo quando from=to (UI più pulita)
 - [ ] STATO/FONTE come chip toggle invece di `<select>`
