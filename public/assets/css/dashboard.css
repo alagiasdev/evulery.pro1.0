@@ -240,6 +240,14 @@ a.sidebar-user:hover { color: #adb5bd; }
     margin-top: 1.1rem; padding-top: 1.1rem;
     border-top: 1px solid #f0f0f0;
 }
+/* Filtri avanzati: collassati di default (desktop + mobile), si aprono con .show */
+.filter-row.filter-advanced { display: none; }
+.filter-row.filter-advanced.show { display: flex; }
+/* Pallino "filtro attivo" sul bottone Filtri (desktop + mobile) */
+.filter-active-dot {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--brand); margin-left: 2px; vertical-align: middle;
+}
 .filter-group { display: flex; align-items: center; gap: .4rem; }
 .filter-group label {
     font-size: .72rem; font-weight: 600; color: #6c757d;
@@ -2089,19 +2097,14 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     /* Phase B: date strip horizontal scroll */
     .date-strip { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
     .date-strip::-webkit-scrollbar { display: none; }
-    /* Phase B: filter bar stacking */
-    .filter-row.filter-advanced { flex-direction: column; align-items: stretch; display: none; }
-    .filter-row.filter-advanced.show { display: flex; }
+    /* Phase B: filter bar stacking — quando .show, su mobile va in colonna */
+    .filter-row.filter-advanced.show { flex-direction: column; align-items: stretch; }
     .filter-row .filter-actions { display: none; }
     .filter-toolbar-mobile { display: flex; gap: .5rem; margin: .4rem 0; }
     .filter-group { width: 100%; }
     .filter-group label { min-width: 30px; }
     .filter-group select.filter-input, .filter-group input.filter-input { flex: 1; }
     .date-chips { flex-wrap: wrap; }
-    .filter-active-dot {
-        display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-        background: var(--brand); margin-left: 4px; vertical-align: middle;
-    }
     /* Phase B: stat pills — 3-col grid on mobile */
     .stats-mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: .35rem; }
     .stat-pill { justify-content: center; padding: .4rem .5rem; }

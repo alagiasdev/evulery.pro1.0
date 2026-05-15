@@ -186,6 +186,9 @@ $navQs = function (string $d) use ($status, $source): string {
             </div>
         </div>
         <div class="filter-actions">
+            <button type="button" class="btn-filter btn-filter-outline js-filter-toggle" title="Mostra/nascondi filtri">
+                <i class="bi bi-funnel me-1"></i>Filtri<?php if ($status || $source): ?> <span class="filter-active-dot"></span><?php endif; ?>
+            </button>
             <?php if (tenant_can('export_csv')): ?>
             <button type="button" class="btn-filter btn-filter-outline" id="export-toggle" title="Esporta CSV">
                 <i class="bi bi-download me-1"></i>CSV
@@ -200,7 +203,7 @@ $navQs = function (string $d) use ($status, $source): string {
 
     <!-- Mobile: Filtri + CSV row -->
     <div class="filter-toolbar-mobile d-md-none">
-        <button type="button" class="btn-filter btn-filter-outline" id="filter-toggle-btn">
+        <button type="button" class="btn-filter btn-filter-outline js-filter-toggle" id="filter-toggle-btn">
             <i class="bi bi-funnel me-1"></i>Filtri<?php if ($status || $source): ?> <span class="filter-active-dot"></span><?php endif; ?>
         </button>
         <?php if (tenant_can('export_csv')): ?>
@@ -214,8 +217,8 @@ $navQs = function (string $d) use ($status, $source): string {
         <?php endif; ?>
     </div>
 
-    <!-- Row 2: Advanced filters -->
-    <div class="filter-row filter-advanced<?= ($status || $source) ? ' show' : '' ?>" id="filter-advanced">
+    <!-- Row 2: Advanced filters — aperta di default solo se ci sono filtri attivi o range -->
+    <div class="filter-row filter-advanced<?= ($status || $source || $isRange) ? ' show' : '' ?>" id="filter-advanced">
         <div class="filter-group"<?= $isUpcoming ? ' style="display:none;"' : '' ?>>
             <label>Da</label>
             <input type="date" class="filter-input" name="date" value="<?= e($date) ?>" id="filter-date-from" style="width:auto;">
@@ -248,7 +251,9 @@ $navQs = function (string $d) use ($status, $source): string {
         </div>
         <div class="filter-actions">
             <button type="submit" class="btn-filter btn-filter-primary"><i class="bi bi-search me-1"></i>Filtra</button>
-            <a href="<?= url('dashboard/reservations') ?>" class="btn-filter btn-filter-reset"><i class="bi bi-x-lg"></i></a>
+            <?php if ($status || $source || $isRange): ?>
+            <a href="<?= url('dashboard/reservations') ?>" class="btn-filter btn-filter-reset"><i class="bi bi-x-lg me-1"></i>Azzera filtri</a>
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -462,14 +467,23 @@ $navQs = function (string $d) use ($status, $source): string {
 
 <script nonce="<?= csp_nonce() ?>">
 (function() {
-    // Mobile: toggle advanced filters
-    var filterBtn = document.getElementById('filter-toggle-btn');
+    // Toggle filtri avanzati — bottone "Filtri" presente sia su desktop
+    // (riga azioni) sia su mobile (toolbar). Classe condivisa js-filter-toggle.
     var filterPanel = document.getElementById('filter-advanced');
-    if (filterBtn && filterPanel) {
-        filterBtn.addEventListener('click', function() {
-            filterPanel.classList.toggle('show');
-            this.classList.toggle('active');
+    function syncToggleBtns(open) {
+        document.querySelectorAll('.js-filter-toggle').forEach(function(b) {
+            b.classList.toggle('active', open);
         });
+    }
+    document.querySelectorAll('.js-filter-toggle').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            if (!filterPanel) return;
+            syncToggleBtns(filterPanel.classList.toggle('show'));
+        });
+    });
+    // Stato iniziale: se il pannello parte aperto (filtri attivi/range), marca i bottoni
+    if (filterPanel && filterPanel.classList.contains('show')) {
+        syncToggleBtns(true);
     }
 
     // Shortcut tastiera per le frecce giorno ±1 (ignora input/textarea attivi)
