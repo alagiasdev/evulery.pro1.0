@@ -414,6 +414,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (wrap) wrap.style.display = '';
 
+        // Carta a garanzia: nessun importo da versare, solo informativa
+        if (config.depositType === 'guarantee') {
+            el.innerHTML = 'È richiesta una carta a garanzia. Non verrà addebitato nulla al momento della prenotazione, salvo mancata presentazione.';
+            return;
+        }
+
         if (mode === 'per_person') {
             var total = (base * party).toFixed(2);
             el.innerHTML = 'Caparra richiesta: <strong>&euro;' + total + '</strong> (&euro;' + parseFloat(base).toFixed(2) + ' &times; ' + party + ' persone)';
@@ -691,10 +697,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 var resId = (data.data && data.data.reservation_id) ? data.data.reservation_id : '';
                 var depType = (data.data && data.data.deposit_type) ? data.data.deposit_type : '';
+                var isGuarantee = !!(data.data && data.data.guarantee);
                 var isPendingDeposit = data.data && data.data.deposit_required;
-                var isPendingManual = data.data && data.data.status === 'pending' && !data.data.deposit_required;
+                var isPendingManual = data.data && data.data.status === 'pending' && !data.data.deposit_required && !isGuarantee;
 
-                if (isPendingDeposit && depType === 'stripe') {
+                if (isGuarantee && data.data.stripe_checkout_url) {
+                    confHtml += '<p style="color:#E65100;"><i class="bi bi-shield-lock"></i> Prenotazione <strong>n. ' + resId + '</strong> creata. Registra la carta a garanzia per confermare: nessun addebito.</p>';
+                } else if (isGuarantee) {
+                    confHtml += '<p style="color:#E65100;"><i class="bi bi-hourglass-split"></i> Prenotazione <strong>n. ' + resId + '</strong> creata. Contatta il ristorante per completare la garanzia.</p>';
+                } else if (isPendingDeposit && depType === 'stripe') {
                     confHtml += '<p style="color:#E65100;"><i class="bi bi-credit-card"></i> Prenotazione <strong>n. ' + resId + '</strong> in attesa di pagamento. Completa il pagamento della caparra per confermare.</p>';
                 } else if (isPendingDeposit) {
                     confHtml += '<p style="color:#E65100;"><i class="bi bi-hourglass-split"></i> Prenotazione <strong>n. ' + resId + '</strong> in attesa di pagamento caparra. Riceverai un\'email di conferma dopo la verifica.</p>';
@@ -710,12 +721,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 var confirmStep = steps.confirm;
                 var headingEl = confirmStep.querySelector('h3');
                 var iconEl = confirmStep.querySelector('.bw-confirm-icon i');
-                if (isPendingDeposit || isPendingManual) {
-                    if (headingEl) headingEl.textContent = isPendingDeposit ? (depType === 'stripe' ? 'Pagamento Caparra' : 'Prenotazione in Attesa') : 'Prenotazione Ricevuta!';
-                    if (iconEl) { iconEl.className = 'bi bi-hourglass-split'; iconEl.style.color = '#E65100'; }
+                if (isGuarantee || isPendingDeposit || isPendingManual) {
+                    if (headingEl) {
+                        if (isGuarantee) {
+                            headingEl.textContent = 'Carta a Garanzia';
+                        } else if (isPendingDeposit) {
+                            headingEl.textContent = depType === 'stripe' ? 'Pagamento Caparra' : 'Prenotazione in Attesa';
+                        } else {
+                            headingEl.textContent = 'Prenotazione Ricevuta!';
+                        }
+                    }
+                    if (iconEl) {
+                        iconEl.className = isGuarantee ? 'bi bi-shield-lock' : 'bi bi-hourglass-split';
+                        iconEl.style.color = '#E65100';
+                    }
                 } else {
                     if (headingEl) headingEl.textContent = 'Prenotazione Confermata!';
                     if (iconEl) { iconEl.className = 'bi bi-check-circle-fill'; iconEl.style.color = ''; }
+                }
+
+                if (isGuarantee && data.data.stripe_checkout_url) {
+                    details.innerHTML += '<div class="bw-deposit-info" style="margin-top:12px;">' +
+                        '<p style="margin:0 0 10px;font-size:.88rem;">È richiesta una carta a garanzia. Non verrà addebitato nulla al momento della prenotazione, salvo mancata presentazione.</p>' +
+                        '<a href="' + data.data.stripe_checkout_url.replace(/"/g, '&quot;') + '" id="bw-stripe-pay-btn" ' +
+                        'style="display:inline-block;background:var(--bw-brand,#2E7D32);color:#fff;padding:10px 24px;border-radius:8px;text-decoration:none;font-size:.9rem;font-weight:600;">' +
+                        '<i class="bi bi-shield-lock" style="margin-right:6px;"></i>Registra la carta</a>' +
+                        '<p id="bw-stripe-countdown" style="margin:10px 0 0;font-size:.78rem;color:#6c757d;">Reindirizzamento automatico tra <strong>5</strong> secondi...</p>' +
+                        '</div>';
                 }
 
                 if (data.data && data.data.deposit_required) {
@@ -757,7 +789,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 steps.confirm.style.display = 'block';
 
-                if (data.data && data.data.deposit_type === 'stripe' && data.data.stripe_checkout_url) {
+                if (data.data && data.data.stripe_checkout_url &&
+                    (data.data.deposit_type === 'stripe' || data.data.guarantee)) {
                     var stripeUrl = data.data.stripe_checkout_url;
                     var countdown = 5;
                     var countdownEl = getEl('bw-stripe-countdown');

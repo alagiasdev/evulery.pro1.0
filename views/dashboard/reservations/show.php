@@ -103,6 +103,25 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
             <div class="detail-value"><?= $depTypeLabels[$depType] ?? ucfirst($depType) ?></div>
         </div>
         <?php endif; ?>
+        <?php if (($reservation['guarantee_status'] ?? 'none') !== 'none'): ?>
+        <?php
+            $gs = $reservation['guarantee_status'];
+            $gBadge = [
+                'pending' => ['#FFF8E1', '#E65100', 'In attesa carta'],
+                'secured' => ['#E8F5E9', '#2E7D32', 'Attiva'],
+                'charged' => ['#FDECEA', '#C62828', 'Penale addebitata'],
+                'waived'  => ['#ECEFF1', '#546E7A', 'Chiusa senza addebito'],
+            ];
+            $gb = $gBadge[$gs] ?? ['#ECEFF1', '#546E7A', $gs];
+        ?>
+        <div>
+            <div class="detail-label"><i class="bi bi-shield-lock me-1"></i>Carta a garanzia</div>
+            <div class="detail-value">
+                Penale &euro;<?= number_format($reservation['deposit_amount'], 2) ?>
+                <span style="background:<?= $gb[0] ?>;color:<?= $gb[1] ?>;font-size:.7rem;font-weight:600;padding:1px 6px;border-radius:4px;"><?= $gb[2] ?></span>
+            </div>
+        </div>
+        <?php endif; ?>
     </div>
 
     <?php if (!empty($reservation['customer_notes'])): ?>
@@ -201,6 +220,57 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
                 </button>
             </form>
         <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
+    <?php
+    // ─── Pannello carta a garanzia ──────────────────────────────
+    $gStatus = $reservation['guarantee_status'] ?? 'none';
+    $gAmount = number_format((float)$reservation['deposit_amount'], 2);
+    ?>
+    <?php if ($gStatus === 'secured'): ?>
+    <div style="margin-top:1rem;padding:1rem;border-radius:8px;background:#E8F5E9;border:1px solid #C8E6C9;">
+        <div style="font-size:.88rem;font-weight:700;color:#2E7D32;margin-bottom:.35rem;">
+            <i class="bi bi-shield-check me-1"></i> Carta a garanzia attiva
+        </div>
+        <div style="font-size:.8rem;color:#558B2F;margin-bottom:.75rem;">
+            Il cliente ha registrato una carta. In caso di mancata presentazione puoi addebitare la penale di
+            <strong>&euro;<?= $gAmount ?></strong>. Altrimenti chiudi la garanzia senza alcun addebito.
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+            <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/guarantee-charge") ?>" class="d-inline"
+                  data-confirm="Confermi l'addebito della penale di &euro;<?= $gAmount ?> sulla carta del cliente?">
+                <?= csrf_field() ?>
+                <button type="submit" class="btn btn-sm" style="background:#C62828;color:#fff;font-size:.78rem;">
+                    <i class="bi bi-credit-card-2-front me-1"></i> Addebita penale &euro;<?= $gAmount ?>
+                </button>
+            </form>
+            <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/guarantee-waive") ?>" class="d-inline"
+                  data-confirm="Chiudere la garanzia senza addebitare nulla?">
+                <?= csrf_field() ?>
+                <button type="submit" class="btn btn-sm" style="background:#fff;color:#546E7A;border:1px solid #CFD8DC;font-size:.78rem;">
+                    <i class="bi bi-check2 me-1"></i> Non addebitare
+                </button>
+            </form>
+        </div>
+    </div>
+    <?php elseif ($gStatus === 'charged'): ?>
+    <div style="margin-top:1rem;padding:.85rem 1rem;border-radius:8px;background:#FDECEA;border:1px solid #F5C6CB;font-size:.85rem;color:#C62828;">
+        <i class="bi bi-credit-card-2-front-fill me-1"></i>
+        Penale di <strong>&euro;<?= number_format((float)($reservation['guarantee_charged_amount'] ?? $reservation['deposit_amount']), 2) ?></strong> addebitata sulla carta a garanzia
+        <?php if (!empty($reservation['guarantee_charged_at'])): ?>
+            <span style="color:#A93226;">il <?= date('d/m/Y', strtotime($reservation['guarantee_charged_at'])) ?> alle <?= date('H:i', strtotime($reservation['guarantee_charged_at'])) ?></span>
+        <?php endif; ?>
+    </div>
+    <?php elseif ($gStatus === 'waived'): ?>
+    <div style="margin-top:1rem;padding:.85rem 1rem;border-radius:8px;background:#ECEFF1;border:1px solid #CFD8DC;font-size:.85rem;color:#546E7A;">
+        <i class="bi bi-shield-slash me-1"></i>
+        Carta a garanzia chiusa senza addebito.
+    </div>
+    <?php elseif ($gStatus === 'pending'): ?>
+    <div style="margin-top:1rem;padding:.85rem 1rem;border-radius:8px;background:#FFF8E1;border:1px solid #FFE0B2;font-size:.85rem;color:#E65100;">
+        <i class="bi bi-hourglass-split me-1"></i>
+        In attesa che il cliente registri la carta a garanzia.
     </div>
     <?php endif; ?>
 </div>

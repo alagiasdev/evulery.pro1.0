@@ -11,6 +11,7 @@ use App\Models\Customer;
 use App\Models\Reservation;
 use App\Models\Promotion;
 use App\Models\ReservationLog;
+use App\Models\Tenant;
 use App\Services\AuditLog;
 use App\Services\AvailabilityService;
 use App\Services\MailService;
@@ -336,6 +337,137 @@ class ReservationsController
 
         flash('success', 'Caparra segnata come rimborsata.');
         Response::redirect(url("dashboard/reservations/{$id}"));
+    }
+
+    /**
+     * Addebita la penale no-show sulla carta a garanzia salvata dal cliente.
+     * Crea un PaymentIntent off-session con il payment method memorizzato.
+     */
+    public function chargeGuarantee(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $reservationModel = new Reservation();
+        $reservation = $reservationModel->findById($id);
+
+        if (!$reservation || (int)$reservation['tenant_id'] !== (int)Auth::tenantId()) {
+            flash('danger', 'Prenotazione non trovata.');
+            Response::redirect(url('dashboard/reservations'));
+            return;
+        }
+
+        if (($reservation['guarantee_status'] ?? 'none') !== 'secured') {
+            flash('info', 'Nessuna carta a garanzia addebitabile per questa prenotazione.');
+            Response::redirect(url("dashboard/reservations/{$id}"));
+            return;
+        }
+
+        $amount = (float)($reservation['deposit_amount'] ?? 0);
+        if ($amount <= 0 || empty($reservation['stripe_customer_id']) || empty($reservation['stripe_payment_method_id'])) {
+            flash('danger', 'Dati della carta a garanzia incompleti: impossibile addebitare.');
+            Response::redirect(url("dashboard/reservations/{$id}"));
+            return;
+        }
+
+        $tenant = (new Tenant())->findById((int)$reservation['tenant_id']);
+        if (!$tenant || empty($tenant['stripe_sk'])) {
+            flash('danger', 'Stripe non è configurato.');
+            Response::redirect(url("dashboard/reservations/{$id}"));
+            return;
+        }
+
+        try {
+            $key = decrypt_value($tenant['stripe_sk']);
+            if (!$key) {
+                throw new \RuntimeException('Chiave Stripe non valida');
+            }
+            \Stripe\Stripe::setApiKey($key);
+
+            $pi = \Stripe\PaymentIntent::create([
+                'amount'         => (int)round($amount * 100),
+                'currency'       => 'eur',
+                'customer'       => $reservation['stripe_customer_id'],
+                'payment_method' => $reservation['stripe_payment_method_id'],
+                'off_session'    => true,
+                'confirm'        => true,
+                'description'    => "Penale no-show - prenotazione #{$id} ({$tenant['name']})",
+                'metadata'       => [
+                    'reservation_id' => $id,
+                    'tenant_id'      => $tenant['id'],
+                    'kind'           => 'guarantee_penalty',
+                ],
+            ]);
+
+            if (($pi->status ?? '') !== 'succeeded') {
+                flash('warning', 'Addebito non completato (stato: ' . ($pi->status ?? 'sconosciuto') . '). Riprova o contatta il cliente.');
+                Response::redirect(url("dashboard/reservations/{$id}"));
+                return;
+            }
+
+            $reservationModel->markGuaranteeCharged($id, $amount, $pi->id);
+            (new ReservationLog())->create(
+                $id, $reservation['status'], $reservation['status'], Auth::id(),
+                'Penale no-show addebitata: €' . number_format($amount, 2, ',', '.')
+            );
+            AuditLog::log(AuditLog::RESERVATION_UPDATED, "Penale garanzia addebitata per prenotazione #{$id}", Auth::id(), (int)$reservation['tenant_id']);
+
+            flash('success', 'Penale di €' . number_format($amount, 2, ',', '.') . ' addebitata sulla carta a garanzia.');
+        } catch (\Stripe\Exception\CardException $e) {
+            app_log('Guarantee charge declined: ' . $e->getMessage(), 'error');
+            flash('danger', 'Addebito rifiutato: ' . $this->cardErrorMessage($e));
+        } catch (\Exception $e) {
+            app_log('Guarantee charge error: ' . $e->getMessage(), 'error');
+            flash('danger', 'Errore durante l\'addebito della penale. Riprova più tardi.');
+        }
+
+        Response::redirect(url("dashboard/reservations/{$id}"));
+    }
+
+    /**
+     * Chiude la carta a garanzia senza alcun addebito (cliente presentato
+     * o scelta del ristoratore di non applicare la penale).
+     */
+    public function waiveGuarantee(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $reservationModel = new Reservation();
+        $reservation = $reservationModel->findById($id);
+
+        if (!$reservation || (int)$reservation['tenant_id'] !== (int)Auth::tenantId()) {
+            flash('danger', 'Prenotazione non trovata.');
+            Response::redirect(url('dashboard/reservations'));
+            return;
+        }
+
+        if (($reservation['guarantee_status'] ?? 'none') !== 'secured') {
+            flash('info', 'Nessuna garanzia attiva da chiudere.');
+            Response::redirect(url("dashboard/reservations/{$id}"));
+            return;
+        }
+
+        $reservationModel->markGuaranteeWaived($id);
+        (new ReservationLog())->create($id, $reservation['status'], $reservation['status'], Auth::id(), 'Garanzia chiusa senza addebito');
+        AuditLog::log(AuditLog::RESERVATION_UPDATED, "Garanzia chiusa senza addebito per prenotazione #{$id}", Auth::id(), (int)$reservation['tenant_id']);
+
+        flash('success', 'Garanzia chiusa senza addebito.');
+        Response::redirect(url("dashboard/reservations/{$id}"));
+    }
+
+    /**
+     * Traduce in italiano i codici di errore Stripe più comuni per un addebito carta.
+     */
+    private function cardErrorMessage(\Stripe\Exception\CardException $e): string
+    {
+        $err = $e->getError();
+        $code = $err->decline_code ?? $err->code ?? '';
+        return match ($code) {
+            'insufficient_funds'        => 'fondi insufficienti sulla carta.',
+            'expired_card'              => 'la carta è scaduta.',
+            'authentication_required'   => 'la banca richiede l\'autenticazione del titolare: l\'addebito non è possibile senza il cliente presente.',
+            'card_declined'             => 'la carta è stata rifiutata dalla banca.',
+            'lost_card', 'stolen_card'  => 'la carta risulta bloccata.',
+            'do_not_honor'              => 'la banca ha negato l\'operazione.',
+            default                     => 'la banca ha rifiutato l\'addebito.',
+        };
     }
 
     public function updateNotes(Request $request): void

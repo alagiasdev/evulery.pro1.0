@@ -263,14 +263,17 @@ class SettingsController
 
         $wantsEnabled = !empty($data['deposit_enabled']);
         $depositMode = in_array($data['deposit_mode'] ?? '', ['per_table', 'per_person']) ? $data['deposit_mode'] : 'per_table';
-        $depositType = in_array($data['deposit_type'] ?? '', ['info', 'link', 'stripe']) ? $data['deposit_type'] : 'info';
+        $depositType = in_array($data['deposit_type'] ?? '', ['info', 'link', 'stripe', 'guarantee']) ? $data['deposit_type'] : 'info';
 
-        // Guard: if stripe type and enabling, keys must exist
-        if ($wantsEnabled && $depositType === 'stripe') {
+        // I tipi 'stripe' e 'guarantee' richiedono entrambi le chiavi Stripe
+        $needsStripeKeys = in_array($depositType, ['stripe', 'guarantee'], true);
+
+        // Guard: se tipo Stripe/garanzia e si abilita, le chiavi devono esistere
+        if ($wantsEnabled && $needsStripeKeys) {
             $hasKeys = !empty($data['stripe_sk']) && !str_contains($data['stripe_sk'], '...');
             $hasExisting = !empty($tenant['stripe_sk']);
             if (!$hasKeys && !$hasExisting) {
-                flash('danger', 'Inserisci le chiavi Stripe per attivare la caparra con pagamento automatico.');
+                flash('danger', 'Inserisci le chiavi Stripe per attivare questo tipo di caparra.');
                 Response::redirect(url('dashboard/settings/deposit'));
             }
         }
@@ -298,8 +301,8 @@ class SettingsController
             'deposit_payment_link' => trim($data['deposit_payment_link'] ?? ''),
         ];
 
-        // Handle Stripe keys — only when type is stripe, don't overwrite if masked/empty
-        if ($depositType === 'stripe' && !empty($data['stripe_sk']) && !str_contains($data['stripe_sk'], '...')) {
+        // Handle Stripe keys — solo per tipi che le usano (stripe/garanzia), non sovrascrivere se mascherate/vuote
+        if ($needsStripeKeys && !empty($data['stripe_sk']) && !str_contains($data['stripe_sk'], '...')) {
             $sk = trim($data['stripe_sk']);
             if (!preg_match('/^sk_(live|test)_/', $sk)) {
                 flash('danger', 'La Secret Key deve iniziare con sk_live_ o sk_test_');
@@ -308,7 +311,7 @@ class SettingsController
             $updateData['stripe_sk'] = encrypt_value($sk);
         }
 
-        if ($depositType === 'stripe' && !empty($data['stripe_pk']) && !str_contains($data['stripe_pk'], '...')) {
+        if ($needsStripeKeys && !empty($data['stripe_pk']) && !str_contains($data['stripe_pk'], '...')) {
             $pk = trim($data['stripe_pk']);
             if (!preg_match('/^pk_(live|test)_/', $pk)) {
                 flash('danger', 'La Publishable Key deve iniziare con pk_live_ o pk_test_');
@@ -317,7 +320,7 @@ class SettingsController
             $updateData['stripe_pk'] = $pk; // Not encrypted (public key)
         }
 
-        if ($depositType === 'stripe' && !empty($data['stripe_wh_secret']) && !str_contains($data['stripe_wh_secret'], '...')) {
+        if ($needsStripeKeys && !empty($data['stripe_wh_secret']) && !str_contains($data['stripe_wh_secret'], '...')) {
             $wh = trim($data['stripe_wh_secret']);
             if (!str_starts_with($wh, 'whsec_')) {
                 flash('danger', 'Il Webhook Secret deve iniziare con whsec_');

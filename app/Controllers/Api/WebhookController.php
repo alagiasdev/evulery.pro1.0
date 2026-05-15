@@ -58,8 +58,12 @@ class WebhookController
                 $session = $event->data->object;
                 $reservationId = $session->metadata->reservation_id ?? null;
                 $orderId = $session->metadata->order_id ?? null;
+                $sessionMode = $session->mode ?? 'payment';
 
-                if ($reservationId) {
+                if ($reservationId && $sessionMode === 'setup') {
+                    // Carta a garanzia: il cliente ha registrato la carta (nessun addebito)
+                    $this->handleGuaranteeSetup($session, (int)$reservationId, $reservationModel, $logModel);
+                } elseif ($reservationId) {
                     $reservation = $reservationModel->findById((int)$reservationId);
                     if ($reservation && !$reservation['deposit_paid']) {
                         $db = Database::getInstance();
@@ -100,13 +104,85 @@ class WebhookController
                 if ($reservationId) {
                     $reservation = $reservationModel->findById((int)$reservationId);
                     if ($reservation && $reservation['status'] === 'pending' && !$reservation['deposit_paid']) {
+                        $isGuarantee = ($reservation['guarantee_status'] ?? 'none') === 'pending';
                         $reservationModel->updateStatus((int)$reservationId, 'cancelled');
-                        $logModel->create((int)$reservationId, 'pending', 'cancelled', null, 'Pagamento scaduto');
+                        $logModel->create(
+                            (int)$reservationId, 'pending', 'cancelled', null,
+                            $isGuarantee ? 'Carta a garanzia non registrata' : 'Pagamento scaduto'
+                        );
                     }
                 }
                 break;
         }
 
         Response::json(['received' => true]);
+    }
+
+    /**
+     * Gestisce il completamento di una Checkout Session in modalità 'setup':
+     * il cliente ha registrato la carta a garanzia. Nessun addebito effettuato.
+     */
+    private function handleGuaranteeSetup(
+        $session,
+        int $reservationId,
+        Reservation $reservationModel,
+        ReservationLog $logModel
+    ): void {
+        $reservation = $reservationModel->findById($reservationId);
+        if (!$reservation || ($reservation['guarantee_status'] ?? 'none') !== 'pending') {
+            return; // già processato o non pertinente
+        }
+
+        $customerId    = $session->customer ?? null;
+        $setupIntentId = $session->setup_intent ?? null;
+        $paymentMethodId = null;
+        $tenant = null;
+        $tenantId = $session->metadata->tenant_id ?? ($reservation['tenant_id'] ?? null);
+
+        // Recupera il payment method dalla SetupIntent (serve la chiave del tenant)
+        if ($setupIntentId && $tenantId) {
+            $tenant = (new Tenant())->findById((int)$tenantId);
+            if ($tenant && !empty($tenant['stripe_sk'])) {
+                try {
+                    $key = decrypt_value($tenant['stripe_sk']);
+                    if ($key) {
+                        \Stripe\Stripe::setApiKey($key);
+                        $si = \Stripe\SetupIntent::retrieve($setupIntentId);
+                        $paymentMethodId = $si->payment_method ?? null;
+                        if (!$customerId) {
+                            $customerId = $si->customer ?? null;
+                        }
+                    }
+                } catch (\Exception $e) {
+                    app_log('Stripe SetupIntent retrieve error: ' . $e->getMessage(), 'error');
+                }
+            }
+        }
+
+        $db = Database::getInstance();
+        $stmt = $db->prepare(
+            'UPDATE reservations
+             SET guarantee_status = "secured", status = "confirmed",
+                 stripe_customer_id = :cust, stripe_payment_method_id = :pm, stripe_setup_intent_id = :si
+             WHERE id = :id'
+        );
+        $stmt->execute([
+            'cust' => $customerId,
+            'pm'   => $paymentMethodId,
+            'si'   => $setupIntentId,
+            'id'   => $reservationId,
+        ]);
+        $logModel->create($reservationId, 'pending', 'confirmed', null, 'Carta a garanzia registrata');
+
+        // Email di conferma al cliente (il ristoratore è già stato notificato alla creazione)
+        $full = $reservationModel->findWithCustomer($reservationId);
+        if ($full && $tenantId) {
+            if (!$tenant) {
+                $tenant = (new Tenant())->findById((int)$tenantId);
+            }
+            if ($tenant) {
+                MailService::sendReservationConfirmation($full, $tenant);
+            }
+        }
     }
 }

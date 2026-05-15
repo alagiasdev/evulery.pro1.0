@@ -153,10 +153,10 @@
             </div>
 
             <?php if ($tenant['deposit_enabled'] && $tenant['deposit_amount']): ?>
+            <?php $dt = $tenant['deposit_type'] ?? 'info'; ?>
             <div class="bw-deposit-info" id="deposit-info">
-                <?php $dt = $tenant['deposit_type'] ?? 'info'; ?>
-                <i class="bi <?= $dt === 'stripe' ? 'bi-credit-card' : ($dt === 'link' ? 'bi-link-45deg' : 'bi-bank') ?>"></i>
-                <span id="deposit-text">Caparra richiesta: <strong>&euro;<?= number_format($tenant['deposit_amount'], 2) ?></strong><?= ($tenant['deposit_mode'] ?? 'per_table') === 'per_person' ? ' a persona' : '' ?></span>
+                <i class="bi <?= $dt === 'stripe' ? 'bi-credit-card' : ($dt === 'link' ? 'bi-link-45deg' : ($dt === 'guarantee' ? 'bi-shield-lock' : 'bi-bank')) ?>"></i>
+                <span id="deposit-text"><?php if ($dt === 'guarantee'): ?>È richiesta una carta a garanzia. Non verrà addebitato nulla al momento della prenotazione, salvo mancata presentazione.<?php else: ?>Caparra richiesta: <strong>&euro;<?= number_format($tenant['deposit_amount'], 2) ?></strong><?= ($tenant['deposit_mode'] ?? 'per_table') === 'per_person' ? ' a persona' : '' ?><?php endif; ?></span>
             </div>
             <?php endif; ?>
 

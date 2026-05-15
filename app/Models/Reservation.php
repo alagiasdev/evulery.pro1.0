@@ -145,8 +145,8 @@ class Reservation
         $bookingNumber = $this->allocateBookingNumber($tenantId);
 
         $stmt = $this->db->prepare(
-            'INSERT INTO reservations (tenant_id, customer_id, reservation_date, reservation_time, party_size, status, deposit_required, deposit_amount, source, discount_percent, promotion_id, manage_token, customer_notes, booking_number)
-             VALUES (:tenant_id, :customer_id, :reservation_date, :reservation_time, :party_size, :status, :deposit_required, :deposit_amount, :source, :discount_percent, :promotion_id, :manage_token, :customer_notes, :booking_number)'
+            'INSERT INTO reservations (tenant_id, customer_id, reservation_date, reservation_time, party_size, status, deposit_required, deposit_amount, guarantee_status, source, discount_percent, promotion_id, manage_token, customer_notes, booking_number)
+             VALUES (:tenant_id, :customer_id, :reservation_date, :reservation_time, :party_size, :status, :deposit_required, :deposit_amount, :guarantee_status, :source, :discount_percent, :promotion_id, :manage_token, :customer_notes, :booking_number)'
         );
         $stmt->execute([
             'tenant_id'        => $tenantId,
@@ -157,6 +157,7 @@ class Reservation
             'status'           => $data['status'] ?? 'pending',
             'deposit_required' => $data['deposit_required'] ?? 0,
             'deposit_amount'   => $data['deposit_amount'] ?? null,
+            'guarantee_status' => $data['guarantee_status'] ?? 'none',
             'source'           => $data['source'] ?? 'widget',
             'discount_percent' => $data['discount_percent'] ?? null,
             'promotion_id'     => $data['promotion_id'] ?? null,
@@ -246,6 +247,29 @@ class Reservation
     public function markDepositRefunded(int $id): bool
     {
         $stmt = $this->db->prepare('UPDATE reservations SET deposit_refunded = 1, deposit_refunded_at = NOW() WHERE id = :id');
+        return $stmt->execute(['id' => $id]);
+    }
+
+    /**
+     * Registra l'addebito della penale sulla carta a garanzia.
+     */
+    public function markGuaranteeCharged(int $id, float $amount, ?string $paymentId): bool
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE reservations
+             SET guarantee_status = "charged", guarantee_charged_at = NOW(),
+                 guarantee_charged_amount = :amt, stripe_payment_id = :pid
+             WHERE id = :id'
+        );
+        return $stmt->execute(['amt' => $amount, 'pid' => $paymentId, 'id' => $id]);
+    }
+
+    /**
+     * Chiude la garanzia senza alcun addebito (cliente presentato / scelta ristoratore).
+     */
+    public function markGuaranteeWaived(int $id): bool
+    {
+        $stmt = $this->db->prepare('UPDATE reservations SET guarantee_status = "waived" WHERE id = :id');
         return $stmt->execute(['id' => $id]);
     }
 

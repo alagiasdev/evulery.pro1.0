@@ -139,6 +139,20 @@ class MailService
             HTML;
         }
 
+        // Carta a garanzia section (only if present)
+        $guaranteeHtml = '';
+        $gStatus = $reservation['guarantee_status'] ?? 'none';
+        if (in_array($gStatus, ['pending', 'secured'], true) && !empty($reservation['deposit_amount'])) {
+            $penale = number_format((float)$reservation['deposit_amount'], 2, ',', '.');
+            $guaranteeHtml = <<<HTML
+            <div style="margin:0 32px 24px;background:#E8F5E9;border-radius:10px;padding:14px 16px;font-size:13px;color:#2E7D32;">
+                <div style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;">&#128274; Carta a garanzia</div>
+                Hai registrato una carta a garanzia: <strong>nessun addebito</strong> &egrave; stato effettuato.
+                In caso di mancata presentazione, il ristorante potr&agrave; addebitare una penale di <strong>&euro;{$penale}</strong>.
+            </div>
+            HTML;
+        }
+
         // Restaurant info section
         $restaurantInfoHtml = '';
         if ($restaurantAddress || $restaurantPhone) {
@@ -269,6 +283,7 @@ class MailService
 
                 {$notesHtml}
                 {$discountHtml}
+                {$guaranteeHtml}
                 {$instructionsHtml}
 
                 <!-- CTA -->
@@ -655,7 +670,7 @@ class MailService
             HTML;
         }
 
-        // Deposit info
+        // Deposit / guarantee info
         $depositHtml = '';
         if (!empty($reservation['deposit_required']) && !empty($reservation['deposit_amount'])) {
             $depositAmount = number_format((float)$reservation['deposit_amount'], 2, ',', '.');
@@ -669,6 +684,18 @@ class MailService
             <div style="margin:0 32px 24px;background:#E3F2FD;border-radius:10px;padding:14px 16px;font-size:13px;color:#1565C0;">
                 <div style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;">Caparra richiesta</div>
                 &euro;{$depositAmount} via {$depositLabel}
+            </div>
+            HTML;
+        } elseif (in_array($reservation['guarantee_status'] ?? 'none', ['pending', 'secured'], true) && !empty($reservation['deposit_amount'])) {
+            $penale = number_format((float)$reservation['deposit_amount'], 2, ',', '.');
+            $gSecured = ($reservation['guarantee_status'] ?? '') === 'secured';
+            $gLine = $gSecured
+                ? "Carta registrata. Penale no-show addebitabile: &euro;{$penale}."
+                : "In attesa che il cliente registri la carta. Penale no-show: &euro;{$penale}.";
+            $depositHtml = <<<HTML
+            <div style="margin:0 32px 24px;background:#E8F5E9;border-radius:10px;padding:14px 16px;font-size:13px;color:#2E7D32;">
+                <div style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;">Carta a garanzia</div>
+                {$gLine}
             </div>
             HTML;
         }

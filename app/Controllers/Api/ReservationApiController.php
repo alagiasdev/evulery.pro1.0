@@ -156,8 +156,11 @@ class ReservationApiController
         }
 
         $depositType = $tenant['deposit_type'] ?? 'info';
+        // 'guarantee' = carta a garanzia: salva la carta, nessun addebito alla prenotazione.
+        $isGuarantee = ($depositType === 'guarantee');
 
-        // Calculate deposit based on mode: per_table (fixed) or per_person (× party_size)
+        // Calculate amount based on mode: per_table (fixed) or per_person (× party_size).
+        // Per il tipo 'guarantee' questo importo è la penale no-show, non un addebito.
         $depositAmount = null;
         if ($depositRequired) {
             $baseAmount = (float)$tenant['deposit_amount'];
@@ -187,8 +190,11 @@ class ReservationApiController
             'reservation_time' => $data['time'],
             'party_size'       => (int)$data['party_size'],
             'status'           => $status,
-            'deposit_required' => $depositRequired,
+            // deposit_required = 1 solo per i tipi che incassano davvero (info/link/stripe).
+            // Per 'guarantee' la garanzia è tracciata da guarantee_status.
+            'deposit_required' => ($depositRequired && !$isGuarantee) ? 1 : 0,
             'deposit_amount'   => $depositAmount,
+            'guarantee_status' => ($depositRequired && $isGuarantee) ? 'pending' : 'none',
             'source'           => 'widget',
         ];
 
@@ -254,13 +260,52 @@ class ReservationApiController
             'party_size'     => (int)$data['party_size'],
         ];
 
-        // If deposit required, handle based on deposit_type
+        // If deposit/guarantee required, handle based on deposit_type
         if ($depositRequired && $depositAmount > 0) {
-            $responseData['deposit_required'] = true;
             $responseData['deposit_amount'] = $depositAmount;
             $responseData['deposit_type'] = $depositType;
 
-            if ($depositType === 'stripe' && !empty($tenant['stripe_sk'])) {
+            if ($isGuarantee && !empty($tenant['stripe_sk'])) {
+                // Carta a garanzia: Checkout Session in modalità 'setup' — salva la carta
+                // del cliente SENZA addebito. La penale sarà eventualmente addebitata
+                // dal ristoratore in caso di no-show.
+                $responseData['guarantee'] = true;
+                try {
+                    $tenantStripeKey = decrypt_value($tenant['stripe_sk']);
+                    if (!$tenantStripeKey) {
+                        throw new \RuntimeException('Chiave Stripe non valida');
+                    }
+                    \Stripe\Stripe::setApiKey($tenantStripeKey);
+
+                    $setupParams = [
+                        'mode'                 => 'setup',
+                        'payment_method_types' => ['card'],
+                        'success_url' => url("{$slug}/booking/success") . '?session_id={CHECKOUT_SESSION_ID}',
+                        'cancel_url'  => url("{$slug}/booking/cancel") . "?reservation_id={$reservationId}",
+                        'metadata'    => [
+                            'reservation_id' => $reservationId,
+                            'tenant_id'      => $tenant['id'],
+                            'kind'           => 'guarantee',
+                        ],
+                        'expires_at' => time() + 1800,
+                    ];
+                    if (!empty($customer['email'])) {
+                        $setupParams['customer_email'] = $customer['email'];
+                    }
+                    $session = \Stripe\Checkout\Session::create($setupParams);
+
+                    $responseData['stripe_checkout_url'] = $session->url;
+                    $responseData['message'] = 'Prenotazione creata. Verrai reindirizzato per registrare la carta a garanzia.';
+                } catch (\Exception $e) {
+                    app_log('Stripe setup (guarantee) error: ' . $e->getMessage(), 'error');
+                    $responseData['message'] = 'Prenotazione creata. Contatta il ristorante per completare la garanzia.';
+                }
+            } elseif ($isGuarantee) {
+                // Garanzia richiesta ma chiavi Stripe assenti — non blocchiamo la prenotazione
+                $responseData['guarantee'] = true;
+                $responseData['message'] = 'Prenotazione creata. Contatta il ristorante per completare la garanzia.';
+            } elseif ($depositType === 'stripe' && !empty($tenant['stripe_sk'])) {
+                $responseData['deposit_required'] = true;
                 // Stripe integrated: create Checkout session with tenant's own keys
                 try {
                     $tenantStripeKey = decrypt_value($tenant['stripe_sk']);
@@ -305,10 +350,12 @@ class ReservationApiController
                 }
             } elseif ($depositType === 'link' && !empty($tenant['deposit_payment_link'])) {
                 // External payment link
+                $responseData['deposit_required'] = true;
                 $responseData['deposit_payment_link'] = $tenant['deposit_payment_link'];
                 $responseData['message'] = 'Prenotazione creata. Effettua il pagamento della caparra tramite il link.';
             } else {
                 // Bank info (default)
+                $responseData['deposit_required'] = true;
                 $responseData['deposit_bank_info'] = $tenant['deposit_bank_info'] ?? '';
                 $responseData['message'] = 'Prenotazione creata. Effettua il bonifico per confermare.';
             }
