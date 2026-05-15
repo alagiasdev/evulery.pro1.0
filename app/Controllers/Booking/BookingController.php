@@ -243,7 +243,9 @@ class BookingController
             $res = (new Reservation())->findWithCustomer($reservationId);
             if ($res && (int)$res['tenant_id'] === (int)$tenant['id'] && $res['status'] === 'pending') {
                 $reservation = $res;
-                $canRetry = ($tenant['deposit_type'] ?? '') === 'stripe' && !empty($tenant['stripe_sk']);
+                // Retry possibile per pagamento caparra Stripe e per carta a garanzia
+                $canRetry = in_array($tenant['deposit_type'] ?? '', ['stripe', 'guarantee'], true)
+                    && !empty($tenant['stripe_sk']);
             }
         }
 
