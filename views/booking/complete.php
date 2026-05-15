@@ -66,6 +66,7 @@ $recapBox = '<div style="background:#f8f9fa;border:1px solid #e9ecef;border-radi
             </span>
         </div>
         <?= $recapBox ?>
+        <?php include __DIR__ . '/../partials/booking-directions.php'; ?>
         <div class="bw-conf-actions">
             <?php if ($manageUrl): ?>
             <a href="<?= e($manageUrl) ?>" class="bw-conf-btn-primary">

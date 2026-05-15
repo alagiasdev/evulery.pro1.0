@@ -173,6 +173,7 @@
         </div>
         <h3>Prenotazione Confermata!</h3>
         <div id="confirmation-details"></div>
+        <?php include __DIR__ . '/../partials/booking-directions.php'; ?>
         <a href="<?= url($slug) ?>" class="bw-btn-secondary">Nuova prenotazione</a>
     </div>
 

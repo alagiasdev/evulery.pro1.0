@@ -897,6 +897,23 @@
 }
 .bw-conf-instructions-text { font-size: .8rem; color: #37474F; line-height: 1.5; }
 
+.bw-conf-directions {
+    background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;
+    padding: .75rem; margin-bottom: 1rem;
+}
+.bw-conf-directions-info {
+    display: flex; align-items: flex-start; gap: .4rem;
+    font-size: .82rem; color: #495057; margin-bottom: .6rem;
+}
+.bw-conf-directions-info i { color: var(--bw-primary); margin-top: .1rem; flex-shrink: 0; }
+.bw-conf-directions-btn {
+    display: flex; align-items: center; justify-content: center; gap: .5rem;
+    padding: .55rem 1rem; border-radius: var(--bw-radius-sm);
+    background: #fff; color: var(--bw-primary); border: 1.5px solid var(--bw-primary);
+    font-size: .8rem; font-weight: 600; text-decoration: none; transition: all .2s;
+}
+.bw-conf-directions-btn:hover { background: var(--bw-primary-light); }
+
 .bw-conf-footer {
     padding: .75rem 1.5rem; border-top: 1px solid var(--bw-border-light);
     text-align: center; font-size: .7rem; color: #adb5bd;

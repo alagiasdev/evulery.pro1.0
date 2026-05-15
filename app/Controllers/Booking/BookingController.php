@@ -80,7 +80,9 @@ class BookingController
         $depositPaid = false;
         $sessionId = $request->query('session_id', '');
 
-        if ($sessionId && ($tenant['deposit_type'] ?? '') === 'stripe' && !empty($tenant['stripe_sk'])) {
+        // Recupera la prenotazione dalla sessione Stripe — vale sia per il pagamento
+        // caparra ('stripe') sia per la registrazione carta a garanzia ('guarantee').
+        if ($sessionId && !empty($tenant['stripe_sk'])) {
             try {
                 $tenantKey = decrypt_value($tenant['stripe_sk']);
                 if (!$tenantKey) throw new \RuntimeException('Invalid stripe key');
@@ -89,7 +91,7 @@ class BookingController
                 $reservationId = $session->metadata->reservation_id ?? null;
                 if ($reservationId) {
                     $reservation = (new Reservation())->findWithCustomer((int)$reservationId);
-                    $depositPaid = ($session->payment_status === 'paid');
+                    $depositPaid = (($session->payment_status ?? '') === 'paid');
                 }
             } catch (\Exception $e) {
                 // Silent fail — show generic confirmation

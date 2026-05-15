@@ -9,8 +9,9 @@ if ($hasDetails) {
     $dateFormatted = $DAYS_IT[(int)date('w', $ts)] . ' ' . (int)date('d', $ts) . ' ' . $MONTHS_IT[(int)date('n', $ts)];
     $timeFormatted = substr($reservation['reservation_time'], 0, 5);
     $partySize = (int)$reservation['party_size'];
-    $resId = (int)$reservation['id'];
+    $resId = (int)($reservation['booking_number'] ?? $reservation['id']);
     $depositAmount = $reservation['deposit_amount'] ? number_format((float)$reservation['deposit_amount'], 2, ',', '.') : null;
+    $guaranteeSecured = ($reservation['guarantee_status'] ?? 'none') === 'secured';
 }
 ?>
 
@@ -44,7 +45,7 @@ if ($hasDetails) {
             </div>
             <div class="bw-conf-detail">
                 <div class="bw-conf-detail-icon"><i class="bi bi-hash"></i></div>
-                <div class="bw-conf-detail-value">#<?= $resId ?></div>
+                <div class="bw-conf-detail-value">n. <?= $resId ?></div>
                 <div class="bw-conf-detail-label">Prenotazione</div>
             </div>
         </div>
@@ -58,7 +59,18 @@ if ($hasDetails) {
                 Caparra di <strong>&euro;<?= $depositAmount ?></strong> pagata con successo
             </div>
         </div>
+        <?php elseif (!empty($guaranteeSecured)): ?>
+        <!-- Carta a garanzia registrata -->
+        <div class="bw-conf-deposit">
+            <div class="bw-conf-deposit-icon"><i class="bi bi-shield-lock"></i></div>
+            <div class="bw-conf-deposit-text">
+                Carta a garanzia registrata &mdash; <strong>nessun addebito</strong> effettuato
+            </div>
+        </div>
         <?php endif; ?>
+
+        <!-- Come raggiungere il ristorante -->
+        <?php include __DIR__ . '/../partials/booking-directions.php'; ?>
 
         <?php if (!empty($tenant['booking_instructions'])): ?>
         <!-- Istruzioni ristorante -->
