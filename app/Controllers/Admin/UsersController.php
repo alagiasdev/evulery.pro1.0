@@ -134,8 +134,7 @@ class UsersController
         $data = $request->all();
         $firstName = trim($data['first_name'] ?? '');
         $lastName  = trim($data['last_name'] ?? '');
-        // Normalizzazione email: lower + trim aggressivo (rimuove anche NBSP/zero-width)
-        $email     = strtolower(preg_replace('/[\s\x{00A0}\x{200B}-\x{200D}\x{FEFF}]+/u', '', $data['email'] ?? ''));
+        $email     = normalize_email($data['email'] ?? '');
         $password  = $data['password'] ?? '';
 
         if (!$firstName || !$lastName || !$email || !$password) {

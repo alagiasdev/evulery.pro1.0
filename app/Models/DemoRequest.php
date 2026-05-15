@@ -95,6 +95,42 @@ class DemoRequest
     }
 
     /**
+     * Aggiorna i dati anagrafici del lead (nome, ristorante, email, telefono).
+     * Non tocca status/assignment/note: quelli hanno il loro flusso.
+     */
+    public function updateContact(int $id, array $data): bool
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE demo_requests
+             SET name = :name, restaurant = :restaurant, email = :email, phone = :phone
+             WHERE id = :id'
+        );
+        return $stmt->execute([
+            'name'       => $data['name'],
+            'restaurant' => $data['restaurant'],
+            'email'      => $data['email'],
+            'phone'      => $data['phone'],
+            'id'         => $id,
+        ]);
+    }
+
+    /**
+     * Verifica se l'email è già usata da un ALTRO lead (qualsiasi, escluso $exceptId).
+     * Usato per impedire collisioni quando si corregge l'email di un lead.
+     */
+    public function emailUsedByOtherLead(string $email, int $exceptId): ?array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT id, name, restaurant, status FROM demo_requests
+             WHERE email = :email AND id <> :id
+             ORDER BY created_at DESC LIMIT 1'
+        );
+        $stmt->execute(['email' => $email, 'id' => $exceptId]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
+    /**
      * Aggiunge entry al log attività.
      */
     public function logActivity(int $leadId, string $type, ?string $description = null, ?int $userId = null, ?array $metadata = null): void

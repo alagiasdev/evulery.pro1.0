@@ -199,6 +199,26 @@ $statusLabel = $statuses[$lead['status']] ?? $lead['status'];
                 <div class="lead-info-row"><div class="lbl">Ristorante</div><div class="val"><?= e($lead['restaurant']) ?></div></div>
                 <div class="lead-info-row"><div class="lbl">Email</div><div class="val"><?= e($lead['email']) ?></div></div>
                 <div class="lead-info-row"><div class="lbl">Telefono</div><div class="val"><?= e($lead['phone']) ?></div></div>
+
+                <details style="margin-top:12px;">
+                    <summary style="cursor:pointer;font-size:.78rem;font-weight:600;color:#00844A;user-select:none;">
+                        <i class="bi bi-pencil"></i> Correggi anagrafica
+                    </summary>
+                    <form method="POST" action="<?= url("admin/leads/{$lead['id']}/contact") ?>" style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+                        <?= csrf_field() ?>
+                        <input type="text" name="name" value="<?= e($lead['name']) ?>" placeholder="Nome" required
+                               style="padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                        <input type="text" name="restaurant" value="<?= e($lead['restaurant']) ?>" placeholder="Ristorante" required
+                               style="padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                        <input type="email" name="email" value="<?= e($lead['email']) ?>" placeholder="Email" required
+                               style="padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                        <input type="tel" name="phone" value="<?= e($lead['phone']) ?>" placeholder="Telefono"
+                               style="padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                        <button type="submit" style="background:#00844A;color:#fff;border:none;padding:.45rem;border-radius:6px;font-size:.8rem;font-weight:600;cursor:pointer;">
+                            Salva anagrafica
+                        </button>
+                    </form>
+                </details>
                 <?php if (!empty($lead['ip_address'])): ?>
                     <div class="lead-info-row"><div class="lbl">IP</div><div class="val private"><?= e($lead['ip_address']) ?></div></div>
                 <?php endif; ?>

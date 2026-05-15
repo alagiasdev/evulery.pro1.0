@@ -233,6 +233,7 @@ $router->group('/admin', ['auth', 'admin', 'csrf', 'dashboard-ratelimit'], funct
     // Leads (mini CRM)
     $r->get('/leads', [LeadsController::class, 'index']);
     $r->get('/leads/{id}', [LeadsController::class, 'show']);
+    $r->post('/leads/{id}/contact', [LeadsController::class, 'updateContact']);
     $r->post('/leads/{id}', [LeadsController::class, 'update']);
     $r->get('/leads/{id}/convert', [LeadsController::class, 'convert']);
     // Credit requests
@@ -254,6 +255,7 @@ $router->group('/reseller', ['auth', 'reseller', 'csrf', 'dashboard-ratelimit'],
     $r->get('/leads/create', [ResellerLeadsController::class, 'create']);
     $r->post('/leads', [ResellerLeadsController::class, 'store']);
     $r->get('/leads/{id}', [ResellerLeadsController::class, 'show']);
+    $r->post('/leads/{id}/contact', [ResellerLeadsController::class, 'updateContact']);
     $r->post('/leads/{id}', [ResellerLeadsController::class, 'update']);
     $r->get('/clients', [ResellerClientsController::class, 'index']);
     $r->get('/commissions', [ResellerCommissionsController::class, 'index']);

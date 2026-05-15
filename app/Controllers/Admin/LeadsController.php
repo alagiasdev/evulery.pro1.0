@@ -213,6 +213,71 @@ class LeadsController
     }
 
     /**
+     * POST /admin/leads/{id}/contact — corregge l'anagrafica del lead
+     * (nome, ristorante, email, telefono). Caso d'uso: typo in fase di inserimento.
+     */
+    public function updateContact(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $leadModel = new DemoRequest();
+        $lead = $leadModel->findById($id);
+
+        if (!$lead) {
+            flash('danger', 'Lead non trovato.');
+            Response::redirect(url('admin/leads'));
+            return;
+        }
+
+        $data = $request->all();
+        $name       = trim($data['name'] ?? '');
+        $restaurant = trim($data['restaurant'] ?? '');
+        $email      = normalize_email($data['email'] ?? '');
+        $phone      = trim($data['phone'] ?? '');
+
+        if (!$name || !$restaurant || !$email) {
+            flash('danger', 'Nome, ristorante ed email sono obbligatori.');
+            Response::redirect(url("admin/leads/{$id}"));
+            return;
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            flash('danger', 'Email non valida.');
+            Response::redirect(url("admin/leads/{$id}"));
+            return;
+        }
+
+        // Se l'email cambia, verifica che non collida con un altro lead
+        if ($email !== $lead['email']) {
+            $other = $leadModel->emailUsedByOtherLead($email, $id);
+            if ($other) {
+                flash('danger', "Email già usata dal lead #{$other['id']} ({$other['restaurant']}).");
+                Response::redirect(url("admin/leads/{$id}"));
+                return;
+            }
+        }
+
+        // Diff per activity log
+        $changes = [];
+        foreach (['name' => 'Nome', 'restaurant' => 'Ristorante', 'email' => 'Email', 'phone' => 'Telefono'] as $field => $label) {
+            $newVal = ${$field};
+            if ((string)$lead[$field] !== (string)$newVal) {
+                $changes[] = "{$label}: \"{$lead[$field]}\" → \"{$newVal}\"";
+            }
+        }
+
+        if (empty($changes)) {
+            flash('info', 'Nessuna modifica all\'anagrafica.');
+            Response::redirect(url("admin/leads/{$id}"));
+            return;
+        }
+
+        $leadModel->updateContact($id, compact('name', 'restaurant', 'email', 'phone'));
+        $leadModel->logActivity($id, 'note_added', 'Anagrafica aggiornata — ' . implode(' · ', $changes), Auth::id());
+
+        flash('success', 'Anagrafica aggiornata.');
+        Response::redirect(url("admin/leads/{$id}"));
+    }
+
+    /**
      * GET /admin/leads/{id}/convert — pre-compila form crea-tenant col lead
      * Redirect a /admin/tenants/create con campi pre-compilati via query string
      */

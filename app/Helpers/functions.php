@@ -137,6 +137,15 @@ function flash(string $type, string $message): void
 }
 
 /**
+ * Normalizza un'email: lowercase + rimozione di TUTTI i whitespace,
+ * inclusi NBSP e zero-width invisibili (causa frequente di falsi "esiste già").
+ */
+function normalize_email(string $raw): string
+{
+    return strtolower(preg_replace('/[\s\x{00A0}\x{200B}-\x{200D}\x{FEFF}]+/u', '', $raw));
+}
+
+/**
  * Format date to Italian
  */
 function format_date(string $date, string $format = 'd/m/Y'): string

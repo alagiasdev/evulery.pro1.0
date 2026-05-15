@@ -197,7 +197,7 @@ class LeadsController
 
         $name       = trim($data['name'] ?? '');
         $restaurant = trim($data['restaurant'] ?? '');
-        $email      = strtolower(preg_replace('/[\s\x{00A0}\x{200B}-\x{200D}\x{FEFF}]+/u', '', $data['email'] ?? ''));
+        $email      = normalize_email($data['email'] ?? '');
         $phone      = trim($data['phone'] ?? '');
         $message    = trim($data['message'] ?? '') ?: null;
         $force      = !empty($data['force']);
@@ -270,6 +270,71 @@ class LeadsController
             'old'        => $old,
             'force'      => false,
         ], 'reseller');
+    }
+
+    /**
+     * POST /reseller/leads/{id}/contact — corregge l'anagrafica del lead.
+     * Solo per lead assegnati al reseller corrente.
+     */
+    public function updateContact(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $userId = Auth::id();
+        $leadModel = new DemoRequest();
+        $lead = $leadModel->findById($id);
+
+        if (!$lead || (int)($lead['assigned_reseller_id'] ?? 0) !== $userId) {
+            flash('danger', 'Lead non trovato o non assegnato a te.');
+            Response::redirect(url('reseller/leads'));
+            return;
+        }
+
+        $data = $request->all();
+        $name       = trim($data['name'] ?? '');
+        $restaurant = trim($data['restaurant'] ?? '');
+        $email      = normalize_email($data['email'] ?? '');
+        $phone      = trim($data['phone'] ?? '');
+
+        if (!$name || !$restaurant || !$email) {
+            flash('danger', 'Nome, ristorante ed email sono obbligatori.');
+            Response::redirect(url("reseller/leads/{$id}"));
+            return;
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            flash('danger', 'Email non valida.');
+            Response::redirect(url("reseller/leads/{$id}"));
+            return;
+        }
+
+        if ($email !== $lead['email']) {
+            $other = $leadModel->emailUsedByOtherLead($email, $id);
+            if ($other) {
+                flash('danger', "Email già usata da un altro lead nel sistema. Verifica con l'amministratore.");
+                Response::redirect(url("reseller/leads/{$id}"));
+                return;
+            }
+        }
+
+        $changes = [];
+        foreach (['name' => 'Nome', 'restaurant' => 'Ristorante', 'email' => 'Email', 'phone' => 'Telefono'] as $field => $label) {
+            $newVal = ${$field};
+            if ((string)$lead[$field] !== (string)$newVal) {
+                $changes[] = "{$label}: \"{$lead[$field]}\" → \"{$newVal}\"";
+            }
+        }
+
+        if (empty($changes)) {
+            flash('info', 'Nessuna modifica all\'anagrafica.');
+            Response::redirect(url("reseller/leads/{$id}"));
+            return;
+        }
+
+        $leadModel->updateContact($id, compact('name', 'restaurant', 'email', 'phone'));
+        $userName = Auth::user()['name'] ?? 'Reseller';
+        $leadModel->logActivity($id, 'note_added', "Anagrafica corretta da {$userName} — " . implode(' · ', $changes), $userId);
+
+        flash('success', 'Anagrafica aggiornata.');
+        Response::redirect(url("reseller/leads/{$id}"));
     }
 
     private function myStatusCounts(int $userId): array

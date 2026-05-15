@@ -141,6 +141,34 @@
                         </div>
                     <?php endif; ?>
                 </div>
+
+                <details style="margin-top:1rem;">
+                    <summary style="cursor:pointer;font-size:.82rem;font-weight:600;color:var(--rs-brand);user-select:none;">
+                        <i class="bi bi-pencil"></i> Correggi anagrafica
+                    </summary>
+                    <form method="POST" action="<?= url('reseller/leads/' . (int)$lead['id'] . '/contact') ?>" style="margin-top:.75rem;display:flex;flex-direction:column;gap:.6rem;">
+                        <?= csrf_field() ?>
+                        <div class="rs-field">
+                            <label for="ct-name">Nome e cognome *</label>
+                            <input type="text" name="name" id="ct-name" required value="<?= e($lead['name']) ?>">
+                        </div>
+                        <div class="rs-field">
+                            <label for="ct-restaurant">Ristorante *</label>
+                            <input type="text" name="restaurant" id="ct-restaurant" required value="<?= e($lead['restaurant']) ?>">
+                        </div>
+                        <div class="rs-field">
+                            <label for="ct-email">Email *</label>
+                            <input type="email" name="email" id="ct-email" required value="<?= e($lead['email']) ?>">
+                        </div>
+                        <div class="rs-field">
+                            <label for="ct-phone">Telefono</label>
+                            <input type="tel" name="phone" id="ct-phone" value="<?= e($lead['phone']) ?>">
+                        </div>
+                        <button type="submit" class="rs-btn rs-btn-primary rs-btn-sm" style="align-self:flex-start;">
+                            <i class="bi bi-check-circle"></i> Salva anagrafica
+                        </button>
+                    </form>
+                </details>
             </div>
         </div>
 
