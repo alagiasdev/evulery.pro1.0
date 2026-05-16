@@ -89,7 +89,7 @@ Controlli da eseguire quando si pubblica su server di produzione.
 - Cliccare l'icona calendario nel filtro data → il dropdown deve mostrare tutte e 7 le colonne (lun-dom)
 - Selezionare una data → il filtro deve aggiornarsi
 
-**Da sistemare:** il dropdown calendario deve essere completamente visibile su schermi ≥ 375px. Valutare `right: 0` o centratura rispetto allo schermo, come fatto per il calendario della dashboard home.
+> Il fix è tracciato nel backlog di cleanup deferito (memory `project_deferred_cleanup.md`).
 
 ---
 
