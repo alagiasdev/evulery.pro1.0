@@ -108,6 +108,38 @@ foreach ($tables as $t) {
     </div>
 </form>
 
+<!-- Impostazioni auto-assegnazione -->
+<div class="card tm-card" style="margin-top:16px;">
+    <div class="tm-head"><span class="tm-head-title"><i class="bi bi-sliders me-1"></i> Auto-assegnazione</span></div>
+    <form method="POST" action="<?= url('dashboard/settings/tables/auto-assign') ?>">
+        <?= csrf_field() ?>
+        <div class="tm-opt-row">
+            <div class="tm-opt-txt">
+                <div class="tm-opt-name">Assegnazione automatica del tavolo</div>
+                <div class="tm-opt-desc">Alla prenotazione il sistema assegna il primo tavolo libero in ordine di priorità. Se disattivata, l'assegnazione è solo manuale.</div>
+            </div>
+            <label class="tm-switch">
+                <input type="checkbox" name="table_auto_assign" value="1" <?= !empty($tenant['table_auto_assign']) ? 'checked' : '' ?>>
+                <span class="tm-switch-track"></span>
+            </label>
+        </div>
+        <div class="tm-opt-row">
+            <div class="tm-opt-txt">
+                <div class="tm-opt-name">Buffer di pulizia / turnover</div>
+                <div class="tm-opt-desc">Minuti liberi tra due turni sullo stesso tavolo prima di poterlo riassegnare. 0 = turni back-to-back.</div>
+            </div>
+            <select name="table_turnover_buffer" class="tm-fi" style="width:120px;flex-shrink:0;">
+                <?php foreach ([0, 5, 10, 15, 20, 30] as $b): ?>
+                <option value="<?= $b ?>" <?= (int)($tenant['table_turnover_buffer'] ?? 15) === $b ? 'selected' : '' ?>><?= $b ?> min</option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="tm-opt-foot">
+            <button type="submit" class="btn-tm-new"><i class="bi bi-check-circle me-1"></i> Salva impostazioni</button>
+        </div>
+    </form>
+</div>
+
 <!-- Modale aggiungi/modifica tavolo -->
 <div class="tm-modal-overlay" id="tm-modal" style="display:none;">
     <div class="tm-modal">

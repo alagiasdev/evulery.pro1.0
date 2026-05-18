@@ -7,6 +7,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\TenantResolver;
 use App\Models\Table;
+use App\Models\Tenant;
 use App\Services\AuditLog;
 
 /**
@@ -126,6 +127,29 @@ class TablesController
         }
 
         flash('success', 'Ordine di priorità aggiornato.');
+        Response::redirect(url('dashboard/settings/tables'));
+    }
+
+    /** Salva le impostazioni di auto-assegnazione del tenant. */
+    public function updateAutoAssign(Request $request): void
+    {
+        if (gate_service('table_management', url('dashboard/settings/tables'))) return;
+
+        $tenantId = Auth::tenantId();
+        $auto = !empty($request->input('table_auto_assign')) ? 1 : 0;
+        $buffer = (int)$request->input('table_turnover_buffer', 15);
+        if (!in_array($buffer, [0, 5, 10, 15, 20, 30], true)) {
+            $buffer = 15;
+        }
+
+        (new Tenant())->update($tenantId, [
+            'table_auto_assign'     => $auto,
+            'table_turnover_buffer' => $buffer,
+        ]);
+        TenantResolver::setCurrent((new Tenant())->findById($tenantId));
+
+        AuditLog::log(AuditLog::SETTINGS_UPDATED, 'Impostazioni auto-assegnazione tavoli', Auth::id(), $tenantId);
+        flash('success', 'Impostazioni auto-assegnazione aggiornate.');
         Response::redirect(url('dashboard/settings/tables'));
     }
 

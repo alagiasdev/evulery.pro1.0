@@ -51,6 +51,17 @@ class ReservationsController
 
         $isRange = !$upcoming && $dateTo && $dateTo !== $date;
 
+        // Gestione Tavoli — assegnazioni per la lista (batch, niente N+1)
+        $tableMgmt = (new Tenant())->canUseService($tenantId, 'table_management');
+        $tableAssignments = [];
+        if ($tableMgmt) {
+            $allIds = array_column($reservations, 'id');
+            if (!empty($searchResults)) {
+                $allIds = array_merge($allIds, array_column($searchResults, 'id'));
+            }
+            $tableAssignments = (new TableAssigner())->assignmentsFor($allIds);
+        }
+
         view('dashboard/reservations/index', [
             'title'        => 'Prenotazioni',
             'activeMenu'   => 'reservations',
@@ -63,6 +74,8 @@ class ReservationsController
             'source'       => $source,
             'searchQuery'  => $searchQuery,
             'searchResults' => $searchResults,
+            'tableMgmt'        => $tableMgmt,
+            'tableAssignments' => $tableAssignments,
         ], 'dashboard');
     }
 

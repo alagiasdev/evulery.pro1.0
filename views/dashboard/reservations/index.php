@@ -1,4 +1,18 @@
 <?php
+// Gestione Tavoli — aggancia l'assegnazione tavolo a ogni prenotazione
+if (!empty($tableMgmt)) {
+    foreach ($reservations as &$_r) {
+        $_r['_tables'] = $tableAssignments[(int)$_r['id']] ?? [];
+    }
+    unset($_r);
+    if (!empty($searchResults)) {
+        foreach ($searchResults as &$_sr) {
+            $_sr['_tables'] = $tableAssignments[(int)$_sr['id']] ?? [];
+        }
+        unset($_sr);
+    }
+}
+
 // Segment badge helper (self-contained, reads tenant thresholds internally)
 function getSegmentBadge(int $bookings): string {
     static $th = null;
@@ -372,6 +386,11 @@ $navQs = function (string $d) use ($status, $source): string {
                 </div>
             </div>
             <div class="res-right">
+                <?php if (!empty($r['_tables'])): ?>
+                <span class="res-table-badge" title="Tavolo assegnato">
+                    <i class="bi bi-grid-3x3"></i><?= e(implode('+', array_map(fn($t) => $t['name'], $r['_tables']))) ?>
+                </span>
+                <?php endif; ?>
                 <span class="res-pax"><i class="bi bi-person-fill me-1"></i><?= (int)$r['party_size'] ?></span>
                 <?php if (!empty($r['discount_percent'])): ?>
                 <span style="background:#FFF3E0;color:#E65100;font-size:.65rem;font-weight:700;padding:1px 5px;border-radius:4px;">-<?= (int)$r['discount_percent'] ?>%</span>
