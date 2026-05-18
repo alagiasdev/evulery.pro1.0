@@ -227,6 +227,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Services\\MailService' => __DIR__ . '/../..' . '/app/Services/MailService.php',
         'App\\Services\\NotificationService' => __DIR__ . '/../..' . '/app/Services/NotificationService.php',
         'App\\Services\\RateLimit' => __DIR__ . '/../..' . '/app/Services/RateLimit.php',
+        'App\\Services\\TableAssigner' => __DIR__ . '/../..' . '/app/Services/TableAssigner.php',
         'Base64Url\\Base64Url' => __DIR__ . '/..' . '/spomky-labs/base64url/src/Base64Url.php',
         'Brick\\Math\\BigDecimal' => __DIR__ . '/..' . '/brick/math/src/BigDecimal.php',
         'Brick\\Math\\BigInteger' => __DIR__ . '/..' . '/brick/math/src/BigInteger.php',

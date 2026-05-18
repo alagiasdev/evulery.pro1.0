@@ -114,6 +114,7 @@ return array(
     'App\\Services\\MailService' => $baseDir . '/app/Services/MailService.php',
     'App\\Services\\NotificationService' => $baseDir . '/app/Services/NotificationService.php',
     'App\\Services\\RateLimit' => $baseDir . '/app/Services/RateLimit.php',
+    'App\\Services\\TableAssigner' => $baseDir . '/app/Services/TableAssigner.php',
     'Base64Url\\Base64Url' => $vendorDir . '/spomky-labs/base64url/src/Base64Url.php',
     'Brick\\Math\\BigDecimal' => $vendorDir . '/brick/math/src/BigDecimal.php',
     'Brick\\Math\\BigInteger' => $vendorDir . '/brick/math/src/BigInteger.php',
