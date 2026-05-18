@@ -223,16 +223,19 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
     </div>
     <?php endif; ?>
 
-    <?php // ─── Pannello tavolo ────────────────────────────────────── ?>
+    <?php // ─── Sezione tavolo ───────────────────────────────────────── ?>
     <?php if (!empty($tableMgmt)): ?>
-    <div style="margin-top:1rem;padding:1rem;border-radius:8px;background:#f8f9fa;border:1px solid #e9ecef;">
-        <div style="font-size:.88rem;font-weight:700;margin-bottom:.5rem;"><i class="bi bi-grid-3x3 me-1"></i> Tavolo</div>
-        <?php if ($tableCurrentValue !== '' && !empty($tableCurrentAuto)): ?>
-        <div style="font-size:.78rem;color:#2E7D32;margin-bottom:.6rem;"><i class="bi bi-magic me-1"></i> Assegnato automaticamente dal sistema &mdash; puoi cambiarlo qui sotto.</div>
-        <?php endif; ?>
-        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/table") ?>" style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
+    <div class="res-section">
+        <div class="res-section-head">
+            <i class="bi bi-grid-3x3"></i>
+            <span>Tavolo</span>
+            <?php if ($tableCurrentValue !== '' && !empty($tableCurrentAuto)): ?>
+            <span class="res-auto-pill"><i class="bi bi-magic me-1"></i>Assegnato in automatico</span>
+            <?php endif; ?>
+        </div>
+        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/table") ?>" class="res-table-form">
             <?= csrf_field() ?>
-            <select name="table_option" class="form-select form-select-sm" style="max-width:340px;">
+            <select name="table_option" class="form-select form-select-sm">
                 <option value="">&mdash; Nessun tavolo &mdash;</option>
                 <?php foreach ($tableOptions as $o): ?>
                 <option value="<?= e($o['value']) ?>" <?= $o['value'] === $tableCurrentValue ? 'selected' : '' ?>><?= e($o['label']) ?></option>
@@ -241,7 +244,7 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
             <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-check me-1"></i> Conferma tavolo</button>
         </form>
         <?php if (empty($tableOptions) && $tableCurrentValue === ''): ?>
-        <div style="font-size:.75rem;color:#9aa1a9;margin-top:.5rem;">
+        <div class="res-section-hint">
             Nessun tavolo disponibile per questo turno. Configura i tavoli in
             <a href="<?= url('dashboard/settings/tables') ?>">Impostazioni &gt; Tavoli</a>.
         </div>

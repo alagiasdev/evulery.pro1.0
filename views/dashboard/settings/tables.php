@@ -34,7 +34,42 @@ foreach ($tables as $t) {
 <?php $lockedTitle = 'La Gestione Tavoli'; include __DIR__ . '/../../partials/service-locked.php'; ?>
 <?php else: ?>
 
-<div class="card tm-card">
+<?php $autoOn = !empty($tenant['table_auto_assign']); ?>
+<!-- Master toggle: assegnazione automatica -->
+<form method="POST" action="<?= url('dashboard/settings/tables/auto-assign') ?>" id="tm-autoassign-form">
+    <?= csrf_field() ?>
+    <div class="master-toggle <?= $autoOn ? 'enabled' : 'disabled' ?>" id="tm-master">
+        <div class="mt-left">
+            <div class="mt-icon" style="background:var(--brand-light);color:var(--brand);">
+                <i class="bi bi-magic"></i>
+            </div>
+            <div>
+                <div class="mt-title">Assegnazione automatica dei tavoli</div>
+                <div class="mt-desc">Alla prenotazione il sistema assegna il primo tavolo libero in ordine di priorità. Puoi sempre cambiarlo a mano.</div>
+            </div>
+        </div>
+        <div class="toggle-big <?= $autoOn ? 'on' : 'off' ?>" id="tm-main-toggle"></div>
+        <input type="hidden" name="table_auto_assign" id="tm-auto-input" value="<?= $autoOn ? '1' : '' ?>">
+    </div>
+    <div class="tm-card <?= $autoOn ? '' : 'disabled-look' ?>" id="tm-buffer-box" style="margin-top:.75rem;">
+        <div class="tm-opt-row">
+            <div class="tm-opt-txt">
+                <div class="tm-opt-name">Buffer di pulizia / turnover</div>
+                <div class="tm-opt-desc">Minuti liberi tra due turni sullo stesso tavolo prima di poterlo riassegnare. 0 = turni back-to-back.</div>
+            </div>
+            <select name="table_turnover_buffer" class="tm-fi" style="width:120px;flex-shrink:0;">
+                <?php foreach ([0, 5, 10, 15, 20, 30] as $b): ?>
+                <option value="<?= $b ?>" <?= (int)($tenant['table_turnover_buffer'] ?? 15) === $b ? 'selected' : '' ?>><?= $b ?> min</option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="tm-opt-foot">
+            <button type="submit" class="btn-tm-new"><i class="bi bi-check-circle me-1"></i> Salva impostazioni</button>
+        </div>
+    </div>
+</form>
+
+<div class="card tm-card" style="margin-top:16px;">
     <div class="tm-head">
         <span class="tm-head-title">Tavoli</span>
         <div class="tm-area-tabs">
@@ -108,38 +143,6 @@ foreach ($tables as $t) {
     </div>
 </form>
 
-<!-- Impostazioni auto-assegnazione -->
-<div class="card tm-card" style="margin-top:16px;">
-    <div class="tm-head"><span class="tm-head-title"><i class="bi bi-sliders me-1"></i> Auto-assegnazione</span></div>
-    <form method="POST" action="<?= url('dashboard/settings/tables/auto-assign') ?>">
-        <?= csrf_field() ?>
-        <div class="tm-opt-row">
-            <div class="tm-opt-txt">
-                <div class="tm-opt-name">Assegnazione automatica del tavolo</div>
-                <div class="tm-opt-desc">Alla prenotazione il sistema assegna il primo tavolo libero in ordine di priorità. Se disattivata, l'assegnazione è solo manuale.</div>
-            </div>
-            <label class="tm-switch">
-                <input type="checkbox" name="table_auto_assign" value="1" <?= !empty($tenant['table_auto_assign']) ? 'checked' : '' ?>>
-                <span class="tm-switch-track"></span>
-            </label>
-        </div>
-        <div class="tm-opt-row">
-            <div class="tm-opt-txt">
-                <div class="tm-opt-name">Buffer di pulizia / turnover</div>
-                <div class="tm-opt-desc">Minuti liberi tra due turni sullo stesso tavolo prima di poterlo riassegnare. 0 = turni back-to-back.</div>
-            </div>
-            <select name="table_turnover_buffer" class="tm-fi" style="width:120px;flex-shrink:0;">
-                <?php foreach ([0, 5, 10, 15, 20, 30] as $b): ?>
-                <option value="<?= $b ?>" <?= (int)($tenant['table_turnover_buffer'] ?? 15) === $b ? 'selected' : '' ?>><?= $b ?> min</option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div class="tm-opt-foot">
-            <button type="submit" class="btn-tm-new"><i class="bi bi-check-circle me-1"></i> Salva impostazioni</button>
-        </div>
-    </form>
-</div>
-
 <!-- Modale aggiungi/modifica tavolo -->
 <div class="tm-modal-overlay" id="tm-modal" style="display:none;">
     <div class="tm-modal">
@@ -210,6 +213,23 @@ foreach ($tables as $t) {
 (function () {
     var TABLES = <?= json_encode($jsTables, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
     var baseAction = <?= json_encode(url('dashboard/settings/tables')) ?>;
+
+    // ---- Master toggle: assegnazione automatica ----
+    var tmMaster = document.getElementById('tm-master');
+    var tmToggle = document.getElementById('tm-main-toggle');
+    var tmAutoInput = document.getElementById('tm-auto-input');
+    var tmBufferBox = document.getElementById('tm-buffer-box');
+    if (tmToggle) {
+        tmToggle.addEventListener('click', function () {
+            var on = !tmToggle.classList.contains('on');
+            tmToggle.classList.toggle('on', on);
+            tmToggle.classList.toggle('off', !on);
+            tmMaster.classList.toggle('enabled', on);
+            tmMaster.classList.toggle('disabled', !on);
+            tmAutoInput.value = on ? '1' : '';
+            tmBufferBox.classList.toggle('disabled-look', !on);
+        });
+    }
 
     // ---- Area filter ----
     var areaTabs = document.querySelectorAll('.tm-area-tab');
