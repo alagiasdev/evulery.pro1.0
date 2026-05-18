@@ -4280,7 +4280,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-map-table.off { background: #adb5bd; }
 .tm-map-table.dragging { cursor: grabbing; box-shadow: 0 6px 16px rgba(0,0,0,.3); z-index: 10; opacity: .92; }
 .tm-map-name { font-size: .72rem; font-weight: 700; white-space: nowrap; max-width: 70px; overflow: hidden; text-overflow: ellipsis; }
-.tm-map-cap { font-size: .6rem; opacity: .88; }
+.tm-map-cap { font-size: .6rem; opacity: .88; white-space: nowrap; }
 
 /* Gestione Tavoli — mappa: modalità, operativa, popup */
 .tm-mode-toggle { display: inline-flex; border: 1px solid var(--border, #e9ecef); border-radius: 8px; overflow: hidden; }

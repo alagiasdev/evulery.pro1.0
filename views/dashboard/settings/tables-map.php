@@ -104,10 +104,11 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
              data-id="<?= (int)$t['id'] ?>" data-area="<?= e($tArea) ?>"
              <?= $occ ? 'data-pop="tm-pop-' . (int)$t['id'] . '"' : '' ?>
              style="left:<?= (int)$t['_x'] ?>px; top:<?= (int)$t['_y'] ?>px;<?= $hidden ? 'display:none;' : '' ?>">
-            <span class="tm-map-name"><?= e($t['name']) ?></span>
             <?php if ($occ): ?>
-            <span class="tm-map-cap"><?= e($occ['name']) ?></span>
+            <span class="tm-map-name"><?= e($occ['name']) ?></span>
+            <span class="tm-map-cap"><?= (int)$occ['party'] ?>p &middot; <?= e($occ['time']) ?></span>
             <?php else: ?>
+            <span class="tm-map-name"><?= e($t['name']) ?></span>
             <span class="tm-map-cap"><?= (int)$t['capacity'] ?>p</span>
             <?php endif; ?>
         </div>
