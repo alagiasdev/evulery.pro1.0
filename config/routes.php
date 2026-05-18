@@ -117,6 +117,8 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/settings/tables', [TablesController::class, 'store']);
     $r->post('/settings/tables/reorder', [TablesController::class, 'reorder']);
     $r->post('/settings/tables/auto-assign', [TablesController::class, 'updateAutoAssign']);
+    $r->get('/settings/tables/map', [TablesController::class, 'map']);
+    $r->post('/settings/tables/map', [TablesController::class, 'savePositions']);
     $r->post('/settings/tables/{id}', [TablesController::class, 'update']);
     $r->post('/settings/tables/{id}/delete', [TablesController::class, 'destroy']);
     $r->post('/settings/tables/{id}/toggle', [TablesController::class, 'toggle']);

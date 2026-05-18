@@ -141,6 +141,33 @@ class Table
         }
     }
 
+    /**
+     * Aggiorna le posizioni sulla mappa sala.
+     * $positions: [tableId => ['x' => int, 'y' => int], ...].
+     */
+    public function updatePositions(int $tenantId, array $positions): void
+    {
+        $this->db->beginTransaction();
+        try {
+            $stmt = $this->db->prepare(
+                'UPDATE restaurant_tables SET position_x = :x, position_y = :y
+                 WHERE id = :id AND tenant_id = :t'
+            );
+            foreach ($positions as $id => $pos) {
+                $stmt->execute([
+                    'x'  => (int)$pos['x'],
+                    'y'  => (int)$pos['y'],
+                    'id' => (int)$id,
+                    't'  => $tenantId,
+                ]);
+            }
+            $this->db->commit();
+        } catch (\PDOException $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
     // ─── Combinazioni ────────────────────────────────────────────
 
     /** Tutte le coppie combinabili del tenant: [['table_a_id'=>..,'table_b_id'=>..], ...]. */

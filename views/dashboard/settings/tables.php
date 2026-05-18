@@ -78,6 +78,7 @@ foreach ($tables as $t) {
             <button type="button" class="tm-area-tab" data-area="<?= e($a) ?>"><?= e($a) ?></button>
             <?php endforeach; ?>
         </div>
+        <a href="<?= url('dashboard/settings/tables/map') ?>" class="btn-tm-ghost"><i class="bi bi-grid-3x3 me-1"></i> Mappa sala</a>
         <button type="button" class="btn-tm-new" id="tm-btn-new"><i class="bi bi-plus-lg"></i> Nuovo tavolo</button>
     </div>
 

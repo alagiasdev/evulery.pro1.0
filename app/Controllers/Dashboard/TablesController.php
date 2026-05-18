@@ -130,6 +130,54 @@ class TablesController
         Response::redirect(url('dashboard/settings/tables'));
     }
 
+    /** Mappa sala — pagina con canvas di posizionamento (setup). */
+    public function map(Request $request): void
+    {
+        $tenant = TenantResolver::current();
+        $canUse = tenant_can('table_management');
+
+        $tables = $areas = [];
+        if ($canUse) {
+            $model = new Table();
+            $tables = $model->findByTenant((int)$tenant['id']);
+            $areas = $model->areas((int)$tenant['id']);
+        }
+
+        view('dashboard/settings/tables-map', [
+            'title'      => 'Mappa sala',
+            'activeMenu' => 'settings-tables',
+            'tenant'     => $tenant,
+            'canUse'     => $canUse,
+            'tables'     => $tables,
+            'areas'      => $areas,
+        ], 'dashboard');
+    }
+
+    /** Salva le posizioni dei tavoli sulla mappa (JSON: {id:{x,y}}). */
+    public function savePositions(Request $request): void
+    {
+        if (gate_service('table_management', url('dashboard/settings/tables'))) return;
+
+        $tenantId = Auth::tenantId();
+        $positions = json_decode((string)$request->input('positions', ''), true);
+
+        $clean = [];
+        if (is_array($positions)) {
+            foreach ($positions as $id => $p) {
+                if (is_array($p) && isset($p['x'], $p['y']) && (int)$id > 0) {
+                    $clean[(int)$id] = ['x' => max(0, (int)$p['x']), 'y' => max(0, (int)$p['y'])];
+                }
+            }
+        }
+        if (!empty($clean)) {
+            (new Table())->updatePositions($tenantId, $clean);
+        }
+
+        AuditLog::log(AuditLog::SETTINGS_UPDATED, 'Mappa sala aggiornata', Auth::id(), $tenantId);
+        flash('success', 'Mappa sala salvata.');
+        Response::redirect(url('dashboard/settings/tables/map'));
+    }
+
     /** Salva le impostazioni di auto-assegnazione del tenant. */
     public function updateAutoAssign(Request $request): void
     {
