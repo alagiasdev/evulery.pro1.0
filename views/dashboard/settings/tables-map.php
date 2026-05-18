@@ -4,18 +4,17 @@
  * Variabili: $tenant, $canUse, $tables, $areas, $mode, $opDate, $opTime,
  *            $floorState, $reassignOptions, $currentMap
  */
-// Posizione iniziale per i tavoli mai posizionati (griglia di fallback per area)
-$areaCounters = [];
+// Posizione iniziale per i tavoli mai posizionati: griglia di fallback con
+// contatore GLOBALE — così due tavoli non posizionati non si sovrappongono mai.
+$fallbackIdx = 0;
 foreach ($tables as &$_t) {
     if ($_t['position_x'] !== null && $_t['position_y'] !== null) {
         $_t['_x'] = (int)$_t['position_x'];
         $_t['_y'] = (int)$_t['position_y'];
     } else {
-        $a = (string)($_t['area'] ?? '');
-        $i = $areaCounters[$a] ?? 0;
-        $areaCounters[$a] = $i + 1;
-        $_t['_x'] = 30 + ($i % 6) * 140;
-        $_t['_y'] = 30 + intdiv($i, 6) * 120;
+        $_t['_x'] = 30 + ($fallbackIdx % 6) * 140;
+        $_t['_y'] = 30 + intdiv($fallbackIdx, 6) * 120;
+        $fallbackIdx++;
     }
 }
 unset($_t);
