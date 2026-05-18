@@ -119,9 +119,12 @@ foreach ($tables as $t) {
                 </div>
             </div>
             <button type="button" class="tm-act tm-edit" data-id="<?= (int)$t['id'] ?>" title="Modifica"><i class="bi bi-pencil"></i></button>
-            <form method="POST" action="<?= url('dashboard/settings/tables/' . (int)$t['id'] . '/toggle') ?>" class="d-inline">
+            <form method="POST" action="<?= url('dashboard/settings/tables/' . (int)$t['id'] . '/toggle') ?>" class="d-inline tm-toggle-form">
                 <?= csrf_field() ?>
-                <button type="submit" class="tm-act" title="<?= $isActive ? 'Disattiva' : 'Attiva' ?>"><i class="bi <?= $isActive ? 'bi-toggle-on' : 'bi-toggle-off' ?>"></i></button>
+                <label class="tm-switch" title="<?= $isActive ? 'Tavolo attivo — clicca per disattivarlo' : 'Tavolo disattivato — clicca per attivarlo' ?>">
+                    <input type="checkbox" class="tm-toggle-input" <?= $isActive ? 'checked' : '' ?>>
+                    <span class="tm-switch-track"></span>
+                </label>
             </form>
             <form method="POST" action="<?= url('dashboard/settings/tables/' . (int)$t['id'] . '/delete') ?>" class="d-inline" data-confirm="Eliminare il tavolo «<?= e($t['name']) ?>»?">
                 <?= csrf_field() ?>
@@ -230,6 +233,14 @@ foreach ($tables as $t) {
             tmBufferBox.classList.toggle('disabled-look', !on);
         });
     }
+
+    // ---- Toggle attivo/disattivo per riga tavolo ----
+    document.querySelectorAll('.tm-toggle-input').forEach(function (cb) {
+        cb.addEventListener('change', function () {
+            var f = cb.closest('form');
+            if (f) f.submit();
+        });
+    });
 
     // ---- Area filter ----
     var areaTabs = document.querySelectorAll('.tm-area-tab');
