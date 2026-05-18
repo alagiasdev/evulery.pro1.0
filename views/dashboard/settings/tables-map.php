@@ -28,14 +28,18 @@ $slots = [];
 for ($m = 12 * 60; $m <= 23 * 60 + 30; $m += 30) {
     $slots[] = sprintf('%02d:%02d', intdiv($m, 60), $m % 60);
 }
-$mapBase = url('dashboard/settings/tables/map');
-$opBack  = 'dashboard/settings/tables/map?mode=operativa&date=' . urlencode($opDate) . '&time=' . urlencode($opTime);
+$setupUrl = url('dashboard/settings/tables/map');   // mappa setup (Impostazioni)
+$opUrl    = url('dashboard/sala');                   // mappa operativa (sidebar "Sala")
+$opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($opTime);
 ?>
 
+<?php if ($mode === 'setup'): ?>
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
 <p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
-
 <?php $activeKey = 'settings-tables'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
+<?php else: ?>
+<h2 style="font-size:1.35rem; font-weight:700; margin-bottom:1rem;"><i class="bi bi-grid-3x3 me-1" style="color:var(--brand);"></i> Sala</h2>
+<?php endif; ?>
 
 <?php if (!$canUse): ?>
 <?php $lockedTitle = 'La Gestione Tavoli'; include __DIR__ . '/../../partials/service-locked.php'; ?>
@@ -43,11 +47,13 @@ $opBack  = 'dashboard/settings/tables/map?mode=operativa&date=' . urlencode($opD
 
 <div class="card tm-card">
     <div class="tm-head">
+        <?php if ($mode === 'setup'): ?>
         <a href="<?= url('dashboard/settings/tables') ?>" class="tm-map-back"><i class="bi bi-arrow-left"></i> Elenco tavoli</a>
-        <span class="tm-head-title"><i class="bi bi-grid-3x3 me-1"></i> Mappa sala</span>
+        <?php endif; ?>
+        <span class="tm-head-title"><i class="bi bi-grid-3x3 me-1"></i> <?= $mode === 'operativa' ? 'Stato sala' : 'Mappa sala' ?></span>
         <div class="tm-mode-toggle">
-            <a href="<?= $mapBase ?>?mode=setup" class="<?= $mode === 'setup' ? 'active' : '' ?>"><i class="bi bi-pencil"></i> Setup</a>
-            <a href="<?= $mapBase ?>?mode=operativa" class="<?= $mode === 'operativa' ? 'active' : '' ?>"><i class="bi bi-eye"></i> Operativa</a>
+            <a href="<?= $opUrl ?>" class="<?= $mode === 'operativa' ? 'active' : '' ?>"><i class="bi bi-eye"></i> Operativa</a>
+            <a href="<?= $setupUrl ?>" class="<?= $mode === 'setup' ? 'active' : '' ?>"><i class="bi bi-pencil"></i> Setup</a>
         </div>
         <?php if ($mode === 'setup' && !empty($tables)): ?>
         <button type="submit" form="tm-map-form" class="btn-tm-new" style="margin-left:auto;"><i class="bi bi-check-circle me-1"></i> Salva posizioni</button>
@@ -67,9 +73,9 @@ $opBack  = 'dashboard/settings/tables/map?mode=operativa&date=' . urlencode($opD
         $prev = date('Y-m-d', strtotime($opDate . ' -1 day'));
         $next = date('Y-m-d', strtotime($opDate . ' +1 day'));
         ?>
-        <a class="tm-op-arrow" href="<?= $mapBase ?>?mode=operativa&date=<?= $prev ?>&time=<?= e($opTime) ?>"><i class="bi bi-chevron-left"></i></a>
+        <a class="tm-op-arrow" href="<?= $opUrl ?>?date=<?= $prev ?>&time=<?= e($opTime) ?>"><i class="bi bi-chevron-left"></i></a>
         <span class="tm-op-date"><?= e(date('D d/m/Y', strtotime($opDate))) ?></span>
-        <a class="tm-op-arrow" href="<?= $mapBase ?>?mode=operativa&date=<?= $next ?>&time=<?= e($opTime) ?>"><i class="bi bi-chevron-right"></i></a>
+        <a class="tm-op-arrow" href="<?= $opUrl ?>?date=<?= $next ?>&time=<?= e($opTime) ?>"><i class="bi bi-chevron-right"></i></a>
         <?php if ($multiArea): ?>
         <div class="tm-area-tabs" style="margin-left:8px;">
             <?php foreach ($areas as $idx => $a): ?>
@@ -84,7 +90,7 @@ $opBack  = 'dashboard/settings/tables/map?mode=operativa&date=' . urlencode($opD
     </div>
     <div class="tm-scrub">
         <?php foreach ($slots as $s): ?>
-        <a href="<?= $mapBase ?>?mode=operativa&date=<?= e($opDate) ?>&time=<?= $s ?>"
+        <a href="<?= $opUrl ?>?date=<?= e($opDate) ?>&time=<?= $s ?>"
            class="tm-scrub-slot <?= $s === $opTime ? 'active' : '' ?>"><?= $s ?></a>
         <?php endforeach; ?>
     </div>

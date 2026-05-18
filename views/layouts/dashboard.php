@@ -59,6 +59,13 @@
                         <i class="bi bi-calendar-check me-2"></i> Prenotazioni
                     </a>
                 </li>
+                <?php if (tenant_can('table_management')): ?>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'sala' ? 'active' : '' ?>" href="<?= url('dashboard/sala') ?>">
+                        <i class="bi bi-grid-3x3 me-2"></i> Sala
+                    </a>
+                </li>
+                <?php endif; ?>
                 <li class="nav-item">
                     <a class="nav-link <?= ($activeMenu ?? '') === 'customers' ? 'active' : '' ?>" href="<?= url('dashboard/customers') ?>">
                         <i class="bi bi-people me-2"></i> Clienti

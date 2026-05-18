@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Accesso mappa Sala</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{ --brand:#00844A; --bg:#f5f6f8; --sidebar:#0f2e22; --card:#fff; --border:#e9ecef; --muted:#6c757d; }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:#1a1d23;padding:28px;}
+  h1{font-size:23px;margin:0 0 4px;}
+  .lead{font-size:14px;color:var(--muted);max-width:820px;line-height:1.55;margin:0 0 26px;}
+  .vlabel{display:inline-block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#fff;padding:5px 12px;border-radius:6px;margin:30px 0 10px;}
+  .vlabel.a{background:var(--brand);}
+  .vlabel.b{background:#8a6d00;}
+  .reco{font-size:12px;font-weight:700;color:var(--brand);}
+  .annot{font-size:12.5px;color:var(--muted);margin:10px 2px 0;line-height:1.55;}
+  .annot b{color:#1a1d23;}
+
+  /* ---- dashboard mock ---- */
+  .app{display:flex;border-radius:12px;overflow:hidden;box-shadow:0 3px 16px rgba(0,0,0,.12);max-width:1180px;}
+  .side{width:184px;background:var(--sidebar);flex-shrink:0;padding:14px 0;}
+  .side-logo{color:#fff;font-weight:800;font-size:15px;padding:6px 18px 16px;}
+  .nav-item{display:flex;align-items:center;gap:11px;padding:9px 18px;color:#9bb4a8;font-size:13.5px;font-weight:500;}
+  .nav-item i{font-size:15px;}
+  .nav-item.active{background:var(--brand);color:#fff;font-weight:700;}
+  .nav-item.new{color:#fff;}
+  .nav-new-badge{margin-left:auto;font-size:8.5px;font-weight:700;background:#ffd24a;color:#5a4500;padding:1px 5px;border-radius:4px;}
+  .main{flex:1;background:var(--bg);min-height:540px;}
+
+  /* page header */
+  .pg-head{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--border);background:#fff;}
+  .pg-title{font-size:16px;font-weight:700;}
+  .seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+  .seg span{padding:6px 14px;font-size:12.5px;font-weight:600;color:var(--muted);background:#fff;}
+  .seg span.on{background:var(--brand);color:#fff;}
+  .daynav{display:flex;align-items:center;gap:6px;}
+  .daynav .arr{width:26px;height:26px;border:1px solid var(--border);border-radius:7px;background:#fff;color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:12px;}
+  .daydate{font-size:13px;font-weight:700;min-width:130px;text-align:center;}
+  .pg-spacer{flex:1;}
+
+  /* scrubber */
+  .scrub{display:flex;background:#fafbfc;border-bottom:1px solid var(--border);overflow:hidden;}
+  .scrub span{flex:0 0 auto;padding:7px 12px;font-size:11.5px;font-weight:600;color:var(--muted);border-right:1px solid #eef0f2;}
+  .scrub span.on{background:var(--brand);color:#fff;}
+
+  /* floor */
+  .floor{position:relative;height:340px;margin:0;background:radial-gradient(circle,#e3e6ea 1px,transparent 1px);background-size:20px 20px;background-color:#fcfcfd;}
+  .tbl{position:absolute;width:66px;height:66px;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.16);font-weight:700;}
+  .tbl.round{border-radius:50%;}
+  .tbl.free{background:#198754;}
+  .tbl.busy{background:#0d6efd;}
+  .tbl .nm{font-size:11.5px;}
+  .tbl .sub{font-size:8.5px;font-weight:500;opacity:.9;}
+  .legend{display:flex;gap:16px;padding:9px 22px;font-size:11.5px;color:var(--muted);border-top:1px solid var(--border);background:#fff;}
+  .legend span{display:flex;align-items:center;gap:5px;}
+  .ldot{width:11px;height:11px;border-radius:3px;}
+</style>
+</head>
+<body>
+
+<h1>Accesso alla mappa "Sala" — confronto</h1>
+<p class="lead">
+  La mappa operativa dei tavoli oggi è sepolta in Impostazioni > Tavoli > Mappa sala. È uno strumento
+  da servizio quotidiano: va reso prominente. Due strade a confronto. <b class="reco">Raccomandata: Opzione A.</b>
+</p>
+
+<!-- ============ OPZIONE A ============ -->
+<span class="vlabel a">Opzione A — voce sidebar "Sala" &nbsp;·&nbsp; raccomandata</span>
+<div class="app">
+  <div class="side">
+    <div class="side-logo">Evulery</div>
+    <div class="nav-item"><i class="bi bi-house"></i> Dashboard</div>
+    <div class="nav-item"><i class="bi bi-calendar-check"></i> Prenotazioni</div>
+    <div class="nav-item active new"><i class="bi bi-grid-3x3"></i> Sala <span class="nav-new-badge">NEW</span></div>
+    <div class="nav-item"><i class="bi bi-people"></i> Clienti</div>
+    <div class="nav-item"><i class="bi bi-book"></i> Menu</div>
+    <div class="nav-item"><i class="bi bi-bag"></i> Ordini</div>
+    <div class="nav-item"><i class="bi bi-envelope"></i> Comunicazioni</div>
+    <div class="nav-item"><i class="bi bi-star"></i> Reputazione</div>
+    <div class="nav-item"><i class="bi bi-bell"></i> Notifiche</div>
+    <div class="nav-item"><i class="bi bi-gear"></i> Impostazioni</div>
+    <div class="nav-item"><i class="bi bi-life-preserver"></i> Guida</div>
+  </div>
+  <div class="main">
+    <div class="pg-head">
+      <span class="pg-title"><i class="bi bi-grid-3x3" style="color:var(--brand);"></i> Sala</span>
+      <div class="daynav">
+        <span class="arr"><i class="bi bi-chevron-left"></i></span>
+        <span class="daydate">Mar 19 maggio</span>
+        <span class="arr"><i class="bi bi-chevron-right"></i></span>
+      </div>
+      <div class="pg-spacer"></div>
+      <span style="font-size:12px;color:var(--muted);">Sala Interna</span>
+    </div>
+    <div class="scrub">
+      <span>18:30</span><span>19:00</span><span class="on">19:30</span><span>20:00</span>
+      <span>20:30</span><span>21:00</span><span>21:30</span><span>22:00</span><span>22:30</span>
+    </div>
+    <div class="floor">
+      <div class="tbl round free" style="left:54px;top:36px;"><span class="nm">T1</span><span class="sub">4 posti</span></div>
+      <div class="tbl busy" style="left:188px;top:30px;"><span class="nm">T4</span><span class="sub">Kailus 2p</span></div>
+      <div class="tbl free" style="left:322px;top:40px;"><span class="nm">T3</span><span class="sub">4 posti</span></div>
+      <div class="tbl busy" style="left:120px;top:170px;"><span class="nm">T8</span><span class="sub">Mita 4p</span></div>
+      <div class="tbl round free" style="left:268px;top:178px;"><span class="nm">T9</span><span class="sub">2 posti</span></div>
+      <div class="tbl busy" style="left:420px;top:160px;"><span class="nm">T10</span><span class="sub">Alagia 6p</span></div>
+    </div>
+    <div class="legend">
+      <span><span class="ldot" style="background:#198754;"></span> Libero</span>
+      <span><span class="ldot" style="background:#0d6efd;"></span> Occupato alle 19:30</span>
+      <span style="margin-left:auto;">Clic su un tavolo occupato → popup per spostare la prenotazione</span>
+    </div>
+  </div>
+</div>
+<p class="annot">
+  <b>Un clic dal menu</b>, sempre visibile durante il servizio — come il "Servizio" di TheFork.
+  La voce <b>"Sala"</b> sta subito sotto Prenotazioni e compare <b>solo</b> ai ristoranti Enterprise
+  (servizio <code>table_management</code>): per gli altri la sidebar resta identica. La mappa
+  <b>Setup</b> (disporre i tavoli) resta in Impostazioni &gt; Tavoli — è configurazione.
+  Costo: minimo, la pagina esiste già.
+</p>
+
+<!-- ============ OPZIONE B ============ -->
+<span class="vlabel b">Opzione B — toggle "Lista / Mappa" dentro Prenotazioni</span>
+<div class="app">
+  <div class="side">
+    <div class="side-logo">Evulery</div>
+    <div class="nav-item"><i class="bi bi-house"></i> Dashboard</div>
+    <div class="nav-item active"><i class="bi bi-calendar-check"></i> Prenotazioni</div>
+    <div class="nav-item"><i class="bi bi-people"></i> Clienti</div>
+    <div class="nav-item"><i class="bi bi-book"></i> Menu</div>
+    <div class="nav-item"><i class="bi bi-bag"></i> Ordini</div>
+    <div class="nav-item"><i class="bi bi-envelope"></i> Comunicazioni</div>
+    <div class="nav-item"><i class="bi bi-star"></i> Reputazione</div>
+    <div class="nav-item"><i class="bi bi-bell"></i> Notifiche</div>
+    <div class="nav-item"><i class="bi bi-gear"></i> Impostazioni</div>
+    <div class="nav-item"><i class="bi bi-life-preserver"></i> Guida</div>
+  </div>
+  <div class="main">
+    <div class="pg-head">
+      <span class="pg-title">Prenotazioni</span>
+      <div class="seg">
+        <span>Lista</span>
+        <span class="on">Mappa</span>
+      </div>
+      <div class="daynav">
+        <span class="arr"><i class="bi bi-chevron-left"></i></span>
+        <span class="daydate">Mar 19 maggio</span>
+        <span class="arr"><i class="bi bi-chevron-right"></i></span>
+      </div>
+      <div class="pg-spacer"></div>
+    </div>
+    <div class="scrub">
+      <span>18:30</span><span>19:00</span><span class="on">19:30</span><span>20:00</span>
+      <span>20:30</span><span>21:00</span><span>21:30</span><span>22:00</span><span>22:30</span>
+    </div>
+    <div class="floor">
+      <div class="tbl round free" style="left:54px;top:36px;"><span class="nm">T1</span><span class="sub">4 posti</span></div>
+      <div class="tbl busy" style="left:188px;top:30px;"><span class="nm">T4</span><span class="sub">Kailus 2p</span></div>
+      <div class="tbl free" style="left:322px;top:40px;"><span class="nm">T3</span><span class="sub">4 posti</span></div>
+      <div class="tbl busy" style="left:120px;top:170px;"><span class="nm">T8</span><span class="sub">Mita 4p</span></div>
+      <div class="tbl round free" style="left:268px;top:178px;"><span class="nm">T9</span><span class="sub">2 posti</span></div>
+      <div class="tbl busy" style="left:420px;top:160px;"><span class="nm">T10</span><span class="sub">Alagia 6p</span></div>
+    </div>
+    <div class="legend">
+      <span><span class="ldot" style="background:#198754;"></span> Libero</span>
+      <span><span class="ldot" style="background:#0d6efd;"></span> Occupato alle 19:30</span>
+    </div>
+  </div>
+</div>
+<p class="annot">
+  La mappa vive come <b>vista alternativa</b> della pagina Prenotazioni (toggle Lista / Mappa).
+  Concettualmente coerente — la mappa è un modo di vedere le prenotazioni del giorno — e non aggiunge
+  voci al menu. <b>Ma</b>: due clic per arrivarci (Prenotazioni → Mappa), e richiede di rifondere
+  la pagina Prenotazioni con lo scorri-orari. Costo: medio.
+</p>
+
+<div style="margin-top:28px;padding:18px 20px;background:#eef7f0;border:1px solid #cfe8d6;border-radius:12px;font-size:13.5px;line-height:1.6;max-width:1180px;">
+  <strong style="color:var(--brand);"><i class="bi bi-lightbulb me-1"></i> Raccomandazione</strong><br>
+  <b>Opzione A.</b> La mappa operativa è il "cruscotto di sala": durante il servizio il ristoratore
+  pensa <i>"guardo la mia sala"</i> — merita una voce dedicata, un clic, sempre lì. È quello che ha
+  validato TheFork. Costa poco (la pagina c'è già) e tiene separato pulito: <b>Sala</b> = operativo,
+  <b>Impostazioni &gt; Tavoli</b> = configurazione.
+</div>
+
+</body>
+</html>

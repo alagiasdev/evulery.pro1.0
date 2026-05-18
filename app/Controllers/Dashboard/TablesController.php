@@ -131,12 +131,23 @@ class TablesController
         Response::redirect(url('dashboard/settings/tables'));
     }
 
-    /** Mappa sala — modalità setup (posizionamento) o operativa (stato sala). */
+    /** Mappa sala da Impostazioni > Tavoli — default modalità setup. */
     public function map(Request $request): void
+    {
+        $this->renderMap($request, $request->query('mode') === 'operativa' ? 'operativa' : 'setup');
+    }
+
+    /** Pagina "Sala" dalla sidebar — default modalità operativa. */
+    public function sala(Request $request): void
+    {
+        $this->renderMap($request, $request->query('mode') === 'setup' ? 'setup' : 'operativa');
+    }
+
+    /** Mappa sala — modalità setup (posizionamento) o operativa (stato sala). */
+    private function renderMap(Request $request, string $mode): void
     {
         $tenant = TenantResolver::current();
         $canUse = tenant_can('table_management');
-        $mode = $request->query('mode') === 'operativa' ? 'operativa' : 'setup';
 
         $tables = $areas = $floorState = $reassignOptions = $currentMap = [];
         $opDate = (string)$request->query('date', date('Y-m-d'));
@@ -164,8 +175,8 @@ class TablesController
         }
 
         view('dashboard/settings/tables-map', [
-            'title'           => 'Mappa sala',
-            'activeMenu'      => 'settings-tables',
+            'title'           => $mode === 'operativa' ? 'Sala' : 'Mappa sala',
+            'activeMenu'      => $mode === 'operativa' ? 'sala' : 'settings-tables',
             'tenant'          => $tenant,
             'canUse'          => $canUse,
             'tables'          => $tables,

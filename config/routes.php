@@ -113,6 +113,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/settings/deposit', [SettingsController::class, 'updateDeposit']);
     $r->get('/settings/meal-categories', [MealCategoriesController::class, 'index']);
     $r->post('/settings/meal-categories', [MealCategoriesController::class, 'update']);
+    $r->get('/sala', [TablesController::class, 'sala']);
     $r->get('/settings/tables', [TablesController::class, 'index']);
     $r->post('/settings/tables', [TablesController::class, 'store']);
     $r->post('/settings/tables/reorder', [TablesController::class, 'reorder']);
