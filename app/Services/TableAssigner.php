@@ -236,9 +236,12 @@ class TableAssigner
         foreach ($stmt->fetchAll() as $row) {
             $start = $this->timeToMinutes($row['reservation_time']);
             if ($t >= $start && $t < $start + $duration) {
+                // Cognome in MAIUSCOLO, nome in minuscolo (stile TheFork)
+                $surname = mb_strtoupper(trim((string)$row['last_name']));
+                $given   = mb_strtolower(trim((string)$row['first_name']));
                 $state[(int)$row['table_id']] = [
                     'reservation_id' => (int)$row['reservation_id'],
-                    'name'           => trim($row['first_name'] . ' ' . $row['last_name']),
+                    'name'           => trim($surname . ' ' . $given),
                     'party'          => (int)$row['party_size'],
                     'time'           => substr((string)$row['reservation_time'], 0, 5),
                     'status'         => $row['status'],
