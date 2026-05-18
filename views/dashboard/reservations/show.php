@@ -138,6 +138,35 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
     </div>
     <?php endif; ?>
 
+    <?php // ─── Sezione tavolo ───────────────────────────────────────── ?>
+    <?php if (!empty($tableMgmt)): ?>
+    <div class="res-section">
+        <div class="res-section-head">
+            <i class="bi bi-grid-3x3"></i>
+            <span>Tavolo</span>
+            <?php if ($tableCurrentValue !== '' && !empty($tableCurrentAuto)): ?>
+            <span class="res-auto-pill"><i class="bi bi-magic me-1"></i>Assegnato in automatico</span>
+            <?php endif; ?>
+        </div>
+        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/table") ?>" class="res-table-form">
+            <?= csrf_field() ?>
+            <select name="table_option" class="form-select form-select-sm">
+                <option value="">&mdash; Nessun tavolo &mdash;</option>
+                <?php foreach ($tableOptions as $o): ?>
+                <option value="<?= e($o['value']) ?>" <?= $o['value'] === $tableCurrentValue ? 'selected' : '' ?>><?= e($o['label']) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-check me-1"></i> Conferma tavolo</button>
+        </form>
+        <?php if (empty($tableOptions) && $tableCurrentValue === ''): ?>
+        <div class="res-section-hint">
+            Nessun tavolo disponibile per questo turno. Configura i tavoli in
+            <a href="<?= url('dashboard/settings/tables') ?>">Impostazioni &gt; Tavoli</a>.
+        </div>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
     <!-- Action buttons -->
     <?php if (!in_array($reservation['status'], ['cancelled', 'noshow'])): ?>
     <div class="actions-bar">
@@ -219,35 +248,6 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
                     <i class="bi bi-check2 me-1"></i> Segna come rimborsata
                 </button>
             </form>
-        <?php endif; ?>
-    </div>
-    <?php endif; ?>
-
-    <?php // ─── Sezione tavolo ───────────────────────────────────────── ?>
-    <?php if (!empty($tableMgmt)): ?>
-    <div class="res-section">
-        <div class="res-section-head">
-            <i class="bi bi-grid-3x3"></i>
-            <span>Tavolo</span>
-            <?php if ($tableCurrentValue !== '' && !empty($tableCurrentAuto)): ?>
-            <span class="res-auto-pill"><i class="bi bi-magic me-1"></i>Assegnato in automatico</span>
-            <?php endif; ?>
-        </div>
-        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/table") ?>" class="res-table-form">
-            <?= csrf_field() ?>
-            <select name="table_option" class="form-select form-select-sm">
-                <option value="">&mdash; Nessun tavolo &mdash;</option>
-                <?php foreach ($tableOptions as $o): ?>
-                <option value="<?= e($o['value']) ?>" <?= $o['value'] === $tableCurrentValue ? 'selected' : '' ?>><?= e($o['label']) ?></option>
-                <?php endforeach; ?>
-            </select>
-            <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-check me-1"></i> Conferma tavolo</button>
-        </form>
-        <?php if (empty($tableOptions) && $tableCurrentValue === ''): ?>
-        <div class="res-section-hint">
-            Nessun tavolo disponibile per questo turno. Configura i tavoli in
-            <a href="<?= url('dashboard/settings/tables') ?>">Impostazioni &gt; Tavoli</a>.
-        </div>
         <?php endif; ?>
     </div>
     <?php endif; ?>
