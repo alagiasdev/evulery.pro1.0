@@ -16,6 +16,7 @@ $settingsGroups = [
         ['url' => url('dashboard/settings'),                 'icon' => 'bi-gear',         'label' => 'Generali',        'key' => 'settings'],
         ['url' => url('dashboard/settings/slots'),           'icon' => 'bi-clock',        'label' => 'Orari e Coperti', 'key' => 'slots'],
         ['url' => url('dashboard/settings/meal-categories'), 'icon' => 'bi-tags',         'label' => 'Categorie Pasto', 'key' => 'meal-categories'],
+        ['url' => url('dashboard/settings/tables'),          'icon' => 'bi-grid-3x3',     'label' => 'Tavoli',          'key' => 'settings-tables'],
         ['url' => url('dashboard/settings/closures'),        'icon' => 'bi-calendar-x',   'label' => 'Chiusure',        'key' => 'closures'],
     ],
     'Servizi clienti' => [

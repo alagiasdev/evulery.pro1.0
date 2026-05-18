@@ -1,0 +1,169 @@
+<?php
+
+namespace App\Controllers\Dashboard;
+
+use App\Core\Auth;
+use App\Core\Request;
+use App\Core\Response;
+use App\Core\TenantResolver;
+use App\Models\Table;
+use App\Services\AuditLog;
+
+/**
+ * Gestione Tavoli — pagina Impostazioni > Tavoli.
+ * CRUD tavoli, riordino priorità, combinazioni. Servizio gatato `table_management`.
+ */
+class TablesController
+{
+    public function index(Request $request): void
+    {
+        $tenant = TenantResolver::current();
+        $canUse = tenant_can('table_management');
+
+        $tables = $combinations = $areas = [];
+        $comboMap = [];
+        if ($canUse) {
+            $model = new Table();
+            $tables = $model->findByTenant((int)$tenant['id']);
+            $combinations = $model->allCombinations((int)$tenant['id']);
+            $areas = $model->areas((int)$tenant['id']);
+            // Mappa tableId => [altri id combinabili] per la view/modale
+            foreach ($combinations as $c) {
+                $a = (int)$c['table_a_id'];
+                $b = (int)$c['table_b_id'];
+                $comboMap[$a][] = $b;
+                $comboMap[$b][] = $a;
+            }
+        }
+
+        view('dashboard/settings/tables', [
+            'title'        => 'Tavoli',
+            'activeMenu'   => 'settings-tables',
+            'tenant'       => $tenant,
+            'canUse'       => $canUse,
+            'tables'       => $tables,
+            'areas'        => $areas,
+            'comboMap'     => $comboMap,
+        ], 'dashboard');
+    }
+
+    public function store(Request $request): void
+    {
+        if (gate_service('table_management', url('dashboard/settings/tables'))) return;
+
+        $tenantId = Auth::tenantId();
+        $data = $this->validated($request);
+        if ($data === null) return;
+
+        $model = new Table();
+        $id = $model->create($tenantId, $data);
+        $model->setCombinations($tenantId, $id, $data['combinable']);
+
+        AuditLog::log(AuditLog::SETTINGS_UPDATED, "Tavolo creato: {$data['name']}", Auth::id(), $tenantId);
+        flash('success', 'Tavolo aggiunto.');
+        Response::redirect(url('dashboard/settings/tables'));
+    }
+
+    public function update(Request $request): void
+    {
+        if (gate_service('table_management', url('dashboard/settings/tables'))) return;
+
+        $tenantId = Auth::tenantId();
+        $id = (int)$request->param('id');
+        $table = (new Table())->findById($id);
+        if (!$table || (int)$table['tenant_id'] !== (int)$tenantId) {
+            flash('danger', 'Tavolo non trovato.');
+            Response::redirect(url('dashboard/settings/tables'));
+            return;
+        }
+
+        $data = $this->validated($request);
+        if ($data === null) return;
+
+        $model = new Table();
+        $model->update($id, $tenantId, $data);
+        $model->setCombinations($tenantId, $id, $data['combinable']);
+
+        AuditLog::log(AuditLog::SETTINGS_UPDATED, "Tavolo aggiornato: {$data['name']}", Auth::id(), $tenantId);
+        flash('success', 'Tavolo aggiornato.');
+        Response::redirect(url('dashboard/settings/tables'));
+    }
+
+    public function destroy(Request $request): void
+    {
+        if (gate_service('table_management', url('dashboard/settings/tables'))) return;
+
+        $tenantId = Auth::tenantId();
+        $id = (int)$request->param('id');
+        (new Table())->delete($id, $tenantId);
+
+        AuditLog::log(AuditLog::SETTINGS_UPDATED, "Tavolo #{$id} eliminato", Auth::id(), $tenantId);
+        flash('success', 'Tavolo eliminato.');
+        Response::redirect(url('dashboard/settings/tables'));
+    }
+
+    public function toggle(Request $request): void
+    {
+        if (gate_service('table_management', url('dashboard/settings/tables'))) return;
+
+        $tenantId = Auth::tenantId();
+        $id = (int)$request->param('id');
+        (new Table())->toggleActive($id, $tenantId);
+
+        flash('success', 'Stato tavolo aggiornato.');
+        Response::redirect(url('dashboard/settings/tables'));
+    }
+
+    public function reorder(Request $request): void
+    {
+        if (gate_service('table_management', url('dashboard/settings/tables'))) return;
+
+        $tenantId = Auth::tenantId();
+        $raw = (string)$request->input('order', '');
+        $ids = array_filter(array_map('intval', explode(',', $raw)));
+        if (!empty($ids)) {
+            (new Table())->reorder($tenantId, $ids);
+        }
+
+        flash('success', 'Ordine di priorità aggiornato.');
+        Response::redirect(url('dashboard/settings/tables'));
+    }
+
+    /**
+     * Valida e normalizza i dati del form tavolo.
+     * Ritorna l'array pulito, oppure null dopo aver fatto redirect su errore.
+     */
+    private function validated(Request $request): ?array
+    {
+        $d = $request->all();
+        $name = trim((string)($d['name'] ?? ''));
+        $capacity = (int)($d['capacity'] ?? 0);
+
+        if ($name === '') {
+            flash('danger', 'Il nome del tavolo è obbligatorio.');
+            Response::redirect(url('dashboard/settings/tables'));
+            return null;
+        }
+        if ($capacity < 1 || $capacity > 30) {
+            flash('danger', 'La capacità deve essere tra 1 e 30 posti.');
+            Response::redirect(url('dashboard/settings/tables'));
+            return null;
+        }
+
+        $combinable = [];
+        foreach ((array)($d['combinable'] ?? []) as $cid) {
+            $cid = (int)$cid;
+            if ($cid > 0) $combinable[] = $cid;
+        }
+
+        return [
+            'name'          => mb_substr($name, 0, 60),
+            'capacity'      => $capacity,
+            'area'          => mb_substr(trim((string)($d['area'] ?? '')), 0, 60),
+            'shape'         => ($d['shape'] ?? 'square') === 'round' ? 'round' : 'square',
+            'internal_note' => mb_substr(trim((string)($d['internal_note'] ?? '')), 0, 255),
+            'is_active'     => !empty($d['is_active']) ? 1 : 0,
+            'combinable'    => $combinable,
+        ];
+    }
+}
