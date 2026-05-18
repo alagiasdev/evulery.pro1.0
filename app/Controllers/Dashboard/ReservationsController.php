@@ -11,11 +11,13 @@ use App\Models\Customer;
 use App\Models\Reservation;
 use App\Models\Promotion;
 use App\Models\ReservationLog;
+use App\Models\Table;
 use App\Models\Tenant;
 use App\Services\AuditLog;
 use App\Services\AvailabilityService;
 use App\Services\MailService;
 use App\Services\NotificationService;
+use App\Services\TableAssigner;
 
 class ReservationsController
 {
@@ -77,13 +79,44 @@ class ReservationsController
         $logs = (new ReservationLog())->findByReservation($id);
         $customerHistory = (new Reservation())->findByCustomer($reservation['customer_id'], (int)Auth::tenantId());
 
+        // Gestione Tavoli — assegnazione corrente + opzioni per l'override
+        $tableMgmt = (new Tenant())->canUseService((int)Auth::tenantId(), 'table_management');
+        $tableOptions = [];
+        $tableCurrentValue = '';
+        $tableCurrentAuto = false;
+        if ($tableMgmt) {
+            $assigner = new TableAssigner();
+            $tenantId = (int)Auth::tenantId();
+            foreach ($assigner->availableOptions($tenantId, $reservation['reservation_date'], $reservation['reservation_time'], (int)$reservation['party_size'], $id) as $o) {
+                $tableOptions[] = ['value' => implode(',', $o['table_ids']), 'label' => $o['label']];
+            }
+            $current = $assigner->assignmentsFor([$id])[$id] ?? [];
+            if (!empty($current)) {
+                $curIds = array_map(fn($x) => (int)$x['id'], $current);
+                sort($curIds);
+                $tableCurrentValue = implode(',', $curIds);
+                $tableCurrentAuto = (bool)($current[0]['is_auto'] ?? 0);
+                $known = array_column($tableOptions, 'value');
+                if (!in_array($tableCurrentValue, $known, true)) {
+                    array_unshift($tableOptions, [
+                        'value' => $tableCurrentValue,
+                        'label' => implode(' + ', array_column($current, 'name')) . ' (attuale)',
+                    ]);
+                }
+            }
+        }
+
         view('dashboard/reservations/show', [
-            'title'       => 'Dettaglio Prenotazione',
-            'activeMenu'  => 'reservations',
-            'reservation' => $reservation,
-            'tenant'      => TenantResolver::current(),
-            'logs'        => $logs,
-            'history'     => $customerHistory,
+            'title'             => 'Dettaglio Prenotazione',
+            'activeMenu'        => 'reservations',
+            'reservation'       => $reservation,
+            'tenant'            => TenantResolver::current(),
+            'logs'              => $logs,
+            'history'           => $customerHistory,
+            'tableMgmt'         => $tableMgmt,
+            'tableOptions'      => $tableOptions,
+            'tableCurrentValue' => $tableCurrentValue,
+            'tableCurrentAuto'  => $tableCurrentAuto,
         ], 'dashboard');
     }
 
@@ -217,6 +250,19 @@ class ReservationsController
         }
 
         AuditLog::log(AuditLog::RESERVATION_CREATED, "Prenotazione #{$reservationId}", Auth::id(), $tenantId);
+
+        // Auto-assegnazione tavolo — non bloccante: un errore non deve mai
+        // compromettere la prenotazione appena creata.
+        try {
+            if ((new Tenant())->canUseService($tenantId, 'table_management')) {
+                (new TableAssigner())->autoAssign(
+                    $tenantId, $reservationId,
+                    $data['reservation_date'], $data['reservation_time'], (int)$data['party_size']
+                );
+            }
+        } catch (\Throwable $e) {
+            error_log('Auto-assegnazione tavolo (dashboard) fallita: ' . $e->getMessage());
+        }
 
         flash('success', 'Prenotazione creata con successo.');
         Response::redirect(url("dashboard/reservations/{$reservationId}"));
@@ -468,6 +514,49 @@ class ReservationsController
             'do_not_honor'              => 'la banca ha negato l\'operazione.',
             default                     => 'la banca ha rifiutato l\'addebito.',
         };
+    }
+
+    /**
+     * Override manuale del tavolo assegnato a una prenotazione.
+     * table_option = id tavolo, oppure "id,id" per una combinazione, oppure "" per rimuovere.
+     */
+    public function assignTable(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $reservation = (new Reservation())->findById($id);
+        $tenantId = (int)Auth::tenantId();
+
+        if (!$reservation || (int)$reservation['tenant_id'] !== $tenantId) {
+            flash('danger', 'Prenotazione non trovata.');
+            Response::redirect(url('dashboard/reservations'));
+            return;
+        }
+        if (gate_service('table_management', url("dashboard/reservations/{$id}"))) return;
+
+        // Valida gli id: ogni tavolo deve appartenere a questo tenant
+        $ids = [];
+        $raw = trim((string)$request->input('table_option', ''));
+        if ($raw !== '') {
+            $tableModel = new Table();
+            foreach (explode(',', $raw) as $tid) {
+                $tid = (int)$tid;
+                if ($tid <= 0) continue;
+                $table = $tableModel->findById($tid);
+                if ($table && (int)$table['tenant_id'] === $tenantId) {
+                    $ids[] = $tid;
+                }
+            }
+        }
+
+        (new TableAssigner())->setAssignment($id, $ids, false);
+        (new ReservationLog())->create(
+            $id, $reservation['status'], $reservation['status'], Auth::id(),
+            $ids ? 'Tavolo assegnato manualmente' : 'Tavolo rimosso'
+        );
+        AuditLog::log(AuditLog::RESERVATION_UPDATED, "Tavolo prenotazione #{$id} aggiornato", Auth::id(), $tenantId);
+
+        flash('success', $ids ? 'Tavolo aggiornato.' : 'Tavolo rimosso.');
+        Response::redirect(url("dashboard/reservations/{$id}"));
     }
 
     public function updateNotes(Request $request): void

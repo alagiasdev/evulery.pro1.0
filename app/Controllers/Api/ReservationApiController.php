@@ -265,6 +265,19 @@ class ReservationApiController
             error_log('Notification failed: ' . $e->getMessage());
         }
 
+        // Auto-assegnazione tavolo — non bloccante: un errore qui non deve
+        // mai compromettere la prenotazione appena creata dal widget.
+        try {
+            if ((new \App\Models\Tenant())->canUseService((int)$tenant['id'], 'table_management')) {
+                (new \App\Services\TableAssigner())->autoAssign(
+                    (int)$tenant['id'], $reservationId,
+                    $data['date'], $data['time'], (int)$data['party_size']
+                );
+            }
+        } catch (\Throwable $e) {
+            app_log('Auto-assegnazione tavolo (widget) fallita: ' . $e->getMessage(), 'error');
+        }
+
         $responseData = [
             'reservation_id' => $reservationId,
             'status'         => $status,

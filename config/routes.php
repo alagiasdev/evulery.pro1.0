@@ -85,6 +85,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/reservations/{id}/deposit-refunded', [ReservationsController::class, 'markDepositRefunded']);
     $r->post('/reservations/{id}/guarantee-charge', [ReservationsController::class, 'chargeGuarantee']);
     $r->post('/reservations/{id}/guarantee-waive', [ReservationsController::class, 'waiveGuarantee']);
+    $r->post('/reservations/{id}/table', [ReservationsController::class, 'assignTable']);
     $r->post('/reservations/{id}/notes', [ReservationsController::class, 'updateNotes']);
     $r->post('/reservations/{id}/delete', [ReservationsController::class, 'destroy']);
     $r->get('/customers', [CustomersController::class, 'index']);
