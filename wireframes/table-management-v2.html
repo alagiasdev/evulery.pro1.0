@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe v2 — Gestione Tavoli</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{
+    --brand:#00844A; --brand-light:#e6f4ed; --bg:#f5f6f8; --card:#fff;
+    --text:#1a1d23; --muted:#6c757d; --border:#e9ecef; --radius:12px;
+    --danger:#dc3545; --warn:#ffc107; --info:#0d6efd;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);padding:24px;max-width:1400px;margin:0 auto;}
+  h2{font-size:1.35rem;font-weight:700;margin-bottom:.25rem;}
+  .subtitle{font-size:.82rem;color:var(--muted);margin-bottom:1rem;}
+  .section-divider{margin:36px 0;border:none;border-top:2px dashed #dee2e6;}
+  .section-label{font-size:1rem;font-weight:700;color:var(--brand);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+  .section-hint{font-size:.78rem;color:var(--muted);margin:-8px 0 14px;}
+
+  /* settings tabs */
+  .settings-tabs{display:flex;gap:4px;margin-bottom:1.25rem;flex-wrap:wrap;}
+  .settings-tab{padding:8px 16px;border-radius:8px;font-size:.78rem;font-weight:600;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:5px;}
+  .settings-tab.active{background:var(--brand);color:#fff;}
+
+  /* generic cards */
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:0 1px 6px rgba(0,0,0,.06);overflow:hidden;}
+  .card-head{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);gap:10px;}
+  .card-title{font-size:.85rem;font-weight:700;flex:1;}
+  .pill{font-size:.7rem;color:var(--muted);background:#f0f1f3;padding:2px 8px;border-radius:10px;font-weight:600;}
+  .btn{padding:6px 12px;border-radius:8px;font-size:.72rem;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
+  .btn-brand{background:var(--brand);color:#fff;}
+  .btn-ghost{background:var(--card);color:var(--muted);border:1px solid var(--border);}
+
+  /* ===== SEZIONE 1: settings tavoli ===== */
+  .tm-layout{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start;}
+  @media(max-width:1024px){.tm-layout{grid-template-columns:1fr;}}
+  .room-tabs{display:flex;gap:4px;}
+  .room-tab{padding:5px 12px;border-radius:6px;font-size:.7rem;font-weight:600;background:#f0f1f3;color:var(--muted);border:none;cursor:pointer;}
+  .room-tab.active{background:var(--brand);color:#fff;}
+  .room-tab-add{padding:5px 8px;border-radius:6px;font-size:.7rem;background:transparent;color:var(--muted);border:1px dashed #ccc;cursor:pointer;}
+  .floor-toolbar{display:flex;align-items:center;padding:8px 16px;background:#fafbfc;border-bottom:1px solid var(--border);gap:8px;}
+  .ft-btn{padding:5px 10px;border-radius:6px;font-size:.7rem;font-weight:600;background:var(--card);color:var(--muted);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:4px;}
+  .ft-btn.active{background:var(--brand-light);color:var(--brand);border-color:var(--brand);}
+  .floor-canvas{position:relative;width:100%;height:440px;background:radial-gradient(circle,#e9ecef 1px,transparent 1px);background-size:20px 20px;overflow:hidden;}
+  .table-el{position:absolute;display:flex;flex-direction:column;align-items:center;cursor:grab;user-select:none;}
+  .table-shape{display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;position:relative;}
+  .table-shape.round{width:58px;height:58px;border-radius:50%;}
+  .table-shape.square{width:58px;height:58px;border-radius:10px;}
+  .table-shape.rect{width:92px;height:48px;border-radius:10px;}
+  .table-shape.large{width:110px;height:52px;border-radius:12px;}
+  .table-shape.free{background:#198754;}
+  .table-shape.busy{background:#0d6efd;}
+  .table-shape.reserved{background:#ffc107;color:#664d03;}
+  .table-shape.off{background:#adb5bd;}
+  .table-label{margin-top:4px;font-size:.6rem;font-weight:600;color:var(--muted);white-space:nowrap;}
+  .combo-link{position:absolute;height:3px;background:repeating-linear-gradient(90deg,var(--brand) 0 6px,transparent 6px 11px);}
+  .floor-wall{position:absolute;background:#dee2e6;border-radius:3px;}
+  .floor-label-static{position:absolute;font-size:.58rem;font-weight:700;color:#adb5bd;text-transform:uppercase;}
+  .floor-legend{display:flex;gap:14px;padding:9px 16px;border-top:1px solid var(--border);background:#fafbfc;flex-wrap:wrap;}
+  .fl-item{display:flex;align-items:center;gap:5px;font-size:.66rem;color:var(--muted);}
+  .fl-dot{width:11px;height:11px;border-radius:4px;}
+
+  .tp-stats{display:flex;padding:10px 16px;gap:10px;border-bottom:1px solid var(--border);background:#fafbfc;}
+  .tp-stat{text-align:center;flex:1;}
+  .tp-stat-num{font-size:1.05rem;font-weight:700;}
+  .tp-stat-label{font-size:.56rem;color:var(--muted);text-transform:uppercase;font-weight:600;}
+  .tp-list{max-height:330px;overflow-y:auto;}
+  .tp-item{display:flex;align-items:center;padding:9px 16px;gap:9px;border-bottom:1px solid #f5f6f8;}
+  .tp-item-shape{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.66rem;font-weight:700;color:#fff;flex-shrink:0;}
+  .tp-item-shape.round{border-radius:50%;}
+  .tp-item-info{flex:1;min-width:0;}
+  .tp-item-name{font-size:.76rem;font-weight:600;}
+  .tp-item-meta{font-size:.62rem;color:var(--muted);display:flex;gap:8px;margin-top:1px;flex-wrap:wrap;}
+  .tag{font-size:.56rem;font-weight:600;padding:1px 6px;border-radius:4px;background:#eef0f2;color:#5b6470;}
+  .tag.combo{background:var(--brand-light);color:var(--brand);}
+  .tp-act{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-size:.66rem;color:var(--muted);}
+
+  /* ===== SEZIONE 3: TIMELINE GIORNALIERA ===== */
+  .tl-toolbar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  .tl-daynav{display:flex;align-items:center;gap:6px;}
+  .tl-arrow{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--card);cursor:pointer;color:var(--muted);}
+  .tl-date{font-size:.82rem;font-weight:700;min-width:150px;text-align:center;}
+  .tl-scroll{overflow-x:auto;}
+  .tl-grid{min-width:780px;}
+  /* time header */
+  .tl-head{display:flex;border-bottom:1px solid var(--border);background:#fafbfc;position:sticky;top:0;}
+  .tl-head-label{width:130px;flex-shrink:0;font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;padding:8px 10px;border-right:1px solid var(--border);}
+  .tl-hours{display:flex;flex:1;position:relative;}
+  .tl-hour{flex:1;font-size:.62rem;color:var(--muted);font-weight:600;padding:8px 0 8px 6px;border-right:1px solid #f0f1f3;}
+  /* table row */
+  .tl-row{display:flex;border-bottom:1px solid #f5f6f8;min-height:50px;}
+  .tl-row:hover{background:#fafbfc;}
+  .tl-row-label{width:130px;flex-shrink:0;border-right:1px solid var(--border);padding:6px 10px;display:flex;flex-direction:column;justify-content:center;}
+  .tl-row-name{font-size:.74rem;font-weight:700;}
+  .tl-row-cap{font-size:.6rem;color:var(--muted);}
+  .tl-track{flex:1;position:relative;}
+  .tl-track::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(100%/11 - 1px),#f0f1f3 calc(100%/11 - 1px) calc(100%/11));}
+  /* reservation block */
+  .tl-block{position:absolute;top:7px;bottom:7px;border-radius:7px;padding:4px 8px;font-size:.62rem;color:#fff;overflow:hidden;cursor:grab;box-shadow:0 1px 3px rgba(0,0,0,.15);display:flex;flex-direction:column;justify-content:center;}
+  .tl-block-name{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tl-block-meta{opacity:.85;font-size:.56rem;}
+  .tl-block.confirmed{background:#ffc107;color:#664d03;}
+  .tl-block.arrived{background:#0d6efd;}
+  .tl-block.pending{background:#fd7e14;}
+  .tl-block.combo{outline:2px dashed var(--brand);outline-offset:1px;}
+  .tl-block.dragging{opacity:.55;transform:rotate(-1deg);}
+  .tl-ghost{position:absolute;top:7px;bottom:7px;border-radius:7px;border:2px dashed var(--brand);background:var(--brand-light);}
+  .tl-auto{position:absolute;top:2px;right:3px;font-size:.5rem;background:rgba(0,0,0,.25);border-radius:3px;padding:0 3px;}
+
+  /* ===== modal ===== */
+  .mock-stage{position:relative;background:rgba(0,0,0,.08);border-radius:12px;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .modal-box{background:var(--card);border-radius:var(--radius);width:440px;max-width:95vw;box-shadow:0 8px 32px rgba(0,0,0,.15);overflow:hidden;}
+  .modal-head{display:flex;align-items:center;padding:15px 20px;border-bottom:1px solid var(--border);}
+  .modal-title{font-size:.9rem;font-weight:700;flex:1;}
+  .modal-x{width:28px;height:28px;border-radius:6px;border:none;background:#f0f1f3;cursor:pointer;color:var(--muted);}
+  .modal-body{padding:20px;}
+  .modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border);background:#fafbfc;}
+  .fg{margin-bottom:14px;}
+  .fl{display:block;font-size:.7rem;font-weight:600;color:var(--muted);margin-bottom:4px;text-transform:uppercase;}
+  .fi{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:8px;font-size:.82rem;}
+  .frow{display:flex;gap:12px;}.frow .fg{flex:1;}
+  .shape-sel{display:flex;gap:8px;}
+  .shape-opt{width:54px;height:54px;border-radius:10px;border:2px solid var(--border);background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:3px;}
+  .shape-opt.active{border-color:var(--brand);background:var(--brand-light);}
+  .shape-ic{width:22px;height:22px;border-radius:4px;background:#d0d0d0;}
+  .shape-ic.round{border-radius:50%;}.shape-ic.rect{width:30px;height:16px;}.shape-ic.large{width:34px;height:16px;}
+  .shape-lbl{font-size:.52rem;color:var(--muted);font-weight:600;}
+  .chk-list{display:flex;flex-wrap:wrap;gap:6px;}
+  .chk{font-size:.68rem;padding:5px 10px;border-radius:7px;border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:5px;}
+  .chk.on{border-color:var(--brand);background:var(--brand-light);color:var(--brand);font-weight:600;}
+
+  /* ===== SEZIONE 4: assegnazione in prenotazione ===== */
+  .assign-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px;padding:16px;}
+  .assign-t{display:flex;flex-direction:column;align-items:center;padding:9px 6px;border-radius:10px;border:2px solid var(--border);cursor:pointer;gap:3px;}
+  .assign-t.assigned{border-color:var(--brand);background:var(--brand-light);}
+  .assign-t.unavail{opacity:.4;}
+  .assign-t-shape{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.64rem;font-weight:700;color:#fff;}
+  .assign-t-shape.round{border-radius:50%;}
+  .assign-t-name{font-size:.62rem;font-weight:600;}
+  .assign-t-cap{font-size:.54rem;color:var(--muted);}
+  .auto-banner{display:flex;align-items:center;gap:10px;margin:16px 16px 0;padding:10px 12px;background:var(--brand-light);border:1px solid #cfe8d6;border-radius:9px;font-size:.74rem;color:var(--brand);}
+
+  /* ===== settings auto-assign ===== */
+  .opt-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f5f6f8;}
+  .opt-row:last-child{border-bottom:none;}
+  .opt-txt{flex:1;}
+  .opt-name{font-size:.8rem;font-weight:600;}
+  .opt-desc{font-size:.68rem;color:var(--muted);margin-top:1px;}
+  .toggle{width:42px;height:24px;border-radius:12px;background:var(--brand);position:relative;flex-shrink:0;cursor:pointer;}
+  .toggle::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;right:3px;}
+  .toggle.off{background:#ccc;}.toggle.off::after{right:auto;left:3px;}
+  .seg{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+  .seg-opt{padding:6px 12px;font-size:.7rem;font-weight:600;color:var(--muted);cursor:pointer;background:var(--card);}
+  .seg-opt.active{background:var(--brand);color:#fff;}
+
+  /* design notes */
+  .notes{margin-top:32px;padding:20px;background:#fff3cd;border:1px solid #ffe082;border-radius:var(--radius);font-size:.8rem;line-height:1.6;}
+  .notes h3{font-size:.92rem;font-weight:700;margin-bottom:8px;color:#664d03;}
+  .notes ul{padding-left:20px;}.notes li{margin-bottom:5px;}
+  .notes code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;font-size:.74rem;}
+  .new-badge{background:var(--brand);color:#fff;font-size:.56rem;font-weight:700;padding:1px 6px;border-radius:4px;text-transform:uppercase;vertical-align:middle;}
+</style>
+</head>
+<body>
+
+<h2>Wireframe v2 — Gestione Tavoli</h2>
+<p class="subtitle">Sala virtuale, turni del tavolo, combinazione per gruppi, timeline giornaliera, riassegnazione manuale. Servizio gatato (Enterprise).</p>
+
+<!-- ============================================================
+     SEZIONE 1 — SETTINGS > TAVOLI
+     ============================================================ -->
+<div class="section-label"><i class="bi bi-1-circle-fill"></i> Impostazioni &gt; Tavoli — sala virtuale</div>
+<p class="section-hint">Il ristoratore disegna la sala: aggiunge i tavoli, li posiziona, definisce forma/capacità e quali sono combinabili.</p>
+
+<div class="settings-tabs">
+  <span class="settings-tab"><i class="bi bi-gear"></i> Generali</span>
+  <span class="settings-tab"><i class="bi bi-clock"></i> Orari e Coperti</span>
+  <span class="settings-tab"><i class="bi bi-tags"></i> Categorie Pasto</span>
+  <span class="settings-tab active"><i class="bi bi-grid-3x3"></i> Tavoli</span>
+  <span class="settings-tab"><i class="bi bi-cash"></i> Caparra</span>
+</div>
+
+<div class="tm-layout">
+  <!-- floor map -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title"><i class="bi bi-grid-3x3 me-1"></i> Mappa Sala</span>
+      <div class="room-tabs">
+        <button class="room-tab active">Sala Principale</button>
+        <button class="room-tab">Terrazza</button>
+        <button class="room-tab-add"><i class="bi bi-plus"></i></button>
+      </div>
+    </div>
+    <div class="floor-toolbar">
+      <button class="ft-btn active"><i class="bi bi-cursor"></i> Seleziona</button>
+      <button class="ft-btn"><i class="bi bi-arrows-move"></i> Sposta</button>
+      <button class="ft-btn"><i class="bi bi-link-45deg"></i> Collega tavoli</button>
+      <span style="margin-left:auto;font-size:.64rem;color:#adb5bd;">Trascina per posizionare · linea tratteggiata = combinabili</span>
+    </div>
+    <div class="floor-canvas">
+      <div class="floor-wall" style="top:0;left:0;right:0;height:4px;"></div>
+      <div class="floor-wall" style="bottom:0;left:0;right:0;height:4px;"></div>
+      <div class="floor-wall" style="top:0;left:0;bottom:0;width:4px;"></div>
+      <div class="floor-wall" style="top:0;right:0;bottom:0;width:4px;"></div>
+      <div class="floor-wall" style="top:18px;left:18px;width:96px;height:46px;border-radius:6px;background:#f0e6d3;"></div>
+      <div class="floor-label-static" style="top:34px;left:38px;">Cucina</div>
+
+      <div class="table-el" style="left:70px;top:120px;"><div class="table-shape round free">T1</div><span class="table-label">Tavolo 1 (4)</span></div>
+      <div class="table-el" style="left:210px;top:110px;"><div class="table-shape round free">T2</div><span class="table-label">Tavolo 2 (2)</span></div>
+      <div class="table-el" style="left:350px;top:120px;"><div class="table-shape square free">T3</div><span class="table-label">Tavolo 3 (4)</span></div>
+      <div class="table-el" style="left:480px;top:110px;"><div class="table-shape rect free">T4</div><span class="table-label">Tavolo 4 (6) · appartato</span></div>
+
+      <!-- combinabili: T9 + T10 -->
+      <div class="combo-link" style="left:108px;top:330px;width:74px;"></div>
+      <div class="table-el" style="left:60px;top:300px;"><div class="table-shape round free">T9</div><span class="table-label">Tavolo 9 (2)</span></div>
+      <div class="table-el" style="left:170px;top:300px;"><div class="table-shape square free">T10</div><span class="table-label">Tavolo 10 (4)</span></div>
+
+      <div class="table-el" style="left:330px;top:290px;"><div class="table-shape large free">T5</div><span class="table-label">Tavolo 5 (8)</span></div>
+      <div class="table-el" style="left:500px;top:300px;"><div class="table-shape square off">T7</div><span class="table-label" style="color:#ccc;">Tavolo 7 — off</span></div>
+    </div>
+    <div class="floor-legend">
+      <div class="fl-item"><div class="fl-dot" style="background:#198754;"></div> Tavolo attivo</div>
+      <div class="fl-item"><div class="fl-dot" style="background:#adb5bd;"></div> Disattivato</div>
+      <div class="fl-item"><span style="width:16px;height:3px;display:inline-block;background:repeating-linear-gradient(90deg,var(--brand) 0 5px,transparent 5px 9px);"></span> Tavoli combinabili</div>
+    </div>
+  </div>
+
+  <!-- table list -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">Tavoli</span><span class="pill">7</span>
+      <button class="btn btn-brand"><i class="bi bi-plus-lg"></i> Nuovo</button>
+    </div>
+    <div class="tp-stats">
+      <div class="tp-stat"><div class="tp-stat-num">6</div><div class="tp-stat-label">Attivi</div></div>
+      <div class="tp-stat"><div class="tp-stat-num">1</div><div class="tp-stat-label">Off</div></div>
+      <div class="tp-stat"><div class="tp-stat-num">26</div><div class="tp-stat-label">Coperti</div></div>
+      <div class="tp-stat"><div class="tp-stat-num">1</div><div class="tp-stat-label">Combo</div></div>
+    </div>
+    <div class="tp-list">
+      <div class="tp-item">
+        <div class="tp-item-shape round free">T1</div>
+        <div class="tp-item-info"><div class="tp-item-name">Tavolo 1</div>
+          <div class="tp-item-meta"><span>4 posti</span><span>Rotondo</span></div></div>
+        <button class="tp-act"><i class="bi bi-pencil"></i></button>
+      </div>
+      <div class="tp-item">
+        <div class="tp-item-shape free" style="border-radius:7px;">T4</div>
+        <div class="tp-item-info"><div class="tp-item-name">Tavolo 4</div>
+          <div class="tp-item-meta"><span>6 posti</span><span>Rettangolare</span><span class="tag">appartato</span></div></div>
+        <button class="tp-act"><i class="bi bi-pencil"></i></button>
+      </div>
+      <div class="tp-item">
+        <div class="tp-item-shape round free">T9</div>
+        <div class="tp-item-info"><div class="tp-item-name">Tavolo 9</div>
+          <div class="tp-item-meta"><span>2 posti</span><span>Rotondo</span><span class="tag combo">↔ T10</span></div></div>
+        <button class="tp-act"><i class="bi bi-pencil"></i></button>
+      </div>
+      <div class="tp-item">
+        <div class="tp-item-shape free" style="border-radius:7px;">T10</div>
+        <div class="tp-item-info"><div class="tp-item-name">Tavolo 10</div>
+          <div class="tp-item-meta"><span>4 posti</span><span>Quadrato</span><span class="tag combo">↔ T9</span></div></div>
+        <button class="tp-act"><i class="bi bi-pencil"></i></button>
+      </div>
+      <div class="tp-item" style="opacity:.55;">
+        <div class="tp-item-shape" style="background:#adb5bd;border-radius:7px;">T7</div>
+        <div class="tp-item-info"><div class="tp-item-name">Tavolo 7 · Disattivato</div>
+          <div class="tp-item-meta"><span>4 posti</span></div></div>
+        <button class="tp-act"><i class="bi bi-toggle-off"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SEZIONE 2 — MODALE TAVOLO (con combinazione)
+     ============================================================ -->
+<hr class="section-divider">
+<div class="section-label"><i class="bi bi-2-circle-fill"></i> Modale aggiungi / modifica tavolo <span class="new-badge">combinazione</span></div>
+
+<div class="mock-stage">
+  <div class="modal-box">
+    <div class="modal-head"><span class="modal-title"><i class="bi bi-pencil-square me-1"></i> Modifica Tavolo 9</span><button class="modal-x"><i class="bi bi-x-lg"></i></button></div>
+    <div class="modal-body">
+      <div class="fg"><label class="fl">Nome tavolo</label><input class="fi" value="Tavolo 9"></div>
+      <div class="frow">
+        <div class="fg"><label class="fl">Posti</label><input class="fi" type="number" value="2"></div>
+        <div class="fg"><label class="fl">Sala</label><select class="fi"><option>Sala Principale</option><option>Terrazza</option></select></div>
+      </div>
+      <div class="fg"><label class="fl">Forma</label>
+        <div class="shape-sel">
+          <div class="shape-opt active"><div class="shape-ic round" style="background:var(--brand);"></div><span class="shape-lbl">Rotondo</span></div>
+          <div class="shape-opt"><div class="shape-ic"></div><span class="shape-lbl">Quadrato</span></div>
+          <div class="shape-opt"><div class="shape-ic rect"></div><span class="shape-lbl">Rettang.</span></div>
+          <div class="shape-opt"><div class="shape-ic large"></div><span class="shape-lbl">Grande</span></div>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Combinabile con <span style="text-transform:none;font-weight:400;">(per gruppi grandi)</span></label>
+        <div class="chk-list">
+          <span class="chk on"><i class="bi bi-check"></i> Tavolo 10</span>
+          <span class="chk">Tavolo 1</span>
+          <span class="chk">Tavolo 2</span>
+          <span class="chk">Tavolo 3</span>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label class="fl">Note interne</label><input class="fi" placeholder="es. appartato, vicino finestra"></div>
+        <div class="fg"><label class="fl">Stato</label><select class="fi"><option>Attivo</option><option>Disattivato</option></select></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost">Annulla</button><button class="btn btn-brand"><i class="bi bi-check-circle"></i> Salva</button></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SEZIONE 3 — TIMELINE GIORNALIERA  (NUOVA)
+     ============================================================ -->
+<hr class="section-divider">
+<div class="section-label"><i class="bi bi-3-circle-fill"></i> Vista Timeline Giornaliera <span class="new-badge">nuova</span></div>
+<p class="section-hint">La giornata di ogni tavolo a colpo d'occhio. Ogni tavolo serve più turni. Trascina un blocco da una riga all'altra per spostare il cliente di tavolo.</p>
+
+<div class="card">
+  <div class="tl-toolbar">
+    <div class="tl-daynav">
+      <button class="tl-arrow"><i class="bi bi-chevron-left"></i></button>
+      <span class="tl-date">Sabato 16 maggio</span>
+      <button class="tl-arrow"><i class="bi bi-chevron-right"></i></button>
+    </div>
+    <div class="room-tabs"><button class="room-tab active">Sala Principale</button><button class="room-tab">Terrazza</button></div>
+    <div class="fl-item" style="margin-left:auto;"><span class="fl-dot" style="background:#fd7e14;"></span> In attesa</div>
+    <div class="fl-item"><span class="fl-dot" style="background:#ffc107;"></span> Confermata</div>
+    <div class="fl-item"><span class="fl-dot" style="background:#0d6efd;"></span> Arrivato</div>
+  </div>
+  <div class="tl-scroll">
+    <div class="tl-grid">
+      <!-- header orari -->
+      <div class="tl-head">
+        <div class="tl-head-label">Tavolo</div>
+        <div class="tl-hours">
+          <div class="tl-hour">12</div><div class="tl-hour">13</div><div class="tl-hour">14</div>
+          <div class="tl-hour">15</div><div class="tl-hour">16</div><div class="tl-hour">17</div>
+          <div class="tl-hour">18</div><div class="tl-hour">19</div><div class="tl-hour">20</div>
+          <div class="tl-hour">21</div><div class="tl-hour">22</div>
+        </div>
+      </div>
+      <!-- T1: due turni (pranzo + cena) -->
+      <div class="tl-row">
+        <div class="tl-row-label"><span class="tl-row-name">Tavolo 1</span><span class="tl-row-cap">4 posti · rotondo</span></div>
+        <div class="tl-track">
+          <div class="tl-block arrived" style="left:4.5%;width:13%;"><span class="tl-block-name">Rossi M.</span><span class="tl-block-meta">12:30 · 4p</span></div>
+          <div class="tl-block confirmed" style="left:64%;width:13%;"><span class="tl-auto">auto</span><span class="tl-block-name">Neri A.</span><span class="tl-block-meta">19:30 · 3p</span></div>
+        </div>
+      </div>
+      <!-- T2 -->
+      <div class="tl-row">
+        <div class="tl-row-label"><span class="tl-row-name">Tavolo 2</span><span class="tl-row-cap">2 posti · rotondo</span></div>
+        <div class="tl-track">
+          <div class="tl-block confirmed" style="left:73%;width:13%;"><span class="tl-block-name">Gallo P.</span><span class="tl-block-meta">20:00 · 2p</span></div>
+        </div>
+      </div>
+      <!-- T4: blocco trascinato (riassegnazione) -->
+      <div class="tl-row">
+        <div class="tl-row-label"><span class="tl-row-name">Tavolo 4</span><span class="tl-row-cap">6 posti · appartato</span></div>
+        <div class="tl-track">
+          <div class="tl-ghost" style="left:55%;width:14%;"></div>
+          <div class="tl-block confirmed dragging" style="left:57%;width:14%;"><span class="tl-block-name">Bianchi L.</span><span class="tl-block-meta">19:00 · 5p — sposto qui</span></div>
+        </div>
+      </div>
+      <!-- T5 -->
+      <div class="tl-row">
+        <div class="tl-row-label"><span class="tl-row-name">Tavolo 5</span><span class="tl-row-cap">8 posti · grande</span></div>
+        <div class="tl-track">
+          <div class="tl-block pending" style="left:82%;width:15%;"><span class="tl-block-name">Verdi G.</span><span class="tl-block-meta">21:00 · 8p · in attesa caparra</span></div>
+        </div>
+      </div>
+      <!-- T9+T10 combinati -->
+      <div class="tl-row">
+        <div class="tl-row-label"><span class="tl-row-name">Tavolo 9 + 10</span><span class="tl-row-cap">combinati · 6 posti</span></div>
+        <div class="tl-track">
+          <div class="tl-block confirmed combo" style="left:64%;width:14%;"><span class="tl-block-name">Esposito T. <i class="bi bi-link-45deg"></i></span><span class="tl-block-meta">19:30 · 6p · combo</span></div>
+        </div>
+      </div>
+      <!-- riga libera -->
+      <div class="tl-row">
+        <div class="tl-row-label"><span class="tl-row-name">Tavolo 3</span><span class="tl-row-cap">4 posti · libero tutto il giorno</span></div>
+        <div class="tl-track"></div>
+      </div>
+    </div>
+  </div>
+  <div class="floor-legend">
+    <span style="font-size:.66rem;color:var(--muted);"><i class="bi bi-info-circle me-1"></i>Lo stesso tavolo compare più volte nella giornata: ogni blocco è un turno (durata coperto + buffer pulizia). Il badge <strong>auto</strong> indica l'assegnazione automatica.</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     SEZIONE 4 — ASSEGNAZIONE NELLA PRENOTAZIONE (auto + override)
+     ============================================================ -->
+<hr class="section-divider">
+<div class="section-label"><i class="bi bi-4-circle-fill"></i> Assegnazione tavolo nella scheda prenotazione <span class="new-badge">auto + override</span></div>
+<p class="section-hint">Alla prenotazione il sistema assegna da solo. Il ristoratore vede la scelta e può cambiarla con un clic.</p>
+
+<div class="card" style="max-width:720px;">
+  <div class="card-head"><i class="bi bi-grid-3x3" style="color:var(--brand);"></i><span class="card-title">Tavolo</span>
+    <span style="font-size:.7rem;color:var(--muted);">5 persone · 19:00 · Sab 16/05</span></div>
+  <div class="auto-banner">
+    <i class="bi bi-magic" style="font-size:1rem;"></i>
+    <div style="flex:1;">Assegnato automaticamente: <strong>Tavolo 1</strong> (4 posti). Puoi cambiarlo qui sotto.</div>
+  </div>
+  <div class="assign-grid">
+    <div class="assign-t"><div class="assign-t-shape round" style="background:#198754;">T1</div><span class="assign-t-name">Tavolo 1</span><span class="assign-t-cap">4 posti · auto</span></div>
+    <div class="assign-t assigned"><div class="assign-t-shape" style="background:var(--brand);">T4</div><span class="assign-t-name">Tavolo 4</span><span class="assign-t-cap">6 · appartato ✓</span></div>
+    <div class="assign-t"><div class="assign-t-shape" style="background:#198754;">T3</div><span class="assign-t-name">Tavolo 3</span><span class="assign-t-cap">4 posti</span></div>
+    <div class="assign-t"><div class="assign-t-shape large" style="background:#198754;width:34px;">T5</div><span class="assign-t-name">Tavolo 5</span><span class="assign-t-cap">8 posti</span></div>
+    <div class="assign-t"><div class="assign-t-shape" style="background:var(--brand-light);color:var(--brand);border:1.5px dashed var(--brand);">9+10</div><span class="assign-t-name">T9 + T10</span><span class="assign-t-cap">combo · 6</span></div>
+    <div class="assign-t unavail"><div class="assign-t-shape round" style="background:#adb5bd;">T2</div><span class="assign-t-name">Tavolo 2</span><span class="assign-t-cap">2 · piccolo</span></div>
+  </div>
+  <div style="padding:10px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;">
+    <span style="font-size:.66rem;color:var(--muted);flex:1;"><i class="bi bi-info-circle me-1"></i> Grigi = troppo piccoli o occupati in quel turno. La combinazione T9+T10 appare perché insieme fanno 6 posti.</span>
+    <button class="btn btn-brand"><i class="bi bi-check"></i> Conferma Tavolo 4</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     SEZIONE 5 — IMPOSTAZIONI AUTO-ASSEGNAZIONE
+     ============================================================ -->
+<hr class="section-divider">
+<div class="section-label"><i class="bi bi-5-circle-fill"></i> Impostazioni auto-assegnazione</div>
+
+<div class="card" style="max-width:720px;">
+  <div class="card-head"><span class="card-title"><i class="bi bi-sliders me-1"></i> Comportamento</span></div>
+  <div style="padding:6px 16px;">
+    <div class="opt-row">
+      <div class="opt-txt"><div class="opt-name">Assegnazione automatica</div>
+        <div class="opt-desc">Alla prenotazione il sistema sceglie il tavolo. Se off, l'assegnazione è solo manuale.</div></div>
+      <div class="toggle"></div>
+    </div>
+    <div class="opt-row">
+      <div class="opt-txt"><div class="opt-name">Strategia</div>
+        <div class="opt-desc">Tavolo più piccolo che basta = ottimizza i posti. Distribuita = riempie la sala in modo uniforme.</div></div>
+      <div class="seg"><span class="seg-opt active">Più piccolo che basta</span><span class="seg-opt">Distribuita</span></div>
+    </div>
+    <div class="opt-row">
+      <div class="opt-txt"><div class="opt-name">Buffer di pulizia / turnover</div>
+        <div class="opt-desc">Minuti liberi tra due turni sullo stesso tavolo prima di poterlo riassegnare.</div></div>
+      <select class="fi" style="width:110px;"><option>10 min</option><option selected>15 min</option><option>20 min</option><option>30 min</option></select>
+    </div>
+    <div class="opt-row">
+      <div class="opt-txt"><div class="opt-name">Combina tavoli per gruppi grandi</div>
+        <div class="opt-desc">Se nessun tavolo singolo basta, propone una combinazione di tavoli collegati.</div></div>
+      <div class="toggle"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     DESIGN NOTES
+     ============================================================ -->
+<div class="notes">
+  <h3><i class="bi bi-lightbulb me-1"></i> Note di design — cosa cambia rispetto al v1</h3>
+  <ul>
+    <li><strong>Turni del tavolo (correzione di modello):</strong> la disponibilità di un tavolo è <em>per finestra temporale</em>, non per giornata. Occupazione = <code>reservation_time</code> + <code>table_duration</code> + buffer pulizia. Lo stesso tavolo serve più prenotazioni nella stessa giornata.</li>
+    <li><strong>DB:</strong>
+      <ul>
+        <li><code>tables</code>: id, tenant_id, name, capacity, shape, room, position_x, position_y, internal_note, sort_order, is_active</li>
+        <li><code>reservation_tables</code>: reservation_id, table_id, is_auto (1=auto, 0=manuale) — bridge, multi-riga per le combinazioni</li>
+        <li><code>table_combinations</code>: tenant_id, table_a_id, table_b_id — coppie di tavoli unibili</li>
+        <li><code>tenants</code> nuovi campi: <code>table_auto_assign</code>, <code>table_assign_strategy</code>, <code>table_turnover_buffer</code>, <code>table_combine_enabled</code></li>
+      </ul>
+    </li>
+    <li><strong>Combinazione tavoli:</strong> definita nel modale tavolo. L'auto-assegnazione, se nessun tavolo singolo basta, cerca una coppia combinabile entramba libera nel turno. Sulla mappa le coppie sono unite da una linea tratteggiata.</li>
+    <li><strong>Vista timeline:</strong> Gantt — righe = tavoli, asse X = orari del servizio, blocchi = prenotazioni colorate per stato. È la vista operativa della giornata. Sostituisce/assorbe l'item "Vista timeline" già in TODO.</li>
+    <li><strong>Riassegnazione manuale:</strong> due strade — (a) dalla scheda prenotazione, griglia tavoli con override; (b) dalla timeline, trascinando il blocco da una riga-tavolo all'altra. Drag &amp; drop JS vanilla. Ogni cambio aggiorna <code>reservation_tables</code> e logga l'azione.</li>
+    <li><strong>Auto-assegnazione:</strong> alla creazione prenotazione (widget e dashboard), se <code>table_auto_assign</code> è on. Algoritmo: filtra i tavoli liberi nel turno con capacità ≥ party_size, ordina per strategia, assegna. Se nessun singolo basta e la combinazione è on → coppia combinabile. Il badge <strong>auto</strong> distingue dall'assegnazione manuale.</li>
+    <li><strong>Disponibilità widget invariata in questa fase:</strong> il widget continua a calcolare la disponibilità sui coperti totali. La "disponibilità guidata dai tavoli" resta una scelta architetturale per una fase successiva.</li>
+    <li><strong>Mobile:</strong> mappa in sola lettura, timeline scrollabile orizzontalmente, assegnazione/override touch-friendly.</li>
+    <li><strong>Ordine implementazione (Fase 1 → 2):</strong>
+      <ol>
+        <li><strong>F1</strong> — migration DB (tables, reservation_tables, table_combinations, campi tenant)</li>
+        <li><strong>F1</strong> — model Table + CRUD lista in Settings &gt; Tavoli (no mappa)</li>
+        <li><strong>F1</strong> — logica turni + servizio auto-assegnazione (TableAssigner)</li>
+        <li><strong>F1</strong> — assegnazione automatica all'atto della prenotazione + pannello override nella scheda</li>
+        <li><strong>F1</strong> — impostazioni auto-assegnazione</li>
+        <li><strong>F2</strong> — mappa sala visuale con drag &amp; drop + collegamento combinazioni</li>
+        <li><strong>F2</strong> — vista timeline giornaliera con riassegnazione drag &amp; drop</li>
+      </ol>
+    </li>
+  </ul>
+</div>
+
+</body>
+</html>
