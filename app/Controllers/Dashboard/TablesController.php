@@ -9,6 +9,7 @@ use App\Core\TenantResolver;
 use App\Models\Table;
 use App\Models\Tenant;
 use App\Services\AuditLog;
+use App\Services\TableAssigner;
 
 /**
  * Gestione Tavoli — pagina Impostazioni > Tavoli.
@@ -130,26 +131,51 @@ class TablesController
         Response::redirect(url('dashboard/settings/tables'));
     }
 
-    /** Mappa sala — pagina con canvas di posizionamento (setup). */
+    /** Mappa sala — modalità setup (posizionamento) o operativa (stato sala). */
     public function map(Request $request): void
     {
         $tenant = TenantResolver::current();
         $canUse = tenant_can('table_management');
+        $mode = $request->query('mode') === 'operativa' ? 'operativa' : 'setup';
 
-        $tables = $areas = [];
+        $tables = $areas = $floorState = $reassignOptions = $currentMap = [];
+        $opDate = (string)$request->query('date', date('Y-m-d'));
+        $opTime = (string)$request->query('time', '20:00');
+
         if ($canUse) {
             $model = new Table();
             $tables = $model->findByTenant((int)$tenant['id']);
             $areas = $model->areas((int)$tenant['id']);
+
+            if ($mode === 'operativa') {
+                if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $opDate)) $opDate = date('Y-m-d');
+                if (!preg_match('/^\d{2}:\d{2}$/', $opTime)) $opTime = '20:00';
+                $assigner = new TableAssigner();
+                $floorState = $assigner->floorState((int)$tenant['id'], $opDate, $opTime);
+                $reassignOptions = $assigner->allTableOptions((int)$tenant['id']);
+                // assegnazione corrente per ogni prenotazione che occupa un tavolo
+                $resIds = array_values(array_unique(array_column($floorState, 'reservation_id')));
+                foreach ($assigner->assignmentsFor($resIds) as $rid => $ts) {
+                    $ids = array_map(fn($x) => (int)$x['id'], $ts);
+                    sort($ids);
+                    $currentMap[(int)$rid] = implode(',', $ids);
+                }
+            }
         }
 
         view('dashboard/settings/tables-map', [
-            'title'      => 'Mappa sala',
-            'activeMenu' => 'settings-tables',
-            'tenant'     => $tenant,
-            'canUse'     => $canUse,
-            'tables'     => $tables,
-            'areas'      => $areas,
+            'title'           => 'Mappa sala',
+            'activeMenu'      => 'settings-tables',
+            'tenant'          => $tenant,
+            'canUse'          => $canUse,
+            'tables'          => $tables,
+            'areas'           => $areas,
+            'mode'            => $mode,
+            'opDate'          => $opDate,
+            'opTime'          => $opTime,
+            'floorState'      => $floorState,
+            'reassignOptions' => $reassignOptions,
+            'currentMap'      => $currentMap,
         ], 'dashboard');
     }
 

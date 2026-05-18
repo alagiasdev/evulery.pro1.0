@@ -569,6 +569,13 @@ class ReservationsController
         AuditLog::log(AuditLog::RESERVATION_UPDATED, "Tavolo prenotazione #{$id} aggiornato", Auth::id(), $tenantId);
 
         flash('success', $ids ? 'Tavolo aggiornato.' : 'Tavolo rimosso.');
+
+        // Torna alla mappa sala se la riassegnazione arriva da lì
+        $back = trim((string)$request->input('redirect_back', ''));
+        if ($back !== '' && str_starts_with($back, 'dashboard/')) {
+            Response::redirect(url($back));
+            return;
+        }
         Response::redirect(url("dashboard/reservations/{$id}"));
     }
 

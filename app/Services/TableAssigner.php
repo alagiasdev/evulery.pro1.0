@@ -210,6 +210,77 @@ class TableAssigner
         return $map;
     }
 
+    /**
+     * Stato della sala a una data/ora: tableId => dati della prenotazione che
+     * occupa il tavolo in quel momento (i tavoli non presenti sono liberi).
+     * "Occupato" = l'ora cade in [inizio, inizio + table_duration] (no buffer).
+     */
+    public function floorState(int $tenantId, string $date, string $time): array
+    {
+        $tenant = (new Tenant())->findById($tenantId);
+        $duration = max(15, (int)($tenant['table_duration'] ?? 90));
+        $t = $this->timeToMinutes($time);
+
+        $statuses = "'" . implode("','", self::BUSY_STATUSES) . "'";
+        $stmt = $this->db->prepare(
+            "SELECT rt.table_id, r.id AS reservation_id, r.reservation_time,
+                    r.party_size, r.status, c.first_name, c.last_name
+             FROM reservation_tables rt
+             JOIN reservations r ON r.id = rt.reservation_id
+             JOIN customers c ON c.id = r.customer_id
+             WHERE r.tenant_id = :t AND r.reservation_date = :d AND r.status IN ($statuses)"
+        );
+        $stmt->execute(['t' => $tenantId, 'd' => $date]);
+
+        $state = [];
+        foreach ($stmt->fetchAll() as $row) {
+            $start = $this->timeToMinutes($row['reservation_time']);
+            if ($t >= $start && $t < $start + $duration) {
+                $state[(int)$row['table_id']] = [
+                    'reservation_id' => (int)$row['reservation_id'],
+                    'name'           => trim($row['first_name'] . ' ' . $row['last_name']),
+                    'party'          => (int)$row['party_size'],
+                    'time'           => substr((string)$row['reservation_time'], 0, 5),
+                    'status'         => $row['status'],
+                ];
+            }
+        }
+        return $state;
+    }
+
+    /**
+     * Tutte le opzioni assegnabili (tavoli attivi + combinazioni), senza
+     * filtro di disponibilità — per la riassegnazione manuale dalla mappa.
+     */
+    public function allTableOptions(int $tenantId): array
+    {
+        $tables = (new Table())->findActiveByTenant($tenantId);
+        $byId = [];
+        foreach ($tables as $t) {
+            $byId[(int)$t['id']] = $t;
+        }
+        $options = [];
+        foreach ($tables as $t) {
+            $options[] = [
+                'value' => (string)(int)$t['id'],
+                'label' => $t['name'] . ' — ' . (int)$t['capacity'] . ' posti',
+            ];
+        }
+        foreach ((new Table())->allCombinations($tenantId) as $c) {
+            $a = (int)$c['table_a_id'];
+            $b = (int)$c['table_b_id'];
+            if (!isset($byId[$a], $byId[$b])) {
+                continue;
+            }
+            $cap = (int)$byId[$a]['capacity'] + (int)$byId[$b]['capacity'];
+            $options[] = [
+                'value' => $a . ',' . $b,
+                'label' => $byId[$a]['name'] . ' + ' . $byId[$b]['name'] . ' — combinazione, ' . $cap . ' posti',
+            ];
+        }
+        return $options;
+    }
+
     // ─── interni ─────────────────────────────────────────────────
 
     /** Durata occupazione + buffer pulizia, in minuti. */
