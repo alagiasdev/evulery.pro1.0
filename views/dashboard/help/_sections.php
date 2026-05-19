@@ -249,6 +249,34 @@ HTML
 
     // ══════════ SERVIZI AVANZATI ══════════
 
+    'tavoli' => [
+        'title'       => 'Gestione Tavoli e Sala',
+        'subtitle'    => 'Sala virtuale, mappa e auto-assegnazione',
+        'icon'        => 'bi-grid-3x3',
+        'color'       => '#0c8599',
+        'category'    => 'avanzati',
+        'count_label' => '1 articolo',
+        'keywords'    => 'tavoli sala mappa auto-assegnazione assegnazione combinazioni aree posti turni operativa setup riassegnazione',
+        'read_time'   => 4,
+        'body' => <<<'HTML'
+<p>La <strong>Gestione Tavoli</strong> (piano Enterprise) ti d&agrave; una sala virtuale: definisci i tuoi tavoli, il sistema assegna in automatico chi prenota e tu vedi lo stato della sala in tempo reale.</p>
+
+<div class="hg-step"><div class="hg-step-num">1</div><div class="hg-step-content"><strong>Configura i tavoli</strong> &mdash; In <em>Impostazioni &rarr; Tavoli</em> usa <strong>Nuovo tavolo</strong> per aggiungere ogni tavolo con nome, numero di posti, area (es. Sala Interna, Esterno), forma e i tavoli con cui pu&ograve; essere combinato per i gruppi grandi. L&rsquo;ordine della lista &egrave; la <strong>priorit&agrave;</strong> di assegnazione: trascina per riordinare, i tavoli pi&ugrave; in alto si riempiono per primi.</div></div>
+<div class="hg-step"><div class="hg-step-num">2</div><div class="hg-step-content"><strong>Attiva l&rsquo;auto-assegnazione</strong> &mdash; Sempre in <em>Impostazioni &rarr; Tavoli</em>, accendi l&rsquo;interruttore <strong>Assegnazione automatica</strong>: a ogni nuova prenotazione il sistema sceglie il primo tavolo libero adatto. Imposta anche il <strong>buffer di pulizia</strong>, i minuti liberi tra due turni sullo stesso tavolo.</div></div>
+<div class="hg-step"><div class="hg-step-num">3</div><div class="hg-step-content"><strong>Disponi la sala</strong> &mdash; Da <em>Impostazioni &rarr; Tavoli &rarr; Mappa sala</em>, in modalit&agrave; <strong>Setup</strong>, trascina i tavoli per riprodurre la disposizione reale del locale. Ricordati di salvare le posizioni.</div></div>
+<div class="hg-step"><div class="hg-step-num">4</div><div class="hg-step-content"><strong>Usa la Sala durante il servizio</strong> &mdash; La voce <strong>Sala</strong> nel menu laterale apre la vista operativa in tempo reale.</div></div>
+
+<p>La pagina <strong>Sala</strong> &egrave; divisa in due pannelli:</p>
+<ul>
+    <li><strong>A sinistra</strong> le prenotazioni del giorno. In cima, in rosso, il gruppo <strong>&ldquo;Da assegnare&rdquo;</strong>: le prenotazioni ancora senza tavolo.</li>
+    <li><strong>A destra</strong> la mappa. I tavoli verdi sono liberi, quelli blu sono occupati e mostrano cliente, coperti e orario.</li>
+</ul>
+<p>La <strong>fascia oraria</strong> in alto fa scorrere la giornata: un pallino sotto un orario indica che a quell&rsquo;ora ci sono prenotazioni. Cliccando un tavolo occupato o una prenotazione nella lista si apre il <strong>popup di dettaglio</strong>, da cui puoi vedere i contatti del cliente, cambiare lo stato (Confermata, Arrivato, No-show) e spostare la prenotazione su un altro tavolo. Due tavoli uniti per lo stesso gruppo sono collegati da una barra con l&rsquo;icona catena.</p>
+
+<div class="hg-tip"><strong><i class="bi bi-lightbulb me-1"></i>Consiglio:</strong> nella scheda di ogni prenotazione puoi sempre cambiare il tavolo a mano, anche con l&rsquo;auto-assegnazione attiva. E se in <em>Impostazioni &rarr; Tavoli</em> compare l&rsquo;avviso giallo, significa che in certi orari accetti pi&ugrave; coperti di quanti posti hanno i tuoi tavoli: allinea i coperti o aggiungi tavoli.</div>
+HTML
+    ],
+
     'ordini' => [
         'title'       => 'Ordini online',
         'subtitle'    => 'Asporto e consegna a domicilio',
