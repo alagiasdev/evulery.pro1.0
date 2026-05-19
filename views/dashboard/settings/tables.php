@@ -9,6 +9,7 @@ $comboCount = 0;
 foreach ($comboMap as $ids) { $comboCount += count($ids); }
 $comboCount = (int)($comboCount / 2);
 $tableNamesById = array_column($tables, 'name', 'id');
+$tableCapById   = array_column($tables, 'capacity', 'id');
 
 // Dati tavoli per il modale (JS)
 $jsTables = [];
@@ -133,8 +134,15 @@ foreach ($tables as $t) {
                     <?php if (!empty($t['area'])): ?><span><i class="bi bi-geo-alt"></i> <?= e($t['area']) ?></span><?php endif; ?>
                     <?php if (!empty($t['internal_note'])): ?><span><?= e($t['internal_note']) ?></span><?php endif; ?>
                     <?php if (!empty($combo)): ?>
-                    <?php $comboNames = array_map(fn($cid) => $tableNamesById[$cid] ?? '?', array_unique(array_map('intval', $combo))); ?>
-                    <span class="tm-tag tm-tag-combo<?= $isActive ? '' : ' off' ?>" title="<?= $isActive ? 'Combinabile con: ' . e(implode(', ', $comboNames)) : 'Combinazione inattiva finché il tavolo è disattivato' ?>">↔ <?= e(implode(', ', $comboNames)) ?></span>
+                    <?php
+                        // Per ogni tavolo combinabile: nome + posti totali della combinazione
+                        $comboParts = [];
+                        foreach (array_unique(array_map('intval', $combo)) as $cid) {
+                            $tot = (int)$t['capacity'] + (int)($tableCapById[$cid] ?? 0);
+                            $comboParts[] = ($tableNamesById[$cid] ?? '?') . ' (' . $tot . 'p)';
+                        }
+                    ?>
+                    <span class="tm-tag tm-tag-combo<?= $isActive ? '' : ' off' ?>" title="<?= $isActive ? 'Combinabile con — tra parentesi i posti totali della combinazione' : 'Combinazione inattiva finché il tavolo è disattivato' ?>">↔ <?= e(implode(', ', $comboParts)) ?></span>
                     <?php endif; ?>
                 </div>
             </div>
