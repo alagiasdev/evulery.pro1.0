@@ -131,7 +131,7 @@ foreach ($tables as $t) {
                 <div class="tm-meta">
                     <?php if (!empty($t['area'])): ?><span><i class="bi bi-geo-alt"></i> <?= e($t['area']) ?></span><?php endif; ?>
                     <?php if (!empty($t['internal_note'])): ?><span><?= e($t['internal_note']) ?></span><?php endif; ?>
-                    <?php if (!empty($combo)): ?><span class="tm-tag tm-tag-combo">↔ <?= count($combo) ?> combinabili</span><?php endif; ?>
+                    <?php if (!empty($combo)): ?><span class="tm-tag tm-tag-combo<?= $isActive ? '' : ' off' ?>"<?= $isActive ? '' : ' title="Combinazione inattiva finché il tavolo è disattivato"' ?>>↔ <?= count($combo) ?> combinabili</span><?php endif; ?>
                 </div>
             </div>
             <button type="button" class="tm-act tm-edit" data-id="<?= (int)$t['id'] ?>" title="Modifica"><i class="bi bi-pencil"></i></button>
