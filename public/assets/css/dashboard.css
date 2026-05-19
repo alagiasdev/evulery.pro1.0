@@ -4211,7 +4211,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-tag-off { background: #fdecea; color: #b3261e; }
 .tm-tag-combo { background: var(--brand-light, #e6f4ed); color: var(--brand, #00844A); }
 .tm-tag-combo.off { background: #eef0f2; color: #9aa1a9; }
-.tm-combo-tot { background: var(--brand, #00844A); color: #fff; font-weight: 800; padding: 0 5px; border-radius: 3px; margin-left: 2px; }
+.tm-combo-tot { background: var(--brand, #00844A); color: #fff; font-weight: 600; padding: 0 5px; border-radius: 3px; margin-left: 2px; }
 .tm-tag-combo.off .tm-combo-tot { background: #9aa1a9; }
 .tm-act { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--border, #e9ecef); background: #fff; cursor: pointer; font-size: .72rem; color: #6c757d; flex-shrink: 0; }
 .tm-act:hover { border-color: var(--brand, #00844A); color: var(--brand, #00844A); }
