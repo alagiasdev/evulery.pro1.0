@@ -172,11 +172,24 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
 
     $prev = date('Y-m-d', strtotime($opDate . ' -1 day'));
     $next = date('Y-m-d', strtotime($opDate . ' +1 day'));
+    // Chip data rapidi per la barra: oggi, domani, dopodomani
+    $DAYS_IT = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+    $salaChips = [];
+    foreach (['Oggi', 'Domani', 'Dopodomani'] as $i => $lbl) {
+        $d = date('Y-m-d', strtotime("+{$i} days"));
+        $dt = new DateTime($d);
+        $salaChips[] = ['date' => $d, 'label' => $lbl, 'sub' => $DAYS_IT[(int)$dt->format('w')] . ' ' . $dt->format('j/n')];
+    }
     ?>
     <div class="tm-op-bar">
-        <a class="tm-op-arrow" href="<?= $opUrl ?>?date=<?= $prev ?>&time=<?= e($opTime) ?>"><i class="bi bi-chevron-left"></i></a>
-        <span class="tm-op-date"><?= e(date('D d/m/Y', strtotime($opDate))) ?></span>
-        <a class="tm-op-arrow" href="<?= $opUrl ?>?date=<?= $next ?>&time=<?= e($opTime) ?>"><i class="bi bi-chevron-right"></i></a>
+        <div class="date-chips">
+            <a class="date-nav-arrow sm" href="<?= $opUrl ?>?date=<?= $prev ?>&time=<?= e($opTime) ?>" title="Giorno precedente"><i class="bi bi-chevron-left"></i></a>
+            <?php foreach ($salaChips as $chip): ?>
+            <a href="<?= $opUrl ?>?date=<?= $chip['date'] ?>&time=<?= e($opTime) ?>" class="date-chip-sm <?= $opDate === $chip['date'] ? 'active' : '' ?>"><?= $chip['label'] ?> <span class="chip-day"><?= $chip['sub'] ?></span></a>
+            <?php endforeach; ?>
+            <a class="date-nav-arrow sm" href="<?= $opUrl ?>?date=<?= $next ?>&time=<?= e($opTime) ?>" title="Giorno successivo"><i class="bi bi-chevron-right"></i></a>
+            <input type="date" class="tm-date-input" id="tm-date-picker" value="<?= e($opDate) ?>" title="Scegli una data">
+        </div>
         <?php if ($multiArea): ?>
         <div class="tm-area-tabs" style="margin-left:8px;">
             <button type="button" class="tm-area-tab active" data-all="1"><i class="bi bi-grid-3x3-gap me-1"></i>Tutte le aree</button>
@@ -438,6 +451,13 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         });
     } else {
         // Operativa — Fase 3a
+        // Calendario: scegliere una data salta a quel giorno (mantiene l'orario)
+        var dp = document.getElementById('tm-date-picker');
+        if (dp) {
+            dp.addEventListener('change', function () {
+                if (dp.value) location.href = <?= json_encode($opUrl) ?> + '?date=' + dp.value + '&time=' + <?= json_encode($opTime) ?>;
+            });
+        }
         // Centra lo scorri-orari sullo slot attivo: niente swipe manuale
         var scrub = document.querySelector('.tm-scrub');
         var activeSlot = scrub && scrub.querySelector('.tm-scrub-slot.active');
