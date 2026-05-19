@@ -104,10 +104,12 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         $resTablesNow[(int)$occ['reservation_id']][] = (int)$tid;
     }
     $comboBars = [];
+    $comboTableIds = [];   // tavoli che fanno parte di una combinazione attiva
     foreach ($resTablesNow as $tids) {
         if (count($tids) < 2) continue;            // combinazioni = coppie
         [$ta, $tb] = [$tids[0], $tids[1]];
         if (!isset($tablePos[$ta], $tablePos[$tb])) continue;
+        $comboTableIds[$ta] = $comboTableIds[$tb] = true;
         $c1x = $tablePos[$ta]['x'] + 38; $c1y = $tablePos[$ta]['y'] + 38;
         $c2x = $tablePos[$tb]['x'] + 38; $c2y = $tablePos[$tb]['y'] + 38;
         $dx = $c2x - $c1x; $dy = $c2y - $c1y;
@@ -119,6 +121,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
             'bx'    => ($c1x + $c2x) / 2,
             'by'    => ($c1y + $c2y) / 2,
             'area'  => $tablePos[$ta]['area'],
+            'party' => (int)($floorState[$ta]['party'] ?? 0),
         ];
     }
 
@@ -223,7 +226,8 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                     <?php if ($areaHasDot($tArea)): ?><span class="tm-area-dot" style="background:<?= e(area_color($tArea)) ?>;"></span><?php endif; ?>
                     <?php if ($occ): ?>
                     <span class="tm-map-name"><?= e($occ['name']) ?></span>
-                    <span class="tm-map-cap"><?= (int)$occ['party'] ?>p &middot; <?= e($occ['time']) ?></span>
+                    <?php // Tavolo in combinazione: niente party sul tavolo (è della coppia → sulla pastiglia) ?>
+                    <span class="tm-map-cap"><?php if (!isset($comboTableIds[(int)$t['id']])): ?><?= (int)$occ['party'] ?>p &middot; <?php endif; ?><?= e($occ['time']) ?></span>
                     <?php else: ?>
                     <span class="tm-map-name"><?= e($t['name']) ?></span>
                     <span class="tm-map-cap"><?= (int)$t['capacity'] ?>p</span>
@@ -233,7 +237,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                 <?php /* Pastiglia catena al centro di ogni combinazione — sopra i tavoli */ ?>
                 <?php foreach ($comboBars as $cb): ?>
                 <div class="tm-combo-badge" data-area="<?= e($cb['area']) ?>"
-                     style="left:<?= round($cb['bx'], 1) ?>px; top:<?= round($cb['by'], 1) ?>px;"><i class="bi bi-link-45deg"></i></div>
+                     style="left:<?= round($cb['bx'], 1) ?>px; top:<?= round($cb['by'], 1) ?>px;"><i class="bi bi-link-45deg"></i> <?= (int)$cb['party'] ?>p</div>
                 <?php endforeach; ?>
             </div>
             <div class="tm-map-hint"><i class="bi bi-info-circle me-1"></i> Tavoli blu = occupati alle <?= e($opTime) ?>. Clicca un tavolo o una prenotazione per i dettagli.</div>
