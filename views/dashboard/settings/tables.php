@@ -135,15 +135,17 @@ foreach ($tables as $t) {
                     <?php if (!empty($t['internal_note'])): ?><span><?= e($t['internal_note']) ?></span><?php endif; ?>
                     <?php if (!empty($combo)): ?>
                     <?php
-                        // Tavoli combinabili: nomi + somma dei posti di tutti questi tavoli
-                        $comboNames = [];
-                        $comboSeats = 0;
+                        // Le combinazioni sono a COPPIE: per ogni partner mostro i posti
+                        // totali della coppia (questo tavolo + quel partner).
+                        $myCap = (int)$t['capacity'];
+                        $comboParts = [];
                         foreach (array_unique(array_map('intval', $combo)) as $cid) {
-                            $comboNames[] = $tableNamesById[$cid] ?? '?';
-                            $comboSeats += (int)($tableCapById[$cid] ?? 0);
+                            $pname = $tableNamesById[$cid] ?? '?';
+                            $pcap  = (int)($tableCapById[$cid] ?? 0);
+                            $comboParts[] = $pname . ' (' . ($myCap + $pcap) . 'p)';
                         }
                     ?>
-                    <span class="tm-tag tm-tag-combo<?= $isActive ? '' : ' off' ?>" title="<?= $isActive ? 'Combinabile con questi tavoli — ' . $comboSeats . ' posti in totale' : 'Combinazione inattiva finché il tavolo è disattivato' ?>">↔ <?= e(implode(', ', $comboNames)) ?> &middot; <?= $comboSeats ?> posti</span>
+                    <span class="tm-tag tm-tag-combo<?= $isActive ? '' : ' off' ?>" title="<?= $isActive ? 'Combinabile a coppie — tra parentesi i posti totali della coppia' : 'Combinazione inattiva finché il tavolo è disattivato' ?>">↔ <?= e(implode(', ', $comboParts)) ?></span>
                     <?php endif; ?>
                 </div>
             </div>
