@@ -48,13 +48,16 @@ class Table
         return $stmt->fetch() ?: null;
     }
 
-    /** Elenco delle aree distinte usate dal tenant. */
+    /**
+     * Elenco delle aree distinte usate dal tenant, ordinate per creazione
+     * (MIN(id) del primo tavolo): la prima è l'area "principale".
+     */
     public function areas(int $tenantId): array
     {
         $stmt = $this->db->prepare(
-            "SELECT DISTINCT area FROM restaurant_tables
+            "SELECT area FROM restaurant_tables
              WHERE tenant_id = :t AND area IS NOT NULL AND area <> ''
-             ORDER BY area ASC"
+             GROUP BY area ORDER BY MIN(id) ASC"
         );
         $stmt->execute(['t' => $tenantId]);
         return array_column($stmt->fetchAll(), 'area');

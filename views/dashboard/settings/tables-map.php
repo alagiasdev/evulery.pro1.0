@@ -23,6 +23,10 @@ unset($_t);
 
 $firstArea = $areas[0] ?? '';
 $multiArea = count($areas) > 1;
+// Area "principale" = la prima creata: niente pallino colore. Le aree
+// aggiuntive ricevono il pallino solo se ce n'è più di una.
+$primaryArea = $firstArea;
+$areaHasDot = fn(string $a): bool => $multiArea && $a !== '' && $a !== $primaryArea;
 
 // Slot orari dello scorri-orari (operativa)
 $slots = [];
@@ -129,7 +133,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         <?php if ($multiArea): ?>
         <div class="tm-area-tabs" style="margin-left:8px;">
             <?php foreach ($areas as $idx => $a): ?>
-            <button type="button" class="tm-area-tab <?= $idx === 0 ? 'active' : '' ?>" data-area="<?= e($a) ?>"><?= e($a) ?></button>
+            <button type="button" class="tm-area-tab <?= $idx === 0 ? 'active' : '' ?>" data-area="<?= e($a) ?>"><?php if ($areaHasDot($a)): ?><span class="tm-area-tab-dot" style="background:<?= e(area_color($a)) ?>;"></span><?php endif; ?><?= e($a) ?></button>
             <?php endforeach; ?>
         </div>
         <?php endif; ?>
@@ -181,6 +185,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                      data-id="<?= (int)$t['id'] ?>" data-area="<?= e($tArea) ?>"
                      <?= $occ ? 'data-pop="tm-pop-res-' . (int)$occ['reservation_id'] . '"' : '' ?>
                      style="left:<?= (int)$t['_x'] ?>px; top:<?= (int)$t['_y'] ?>px;<?= $hidden ? 'display:none;' : '' ?>">
+                    <?php if ($areaHasDot($tArea)): ?><span class="tm-area-dot" style="background:<?= e(area_color($tArea)) ?>;"></span><?php endif; ?>
                     <?php if ($occ): ?>
                     <span class="tm-map-name"><?= e($occ['name']) ?></span>
                     <span class="tm-map-cap"><?= (int)$occ['party'] ?>p &middot; <?= e($occ['time']) ?></span>
@@ -252,7 +257,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
     <div class="tm-op-bar">
         <div class="tm-area-tabs">
             <?php foreach ($areas as $idx => $a): ?>
-            <button type="button" class="tm-area-tab <?= $idx === 0 ? 'active' : '' ?>" data-area="<?= e($a) ?>"><?= e($a) ?></button>
+            <button type="button" class="tm-area-tab <?= $idx === 0 ? 'active' : '' ?>" data-area="<?= e($a) ?>"><?php if ($areaHasDot($a)): ?><span class="tm-area-tab-dot" style="background:<?= e(area_color($a)) ?>;"></span><?php endif; ?><?= e($a) ?></button>
             <?php endforeach; ?>
         </div>
     </div>
@@ -267,6 +272,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         <div class="tm-map-table <?= $t['shape'] === 'round' ? 'round' : 'square' ?><?= (int)$t['is_active'] ? '' : ' off' ?>"
              data-id="<?= (int)$t['id'] ?>" data-area="<?= e($tArea) ?>"
              style="left:<?= (int)$t['_x'] ?>px; top:<?= (int)$t['_y'] ?>px;<?= $hidden ? 'display:none;' : '' ?>">
+            <?php if ($areaHasDot($tArea)): ?><span class="tm-area-dot" style="background:<?= e(area_color($tArea)) ?>;"></span><?php endif; ?>
             <span class="tm-map-name"><?= e($t['name']) ?></span>
             <span class="tm-map-cap"><?= (int)$t['capacity'] ?>p</span>
         </div>

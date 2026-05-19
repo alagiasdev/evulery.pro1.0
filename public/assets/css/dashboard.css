@@ -4341,6 +4341,9 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-res-table.set { border: 1px solid var(--brand, #00844A); color: var(--brand, #00844A); background: var(--brand-light, #e6f4ed); }
 .tm-res-table.none { border: 1px dashed #e0a39d; color: #b3261e; background: #fdecea; }
 .tm-map-table.hl { box-shadow: 0 0 0 3px #ffc107, 0 0 0 6px rgba(255,193,7,.4); z-index: 9; }
+/* pallino colore area: accento (solo aree aggiuntive), non riempimento */
+.tm-area-dot { position: absolute; top: -5px; right: -5px; width: 17px; height: 17px; border-radius: 50%; box-shadow: 0 0 0 2.5px #fff, 0 1px 3px rgba(0,0,0,.3); }
+.tm-area-tab-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; box-shadow: 0 0 0 1.5px rgba(255,255,255,.55); }
 .tm-pop-badge { font-size: .58rem; font-weight: 700; background: #e7f1ff; color: #0d6efd; border-radius: 5px; padding: 2px 6px; margin-left: 4px; vertical-align: middle; }
 .tm-pop-contact { display: flex; flex-direction: column; gap: 3px; margin-bottom: 11px; }
 .tm-pop-contact a { font-size: .74rem; color: #6c757d; text-decoration: none; display: flex; align-items: center; gap: 6px; }

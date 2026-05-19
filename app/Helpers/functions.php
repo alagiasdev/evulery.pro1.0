@@ -215,6 +215,18 @@ function status_label(string $status): string
 }
 
 /**
+ * Colore identificativo di un'area sala, derivato in modo deterministico
+ * dal nome (crc32 → palette fissa). La stessa area ha sempre lo stesso
+ * colore, senza alcuna configurazione. Palette scelta per non confondersi
+ * con verde (tavolo libero), blu (occupato) e giallo (selezione).
+ */
+function area_color(string $area): string
+{
+    $palette = ['#e8590c', '#9c36b5', '#0c8599', '#d6336c', '#f08c00', '#7048e8', '#a8763e', '#495057'];
+    return $palette[crc32($area) % count($palette)];
+}
+
+/**
  * Get Bootstrap badge class for reservation status
  */
 function status_badge(string $status): string
