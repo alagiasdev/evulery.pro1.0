@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Connettore tavoli combinati (mappa operativa)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{
+    --brand:#00844A;--brand-light:#e6f4ed;--bg:#f5f6f8;--card:#fff;
+    --text:#1a1d23;--muted:#6c757d;--border:#e9ecef;--radius:12px;--busy:#0d6efd;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);padding:24px;max-width:1100px;margin:0 auto;}
+  h2{font-size:1.35rem;font-weight:700;margin-bottom:.25rem;}
+  .subtitle{font-size:.82rem;color:var(--muted);margin-bottom:1rem;}
+  .section-divider{margin:38px 0;border:none;border-top:2px dashed #dee2e6;}
+  .section-label{font-size:1rem;font-weight:700;color:var(--brand);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+  .section-hint{font-size:.78rem;color:var(--muted);margin:0 0 14px;}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:0 1px 6px rgba(0,0,0,.06);overflow:hidden;}
+
+  .canvas{position:relative;height:280px;background:radial-gradient(circle,#e3e6ea 1px,transparent 1px);background-size:20px 20px;background-color:#fcfcfd;}
+  .tbl{position:absolute;width:76px;height:76px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18);z-index:2;}
+  .tbl.round{border-radius:50%;}
+  .tbl.free{background:#198754;}
+  .tbl.busy{background:var(--busy);}
+  .t-name{font-size:.72rem;font-weight:700;}
+  .t-cap{font-size:.6rem;opacity:.9;}
+
+  /* connettore: barra che unisce 2 tavoli della stessa prenotazione */
+  .combo-bar{position:absolute;height:9px;background:var(--busy);border-radius:5px;z-index:1;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+  .combo-badge{position:absolute;z-index:3;width:26px;height:26px;border-radius:50%;background:#fff;color:var(--busy);
+    display:flex;align-items:center;justify-content:center;font-size:.8rem;box-shadow:0 0 0 2px var(--busy),0 1px 4px rgba(0,0,0,.25);}
+
+  .legend{display:flex;gap:16px;padding:10px 14px;border-top:1px solid var(--border);background:#fafbfc;flex-wrap:wrap;font-size:.68rem;color:var(--muted);}
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .lg-dot{width:12px;height:12px;border-radius:4px;}
+  .lg-bar{width:22px;height:8px;border-radius:4px;background:var(--busy);}
+
+  .variants{display:flex;gap:18px;flex-wrap:wrap;}
+  .variant{flex:1;min-width:300px;}
+  .variant h4{font-size:.8rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+  .pick{font-size:.58rem;font-weight:700;background:var(--brand);color:#fff;padding:2px 7px;border-radius:5px;}
+
+  .notes{margin-top:34px;padding:20px;background:#fff3cd;border:1px solid #ffe082;border-radius:var(--radius);font-size:.8rem;line-height:1.65;}
+  .notes h3{font-size:.92rem;font-weight:700;margin-bottom:8px;color:#664d03;}
+  .notes ul{padding-left:20px;}.notes li{margin-bottom:6px;}
+  .notes code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;font-size:.74rem;}
+</style>
+</head>
+<body>
+
+<h2>Wireframe — Connettore tavoli combinati</h2>
+<p class="subtitle">Mappa sala <strong>operativa</strong>: quando una prenotazione occupa 2 tavoli, una barra li unisce. A colpo d'occhio: "questi due tavoli = una sola prenotazione". Le combinazioni sono sempre coppie (mai 3+).</p>
+
+<!-- ===== SCENARIO ===== -->
+<div class="section-label"><i class="bi bi-link-45deg"></i> Come appare in sala</div>
+<p class="section-hint">Tav.1 + Tav.2 sono occupati dalla stessa prenotazione (ALAGIA, 7 persone) → barra di collegamento + pastiglia con icona catena al centro. Tav.3 è una prenotazione singola: nessuna barra.</p>
+<div class="card">
+  <div class="canvas">
+    <!-- combinazione: Tav.1 + Tav.2 -->
+    <div class="combo-bar" style="left:98px;top:103px;width:140px;"></div>
+    <div class="combo-badge" style="left:155px;top:95px;"><i class="bi bi-link-45deg"></i></div>
+    <div class="tbl busy" style="left:60px;top:65px;"><span class="t-name">ALAGIA</span><span class="t-cap">7p · 17:00</span></div>
+    <div class="tbl busy" style="left:200px;top:65px;"><span class="t-name">ALAGIA</span><span class="t-cap">7p · 17:00</span></div>
+    <!-- singola -->
+    <div class="tbl busy round" style="left:400px;top:65px;"><span class="t-name">BIANCHI</span><span class="t-cap">2p · 17:30</span></div>
+    <!-- libero -->
+    <div class="tbl free" style="left:540px;top:65px;"><span class="t-name">Tav.4</span><span class="t-cap">4p</span></div>
+  </div>
+  <div class="legend">
+    <span><span class="lg-dot" style="background:#198754;"></span> Libero</span>
+    <span><span class="lg-dot" style="background:var(--busy);"></span> Occupato</span>
+    <span><span class="lg-bar"></span> <i class="bi bi-link-45deg"></i> Tavoli combinati (stessa prenotazione)</span>
+  </div>
+</div>
+
+<!-- ===== ANGOLAZIONE ===== -->
+<hr class="section-divider">
+<div class="section-label"><i class="bi bi-bounding-box"></i> Funziona a qualsiasi angolazione</div>
+<p class="section-hint">I tavoli sulla mappa possono stare ovunque: la barra collega i due centri seguendo qualsiasi inclinazione (in implementazione: un layer SVG dietro i tavoli).</p>
+<div class="card">
+  <div class="canvas">
+    <!-- combinazione diagonale -->
+    <div class="combo-bar" style="left:118px;top:120px;width:165px;transform:rotate(34deg);transform-origin:left center;"></div>
+    <div class="combo-badge" style="left:178px;top:128px;"><i class="bi bi-link-45deg"></i></div>
+    <div class="tbl busy" style="left:80px;top:82px;"><span class="t-name">VERDI</span><span class="t-cap">6p · 20:00</span></div>
+    <div class="tbl busy" style="left:240px;top:170px;"><span class="t-name">VERDI</span><span class="t-cap">6p · 20:00</span></div>
+  </div>
+</div>
+
+<!-- ===== VARIANTI ===== -->
+<hr class="section-divider">
+<div class="section-label"><i class="bi bi-palette2"></i> Due varianti del connettore</div>
+<p class="section-hint">Stesso comportamento, segno visivo diverso. Scegli quella che preferisci.</p>
+<div class="variants">
+  <div class="variant">
+    <h4>A — Barra + pastiglia catena <span class="pick">consigliata</span></h4>
+    <div class="card">
+      <div class="canvas" style="height:170px;">
+        <div class="combo-bar" style="left:78px;top:78px;width:140px;"></div>
+        <div class="combo-badge" style="left:135px;top:70px;"><i class="bi bi-link-45deg"></i></div>
+        <div class="tbl busy" style="left:40px;top:40px;"><span class="t-name">ALAGIA</span><span class="t-cap">7p</span></div>
+        <div class="tbl busy" style="left:180px;top:40px;"><span class="t-name">ALAGIA</span><span class="t-cap">7p</span></div>
+      </div>
+    </div>
+    <p style="font-size:.72rem;color:var(--muted);margin-top:6px;">La pastiglia con l'icona rende il legame esplicito anche se i tavoli sono vicini o si sovrappongono un po'.</p>
+  </div>
+  <div class="variant">
+    <h4>B — Solo barra</h4>
+    <div class="card">
+      <div class="canvas" style="height:170px;">
+        <div class="combo-bar" style="left:78px;top:78px;width:140px;"></div>
+        <div class="tbl busy" style="left:40px;top:40px;"><span class="t-name">ALAGIA</span><span class="t-cap">7p</span></div>
+        <div class="tbl busy" style="left:180px;top:40px;"><span class="t-name">ALAGIA</span><span class="t-cap">7p</span></div>
+      </div>
+    </div>
+    <p style="font-size:.72rem;color:var(--muted);margin-top:6px;">Più pulita, ma con tavoli molto vicini la barra si vede poco.</p>
+  </div>
+</div>
+
+<!-- ===== NOTE ===== -->
+<div class="notes">
+  <h3><i class="bi bi-lightbulb"></i> Note di design — connettore tavoli combinati</h3>
+  <ul>
+    <li><strong>Solo modalità operativa.</strong> Il connettore mostra una combinazione <em>attiva</em>: una prenotazione che in quel momento occupa 2 tavoli. Non mostra le coppie semplicemente "combinabili" (quella è configurazione, vive nella modale tavolo).</li>
+    <li><strong>Dato già disponibile.</strong> <code>floorState</code> mappa tavolo → prenotazione. Due tavoli con lo <em>stesso</em> <code>reservation_id</code> = combinazione attiva → si traccia la barra tra i loro centri. Nessuna query nuova.</li>
+    <li><strong>Sempre coppie.</strong> Le combinazioni sono solo a 2 tavoli (mai catene di 3+), quindi il connettore è sempre una linea singola tra due tavoli.</li>
+    <li><strong>Qualsiasi angolazione.</strong> La barra collega i centri dei due tavoli → in implementazione un piccolo layer SVG dietro i tavoli (<code>z-index</code> sotto), così segue qualunque disposizione.</li>
+    <li><strong>Colore.</strong> Barra blu come i tavoli occupati: comunica "unità". La pastiglia bianca con icona catena (variante A) resta leggibile anche con tavoli accostati.</li>
+    <li><strong>Fuori scope</strong>: le linee tratteggiate dei tavoli <em>combinabili</em> in Setup — valutabili a parte, solo se utili, perché con molte coppie affollano la mappa.</li>
+  </ul>
+</div>
+
+</body>
+</html>
