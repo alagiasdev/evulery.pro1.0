@@ -228,6 +228,18 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                 <?php if ($cnotes !== ''): ?>
                 <div class="tm-pop-note"><i class="bi bi-chat-left-text"></i> <span><strong>Note del cliente:</strong> <?= e($cnotes) ?></span></div>
                 <?php endif; ?>
+                <form method="POST" action="<?= url('dashboard/reservations/' . $rid . '/status') ?>" class="tm-pop-status">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="redirect_back" value="<?= e($opBack) ?>">
+                    <label class="tm-pop-label">Cambia stato</label>
+                    <div class="tm-pop-sp-row">
+                        <?php foreach (['confirmed' => ['Confermata', 'bi-check-circle'], 'arrived' => ['Arrivato', 'bi-box-arrow-in-right'], 'noshow' => ['No-show', 'bi-x-circle']] as $sv => $si): ?>
+                        <?php if ((string)$r['status'] !== $sv): ?>
+                        <button type="submit" name="status" value="<?= $sv ?>" class="tm-pop-sp sp-<?= $sv ?>"><i class="bi <?= $si[1] ?> me-1"></i><?= e($si[0]) ?></button>
+                        <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                </form>
                 <form method="POST" action="<?= url('dashboard/reservations/' . $rid . '/table') ?>">
                     <?= csrf_field() ?>
                     <input type="hidden" name="redirect_back" value="<?= e($opBack) ?>">

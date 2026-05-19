@@ -4351,6 +4351,13 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-pop-note { display: flex; gap: 7px; font-size: .72rem; color: #5b6470; background: #f5f6f8; border: 1px solid var(--border, #e9ecef); border-radius: 7px; padding: 7px 9px; margin-bottom: 12px; line-height: 1.45; }
 .tm-pop-note i { color: #6c757d; margin-top: 1px; flex-shrink: 0; }
 .tm-pop-note strong { color: #1a1d23; }
+.tm-pop-status { margin-bottom: 13px; }
+.tm-pop-sp-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.tm-pop-sp { font-size: .72rem; font-weight: 600; padding: 6px 11px; border-radius: 7px; border: 1px solid var(--border, #e9ecef); background: #fff; color: #5b6470; cursor: pointer; display: inline-flex; align-items: center; }
+.tm-pop-sp:hover { border-color: #adb5bd; }
+.tm-pop-sp.sp-confirmed:hover { border-color: #0a5c36; background: #d1e7dd; color: #0a5c36; }
+.tm-pop-sp.sp-arrived:hover { border-color: #084298; background: #cfe2ff; color: #084298; }
+.tm-pop-sp.sp-noshow:hover { border-color: #b3261e; background: #fdecea; color: #b3261e; }
 @media (max-width: 860px) {
     .tm-vtabs { display: flex; }
     .tm-twopane { flex-direction: column; }
