@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Sala a due pannelli (lista + mappa)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{
+    --brand:#00844A;--brand-light:#e6f4ed;--bg:#f5f6f8;--card:#fff;
+    --text:#1a1d23;--muted:#6c757d;--border:#e9ecef;--radius:12px;
+    --danger:#dc3545;--warn:#ffc107;--info:#0d6efd;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);padding:24px;max-width:1500px;margin:0 auto;}
+  h2{font-size:1.35rem;font-weight:700;margin-bottom:.25rem;}
+  .subtitle{font-size:.82rem;color:var(--muted);margin-bottom:1rem;}
+  .section-divider{margin:40px 0;border:none;border-top:2px dashed #dee2e6;}
+  .section-label{font-size:1rem;font-weight:700;color:var(--brand);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+  .section-hint{font-size:.78rem;color:var(--muted);margin:0 0 14px;}
+
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:0 1px 6px rgba(0,0,0,.06);overflow:hidden;}
+  .btn{padding:6px 12px;border-radius:8px;font-size:.72rem;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
+  .btn-brand{background:var(--brand);color:#fff;}
+  .btn-ghost{background:var(--card);color:var(--muted);border:1px solid var(--border);}
+
+  /* ===== layout a due pannelli ===== */
+  .sala-head{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  .sala-title{font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:6px;}
+  .date-nav{display:flex;align-items:center;gap:4px;}
+  .date-arrow{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--card);cursor:pointer;color:var(--muted);font-size:.8rem;}
+  .date-cur{font-size:.78rem;font-weight:700;padding:0 8px;}
+  .mode-toggle{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+  .mode-toggle a{padding:5px 12px;font-size:.72rem;font-weight:600;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:5px;}
+  .mode-toggle a.active{background:var(--brand);color:#fff;}
+
+  .twopane{display:flex;min-height:540px;}
+  .pane-list{width:340px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;}
+  .pane-map{flex:1;display:flex;flex-direction:column;min-width:0;}
+
+  /* lista prenotazioni */
+  .list-search{padding:10px 12px;border-bottom:1px solid var(--border);}
+  .list-search input{width:100%;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-size:.76rem;}
+  .list-scroll{overflow-y:auto;flex:1;}
+  .list-group-h{font-size:.62rem;font-weight:700;text-transform:uppercase;color:var(--muted);padding:9px 14px 5px;background:#fafbfc;position:sticky;top:0;display:flex;align-items:center;gap:6px;}
+  .list-group-h.alert{color:#b3261e;background:#fdecea;}
+  .res-row{display:flex;align-items:center;gap:9px;padding:10px 14px;border-bottom:1px solid #f5f6f8;cursor:pointer;}
+  .res-row:hover{background:#fafbfc;}
+  .res-row.sel{background:var(--brand-light);box-shadow:inset 3px 0 0 var(--brand);}
+  .res-time{font-size:.72rem;font-weight:700;background:#1a1d23;color:#fff;border-radius:6px;padding:3px 7px;flex-shrink:0;}
+  .res-info{flex:1;min-width:0;}
+  .res-name{font-size:.78rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .res-name b{font-weight:700;}
+  .res-sub{font-size:.62rem;color:var(--muted);display:flex;gap:7px;flex-wrap:wrap;margin-top:1px;}
+  .res-tag{font-size:.55rem;font-weight:600;padding:1px 5px;border-radius:4px;background:#fff3cd;color:#8a6d00;}
+  .res-tag.allergy{background:#fdecea;color:#b3261e;}
+  .res-table{font-size:.68rem;font-weight:700;border-radius:7px;padding:4px 7px;flex-shrink:0;min-width:46px;text-align:center;}
+  .res-table.set{border:1px solid var(--brand);color:var(--brand);background:var(--brand-light);}
+  .res-table.none{border:1px dashed #e0a39d;color:#b3261e;background:#fdecea;}
+
+  /* mappa */
+  .scrub{display:flex;border-bottom:1px solid var(--border);background:#fafbfc;overflow-x:auto;}
+  .scrub-slot{flex:0 0 56px;text-align:center;padding:7px 4px;font-size:.64rem;font-weight:600;color:var(--muted);border-right:1px solid #f0f1f3;cursor:pointer;}
+  .scrub-slot.active{background:var(--brand);color:#fff;}
+  .scrub-slot small{display:block;font-size:.52rem;opacity:.8;font-weight:500;}
+  .floor-canvas{position:relative;flex:1;background:radial-gradient(circle,#e9ecef 1px,transparent 1px);background-size:20px 20px;overflow:hidden;min-height:380px;}
+  .table-el{position:absolute;width:76px;height:76px;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.18);}
+  .table-el.round{border-radius:50%;}
+  .table-el.free{background:#198754;}
+  .table-el.busy{background:#0d6efd;}
+  .table-el.sel{box-shadow:0 0 0 3px var(--warn),0 0 0 6px rgba(255,193,7,.35);}
+  .t-name{font-size:.72rem;font-weight:700;}
+  .t-cap{font-size:.6rem;opacity:.9;white-space:nowrap;}
+  .map-legend{display:flex;gap:14px;padding:9px 14px;border-top:1px solid var(--border);background:#fafbfc;flex-wrap:wrap;}
+  .lg-item{display:flex;align-items:center;gap:5px;font-size:.66rem;color:var(--muted);}
+  .lg-dot{width:11px;height:11px;border-radius:4px;}
+
+  /* mobile mock */
+  .phone{width:360px;border:8px solid #1a1d23;border-radius:30px;overflow:hidden;background:var(--card);}
+  .phone-tabs{display:flex;border-bottom:1px solid var(--border);}
+  .phone-tabs button{flex:1;padding:11px;font-size:.78rem;font-weight:600;background:var(--card);color:var(--muted);border:none;border-bottom:2px solid transparent;cursor:pointer;}
+  .phone-tabs button.active{color:var(--brand);border-bottom-color:var(--brand);}
+  .badge-count{background:#b3261e;color:#fff;font-size:.58rem;font-weight:700;border-radius:9px;padding:1px 6px;margin-left:4px;}
+
+  .notes{margin-top:36px;padding:20px;background:#fff3cd;border:1px solid #ffe082;border-radius:var(--radius);font-size:.8rem;line-height:1.65;}
+  .notes h3{font-size:.92rem;font-weight:700;margin-bottom:8px;color:#664d03;}
+  .notes ul{padding-left:20px;}.notes li{margin-bottom:6px;}
+  .notes code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;font-size:.74rem;}
+  .ph{font-size:.56rem;font-weight:700;padding:2px 7px;border-radius:5px;text-transform:uppercase;}
+  .ph1{background:var(--brand);color:#fff;}
+  .ph2{background:#fff3cd;color:#8a6d00;border:1px solid #ffe082;}
+</style>
+</head>
+<body>
+
+<h2>Wireframe — Sala a due pannelli</h2>
+<p class="subtitle">Pagina "Sala" in modalità operativa: a sinistra l'elenco prenotazioni del giorno, a destra la mappa. Click su una prenotazione → evidenzia il suo tavolo. In cima, evidenziate, le prenotazioni <strong>senza tavolo</strong> — l'unica cosa che oggi non si vede da nessuna parte.</p>
+
+<!-- ===== DESKTOP ===== -->
+<div class="section-label"><i class="bi bi-display"></i> Desktop — due pannelli affiancati</div>
+<p class="section-hint">Il pannello sinistro mostra TUTTE le prenotazioni del giorno (non dipende dallo scorri-orari). Lo scorri-orari colora solo la mappa.</p>
+
+<div class="card">
+  <div class="sala-head">
+    <span class="sala-title"><i class="bi bi-grid-3x3" style="color:var(--brand);"></i> Sala</span>
+    <div class="date-nav">
+      <button class="date-arrow"><i class="bi bi-chevron-left"></i></button>
+      <span class="date-cur">Mar 19/05/2026</span>
+      <button class="date-arrow"><i class="bi bi-chevron-right"></i></button>
+    </div>
+    <span style="font-size:.72rem;color:var(--muted);">9 prenotazioni · 29 coperti</span>
+    <div class="mode-toggle" style="margin-left:auto;">
+      <a href="#" class="active"><i class="bi bi-eye"></i> Operativa</a>
+      <a href="#"><i class="bi bi-pencil"></i> Setup</a>
+    </div>
+  </div>
+
+  <div class="twopane">
+    <!-- PANNELLO SINISTRO -->
+    <div class="pane-list">
+      <div class="list-search">
+        <input placeholder="Cerca nome o telefono...">
+      </div>
+      <div class="list-scroll">
+
+        <div class="list-group-h alert"><i class="bi bi-exclamation-triangle-fill"></i> Da assegnare · 2</div>
+        <div class="res-row">
+          <span class="res-time">20:00</span>
+          <div class="res-info">
+            <div class="res-name"><b>ALAGIA</b> stefano</div>
+            <div class="res-sub"><span>6 persone</span><span class="res-tag">In attesa</span></div>
+          </div>
+          <span class="res-table none">Assegna</span>
+        </div>
+        <div class="res-row">
+          <span class="res-time">21:30</span>
+          <div class="res-info">
+            <div class="res-name"><b>GALLO</b> pietro</div>
+            <div class="res-sub"><span>9 persone</span><span class="res-tag">Confermata</span></div>
+          </div>
+          <span class="res-table none">Assegna</span>
+        </div>
+
+        <div class="list-group-h"><i class="bi bi-clock"></i> 18:15 — 18:45</div>
+        <div class="res-row sel">
+          <span class="res-time">18:15</span>
+          <div class="res-info">
+            <div class="res-name"><b>KAILUS</b> william</div>
+            <div class="res-sub"><span>2 persone</span><span>1ª visita</span></div>
+          </div>
+          <span class="res-table set">Tav.4</span>
+        </div>
+        <div class="res-row">
+          <span class="res-time">18:30</span>
+          <div class="res-info">
+            <div class="res-name"><b>DRASKOVIC</b> erika</div>
+            <div class="res-sub"><span>2 persone</span><span class="res-tag allergy"><i class="bi bi-exclamation-octagon"></i> Allergia</span></div>
+          </div>
+          <span class="res-table set">Tav.6</span>
+        </div>
+        <div class="res-row">
+          <span class="res-time">18:45</span>
+          <div class="res-info">
+            <div class="res-name"><b>EKBLOM</b> anna</div>
+            <div class="res-sub"><span>3 persone</span></div>
+          </div>
+          <span class="res-table set">Tav.9</span>
+        </div>
+
+        <div class="list-group-h"><i class="bi bi-clock"></i> 19:00 — 19:45</div>
+        <div class="res-row">
+          <span class="res-time">19:00</span>
+          <div class="res-info">
+            <div class="res-name"><b>JUAN</b> carlos</div>
+            <div class="res-sub"><span>2 persone</span></div>
+          </div>
+          <span class="res-table set">Tav.7</span>
+        </div>
+        <div class="res-row">
+          <span class="res-time">19:30</span>
+          <div class="res-info">
+            <div class="res-name"><b>HINRICHSEN</b> jonas</div>
+            <div class="res-sub"><span>2 persone</span></div>
+          </div>
+          <span class="res-table set">Tav.12</span>
+        </div>
+        <div class="res-row">
+          <span class="res-time">19:45</span>
+          <div class="res-info">
+            <div class="res-name"><b>BEDOUIN</b> sami</div>
+            <div class="res-sub"><span>3 persone</span></div>
+          </div>
+          <span class="res-table set">Tav.5</span>
+        </div>
+
+        <div class="list-group-h"><i class="bi bi-clock"></i> 20:00 — 20:30</div>
+        <div class="res-row">
+          <span class="res-time">20:00</span>
+          <div class="res-info">
+            <div class="res-name"><b>MITA</b> giulia</div>
+            <div class="res-sub"><span>4 persone</span></div>
+          </div>
+          <span class="res-table set">Tav.8</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PANNELLO DESTRO -->
+    <div class="pane-map">
+      <div class="scrub">
+        <div class="scrub-slot">18:00<small>0/13</small></div>
+        <div class="scrub-slot">18:30<small>4/13</small></div>
+        <div class="scrub-slot">19:00<small>6/13</small></div>
+        <div class="scrub-slot">19:30<small>14/13</small></div>
+        <div class="scrub-slot active">20:00<small>25/13</small></div>
+        <div class="scrub-slot">20:30<small>17/13</small></div>
+        <div class="scrub-slot">21:00<small>9/13</small></div>
+        <div class="scrub-slot">21:30<small>9/13</small></div>
+        <div class="scrub-slot">22:00<small>0/13</small></div>
+      </div>
+      <div class="floor-canvas">
+        <div class="table-el free" style="left:40px;top:30px;"><span class="t-name">Tav.1</span><span class="t-cap">2p</span></div>
+        <div class="table-el free" style="left:150px;top:30px;"><span class="t-name">Tav.2</span><span class="t-cap">4p</span></div>
+        <div class="table-el free round" style="left:260px;top:30px;"><span class="t-name">Tav.3</span><span class="t-cap">2p</span></div>
+        <div class="table-el busy sel" style="left:40px;top:150px;"><span class="t-name">KAILUS</span><span class="t-cap">2p · 18:15</span></div>
+        <div class="table-el busy" style="left:150px;top:150px;"><span class="t-name">BEDOUIN</span><span class="t-cap">3p · 19:45</span></div>
+        <div class="table-el busy" style="left:260px;top:150px;"><span class="t-name">DRASKOVIC</span><span class="t-cap">2p · 18:30</span></div>
+        <div class="table-el busy" style="left:370px;top:150px;"><span class="t-name">JUAN</span><span class="t-cap">2p · 19:00</span></div>
+        <div class="table-el busy" style="left:480px;top:150px;"><span class="t-name">MITA</span><span class="t-cap">4p · 20:00</span></div>
+        <div class="table-el busy round" style="left:40px;top:270px;"><span class="t-name">EKBLOM</span><span class="t-cap">3p · 18:45</span></div>
+        <div class="table-el free" style="left:150px;top:270px;"><span class="t-name">Tav.10</span><span class="t-cap">2p</span></div>
+        <div class="table-el free" style="left:260px;top:270px;"><span class="t-name">Tav.11</span><span class="t-cap">2p</span></div>
+        <div class="table-el busy" style="left:370px;top:270px;"><span class="t-name">HINRICH.</span><span class="t-cap">2p · 19:30</span></div>
+      </div>
+      <div class="map-legend">
+        <div class="lg-item"><div class="lg-dot" style="background:#198754;"></div> Libero</div>
+        <div class="lg-item"><div class="lg-dot" style="background:#0d6efd;"></div> Occupato</div>
+        <div class="lg-item"><div class="lg-dot" style="box-shadow:0 0 0 2px var(--warn);"></div> Selezionato dalla lista</div>
+        <span style="margin-left:auto;font-size:.64rem;color:#adb5bd;">Click su una prenotazione a sinistra → evidenzia il tavolo. Click su un tavolo → popup riassegnazione.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MOBILE ===== -->
+<hr class="section-divider">
+<div class="section-label"><i class="bi bi-phone"></i> Mobile — due tab (no affiancamento)</div>
+<p class="section-hint">Su mobile i due pannelli diventano tab. Il tab "Prenotazioni" porta il badge rosso col numero di prenotazioni da assegnare, così l'azione resta visibile anche partendo dalla mappa.</p>
+
+<div style="display:flex;gap:30px;flex-wrap:wrap;">
+  <div>
+    <p style="font-size:.72rem;color:var(--muted);margin-bottom:8px;font-weight:600;">Tab Prenotazioni</p>
+    <div class="phone">
+      <div class="phone-tabs">
+        <button class="active">Prenotazioni <span class="badge-count">2</span></button>
+        <button>Mappa</button>
+      </div>
+      <div class="list-scroll" style="max-height:420px;">
+        <div class="list-group-h alert"><i class="bi bi-exclamation-triangle-fill"></i> Da assegnare · 2</div>
+        <div class="res-row">
+          <span class="res-time">20:00</span>
+          <div class="res-info"><div class="res-name"><b>ALAGIA</b> stefano</div><div class="res-sub"><span>6 persone</span></div></div>
+          <span class="res-table none">Assegna</span>
+        </div>
+        <div class="res-row">
+          <span class="res-time">21:30</span>
+          <div class="res-info"><div class="res-name"><b>GALLO</b> pietro</div><div class="res-sub"><span>9 persone</span></div></div>
+          <span class="res-table none">Assegna</span>
+        </div>
+        <div class="list-group-h"><i class="bi bi-clock"></i> 18:15 — 18:45</div>
+        <div class="res-row">
+          <span class="res-time">18:15</span>
+          <div class="res-info"><div class="res-name"><b>KAILUS</b> william</div><div class="res-sub"><span>2 persone</span></div></div>
+          <span class="res-table set">Tav.4</span>
+        </div>
+        <div class="res-row">
+          <span class="res-time">18:30</span>
+          <div class="res-info"><div class="res-name"><b>DRASKOVIC</b> erika</div><div class="res-sub"><span class="res-tag allergy">Allergia</span></div></div>
+          <span class="res-table set">Tav.6</span>
+        </div>
+        <div class="res-row">
+          <span class="res-time">18:45</span>
+          <div class="res-info"><div class="res-name"><b>EKBLOM</b> anna</div><div class="res-sub"><span>3 persone</span></div></div>
+          <span class="res-table set">Tav.9</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p style="font-size:.72rem;color:var(--muted);margin-bottom:8px;font-weight:600;">Tab Mappa</p>
+    <div class="phone">
+      <div class="phone-tabs">
+        <button>Prenotazioni <span class="badge-count">2</span></button>
+        <button class="active">Mappa</button>
+      </div>
+      <div class="scrub">
+        <div class="scrub-slot">19:00</div>
+        <div class="scrub-slot">19:30</div>
+        <div class="scrub-slot active">20:00</div>
+        <div class="scrub-slot">20:30</div>
+        <div class="scrub-slot">21:00</div>
+      </div>
+      <div class="floor-canvas" style="min-height:300px;">
+        <div class="table-el free" style="left:30px;top:24px;"><span class="t-name">Tav.1</span><span class="t-cap">2p</span></div>
+        <div class="table-el busy" style="left:150px;top:24px;"><span class="t-name">MITA</span><span class="t-cap">4p · 20:00</span></div>
+        <div class="table-el busy round" style="left:30px;top:140px;"><span class="t-name">KAILUS</span><span class="t-cap">2p · 18:15</span></div>
+        <div class="table-el free" style="left:150px;top:140px;"><span class="t-name">Tav.3</span><span class="t-cap">2p</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NOTE ===== -->
+<div class="notes">
+  <h3><i class="bi bi-lightbulb"></i> Note di design — Sala a due pannelli</h3>
+  <ul>
+    <li><strong>Cosa risolve.</strong> Tre cose che la sola mappa non mostra: (1) le prenotazioni <strong>senza tavolo</strong> — invisibili sulla mappa; (2) l'<strong>intera giornata</strong>, non solo l'istante dello scorri-orari; (3) <strong>stato/allergie/1ª visita</strong> di ogni prenotazione.</li>
+    <li><strong>Gruppo "Da assegnare" in cima.</strong> In rosso, sempre per primo. È il vero valore aggiunto: la lista <code>/dashboard/reservations</code> non lo evidenzia. Su mobile diventa il <strong>badge rosso</strong> sul tab.</li>
+    <li><strong>La lista NON segue lo scorri-orari.</strong> Mostra tutte le prenotazioni del giorno raggruppate per fascia. Lo scorri-orari colora solo la mappa. Due semantiche distinte e volute.</li>
+    <li><strong>Interazione lista ⇄ mappa.</strong> Click su una prenotazione → evidenzia (bordo giallo) il suo tavolo sulla mappa. Se non ha tavolo → apre l'assegnazione. Click su un tavolo occupato → popup riassegnazione (già esistente in Fase 2).</li>
+    <li><strong>Mobile = tab, non affiancamento.</strong> Coerente con lo standard mobile-first del progetto. Il badge col conteggio "da assegnare" resta visibile anche dal tab Mappa.</li>
+    <li><strong>Nome:</strong> <code>COGNOME nome</code> (cognome maiuscolo) come già fatto sui tavoli della mappa.</li>
+    <li><strong>Fuori scope ora</strong> <span class="ph ph2">Fase succ.</span>: stati prenotazione editabili inline (Confermata/In attesa…), statistiche coperti per slot ricche, ricerca avanzata. La barra di ricerca c'è ma è un filtro semplice. Evitiamo di riprodurre mezza pagina Prenotazioni dentro Sala.</li>
+    <li><strong>Dati.</strong> <code>floorState</code> già fornisce gli occupati per orario. Serve una sola query nuova: tutte le prenotazioni del giorno con il tavolo assegnato (LEFT JOIN <code>reservation_tables</code>) → da cui si ricava anche il gruppo "Da assegnare" (tavolo NULL).</li>
+    <li><strong>Implementazione</strong> <span class="ph ph1">Fase 3</span>:
+      <ol>
+        <li>Query "prenotazioni del giorno + tavolo" nel <code>TableAssigner</code> o nel controller.</li>
+        <li>Pannello sinistro nella view <code>tables-map.php</code> (solo modalità operativa).</li>
+        <li>Layout flex 2 colonne desktop + tab su mobile (CSS <code>.tm-*</code>).</li>
+        <li>JS: click lista → evidenzia tavolo / apre popup. Riusa i popup esistenti.</li>
+      </ol>
+    </li>
+  </ul>
+</div>
+
+</body>
+</html>
