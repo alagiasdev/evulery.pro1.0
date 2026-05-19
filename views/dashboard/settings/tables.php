@@ -8,6 +8,7 @@ $totCovers = array_sum(array_map(fn($t) => (int)$t['is_active'] === 1 ? (int)$t[
 $comboCount = 0;
 foreach ($comboMap as $ids) { $comboCount += count($ids); }
 $comboCount = (int)($comboCount / 2);
+$tableNamesById = array_column($tables, 'name', 'id');
 
 // Dati tavoli per il modale (JS)
 $jsTables = [];
@@ -131,7 +132,10 @@ foreach ($tables as $t) {
                 <div class="tm-meta">
                     <?php if (!empty($t['area'])): ?><span><i class="bi bi-geo-alt"></i> <?= e($t['area']) ?></span><?php endif; ?>
                     <?php if (!empty($t['internal_note'])): ?><span><?= e($t['internal_note']) ?></span><?php endif; ?>
-                    <?php if (!empty($combo)): ?><span class="tm-tag tm-tag-combo<?= $isActive ? '' : ' off' ?>"<?= $isActive ? '' : ' title="Combinazione inattiva finché il tavolo è disattivato"' ?>>↔ <?= count($combo) ?> combinabili</span><?php endif; ?>
+                    <?php if (!empty($combo)): ?>
+                    <?php $comboNames = array_map(fn($cid) => $tableNamesById[$cid] ?? '?', array_unique(array_map('intval', $combo))); ?>
+                    <span class="tm-tag tm-tag-combo<?= $isActive ? '' : ' off' ?>" title="<?= $isActive ? 'Combinabile con: ' . e(implode(', ', $comboNames)) : 'Combinazione inattiva finché il tavolo è disattivato' ?>">↔ <?= e(implode(', ', $comboNames)) ?></span>
+                    <?php endif; ?>
                 </div>
             </div>
             <button type="button" class="tm-act tm-edit" data-id="<?= (int)$t['id'] ?>" title="Modifica"><i class="bi bi-pencil"></i></button>
