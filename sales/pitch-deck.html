@@ -61,7 +61,7 @@ body {
 }
 h1.slide-title { font-size: 48px; font-weight: 800; letter-spacing: -1px; line-height: 1.15; margin: 0 0 24px 0; color: var(--ink); }
 h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-height: 1.2; margin: 0 0 16px 0; color: var(--ink); }
-.slide-sub { font-size: 20px; color: var(--ink-soft); margin: 0 0 40px 0; max-width: 880px; line-height: 1.5; }
+.slide-sub { font-size: 20px; color: var(--ink-soft); margin: 0 0 28px 0; max-width: 880px; line-height: 1.5; }
 
 .brand { color: var(--brand); }
 .muted { color: var(--muted); }
@@ -132,23 +132,23 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
 .solution-banner i { color: #4ade80; font-size: 22px; }
 
 /* ============= Feature grid ============= */
-.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 12px; }
+.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 8px; }
 .feature-card {
     background: #fff;
     border: 1px solid var(--line);
     border-radius: 12px;
-    padding: 20px;
-    display: flex; flex-direction: column; gap: 8px;
+    padding: 13px 15px;
+    display: flex; flex-direction: column; gap: 5px;
 }
 .feature-card-icon {
-    width: 36px; height: 36px; border-radius: 8px;
+    width: 30px; height: 30px; border-radius: 8px;
     background: var(--brand-light); color: var(--brand);
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    margin-bottom: 4px;
+    font-size: 15px;
+    margin-bottom: 2px;
 }
-.feature-card h4 { font-size: 14px; font-weight: 700; margin: 0; color: var(--ink); }
-.feature-card p { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.45; }
+.feature-card h4 { font-size: 13px; font-weight: 700; margin: 0; color: var(--ink); }
+.feature-card p { font-size: 11px; color: var(--muted); margin: 0; line-height: 1.4; }
 
 /* ============= Compliance ============= */
 .compliance-banner {
@@ -250,10 +250,10 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
 .case-disclaimer { font-size: 11px; color: var(--muted); margin-top: 12px; font-style: italic; }
 
 /* ============= Pricing ============= */
-.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px; }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 4px; }
 .price-card {
     background: #fff; border: 1px solid var(--line); border-radius: 14px;
-    padding: 24px; display: flex; flex-direction: column;
+    padding: 14px 16px; display: flex; flex-direction: column;
     position: relative;
 }
 .price-card.popular { border: 2px solid var(--brand); box-shadow: 0 8px 24px rgba(0,132,74,.12); }
@@ -263,16 +263,16 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
     font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
     padding: 4px 12px; border-radius: 12px;
 }
-.price-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-.price-desc { font-size: 12px; color: var(--muted); margin-bottom: 16px; min-height: 32px; }
-.price-amount { font-size: 36px; font-weight: 900; color: var(--ink); }
+.price-name { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
+.price-desc { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.price-amount { font-size: 30px; font-weight: 900; color: var(--ink); }
 .price-amount sub { font-size: 14px; font-weight: 500; color: var(--muted); }
 .price-launch { font-size: 11px; color: var(--muted); margin-top: 4px; }
 .price-launch strong { color: var(--brand); font-weight: 700; }
 .price-launch s { color: #b3b3c2; }
-.price-features { list-style: none; padding: 0; margin: 16px 0 0 0; flex: 1; }
+.price-features { list-style: none; padding: 0; margin: 10px 0 0 0; flex: 1; }
 .price-features li {
-    font-size: 12px; padding: 5px 0;
+    font-size: 12px; padding: 2px 0;
     display: flex; align-items: flex-start; gap: 6px;
     color: var(--ink);
 }
@@ -440,7 +440,7 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
     <div class="slide-body">
         <span class="slide-tag">La piattaforma</span>
         <h2 class="slide-title">Tutto in un'unica dashboard</h2>
-        <p class="slide-sub">Otto moduli integrati, gestiti da un'unica interfaccia. Niente abbonamenti separati a tool diversi.</p>
+        <p class="slide-sub">Nove moduli integrati, gestiti da un'unica interfaccia. Niente abbonamenti separati a tool diversi.</p>
 
         <div class="feature-grid">
             <div class="feature-card">
@@ -486,7 +486,7 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
             <div class="feature-card">
                 <div class="feature-card-icon"><i class="bi bi-grid-3x3"></i></div>
                 <h4>Gestione tavoli</h4>
-                <p>Mappa sala, auto-assegnazione e stato della sala in tempo reale.</p>
+                <p>Mappa sala, auto-assegnazione, stato in tempo reale.</p>
             </div>
         </div>
     </div>
@@ -751,7 +751,7 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
             </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
             <div style="background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:18px 22px;">
                 <div style="font-size:12px;font-weight:700;color:var(--brand);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">
                     <i class="bi bi-rocket-takeoff"></i> Attivazione
