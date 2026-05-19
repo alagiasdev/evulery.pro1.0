@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Colore per area sulla mappa sala</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{
+    --brand:#00844A;--brand-light:#e6f4ed;--bg:#f5f6f8;--card:#fff;
+    --text:#1a1d23;--muted:#6c757d;--border:#e9ecef;--radius:12px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);padding:24px;max-width:1200px;margin:0 auto;}
+  h2{font-size:1.35rem;font-weight:700;margin-bottom:.25rem;}
+  .subtitle{font-size:.82rem;color:var(--muted);margin-bottom:1rem;}
+  .section-divider{margin:38px 0;border:none;border-top:2px dashed #dee2e6;}
+  .section-label{font-size:1rem;font-weight:700;color:var(--brand);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+  .section-hint{font-size:.78rem;color:var(--muted);margin:0 0 14px;}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:0 1px 6px rgba(0,0,0,.06);overflow:hidden;}
+
+  /* palette */
+  .palette{display:flex;gap:10px;flex-wrap:wrap;}
+  .sw{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:.62rem;color:var(--muted);}
+  .sw-chip{width:54px;height:54px;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.15);}
+
+  /* tab area con pallino */
+  .area-tabs{display:flex;gap:5px;flex-wrap:wrap;}
+  .area-tab{display:flex;align-items:center;gap:6px;padding:6px 13px;border-radius:7px;font-size:.74rem;font-weight:600;background:#f0f1f3;color:var(--muted);border:none;cursor:pointer;}
+  .area-tab.active{background:var(--brand);color:#fff;}
+  .area-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 2px rgba(255,255,255,.6);}
+
+  /* mappa */
+  .toolbar{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  .mode-toggle{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-left:auto;}
+  .mode-toggle a{padding:5px 12px;font-size:.72rem;font-weight:600;color:var(--muted);text-decoration:none;}
+  .mode-toggle a.active{background:var(--brand);color:#fff;}
+  .canvas{position:relative;height:300px;background:radial-gradient(circle,#e3e6ea 1px,transparent 1px);background-size:20px 20px;background-color:#fcfcfd;}
+  .tbl{position:absolute;width:76px;height:76px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18);}
+  .tbl.round{border-radius:50%;}
+  .tbl.free{background:#198754;}
+  .tbl.busy{background:#0d6efd;}
+  .tbl.setup{background:var(--brand);}
+  .t-name{font-size:.72rem;font-weight:700;}
+  .t-cap{font-size:.6rem;opacity:.9;}
+  /* accento area = pallino angolo alto-destra */
+  .t-area-dot{position:absolute;top:-5px;right:-5px;width:17px;height:17px;border-radius:50%;box-shadow:0 0 0 2.5px #fff,0 1px 3px rgba(0,0,0,.3);}
+  .legend{display:flex;gap:14px;padding:9px 14px;border-top:1px solid var(--border);background:#fafbfc;flex-wrap:wrap;font-size:.66rem;color:var(--muted);}
+  .legend span{display:flex;align-items:center;gap:5px;}
+  .lg-dot{width:11px;height:11px;border-radius:4px;}
+
+  .notes{margin-top:34px;padding:20px;background:#fff3cd;border:1px solid #ffe082;border-radius:var(--radius);font-size:.8rem;line-height:1.65;}
+  .notes h3{font-size:.92rem;font-weight:700;margin-bottom:8px;color:#664d03;}
+  .notes ul{padding-left:20px;}.notes li{margin-bottom:6px;}
+  .notes code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;font-size:.74rem;}
+</style>
+</head>
+<body>
+
+<h2>Wireframe — Colore per area sulla mappa sala</h2>
+<p class="subtitle">Opzione A: ogni area riceve un colore <strong>automatico</strong>, derivato dal suo nome (hash). Il colore è un <strong>accento</strong> — un pallino — non il riempimento del tavolo: lo stato (libero/occupato) resta il colore pieno.</p>
+
+<!-- ===== PALETTE ===== -->
+<div class="section-label"><i class="bi bi-palette"></i> La palette — 8 colori</div>
+<p class="section-hint">Colori scelti per non confondersi con verde (libero), blu (occupato) e giallo (tavolo selezionato). Il nome dell'area viene "hashato" e mappato su uno di questi 8.</p>
+<div class="palette">
+  <div class="sw"><div class="sw-chip" style="background:#e8590c;"></div>arancio</div>
+  <div class="sw"><div class="sw-chip" style="background:#9c36b5;"></div>viola</div>
+  <div class="sw"><div class="sw-chip" style="background:#0c8599;"></div>petrolio</div>
+  <div class="sw"><div class="sw-chip" style="background:#d6336c;"></div>magenta</div>
+  <div class="sw"><div class="sw-chip" style="background:#f08c00;"></div>ambra</div>
+  <div class="sw"><div class="sw-chip" style="background:#7048e8;"></div>indaco</div>
+  <div class="sw"><div class="sw-chip" style="background:#a8763e;"></div>terra</div>
+  <div class="sw"><div class="sw-chip" style="background:#495057;"></div>ardesia</div>
+</div>
+
+<!-- ===== TAB AREA ===== -->
+<hr class="section-divider">
+<div class="section-label"><i class="bi bi-bookmark"></i> I tab area — pallino colorato</div>
+<p class="section-hint">Su ogni tab compare il pallino dell'area. È qui che il colore lavora di più: i tab mostrano tutte le aree insieme.</p>
+<div class="area-tabs">
+  <button class="area-tab active"><span class="area-dot" style="background:#0c8599;"></span> Sala Interna</button>
+  <button class="area-tab"><span class="area-dot" style="background:#e8590c;"></span> Esterno</button>
+  <button class="area-tab"><span class="area-dot" style="background:#9c36b5;"></span> Dehors</button>
+  <button class="area-tab"><span class="area-dot" style="background:#f08c00;"></span> Sala Privé</button>
+</div>
+
+<!-- ===== MAPPA OPERATIVA ===== -->
+<hr class="section-divider">
+<div class="section-label"><i class="bi bi-eye"></i> Mappa operativa — accento area + stato</div>
+<p class="section-hint">Il tavolo resta verde/blu per lo stato. Il pallino in alto a destra dice l'area. La mappa mostra un'area alla volta: il pallino conferma a colpo d'occhio "stai guardando l'Esterno".</p>
+<div class="card">
+  <div class="toolbar">
+    <div class="area-tabs">
+      <button class="area-tab"><span class="area-dot" style="background:#0c8599;"></span> Sala Interna</button>
+      <button class="area-tab active"><span class="area-dot" style="background:#e8590c;"></span> Esterno</button>
+    </div>
+    <div class="mode-toggle">
+      <a href="#" class="active"><i class="bi bi-eye"></i> Operativa</a>
+      <a href="#"><i class="bi bi-pencil"></i> Setup</a>
+    </div>
+  </div>
+  <div class="canvas">
+    <div class="tbl free" style="left:40px;top:30px;">
+      <span class="t-area-dot" style="background:#e8590c;"></span>
+      <span class="t-name">Tav.1</span><span class="t-cap">2p</span>
+    </div>
+    <div class="tbl busy" style="left:150px;top:30px;">
+      <span class="t-area-dot" style="background:#e8590c;"></span>
+      <span class="t-name">ROSSI</span><span class="t-cap">4p · 20:00</span>
+    </div>
+    <div class="tbl busy round" style="left:260px;top:30px;">
+      <span class="t-area-dot" style="background:#e8590c;"></span>
+      <span class="t-name">BIANCHI</span><span class="t-cap">2p · 20:30</span>
+    </div>
+    <div class="tbl free" style="left:40px;top:150px;">
+      <span class="t-area-dot" style="background:#e8590c;"></span>
+      <span class="t-name">Tav.4</span><span class="t-cap">6p</span>
+    </div>
+    <div class="tbl free" style="left:150px;top:150px;">
+      <span class="t-area-dot" style="background:#e8590c;"></span>
+      <span class="t-name">Tav.5</span><span class="t-cap">4p</span>
+    </div>
+  </div>
+  <div class="legend">
+    <span><span class="lg-dot" style="background:#198754;"></span> Libero</span>
+    <span><span class="lg-dot" style="background:#0d6efd;"></span> Occupato</span>
+    <span><span class="lg-dot" style="background:#e8590c;border-radius:50%;"></span> Area: Esterno</span>
+  </div>
+</div>
+
+<!-- ===== MAPPA SETUP ===== -->
+<hr class="section-divider">
+<div class="section-label"><i class="bi bi-pencil"></i> Mappa setup — qui l'accento aiuta di più</div>
+<p class="section-hint">In Setup i tavoli non hanno stato (sono tutti verdi): il pallino area è l'unico segno di colore distintivo. Utile quando posizioni i tavoli.</p>
+<div class="card">
+  <div class="toolbar">
+    <div class="area-tabs">
+      <button class="area-tab active"><span class="area-dot" style="background:#9c36b5;"></span> Dehors</button>
+      <button class="area-tab"><span class="area-dot" style="background:#0c8599;"></span> Sala Interna</button>
+    </div>
+  </div>
+  <div class="canvas">
+    <div class="tbl setup" style="left:40px;top:30px;">
+      <span class="t-area-dot" style="background:#9c36b5;"></span>
+      <span class="t-name">Tav.10</span><span class="t-cap">2p</span>
+    </div>
+    <div class="tbl setup round" style="left:150px;top:30px;">
+      <span class="t-area-dot" style="background:#9c36b5;"></span>
+      <span class="t-name">Tav.11</span><span class="t-cap">4p</span>
+    </div>
+    <div class="tbl setup" style="left:40px;top:150px;">
+      <span class="t-area-dot" style="background:#9c36b5;"></span>
+      <span class="t-name">Tav.12</span><span class="t-cap">2p</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NOTE ===== -->
+<div class="notes">
+  <h3><i class="bi bi-lightbulb"></i> Note di design — colore per area (Opzione A)</h3>
+  <ul>
+    <li><strong>Colore automatico dal nome.</strong> <code>crc32(nome_area) % 8</code> → indice nella palette. "Esterno" avrà <em>sempre</em> lo stesso colore, su ogni pagina. Nessun campo da compilare, nessuna gestione.</li>
+    <li><strong>Accento, non riempimento.</strong> Il riempimento del tavolo resta lo <strong>stato</strong> (verde libero / blu occupato). Il colore area è un pallino in alto a destra → le due informazioni non si pestano i piedi.</li>
+    <li><strong>Palette anti-conflitto.</strong> 8 colori scelti per non somigliare a verde/blu/giallo (stato e selezione). Anche se un pallino fosse verdino, è piccolo e in un angolo: nessuna ambiguità.</li>
+    <li><strong>Dove rende di più.</strong> Sui <strong>tab area</strong> (mostrano tutte le aree insieme) e in <strong>Setup</strong> (i tavoli non hanno colore di stato). In operativa è un rinforzo del tab attivo.</li>
+    <li><strong>Collisioni di colore.</strong> Con tante aree (9+) due potrebbero capitare sullo stesso colore. Non è un problema funzionale: il <em>nome</em> resta la verità, il colore è solo un aiuto visivo. Con 8 colori e poche aree è raro.</li>
+    <li><strong>Zero rischio.</strong> Solo CSS + una funzione helper <code>area_color($nome)</code>. Nessun DB, nessuna modifica a dati o logica. Si applica a <code>tables-map.php</code> (operativa + setup) e ai tab area.</li>
+    <li><strong>Se in futuro</strong> il ristoratore volesse <em>scegliere</em> il colore (Opzione B), basterà aggiungere un campo: la palette e il pallino restano identici, cambia solo da dove arriva l'indice.</li>
+  </ul>
+</div>
+
+</body>
+</html>
