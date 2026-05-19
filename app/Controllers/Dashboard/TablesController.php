@@ -9,6 +9,7 @@ use App\Core\TenantResolver;
 use App\Models\Reservation;
 use App\Models\Table;
 use App\Models\Tenant;
+use App\Models\TimeSlot;
 use App\Services\AuditLog;
 use App\Services\TableAssigner;
 
@@ -25,6 +26,7 @@ class TablesController
 
         $tables = $combinations = $areas = [];
         $comboMap = [];
+        $capacityCheck = null;
         if ($canUse) {
             $model = new Table();
             $tables = $model->findByTenant((int)$tenant['id']);
@@ -37,16 +39,33 @@ class TablesController
                 $comboMap[$a][] = $b;
                 $comboMap[$b][] = $a;
             }
+
+            // Fase 3c — coerenza coperti/tavoli: confronta i posti totali dei
+            // tavoli attivi col limite coperti più alto fra gli slot attivi.
+            $seats = 0;
+            foreach ($tables as $t) {
+                if ((int)$t['is_active']) $seats += (int)$t['capacity'];
+            }
+            $peak = 0;
+            foreach ((new TimeSlot())->findAllByTenant((int)$tenant['id']) as $s) {
+                if ((int)$s['is_active'] && (int)$s['max_covers'] > $peak) {
+                    $peak = (int)$s['max_covers'];
+                }
+            }
+            if ($seats > 0 && $peak > 0) {
+                $capacityCheck = ['seats' => $seats, 'peak' => $peak];
+            }
         }
 
         view('dashboard/settings/tables', [
-            'title'        => 'Tavoli',
-            'activeMenu'   => 'settings-tables',
-            'tenant'       => $tenant,
-            'canUse'       => $canUse,
-            'tables'       => $tables,
-            'areas'        => $areas,
-            'comboMap'     => $comboMap,
+            'title'         => 'Tavoli',
+            'activeMenu'    => 'settings-tables',
+            'tenant'        => $tenant,
+            'canUse'        => $canUse,
+            'tables'        => $tables,
+            'areas'         => $areas,
+            'comboMap'      => $comboMap,
+            'capacityCheck' => $capacityCheck,
         ], 'dashboard');
     }
 

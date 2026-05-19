@@ -4341,6 +4341,14 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-res-table.set { border: 1px solid var(--brand, #00844A); color: var(--brand, #00844A); background: var(--brand-light, #e6f4ed); }
 .tm-res-table.none { border: 1px dashed #e0a39d; color: #b3261e; background: #fdecea; }
 .tm-map-table.hl { box-shadow: 0 0 0 3px #ffc107, 0 0 0 6px rgba(255,193,7,.4); z-index: 9; }
+/* Fase 3c — avviso coerenza coperti / posti tavoli */
+.tm-cap-warn { display: flex; gap: 11px; margin-top: 16px; padding: 12px 14px; background: #fff8e6; border: 1px solid #ffe082; border-radius: 10px; }
+.tm-cap-warn > i { color: #b8860b; font-size: 1.05rem; margin-top: 1px; flex-shrink: 0; }
+.tm-cap-warn-t { font-size: .82rem; font-weight: 700; color: #664d03; margin-bottom: 3px; }
+.tm-cap-warn-d { font-size: .73rem; color: #6c5a1f; line-height: 1.5; }
+.tm-cap-warn-d a { color: var(--brand, #00844A); font-weight: 600; }
+.tm-cap-ok { display: flex; align-items: center; gap: 8px; margin-top: 16px; padding: 10px 14px; background: #eef7f1; border: 1px solid #cfe8d6; border-radius: 10px; font-size: .76rem; font-weight: 600; color: var(--brand, #00844A); }
+
 /* connettore tavoli combinati: barra tra i 2 tavoli + pastiglia catena */
 .tm-combo-bar { position: absolute; height: 8px; margin-top: -4px; background: #0d6efd; border-radius: 4px; transform-origin: left center; box-shadow: 0 1px 3px rgba(0,0,0,.2); pointer-events: none; }
 .tm-combo-badge { position: absolute; transform: translate(-50%,-50%); display: flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 11px; background: #fff; color: #0d6efd; font-size: .64rem; font-weight: 700; white-space: nowrap; box-shadow: 0 0 0 2px #0d6efd, 0 1px 4px rgba(0,0,0,.25); z-index: 5; pointer-events: none; }

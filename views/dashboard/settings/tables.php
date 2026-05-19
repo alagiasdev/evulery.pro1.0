@@ -1,7 +1,7 @@
 <?php
 /**
  * Impostazioni > Tavoli — lista tavoli per area + priorità (Fase 1).
- * Variabili: $tenant, $canUse, $tables, $areas, $comboMap
+ * Variabili: $tenant, $canUse, $tables, $areas, $comboMap, $capacityCheck
  */
 $activeTables = array_filter($tables, fn($t) => (int)$t['is_active'] === 1);
 $totCovers = array_sum(array_map(fn($t) => (int)$t['is_active'] === 1 ? (int)$t['capacity'] : 0, $tables));
@@ -68,6 +68,21 @@ foreach ($tables as $t) {
         </div>
     </div>
 </form>
+
+<?php /* Fase 3c — avviso coerenza coperti / posti tavoli */ ?>
+<?php if (!empty($capacityCheck)): ?>
+<?php if ($capacityCheck['peak'] > $capacityCheck['seats']): ?>
+<div class="tm-cap-warn">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <div>
+        <div class="tm-cap-warn-t">I tuoi tavoli hanno <?= (int)$capacityCheck['seats'] ?> posti, ma in alcuni orari ne accetti di più</div>
+        <div class="tm-cap-warn-d">In certe fasce accetti fino a <strong><?= (int)$capacityCheck['peak'] ?> coperti</strong>: oltre la capienza dei tavoli le nuove prenotazioni vengono create comunque, ma <strong>senza tavolo</strong>. Allinea i coperti in <a href="<?= url('dashboard/settings/slots') ?>">Orari e Coperti</a> oppure aggiungi tavoli.</div>
+    </div>
+</div>
+<?php else: ?>
+<div class="tm-cap-ok"><i class="bi bi-check-circle-fill"></i> I tuoi <?= (int)$capacityCheck['seats'] ?> posti coprono il limite coperti di tutti gli orari.</div>
+<?php endif; ?>
+<?php endif; ?>
 
 <div class="card tm-card" style="margin-top:16px;">
     <div class="tm-head">
