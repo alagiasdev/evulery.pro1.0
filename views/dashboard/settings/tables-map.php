@@ -313,6 +313,8 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                     </div>
                 </form>
                 <?php endif; ?>
+                <?php if (in_array((string)$r['status'], ['pending', 'confirmed'], true)): ?>
+                <?php /* Prenotazione non ancora servita: il tavolo si può ancora cambiare */ ?>
                 <form method="POST" action="<?= url('dashboard/reservations/' . $rid . '/table') ?>">
                     <?= csrf_field() ?>
                     <input type="hidden" name="redirect_back" value="<?= e($opBack) ?>">
@@ -328,6 +330,14 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                         <button type="submit" class="btn-tm-new"><i class="bi bi-check me-1"></i> Salva</button>
                     </div>
                 </form>
+                <?php else: ?>
+                <?php /* Cliente già arrivato / no-show: tavolo bloccato, solo lettura */ ?>
+                <label class="tm-pop-label">Tavolo assegnato</label>
+                <div class="tm-pop-table-ro"><?php if (!empty($resTableLabel[$rid])): ?><?= e($resTableLabel[$rid]) ?><?php else: ?>&mdash; Nessun tavolo &mdash;<?php endif; ?></div>
+                <div class="tm-pop-foot">
+                    <a href="<?= url('dashboard/reservations/' . $rid) ?>" class="tm-pop-link">Apri scheda completa</a>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

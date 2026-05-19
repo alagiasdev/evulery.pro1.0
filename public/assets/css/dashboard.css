@@ -4377,6 +4377,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-pop-sp.sp-confirmed:hover { border-color: #0a5c36; background: #d1e7dd; color: #0a5c36; }
 .tm-pop-sp.sp-arrived:hover { border-color: #084298; background: #cfe2ff; color: #084298; }
 .tm-pop-sp.sp-noshow:hover { border-color: #b3261e; background: #fdecea; color: #b3261e; }
+.tm-pop-table-ro { font-size: .8rem; font-weight: 600; color: #495057; background: #f5f6f8; border: 1px solid var(--border, #e9ecef); border-radius: 8px; padding: 8px 11px; }
 @media (max-width: 860px) {
     .tm-vtabs { display: flex; }
     .tm-twopane { flex-direction: column; }
