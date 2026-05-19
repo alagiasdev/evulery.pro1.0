@@ -368,8 +368,9 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
     color: var(--brand); background: var(--brand-light);
     padding: 4px 12px; border-radius: 100px; margin-bottom: 10px;
 }
-.ev-plan-listino { font-size: .82rem; color: var(--text-muted); margin-top: 8px; }
-.ev-plan-listino s { color: #b3b3c2; }
+.ev-plan-listino { font-size: .9rem; color: var(--text-secondary); margin-top: 10px; }
+.ev-plan-listino s { color: #9a9ab0; }
+.ev-plan-listino strong { color: var(--brand); font-weight: 700; }
 .ev-pricing-launch {
     display: flex; align-items: center; gap: 12px;
     max-width: 760px; margin: 0 auto 40px;
