@@ -132,8 +132,9 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         <a class="tm-op-arrow" href="<?= $opUrl ?>?date=<?= $next ?>&time=<?= e($opTime) ?>"><i class="bi bi-chevron-right"></i></a>
         <?php if ($multiArea): ?>
         <div class="tm-area-tabs" style="margin-left:8px;">
-            <?php foreach ($areas as $idx => $a): ?>
-            <button type="button" class="tm-area-tab <?= $idx === 0 ? 'active' : '' ?>" data-area="<?= e($a) ?>"><?php if ($areaHasDot($a)): ?><span class="tm-area-tab-dot" style="background:<?= e(area_color($a)) ?>;"></span><?php endif; ?><?= e($a) ?></button>
+            <button type="button" class="tm-area-tab active" data-all="1"><i class="bi bi-grid-3x3-gap me-1"></i>Tutte le aree</button>
+            <?php foreach ($areas as $a): ?>
+            <button type="button" class="tm-area-tab" data-area="<?= e($a) ?>"><?php if ($areaHasDot($a)): ?><span class="tm-area-tab-dot" style="background:<?= e(area_color($a)) ?>;"></span><?php endif; ?><?= e($a) ?></button>
             <?php endforeach; ?>
         </div>
         <?php endif; ?>
@@ -178,7 +179,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                 <?php foreach ($tables as $t): ?>
                 <?php
                     $tArea = (string)($t['area'] ?? '');
-                    $hidden = ($multiArea && $tArea !== $firstArea);
+                    $hidden = false; // "Tutte le aree" è la vista iniziale
                     $occ = $floorState[(int)$t['id']] ?? null;
                 ?>
                 <div class="tm-map-table <?= $t['shape'] === 'round' ? 'round' : 'square' ?> <?= $occ ? 'busy' : 'freev' ?>"
@@ -256,8 +257,9 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
     <?php if ($multiArea): ?>
     <div class="tm-op-bar">
         <div class="tm-area-tabs">
-            <?php foreach ($areas as $idx => $a): ?>
-            <button type="button" class="tm-area-tab <?= $idx === 0 ? 'active' : '' ?>" data-area="<?= e($a) ?>"><?php if ($areaHasDot($a)): ?><span class="tm-area-tab-dot" style="background:<?= e(area_color($a)) ?>;"></span><?php endif; ?><?= e($a) ?></button>
+            <button type="button" class="tm-area-tab active" data-all="1"><i class="bi bi-grid-3x3-gap me-1"></i>Tutte le aree</button>
+            <?php foreach ($areas as $a): ?>
+            <button type="button" class="tm-area-tab" data-area="<?= e($a) ?>"><?php if ($areaHasDot($a)): ?><span class="tm-area-tab-dot" style="background:<?= e(area_color($a)) ?>;"></span><?php endif; ?><?= e($a) ?></button>
             <?php endforeach; ?>
         </div>
     </div>
@@ -267,7 +269,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         <?php foreach ($tables as $t): ?>
         <?php
             $tArea = (string)($t['area'] ?? '');
-            $hidden = ($multiArea && $tArea !== $firstArea);
+            $hidden = false; // "Tutte le aree" è la vista iniziale
         ?>
         <div class="tm-map-table <?= $t['shape'] === 'round' ? 'round' : 'square' ?><?= (int)$t['is_active'] ? '' : ' off' ?>"
              data-id="<?= (int)$t['id'] ?>" data-area="<?= e($tArea) ?>"
@@ -287,14 +289,15 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
     var canvas = document.getElementById('tm-map');
     var mode = <?= json_encode($mode) ?>;
 
-    // Filtro area (comune)
+    // Filtro area (comune) — "Tutte le aree" mostra tutti i tavoli insieme
     document.querySelectorAll('.tm-area-tab').forEach(function (tab) {
         tab.addEventListener('click', function () {
             document.querySelectorAll('.tm-area-tab').forEach(function (t) { t.classList.remove('active'); });
             tab.classList.add('active');
+            var all = tab.hasAttribute('data-all');
             var area = tab.getAttribute('data-area');
             canvas.querySelectorAll('.tm-map-table').forEach(function (el) {
-                el.style.display = (el.getAttribute('data-area') === area) ? '' : 'none';
+                el.style.display = (all || el.getAttribute('data-area') === area) ? '' : 'none';
             });
         });
     });

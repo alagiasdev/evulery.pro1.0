@@ -76,10 +76,11 @@
 
 <!-- ===== TAB AREA ===== -->
 <hr class="section-divider">
-<div class="section-label"><i class="bi bi-bookmark"></i> I tab area — pallino colorato</div>
-<p class="section-hint">Sui tab delle aree aggiuntive compare il pallino; l'area principale ("Sala Interna" qui) resta senza. È qui che il colore lavora di più: i tab mostrano tutte le aree insieme.</p>
+<div class="section-label"><i class="bi bi-bookmark"></i> I tab area — pallino colorato + "Tutte le aree"</div>
+<p class="section-hint">Sui tab delle aree aggiuntive compare il pallino; l'area principale ("Sala Interna" qui) resta senza. Il tab <strong>"Tutte le aree"</strong> (default) mostra tutti i tavoli insieme su un'unica schermata: lì i pallini permettono di distinguere a colpo d'occhio a quale area appartiene ogni tavolo.</p>
 <div class="area-tabs">
-  <button class="area-tab active"> Sala Interna</button>
+  <button class="area-tab active"><i class="bi bi-grid-3x3-gap"></i> Tutte le aree</button>
+  <button class="area-tab"> Sala Interna</button>
   <button class="area-tab"><span class="area-dot" style="background:#e8590c;"></span> Esterno</button>
   <button class="area-tab"><span class="area-dot" style="background:#9c36b5;"></span> Dehors</button>
   <button class="area-tab"><span class="area-dot" style="background:#f08c00;"></span> Sala Privé</button>
@@ -162,6 +163,7 @@
   <ul>
     <li><strong>Colore automatico dal nome.</strong> <code>crc32(nome_area) % 8</code> → indice nella palette. "Esterno" avrà <em>sempre</em> lo stesso colore, su ogni pagina. Nessun campo da compilare, nessuna gestione.</li>
     <li><strong>Area principale senza pallino.</strong> La <em>prima area creata</em> (di norma la sala interna) è la "principale" e non ha pallino. Lo ricevono solo le aree aggiuntive. Così chi ha <strong>una sola disposizione</strong> vede i tavoli completamente puliti, e il pallino diventa il segnale "questa NON è la sala principale". Il pallino compare comunque solo con 2+ aree.</li>
+    <li><strong>Tab "Tutte le aree".</strong> È la vista di default: tutti i tavoli di tutte le aree su un'unica schermata. È qui che il pallino dà il massimo — distingue a colpo d'occhio l'area di ogni tavolo. I tab delle singole aree restano come filtro per concentrarsi su una sola zona.</li>
     <li><strong>Accento, non riempimento.</strong> Il riempimento del tavolo resta lo <strong>stato</strong> (verde libero / blu occupato). Il colore area è un pallino in alto a destra → le due informazioni non si pestano i piedi.</li>
     <li><strong>Palette anti-conflitto.</strong> 8 colori scelti per non somigliare a verde/blu/giallo (stato e selezione). Anche se un pallino fosse verdino, è piccolo e in un angolo: nessuna ambiguità.</li>
     <li><strong>Dove rende di più.</strong> Sui <strong>tab area</strong> (mostrano tutte le aree insieme) e in <strong>Setup</strong> (i tavoli non hanno colore di stato). In operativa è un rinforzo del tab attivo.</li>
