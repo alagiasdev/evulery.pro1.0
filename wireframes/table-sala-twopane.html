@@ -113,6 +113,21 @@
   .sheet{position:absolute;left:0;right:0;bottom:0;background:var(--card);border-radius:16px 16px 0 0;box-shadow:0 -6px 24px rgba(0,0,0,.22);}
   .sheet-grab{width:36px;height:4px;border-radius:2px;background:#d0d4d9;margin:8px auto 0;}
 
+  /* ===== Fase 3c: avviso coperti / posti tavoli ===== */
+  .cap-warn{display:flex;gap:11px;margin:14px;padding:12px 14px;background:#fff8e6;border:1px solid #ffe082;border-radius:10px;}
+  .cap-warn>i{color:#b8860b;font-size:1.05rem;margin-top:1px;flex-shrink:0;}
+  .cap-title{font-size:.82rem;font-weight:700;color:#664d03;margin-bottom:3px;}
+  .cap-desc{font-size:.72rem;color:#6c5a1f;line-height:1.5;}
+  .cap-desc a{color:var(--brand);font-weight:600;}
+  .cap-list{margin-top:9px;display:flex;flex-direction:column;gap:5px;}
+  .cap-rowx{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid #f0e3b8;border-radius:7px;padding:6px 10px;font-size:.72rem;}
+  .cap-slot{font-weight:600;color:var(--text);}
+  .cap-vs{color:var(--muted);}
+  .cap-vs .hi{color:#b3261e;font-weight:700;}
+  .cap-vs b{color:var(--text);}
+  .cap-ok{display:flex;align-items:center;gap:8px;margin:14px;padding:10px 14px;background:#eef7f1;border:1px solid #cfe8d6;border-radius:10px;font-size:.76rem;font-weight:600;color:var(--brand);}
+  .cap-fill{padding:14px 16px;font-size:.74rem;color:#adb5bd;text-align:center;border-top:1px dashed var(--border);}
+
   .notes{margin-top:36px;padding:20px;background:#fff3cd;border:1px solid #ffe082;border-radius:var(--radius);font-size:.8rem;line-height:1.65;}
   .notes h3{font-size:.92rem;font-weight:700;margin-bottom:8px;color:#664d03;}
   .notes ul{padding-left:20px;}.notes li{margin-bottom:6px;}
@@ -427,6 +442,43 @@
   </div>
 </div>
 
+<!-- ===== FASE 3C — avviso coperti/tavoli ===== -->
+<hr class="section-divider">
+<div class="section-label"><i class="bi bi-exclamation-diamond"></i> Avviso coperti / posti tavoli <span class="ph ph2">Fase 3c</span></div>
+<p class="section-hint">Banner diagnostico nella pagina <strong>Impostazioni &gt; Tavoli</strong> (NON nella Sala — è indipendente da 3a/3b). Confronta i posti totali dei tavoli col limite coperti degli orari. Non bloccante: informa e basta.</p>
+
+<div style="max-width:780px;">
+  <p style="font-size:.72rem;color:var(--muted);margin-bottom:8px;font-weight:600;">Stato 1 — incoerenza rilevata (i tavoli non bastano a coprire alcuni orari)</p>
+  <div class="card">
+    <div class="sala-head">
+      <span class="sala-title"><i class="bi bi-grid-3x3" style="color:var(--brand);"></i> Tavoli</span>
+      <button class="btn btn-brand" style="margin-left:auto;"><i class="bi bi-plus-lg"></i> Nuovo tavolo</button>
+    </div>
+    <div class="cap-warn">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      <div>
+        <div class="cap-title">I tuoi tavoli hanno 30 posti, ma alcuni orari ne accettano di più</div>
+        <div class="cap-desc">Oltre la capienza dei tavoli, le nuove prenotazioni vengono comunque create ma <strong>senza tavolo</strong> e finiscono in "Da assegnare". Allinea i coperti in <a href="#">Orari e Coperti</a> oppure aggiungi tavoli.</div>
+        <div class="cap-list">
+          <div class="cap-rowx"><span class="cap-slot">Cena · 19:00 – 22:30</span><span class="cap-vs"><span class="hi">50</span> coperti accettati · <b>30</b> posti tavoli</span></div>
+          <div class="cap-rowx"><span class="cap-slot">Pranzo · 12:30 – 14:30</span><span class="cap-vs"><span class="hi">40</span> coperti accettati · <b>30</b> posti tavoli</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="cap-fill">↓ qui sotto la stat-bar e la lista tavoli (invariate)</div>
+  </div>
+
+  <p style="font-size:.72rem;color:var(--muted);margin:22px 0 8px;font-weight:600;">Stato 2 — tutto coerente (i tavoli coprono ogni orario)</p>
+  <div class="card">
+    <div class="sala-head">
+      <span class="sala-title"><i class="bi bi-grid-3x3" style="color:var(--brand);"></i> Tavoli</span>
+      <button class="btn btn-brand" style="margin-left:auto;"><i class="bi bi-plus-lg"></i> Nuovo tavolo</button>
+    </div>
+    <div class="cap-ok"><i class="bi bi-check-circle-fill"></i> I tuoi 50 posti coprono il limite coperti di tutti gli orari.</div>
+    <div class="cap-fill">↓ qui sotto la stat-bar e la lista tavoli (invariate)</div>
+  </div>
+</div>
+
 <!-- ===== NOTE ===== -->
 <div class="notes">
   <h3><i class="bi bi-lightbulb"></i> Note di design — Sala a due pannelli</h3>
@@ -444,14 +496,14 @@
     <li><strong>Nome:</strong> <code>COGNOME nome</code> (cognome maiuscolo) come già fatto sui tavoli della mappa.</li>
     <li><strong>Fuori scope ora</strong> <span class="ph ph2">Fase succ.</span>: stati prenotazione editabili inline (Confermata/In attesa…), statistiche coperti per slot ricche, ricerca avanzata. La barra di ricerca c'è ma è un filtro semplice. Evitiamo di riprodurre mezza pagina Prenotazioni dentro Sala.</li>
     <li><strong>Dati.</strong> <code>floorState</code> già fornisce gli occupati per orario. Serve una sola query nuova: tutte le prenotazioni del giorno con il tavolo assegnato (LEFT JOIN <code>reservation_tables</code>) → da cui si ricava anche il gruppo "Da assegnare" (tavolo NULL).</li>
-    <li><strong>Implementazione</strong> <span class="ph ph1">Fase 3</span>:
+    <li><strong>Fase 3 divisa in tre sotto-fasi</strong> (rischio crescente, indipendenti dove indicato):
       <ol>
-        <li>Query "prenotazioni del giorno + tavolo" nel <code>TableAssigner</code> o nel controller.</li>
-        <li>Pannello sinistro nella view <code>tables-map.php</code> (solo modalità operativa).</li>
-        <li>Layout flex 2 colonne desktop + tab su mobile (CSS <code>.tm-*</code>).</li>
-        <li>JS: click lista → evidenzia tavolo / apre popup. Riusa i popup esistenti.</li>
+        <li><strong>3a — Sala a due pannelli + popup.</strong> Query "prenotazioni del giorno + tavolo" (LEFT JOIN read-only), pannello sinistro in <code>tables-map.php</code> (solo operativa), layout 2 colonne desktop + tab mobile, popup dettaglio con riassegnazione (riusa l'endpoint Fase 2). <em>Rischio quasi nullo.</em></li>
+        <li><strong>3b — pillole di stato nel popup.</strong> Cambio stato prenotazione inline. Da fare <em>dopo</em> aver tracciato gli effetti collaterali di ogni cambio stato (es. email). Isolata e piccola.</li>
+        <li><strong>3c — avviso coperti/tavoli.</strong> Banner diagnostico nella pagina Tavoli. <strong>Indipendente da 3a/3b</strong>: può uscire in qualsiasi momento, anche per prima. Lavora sulla configurazione base degli slot (ignora gli override per data → avviso strutturale, non del singolo giorno). Calcolo read-only, rischio zero.</li>
       </ol>
     </li>
+    <li><strong>Coperti e posti tavoli restano scollegati.</strong> <code>max_covers</code> (Orari e Coperti) è il tetto delle prenotazioni; la capienza dei tavoli serve solo a decidere <em>dove</em> sedere. La 3c non li collega: li confronta e basta. Non tutti i piani hanno i tavoli, e il ristoratore spesso vuole un tetto coperti sotto la capienza fisica.</li>
   </ul>
 </div>
 
