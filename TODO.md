@@ -38,6 +38,12 @@ Decisione: NON costruirli in cieco, aspettare il segnale reale.
 - [ ] **Loyalty Program** — validazione con clienti Professional paganti (4 wireframe pronti)
 - [ ] **Dashboard redesign UX** — 5-10 ristoranti attivi da 1+ mese + feedback strutturato
 - [ ] **Sales Kit super admin** — quando arriva il 1° reseller B2B vero
+- [ ] **Dominio personalizzato — RIATTIVARE** — feature NASCOSTA dalla UI il 19/05/2026
+  (commit `b72803f`) perché non pronta. Codice/rotte/controller intatti. Per riattivarla:
+  togliere `'hidden' => true` in (1) `settings_nav()` → `app/Helpers/functions.php` e
+  (2) sezione `'dominio'` in `views/dashboard/help/_sections.php`. **Ma prima** sistemare
+  il bug `cname_target` hardcoded in `DomainController.php` + test end-to-end con
+  `dominio.evulery.it` (piano completo: `docs/` o memory `project_custom_domain.md`).
 
 ### Priorità reale a breve termine (NON in panchina)
 - [ ] **Migrazione VPS** — nuovo server 8core/32GB, attesa conferma Serverplan (PHP 8.2,
