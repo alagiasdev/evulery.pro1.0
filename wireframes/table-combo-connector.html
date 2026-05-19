@@ -31,6 +31,9 @@
   .combo-bar{position:absolute;height:9px;background:var(--busy);border-radius:5px;z-index:1;box-shadow:0 1px 3px rgba(0,0,0,.2);}
   .combo-badge{position:absolute;z-index:3;width:26px;height:26px;border-radius:50%;background:#fff;color:var(--busy);
     display:flex;align-items:center;justify-content:center;font-size:.8rem;box-shadow:0 0 0 2px var(--busy),0 1px 4px rgba(0,0,0,.25);}
+  /* variante C: solo icona sull'angolo del tavolo */
+  .tbl-combo-icon{position:absolute;top:-6px;left:-6px;width:20px;height:20px;border-radius:50%;background:#fff;color:var(--busy);
+    display:flex;align-items:center;justify-content:center;font-size:.66rem;box-shadow:0 0 0 2px var(--busy),0 1px 3px rgba(0,0,0,.25);z-index:3;}
 
   .legend{display:flex;gap:16px;padding:10px 14px;border-top:1px solid var(--border);background:#fafbfc;flex-wrap:wrap;font-size:.68rem;color:var(--muted);}
   .legend span{display:flex;align-items:center;gap:6px;}
@@ -95,7 +98,17 @@
 <p class="section-hint">Stesso comportamento, segno visivo diverso. Scegli quella che preferisci.</p>
 <div class="variants">
   <div class="variant">
-    <h4>A — Barra + pastiglia catena <span class="pick">consigliata</span></h4>
+    <h4>C — Solo icona sui tavoli <span class="pick">la più semplice</span></h4>
+    <div class="card">
+      <div class="canvas" style="height:170px;">
+        <div class="tbl busy" style="left:40px;top:55px;"><span class="tbl-combo-icon"><i class="bi bi-link-45deg"></i></span><span class="t-name">ALAGIA</span><span class="t-cap">7p</span></div>
+        <div class="tbl busy" style="left:180px;top:55px;"><span class="tbl-combo-icon"><i class="bi bi-link-45deg"></i></span><span class="t-name">ALAGIA</span><span class="t-cap">7p</span></div>
+      </div>
+    </div>
+    <p style="font-size:.72rem;color:var(--muted);margin-top:6px;">Niente barra, niente SVG, niente geometria: ogni tavolo combinato ha solo una piccola icona catena nell'angolo. Stessa icona + stesso nome = stessa prenotazione. Implementazione minima.</p>
+  </div>
+  <div class="variant">
+    <h4>A — Barra + pastiglia catena</h4>
     <div class="card">
       <div class="canvas" style="height:170px;">
         <div class="combo-bar" style="left:78px;top:78px;width:140px;"></div>
@@ -126,8 +139,8 @@
     <li><strong>Solo modalità operativa.</strong> Il connettore mostra una combinazione <em>attiva</em>: una prenotazione che in quel momento occupa 2 tavoli. Non mostra le coppie semplicemente "combinabili" (quella è configurazione, vive nella modale tavolo).</li>
     <li><strong>Dato già disponibile.</strong> <code>floorState</code> mappa tavolo → prenotazione. Due tavoli con lo <em>stesso</em> <code>reservation_id</code> = combinazione attiva → si traccia la barra tra i loro centri. Nessuna query nuova.</li>
     <li><strong>Sempre coppie.</strong> Le combinazioni sono solo a 2 tavoli (mai catene di 3+), quindi il connettore è sempre una linea singola tra due tavoli.</li>
-    <li><strong>Qualsiasi angolazione.</strong> La barra collega i centri dei due tavoli → in implementazione un piccolo layer SVG dietro i tavoli (<code>z-index</code> sotto), così segue qualunque disposizione.</li>
-    <li><strong>Colore.</strong> Barra blu come i tavoli occupati: comunica "unità". La pastiglia bianca con icona catena (variante A) resta leggibile anche con tavoli accostati.</li>
+    <li><strong>Variante C = la più semplice.</strong> Solo un'iconcina catena nell'angolo di ogni tavolo combinato — come il pallino dell'area, ma a sinistra. Nessuna barra, nessun SVG, nessun calcolo di posizioni: un solo <code>&lt;span&gt;</code> condizionale nel ciclo dei tavoli. Stessa icona + stesso nome cliente = stessa prenotazione.</li>
+    <li><strong>Varianti A/B (barra).</strong> Più esplicite ma richiedono un layer SVG dietro i tavoli per collegare i centri a qualsiasi angolazione. Riservate al caso servisse un legame più "fisico".</li>
     <li><strong>Fuori scope</strong>: le linee tratteggiate dei tavoli <em>combinabili</em> in Setup — valutabili a parte, solo se utili, perché con molte coppie affollano la mappa.</li>
   </ul>
 </div>
