@@ -22,25 +22,21 @@ $isZones = ($tenant['delivery_mode'] ?? '') === 'zones';
             <?= csrf_field() ?>
 
             <!-- 1. Master toggle -->
-            <div class="card section-card mb-3">
-                <div class="card-body d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="section-icon" style="background:var(--brand-light, #e8f5e9); color:var(--brand, #00844A); width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
-                            <i class="bi bi-bag-check"></i>
-                        </div>
-                        <div>
-                            <div style="font-weight:700; font-size:.9rem;">Abilita ordini online</div>
-                            <div style="font-size:.72rem; color:#6c757d;">I clienti possono ordinare dal tuo store</div>
-                            <?php if ($tenant['ordering_enabled']): ?>
-                            <div style="font-size:.72rem; color:var(--brand, #00844A); margin-top:2px;"><i class="bi bi-link-45deg"></i> <a href="<?= url($tenant['slug'] . '/order') ?>" target="_blank" style="color:inherit; text-decoration:underline;">/<?= e($tenant['slug']) ?>/order</a></div>
-                            <?php endif; ?>
-                        </div>
+            <div class="master-toggle <?= $tenant['ordering_enabled'] ? 'enabled' : 'disabled' ?>" id="ordering-master">
+                <div class="mt-left">
+                    <div class="mt-icon" style="background:var(--brand-light);color:var(--brand);">
+                        <i class="bi bi-bag-check"></i>
                     </div>
-                    <div class="form-check form-switch" style="font-size:1.4rem;">
-                        <input class="form-check-input" type="checkbox" id="ordering_enabled" name="ordering_enabled" value="1"
-                            <?= $tenant['ordering_enabled'] ? 'checked' : '' ?>>
+                    <div>
+                        <div class="mt-title">Abilita ordini online</div>
+                        <div class="mt-desc">I clienti possono ordinare dal tuo store</div>
+                        <?php if ($tenant['ordering_enabled']): ?>
+                        <div class="mt-desc" style="margin-top:.25rem;"><i class="bi bi-link-45deg"></i> <a href="<?= url($tenant['slug'] . '/order') ?>" target="_blank" style="color:var(--brand);text-decoration:underline;">/<?= e($tenant['slug']) ?>/order</a></div>
+                        <?php endif; ?>
                     </div>
                 </div>
+                <div class="toggle-big <?= $tenant['ordering_enabled'] ? 'on' : 'off' ?>" id="ordering-toggle"></div>
+                <input type="hidden" name="ordering_enabled" id="ordering-enabled-input" value="<?= $tenant['ordering_enabled'] ? '1' : '' ?>">
             </div>
 
             <!-- 2. Modalità ordini -->
@@ -388,6 +384,20 @@ $isZones = ($tenant['delivery_mode'] ?? '') === 'zones';
 
 <script nonce="<?= csp_nonce() ?>">
 document.addEventListener('DOMContentLoaded', function() {
+    // Master toggle "Abilita ordini online"
+    var ordToggle = document.getElementById('ordering-toggle');
+    if (ordToggle) {
+        ordToggle.addEventListener('click', function () {
+            var on = !ordToggle.classList.contains('on');
+            ordToggle.classList.toggle('on', on);
+            ordToggle.classList.toggle('off', !on);
+            var card = document.getElementById('ordering-master');
+            card.classList.toggle('enabled', on);
+            card.classList.toggle('disabled', !on);
+            document.getElementById('ordering-enabled-input').value = on ? '1' : '';
+        });
+    }
+
     var modeSelect = document.getElementById('orderingMode');
     var deliverySettings = document.getElementById('deliverySettings');
     var deliveryModeSelect = document.getElementById('deliveryMode');

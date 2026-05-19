@@ -2,12 +2,22 @@
  * Settings Reviews — toggle master + filter + copy buttons
  */
 document.addEventListener("DOMContentLoaded", function() {
-    // Master toggle
-    var master = document.getElementById("rv-toggle-master");
+    // Master toggle (componente .toggle-big — div cliccabile + input nascosto)
+    var master = document.getElementById("rv-toggle");
+    var masterCard = document.getElementById("rv-master");
+    var enabledInput = document.getElementById("rv-enabled-input");
     var body = document.getElementById("rv-settings-body");
     if (master && body) {
-        master.addEventListener("change", function() {
-            body.style.display = this.checked ? "" : "none";
+        master.addEventListener("click", function() {
+            var on = !master.classList.contains("on");
+            master.classList.toggle("on", on);
+            master.classList.toggle("off", !on);
+            if (masterCard) {
+                masterCard.classList.toggle("enabled", on);
+                masterCard.classList.toggle("disabled", !on);
+            }
+            if (enabledInput) enabledInput.value = on ? "1" : "";
+            body.style.display = on ? "" : "none";
         });
     }
 

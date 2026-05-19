@@ -20,24 +20,18 @@ $platformLabel = $tenant['review_platform_label'] ?? '';
             <?= csrf_field() ?>
 
             <!-- 1. Master toggle -->
-            <div class="card section-card mb-3">
-                <div class="card-body d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center gap-3">
-                        <div style="background:#FFF8E1; color:#F9A825; width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
-                            <i class="bi bi-star-fill"></i>
-                        </div>
-                        <div>
-                            <div style="font-weight:700; font-size:.9rem;">Richiedi recensioni ai clienti</div>
-                            <div style="font-size:.72rem; color:#6c757d;">Invia automaticamente una richiesta dopo la visita</div>
-                        </div>
+            <div class="master-toggle <?= $reviewEnabled ? 'enabled' : 'disabled' ?>" id="rv-master">
+                <div class="mt-left">
+                    <div class="mt-icon" style="background:#FFF8E1;color:#F9A825;">
+                        <i class="bi bi-star-fill"></i>
                     </div>
-                    <div class="form-check form-switch" style="margin:0; padding-left:3rem;">
-                        <input class="form-check-input" type="checkbox" name="review_enabled" value="1"
-                               <?= $reviewEnabled ? 'checked' : '' ?>
-                               style="width:2.5rem; height:1.25rem; cursor:pointer;"
-                               id="rv-toggle-master">
+                    <div>
+                        <div class="mt-title">Richiedi recensioni ai clienti</div>
+                        <div class="mt-desc">Invia automaticamente una richiesta dopo la visita</div>
                     </div>
                 </div>
+                <div class="toggle-big <?= $reviewEnabled ? 'on' : 'off' ?>" id="rv-toggle"></div>
+                <input type="hidden" name="review_enabled" id="rv-enabled-input" value="<?= $reviewEnabled ? '1' : '' ?>">
             </div>
 
             <!-- Content (toggled) -->
