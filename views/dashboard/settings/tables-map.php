@@ -125,6 +125,21 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         ];
     }
 
+    // Slot della fascia oraria con almeno una prenotazione attiva: una
+    // prenotazione "occupa" lo slot da inizio a inizio+durata tavolo.
+    $slotDuration = max(15, (int)($tenant['table_duration'] ?? 90));
+    $slotHasRes = [];
+    foreach ($dayReservations as $r) {
+        if (!in_array((string)$r['status'], ['confirmed', 'pending', 'arrived'], true)) continue;
+        $st = (int)substr((string)$r['reservation_time'], 0, 2) * 60 + (int)substr((string)$r['reservation_time'], 3, 2);
+        foreach ($slots as $s) {
+            $sm = (int)substr($s, 0, 2) * 60 + (int)substr($s, 3, 2);
+            if ($sm >= $st && $sm < $st + $slotDuration) {
+                $slotHasRes[$s] = true;
+            }
+        }
+    }
+
     // Render di una riga prenotazione (riusata in entrambi i gruppi)
     $renderRow = function (array $r) use ($assignments, $resTableLabel) {
         $rid     = (int)$r['id'];
@@ -204,7 +219,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
             <div class="tm-scrub">
                 <?php foreach ($slots as $s): ?>
                 <a href="<?= $opUrl ?>?date=<?= e($opDate) ?>&time=<?= $s ?>"
-                   class="tm-scrub-slot <?= $s === $opTime ? 'active' : '' ?>"><?= $s ?></a>
+                   class="tm-scrub-slot <?= $s === $opTime ? 'active' : '' ?>"><?= $s ?><span class="tm-scrub-dot<?= isset($slotHasRes[$s]) ? '' : ' empty' ?>"></span></a>
                 <?php endforeach; ?>
             </div>
             <div class="tm-map-canvas" id="tm-map">
