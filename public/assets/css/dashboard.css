@@ -4272,6 +4272,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .res-table-form { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
 .res-table-form .form-select { max-width: 320px; }
 .res-section-hint { font-size: .75rem; color: #9aa1a9; margin-top: .5rem; }
+.res-table-ro { font-size: .9rem; font-weight: 600; color: #1a1d23; background: #f5f6f8; border: 1px solid #e9ecef; border-radius: 8px; padding: .5rem .8rem; display: inline-block; }
 
 /* Gestione Tavoli — pulsante ghost + mappa sala */
 .btn-tm-ghost { padding: 7px 14px; border-radius: 8px; font-size: .76rem; font-weight: 600; background: #fff; color: var(--brand, #00844A); border: 1px solid var(--brand, #00844A); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }

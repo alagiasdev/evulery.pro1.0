@@ -148,6 +148,8 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
             <span class="res-auto-pill"><i class="bi bi-magic me-1"></i>Assegnato in automatico</span>
             <?php endif; ?>
         </div>
+        <?php if (in_array((string)$reservation['status'], ['pending', 'confirmed'], true)): ?>
+        <?php // Prenotazione non ancora servita: il tavolo si può cambiare ?>
         <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/table") ?>" class="res-table-form">
             <?= csrf_field() ?>
             <select name="table_option" class="form-select form-select-sm">
@@ -163,6 +165,10 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
             Nessun tavolo disponibile per questo turno. Configura i tavoli in
             <a href="<?= url('dashboard/settings/tables') ?>">Impostazioni &gt; Tavoli</a>.
         </div>
+        <?php endif; ?>
+        <?php else: ?>
+        <?php // Cliente già arrivato / no-show: tavolo bloccato, solo lettura ?>
+        <div class="res-table-ro"><?php if ($tableCurrentValue !== ''): ?><?= e($tableCurrentLabel) ?><?php else: ?>Nessun tavolo assegnato<?php endif; ?></div>
         <?php endif; ?>
     </div>
     <?php endif; ?>

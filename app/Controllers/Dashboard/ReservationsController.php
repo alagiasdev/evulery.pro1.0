@@ -96,6 +96,7 @@ class ReservationsController
         $tableMgmt = (new Tenant())->canUseService((int)Auth::tenantId(), 'table_management');
         $tableOptions = [];
         $tableCurrentValue = '';
+        $tableCurrentLabel = '';
         $tableCurrentAuto = false;
         if ($tableMgmt) {
             $assigner = new TableAssigner();
@@ -109,6 +110,7 @@ class ReservationsController
                 $curIds = array_map(fn($x) => (int)$x['id'], $current);
                 sort($curIds);
                 $tableCurrentValue = implode(',', $curIds);
+                $tableCurrentLabel = implode(' + ', array_column($current, 'name'));
                 $tableCurrentAuto = (bool)($current[0]['is_auto'] ?? 0);
                 $known = array_column($tableOptions, 'value');
                 if (!in_array($tableCurrentValue, $known, true)) {
@@ -130,6 +132,7 @@ class ReservationsController
             'tableMgmt'         => $tableMgmt,
             'tableOptions'      => $tableOptions,
             'tableCurrentValue' => $tableCurrentValue,
+            'tableCurrentLabel' => $tableCurrentLabel,
             'tableCurrentAuto'  => $tableCurrentAuto,
         ], 'dashboard');
     }
