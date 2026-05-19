@@ -1,8 +1,10 @@
 <?php
 /**
- * Mappa sala — modalità setup (posizionamento) e operativa (stato sala). Fase 2.
+ * Mappa sala — modalità setup (posizionamento) e operativa (stato sala).
+ * Fase 2 (mappa) + Fase 3a (operativa a due pannelli: lista + mappa).
  * Variabili: $tenant, $canUse, $tables, $areas, $mode, $opDate, $opTime,
- *            $floorState, $reassignOptions, $currentMap
+ *            $floorState, $reassignOptions, $currentMap,
+ *            $dayReservations, $assignments
  */
 // Posizione iniziale per i tavoli mai posizionati: griglia di fallback con
 // contatore GLOBALE — così due tavoli non posizionati non si sovrappongono mai.
@@ -66,12 +68,61 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
     </div>
 
     <?php elseif ($mode === 'operativa'): ?>
-    <!-- ===== MODALITÀ OPERATIVA ===== -->
-    <div class="tm-op-bar">
-        <?php
-        $prev = date('Y-m-d', strtotime($opDate . ' -1 day'));
-        $next = date('Y-m-d', strtotime($opDate . ' +1 day'));
+    <!-- ===== MODALITÀ OPERATIVA — Fase 3a: due pannelli ===== -->
+    <?php
+    // Etichetta tavolo per prenotazione (tavoli assegnati, anche combinazioni)
+    $resTableLabel = [];
+    foreach ($assignments as $rid => $ts) {
+        $resTableLabel[(int)$rid] = implode(' + ', array_map(fn($x) => $x['name'], $ts));
+    }
+    // Raggruppa: "Da assegnare" (attive senza tavolo) + per ora di prenotazione
+    $unassigned = [];
+    $byHour = [];
+    foreach ($dayReservations as $r) {
+        $rid = (int)$r['id'];
+        if (!isset($assignments[$rid]) && in_array((string)$r['status'], ['confirmed', 'pending', 'arrived'], true)) {
+            $unassigned[] = $r;
+        } else {
+            $byHour[substr((string)$r['reservation_time'], 0, 2)][] = $r;
+        }
+    }
+    ksort($byHour);
+    $nUnassigned = count($unassigned);
+
+    // Render di una riga prenotazione (riusata in entrambi i gruppi)
+    $renderRow = function (array $r) use ($assignments, $resTableLabel) {
+        $rid     = (int)$r['id'];
+        $surname = mb_strtoupper(trim((string)$r['last_name']));
+        $given   = mb_strtolower(trim((string)$r['first_name']));
+        $hasTable = isset($assignments[$rid]);
+        $tableIds = $hasTable ? implode(',', array_map(fn($x) => (int)$x['id'], $assignments[$rid])) : '';
+        $cnotes  = trim((string)($r['customer_notes'] ?? ''));
+        $first   = (int)($r['total_bookings'] ?? 0) <= 1;
         ?>
+        <div class="tm-res-row" data-pop="tm-pop-res-<?= $rid ?>" data-tables="<?= e($tableIds) ?>">
+            <span class="tm-res-time"><?= e(substr((string)$r['reservation_time'], 0, 5)) ?></span>
+            <div class="tm-res-info">
+                <div class="tm-res-name"><strong><?= e($surname) ?></strong> <?= e($given) ?></div>
+                <div class="tm-res-sub">
+                    <span><?= (int)$r['party_size'] ?> persone</span>
+                    <span class="tm-res-status s-<?= e((string)$r['status']) ?>"><?= e(status_label($r['status'])) ?></span>
+                    <?php if ($first): ?><span>1ª visita</span><?php endif; ?>
+                    <?php if ($cnotes !== ''): ?><span class="tm-res-chip"><i class="bi bi-chat-left-text"></i> Nota</span><?php endif; ?>
+                </div>
+            </div>
+            <?php if ($hasTable): ?>
+            <span class="tm-res-table set"><?= e($resTableLabel[$rid]) ?></span>
+            <?php else: ?>
+            <span class="tm-res-table none">Assegna</span>
+            <?php endif; ?>
+        </div>
+        <?php
+    };
+
+    $prev = date('Y-m-d', strtotime($opDate . ' -1 day'));
+    $next = date('Y-m-d', strtotime($opDate . ' +1 day'));
+    ?>
+    <div class="tm-op-bar">
         <a class="tm-op-arrow" href="<?= $opUrl ?>?date=<?= $prev ?>&time=<?= e($opTime) ?>"><i class="bi bi-chevron-left"></i></a>
         <span class="tm-op-date"><?= e(date('D d/m/Y', strtotime($opDate))) ?></span>
         <a class="tm-op-arrow" href="<?= $opUrl ?>?date=<?= $next ?>&time=<?= e($opTime) ?>"><i class="bi bi-chevron-right"></i></a>
@@ -87,59 +138,103 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
             <span><span class="tm-dot" style="background:#0d6efd;"></span> Occupato</span>
         </span>
     </div>
-    <div class="tm-scrub">
-        <?php foreach ($slots as $s): ?>
-        <a href="<?= $opUrl ?>?date=<?= e($opDate) ?>&time=<?= $s ?>"
-           class="tm-scrub-slot <?= $s === $opTime ? 'active' : '' ?>"><?= $s ?></a>
-        <?php endforeach; ?>
+
+    <!-- Tab (solo mobile): commuta lista / mappa -->
+    <div class="tm-vtabs">
+        <button type="button" class="tm-vtab" data-pane="list">Prenotazioni<?php if ($nUnassigned > 0): ?> <span class="tm-vtab-badge"><?= $nUnassigned ?></span><?php endif; ?></button>
+        <button type="button" class="tm-vtab active" data-pane="map">Mappa</button>
     </div>
-    <div class="tm-map-canvas" id="tm-map">
-        <?php foreach ($tables as $t): ?>
-        <?php
-            $tArea = (string)($t['area'] ?? '');
-            $hidden = ($multiArea && $tArea !== $firstArea);
-            $occ = $floorState[(int)$t['id']] ?? null;
-        ?>
-        <div class="tm-map-table <?= $t['shape'] === 'round' ? 'round' : 'square' ?> <?= $occ ? 'busy' : 'freev' ?>"
-             data-id="<?= (int)$t['id'] ?>" data-area="<?= e($tArea) ?>"
-             <?= $occ ? 'data-pop="tm-pop-' . (int)$t['id'] . '"' : '' ?>
-             style="left:<?= (int)$t['_x'] ?>px; top:<?= (int)$t['_y'] ?>px;<?= $hidden ? 'display:none;' : '' ?>">
-            <?php if ($occ): ?>
-            <span class="tm-map-name"><?= e($occ['name']) ?></span>
-            <span class="tm-map-cap"><?= (int)$occ['party'] ?>p &middot; <?= e($occ['time']) ?></span>
+
+    <div class="tm-twopane show-map" id="tm-twopane">
+        <!-- Pannello sinistro: prenotazioni del giorno -->
+        <div class="tm-pane-list">
+            <?php if (empty($dayReservations)): ?>
+            <div class="tm-list-empty"><i class="bi bi-calendar-x me-1"></i> Nessuna prenotazione per questa data.</div>
             <?php else: ?>
-            <span class="tm-map-name"><?= e($t['name']) ?></span>
-            <span class="tm-map-cap"><?= (int)$t['capacity'] ?>p</span>
+                <?php if ($nUnassigned > 0): ?>
+                <div class="tm-list-group danger"><i class="bi bi-exclamation-triangle-fill"></i> Da assegnare &middot; <?= $nUnassigned ?></div>
+                <?php foreach ($unassigned as $r) $renderRow($r); ?>
+                <?php endif; ?>
+                <?php foreach ($byHour as $hr => $rows): ?>
+                <div class="tm-list-group"><i class="bi bi-clock"></i> Ore <?= e($hr) ?>:00</div>
+                <?php foreach ($rows as $r) $renderRow($r); ?>
+                <?php endforeach; ?>
             <?php endif; ?>
         </div>
-        <?php endforeach; ?>
-    </div>
-    <div class="tm-map-hint"><i class="bi bi-info-circle me-1"></i> Tavoli blu = occupati alle <?= e($opTime) ?>. Clicca un tavolo occupato per vedere la prenotazione o spostarla.</div>
 
-    <!-- Popup per i tavoli occupati -->
-    <?php foreach ($floorState as $tableId => $occ): ?>
-    <div class="tm-pop-overlay" id="tm-pop-<?= (int)$tableId ?>">
+        <!-- Pannello destro: mappa -->
+        <div class="tm-pane-map">
+            <div class="tm-scrub">
+                <?php foreach ($slots as $s): ?>
+                <a href="<?= $opUrl ?>?date=<?= e($opDate) ?>&time=<?= $s ?>"
+                   class="tm-scrub-slot <?= $s === $opTime ? 'active' : '' ?>"><?= $s ?></a>
+                <?php endforeach; ?>
+            </div>
+            <div class="tm-map-canvas" id="tm-map">
+                <?php foreach ($tables as $t): ?>
+                <?php
+                    $tArea = (string)($t['area'] ?? '');
+                    $hidden = ($multiArea && $tArea !== $firstArea);
+                    $occ = $floorState[(int)$t['id']] ?? null;
+                ?>
+                <div class="tm-map-table <?= $t['shape'] === 'round' ? 'round' : 'square' ?> <?= $occ ? 'busy' : 'freev' ?>"
+                     data-id="<?= (int)$t['id'] ?>" data-area="<?= e($tArea) ?>"
+                     <?= $occ ? 'data-pop="tm-pop-res-' . (int)$occ['reservation_id'] . '"' : '' ?>
+                     style="left:<?= (int)$t['_x'] ?>px; top:<?= (int)$t['_y'] ?>px;<?= $hidden ? 'display:none;' : '' ?>">
+                    <?php if ($occ): ?>
+                    <span class="tm-map-name"><?= e($occ['name']) ?></span>
+                    <span class="tm-map-cap"><?= (int)$occ['party'] ?>p &middot; <?= e($occ['time']) ?></span>
+                    <?php else: ?>
+                    <span class="tm-map-name"><?= e($t['name']) ?></span>
+                    <span class="tm-map-cap"><?= (int)$t['capacity'] ?>p</span>
+                    <?php endif; ?>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <div class="tm-map-hint"><i class="bi bi-info-circle me-1"></i> Tavoli blu = occupati alle <?= e($opTime) ?>. Clicca un tavolo o una prenotazione per i dettagli.</div>
+        </div>
+    </div>
+
+    <!-- Popup dettaglio per ogni prenotazione del giorno -->
+    <?php foreach ($dayReservations as $r): ?>
+    <?php
+        $rid     = (int)$r['id'];
+        $surname = mb_strtoupper(trim((string)$r['last_name']));
+        $given   = mb_strtolower(trim((string)$r['first_name']));
+        $first   = (int)($r['total_bookings'] ?? 0) <= 1;
+        $cnotes  = trim((string)($r['customer_notes'] ?? ''));
+        $curOpt  = $currentMap[$rid] ?? '';
+    ?>
+    <div class="tm-pop-overlay" id="tm-pop-res-<?= $rid ?>">
         <div class="tm-pop">
             <div class="tm-pop-head">
-                <span><i class="bi bi-person me-1"></i> <?= e($occ['name']) ?></span>
+                <span><i class="bi bi-person me-1"></i> <?= e(trim($surname . ' ' . $given)) ?><?php if ($first): ?> <span class="tm-pop-badge">1ª visita</span><?php endif; ?></span>
                 <button type="button" class="tm-pop-x" data-close>&times;</button>
             </div>
             <div class="tm-pop-body">
-                <div class="tm-pop-meta"><?= (int)$occ['party'] ?> persone &middot; <?= e($occ['time']) ?> &middot; <?= e(status_label($occ['status'])) ?></div>
-                <form method="POST" action="<?= url('dashboard/reservations/' . (int)$occ['reservation_id'] . '/table') ?>">
+                <div class="tm-pop-meta"><?= (int)$r['party_size'] ?> persone &middot; <?= e(substr((string)$r['reservation_time'], 0, 5)) ?> &middot; <?= e(status_label($r['status'])) ?></div>
+                <?php if (!empty($r['phone']) || !empty($r['email'])): ?>
+                <div class="tm-pop-contact">
+                    <?php if (!empty($r['phone'])): ?><a href="tel:<?= e(str_replace(' ', '', (string)$r['phone'])) ?>"><i class="bi bi-telephone"></i> <?= e($r['phone']) ?></a><?php endif; ?>
+                    <?php if (!empty($r['email'])): ?><a href="mailto:<?= e($r['email']) ?>"><i class="bi bi-envelope"></i> <?= e($r['email']) ?></a><?php endif; ?>
+                </div>
+                <?php endif; ?>
+                <?php if ($cnotes !== ''): ?>
+                <div class="tm-pop-note"><i class="bi bi-chat-left-text"></i> <span><strong>Note del cliente:</strong> <?= e($cnotes) ?></span></div>
+                <?php endif; ?>
+                <form method="POST" action="<?= url('dashboard/reservations/' . $rid . '/table') ?>">
                     <?= csrf_field() ?>
                     <input type="hidden" name="redirect_back" value="<?= e($opBack) ?>">
-                    <label class="tm-pop-label">Sposta su un altro tavolo</label>
+                    <label class="tm-pop-label">Tavolo assegnato</label>
                     <select name="table_option" class="tm-fi">
                         <option value="">&mdash; Nessun tavolo &mdash;</option>
-                        <?php $cur = $currentMap[(int)$occ['reservation_id']] ?? ''; ?>
                         <?php foreach ($reassignOptions as $o): ?>
-                        <option value="<?= e($o['value']) ?>" <?= $o['value'] === $cur ? 'selected' : '' ?>><?= e($o['label']) ?></option>
+                        <option value="<?= e($o['value']) ?>" <?= $o['value'] === $curOpt ? 'selected' : '' ?>><?= e($o['label']) ?></option>
                         <?php endforeach; ?>
                     </select>
                     <div class="tm-pop-foot">
-                        <a href="<?= url('dashboard/reservations/' . (int)$occ['reservation_id']) ?>" class="tm-pop-link">Apri prenotazione</a>
-                        <button type="submit" class="btn-tm-new"><i class="bi bi-check me-1"></i> Sposta</button>
+                        <a href="<?= url('dashboard/reservations/' . $rid) ?>" class="tm-pop-link">Apri scheda completa</a>
+                        <button type="submit" class="btn-tm-new"><i class="bi bi-check me-1"></i> Salva</button>
                     </div>
                 </form>
             </div>
@@ -238,16 +333,46 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
             posInput.value = JSON.stringify(pos);
         });
     } else {
-        // Operativa: clic su tavolo occupato → popup
+        // Operativa — Fase 3a
+        function openPop(id) {
+            var ov = id && document.getElementById(id);
+            if (ov) ov.style.display = 'flex';
+        }
+        function highlight(ids) {
+            canvas.querySelectorAll('.tm-map-table').forEach(function (el) {
+                el.classList.toggle('hl', ids.indexOf(el.getAttribute('data-id')) >= 0);
+            });
+        }
+        // clic su tavolo occupato → popup + evidenzia
         canvas.querySelectorAll('.tm-map-table[data-pop]').forEach(function (el) {
             el.addEventListener('click', function () {
-                var ov = document.getElementById(el.getAttribute('data-pop'));
-                if (ov) ov.style.display = 'flex';
+                highlight([el.getAttribute('data-id')]);
+                openPop(el.getAttribute('data-pop'));
             });
         });
+        // clic su riga prenotazione → popup + evidenzia il suo tavolo sulla mappa
+        document.querySelectorAll('.tm-res-row').forEach(function (row) {
+            row.addEventListener('click', function () {
+                var ids = (row.getAttribute('data-tables') || '').split(',').filter(Boolean);
+                highlight(ids);
+                openPop(row.getAttribute('data-pop'));
+            });
+        });
+        // chiusura popup
         document.querySelectorAll('.tm-pop-overlay').forEach(function (ov) {
             ov.addEventListener('click', function (e) {
                 if (e.target === ov || e.target.hasAttribute('data-close')) ov.style.display = 'none';
+            });
+        });
+        // tab mobile: commuta lista / mappa
+        var twopane = document.getElementById('tm-twopane');
+        document.querySelectorAll('.tm-vtab').forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                document.querySelectorAll('.tm-vtab').forEach(function (t) { t.classList.remove('active'); });
+                tab.classList.add('active');
+                var pane = tab.getAttribute('data-pane');
+                twopane.classList.toggle('show-map', pane === 'map');
+                twopane.classList.toggle('show-list', pane === 'list');
             });
         });
     }

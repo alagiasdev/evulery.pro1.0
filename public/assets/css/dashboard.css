@@ -4311,3 +4311,47 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-pop-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
 .tm-pop-link { font-size: .74rem; color: var(--brand, #00844A); text-decoration: none; font-weight: 600; }
 .tm-pop-link:hover { text-decoration: underline; }
+
+/* Gestione Tavoli — Fase 3a: Sala operativa a due pannelli */
+.tm-vtabs { display: none; border-bottom: 1px solid var(--border, #e9ecef); }
+.tm-vtab { flex: 1; padding: 11px; font-size: .8rem; font-weight: 600; background: #fff; color: #6c757d; border: none; border-bottom: 2px solid transparent; cursor: pointer; }
+.tm-vtab.active { color: var(--brand, #00844A); border-bottom-color: var(--brand, #00844A); }
+.tm-vtab-badge { background: #b3261e; color: #fff; font-size: .62rem; font-weight: 700; border-radius: 9px; padding: 1px 6px; }
+.tm-twopane { display: flex; }
+.tm-pane-list { width: 322px; flex-shrink: 0; border-right: 1px solid var(--border, #e9ecef); height: 540px; overflow-y: auto; }
+.tm-pane-map { flex: 1; min-width: 0; }
+.tm-list-empty { padding: 26px 16px; font-size: .78rem; color: #9aa1a9; text-align: center; }
+.tm-list-group { font-size: .64rem; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; color: #6c757d; padding: 9px 14px 5px; background: #fafbfc; position: sticky; top: 0; display: flex; align-items: center; gap: 6px; }
+.tm-list-group.danger { color: #b3261e; background: #fdecea; }
+.tm-res-row { display: flex; align-items: center; gap: 9px; padding: 10px 14px; border-bottom: 1px solid #f5f6f8; cursor: pointer; }
+.tm-res-row:hover { background: #fafbfc; }
+.tm-res-time { font-size: .72rem; font-weight: 700; background: #1a1d23; color: #fff; border-radius: 6px; padding: 3px 7px; flex-shrink: 0; }
+.tm-res-info { flex: 1; min-width: 0; }
+.tm-res-name { font-size: .78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tm-res-name strong { font-weight: 700; }
+.tm-res-sub { font-size: .62rem; color: #6c757d; display: flex; gap: 7px; flex-wrap: wrap; margin-top: 2px; align-items: center; }
+.tm-res-chip { background: #eef0f2; color: #5b6470; font-weight: 600; border-radius: 4px; padding: 1px 5px; }
+.tm-res-status { font-weight: 700; border-radius: 4px; padding: 1px 6px; }
+.tm-res-status.s-confirmed { background: #d1e7dd; color: #0a5c36; }
+.tm-res-status.s-pending { background: #fff3cd; color: #664d03; }
+.tm-res-status.s-arrived { background: #cfe2ff; color: #084298; }
+.tm-res-status.s-noshow { background: #fdecea; color: #b3261e; }
+.tm-res-status.s-completed { background: #eef0f2; color: #5b6470; }
+.tm-res-table { font-size: .68rem; font-weight: 700; border-radius: 7px; padding: 4px 7px; flex-shrink: 0; max-width: 96px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: center; }
+.tm-res-table.set { border: 1px solid var(--brand, #00844A); color: var(--brand, #00844A); background: var(--brand-light, #e6f4ed); }
+.tm-res-table.none { border: 1px dashed #e0a39d; color: #b3261e; background: #fdecea; }
+.tm-map-table.hl { box-shadow: 0 0 0 3px #ffc107, 0 0 0 6px rgba(255,193,7,.4); z-index: 9; }
+.tm-pop-badge { font-size: .58rem; font-weight: 700; background: #e7f1ff; color: #0d6efd; border-radius: 5px; padding: 2px 6px; margin-left: 4px; vertical-align: middle; }
+.tm-pop-contact { display: flex; flex-direction: column; gap: 3px; margin-bottom: 11px; }
+.tm-pop-contact a { font-size: .74rem; color: #6c757d; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+.tm-pop-contact a:hover { color: var(--brand, #00844A); }
+.tm-pop-note { display: flex; gap: 7px; font-size: .72rem; color: #5b6470; background: #f5f6f8; border: 1px solid var(--border, #e9ecef); border-radius: 7px; padding: 7px 9px; margin-bottom: 12px; line-height: 1.45; }
+.tm-pop-note i { color: #6c757d; margin-top: 1px; flex-shrink: 0; }
+.tm-pop-note strong { color: #1a1d23; }
+@media (max-width: 860px) {
+    .tm-vtabs { display: flex; }
+    .tm-twopane { flex-direction: column; }
+    .tm-pane-list { width: 100%; height: auto; max-height: 70vh; border-right: none; }
+    .tm-twopane.show-map .tm-pane-list { display: none; }
+    .tm-twopane.show-list .tm-pane-map { display: none; }
+}

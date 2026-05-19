@@ -6,6 +6,7 @@ use App\Core\Auth;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\TenantResolver;
+use App\Models\Reservation;
 use App\Models\Table;
 use App\Models\Tenant;
 use App\Services\AuditLog;
@@ -150,6 +151,7 @@ class TablesController
         $canUse = tenant_can('table_management');
 
         $tables = $areas = $floorState = $reassignOptions = $currentMap = [];
+        $dayReservations = $assignments = [];
         $opDate = (string)$request->query('date', date('Y-m-d'));
         $opTime = (string)$request->query('time', $this->defaultOpTime());
 
@@ -164,9 +166,15 @@ class TablesController
                 $assigner = new TableAssigner();
                 $floorState = $assigner->floorState((int)$tenant['id'], $opDate, $opTime);
                 $reassignOptions = $assigner->allTableOptions((int)$tenant['id']);
-                // assegnazione corrente per ogni prenotazione che occupa un tavolo
-                $resIds = array_values(array_unique(array_column($floorState, 'reservation_id')));
-                foreach ($assigner->assignmentsFor($resIds) as $rid => $ts) {
+
+                // Fase 3a — elenco prenotazioni del giorno (escluse le annullate)
+                // + mappa dei tavoli assegnati a ciascuna.
+                $dayReservations = array_values(array_filter(
+                    (new Reservation())->findByTenantAndDate((int)$tenant['id'], $opDate),
+                    fn($r) => ($r['status'] ?? '') !== 'cancelled'
+                ));
+                $assignments = $assigner->assignmentsFor(array_column($dayReservations, 'id'));
+                foreach ($assignments as $rid => $ts) {
                     $ids = array_map(fn($x) => (int)$x['id'], $ts);
                     sort($ids);
                     $currentMap[(int)$rid] = implode(',', $ids);
@@ -187,6 +195,8 @@ class TablesController
             'floorState'      => $floorState,
             'reassignOptions' => $reassignOptions,
             'currentMap'      => $currentMap,
+            'dayReservations' => $dayReservations,
+            'assignments'     => $assignments,
         ], 'dashboard');
     }
 
