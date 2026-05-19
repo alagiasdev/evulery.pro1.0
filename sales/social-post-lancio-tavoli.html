@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post di lancio — Gestione Tavoli | Evulery</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{
+    --brand:#00844A;--brand-deep:#00532f;--accent:#23d18b;
+    --bg:#f5f6f8;--card:#fff;--text:#1a1d23;--muted:#6c757d;--border:#e9ecef;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);
+    padding:24px;max-width:760px;margin:0 auto;line-height:1.55;}
+  h1{font-size:1.4rem;font-weight:800;margin-bottom:.2rem;}
+  .sub{font-size:.85rem;color:var(--muted);margin-bottom:1.4rem;}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+  .pill{font-size:.66rem;font-weight:700;padding:4px 10px;border-radius:20px;background:#e6f4ed;color:var(--brand);}
+  .pill.alt{background:#fff3cd;color:#8a6d00;}
+  .section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:26px 0 8px;}
+
+  /* ===== CARD VISIVA (1080×1080) ===== */
+  .card-wrap{display:flex;justify-content:center;}
+  .card{width:100%;max-width:460px;aspect-ratio:1/1;border-radius:18px;overflow:hidden;
+    background:linear-gradient(155deg,#00532f 0%,#00844A 100%);color:#fff;
+    display:flex;flex-direction:column;padding:7%;box-shadow:0 8px 30px rgba(0,0,0,.18);}
+  .card-logo{font-size:1.5rem;font-weight:800;letter-spacing:-.5px;}
+  .card-logo .dot{color:var(--accent);}
+  .card-badge{display:inline-block;align-self:flex-start;margin-top:14px;font-size:.66rem;font-weight:800;
+    letter-spacing:1.2px;background:var(--accent);color:#00351f;padding:5px 12px;border-radius:20px;}
+  .card-headline{font-size:2rem;font-weight:800;line-height:1.12;margin-top:14px;}
+  .card-headline span{color:var(--accent);}
+  /* mini mappa sala */
+  .card-map{display:flex;gap:7px;flex-wrap:wrap;margin-top:auto;margin-bottom:14px;}
+  .t{width:46px;height:46px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+    font-size:.5rem;font-weight:700;color:#fff;}
+  .t.round{border-radius:50%;}
+  .t.free{background:#1fb866;}
+  .t.busy{background:#2f7bf6;}
+  .card-feat{font-size:.92rem;font-weight:700;}
+  .card-feat i{color:var(--accent);}
+  .card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;
+    font-size:.72rem;opacity:.85;border-top:1px solid rgba(255,255,255,.18);padding-top:10px;}
+
+  /* ===== CAPTION ===== */
+  .caption{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;
+    font-size:.9rem;white-space:pre-wrap;}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
+  .tag{font-size:.72rem;font-weight:600;color:var(--brand);background:#e6f4ed;padding:3px 9px;border-radius:6px;}
+  .notes{background:#fff8e6;border:1px solid #ffe082;border-radius:12px;padding:16px 18px;font-size:.82rem;
+    line-height:1.6;margin-top:10px;}
+  .notes strong{color:#664d03;}
+  .notes ul{padding-left:20px;margin-top:6px;}
+  .notes li{margin-bottom:4px;}
+  @media(max-width:520px){ h1{font-size:1.2rem;} .card-headline{font-size:1.6rem;} .t{width:38px;height:38px;} }
+</style>
+</head>
+<body>
+
+<h1>Post di lancio — Gestione Tavoli</h1>
+<p class="sub">Annuncio della nuova funzionalità Sala &amp; Tavoli. Da pubblicare su Instagram / Facebook, formato quadrato 1080×1080.</p>
+<div class="meta">
+  <span class="pill">Lancio feature</span>
+  <span class="pill">Singolo · 1080×1080</span>
+  <span class="pill alt">Da fissare in alto al profilo</span>
+</div>
+
+<!-- ===== VISUAL ===== -->
+<div class="section-label">Grafica del post</div>
+<div class="card-wrap">
+  <div class="card">
+    <div class="card-logo">evulery<span class="dot">.</span></div>
+    <span class="card-badge">NUOVO</span>
+    <div class="card-headline">La tua sala,<br>sotto controllo.<br><span>In tempo reale.</span></div>
+    <div class="card-map">
+      <div class="t free">2p</div>
+      <div class="t busy">●</div>
+      <div class="t busy round">●</div>
+      <div class="t free">4p</div>
+      <div class="t busy">●</div>
+      <div class="t free round">2p</div>
+      <div class="t free">4p</div>
+    </div>
+    <div class="card-feat"><i class="bi bi-grid-3x3"></i> Gestione Tavoli &mdash; mappa sala + auto-assegnazione</div>
+    <div class="card-foot">
+      <span>Piano Enterprise</span>
+      <span>evulery.it</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CAPTION ===== -->
+<div class="section-label">Caption</div>
+<div class="caption">NOVITÀ — la tua sala, ora la gestisci dallo schermo.
+
+Ogni sera la stessa scena: il foglio delle prenotazioni, la matita, e la testa che fa i conti. "Se sposto i quattro del tavolo 6… no aspetta, alle 21 arriva il gruppo da otto…"
+
+Da oggi su Evulery c'è la Gestione Tavoli.
+
+→ Disegni la pianta della tua sala una volta sola.
+→ A ogni prenotazione, il sistema assegna il tavolo giusto da solo.
+→ Durante il servizio vedi la sala in tempo reale: chi è seduto dove, cosa è libero, cosa sta per liberarsi.
+
+Niente più foglio. Niente più "secondo me ci stanno". La sala la guardi e la capisci in due secondi.
+
+È nel piano Enterprise — pensata per chi ha una sala vera da gestire: turni, gruppi numerosi, tavoli da combinare.
+
+Vuoi vederla in azione? Demo gratuita → link in bio.</div>
+<div class="tags">
+  <span class="tag">#gestioneristorante</span>
+  <span class="tag">#ristorante</span>
+  <span class="tag">#ristoratori</span>
+  <span class="tag">#salaristorante</span>
+  <span class="tag">#prenotazioniristorante</span>
+  <span class="tag">#gestionetavoli</span>
+  <span class="tag">#ristorazione</span>
+  <span class="tag">#evulery</span>
+</div>
+
+<!-- ===== NOTE ===== -->
+<div class="section-label">Note operative</div>
+<div class="notes">
+  <strong>Come usare questo post:</strong>
+  <ul>
+    <li><strong>Fissalo in alto</strong> al profilo per le prime 2 settimane: è un annuncio, non un post evergreen.</li>
+    <li><strong>Target sponsorizzata</strong> (15-30€): ristoranti strutturati, 40+ coperti, con sala da gestire — è il pubblico del piano Enterprise. Inutile spingerlo verso bar o attività solo-asporto.</li>
+    <li><strong>Abbinalo a un secondo contenuto</strong>: una storia o un reel con la registrazione schermo della Sala vera (mappa che si colora, tavolo che si sposta). L'annuncio incuriosisce, il video dimostra.</li>
+    <li><strong>Tono</strong>: si parte dal problema concreto (il foglio, la matita) — non dalla feature. Il ristoratore si riconosce nella scena prima ancora di sapere cosa vendi.</li>
+    <li><strong>Non promettere</strong> la feature a chi non ha l'Enterprise: nei commenti, se chiedono, indirizza alla demo. Mai dire "ce l'hai anche tu" senza verificare il piano.</li>
+  </ul>
+</div>
+
+</body>
+</html>
