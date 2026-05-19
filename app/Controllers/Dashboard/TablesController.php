@@ -151,7 +151,7 @@ class TablesController
 
         $tables = $areas = $floorState = $reassignOptions = $currentMap = [];
         $opDate = (string)$request->query('date', date('Y-m-d'));
-        $opTime = (string)$request->query('time', '20:00');
+        $opTime = (string)$request->query('time', $this->defaultOpTime());
 
         if ($canUse) {
             $model = new Table();
@@ -188,6 +188,20 @@ class TablesController
             'reassignOptions' => $reassignOptions,
             'currentMap'      => $currentMap,
         ], 'dashboard');
+    }
+
+    /**
+     * Slot orario di default per la modalità operativa: arrotonda l'ora
+     * corrente ai 30 minuti, limitato alla fascia 12:00–23:30 dello
+     * scorri-orari. Fuori fascia (notte/mattina) si aggancia all'estremo
+     * più vicino, così si apre sempre vicino "all'adesso".
+     */
+    private function defaultOpTime(): string
+    {
+        $min = (int)date('G') * 60 + (int)date('i');
+        $min = (int)(round($min / 30) * 30);
+        $min = max(12 * 60, min(23 * 60 + 30, $min));
+        return sprintf('%02d:%02d', intdiv($min, 60), $min % 60);
     }
 
     /** Salva le posizioni dei tavoli sulla mappa (JSON: {id:{x,y}}). */
