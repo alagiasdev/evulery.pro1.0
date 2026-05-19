@@ -11,7 +11,7 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
 
 <?php $activeKey = 'settings'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
-<form method="POST" action="<?= url('dashboard/settings') ?>" enctype="multipart/form-data">
+<form method="POST" action="<?= url('dashboard/settings/general') ?>" enctype="multipart/form-data">
     <?= csrf_field() ?>
     <div class="row g-4">
         <!-- Left: Form -->

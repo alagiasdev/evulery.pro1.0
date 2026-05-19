@@ -4379,3 +4379,21 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     .tm-twopane.show-map .tm-pane-list { display: none; }
     .tm-twopane.show-list .tm-pane-map { display: none; }
 }
+
+/* Impostazioni — hub a griglia (pagina /dashboard/settings) */
+.set-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.set-card { background: #fff; border: 1px solid var(--border, #e9ecef); border-radius: 14px; overflow: hidden; }
+.set-card-head { display: flex; align-items: center; gap: 9px; padding: 14px 16px; border-bottom: 1px solid var(--border, #e9ecef); }
+.set-card-ic { width: 34px; height: 34px; border-radius: 9px; background: var(--brand-light, #e6f4ed); color: var(--brand, #00844A); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+.set-card-tit { font-size: .9rem; font-weight: 700; display: block; }
+.set-card-sub { font-size: .66rem; color: #6c757d; }
+.set-item { display: flex; align-items: flex-start; gap: 10px; padding: 11px 16px; border-bottom: 1px solid #f5f6f8; text-decoration: none; color: inherit; }
+.set-item:last-child { border-bottom: none; }
+.set-item:hover { background: #fafbfc; }
+.set-item-ic { width: 24px; text-align: center; color: var(--brand, #00844A); font-size: .9rem; margin-top: 1px; flex-shrink: 0; }
+.set-item-body { flex: 1; min-width: 0; }
+.set-item-name { font-size: .82rem; font-weight: 600; display: block; }
+.set-item-desc { font-size: .68rem; color: #6c757d; margin-top: 1px; line-height: 1.4; display: block; }
+.set-item-arrow { color: #c4c9ce; font-size: .8rem; margin-top: 2px; }
+.set-lock { color: #adb5bd; font-size: .7rem; }
+@media (max-width: 880px) { .set-grid { grid-template-columns: 1fr; } }

@@ -13,6 +13,16 @@ use App\Services\AuditLog;
 
 class SettingsController
 {
+    /** Hub Impostazioni — pagina a griglia che raggruppa tutte le sezioni. */
+    public function index(Request $request): void
+    {
+        view('dashboard/settings/index', [
+            'title'      => 'Impostazioni',
+            'activeMenu' => 'settings',
+            'tenant'     => TenantResolver::current(),
+        ], 'dashboard');
+    }
+
     public function general(Request $request): void
     {
         view('dashboard/settings/general', [
@@ -36,17 +46,17 @@ class SettingsController
 
         if (isset($data['cancellation_policy']) && mb_strlen($data['cancellation_policy']) > 2000) {
             flash('danger', 'La policy di cancellazione non può superare 2000 caratteri.');
-            Response::redirect(url('dashboard/settings'));
+            Response::redirect(url('dashboard/settings/general'));
         }
 
         if (isset($data['booking_instructions']) && mb_strlen($data['booking_instructions']) > 1000) {
             flash('danger', 'Le istruzioni per il cliente non possono superare 1000 caratteri.');
-            Response::redirect(url('dashboard/settings'));
+            Response::redirect(url('dashboard/settings/general'));
         }
 
         if ($v->fails()) {
             flash('danger', $v->firstError());
-            Response::redirect(url('dashboard/settings'));
+            Response::redirect(url('dashboard/settings/general'));
         }
 
         // Validate segment thresholds: occasionale < abituale < vip
@@ -56,7 +66,7 @@ class SettingsController
 
         if ($segOcc >= $segAbi || $segAbi >= $segVip) {
             flash('danger', 'Le soglie segmento devono essere crescenti: Occasionale < Abituale < VIP.');
-            Response::redirect(url('dashboard/settings'));
+            Response::redirect(url('dashboard/settings/general'));
         }
 
         // Handle logo upload
@@ -64,7 +74,7 @@ class SettingsController
         if (!empty($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
             $logoUrl = $this->handleLogoUpload($tenantId);
             if ($logoUrl === false) {
-                Response::redirect(url('dashboard/settings'));
+                Response::redirect(url('dashboard/settings/general'));
             }
         }
 
@@ -109,7 +119,7 @@ class SettingsController
         TenantResolver::setCurrent($tenant);
 
         flash('success', 'Impostazioni aggiornate.');
-        Response::redirect(url('dashboard/settings'));
+        Response::redirect(url('dashboard/settings/general'));
     }
 
     /**

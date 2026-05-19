@@ -103,8 +103,9 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('/help', [HelpController::class, 'index']);
     $r->post('/help/feedback', [HelpController::class, 'feedback']);
     $r->get('/help/{slug}', [HelpController::class, 'show']);
-    $r->get('/settings', [SettingsController::class, 'general']);
-    $r->post('/settings', [SettingsController::class, 'updateGeneral']);
+    $r->get('/settings', [SettingsController::class, 'index']);
+    $r->get('/settings/general', [SettingsController::class, 'general']);
+    $r->post('/settings/general', [SettingsController::class, 'updateGeneral']);
     $r->get('/settings/slots', [SlotsController::class, 'index']);
     $r->post('/settings/slots', [SlotsController::class, 'update']);
     $r->get('/settings/notifications', [SettingsController::class, 'notifications']);

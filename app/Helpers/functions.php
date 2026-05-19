@@ -227,6 +227,36 @@ function area_color(string $area): string
 }
 
 /**
+ * Navigazione delle Impostazioni — single source of truth.
+ * Usata sia dall'hub a griglia (/dashboard/settings) sia dalla barra di tab
+ * delle sotto-pagine (partials/settings-tabs.php). Ritorna i gruppi con le
+ * voci: url, icon, label, key, desc e (per i servizi gatati) service.
+ */
+function settings_nav(): array
+{
+    return [
+        'Operatività' => [
+            ['url' => url('dashboard/settings/general'),         'icon' => 'bi-gear',         'label' => 'Generali',          'key' => 'settings',               'desc' => 'Dati del ristorante, contatti, orari di apertura'],
+            ['url' => url('dashboard/settings/slots'),           'icon' => 'bi-clock',        'label' => 'Orari e Coperti',   'key' => 'slots',                  'desc' => 'Fasce di prenotazione e limite coperti per slot'],
+            ['url' => url('dashboard/settings/meal-categories'), 'icon' => 'bi-tags',         'label' => 'Categorie Pasto',   'key' => 'meal-categories',        'desc' => 'Pranzo, cena, brunch: fasce con regole proprie'],
+            ['url' => url('dashboard/settings/tables'),          'icon' => 'bi-grid-3x3',     'label' => 'Tavoli',            'key' => 'settings-tables',        'desc' => 'Sala, mappa, auto-assegnazione tavoli',          'service' => 'table_management'],
+            ['url' => url('dashboard/settings/closures'),        'icon' => 'bi-calendar-x',   'label' => 'Chiusure',          'key' => 'closures',               'desc' => 'Giorni di chiusura straordinaria e ferie'],
+        ],
+        'Servizi clienti' => [
+            ['url' => url('dashboard/settings/promotions'),      'icon' => 'bi-percent',      'label' => 'Promozioni',        'key' => 'promotions',             'desc' => 'Sconti e offerte nel widget di prenotazione',    'service' => 'promotions'],
+            ['url' => url('dashboard/settings/deposit'),         'icon' => 'bi-cash',         'label' => 'Caparra',           'key' => 'deposit',                'desc' => 'Caparra o carta a garanzia sulle prenotazioni',  'service' => 'deposit'],
+            ['url' => url('dashboard/settings/ordering'),        'icon' => 'bi-bag-check',    'label' => 'Ordini online',     'key' => 'settings-ordering',      'desc' => 'Takeaway e delivery, zone di consegna',          'service' => 'online_ordering'],
+            ['url' => url('dashboard/settings/reviews'),         'icon' => 'bi-star',         'label' => 'Recensioni',        'key' => 'settings-reviews',       'desc' => 'Richieste recensione automatiche post-visita',   'service' => 'review_management'],
+        ],
+        'Brand' => [
+            ['url' => url('dashboard/settings/notifications'),   'icon' => 'bi-bell',         'label' => 'Notifiche',         'key' => 'settings-notifications', 'desc' => 'Email, campanella dashboard, push browser'],
+            ['url' => url('dashboard/settings/hub'),             'icon' => 'bi-grid-3x3-gap', 'label' => 'Vetrina Digitale',  'key' => 'settings-hub',           'desc' => 'Pagina pubblica aggregatrice, QR scansionabile'],
+            ['url' => url('dashboard/settings/domain'),          'icon' => 'bi-globe',        'label' => 'Dominio',           'key' => 'domain',                 'desc' => 'Dominio personalizzato per le pagine pubbliche', 'service' => 'custom_domain'],
+        ],
+    ];
+}
+
+/**
  * Get Bootstrap badge class for reservation status
  */
 function status_badge(string $status): string
