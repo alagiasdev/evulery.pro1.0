@@ -53,7 +53,7 @@
   .res-name b{font-weight:700;}
   .res-sub{font-size:.62rem;color:var(--muted);display:flex;gap:7px;flex-wrap:wrap;margin-top:1px;}
   .res-tag{font-size:.55rem;font-weight:600;padding:1px 5px;border-radius:4px;background:#fff3cd;color:#8a6d00;}
-  .res-tag.allergy{background:#fdecea;color:#b3261e;}
+  .res-tag.note{background:#eef0f2;color:#5b6470;}
   .res-table{font-size:.68rem;font-weight:700;border-radius:7px;padding:4px 7px;flex-shrink:0;min-width:46px;text-align:center;}
   .res-table.set{border:1px solid var(--brand);color:var(--brand);background:var(--brand-light);}
   .res-table.none{border:1px dashed #e0a39d;color:#b3261e;background:#fdecea;}
@@ -96,7 +96,9 @@
   .seg-badge{font-size:.54rem;font-weight:700;background:#e7f1ff;color:#0d6efd;border-radius:5px;padding:2px 6px;vertical-align:middle;margin-left:3px;}
   .det-contact{display:flex;flex-direction:column;gap:3px;margin-bottom:11px;}
   .det-contact a{font-size:.72rem;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:6px;}
-  .det-alert{display:flex;align-items:center;gap:6px;font-size:.7rem;font-weight:600;color:#b3261e;background:#fdecea;border:1px solid #f3c9c4;border-radius:7px;padding:6px 9px;margin-bottom:12px;}
+  .det-note{display:flex;gap:7px;font-size:.7rem;color:#5b6470;background:#f5f6f8;border:1px solid var(--border);border-radius:7px;padding:7px 9px;margin-bottom:12px;line-height:1.45;}
+  .det-note i{color:var(--muted);margin-top:1px;flex-shrink:0;}
+  .det-note strong{color:var(--text);}
   .det-field{margin-bottom:12px;}
   .det-lbl{display:block;font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
   .status-pills{display:flex;gap:5px;flex-wrap:wrap;}
@@ -183,7 +185,7 @@
           <span class="res-time">18:30</span>
           <div class="res-info">
             <div class="res-name"><b>DRASKOVIC</b> erika</div>
-            <div class="res-sub"><span>2 persone</span><span class="res-tag allergy"><i class="bi bi-exclamation-octagon"></i> Allergia</span></div>
+            <div class="res-sub"><span>2 persone</span><span class="res-tag note"><i class="bi bi-chat-left-text"></i> Nota</span></div>
           </div>
           <span class="res-table set">Tav.6</span>
         </div>
@@ -305,7 +307,7 @@
         </div>
         <div class="res-row">
           <span class="res-time">18:30</span>
-          <div class="res-info"><div class="res-name"><b>DRASKOVIC</b> erika</div><div class="res-sub"><span class="res-tag allergy">Allergia</span></div></div>
+          <div class="res-info"><div class="res-name"><b>DRASKOVIC</b> erika</div><div class="res-sub"><span>2 persone</span><span class="res-tag note"><i class="bi bi-chat-left-text"></i> Nota</span></div></div>
           <span class="res-table set">Tav.6</span>
         </div>
         <div class="res-row">
@@ -361,7 +363,7 @@
         <a href="#"><i class="bi bi-telephone"></i> +39 370 101 0546</a>
         <a href="#"><i class="bi bi-envelope"></i> stefano@alagia.it</a>
       </div>
-      <div class="det-alert"><i class="bi bi-exclamation-octagon-fill"></i> Allergia segnalata: frutta secca</div>
+      <div class="det-note"><i class="bi bi-chat-left-text"></i> <span><strong>Note del cliente:</strong> Allergia alla frutta secca, se possibile un tavolo tranquillo.</span></div>
       <div class="det-field">
         <label class="det-lbl">Stato prenotazione</label>
         <div class="status-pills">
@@ -403,6 +405,7 @@
         <div class="det-contact">
           <a href="#"><i class="bi bi-telephone"></i> +39 370 101 0546</a>
         </div>
+        <div class="det-note"><i class="bi bi-chat-left-text"></i> <span><strong>Note del cliente:</strong> Allergia alla frutta secca.</span></div>
         <div class="det-field">
           <label class="det-lbl">Stato</label>
           <div class="status-pills">
@@ -428,11 +431,12 @@
 <div class="notes">
   <h3><i class="bi bi-lightbulb"></i> Note di design — Sala a due pannelli</h3>
   <ul>
-    <li><strong>Cosa risolve.</strong> Tre cose che la sola mappa non mostra: (1) le prenotazioni <strong>senza tavolo</strong> — invisibili sulla mappa; (2) l'<strong>intera giornata</strong>, non solo l'istante dello scorri-orari; (3) <strong>stato/allergie/1ª visita</strong> di ogni prenotazione.</li>
+    <li><strong>Cosa risolve.</strong> Tre cose che la sola mappa non mostra: (1) le prenotazioni <strong>senza tavolo</strong> — invisibili sulla mappa; (2) l'<strong>intera giornata</strong>, non solo l'istante dello scorri-orari; (3) <strong>stato, note del cliente, 1ª visita</strong> di ogni prenotazione.</li>
     <li><strong>Gruppo "Da assegnare" in cima.</strong> In rosso, sempre per primo. È il vero valore aggiunto: la lista <code>/dashboard/reservations</code> non lo evidenzia. Su mobile diventa il <strong>badge rosso</strong> sul tab.</li>
     <li><strong>La lista NON segue lo scorri-orari.</strong> Mostra tutte le prenotazioni del giorno raggruppate per fascia. Lo scorri-orari colora solo la mappa. Due semantiche distinte e volute.</li>
     <li><strong>Interazione lista ⇄ mappa.</strong> Click su una prenotazione → evidenzia (bordo giallo) il suo tavolo sulla mappa <em>e</em> apre il popup dettaglio. Click su un tavolo occupato → stesso identico popup. Un solo popup, due trigger.</li>
-    <li><strong>Popup dettaglio = azioni rapide da servizio.</strong> Contiene contatti cliente (telefono/email cliccabili), allergie, cambio <strong>stato</strong> a pillole e spostamento <strong>tavolo</strong>, più il link alla scheda completa. <em>Non</em> modifica orario/coperti inline (cambiano disponibilità, caparra, ecc.) → quelle restano sulla scheda prenotazione. Sostituisce ed estende il popup di sola riassegnazione della Fase 2.</li>
+    <li><strong>Popup dettaglio = azioni rapide da servizio.</strong> Contiene contatti cliente (telefono/email cliccabili), le <strong>note del cliente</strong>, cambio <strong>stato</strong> a pillole e spostamento <strong>tavolo</strong>, più il link alla scheda completa. <em>Non</em> modifica orario/coperti inline (cambiano disponibilità, caparra, ecc.) → quelle restano sulla scheda prenotazione. Sostituisce ed estende il popup di sola riassegnazione della Fase 2.</li>
+    <li><strong>Note del cliente, non "allergie".</strong> Non esiste un campo allergie strutturato: si mostra <code>customer_notes</code> — il testo libero che il cliente lascia prenotando (allergie, seggiolone, compleanno…). In lista una riga con nota mostra il chip neutro <em>"Nota"</em>; nel popup si legge il testo completo. Un eventuale campo allergie dedicato resta una mini-feature separata.</li>
     <li><strong>Cancellazione fuori dal popup.</strong> Annullare una prenotazione invia email e libera il tavolo: troppo rischioso da un click in pieno servizio → resta sulla scheda completa. Il <strong>"No-show"</strong> invece è uno stato, quindi sta nelle pillole. (Gli stati nelle pillole sono illustrativi: in build si allineano all'enum reale delle prenotazioni.)</li>
     <li><strong>Posizionamento popup.</strong> Desktop: ancorato vicino all'elemento cliccato. Mobile: <strong>bottom-sheet</strong> che sale dal basso, con maniglia per chiudere trascinando.</li>
     <li><strong>Click su tavolo libero</strong> <span class="ph ph2">Fase succ.</span>: aprirà "Nuova prenotazione" col tavolo pre-compilato (walk-in). Per ora il click su un tavolo libero non fa nulla.</li>
