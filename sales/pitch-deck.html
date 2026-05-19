@@ -250,10 +250,10 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
 .case-disclaimer { font-size: 11px; color: var(--muted); margin-top: 12px; font-style: italic; }
 
 /* ============= Pricing ============= */
-.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 4px; }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px; }
 .price-card {
     background: #fff; border: 1px solid var(--line); border-radius: 14px;
-    padding: 14px 16px; display: flex; flex-direction: column;
+    padding: 22px 24px; display: flex; flex-direction: column;
     position: relative;
 }
 .price-card.popular { border: 2px solid var(--brand); box-shadow: 0 8px 24px rgba(0,132,74,.12); }
@@ -263,16 +263,16 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
     font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
     padding: 4px 12px; border-radius: 12px;
 }
-.price-name { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
-.price-desc { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
-.price-amount { font-size: 30px; font-weight: 900; color: var(--ink); }
+.price-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.price-desc { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+.price-amount { font-size: 34px; font-weight: 900; color: var(--ink); }
 .price-amount sub { font-size: 14px; font-weight: 500; color: var(--muted); }
 .price-launch { font-size: 11px; color: var(--muted); margin-top: 4px; }
 .price-launch strong { color: var(--brand); font-weight: 700; }
 .price-launch s { color: #b3b3c2; }
-.price-features { list-style: none; padding: 0; margin: 10px 0 0 0; flex: 1; }
+.price-features { list-style: none; padding: 0; margin: 14px 0 0 0; flex: 1; }
 .price-features li {
-    font-size: 12px; padding: 2px 0;
+    font-size: 12px; padding: 4px 0;
     display: flex; align-items: flex-start; gap: 6px;
     color: var(--ink);
 }
@@ -751,29 +751,54 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
             </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
-            <div style="background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:18px 22px;">
-                <div style="font-size:12px;font-weight:700;color:var(--brand);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">
-                    <i class="bi bi-rocket-takeoff"></i> Attivazione
-                </div>
-                <div style="font-size:18px;font-weight:700;color:var(--ink);">€249 <span style="font-size:13px;color:var(--ink-soft);font-weight:500;">una-tantum</span></div>
-                <div style="font-size:13px;color:var(--ink-soft);margin-top:4px;line-height:1.4;">Include primo mese di servizio + onboarding dedicato + migrazione dati</div>
-            </div>
-            <div style="background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:18px 22px;">
-                <div style="font-size:12px;font-weight:700;color:var(--brand);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">
-                    <i class="bi bi-piggy-bank"></i> Opzioni di pagamento
-                </div>
-                <div style="font-size:14px;color:var(--ink);line-height:1.6;">
-                    Mensile · Semestrale <strong style="color:var(--brand);">-5%</strong> · Annuale <strong style="color:var(--brand);">-12%</strong>
-                </div>
-                <div style="font-size:13px;color:var(--ink-soft);margin-top:4px;line-height:1.4;">Pagamento anticipato per il ciclo scelto, niente sorprese</div>
-            </div>
-        </div>
     </div>
     <div class="slide-num">09</div>
 </section>
 
-<!-- ═══════════ SLIDE 10 — SETUP ═══════════ -->
+<!-- ═══════════ SLIDE 10 — ATTIVAZIONE E PAGAMENTO ═══════════ -->
+<section class="slide">
+    <div class="slide-body">
+        <span class="slide-tag">Attivazione</span>
+        <h2 class="slide-title">Parti senza pensieri</h2>
+        <p class="slide-sub">Un'unica quota di attivazione, poi solo il canone del piano. Nessun costo nascosto, nessun vincolo contrattuale.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:20px;">
+            <div style="background:#f5f6f8;border:1px solid var(--line);border-radius:16px;padding:32px 36px;">
+                <div style="font-size:13px;font-weight:700;color:var(--brand);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;">
+                    <i class="bi bi-rocket-takeoff"></i> Attivazione
+                </div>
+                <div style="font-size:52px;font-weight:900;color:var(--ink);line-height:1;">€249 <span style="font-size:18px;color:var(--ink-soft);font-weight:600;">una-tantum</span></div>
+                <ul style="list-style:none;padding:0;margin:24px 0 0 0;">
+                    <li style="font-size:15px;color:var(--ink);padding:8px 0;display:flex;gap:10px;align-items:flex-start;"><i class="bi bi-check-circle-fill" style="color:var(--brand);margin-top:3px;"></i> Primo mese di servizio incluso</li>
+                    <li style="font-size:15px;color:var(--ink);padding:8px 0;display:flex;gap:10px;align-items:flex-start;"><i class="bi bi-check-circle-fill" style="color:var(--brand);margin-top:3px;"></i> Onboarding dedicato: configuriamo tutto noi</li>
+                    <li style="font-size:15px;color:var(--ink);padding:8px 0;display:flex;gap:10px;align-items:flex-start;"><i class="bi bi-check-circle-fill" style="color:var(--brand);margin-top:3px;"></i> Migrazione dati da TheFork, Quandoo o CSV</li>
+                </ul>
+            </div>
+            <div style="background:#f5f6f8;border:1px solid var(--line);border-radius:16px;padding:32px 36px;">
+                <div style="font-size:13px;font-weight:700;color:var(--brand);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;">
+                    <i class="bi bi-piggy-bank"></i> Opzioni di pagamento
+                </div>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:#fff;border:1px solid var(--line);border-radius:12px;">
+                        <span style="font-size:16px;font-weight:600;color:var(--ink);">Mensile</span>
+                        <span style="font-size:13px;color:var(--muted);">flessibilità massima</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:#fff;border:1px solid var(--line);border-radius:12px;">
+                        <span style="font-size:16px;font-weight:600;color:var(--ink);">Semestrale</span>
+                        <span style="font-size:17px;font-weight:800;color:var(--brand);">−5%</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:#fff;border:2px solid var(--brand);border-radius:12px;">
+                        <span style="font-size:16px;font-weight:600;color:var(--ink);">Annuale</span>
+                        <span style="font-size:17px;font-weight:800;color:var(--brand);">−12%</span>
+                    </div>
+                </div>
+                <div style="font-size:14px;color:var(--ink-soft);margin-top:20px;line-height:1.5;"><i class="bi bi-shield-check" style="color:var(--brand);"></i> Nessun vincolo: cambi piano o disdici quando vuoi.</div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-num">10</div>
+</section>
+
+<!-- ═══════════ SLIDE 11 — SETUP ═══════════ -->
 <section class="slide">
     <div class="slide-body">
         <span class="slide-tag">Onboarding</span>
@@ -806,10 +831,10 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
             Onboarding dedicato · Migrazione dati da TheFork/Quandoo inclusa
         </div>
     </div>
-    <div class="slide-num">10</div>
+    <div class="slide-num">11</div>
 </section>
 
-<!-- ═══════════ SLIDE 11 — TRUST ═══════════ -->
+<!-- ═══════════ SLIDE 12 — TRUST ═══════════ -->
 <section class="slide">
     <div class="slide-body">
         <span class="slide-tag">Affidabilità</span>
@@ -849,10 +874,10 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
             </div>
         </div>
     </div>
-    <div class="slide-num">11</div>
+    <div class="slide-num">12</div>
 </section>
 
-<!-- ═══════════ SLIDE 12 — CTA ═══════════ -->
+<!-- ═══════════ SLIDE 13 — CTA ═══════════ -->
 <section class="slide final-cta">
     <div class="final-cta-content">
         <h2>Pronto a smettere di pagare commissioni?</h2>
@@ -873,7 +898,7 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
             Onboarding dedicato · Migrazione dati inclusa · Nessun vincolo contrattuale
         </div>
     </div>
-    <div class="slide-num" style="color:rgba(255,255,255,.5);">12</div>
+    <div class="slide-num" style="color:rgba(255,255,255,.5);">13</div>
 </section>
 
 </div>
