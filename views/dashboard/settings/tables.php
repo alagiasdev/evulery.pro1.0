@@ -144,7 +144,7 @@ foreach ($tables as $t) {
                             $comboSeats  += (int)($tableCapById[$cid] ?? 0);
                         }
                     ?>
-                    <span class="tm-tag tm-tag-combo<?= $isActive ? '' : ' off' ?>" title="<?= $isActive ? 'Combinabile con questi tavoli — ' . $comboSeats . ' posti unendo tutto' : 'Combinazione inattiva finché il tavolo è disattivato' ?>">↔ <?= e(implode(', ', $comboNames)) ?> &middot; <?= $comboSeats ?> posti</span>
+                    <span class="tm-tag tm-tag-combo<?= $isActive ? '' : ' off' ?>" title="<?= $isActive ? 'Combinabile con questi tavoli — ' . $comboSeats . ' posti unendo tutto' : 'Combinazione inattiva finché il tavolo è disattivato' ?>">↔ <?= e(implode(', ', $comboNames)) ?> <span class="tm-combo-tot"><?= $comboSeats ?> posti</span></span>
                     <?php endif; ?>
                 </div>
             </div>
