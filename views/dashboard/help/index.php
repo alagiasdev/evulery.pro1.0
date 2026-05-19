@@ -11,6 +11,7 @@ $categories = [
 // Group sections by category preserving config order
 $byCategory = [];
 foreach ($sections as $slug => $data) {
+    if (!empty($data['hidden'])) continue;   // sezione nascosta dalla guida
     $cat = $data['category'] ?? 'supporto';
     $byCategory[$cat][$slug] = $data;
 }

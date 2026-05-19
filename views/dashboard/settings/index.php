@@ -25,6 +25,7 @@ $groupMeta = [
             </span>
         </div>
         <?php foreach ($items as $it): ?>
+        <?php if (!empty($it['hidden'])) continue;   // voce nascosta dalla UI ?>
         <?php $locked = !empty($it['service']) && !tenant_can($it['service']); ?>
         <a class="set-item" href="<?= $it['url'] ?>">
             <span class="set-item-ic"><i class="bi <?= e($it['icon']) ?>"></i></span>

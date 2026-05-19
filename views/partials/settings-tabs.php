@@ -20,6 +20,7 @@ foreach ($settingsGroups as $groupLabel => $groupTabs) {
     }
 }
 $tabs = $currentGroup !== null ? $settingsGroups[$currentGroup] : [];
+$tabs = array_filter($tabs, fn($t) => empty($t['hidden']));   // esclude le voci nascoste
 ?>
 <div class="settings-subnav">
     <a href="<?= url('dashboard/settings') ?>" class="settings-back"><i class="bi bi-arrow-left"></i> Impostazioni</a>

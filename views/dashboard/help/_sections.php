@@ -459,6 +459,8 @@ HTML
     ],
 
     'dominio' => [
+        // Feature nascosta dalla guida (vedi settings_nav): togliere 'hidden' per riattivarla.
+        'hidden'      => true,
         'title'       => 'Dominio personalizzato',
         'subtitle'    => 'Usa il tuo dominio per prenotazioni e Vetrina',
         'icon'        => 'bi-globe',

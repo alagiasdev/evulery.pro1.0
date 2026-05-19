@@ -251,7 +251,9 @@ function settings_nav(): array
         'Brand' => [
             ['url' => url('dashboard/settings/notifications'),   'icon' => 'bi-bell',         'label' => 'Notifiche',         'key' => 'settings-notifications', 'desc' => 'Email, campanella dashboard, push browser'],
             ['url' => url('dashboard/settings/hub'),             'icon' => 'bi-grid-3x3-gap', 'label' => 'Vetrina Digitale',  'key' => 'settings-hub',           'desc' => 'Pagina pubblica aggregatrice, QR scansionabile'],
-            ['url' => url('dashboard/settings/domain'),          'icon' => 'bi-globe',        'label' => 'Dominio',           'key' => 'domain',                 'desc' => 'Dominio personalizzato per le pagine pubbliche', 'service' => 'custom_domain'],
+            // 'hidden' => true: feature Dominio nascosta dalla UI (codice e rotte
+            // restano intatti). Togliere il flag per riattivarla.
+            ['url' => url('dashboard/settings/domain'),          'icon' => 'bi-globe',        'label' => 'Dominio',           'key' => 'domain',                 'desc' => 'Dominio personalizzato per le pagine pubbliche', 'service' => 'custom_domain', 'hidden' => true],
         ],
     ];
 }
