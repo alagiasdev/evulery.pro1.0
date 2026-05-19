@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Impostazioni a griglia (hub)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{
+    --brand:#00844A;--brand-light:#e6f4ed;--bg:#f5f6f8;--card:#fff;
+    --text:#1a1d23;--muted:#6c757d;--border:#e9ecef;--radius:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);padding:28px;max-width:1180px;margin:0 auto;}
+  h1{font-size:1.5rem;font-weight:700;margin-bottom:.2rem;}
+  .sub{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem;}
+  .section-divider{margin:40px 0;border:none;border-top:2px dashed #dee2e6;}
+  .section-label{font-size:1rem;font-weight:700;color:var(--brand);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+  .section-hint{font-size:.78rem;color:var(--muted);margin:0 0 16px;}
+
+  /* griglia hub */
+  .hub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .hub-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;}
+  .hub-head{display:flex;align-items:center;gap:9px;padding:14px 16px;border-bottom:1px solid var(--border);}
+  .hub-head-ic{width:34px;height:34px;border-radius:9px;background:var(--brand-light);color:var(--brand);
+    display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+  .hub-head-tit{font-size:.9rem;font-weight:700;}
+  .hub-head-sub{font-size:.66rem;color:var(--muted);}
+  .hub-item{display:flex;align-items:flex-start;gap:10px;padding:11px 16px;border-bottom:1px solid #f5f6f8;text-decoration:none;color:inherit;}
+  .hub-item:last-child{border-bottom:none;}
+  .hub-item:hover{background:#fafbfc;}
+  .hub-item-ic{width:24px;text-align:center;color:var(--brand);font-size:.9rem;margin-top:1px;flex-shrink:0;}
+  .hub-item-body{flex:1;min-width:0;}
+  .hub-item-name{font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:6px;}
+  .hub-item-desc{font-size:.68rem;color:var(--muted);margin-top:1px;line-height:1.4;}
+  .hub-item-arrow{color:#c4c9ce;font-size:.8rem;margin-top:2px;}
+  .lock{font-size:.54rem;font-weight:700;background:#fff3cd;color:#8a6d00;border:1px solid #ffe082;padding:1px 6px;border-radius:5px;text-transform:uppercase;}
+
+  /* sotto-pagina: barra tab che resta */
+  .mock-tabs{display:flex;gap:4px;flex-wrap:wrap;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:7px;}
+  .mock-tab{padding:6px 12px;border-radius:7px;font-size:.74rem;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:5px;}
+  .mock-tab.active{background:var(--brand);color:#fff;}
+  .back-link{font-size:.76rem;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:5px;margin-bottom:10px;}
+
+  .notes{margin-top:36px;padding:20px;background:#fff3cd;border:1px solid #ffe082;border-radius:var(--radius);font-size:.8rem;line-height:1.65;}
+  .notes h3{font-size:.92rem;font-weight:700;margin-bottom:8px;color:#664d03;}
+  .notes ul{padding-left:20px;}.notes li{margin-bottom:6px;}
+  .notes code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;font-size:.74rem;}
+  @media(max-width:880px){.hub-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<h1>Impostazioni</h1>
+<p class="sub">Configura il tuo ristorante — scegli un'area</p>
+
+<!-- ===== HUB ===== -->
+<div class="section-label"><i class="bi bi-grid-1x2"></i> L'hub a griglia (la nuova pagina <code>/dashboard/settings</code>)</div>
+<p class="section-hint">Tre card, una per gruppo. Ogni voce porta alla sua pagina di impostazioni. I servizi non inclusi nel piano mostrano un'etichetta.</p>
+
+<div class="hub-grid">
+
+  <!-- GRUPPO 1 -->
+  <div class="hub-card">
+    <div class="hub-head">
+      <div class="hub-head-ic"><i class="bi bi-sliders"></i></div>
+      <div><div class="hub-head-tit">Operatività</div><div class="hub-head-sub">Come funziona il servizio</div></div>
+    </div>
+    <a class="hub-item" href="#">
+      <span class="hub-item-ic"><i class="bi bi-gear"></i></span>
+      <span class="hub-item-body"><span class="hub-item-name">Generali</span><span class="hub-item-desc">Dati del ristorante, contatti, orari di apertura</span></span>
+      <i class="bi bi-chevron-right hub-item-arrow"></i>
+    </a>
+    <a class="hub-item" href="#">
+      <span class="hub-item-ic"><i class="bi bi-clock"></i></span>
+      <span class="hub-item-body"><span class="hub-item-name">Orari e Coperti</span><span class="hub-item-desc">Fasce di prenotazione e limite coperti per slot</span></span>
+      <i class="bi bi-chevron-right hub-item-arrow"></i>
+    </a>
+    <a class="hub-item" href="#">
+      <span class="hub-item-ic"><i class="bi bi-tags"></i></span>
+      <span class="hub-item-body"><span class="hub-item-name">Categorie Pasto</span><span class="hub-item-desc">Pranzo, cena, brunch — fasce con regole proprie</span></span>
+      <i class="bi bi-chevron-right hub-item-arrow"></i>
+    </a>
+    <a class="hub-item" href="#">
+      <span class="hub-item-ic"><i class="bi bi-grid-3x3"></i></span>
+      <span class="hub-item-body"><span class="hub-item-name">Tavoli <span class="lock">Enterprise</span></span><span class="hub-item-desc">Sala, mappa, auto-assegnazione tavoli</span></span>
+      <i class="bi bi-chevron-right hub-item-arrow"></i>
+    </a>
+    <a class="hub-item" href="#">
+      <span class="hub-item-ic"><i class="bi bi-calendar-x"></i></span>
+      <span class="hub-item-body"><span class="hub-item-name">Chiusure</span><span class="hub-item-desc">Giorni di chiusura straordinaria e ferie</span></span>
+      <i class="bi bi-chevron-right hub-item-arrow"></i>
+    </a>
+  </div>
+
+  <!-- GRUPPO 2 -->
+  <div class="hub-card">
+    <div class="hub-head">
+      <div class="hub-head-ic"><i class="bi bi-people"></i></div>
+      <div><div class="hub-head-tit">Servizi clienti</div><div class="hub-head-sub">Cosa offri a chi prenota</div></div>
+    </div>
+    <a class="hub-item" href="#">
+      <span class="hub-item-ic"><i class="bi bi-percent"></i></span>
+      <span class="hub-item-body"><span class="hub-item-name">Promozioni</span><span class="hub-item-desc">Sconti e offerte mostrati nel widget di prenotazione</span></span>
+      <i class="bi bi-chevron-right hub-item-arrow"></i>
+    </a>
+    <a class="hub-item" href="#">
+      <span class="hub-item-ic"><i class="bi bi-cash"></i></span>
+      <span class="hub-item-body"><span class="hub-item-name">Caparra</span><span class="hub-item-desc">Caparra o carta a garanzia sulle prenotazioni</span></span>
+      <i class="bi bi-chevron-right hub-item-arrow"></i>
+    </a>
+    <a class="hub-item" href="#">
+      <span class="hub-item-ic"><i class="bi bi-bag-check"></i></span>
+      <span class="hub-item-body"><span class="hub-item-name">Ordini online <span class="lock">Pro</span></span><span class="hub-item-desc">Takeaway e delivery, zone di consegna</span></span>
+      <i class="bi bi-chevron-right hub-item-arrow"></i>
+    </a>
+    <a class="hub-item" href="#">
+      <span class="hub-item-ic"><i class="bi bi-star"></i></span>
+      <span class="hub-item-body"><span class="hub-item-name">Recensioni <span class="lock">Pro</span></span><span class="hub-item-desc">Richieste recensione automatiche post-visita</span></span>
+      <i class="bi bi-chevron-right hub-item-arrow"></i>
+    </a>
+  </div>
+
+  <!-- GRUPPO 3 -->
+  <div class="hub-card">
+    <div class="hub-head">
+      <div class="hub-head-ic"><i class="bi bi-megaphone"></i></div>
+      <div><div class="hub-head-tit">Brand</div><div class="hub-head-sub">Come ti presenti online</div></div>
+    </div>
+    <a class="hub-item" href="#">
+      <span class="hub-item-ic"><i class="bi bi-bell"></i></span>
+      <span class="hub-item-body"><span class="hub-item-name">Notifiche</span><span class="hub-item-desc">Email, campanella dashboard, push browser</span></span>
+      <i class="bi bi-chevron-right hub-item-arrow"></i>
+    </a>
+    <a class="hub-item" href="#">
+      <span class="hub-item-ic"><i class="bi bi-grid-3x3-gap"></i></span>
+      <span class="hub-item-body"><span class="hub-item-name">Vetrina Digitale</span><span class="hub-item-desc">Pagina pubblica aggregatrice, scansionabile da QR</span></span>
+      <i class="bi bi-chevron-right hub-item-arrow"></i>
+    </a>
+    <a class="hub-item" href="#">
+      <span class="hub-item-ic"><i class="bi bi-globe"></i></span>
+      <span class="hub-item-body"><span class="hub-item-name">Dominio <span class="lock">Enterprise</span></span><span class="hub-item-desc">Dominio personalizzato per le pagine pubbliche</span></span>
+      <i class="bi bi-chevron-right hub-item-arrow"></i>
+    </a>
+  </div>
+
+</div>
+
+<!-- ===== SOTTO-PAGINA ===== -->
+<hr class="section-divider">
+<div class="section-label"><i class="bi bi-window"></i> Dentro una sezione — la barra di tab resta</div>
+<p class="section-hint">Cliccata una voce, la sua pagina mantiene la barra di tab (già esistente) per lo switch rapido + un link "Impostazioni" per tornare all'hub. Niente è perso: hub per la panoramica, tab per muoversi dentro.</p>
+<div>
+  <a class="back-link" href="#"><i class="bi bi-arrow-left"></i> Impostazioni</a>
+  <div class="mock-tabs">
+    <span class="mock-tab"><i class="bi bi-gear"></i> Generali</span>
+    <span class="mock-tab"><i class="bi bi-clock"></i> Orari e Coperti</span>
+    <span class="mock-tab"><i class="bi bi-tags"></i> Categorie Pasto</span>
+    <span class="mock-tab active"><i class="bi bi-grid-3x3"></i> Tavoli</span>
+    <span class="mock-tab"><i class="bi bi-calendar-x"></i> Chiusure</span>
+    <span class="mock-tab"><i class="bi bi-percent"></i> Promozioni</span>
+    <span class="mock-tab"><i class="bi bi-cash"></i> Caparra</span>
+  </div>
+</div>
+
+<!-- ===== NOTE ===== -->
+<div class="notes">
+  <h3><i class="bi bi-lightbulb"></i> Note di design</h3>
+  <ul>
+    <li><strong>Dato già pronto.</strong> Le 3 card sono i 3 gruppi di <code>settings-tabs.php</code> (<code>$settingsGroups</code>: Operatività / Servizi clienti / Brand). Nessuna nuova tassonomia da inventare — si aggiunge solo una descrizione breve per voce.</li>
+    <li><strong><code>/dashboard/settings</code> diventa l'hub.</strong> Oggi quell'URL è la pagina "Generali": "Generali" si sposta su <code>/dashboard/settings/general</code>. La voce sidebar "Impostazioni" punta all'hub.</li>
+    <li><strong>La barra di tab resta</strong> nelle sotto-pagine: hub per entrare/panoramica, tab per lo switch rapido una volta dentro. Si aggiunge solo un link "← Impostazioni".</li>
+    <li><strong>Servizi gatati.</strong> Le voci legate al piano (Tavoli, Ordini, Recensioni, Dominio…) mostrano un'etichetta col piano richiesto. Cliccandole, la pagina mostra già il blocco "servizio non incluso" (<code>service-locked</code>) — comportamento invariato.</li>
+    <li><strong>Stile riusato.</strong> Stessa logica card-grid della Guida in-app (Help Guide v2). CSS nuovo namespacing <code>.set-*</code> o riuso di un pattern esistente.</li>
+    <li><strong>Responsive.</strong> 3 colonne su desktop → 1 colonna in pila su mobile.</li>
+  </ul>
+</div>
+
+</body>
+</html>
