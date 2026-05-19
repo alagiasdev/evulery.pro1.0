@@ -43,7 +43,16 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
 <p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
 <?php $activeKey = 'settings-tables'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 <?php else: ?>
-<h2 style="font-size:1.35rem; font-weight:700; margin-bottom:1rem;"><i class="bi bi-grid-3x3 me-1" style="color:var(--brand);"></i> Sala</h2>
+<?php
+    $DAYS_IT   = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+    $MONTHS_IT = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+    $dtH = new DateTime($opDate);
+    $opDateLabel = $DAYS_IT[(int)$dtH->format('w')] . ' ' . $dtH->format('j') . ' ' . $MONTHS_IT[(int)$dtH->format('n') - 1] . ' ' . $dtH->format('Y');
+?>
+<div style="display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; margin-bottom:1rem;">
+    <h2 style="font-size:1.35rem; font-weight:700; margin:0;"><i class="bi bi-grid-3x3 me-1" style="color:var(--brand);"></i> Sala</h2>
+    <span class="dh-date-badge"><?= e($opDateLabel) ?></span>
+</div>
 <?php endif; ?>
 
 <?php if (!$canUse): ?>
