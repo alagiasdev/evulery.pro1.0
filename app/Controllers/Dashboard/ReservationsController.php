@@ -100,9 +100,10 @@ class ReservationsController
         if ($tableMgmt) {
             $assigner = new TableAssigner();
             $tenantId = (int)Auth::tenantId();
-            foreach ($assigner->availableOptions($tenantId, $reservation['reservation_date'], $reservation['reservation_time'], (int)$reservation['party_size'], $id) as $o) {
-                $tableOptions[] = ['value' => implode(',', $o['table_ids']), 'label' => $o['label']];
-            }
+            // Override manuale: elenca TUTTI i tavoli (come il popup Sala), senza
+            // filtro capienza/turno. Il filtro serve all'auto-assegnazione, non
+            // alla scelta dell'operatore, che non va mai bloccata.
+            $tableOptions = $assigner->allTableOptions($tenantId);
             $current = $assigner->assignmentsFor([$id])[$id] ?? [];
             if (!empty($current)) {
                 $curIds = array_map(fn($x) => (int)$x['id'], $current);
