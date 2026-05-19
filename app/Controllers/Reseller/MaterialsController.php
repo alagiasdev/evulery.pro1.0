@@ -22,7 +22,8 @@ class MaterialsController
             'description'   => 'Riassunto di 1 pagina. Da inviare via email dopo il primo contatto.',
             'icon'          => 'file-earmark-text',
             'preview_file'  => 'sales/onepager.html',
-            'download_file' => 'sales/onepager.pdf',
+            // 'download_file' rimosso: il PDF e disallineato dall'HTML aggiornato.
+            // Ripristinare 'download_file' => 'sales/onepager.pdf' dopo il ri-export.
         ],
         'pitch-deck' => [
             'category'      => 'client',
@@ -30,7 +31,8 @@ class MaterialsController
             'description'   => 'Presentazione completa: problema, soluzione, ROI, prezzi. Usalo in demo.',
             'icon'          => 'file-earmark-slides',
             'preview_file'  => 'sales/pitch-deck.html',
-            'download_file' => 'sales/pitch-deck.pdf',
+            // 'download_file' rimosso: il PDF e disallineato dall'HTML aggiornato.
+            // Ripristinare 'download_file' => 'sales/pitch-deck.pdf' dopo il ri-export.
         ],
         'faq-ristoratore' => [
             'category'    => 'client',
