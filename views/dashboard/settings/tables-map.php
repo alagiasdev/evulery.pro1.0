@@ -398,6 +398,14 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         });
     } else {
         // Operativa — Fase 3a
+        // Centra lo scorri-orari sullo slot attivo: niente swipe manuale
+        var scrub = document.querySelector('.tm-scrub');
+        var activeSlot = scrub && scrub.querySelector('.tm-scrub-slot.active');
+        if (scrub && activeSlot) {
+            var sRect = scrub.getBoundingClientRect();
+            var aRect = activeSlot.getBoundingClientRect();
+            scrub.scrollLeft += (aRect.left - sRect.left) - (sRect.width - aRect.width) / 2;
+        }
         function openPop(id) {
             var ov = id && document.getElementById(id);
             if (ov) ov.style.display = 'flex';
