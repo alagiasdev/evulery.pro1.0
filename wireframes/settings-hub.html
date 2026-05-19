@@ -42,6 +42,16 @@
   .mock-tab.active{background:var(--brand);color:#fff;}
   .back-link{font-size:.76rem;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:5px;margin-bottom:10px;}
 
+  /* ===== V2 — griglia di tile ===== */
+  .set2-section{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:20px 0 10px;display:flex;align-items:center;gap:7px;}
+  .set2-section:first-child{margin-top:0;}
+  .set2-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:14px;}
+  .set2-tile{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;transition:border-color .12s,box-shadow .12s;}
+  .set2-tile:hover{border-color:var(--brand);box-shadow:0 3px 10px rgba(0,0,0,.07);}
+  .set2-tile-ic{width:42px;height:42px;border-radius:11px;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.15rem;}
+  .set2-tile-name{font-size:.86rem;font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .set2-tile-desc{font-size:.7rem;color:var(--muted);line-height:1.45;}
+
   .notes{margin-top:36px;padding:20px;background:#fff3cd;border:1px solid #ffe082;border-radius:var(--radius);font-size:.8rem;line-height:1.65;}
   .notes h3{font-size:.92rem;font-weight:700;margin-bottom:8px;color:#664d03;}
   .notes ul{padding-left:20px;}.notes li{margin-bottom:6px;}
@@ -163,6 +173,83 @@
   </div>
 </div>
 
+<!-- ===== V2 ===== -->
+<hr class="section-divider">
+<div class="section-label"><i class="bi bi-grid-3x3-gap"></i> Variante V2 — griglia di tile</div>
+<p class="section-hint">Stesso hub, layout diverso: ogni impostazione è una <strong>tile</strong> a sé in una griglia fluida, con i gruppi come intestazioni leggere. Più denso e visivo (vicino alla resa di TheFork), più scalabile se le voci crescono. Stessi componenti del resto del software: card bianche, bordo standard, verde brand, icone Bootstrap.</p>
+
+<div class="set2-section"><i class="bi bi-sliders"></i> Operatività</div>
+<div class="set2-grid">
+  <a class="set2-tile" href="#">
+    <div class="set2-tile-ic"><i class="bi bi-gear"></i></div>
+    <div class="set2-tile-name">Generali</div>
+    <div class="set2-tile-desc">Dati del ristorante, contatti, orari di apertura</div>
+  </a>
+  <a class="set2-tile" href="#">
+    <div class="set2-tile-ic"><i class="bi bi-clock"></i></div>
+    <div class="set2-tile-name">Orari e Coperti</div>
+    <div class="set2-tile-desc">Fasce di prenotazione e limite coperti per slot</div>
+  </a>
+  <a class="set2-tile" href="#">
+    <div class="set2-tile-ic"><i class="bi bi-tags"></i></div>
+    <div class="set2-tile-name">Categorie Pasto</div>
+    <div class="set2-tile-desc">Pranzo, cena, brunch — fasce con regole proprie</div>
+  </a>
+  <a class="set2-tile" href="#">
+    <div class="set2-tile-ic"><i class="bi bi-grid-3x3"></i></div>
+    <div class="set2-tile-name">Tavoli <span class="lock">Enterprise</span></div>
+    <div class="set2-tile-desc">Sala, mappa, auto-assegnazione tavoli</div>
+  </a>
+  <a class="set2-tile" href="#">
+    <div class="set2-tile-ic"><i class="bi bi-calendar-x"></i></div>
+    <div class="set2-tile-name">Chiusure</div>
+    <div class="set2-tile-desc">Giorni di chiusura straordinaria e ferie</div>
+  </a>
+</div>
+
+<div class="set2-section"><i class="bi bi-people"></i> Servizi clienti</div>
+<div class="set2-grid">
+  <a class="set2-tile" href="#">
+    <div class="set2-tile-ic"><i class="bi bi-percent"></i></div>
+    <div class="set2-tile-name">Promozioni</div>
+    <div class="set2-tile-desc">Sconti e offerte nel widget di prenotazione</div>
+  </a>
+  <a class="set2-tile" href="#">
+    <div class="set2-tile-ic"><i class="bi bi-cash"></i></div>
+    <div class="set2-tile-name">Caparra</div>
+    <div class="set2-tile-desc">Caparra o carta a garanzia sulle prenotazioni</div>
+  </a>
+  <a class="set2-tile" href="#">
+    <div class="set2-tile-ic"><i class="bi bi-bag-check"></i></div>
+    <div class="set2-tile-name">Ordini online <span class="lock">Pro</span></div>
+    <div class="set2-tile-desc">Takeaway e delivery, zone di consegna</div>
+  </a>
+  <a class="set2-tile" href="#">
+    <div class="set2-tile-ic"><i class="bi bi-star"></i></div>
+    <div class="set2-tile-name">Recensioni <span class="lock">Pro</span></div>
+    <div class="set2-tile-desc">Richieste recensione automatiche post-visita</div>
+  </a>
+</div>
+
+<div class="set2-section"><i class="bi bi-megaphone"></i> Brand</div>
+<div class="set2-grid">
+  <a class="set2-tile" href="#">
+    <div class="set2-tile-ic"><i class="bi bi-bell"></i></div>
+    <div class="set2-tile-name">Notifiche</div>
+    <div class="set2-tile-desc">Email, campanella dashboard, push browser</div>
+  </a>
+  <a class="set2-tile" href="#">
+    <div class="set2-tile-ic"><i class="bi bi-grid-3x3-gap"></i></div>
+    <div class="set2-tile-name">Vetrina Digitale</div>
+    <div class="set2-tile-desc">Pagina pubblica aggregatrice, QR scansionabile</div>
+  </a>
+  <a class="set2-tile" href="#">
+    <div class="set2-tile-ic"><i class="bi bi-globe"></i></div>
+    <div class="set2-tile-name">Dominio <span class="lock">Enterprise</span></div>
+    <div class="set2-tile-desc">Dominio personalizzato per le pagine pubbliche</div>
+  </a>
+</div>
+
 <!-- ===== NOTE ===== -->
 <div class="notes">
   <h3><i class="bi bi-lightbulb"></i> Note di design</h3>
@@ -173,6 +260,13 @@
     <li><strong>Servizi gatati.</strong> Le voci legate al piano (Tavoli, Ordini, Recensioni, Dominio…) mostrano un'etichetta col piano richiesto. Cliccandole, la pagina mostra già il blocco "servizio non incluso" (<code>service-locked</code>) — comportamento invariato.</li>
     <li><strong>Stile riusato.</strong> Stessa logica card-grid della Guida in-app (Help Guide v2). CSS nuovo namespacing <code>.set-*</code> o riuso di un pattern esistente.</li>
     <li><strong>Responsive.</strong> 3 colonne su desktop → 1 colonna in pila su mobile.</li>
+  </ul>
+  <h3 style="margin-top:14px;"><i class="bi bi-grid-3x3-gap me-1"></i> V1 vs V2 — quale</h3>
+  <ul>
+    <li><strong>V1 — 3 card con liste.</strong> I gruppi sono contenitori; le voci righe verticali. Ordinata, pochi elementi per card, le descrizioni si leggono bene. Resa "a menu".</li>
+    <li><strong>V2 — griglia di tile.</strong> Ogni impostazione è una tile; i gruppi sono intestazioni leggere. Più densa, più visiva, scala meglio se le voci aumentano. Resa "a griglia", vicina a TheFork.</li>
+    <li><strong>Coerenza col software.</strong> Entrambe usano SOLO componenti già in uso: card bianche, <code>--border</code>, verde brand, icone Bootstrap, stesso radius — nessun linguaggio visivo nuovo. V1 è praticamente lo stile della Guida in-app (Help Guide v2); V2 è lo stile "card cliccabile" già visto nella dashboard. Qualunque si scelga, resta in famiglia.</li>
+    <li><strong>Invarianti per entrambe.</strong> Stessi dati (<code>$settingsGroups</code>), <code>/dashboard/settings</code> = hub, "Generali" → <code>/settings/general</code>, barra tab che resta nelle sotto-pagine, etichette piano sui servizi gatati.</li>
   </ul>
 </div>
 
