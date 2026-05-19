@@ -362,6 +362,22 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 .ev-plan-desc { color: var(--text-muted); font-size: .85rem; margin-bottom: 16px; }
 .ev-plan-amount { font-size: 3rem; font-weight: 800; letter-spacing: -.02em; }
 .ev-plan-period { font-size: .9rem; color: var(--text-muted); font-weight: 500; }
+.ev-plan-launch {
+    display: inline-block; font-size: .68rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .5px;
+    color: var(--brand); background: var(--brand-light);
+    padding: 4px 12px; border-radius: 100px; margin-bottom: 10px;
+}
+.ev-plan-listino { font-size: .82rem; color: var(--text-muted); margin-top: 8px; }
+.ev-plan-listino s { color: #b3b3c2; }
+.ev-pricing-launch {
+    display: flex; align-items: center; gap: 12px;
+    max-width: 760px; margin: 0 auto 40px;
+    background: #fff8e6; border: 1px solid #ffe082; border-radius: var(--radius);
+    padding: 14px 20px; font-size: .9rem; color: #6c5a1f; line-height: 1.5;
+}
+.ev-pricing-launch i { font-size: 1.5rem; color: #b8860b; flex-shrink: 0; }
+.ev-pricing-launch strong { color: #664d03; }
 .ev-plan-features { margin-bottom: 28px; }
 .ev-plan-features li {
     display: flex; align-items: center; gap: 10px;
