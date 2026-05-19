@@ -4341,6 +4341,9 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-res-table.set { border: 1px solid var(--brand, #00844A); color: var(--brand, #00844A); background: var(--brand-light, #e6f4ed); }
 .tm-res-table.none { border: 1px dashed #e0a39d; color: #b3261e; background: #fdecea; }
 .tm-map-table.hl { box-shadow: 0 0 0 3px #ffc107, 0 0 0 6px rgba(255,193,7,.4); z-index: 9; }
+/* connettore tavoli combinati: barra tra i 2 tavoli + pastiglia catena */
+.tm-combo-bar { position: absolute; height: 8px; margin-top: -4px; background: #0d6efd; border-radius: 4px; transform-origin: left center; box-shadow: 0 1px 3px rgba(0,0,0,.2); pointer-events: none; }
+.tm-combo-badge { position: absolute; width: 24px; height: 24px; border-radius: 50%; background: #fff; color: #0d6efd; display: flex; align-items: center; justify-content: center; font-size: .8rem; transform: translate(-50%,-50%); box-shadow: 0 0 0 2px #0d6efd, 0 1px 4px rgba(0,0,0,.25); z-index: 5; pointer-events: none; }
 /* pallino colore area: accento (solo aree aggiuntive), non riempimento */
 .tm-area-dot { position: absolute; top: -5px; right: -5px; width: 17px; height: 17px; border-radius: 50%; box-shadow: 0 0 0 2.5px #fff, 0 1px 3px rgba(0,0,0,.3); }
 .tm-area-tab-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; box-shadow: 0 0 0 1.5px rgba(255,255,255,.55); }

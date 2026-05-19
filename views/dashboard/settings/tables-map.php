@@ -93,6 +93,35 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
     ksort($byHour);
     $nUnassigned = count($unassigned);
 
+    // Connettore tavoli combinati: prenotazioni che occupano 2 tavoli a
+    // quest'ora. Barra tra i centri dei due tavoli (tavolo = 76x76).
+    $tablePos = [];
+    foreach ($tables as $t) {
+        $tablePos[(int)$t['id']] = ['x' => (int)$t['_x'], 'y' => (int)$t['_y'], 'area' => (string)($t['area'] ?? '')];
+    }
+    $resTablesNow = [];
+    foreach ($floorState as $tid => $occ) {
+        $resTablesNow[(int)$occ['reservation_id']][] = (int)$tid;
+    }
+    $comboBars = [];
+    foreach ($resTablesNow as $tids) {
+        if (count($tids) < 2) continue;            // combinazioni = coppie
+        [$ta, $tb] = [$tids[0], $tids[1]];
+        if (!isset($tablePos[$ta], $tablePos[$tb])) continue;
+        $c1x = $tablePos[$ta]['x'] + 38; $c1y = $tablePos[$ta]['y'] + 38;
+        $c2x = $tablePos[$tb]['x'] + 38; $c2y = $tablePos[$tb]['y'] + 38;
+        $dx = $c2x - $c1x; $dy = $c2y - $c1y;
+        $comboBars[] = [
+            'left'  => $c1x,
+            'top'   => $c1y,
+            'width' => sqrt($dx * $dx + $dy * $dy),
+            'angle' => rad2deg(atan2($dy, $dx)),
+            'bx'    => ($c1x + $c2x) / 2,
+            'by'    => ($c1y + $c2y) / 2,
+            'area'  => $tablePos[$ta]['area'],
+        ];
+    }
+
     // Render di una riga prenotazione (riusata in entrambi i gruppi)
     $renderRow = function (array $r) use ($assignments, $resTableLabel) {
         $rid     = (int)$r['id'];
@@ -176,6 +205,11 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                 <?php endforeach; ?>
             </div>
             <div class="tm-map-canvas" id="tm-map">
+                <?php /* Connettori tavoli combinati — dietro i tavoli */ ?>
+                <?php foreach ($comboBars as $cb): ?>
+                <div class="tm-combo-bar" data-area="<?= e($cb['area']) ?>"
+                     style="left:<?= $cb['left'] ?>px; top:<?= $cb['top'] ?>px; width:<?= round($cb['width'], 1) ?>px; transform:rotate(<?= round($cb['angle'], 2) ?>deg);"></div>
+                <?php endforeach; ?>
                 <?php foreach ($tables as $t): ?>
                 <?php
                     $tArea = (string)($t['area'] ?? '');
@@ -195,6 +229,11 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                     <span class="tm-map-cap"><?= (int)$t['capacity'] ?>p</span>
                     <?php endif; ?>
                 </div>
+                <?php endforeach; ?>
+                <?php /* Pastiglia catena al centro di ogni combinazione — sopra i tavoli */ ?>
+                <?php foreach ($comboBars as $cb): ?>
+                <div class="tm-combo-badge" data-area="<?= e($cb['area']) ?>"
+                     style="left:<?= round($cb['bx'], 1) ?>px; top:<?= round($cb['by'], 1) ?>px;"><i class="bi bi-link-45deg"></i></div>
                 <?php endforeach; ?>
             </div>
             <div class="tm-map-hint"><i class="bi bi-info-circle me-1"></i> Tavoli blu = occupati alle <?= e($opTime) ?>. Clicca un tavolo o una prenotazione per i dettagli.</div>
@@ -308,7 +347,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
             tab.classList.add('active');
             var all = tab.hasAttribute('data-all');
             var area = tab.getAttribute('data-area');
-            canvas.querySelectorAll('.tm-map-table').forEach(function (el) {
+            canvas.querySelectorAll('.tm-map-table, .tm-combo-bar, .tm-combo-badge').forEach(function (el) {
                 el.style.display = (all || el.getAttribute('data-area') === area) ? '' : 'none';
             });
         });
