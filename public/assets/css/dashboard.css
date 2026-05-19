@@ -4295,7 +4295,6 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-op-arrow { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--border, #e9ecef); background: #fff; color: #6c757d; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 .tm-op-arrow:hover { border-color: var(--brand, #00844A); color: var(--brand, #00844A); }
 .tm-op-date { font-size: .82rem; font-weight: 700; min-width: 130px; text-align: center; text-transform: capitalize; }
-.tm-date-input { font-size: .72rem; font-weight: 600; color: #495057; background: #fff; border: 1px solid var(--border, #e9ecef); border-radius: 7px; padding: 5px 8px; cursor: pointer; font-family: inherit; }
 .tm-op-legend { margin-left: auto; display: flex; gap: 14px; font-size: .68rem; color: #6c757d; }
 .tm-op-legend span { display: inline-flex; align-items: center; gap: 5px; }
 .tm-dot { width: 11px; height: 11px; border-radius: 4px; display: inline-block; }

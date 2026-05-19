@@ -188,7 +188,26 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
             <a href="<?= $opUrl ?>?date=<?= $chip['date'] ?>&time=<?= e($opTime) ?>" class="date-chip-sm <?= $opDate === $chip['date'] ? 'active' : '' ?>"><?= $chip['label'] ?> <span class="chip-day"><?= $chip['sub'] ?></span></a>
             <?php endforeach; ?>
             <a class="date-nav-arrow sm" href="<?= $opUrl ?>?date=<?= $next ?>&time=<?= e($opTime) ?>" title="Giorno successivo"><i class="bi bi-chevron-right"></i></a>
-            <input type="date" class="tm-date-input" id="tm-date-picker" value="<?= e($opDate) ?>" title="Scegli una data">
+            <div class="date-chip-cal">
+                <a href="#" class="date-chip-sm" id="tm-cal-toggle" title="Scegli una data"><i class="bi bi-calendar3"></i></a>
+                <div class="home-cal-dropdown" id="tm-cal-dropdown" style="display:none;">
+                    <div class="dr-cal-header">
+                        <button type="button" class="dr-cal-nav" id="tm-cal-prev"><i class="bi bi-chevron-left"></i></button>
+                        <span class="dr-cal-month" id="tm-cal-month"></span>
+                        <button type="button" class="dr-cal-nav" id="tm-cal-next"><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                    <div class="dr-cal-days-header">
+                        <div class="dr-cal-day-name">lun</div>
+                        <div class="dr-cal-day-name">mar</div>
+                        <div class="dr-cal-day-name">mer</div>
+                        <div class="dr-cal-day-name">gio</div>
+                        <div class="dr-cal-day-name">ven</div>
+                        <div class="dr-cal-day-name">sab</div>
+                        <div class="dr-cal-day-name">dom</div>
+                    </div>
+                    <div class="dr-cal-grid" id="tm-cal-grid"></div>
+                </div>
+            </div>
         </div>
         <?php if ($multiArea): ?>
         <div class="tm-area-tabs" style="margin-left:8px;">
@@ -451,13 +470,82 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         });
     } else {
         // Operativa — Fase 3a
-        // Calendario: scegliere una data salta a quel giorno (mantiene l'orario)
-        var dp = document.getElementById('tm-date-picker');
-        if (dp) {
-            dp.addEventListener('change', function () {
-                if (dp.value) location.href = <?= json_encode($opUrl) ?> + '?date=' + dp.value + '&time=' + <?= json_encode($opTime) ?>;
+        // Calendario dropdown: scegliere una data salta a quel giorno (mantiene l'orario)
+        (function () {
+            var toggle = document.getElementById('tm-cal-toggle');
+            if (!toggle) return;
+            var MONTHS = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+            var selectedDate = <?= json_encode($opDate) ?>;
+            var navBase = <?= json_encode($opUrl) ?> + '?date=';
+            var navTime = '&time=' + <?= json_encode($opTime) ?>;
+            var dropdown = document.getElementById('tm-cal-dropdown');
+            var grid = document.getElementById('tm-cal-grid');
+            var monthLabel = document.getElementById('tm-cal-month');
+            var sel = new Date(selectedDate + 'T00:00:00');
+            var calMonth = sel.getMonth(), calYear = sel.getFullYear();
+            function pad(n) { return n < 10 ? '0' + n : '' + n; }
+            function isoDate(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+            function render() {
+                monthLabel.textContent = MONTHS[calMonth] + ' ' + calYear;
+                var first = new Date(calYear, calMonth, 1);
+                var startDow = first.getDay() - 1; if (startDow < 0) startDow = 6;
+                var days = new Date(calYear, calMonth + 1, 0).getDate();
+                var today = new Date(); today.setHours(0, 0, 0, 0);
+                var html = '';
+                for (var i = 0; i < startDow; i++) html += '<div class="dr-cal-cell dr-cal-empty"></div>';
+                for (var d = 1; d <= days; d++) {
+                    var dt = new Date(calYear, calMonth, d); dt.setHours(0, 0, 0, 0);
+                    var ds = isoDate(dt);
+                    var cls = 'dr-cal-cell';
+                    if (dt.getTime() === today.getTime()) cls += ' dr-cal-today';
+                    if (ds === selectedDate) cls += ' dr-cal-selected';
+                    html += '<div class="' + cls + '" data-date="' + ds + '">' + d + '</div>';
+                }
+                grid.innerHTML = html;
+                grid.querySelectorAll('.dr-cal-cell:not(.dr-cal-empty)').forEach(function (cell) {
+                    cell.addEventListener('click', function () {
+                        location.href = navBase + this.dataset.date + navTime;
+                    });
+                });
+            }
+            var isMobile = window.matchMedia('(max-width: 768px)').matches;
+            var modalOverlay = null;
+            function openCal() {
+                if (isMobile) {
+                    if (!modalOverlay) {
+                        modalOverlay = document.createElement('div');
+                        modalOverlay.className = 'cal-modal-overlay';
+                        var box = document.createElement('div'); box.className = 'cal-modal-box';
+                        modalOverlay.appendChild(box);
+                        modalOverlay.addEventListener('click', function (e) { if (e.target === modalOverlay) closeCal(); });
+                    }
+                    modalOverlay.querySelector('.cal-modal-box').appendChild(dropdown);
+                    document.body.appendChild(modalOverlay);
+                }
+                dropdown.style.display = 'block';
+                render();
+            }
+            function closeCal() {
+                dropdown.style.display = 'none';
+                if (isMobile && modalOverlay && modalOverlay.parentNode) {
+                    toggle.parentNode.appendChild(dropdown);
+                    modalOverlay.remove();
+                }
+            }
+            toggle.addEventListener('click', function (e) {
+                e.preventDefault(); e.stopPropagation();
+                dropdown.style.display === 'none' ? openCal() : closeCal();
             });
-        }
+            document.getElementById('tm-cal-prev').addEventListener('click', function (e) {
+                e.stopPropagation(); calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } render();
+            });
+            document.getElementById('tm-cal-next').addEventListener('click', function (e) {
+                e.stopPropagation(); calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } render();
+            });
+            document.addEventListener('click', function (e) {
+                if (!isMobile && !e.target.closest('#tm-cal-dropdown') && !e.target.closest('#tm-cal-toggle')) closeCal();
+            });
+        })();
         // Centra lo scorri-orari sullo slot attivo: niente swipe manuale
         var scrub = document.querySelector('.tm-scrub');
         var activeSlot = scrub && scrub.querySelector('.tm-scrub-slot.active');
