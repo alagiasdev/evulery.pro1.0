@@ -6,9 +6,10 @@
 -- anche 1, 2, 3 persone). La colonna `capacity` esistente
 -- continua a rappresentare il massimo.
 --
--- Backfill: per tutti i tavoli esistenti `min_capacity = capacity`
--- (comportamento identico a oggi, zero impatto sui tenant
--- preesistenti). Il ristoratore allarga la forbice quando vuole.
+-- Backfill: per tutti i tavoli esistenti `min_capacity = 1`
+-- (riproduce esattamente il comportamento pre-migration, in cui
+-- l'auto-assegnatore controllava solo `capacity >= partySize`
+-- senza lower bound). Il ristoratore può alzare il min quando vuole.
 --
 -- Regola dell'auto-assegnatore (post-migration):
 --   tavolo valido per party P  ⇔  min_capacity ≤ P ≤ capacity

@@ -80,7 +80,7 @@ class TableAssigner
         // 1) singolo tavolo: tutti i candidati validi e liberi, poi ordina per fit.
         $candidates = [];
         foreach ($tables as $idx => $t) {
-            $min = (int)($t['min_capacity'] ?? $t['capacity']);
+            $min = (int)($t['min_capacity'] ?? 1);
             $max = (int)$t['capacity'];
             if ($partySize < $min || $partySize > $max) continue;
             if (!$this->isFree((int)$t['id'], $start, $occ, $window)) continue;
@@ -97,7 +97,10 @@ class TableAssigner
             return [$candidates[0]['id']];
         }
 
-        // 2) combinazione di due tavoli — solo se nessun singolo era valido.
+        // 2) combinazione di due tavoli — solo se nessun singolo era valido E
+        // il party è troppo grande per stare in uno dei due tavoli della coppia.
+        // Questa seconda condizione evita lo spreco: 2 tavoli per 1 persona
+        // non ha senso. Coerente con availableOptions (regola wireframe).
         $byId = [];
         foreach ($tables as $t) {
             $byId[(int)$t['id']] = $t;
@@ -107,7 +110,11 @@ class TableAssigner
             $a = (int)$c['table_a_id'];
             $b = (int)$c['table_b_id'];
             if (!isset($byId[$a], $byId[$b])) continue; // uno dei due non è attivo
-            $cap = (int)$byId[$a]['capacity'] + (int)$byId[$b]['capacity'];
+            $maxA = (int)$byId[$a]['capacity'];
+            $maxB = (int)$byId[$b]['capacity'];
+            // Combo utile solo per party > max del singolo più grande della coppia.
+            if ($partySize <= max($maxA, $maxB)) continue;
+            $cap = $maxA + $maxB;
             if ($cap < $partySize) continue;
             if (!$this->isFree($a, $start, $occ, $window)) continue;
             if (!$this->isFree($b, $start, $occ, $window)) continue;
@@ -146,7 +153,7 @@ class TableAssigner
         $options = [];
         // singoli — validi solo se min ≤ P ≤ max
         foreach ($tables as $t) {
-            $min = (int)($t['min_capacity'] ?? $t['capacity']);
+            $min = (int)($t['min_capacity'] ?? 1);
             $max = (int)$t['capacity'];
             if ($partySize < $min || $partySize > $max) continue;
             if (!$this->isFree((int)$t['id'], $start, $occ, $window)) continue;
@@ -301,7 +308,7 @@ class TableAssigner
         }
         $options = [];
         foreach ($tables as $t) {
-            $min = (int)($t['min_capacity'] ?? $t['capacity']);
+            $min = (int)($t['min_capacity'] ?? 1);
             $max = (int)$t['capacity'];
             $options[] = [
                 'value' => (string)(int)$t['id'],

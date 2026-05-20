@@ -301,7 +301,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                     <span class="tm-map-cap"><?php if (!isset($comboTableIds[(int)$t['id']])): ?><?= (int)$occ['party'] ?>p &middot; <?php endif; ?><?= e($occ['time']) ?></span>
                     <?php else: ?>
                     <span class="tm-map-name"><?= e($t['name']) ?></span>
-                    <span class="tm-map-cap"><?= format_capacity((int)($t['min_capacity'] ?? $t['capacity']), (int)$t['capacity']) ?></span>
+                    <span class="tm-map-cap"><?= format_capacity((int)($t['min_capacity'] ?? 1), (int)$t['capacity']) ?></span>
                     <?php endif; ?>
                 </div>
                 <?php endforeach; ?>
@@ -428,7 +428,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
              style="left:<?= (int)$t['_x'] ?>px; top:<?= (int)$t['_y'] ?>px;<?= $hidden ? 'display:none;' : '' ?>">
             <?php if ($areaHasDot($tArea)): ?><span class="tm-area-dot" style="background:<?= e(area_color($tArea)) ?>;"></span><?php endif; ?>
             <span class="tm-map-name"><?= e($t['name']) ?></span>
-            <span class="tm-map-cap"><?= format_capacity((int)($t['min_capacity'] ?? $t['capacity']), (int)$t['capacity']) ?></span>
+            <span class="tm-map-cap"><?= format_capacity((int)($t['min_capacity'] ?? 1), (int)$t['capacity']) ?></span>
         </div>
         <?php endforeach; ?>
     </div>

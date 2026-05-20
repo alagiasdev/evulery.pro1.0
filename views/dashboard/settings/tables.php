@@ -10,6 +10,8 @@ foreach ($comboMap as $ids) { $comboCount += count($ids); }
 $comboCount = (int)($comboCount / 2);
 $tableNamesById = array_column($tables, 'name', 'id');
 $tableCapById   = array_column($tables, 'capacity', 'id');
+// Mappa min_capacity per id. Pre-migration la colonna manca → array vuoto,
+// e i lookup successivi cadono in fallback su 1 (=comportamento legacy).
 $tableMinById   = array_column($tables, 'min_capacity', 'id');
 
 // Dati tavoli per il modale (JS)
@@ -19,7 +21,7 @@ foreach ($tables as $t) {
         'id'           => (int)$t['id'],
         'name'         => $t['name'],
         'capacity'     => (int)$t['capacity'],
-        'min_capacity' => (int)($t['min_capacity'] ?? $t['capacity']),
+        'min_capacity' => (int)($t['min_capacity'] ?? 1),
         'area'         => $t['area'] ?? '',
         'shape'        => $t['shape'],
         'note'         => $t['internal_note'] ?? '',
@@ -130,7 +132,7 @@ foreach ($tables as $t) {
             <i class="bi bi-grip-vertical tm-drag" title="Trascina per riordinare"></i>
             <span class="tm-rank"><?= $isActive ? $rank : '—' ?></span>
             <?php
-                $tMin = (int)($t['min_capacity'] ?? $t['capacity']);
+                $tMin = (int)($t['min_capacity'] ?? 1);
                 $tMax = (int)$t['capacity'];
                 $isElastic = $tMin !== $tMax;
             ?>
@@ -148,11 +150,11 @@ foreach ($tables as $t) {
                         // Es. Tav.2 (1-4) + Tav.1 (1-2) + Tav.4 (1-4) → range 3-10 posti.
                         $comboNames = [];
                         $comboSeatsMax = (int)$t['capacity'];
-                        $comboSeatsMin = (int)($t['min_capacity'] ?? $t['capacity']);
+                        $comboSeatsMin = (int)($t['min_capacity'] ?? 1);
                         foreach (array_unique(array_map('intval', $combo)) as $cid) {
                             $comboNames[] = $tableNamesById[$cid] ?? '?';
                             $comboSeatsMax += (int)($tableCapById[$cid] ?? 0);
-                            $comboSeatsMin += (int)($tableMinById[$cid] ?? $tableCapById[$cid] ?? 0);
+                            $comboSeatsMin += (int)($tableMinById[$cid] ?? 1);
                         }
                         $comboLabel = format_seats_range($comboSeatsMin, $comboSeatsMax);
                     ?>

@@ -49,7 +49,7 @@ class TablesController
             foreach ($tables as $t) {
                 if (!(int)$t['is_active']) continue;
                 $seats    += (int)$t['capacity'];
-                $seatsMin += (int)($t['min_capacity'] ?? $t['capacity']);
+                $seatsMin += (int)($t['min_capacity'] ?? 1);
             }
             $peak = 0;
             foreach ((new TimeSlot())->findAllByTenant((int)$tenant['id']) as $s) {
