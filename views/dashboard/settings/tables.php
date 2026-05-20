@@ -10,9 +10,6 @@ foreach ($comboMap as $ids) { $comboCount += count($ids); }
 $comboCount = (int)($comboCount / 2);
 $tableNamesById = array_column($tables, 'name', 'id');
 $tableCapById   = array_column($tables, 'capacity', 'id');
-// Mappa min_capacity per id. Pre-migration la colonna manca → array vuoto,
-// e i lookup successivi cadono in fallback su 1 (=comportamento legacy).
-$tableMinById   = array_column($tables, 'min_capacity', 'id');
 
 // Dati tavoli per il modale (JS)
 $jsTables = [];
@@ -144,21 +141,18 @@ foreach ($tables as $t) {
                     <?php if (!empty($t['internal_note'])): ?><span><?= e($t['internal_note']) ?></span><?php endif; ?>
                     <?php if (!empty($combo)): ?>
                     <?php
-                        // Totale posti = capacità di questo tavolo + quella di tutti i
-                        // tavoli combinabili. Con la capacità elastica, sommiamo i max
-                        // (potenziale unione) e calcoliamo anche il min realistico.
-                        // Es. Tav.2 (1-4) + Tav.1 (1-2) + Tav.4 (1-4) → range 3-10 posti.
+                        // Badge informativo: con chi posso combinarmi e quanti posti
+                        // ottengo unendo tutto. NB: il "quando" si attiva la combo
+                        // (algoritmo: solo se nessun singolo basta E party > max coppia)
+                        // è gestito da TableAssigner, non è una proprietà del tavolo.
                         $comboNames = [];
-                        $comboSeatsMax = (int)$t['capacity'];
-                        $comboSeatsMin = (int)($t['min_capacity'] ?? 1);
+                        $comboSeats = (int)$t['capacity'];
                         foreach (array_unique(array_map('intval', $combo)) as $cid) {
                             $comboNames[] = $tableNamesById[$cid] ?? '?';
-                            $comboSeatsMax += (int)($tableCapById[$cid] ?? 0);
-                            $comboSeatsMin += (int)($tableMinById[$cid] ?? 1);
+                            $comboSeats  += (int)($tableCapById[$cid] ?? 0);
                         }
-                        $comboLabel = format_seats_range($comboSeatsMin, $comboSeatsMax);
                     ?>
-                    <span class="tm-tag tm-tag-combo<?= $isActive ? '' : ' off' ?>" title="<?= $isActive ? 'Combinabile con questi tavoli — ' . $comboLabel . ' unendo tutto' : 'Combinazione inattiva finché il tavolo è disattivato' ?>">↔ <?= e(implode(', ', $comboNames)) ?> <span class="tm-combo-tot"><?= e($comboLabel) ?></span></span>
+                    <span class="tm-tag tm-tag-combo<?= $isActive ? '' : ' off' ?>" title="<?= $isActive ? 'Combinabile con questi tavoli — ' . $comboSeats . ' posti unendo tutto' : 'Combinazione inattiva finché il tavolo è disattivato' ?>">↔ <?= e(implode(', ', $comboNames)) ?> <span class="tm-combo-tot"><?= $comboSeats ?> posti</span></span>
                     <?php endif; ?>
                 </div>
             </div>
