@@ -227,6 +227,30 @@ function area_color(string $area): string
 }
 
 /**
+ * Formato capacità tavolo: "4p" se min=max (rigido), "1-4p" se elastico.
+ * Single source of truth per evitare drift visivo fra lista, mappa,
+ * scheda prenotazione e popup. Il suffisso "p" è opzionale.
+ */
+function format_capacity(int $min, int $max, bool $suffix = true): string
+{
+    $min = max(1, $min);
+    $max = max($min, $max);
+    $s = $suffix ? 'p' : '';
+    return $min === $max ? $max . $s : $min . '-' . $max . $s;
+}
+
+/**
+ * Variante "posti" per i totali combinati e i banner.
+ * format_seats_range(6, 10) → "6-10 posti"; format_seats_range(8, 8) → "8 posti".
+ */
+function format_seats_range(int $min, int $max): string
+{
+    $min = max(0, $min);
+    $max = max($min, $max);
+    return $min === $max ? $max . ' posti' : $min . '-' . $max . ' posti';
+}
+
+/**
  * Navigazione delle Impostazioni — single source of truth.
  * Usata sia dall'hub a griglia (/dashboard/settings) sia dalla barra di tab
  * delle sotto-pagine (partials/settings-tabs.php). Ritorna i gruppi con le

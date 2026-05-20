@@ -70,15 +70,18 @@ class Table
             'SELECT COALESCE(MAX(priority), -1) FROM restaurant_tables WHERE tenant_id = ' . (int)$tenantId
         )->fetchColumn();
 
+        [$min, $max] = $this->normalizeCapacity($data);
+
         $stmt = $this->db->prepare(
             'INSERT INTO restaurant_tables
-                (tenant_id, name, capacity, priority, area, shape, internal_note, is_active)
-             VALUES (:t, :name, :cap, :prio, :area, :shape, :note, :active)'
+                (tenant_id, name, capacity, min_capacity, priority, area, shape, internal_note, is_active)
+             VALUES (:t, :name, :cap, :mincap, :prio, :area, :shape, :note, :active)'
         );
         $stmt->execute([
             't'      => $tenantId,
             'name'   => $data['name'],
-            'cap'    => (int)$data['capacity'],
+            'cap'    => $max,
+            'mincap' => $min,
             'prio'   => $maxPrio + 1,
             'area'   => $data['area'] !== '' ? $data['area'] : null,
             'shape'  => in_array($data['shape'] ?? 'square', ['square', 'round'], true) ? $data['shape'] : 'square',
@@ -90,15 +93,18 @@ class Table
 
     public function update(int $id, int $tenantId, array $data): bool
     {
+        [$min, $max] = $this->normalizeCapacity($data);
+
         $stmt = $this->db->prepare(
             'UPDATE restaurant_tables
-             SET name = :name, capacity = :cap, area = :area, shape = :shape,
+             SET name = :name, capacity = :cap, min_capacity = :mincap, area = :area, shape = :shape,
                  internal_note = :note, is_active = :active
              WHERE id = :id AND tenant_id = :t'
         );
         return $stmt->execute([
             'name'   => $data['name'],
-            'cap'    => (int)$data['capacity'],
+            'cap'    => $max,
+            'mincap' => $min,
             'area'   => $data['area'] !== '' ? $data['area'] : null,
             'shape'  => in_array($data['shape'] ?? 'square', ['square', 'round'], true) ? $data['shape'] : 'square',
             'note'   => $data['internal_note'] !== '' ? $data['internal_note'] : null,
@@ -106,6 +112,23 @@ class Table
             'id'     => $id,
             't'      => $tenantId,
         ]);
+    }
+
+    /**
+     * Normalizza capacità min/max dai dati form. Se `min_capacity` non è
+     * presente o non valido, ricade su `capacity` (comportamento rigido).
+     * Garantisce sempre 1 ≤ min ≤ max ≤ 30.
+     *
+     * @return array{0:int,1:int} [min, max]
+     */
+    private function normalizeCapacity(array $data): array
+    {
+        $max = max(1, min(30, (int)($data['capacity'] ?? 1)));
+        $min = isset($data['min_capacity']) && (int)$data['min_capacity'] > 0
+            ? (int)$data['min_capacity']
+            : $max;
+        $min = max(1, min($min, $max));
+        return [$min, $max];
     }
 
     public function delete(int $id, int $tenantId): bool

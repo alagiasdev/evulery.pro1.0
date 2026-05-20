@@ -10,19 +10,21 @@ foreach ($comboMap as $ids) { $comboCount += count($ids); }
 $comboCount = (int)($comboCount / 2);
 $tableNamesById = array_column($tables, 'name', 'id');
 $tableCapById   = array_column($tables, 'capacity', 'id');
+$tableMinById   = array_column($tables, 'min_capacity', 'id');
 
 // Dati tavoli per il modale (JS)
 $jsTables = [];
 foreach ($tables as $t) {
     $jsTables[] = [
-        'id'         => (int)$t['id'],
-        'name'       => $t['name'],
-        'capacity'   => (int)$t['capacity'],
-        'area'       => $t['area'] ?? '',
-        'shape'      => $t['shape'],
-        'note'       => $t['internal_note'] ?? '',
-        'active'     => (int)$t['is_active'],
-        'combinable' => array_values(array_unique(array_map('intval', $comboMap[(int)$t['id']] ?? []))),
+        'id'           => (int)$t['id'],
+        'name'         => $t['name'],
+        'capacity'     => (int)$t['capacity'],
+        'min_capacity' => (int)($t['min_capacity'] ?? $t['capacity']),
+        'area'         => $t['area'] ?? '',
+        'shape'        => $t['shape'],
+        'note'         => $t['internal_note'] ?? '',
+        'active'       => (int)$t['is_active'],
+        'combinable'   => array_values(array_unique(array_map('intval', $comboMap[(int)$t['id']] ?? []))),
     ];
 }
 ?>
@@ -127,7 +129,12 @@ foreach ($tables as $t) {
         <div class="tm-row<?= $isActive ? '' : ' tm-row-off' ?>" data-id="<?= (int)$t['id'] ?>" data-area="<?= e($t['area'] ?? '') ?>" draggable="true">
             <i class="bi bi-grip-vertical tm-drag" title="Trascina per riordinare"></i>
             <span class="tm-rank"><?= $isActive ? $rank : '—' ?></span>
-            <span class="tm-cap"><?= (int)$t['capacity'] ?>p</span>
+            <?php
+                $tMin = (int)($t['min_capacity'] ?? $t['capacity']);
+                $tMax = (int)$t['capacity'];
+                $isElastic = $tMin !== $tMax;
+            ?>
+            <span class="tm-cap<?= $isElastic ? ' tm-cap-range' : '' ?>" title="<?= $isElastic ? 'Tavolo elastico: da ' . $tMin . ' a ' . $tMax . ' persone' : 'Tavolo rigido: ' . $tMax . ' posti' ?>"><?= format_capacity($tMin, $tMax, true) ?></span>
             <div class="tm-info">
                 <div class="tm-name"><?= e($t['name']) ?><?= $isActive ? '' : ' <span class="tm-tag tm-tag-off">disattivato</span>' ?></div>
                 <div class="tm-meta">
@@ -135,16 +142,21 @@ foreach ($tables as $t) {
                     <?php if (!empty($t['internal_note'])): ?><span><?= e($t['internal_note']) ?></span><?php endif; ?>
                     <?php if (!empty($combo)): ?>
                     <?php
-                        // Totale posti = capacità di questo tavolo + quella di tutti
-                        // i tavoli combinabili. Es. Tav.2 (4p) + Tav.1 (2p) + Tav.4 (4p) = 10.
+                        // Totale posti = capacità di questo tavolo + quella di tutti i
+                        // tavoli combinabili. Con la capacità elastica, sommiamo i max
+                        // (potenziale unione) e calcoliamo anche il min realistico.
+                        // Es. Tav.2 (1-4) + Tav.1 (1-2) + Tav.4 (1-4) → range 3-10 posti.
                         $comboNames = [];
-                        $comboSeats = (int)$t['capacity'];
+                        $comboSeatsMax = (int)$t['capacity'];
+                        $comboSeatsMin = (int)($t['min_capacity'] ?? $t['capacity']);
                         foreach (array_unique(array_map('intval', $combo)) as $cid) {
                             $comboNames[] = $tableNamesById[$cid] ?? '?';
-                            $comboSeats  += (int)($tableCapById[$cid] ?? 0);
+                            $comboSeatsMax += (int)($tableCapById[$cid] ?? 0);
+                            $comboSeatsMin += (int)($tableMinById[$cid] ?? $tableCapById[$cid] ?? 0);
                         }
+                        $comboLabel = format_seats_range($comboSeatsMin, $comboSeatsMax);
                     ?>
-                    <span class="tm-tag tm-tag-combo<?= $isActive ? '' : ' off' ?>" title="<?= $isActive ? 'Combinabile con questi tavoli — ' . $comboSeats . ' posti unendo tutto' : 'Combinazione inattiva finché il tavolo è disattivato' ?>">↔ <?= e(implode(', ', $comboNames)) ?> <span class="tm-combo-tot"><?= $comboSeats ?> posti</span></span>
+                    <span class="tm-tag tm-tag-combo<?= $isActive ? '' : ' off' ?>" title="<?= $isActive ? 'Combinabile con questi tavoli — ' . $comboLabel . ' unendo tutto' : 'Combinazione inattiva finché il tavolo è disattivato' ?>">↔ <?= e(implode(', ', $comboNames)) ?> <span class="tm-combo-tot"><?= e($comboLabel) ?></span></span>
                     <?php endif; ?>
                 </div>
             </div>
@@ -190,19 +202,28 @@ foreach ($tables as $t) {
                     <label class="tm-fl">Nome tavolo</label>
                     <input type="text" class="tm-fi" name="name" id="tm-f-name" maxlength="60" placeholder="es. Tavolo 1, Finestra A" required>
                 </div>
-                <div class="tm-frow">
-                    <div class="tm-fg">
-                        <label class="tm-fl">Posti (capacità)</label>
-                        <input type="number" class="tm-fi" name="capacity" id="tm-f-capacity" min="1" max="30" value="2" required>
+                <div class="tm-fg">
+                    <label class="tm-fl">Capacità <span style="text-transform:none;font-weight:400;color:#adb5bd;">— quante persone può ospitare il tavolo</span></label>
+                    <div class="tm-cap-row">
+                        <div class="tm-cap-field">
+                            <label class="tm-cap-sublabel" for="tm-f-min-capacity">Posti minimi</label>
+                            <input type="number" class="tm-fi" name="min_capacity" id="tm-f-min-capacity" min="1" max="30" value="1" required>
+                        </div>
+                        <span class="tm-cap-sep" aria-hidden="true">→</span>
+                        <div class="tm-cap-field">
+                            <label class="tm-cap-sublabel" for="tm-f-capacity">Posti massimi</label>
+                            <input type="number" class="tm-fi" name="capacity" id="tm-f-capacity" min="1" max="30" value="2" required>
+                        </div>
                     </div>
-                    <div class="tm-fg">
-                        <label class="tm-fl">Area</label>
-                        <input type="text" class="tm-fi" name="area" id="tm-f-area" list="tm-areas" maxlength="60" placeholder="es. Sala Interna">
-                        <datalist id="tm-areas">
-                            <?php foreach ($areas as $a): ?><option value="<?= e($a) ?>"><?php endforeach; ?>
-                        </datalist>
-                        <div class="tm-fhint">Scegli un'area esistente o scrivine una nuova.</div>
-                    </div>
+                    <div class="tm-fhint" id="tm-cap-preview">Anteprima: <span class="tm-cap tm-cap-range" id="tm-cap-preview-pill">1-2p</span> &middot; accetta da 1 a 2 persone.</div>
+                </div>
+                <div class="tm-fg">
+                    <label class="tm-fl">Area</label>
+                    <input type="text" class="tm-fi" name="area" id="tm-f-area" list="tm-areas" maxlength="60" placeholder="es. Sala Interna">
+                    <datalist id="tm-areas">
+                        <?php foreach ($areas as $a): ?><option value="<?= e($a) ?>"><?php endforeach; ?>
+                    </datalist>
+                    <div class="tm-fhint">Scegli un'area esistente o scrivine una nuova.</div>
                 </div>
                 <div class="tm-fg">
                     <label class="tm-fl">Forma <span style="text-transform:none;font-weight:400;color:#adb5bd;">— usata nella mappa sala</span></label>
@@ -336,12 +357,36 @@ foreach ($tables as $t) {
     var form = document.getElementById('tm-form');
     var fName = document.getElementById('tm-f-name');
     var fCap = document.getElementById('tm-f-capacity');
+    var fMin = document.getElementById('tm-f-min-capacity');
     var fArea = document.getElementById('tm-f-area');
     var fNote = document.getElementById('tm-f-note');
     var fActive = document.getElementById('tm-f-active');
     var comboBox = document.getElementById('tm-f-combinable');
     var modalTitle = document.getElementById('tm-modal-title');
     var prioNote = document.getElementById('tm-prio-note');
+    var capPreview = document.getElementById('tm-cap-preview');
+    var capPreviewPill = document.getElementById('tm-cap-preview-pill');
+
+    function updateCapPreview() {
+        var mn = parseInt(fMin.value, 10);
+        var mx = parseInt(fCap.value, 10);
+        if (isNaN(mn) || mn < 1) mn = 1;
+        if (isNaN(mx) || mx < 1) mx = 1;
+        if (mn > mx) {
+            capPreviewPill.textContent = '—';
+            capPreviewPill.className = 'tm-cap tm-cap-error';
+            capPreview.innerHTML = 'Anteprima: <span class="tm-cap tm-cap-error">⚠ min &gt; max</span> &middot; correggi i valori prima di salvare.';
+            return;
+        }
+        var pillText = mn === mx ? (mx + 'p') : (mn + '-' + mx + 'p');
+        var pillCls = mn === mx ? 'tm-cap' : 'tm-cap tm-cap-range';
+        var desc = mn === mx
+            ? 'tavolo rigido: accetta solo gruppi di ' + mx + (mx === 1 ? ' persona.' : ' persone.')
+            : 'tavolo elastico: accetta da ' + mn + ' a ' + mx + ' persone.';
+        capPreview.innerHTML = 'Anteprima: <span class="' + pillCls + '">' + pillText + '</span> &middot; ' + desc;
+    }
+    fMin.addEventListener('input', updateCapPreview);
+    fCap.addEventListener('input', updateCapPreview);
 
     function buildCombinable(excludeId, checkedIds) {
         if (TABLES.length <= (excludeId ? 1 : 0)) {
@@ -370,6 +415,7 @@ foreach ($tables as $t) {
             form.action = baseAction + '/' + table.id;
             fName.value = table.name;
             fCap.value = table.capacity;
+            fMin.value = (table.min_capacity > 0 ? table.min_capacity : table.capacity);
             fArea.value = table.area;
             fNote.value = table.note;
             fActive.value = String(table.active);
@@ -379,12 +425,13 @@ foreach ($tables as $t) {
         } else {
             modalTitle.innerHTML = '<i class="bi bi-plus-circle me-1"></i> Nuovo tavolo';
             form.action = baseAction;
-            fName.value = ''; fCap.value = 2; fArea.value = ''; fNote.value = '';
+            fName.value = ''; fCap.value = 2; fMin.value = 1; fArea.value = ''; fNote.value = '';
             fActive.value = '1';
             form.querySelector('input[name="shape"][value="square"]').checked = true;
             buildCombinable(null, []);
             prioNote.style.display = 'none';
         }
+        updateCapPreview();
         modal.style.display = 'flex';
     }
     function closeModal() { modal.style.display = 'none'; }
@@ -393,6 +440,17 @@ foreach ($tables as $t) {
     document.getElementById('tm-modal-close').addEventListener('click', closeModal);
     document.getElementById('tm-modal-cancel').addEventListener('click', closeModal);
     modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+
+    // Validazione client-side: blocca il submit se min > max
+    form.addEventListener('submit', function (e) {
+        var mn = parseInt(fMin.value, 10);
+        var mx = parseInt(fCap.value, 10);
+        if (isNaN(mn) || mn < 1 || isNaN(mx) || mx < 1 || mn > mx) {
+            e.preventDefault();
+            updateCapPreview();
+            fMin.focus();
+        }
+    });
 
     document.querySelectorAll('.tm-edit').forEach(function (btn) {
         btn.addEventListener('click', function () {

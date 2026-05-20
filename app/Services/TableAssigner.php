@@ -14,9 +14,17 @@ use PDO;
  * minuti a partire dall'orario prenotato. Due prenotazioni sullo stesso
  * tavolo sono compatibili se distano almeno W = durata + buffer minuti.
  *
- * Auto-assegnazione: scorre i tavoli attivi in ordine di priorità e prende
- * il primo libero con capienza sufficiente; se nessun singolo tavolo basta,
- * cerca una coppia combinabile entrambi liberi. Mai bloccante.
+ * Capacità elastica (min/max): un tavolo è "valido" per un party di N
+ * persone se `min_capacity ≤ N ≤ capacity`. Default min = capacity per i
+ * tavoli pre-esistenti → comportamento rigido di un tempo. Il ristoratore
+ * allarga la forbice quando vuole.
+ *
+ * Auto-assegnazione: tra i tavoli liberi e validi sceglie il "fit più
+ * stretto" (quello che spreca meno posti rispetto al party); a parità
+ * di fit, vince la priorità manuale (ordine in lista); a parità ancora,
+ * l'id più basso (deterministico). Le combinazioni si attivano SOLO se
+ * nessun tavolo singolo valido è libero — altrimenti spreca due tavoli
+ * per fare il lavoro di uno. Mai bloccante.
  */
 class TableAssigner
 {
@@ -50,11 +58,18 @@ class TableAssigner
     /**
      * Sceglie i tavoli per una prenotazione (singolo o coppia combinabile),
      * senza scrivere nulla. Ritorna gli id ([] se nessuna soluzione).
+     *
+     * Algoritmo:
+     *  1. Filtra i tavoli validi (min≤P≤max) e liberi nel turno.
+     *  2. Sceglie il "fit più stretto" (capacity - P minore); tiebreaker
+     *     su priority asc, poi id asc per determinismo.
+     *  3. Se nessun singolo è disponibile, prova una combinazione di
+     *     due tavoli (entrambi liberi e con max_a + max_b ≥ P).
      */
     public function pickTables(int $tenantId, string $date, string $time, int $partySize, int $excludeReservationId = 0): array
     {
         $window = $this->windowMinutes($tenantId);
-        $tables = (new Table())->findActiveByTenant($tenantId); // ordine di priorità
+        $tables = (new Table())->findActiveByTenant($tenantId);
         if (empty($tables)) {
             return [];
         }
@@ -62,31 +77,48 @@ class TableAssigner
         $occ = $this->occupationMap($tenantId, $date, $excludeReservationId);
         $start = $this->timeToMinutes($time);
 
-        // 1) singolo tavolo, in ordine di priorità
-        foreach ($tables as $t) {
-            if ((int)$t['capacity'] >= $partySize
-                && $this->isFree((int)$t['id'], $start, $occ, $window)) {
-                return [(int)$t['id']];
-            }
+        // 1) singolo tavolo: tutti i candidati validi e liberi, poi ordina per fit.
+        $candidates = [];
+        foreach ($tables as $idx => $t) {
+            $min = (int)($t['min_capacity'] ?? $t['capacity']);
+            $max = (int)$t['capacity'];
+            if ($partySize < $min || $partySize > $max) continue;
+            if (!$this->isFree((int)$t['id'], $start, $occ, $window)) continue;
+            $candidates[] = [
+                'id'    => (int)$t['id'],
+                'fit'   => $max - $partySize,   // spreco di posti (più basso = meglio)
+                'prio'  => $idx,                 // posizione in lista (già ordinata per priority)
+            ];
+        }
+        if (!empty($candidates)) {
+            usort($candidates, function ($a, $b) {
+                return [$a['fit'], $a['prio'], $a['id']] <=> [$b['fit'], $b['prio'], $b['id']];
+            });
+            return [$candidates[0]['id']];
         }
 
-        // 2) combinazione di due tavoli
+        // 2) combinazione di due tavoli — solo se nessun singolo era valido.
         $byId = [];
         foreach ($tables as $t) {
             $byId[(int)$t['id']] = $t;
         }
+        $comboCandidates = [];
         foreach ((new Table())->allCombinations($tenantId) as $c) {
             $a = (int)$c['table_a_id'];
             $b = (int)$c['table_b_id'];
-            if (!isset($byId[$a], $byId[$b])) {
-                continue; // uno dei due non è attivo
-            }
+            if (!isset($byId[$a], $byId[$b])) continue; // uno dei due non è attivo
             $cap = (int)$byId[$a]['capacity'] + (int)$byId[$b]['capacity'];
-            if ($cap >= $partySize
-                && $this->isFree($a, $start, $occ, $window)
-                && $this->isFree($b, $start, $occ, $window)) {
-                return [$a, $b];
-            }
+            if ($cap < $partySize) continue;
+            if (!$this->isFree($a, $start, $occ, $window)) continue;
+            if (!$this->isFree($b, $start, $occ, $window)) continue;
+            $comboCandidates[] = [
+                'ids' => [$a, $b],
+                'fit' => $cap - $partySize,
+            ];
+        }
+        if (!empty($comboCandidates)) {
+            usort($comboCandidates, fn($x, $y) => [$x['fit'], $x['ids'][0]] <=> [$y['fit'], $y['ids'][0]]);
+            return $comboCandidates[0]['ids'];
         }
 
         return [];
@@ -112,34 +144,37 @@ class TableAssigner
         }
 
         $options = [];
-        // singoli
+        // singoli — validi solo se min ≤ P ≤ max
         foreach ($tables as $t) {
-            if ((int)$t['capacity'] >= $partySize
-                && $this->isFree((int)$t['id'], $start, $occ, $window)) {
-                $options[] = [
-                    'table_ids' => [(int)$t['id']],
-                    'capacity'  => (int)$t['capacity'],
-                    'label'     => $t['name'] . ' — ' . (int)$t['capacity'] . ' posti',
-                ];
-            }
+            $min = (int)($t['min_capacity'] ?? $t['capacity']);
+            $max = (int)$t['capacity'];
+            if ($partySize < $min || $partySize > $max) continue;
+            if (!$this->isFree((int)$t['id'], $start, $occ, $window)) continue;
+            $options[] = [
+                'table_ids' => [(int)$t['id']],
+                'capacity'  => $max,
+                'label'     => $t['name'] . ' — ' . format_capacity($min, $max, false) . ' posti',
+            ];
         }
-        // combinazioni
+        // combinazioni — solo se almeno uno dei due tavoli da solo non basterebbe.
+        // (Se entrambi singoli potessero contenere P, evitiamo lo spreco).
         foreach ((new Table())->allCombinations($tenantId) as $c) {
             $a = (int)$c['table_a_id'];
             $b = (int)$c['table_b_id'];
-            if (!isset($byId[$a], $byId[$b])) {
-                continue;
-            }
-            $cap = (int)$byId[$a]['capacity'] + (int)$byId[$b]['capacity'];
-            if ($cap >= $partySize
-                && $this->isFree($a, $start, $occ, $window)
-                && $this->isFree($b, $start, $occ, $window)) {
-                $options[] = [
-                    'table_ids' => [$a, $b],
-                    'capacity'  => $cap,
-                    'label'     => $byId[$a]['name'] . ' + ' . $byId[$b]['name'] . ' — combinazione, ' . $cap . ' posti',
-                ];
-            }
+            if (!isset($byId[$a], $byId[$b])) continue;
+            $maxA = (int)$byId[$a]['capacity'];
+            $maxB = (int)$byId[$b]['capacity'];
+            // Combo utile solo per party > max del singolo più grande.
+            if ($partySize <= max($maxA, $maxB)) continue;
+            $cap = $maxA + $maxB;
+            if ($cap < $partySize) continue;
+            if (!$this->isFree($a, $start, $occ, $window)) continue;
+            if (!$this->isFree($b, $start, $occ, $window)) continue;
+            $options[] = [
+                'table_ids' => [$a, $b],
+                'capacity'  => $cap,
+                'label'     => $byId[$a]['name'] . ' + ' . $byId[$b]['name'] . ' — combinazione, ' . $cap . ' posti',
+            ];
         }
         return $options;
     }
@@ -253,7 +288,9 @@ class TableAssigner
 
     /**
      * Tutte le opzioni assegnabili (tavoli attivi + combinazioni), senza
-     * filtro di disponibilità — per la riassegnazione manuale dalla mappa.
+     * filtro di disponibilità — per la riassegnazione manuale dalla mappa
+     * e dalla scheda prenotazione. L'operatore può scegliere anche tavoli
+     * "non perfetti": qui non si filtra per min/max, si mostra il range.
      */
     public function allTableOptions(int $tenantId): array
     {
@@ -264,21 +301,27 @@ class TableAssigner
         }
         $options = [];
         foreach ($tables as $t) {
+            $min = (int)($t['min_capacity'] ?? $t['capacity']);
+            $max = (int)$t['capacity'];
             $options[] = [
                 'value' => (string)(int)$t['id'],
-                'label' => $t['name'] . ' — ' . (int)$t['capacity'] . ' posti',
+                'label' => $t['name'] . ' — ' . format_capacity($min, $max, false) . ' posti',
             ];
         }
         foreach ((new Table())->allCombinations($tenantId) as $c) {
             $a = (int)$c['table_a_id'];
             $b = (int)$c['table_b_id'];
-            if (!isset($byId[$a], $byId[$b])) {
-                continue;
-            }
-            $cap = (int)$byId[$a]['capacity'] + (int)$byId[$b]['capacity'];
+            if (!isset($byId[$a], $byId[$b])) continue;
+            $maxA = (int)$byId[$a]['capacity'];
+            $maxB = (int)$byId[$b]['capacity'];
+            // La combo ha senso solo sopra la soglia del singolo più grande:
+            // sotto, conviene il singolo. Mostriamo comunque il range completo.
+            $comboMin = max($maxA, $maxB) + 1;
+            $comboMax = $maxA + $maxB;
             $options[] = [
                 'value' => $a . ',' . $b,
-                'label' => $byId[$a]['name'] . ' + ' . $byId[$b]['name'] . ' — combinazione, ' . $cap . ' posti',
+                'label' => $byId[$a]['name'] . ' + ' . $byId[$b]['name']
+                    . ' — combinazione, ' . format_seats_range($comboMin, $comboMax),
             ];
         }
         return $options;

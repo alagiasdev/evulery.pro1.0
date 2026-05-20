@@ -42,9 +42,14 @@ class TablesController
 
             // Fase 3c — coerenza coperti/tavoli: confronta i posti totali dei
             // tavoli attivi col limite coperti più alto fra gli slot attivi.
+            // Con la capacità elastica usiamo SEMPRE il massimo: rappresenta
+            // il "potenziale" della sala, che è ciò che lo slot deve coprire.
             $seats = 0;
+            $seatsMin = 0;
             foreach ($tables as $t) {
-                if ((int)$t['is_active']) $seats += (int)$t['capacity'];
+                if (!(int)$t['is_active']) continue;
+                $seats    += (int)$t['capacity'];
+                $seatsMin += (int)($t['min_capacity'] ?? $t['capacity']);
             }
             $peak = 0;
             foreach ((new TimeSlot())->findAllByTenant((int)$tenant['id']) as $s) {
@@ -66,6 +71,7 @@ class TablesController
             'areas'         => $areas,
             'comboMap'      => $comboMap,
             'capacityCheck' => $capacityCheck,
+            'seatsMin'      => $seatsMin ?? 0,
         ], 'dashboard');
     }
 
@@ -290,6 +296,10 @@ class TablesController
         $d = $request->all();
         $name = trim((string)($d['name'] ?? ''));
         $capacity = (int)($d['capacity'] ?? 0);
+        // `min_capacity` opzionale: assente o vuoto → ricade su capacity
+        // (comportamento rigido di default, identico al pre-min-max).
+        $hasMin = isset($d['min_capacity']) && $d['min_capacity'] !== '';
+        $minCapacity = $hasMin ? (int)$d['min_capacity'] : $capacity;
 
         if ($name === '') {
             flash('danger', 'Il nome del tavolo è obbligatorio.');
@@ -297,7 +307,12 @@ class TablesController
             return null;
         }
         if ($capacity < 1 || $capacity > 30) {
-            flash('danger', 'La capacità deve essere tra 1 e 30 posti.');
+            flash('danger', 'I posti massimi devono essere tra 1 e 30.');
+            Response::redirect(url('dashboard/settings/tables'));
+            return null;
+        }
+        if ($minCapacity < 1 || $minCapacity > $capacity) {
+            flash('danger', 'I posti minimi devono essere compresi fra 1 e i posti massimi.');
             Response::redirect(url('dashboard/settings/tables'));
             return null;
         }
@@ -311,6 +326,7 @@ class TablesController
         return [
             'name'          => mb_substr($name, 0, 60),
             'capacity'      => $capacity,
+            'min_capacity'  => $minCapacity,
             'area'          => mb_substr(trim((string)($d['area'] ?? '')), 0, 60),
             'shape'         => ($d['shape'] ?? 'square') === 'round' ? 'round' : 'square',
             'internal_note' => mb_substr(trim((string)($d['internal_note'] ?? '')), 0, 255),
