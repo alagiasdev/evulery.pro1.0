@@ -120,88 +120,129 @@ class HomeController
         return $stmt->fetch();
     }
 
+    /**
+     * Capienza e prenotato per ogni categoria pasto ATTIVA del tenant.
+     * Ogni slot viene mappato sulla prima categoria attiva il cui range
+     * `[start_time, end_time)` lo copre. Prenotazioni con stesso criterio,
+     * raggruppate per ora di prenotazione.
+     *
+     * @return array{categories: array<int, array>, orphanSlots: int}
+     *   - categories: lista ordinata per sort_order, ognuna con
+     *     name/display_name/start_time/end_time/capacity/booked/count
+     *   - orphanSlots: numero di slot fuori da ogni categoria attiva
+     */
     private function getMealCapacity(\PDO $db, int $tenantId, string $date): array
     {
-        // Day of week: 0=Mon ... 6=Sun (matching time_slots.day_of_week)
-        $dow = (int)date('N', strtotime($date)) - 1;
+        // 1) Categorie attive del tenant (ordine wireframe)
+        $stmt = $db->prepare(
+            'SELECT id, name, display_name, start_time, end_time
+             FROM meal_categories
+             WHERE tenant_id = :t AND is_active = 1
+             ORDER BY sort_order ASC, id ASC'
+        );
+        $stmt->execute(['t' => $tenantId]);
+        $cats = $stmt->fetchAll();
+        if (empty($cats)) {
+            return ['categories' => [], 'orphanSlots' => 0];
+        }
 
-        // Get base capacity from time_slots
+        // 2) Slot del giorno + overrides
+        $dow = (int)date('N', strtotime($date)) - 1; // 0=Lun ... 6=Dom
         $stmt = $db->prepare(
             'SELECT slot_time, max_covers
              FROM time_slots
-             WHERE tenant_id = :tenant_id
-             AND day_of_week = :dow
-             AND is_active = 1'
+             WHERE tenant_id = :t AND day_of_week = :dow AND is_active = 1'
         );
-        $stmt->execute(['tenant_id' => $tenantId, 'dow' => $dow]);
+        $stmt->execute(['t' => $tenantId, 'dow' => $dow]);
         $slots = $stmt->fetchAll();
 
-        // Check for date-specific overrides
         $stmt = $db->prepare(
             'SELECT slot_time, max_covers, is_closed
              FROM slot_overrides
-             WHERE tenant_id = :tenant_id
-             AND override_date = :date'
+             WHERE tenant_id = :t AND override_date = :d'
         );
-        $stmt->execute(['tenant_id' => $tenantId, 'date' => $date]);
+        $stmt->execute(['t' => $tenantId, 'd' => $date]);
         $overrides = [];
+        $dayClosed = false;
         foreach ($stmt->fetchAll() as $ov) {
             if ($ov['slot_time'] === null) {
-                // Whole day override
-                if ($ov['is_closed']) {
-                    return [
-                        'pranzo' => ['capacity' => 0, 'booked' => 0, 'count' => 0],
-                        'cena'   => ['capacity' => 0, 'booked' => 0, 'count' => 0],
-                    ];
-                }
+                if ($ov['is_closed']) $dayClosed = true;
             } else {
                 $overrides[$ov['slot_time']] = $ov;
             }
         }
 
-        // Calculate capacity per meal
-        $capacity = ['pranzo' => 0, 'cena' => 0];
-        foreach ($slots as $slot) {
-            $time = $slot['slot_time'];
-            $hour = (int)substr($time, 0, 2);
-            $meal = ($hour < 16) ? 'pranzo' : 'cena';
-
-            if (isset($overrides[$time])) {
-                if (!$overrides[$time]['is_closed']) {
-                    $capacity[$meal] += (int)$overrides[$time]['max_covers'];
-                }
-            } else {
-                $capacity[$meal] += (int)$slot['max_covers'];
-            }
+        // Inizializza accumulatori per categoria
+        $byKey = [];
+        foreach ($cats as $c) {
+            $byKey[$c['name']] = [
+                'name'         => $c['name'],
+                'display_name' => $c['display_name'],
+                'start_time'   => substr((string)$c['start_time'], 0, 5),
+                'end_time'     => substr((string)$c['end_time'], 0, 5),
+                'capacity'     => 0,
+                'booked'       => 0,
+                'count'        => 0,
+            ];
         }
 
-        // Get booked covers per meal
+        if ($dayClosed) {
+            return ['categories' => array_values($byKey), 'orphanSlots' => 0];
+        }
+
+        // 3) Mappa ogni slot sulla prima categoria attiva che lo copre
+        $orphanSlots = 0;
+        foreach ($slots as $slot) {
+            $time = $slot['slot_time'];
+            // Effective max_covers (override > base)
+            if (isset($overrides[$time])) {
+                if ((int)$overrides[$time]['is_closed']) continue;
+                $maxCovers = (int)$overrides[$time]['max_covers'];
+            } else {
+                $maxCovers = (int)$slot['max_covers'];
+            }
+
+            $catKey = $this->categoryForTime($cats, $time);
+            if ($catKey === null) {
+                $orphanSlots++;
+                continue;
+            }
+            $byKey[$catKey]['capacity'] += $maxCovers;
+        }
+
+        // 4) Prenotazioni del giorno (status che contano)
         $stmt = $db->prepare(
-            'SELECT
-                SUM(CASE WHEN HOUR(reservation_time) < 16 THEN party_size ELSE 0 END) as pranzo_booked,
-                SUM(CASE WHEN HOUR(reservation_time) >= 16 THEN party_size ELSE 0 END) as cena_booked,
-                SUM(CASE WHEN HOUR(reservation_time) < 16 THEN 1 ELSE 0 END) as pranzo_count,
-                SUM(CASE WHEN HOUR(reservation_time) >= 16 THEN 1 ELSE 0 END) as cena_count
+            'SELECT reservation_time, party_size
              FROM reservations
-             WHERE tenant_id = :tenant_id
-             AND reservation_date = :date
+             WHERE tenant_id = :t AND reservation_date = :d
              AND status IN ("confirmed", "pending", "arrived")'
         );
-        $stmt->execute(['tenant_id' => $tenantId, 'date' => $date]);
-        $booked = $stmt->fetch();
+        $stmt->execute(['t' => $tenantId, 'd' => $date]);
+        foreach ($stmt->fetchAll() as $r) {
+            $catKey = $this->categoryForTime($cats, $r['reservation_time']);
+            if ($catKey === null) continue;
+            $byKey[$catKey]['booked'] += (int)$r['party_size'];
+            $byKey[$catKey]['count']  += 1;
+        }
 
-        return [
-            'pranzo' => [
-                'capacity' => $capacity['pranzo'],
-                'booked'   => (int)($booked['pranzo_booked'] ?? 0),
-                'count'    => (int)($booked['pranzo_count'] ?? 0),
-            ],
-            'cena' => [
-                'capacity' => $capacity['cena'],
-                'booked'   => (int)($booked['cena_booked'] ?? 0),
-                'count'    => (int)($booked['cena_count'] ?? 0),
-            ],
-        ];
+        return ['categories' => array_values($byKey), 'orphanSlots' => $orphanSlots];
+    }
+
+    /**
+     * Trova la prima categoria (in ordine di sort) il cui range
+     * [start_time, end_time) copre l'orario indicato. NULL se nessuna.
+     */
+    private function categoryForTime(array $cats, string $time): ?string
+    {
+        $t = substr($time, 0, 5); // "HH:MM"
+        foreach ($cats as $c) {
+            $start = substr((string)$c['start_time'], 0, 5);
+            $end   = substr((string)$c['end_time'], 0, 5);
+            if ($t >= $start && $t < $end) {
+                return (string)$c['name'];
+            }
+        }
+        return null;
     }
 
     private function getNoshowRate(\PDO $db, int $tenantId): array

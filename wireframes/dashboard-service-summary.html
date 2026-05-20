@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Riepilogo servizi per categoria</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{
+    --brand:#00844A;--brand-light:#e6f4ed;--bg:#f5f6f8;--card:#fff;
+    --text:#1a1d23;--muted:#6c757d;--border:#e9ecef;--radius:12px;
+    --warn:#ffc107;--danger:#dc3545;--gray-500:#adb5bd;--gray-600:#6c757d;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);padding:24px;max-width:1280px;margin:0 auto;}
+  h2{font-size:1.35rem;font-weight:700;margin-bottom:.25rem;}
+  .subtitle{font-size:.82rem;color:var(--muted);margin-bottom:1rem;}
+  .section-divider{margin:36px 0;border:none;border-top:2px dashed #dee2e6;}
+  .section-label{font-size:1rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+  .section-label.bad{color:var(--danger);}
+  .section-label.good{color:var(--brand);}
+  .section-hint{font-size:.78rem;color:var(--muted);margin:0 0 16px;line-height:1.5;}
+
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:0 1px 6px rgba(0,0,0,.06);overflow:hidden;}
+  .card-head{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);gap:10px;justify-content:space-between;}
+  .card-title{font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:7px;}
+  .btn-out{font-size:.74rem;font-weight:600;color:var(--brand);background:#fff;border:1px solid var(--brand);padding:5px 11px;border-radius:7px;text-decoration:none;display:inline-flex;align-items:center;gap:5px;}
+
+  /* ===== layout 2-col attuale ===== */
+  .meal-split{display:grid;grid-template-columns:1fr 1fr;}
+  .meal-half{padding:18px 22px;border-right:1px solid var(--border);}
+  .meal-half:last-child{border-right:none;}
+  .meal-title{font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:flex;align-items:center;gap:6px;margin-bottom:10px;}
+  .meal-big{font-size:1.85rem;font-weight:700;}
+  .meal-cap{font-size:1rem;color:var(--muted);font-weight:600;}
+  .meal-sub{font-size:.72rem;color:var(--muted);margin-top:2px;}
+  .cap-bar{height:7px;background:#eef0f2;border-radius:4px;margin-top:11px;overflow:hidden;}
+  .cap-fill{height:100%;background:var(--brand);border-radius:4px;transition:width .3s;}
+  .cap-fill.warn{background:var(--warn);}
+  .cap-fill.over{background:var(--danger);}
+  .cap-info{display:flex;justify-content:space-between;margin-top:6px;font-size:.72rem;}
+  .cap-text{color:var(--muted);}
+  .cap-text strong{color:var(--text);}
+
+  /* ===== layout N-col proposto ===== */
+  .meal-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));}
+  .meal-card{padding:18px 22px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
+  .meal-card:nth-child(2n){border-right:none;}
+  .meal-card:nth-last-child(-n+2):not(:nth-child(2n)){/* keep */}
+  @media(max-width:600px){
+    .meal-grid{grid-template-columns:1fr;}
+    .meal-card{border-right:none;}
+  }
+  .meal-card .meal-title i.brunch{color:#c4925e;}
+  .meal-card .meal-title i.pranzo{color:#f0b400;}
+  .meal-card .meal-title i.aperitivo{color:#e8590c;}
+  .meal-card .meal-title i.cena{color:#7048e8;}
+  .meal-card .meal-title i.after_dinner{color:#9c36b5;}
+
+  /* ===== annotazioni ===== */
+  .annot{display:flex;gap:8px;align-items:flex-start;background:#fdecea;border:1px solid #f5c2bd;border-radius:8px;padding:10px 12px;margin-top:10px;font-size:.74rem;color:#b3261e;line-height:1.5;}
+  .annot.good{background:#eef7f1;border-color:#cfe8d6;color:var(--brand);}
+  .annot i{margin-top:1px;flex-shrink:0;}
+  .annot strong{font-weight:700;}
+
+  .map-row{display:flex;font-size:.74rem;border-bottom:1px dashed #f0f1f3;padding:6px 0;align-items:center;}
+  .map-row:last-child{border-bottom:none;}
+  .map-slot{width:90px;font-weight:600;color:var(--text);}
+  .map-arrow{color:var(--muted);margin:0 8px;}
+  .map-cat{flex:1;color:var(--brand);font-weight:600;}
+  .map-num{color:var(--muted);font-size:.7rem;}
+
+  .small-box{padding:14px 16px;background:#fafbfc;border-radius:10px;margin-top:10px;font-size:.78rem;line-height:1.55;}
+  .small-box code{background:#fff;border:1px solid var(--border);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;font-size:.74rem;}
+
+  .vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  @media(max-width:900px){.vs-grid{grid-template-columns:1fr;}}
+  .vs-col h3{font-size:.92rem;font-weight:700;margin-bottom:10px;}
+</style>
+</head>
+<body>
+
+<h2>Wireframe — Riepilogo servizi per categoria</h2>
+<p class="subtitle">Tenant di esempio (Trattoria Da Mario): 5 categorie pasto configurate, 4 attive (Brunch disattivato), 7 slot da 20 coperti tra le 17:00 e le 23:00.</p>
+
+<!-- ===== SEZ.1 mapping slot → categoria ===== -->
+<div class="section-label"><i class="bi bi-1-circle-fill"></i> Mappatura slot → categoria (come dovrebbe essere)</div>
+<p class="section-hint">Il sistema dovrebbe associare ogni slot alla categoria il cui range orario lo copre. Slot fuori da ogni categoria attiva → orfano.</p>
+
+<div class="card" style="padding:14px 20px;">
+    <div class="map-row"><span class="map-slot">17:00</span><span class="map-arrow">→</span><span class="map-cat">Aperitivo</span><span class="map-num">17:00 – 19:00 · max 20</span></div>
+    <div class="map-row"><span class="map-slot">18:00</span><span class="map-arrow">→</span><span class="map-cat">Aperitivo</span><span class="map-num">17:00 – 19:00 · max 20</span></div>
+    <div class="map-row"><span class="map-slot">19:00</span><span class="map-arrow">→</span><span class="map-cat">Cena</span><span class="map-num">19:00 – 22:30 · max 20</span></div>
+    <div class="map-row"><span class="map-slot">20:00</span><span class="map-arrow">→</span><span class="map-cat">Cena</span><span class="map-num">19:00 – 22:30 · max 20</span></div>
+    <div class="map-row"><span class="map-slot">21:00</span><span class="map-arrow">→</span><span class="map-cat">Cena</span><span class="map-num">19:00 – 22:30 · max 20</span></div>
+    <div class="map-row"><span class="map-slot">22:00</span><span class="map-arrow">→</span><span class="map-cat">Cena</span><span class="map-num">19:00 – 22:30 · max 20</span></div>
+    <div class="map-row"><span class="map-slot">23:00</span><span class="map-arrow">→</span><span class="map-cat">After Dinner</span><span class="map-num">22:30 – 23:59 · max 20</span></div>
+</div>
+
+<div class="small-box">
+    <strong>Subtotali per categoria attiva:</strong><br>
+    Pranzo: <code>0 coperti</code> (0 slot configurati nel suo range) &middot;
+    Aperitivo: <code>40 coperti</code> (2 slot × 20) &middot;
+    Cena: <code>80 coperti</code> (4 slot × 20) &middot;
+    After Dinner: <code>20 coperti</code> (1 slot × 20)<br>
+    <span style="color:var(--gray-600);">Brunch è disattivato → non si mostra.</span>
+</div>
+
+<hr class="section-divider">
+
+<!-- ===== SEZ.2 confronto attuale vs proposto ===== -->
+<div class="section-label"><i class="bi bi-2-circle-fill"></i> Confronto: stato attuale vs proposto</div>
+
+<div class="vs-grid">
+
+    <!-- ATTUALE -->
+    <div class="vs-col">
+        <h3 style="color:var(--danger);"><i class="bi bi-x-octagon-fill"></i> Attuale (fuorviante)</h3>
+
+        <div class="card">
+            <div class="card-head">
+                <span class="card-title"><i class="bi bi-bar-chart"></i> Riepilogo servizi</span>
+                <a class="btn-out">Vedi tutte <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <div class="meal-split">
+                <div class="meal-half">
+                    <div class="meal-title"><i class="bi bi-sun"></i> Pranzo</div>
+                    <div class="meal-sub" style="margin-top:8px;">Nessuno slot configurato</div>
+                </div>
+                <div class="meal-half">
+                    <div class="meal-title"><i class="bi bi-moon-stars"></i> Cena</div>
+                    <div><span class="meal-big">0</span> <span class="meal-cap">/ 140</span></div>
+                    <div class="meal-sub">coperti prenotati &middot; 0 prenotazioni</div>
+                    <div class="cap-bar"><div class="cap-fill" style="width:0%;"></div></div>
+                    <div class="cap-info">
+                        <span class="cap-text"><strong>140</strong> coperti disponibili</span>
+                        <span class="cap-text">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="annot">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <div>
+                <strong>Bug:</strong> "Cena 0/140" somma <em>tutti</em> gli slot dalle 16:00 in poi (Aperitivo + Cena reale + After Dinner). Le categorie Aperitivo e After Dinner non hanno nessun box dedicato. La soglia 16:00 è hardcoded e ignora le definizioni di <code>meal_categories</code>.
+            </div>
+        </div>
+    </div>
+
+    <!-- PROPOSTO -->
+    <div class="vs-col">
+        <h3 style="color:var(--brand);"><i class="bi bi-check-circle-fill"></i> Proposto (per categoria)</h3>
+
+        <div class="card">
+            <div class="card-head">
+                <span class="card-title"><i class="bi bi-bar-chart"></i> Riepilogo servizi</span>
+                <a class="btn-out">Vedi tutte <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <div class="meal-grid">
+                <div class="meal-card">
+                    <div class="meal-title"><i class="bi bi-sun pranzo"></i> Pranzo</div>
+                    <div class="meal-sub" style="margin-top:8px;">Nessuno slot configurato</div>
+                </div>
+                <div class="meal-card">
+                    <div class="meal-title"><i class="bi bi-cup-straw aperitivo"></i> Aperitivo</div>
+                    <div><span class="meal-big">0</span> <span class="meal-cap">/ 40</span></div>
+                    <div class="meal-sub">coperti prenotati &middot; 0 prenotazioni</div>
+                    <div class="cap-bar"><div class="cap-fill" style="width:0%;"></div></div>
+                    <div class="cap-info">
+                        <span class="cap-text"><strong>40</strong> disponibili</span>
+                        <span class="cap-text">0%</span>
+                    </div>
+                </div>
+                <div class="meal-card">
+                    <div class="meal-title"><i class="bi bi-moon-stars cena"></i> Cena</div>
+                    <div><span class="meal-big">0</span> <span class="meal-cap">/ 80</span></div>
+                    <div class="meal-sub">coperti prenotati &middot; 0 prenotazioni</div>
+                    <div class="cap-bar"><div class="cap-fill" style="width:0%;"></div></div>
+                    <div class="cap-info">
+                        <span class="cap-text"><strong>80</strong> disponibili</span>
+                        <span class="cap-text">0%</span>
+                    </div>
+                </div>
+                <div class="meal-card">
+                    <div class="meal-title"><i class="bi bi-stars after_dinner"></i> After Dinner</div>
+                    <div><span class="meal-big">0</span> <span class="meal-cap">/ 20</span></div>
+                    <div class="meal-sub">coperti prenotati &middot; 0 prenotazioni</div>
+                    <div class="cap-bar"><div class="cap-fill" style="width:0%;"></div></div>
+                    <div class="cap-info">
+                        <span class="cap-text"><strong>20</strong> disponibili</span>
+                        <span class="cap-text">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="annot good">
+            <i class="bi bi-check-circle-fill"></i>
+            <div>
+                <strong>Coerente:</strong> ogni categoria attiva ha il suo box con i numeri reali. "Cena = 80" rispetta il range 19:00–22:30 che tu hai configurato. Brunch (disattivato) non viene mostrato.
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<hr class="section-divider">
+
+<!-- ===== SEZ.3 edge case ===== -->
+<div class="section-label"><i class="bi bi-3-circle-fill"></i> Edge case (come gestirli)</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+
+    <div class="card" style="padding:14px 18px;">
+        <strong style="font-size:.86rem;">Caso 1: solo 1 categoria attiva</strong>
+        <p style="font-size:.78rem;color:var(--muted);margin-top:4px;">Es. ristorante che fa solo cena. Il box mostra un solo card a tutta larghezza.</p>
+        <div class="card" style="margin-top:10px;">
+            <div class="meal-grid" style="grid-template-columns:1fr;">
+                <div class="meal-card" style="border-right:none;">
+                    <div class="meal-title"><i class="bi bi-moon-stars cena"></i> Cena</div>
+                    <div><span class="meal-big">12</span> <span class="meal-cap">/ 80</span></div>
+                    <div class="meal-sub">coperti prenotati &middot; 4 prenotazioni</div>
+                    <div class="cap-bar"><div class="cap-fill" style="width:15%;"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="padding:14px 18px;">
+        <strong style="font-size:.86rem;">Caso 2: slot orfano</strong>
+        <p style="font-size:.78rem;color:var(--muted);margin-top:4px;">Slot fuori da ogni categoria attiva (es. slot 16:00 senza categoria che lo copra). Non viene contato in nessun box; appare un piccolo avviso.</p>
+        <div class="card" style="margin-top:10px;padding:11px 14px;">
+            <div style="font-size:.74rem;color:#8a6d00;background:#fff8e0;border:1px solid #ffe082;border-radius:7px;padding:8px 11px;">
+                <i class="bi bi-info-circle-fill"></i> 1 slot (16:00) non è coperto da nessuna categoria pasto attiva.
+                <a href="#" style="color:#664d03;text-decoration:underline;">Configura categorie</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="padding:14px 18px;">
+        <strong style="font-size:.86rem;">Caso 3: 5 categorie tutte attive</strong>
+        <p style="font-size:.78rem;color:var(--muted);margin-top:4px;">Massimo realistico: brunch + pranzo + aperitivo + cena + after dinner. Auto-fit grid → 3-2 desktop o 2-2-1 in base allo spazio.</p>
+        <div class="card" style="margin-top:10px;">
+            <div class="meal-grid" style="grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));">
+                <div class="meal-card" style="border-bottom:none;">
+                    <div class="meal-title" style="font-size:.7rem;"><i class="bi bi-cup-hot brunch"></i> Brunch</div>
+                    <div><span style="font-size:1.4rem;font-weight:700;">8</span> <span class="meal-cap">/ 30</span></div>
+                </div>
+                <div class="meal-card" style="border-bottom:none;">
+                    <div class="meal-title" style="font-size:.7rem;"><i class="bi bi-sun pranzo"></i> Pranzo</div>
+                    <div><span style="font-size:1.4rem;font-weight:700;">25</span> <span class="meal-cap">/ 60</span></div>
+                </div>
+                <div class="meal-card" style="border-bottom:none;border-right:none;">
+                    <div class="meal-title" style="font-size:.7rem;"><i class="bi bi-cup-straw aperitivo"></i> Aperitivo</div>
+                    <div><span style="font-size:1.4rem;font-weight:700;">12</span> <span class="meal-cap">/ 40</span></div>
+                </div>
+                <div class="meal-card" style="border-bottom:none;">
+                    <div class="meal-title" style="font-size:.7rem;"><i class="bi bi-moon-stars cena"></i> Cena</div>
+                    <div><span style="font-size:1.4rem;font-weight:700;">42</span> <span class="meal-cap">/ 80</span></div>
+                </div>
+                <div class="meal-card" style="border-bottom:none;border-right:none;">
+                    <div class="meal-title" style="font-size:.7rem;"><i class="bi bi-stars after_dinner"></i> After Dinner</div>
+                    <div><span style="font-size:1.4rem;font-weight:700;">3</span> <span class="meal-cap">/ 20</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="padding:14px 18px;">
+        <strong style="font-size:.86rem;">Caso 4: nessuna categoria attiva</strong>
+        <p style="font-size:.78rem;color:var(--muted);margin-top:4px;">Tenant nuovo che non ha ancora configurato le categorie pasto. Box vuoto con CTA.</p>
+        <div class="card" style="margin-top:10px;padding:18px 20px;text-align:center;">
+            <i class="bi bi-tags" style="font-size:1.8rem;color:var(--gray-500);"></i>
+            <p style="font-size:.78rem;color:var(--muted);margin:6px 0 10px;">Nessuna categoria pasto attiva</p>
+            <a href="#" class="btn-out">Configura categorie</a>
+        </div>
+    </div>
+
+</div>
+
+<hr class="section-divider">
+
+<!-- ===== SEZ.4 logica algoritmo ===== -->
+<div class="section-label"><i class="bi bi-4-circle-fill"></i> Logica del calcolo (pseudo-codice)</div>
+
+<div class="card" style="padding:16px 20px;font-size:.78rem;line-height:1.65;">
+    <ol style="margin-left:18px;">
+        <li>Carica <code>meal_categories</code> attive del tenant, ordinate per <code>sort_order</code>.</li>
+        <li>Carica gli slot del giorno (<code>time_slots</code> + eventuali <code>slot_overrides</code>).</li>
+        <li>Per ogni slot, trova la <strong>prima categoria attiva</strong> il cui range <code>[start_time, end_time)</code> copre lo slot. Se nessuna → slot orfano.</li>
+        <li>Somma <code>max_covers</code> dello slot al totale della categoria.</li>
+        <li>Per ogni categoria, conta le prenotazioni del giorno con <code>reservation_time</code> nel suo range e <code>status NOT IN ('cancelled','noshow')</code>.</li>
+        <li>Renderizza un card per ogni categoria attiva, anche quelle a 0 (sub-message "Nessuno slot configurato").</li>
+    </ol>
+    <p style="margin-top:10px;color:var(--muted);">Le categorie inattive non vengono mai mostrate. Overlap fra categorie risolto dalla prima per <code>sort_order</code> (regola già usata negli slot).</p>
+</div>
+
+</body>
+</html>

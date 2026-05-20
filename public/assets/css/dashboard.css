@@ -1909,10 +1909,30 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 .dh-next-countdown.dh-next-now { color: var(--brand); background: var(--brand-light); }
 .dh-next-evening .dh-next-countdown { background: #e8f0fe; color: #0d6efd; }
 
-/* Meal split (pranzo/cena with capacity) */
+/* Meal split (legacy pranzo/cena — mantenuto per compatibilita) */
 .dh-meal-split { display: grid; grid-template-columns: 1fr 1fr; }
 .dh-meal-half { padding: 1rem 1.25rem; }
 .dh-meal-half + .dh-meal-half { border-left: 1px solid #e9ecef; }
+/* Meal grid (una card per categoria pasto attiva) — auto-fit responsive */
+.dh-meal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.dh-meal-card { padding: 1rem 1.25rem; border-right: 1px solid #e9ecef; border-bottom: 1px solid #e9ecef; }
+.dh-meal-card:last-child { border-right: none; }
+/* Icone colorate per categoria — accento visivo, fallback grigio per voci custom */
+.dh-meal-title i.dh-meal-i-brunch    { color: #c4925e; }
+.dh-meal-title i.dh-meal-i-pranzo    { color: #f0b400; }
+.dh-meal-title i.dh-meal-i-aperitivo { color: #e8590c; }
+.dh-meal-title i.dh-meal-i-cena      { color: #7048e8; }
+.dh-meal-title i.dh-meal-i-after     { color: #9c36b5; }
+.dh-meal-empty { padding: 1.5rem 1.25rem; text-align: center; }
+.dh-meal-empty i { font-size: 1.6rem; color: #adb5bd; }
+.dh-meal-empty p { font-size: .82rem; color: #6c757d; margin: .4rem 0 .75rem; }
+.dh-meal-orphan {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    background: #fff8e0; border-top: 1px solid #ffe082;
+    color: #664d03; font-size: .74rem; padding: 8px 1.25rem;
+}
+.dh-meal-orphan i { color: #b8860b; flex-shrink: 0; }
+.dh-meal-orphan a { color: #664d03; font-weight: 600; text-decoration: underline; }
 .dh-meal-title {
     font-size: .75rem; font-weight: 700; color: #6c757d;
     text-transform: uppercase; letter-spacing: .3px;
@@ -2101,6 +2121,9 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     .dh-stat-cards { grid-template-columns: repeat(2, 1fr); }
     .dh-meal-split { grid-template-columns: 1fr; }
     .dh-meal-half + .dh-meal-half { border-left: none; border-top: 1px solid #e9ecef; }
+    .dh-meal-grid { grid-template-columns: 1fr; }
+    .dh-meal-card { border-right: none; }
+    .dh-meal-card:last-child { border-bottom: none; }
     .dh-two-col { grid-template-columns: 1fr; }
     .dh-source-bar-wrap { display: none; }
     .fab { display: flex; }

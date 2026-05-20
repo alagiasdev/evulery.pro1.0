@@ -188,7 +188,20 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
         </div>
         <?php endif; ?>
 
-        <!-- Riepilogo servizi (Pranzo/Cena con capienza) -->
+        <!-- Riepilogo servizi (una card per categoria pasto attiva) -->
+        <?php
+            // Mappa categoria → icona + classe colore. Le chiavi non-mappate
+            // ricadono su "bi-clock" come fallback neutro.
+            $mealIcons = [
+                'brunch'       => ['bi-cup-hot',    'dh-meal-i-brunch'],
+                'pranzo'       => ['bi-sun',        'dh-meal-i-pranzo'],
+                'aperitivo'    => ['bi-cup-straw',  'dh-meal-i-aperitivo'],
+                'cena'         => ['bi-moon-stars', 'dh-meal-i-cena'],
+                'after_dinner' => ['bi-stars',      'dh-meal-i-after'],
+            ];
+            $activeCats = $mealCapacity['categories'] ?? [];
+            $orphanSlots = (int)($mealCapacity['orphanSlots'] ?? 0);
+        ?>
         <div class="card">
             <div class="card-header">
                 <h6><i class="bi bi-bar-chart me-1"></i> Riepilogo servizi</h6>
@@ -196,27 +209,34 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
                     Vedi tutte <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
-            <div class="dh-meal-split">
-                <?php foreach (['pranzo' => ['bi-sun', 'Pranzo'], 'cena' => ['bi-moon-stars', 'Cena']] as $mealKey => [$mealIcon, $mealName]):
-                    $cap = $mealCapacity[$mealKey];
-                    $booked = $cap['booked'];
-                    $maxCap = $cap['capacity'];
-                    $count = $cap['count'];
+            <?php if (empty($activeCats)): ?>
+            <div class="dh-meal-empty">
+                <i class="bi bi-tags"></i>
+                <p>Nessuna categoria pasto attiva.</p>
+                <a href="<?= url('dashboard/settings/meal-categories') ?>" class="btn btn-sm btn-brand-outline" style="font-size:.78rem;">Configura categorie</a>
+            </div>
+            <?php else: ?>
+            <div class="dh-meal-grid">
+                <?php foreach ($activeCats as $cat):
+                    [$mealIcon, $mealIconCls] = $mealIcons[$cat['name']] ?? ['bi-clock', ''];
+                    $booked = (int)$cat['booked'];
+                    $maxCap = (int)$cat['capacity'];
+                    $count  = (int)$cat['count'];
                     $pct = $maxCap > 0 ? round(($booked / $maxCap) * 100) : 0;
                     $barClass = 'ok';
                     if ($pct > 100) $barClass = 'over';
                     elseif ($pct > 80) $barClass = 'warn';
                     $available = $maxCap - $booked;
                 ?>
-                <div class="dh-meal-half">
-                    <div class="dh-meal-title"><i class="bi <?= $mealIcon ?>"></i> <?= $mealName ?></div>
+                <div class="dh-meal-card">
+                    <div class="dh-meal-title"><i class="bi <?= $mealIcon ?> <?= e($mealIconCls) ?>"></i> <?= e($cat['display_name']) ?></div>
                     <?php if ($maxCap > 0): ?>
                         <div><span class="dh-meal-big"><?= $booked ?></span> <span class="dh-meal-cap">/ <?= $maxCap ?></span></div>
                         <div class="dh-meal-sub">coperti prenotati &middot; <?= $count ?> prenotazioni</div>
                         <div class="dh-cap-bar"><div class="dh-cap-fill <?= $barClass ?>" style="width:<?= min(100, $pct) ?>%;"></div></div>
                         <div class="dh-cap-info">
                             <?php if ($available >= 0): ?>
-                                <span class="dh-cap-text"><strong><?= $available ?></strong> coperti disponibili</span>
+                                <span class="dh-cap-text"><strong><?= $available ?></strong> disponibili</span>
                             <?php else: ?>
                                 <span class="dh-overbooking-badge"><i class="bi bi-exclamation-triangle-fill"></i> <?= $available ?> overbooking</span>
                             <?php endif; ?>
@@ -228,6 +248,14 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
                 </div>
                 <?php endforeach; ?>
             </div>
+            <?php if ($orphanSlots > 0): ?>
+            <div class="dh-meal-orphan">
+                <i class="bi bi-info-circle-fill"></i>
+                <span><?= $orphanSlots ?> slot <?= $orphanSlots === 1 ? 'non è coperto' : 'non sono coperti' ?> da nessuna categoria pasto attiva.</span>
+                <a href="<?= url('dashboard/settings/meal-categories') ?>">Configura categorie</a>
+            </div>
+            <?php endif; ?>
+            <?php endif; ?>
         </div>
 
         <!-- Confronto settimana -->
