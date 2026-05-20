@@ -21,6 +21,20 @@ foreach ($tables as &$_t) {
 }
 unset($_t);
 
+// Bounding box delle posizioni: serve a "spaccare" la canvas più larga del
+// viewport quando i tavoli sono posizionati oltre il bordo (frequente su
+// mobile dopo un setup fatto da desktop). Senza questo, lo scroll interno
+// non si attiva e i tavoli a destra/in basso restano invisibili.
+$canvasMaxX = 0;
+$canvasMaxY = 0;
+foreach ($tables as $_t) {
+    if ($_t['_x'] > $canvasMaxX) $canvasMaxX = $_t['_x'];
+    if ($_t['_y'] > $canvasMaxY) $canvasMaxY = $_t['_y'];
+}
+// 76px = lato tavolo, 32px = padding per non incollare lo scroll al bordo
+$canvasContentW = $canvasMaxX + 76 + 32;
+$canvasContentH = max(540, $canvasMaxY + 76 + 32);
+
 $firstArea = $areas[0] ?? '';
 $multiArea = count($areas) > 1;
 // Area "principale" = la prima creata: niente pallino colore. Le aree
@@ -264,6 +278,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                 <?php endforeach; ?>
             </div>
             <div class="tm-map-canvas" id="tm-map">
+                <div class="tm-map-spacer" aria-hidden="true" style="width:<?= (int)$canvasContentW ?>px; height:<?= (int)$canvasContentH ?>px;"></div>
                 <?php /* Connettori tavoli combinati — dietro i tavoli */ ?>
                 <?php foreach ($comboBars as $cb): ?>
                 <div class="tm-combo-bar" data-area="<?= e($cb['area']) ?>"
@@ -402,6 +417,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
     <?php endif; ?>
     <div class="tm-map-hint"><i class="bi bi-arrows-move me-1"></i> Trascina i tavoli per disporli come nella tua sala. Le posizioni si agganciano alla griglia. Ricordati di salvare.</div>
     <div class="tm-map-canvas" id="tm-map">
+        <div class="tm-map-spacer" aria-hidden="true" style="width:<?= (int)$canvasContentW ?>px; height:<?= (int)$canvasContentH ?>px;"></div>
         <?php foreach ($tables as $t): ?>
         <?php
             $tArea = (string)($t['area'] ?? '');

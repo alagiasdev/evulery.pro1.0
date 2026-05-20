@@ -4290,7 +4290,10 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-map-back { font-size: .74rem; font-weight: 600; color: #6c757d; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
 .tm-map-back:hover { color: var(--brand, #00844A); }
 .tm-map-hint { font-size: .7rem; color: #6c757d; padding: 9px 16px; background: #fafbfc; border-bottom: 1px solid var(--border, #e9ecef); }
-.tm-map-canvas { position: relative; width: 100%; height: 540px; overflow: auto; background: radial-gradient(circle, #e3e6ea 1px, transparent 1px); background-size: 20px 20px; background-color: #fcfcfd; }
+.tm-map-canvas { position: relative; width: 100%; height: 540px; overflow: auto; background: radial-gradient(circle, #e3e6ea 1px, transparent 1px); background-size: 20px 20px; background-color: #fcfcfd; -webkit-overflow-scrolling: touch; }
+/* Spacer fantasma che spinge l'area scrollabile fino al tavolo più lontano,
+   così su mobile la canvas si può scorrere fino a vedere ogni tavolo. */
+.tm-map-spacer { display: block; pointer-events: none; visibility: hidden; }
 .tm-map-table { position: absolute; width: 76px; height: 76px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: var(--brand, #00844A); color: #fff; border-radius: 12px; cursor: grab; user-select: none; box-shadow: 0 2px 6px rgba(0,0,0,.18); transition: box-shadow .12s; }
 .tm-map-table.round { border-radius: 50%; }
 .tm-map-table.off { background: #adb5bd; }
@@ -4395,6 +4398,8 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     .tm-pane-list { width: 100%; height: auto; max-height: 70vh; border-right: none; }
     .tm-twopane.show-map .tm-pane-list { display: none; }
     .tm-twopane.show-list .tm-pane-map { display: none; }
+    /* Canvas più compatta su mobile per lasciare aria al resto della pagina */
+    .tm-map-canvas { height: min(540px, 62vh); }
 }
 
 /* Impostazioni — hub a griglia (pagina /dashboard/settings) */
