@@ -1933,6 +1933,13 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 }
 .dh-meal-orphan i { color: #b8860b; flex-shrink: 0; }
 .dh-meal-orphan a { color: #664d03; font-weight: 600; text-decoration: underline; }
+.dh-meal-note {
+    display: flex; align-items: center; gap: 6px;
+    padding: 9px 1.25rem; font-size: .72rem; color: #6c757d;
+    background: #fafbfc; border-top: 1px solid #eef0f2;
+    line-height: 1.4;
+}
+.dh-meal-note i { color: #adb5bd; flex-shrink: 0; }
 .dh-meal-title {
     font-size: .75rem; font-weight: 700; color: #6c757d;
     text-transform: uppercase; letter-spacing: .3px;

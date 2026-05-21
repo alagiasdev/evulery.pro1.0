@@ -255,6 +255,10 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
                 <a href="<?= url('dashboard/settings/meal-categories') ?>">Configura categorie</a>
             </div>
             <?php endif; ?>
+            <div class="dh-meal-note">
+                <i class="bi bi-info-circle"></i>
+                Stima dei coperti del servizio: capienza × turni (durata pasto + buffer).
+            </div>
             <?php endif; ?>
         </div>
 

@@ -122,18 +122,22 @@ class HomeController
 
     /**
      * Capienza e prenotato per ogni categoria pasto ATTIVA del tenant.
-     * Ogni slot viene mappato sulla prima categoria attiva il cui range
-     * `[start_time, end_time)` lo copre. Prenotazioni con stesso criterio,
-     * raggruppate per ora di prenotazione.
+     *
+     * "capacity" qui NON è la somma dei max_covers degli slot (semanticamente
+     * sbagliato: max_covers è un cap simultaneo, sommarlo gonfia il numero).
+     * È invece una stima del throughput realistico del servizio:
+     *     capacity = cap_istantaneo × turni
+     * dove cap_istantaneo = max(max_covers degli slot della categoria) e
+     * turni = floor(durata_categoria / (table_duration + table_turnover_buffer)).
+     *
+     * Booked: somma dei party_size delle prenotazioni che cadono nella
+     * categoria (stesso criterio "primo range che copre l'orario").
      *
      * @return array{categories: array<int, array>, orphanSlots: int}
-     *   - categories: lista ordinata per sort_order, ognuna con
-     *     name/display_name/start_time/end_time/capacity/booked/count
-     *   - orphanSlots: numero di slot fuori da ogni categoria attiva
      */
     private function getMealCapacity(\PDO $db, int $tenantId, string $date): array
     {
-        // 1) Categorie attive del tenant (ordine wireframe)
+        // 1) Categorie attive del tenant
         $stmt = $db->prepare(
             'SELECT id, name, display_name, start_time, end_time
              FROM meal_categories
@@ -146,8 +150,17 @@ class HomeController
             return ['categories' => [], 'orphanSlots' => 0];
         }
 
+        // Tenant: durata pasto + buffer turnover per il calcolo dei turni
+        $stmt = $db->prepare(
+            'SELECT table_duration, table_turnover_buffer FROM tenants WHERE id = :t'
+        );
+        $stmt->execute(['t' => $tenantId]);
+        $tCfg = $stmt->fetch() ?: [];
+        $turnDuration = max(30, (int)($tCfg['table_duration'] ?? 90))
+                      + max(0,  (int)($tCfg['table_turnover_buffer'] ?? 15));
+
         // 2) Slot del giorno + overrides
-        $dow = (int)date('N', strtotime($date)) - 1; // 0=Lun ... 6=Dom
+        $dow = (int)date('N', strtotime($date)) - 1;
         $stmt = $db->prepare(
             'SELECT slot_time, max_covers
              FROM time_slots
@@ -181,6 +194,8 @@ class HomeController
                 'start_time'   => substr((string)$c['start_time'], 0, 5),
                 'end_time'     => substr((string)$c['end_time'], 0, 5),
                 'capacity'     => 0,
+                'instant_cap'  => 0, // max max_covers fra gli slot della categoria
+                'turns'        => 0, // turni stimati nella durata della categoria
                 'booked'       => 0,
                 'count'        => 0,
             ];
@@ -190,11 +205,11 @@ class HomeController
             return ['categories' => array_values($byKey), 'orphanSlots' => 0];
         }
 
-        // 3) Mappa ogni slot sulla prima categoria attiva che lo copre
+        // 3) Mappa ogni slot sulla prima categoria attiva che lo copre.
+        //    Per ogni categoria teniamo il MAX dei max_covers degli slot.
         $orphanSlots = 0;
         foreach ($slots as $slot) {
             $time = $slot['slot_time'];
-            // Effective max_covers (override > base)
             if (isset($overrides[$time])) {
                 if ((int)$overrides[$time]['is_closed']) continue;
                 $maxCovers = (int)$overrides[$time]['max_covers'];
@@ -207,10 +222,22 @@ class HomeController
                 $orphanSlots++;
                 continue;
             }
-            $byKey[$catKey]['capacity'] += $maxCovers;
+            if ($maxCovers > $byKey[$catKey]['instant_cap']) {
+                $byKey[$catKey]['instant_cap'] = $maxCovers;
+            }
         }
 
-        // 4) Prenotazioni del giorno (status che contano)
+        // 4) Calcolo turni × cap istantaneo per ogni categoria
+        foreach ($byKey as $key => &$row) {
+            if ($row['instant_cap'] === 0) continue; // nessuno slot configurato
+            $catMinutes = $this->timeDiffMinutes($row['start_time'], $row['end_time']);
+            $turns = max(1, (int)floor($catMinutes / max(1, $turnDuration)));
+            $row['turns'] = $turns;
+            $row['capacity'] = $row['instant_cap'] * $turns;
+        }
+        unset($row);
+
+        // 5) Prenotazioni del giorno (status che contano)
         $stmt = $db->prepare(
             'SELECT reservation_time, party_size
              FROM reservations
@@ -226,6 +253,14 @@ class HomeController
         }
 
         return ['categories' => array_values($byKey), 'orphanSlots' => $orphanSlots];
+    }
+
+    /** Differenza in minuti tra due orari "HH:MM" (assume stesso giorno). */
+    private function timeDiffMinutes(string $start, string $end): int
+    {
+        [$sh, $sm] = array_map('intval', explode(':', $start) + [0, 0]);
+        [$eh, $em] = array_map('intval', explode(':', $end)   + [0, 0]);
+        return max(0, ($eh * 60 + $em) - ($sh * 60 + $sm));
     }
 
     /**
