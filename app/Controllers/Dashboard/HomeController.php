@@ -123,15 +123,24 @@ class HomeController
     /**
      * Capienza e prenotato per ogni categoria pasto ATTIVA del tenant.
      *
-     * "capacity" qui NON è la somma dei max_covers degli slot (semanticamente
-     * sbagliato: max_covers è un cap simultaneo, sommarlo gonfia il numero).
-     * È invece una stima del throughput realistico del servizio:
-     *     capacity = cap_istantaneo × turni
-     * dove cap_istantaneo = max(max_covers degli slot della categoria) e
-     * turni = floor(durata_categoria / (table_duration + table_turnover_buffer)).
+     * - capacity = cap_istantaneo × turni
+     *   dove cap_istantaneo = max(max_covers degli slot della categoria)
+     *   e turni = floor(durata_categoria / (table_duration + buffer)).
      *
-     * Booked: somma dei party_size delle prenotazioni che cadono nella
-     * categoria (stesso criterio "primo range che copre l'orario").
+     * - booked = PICCO di occupazione fisica in sala durante il servizio.
+     *   Per ogni slot della categoria si calcola quante persone sono sedute
+     *   in quel momento (somma party_size delle prenotazioni con
+     *   [reservation_time, reservation_time + table_duration] che copre lo
+     *   slot). Il "booked" della categoria è il max fra questi valori.
+     *   Stesso modello che il widget di prenotazione usa per decidere se
+     *   uno slot accetta nuovi clienti.
+     *   IMPORTANTE: una prenotazione iniziata in Aperitivo che dura 90 min
+     *   e spilla in Cena conta nell'occupazione di entrambe (è fisicamente
+     *   presente in entrambe le fasce, anche se "appartiene" solo ad
+     *   Aperitivo come count).
+     *
+     * - count = numero di prenotazioni iniziate IN questa categoria.
+     *   Diverso dal booked: la spillover non incrementa il count, solo il booked.
      *
      * @return array{categories: array<int, array>, orphanSlots: int}
      */
@@ -239,7 +248,10 @@ class HomeController
         }
         unset($row);
 
-        // 5) Prenotazioni del giorno (status che contano)
+        // 5) Carica tutte le prenotazioni del giorno (status che contano) UNA volta.
+        //    Le useremo sia per il "count" (dove inizia) sia per il "booked"
+        //    (occupazione fisica = overlap con gli slot della categoria).
+        $tableDuration = max(15, (int)($tCfg['table_duration'] ?? 90));
         $stmt = $db->prepare(
             'SELECT reservation_time, party_size
              FROM reservations
@@ -247,12 +259,47 @@ class HomeController
              AND status IN ("confirmed", "pending", "arrived")'
         );
         $stmt->execute(['t' => $tenantId, 'd' => $date]);
+        $bookings = [];
         foreach ($stmt->fetchAll() as $r) {
-            $catKey = $this->categoryForTime($cats, $r['reservation_time']);
-            if ($catKey === null) continue;
-            $byKey[$catKey]['booked'] += (int)$r['party_size'];
-            $byKey[$catKey]['count']  += 1;
+            $startMin = $this->timeToMinutes((string)$r['reservation_time']);
+            $bookings[] = [
+                'start'     => $startMin,
+                'end'       => $startMin + $tableDuration,
+                'size'      => (int)$r['party_size'],
+                'startTime' => substr((string)$r['reservation_time'], 0, 5),
+            ];
         }
+
+        // 6) count = prenotazioni che INIZIANO nella categoria
+        foreach ($bookings as $b) {
+            $catKey = $this->categoryForTime($cats, $b['startTime']);
+            if ($catKey === null) continue;
+            $byKey[$catKey]['count'] += 1;
+        }
+
+        // 7) booked = PICCO di occupazione fisica negli slot della categoria
+        //    (= include lo spillover dalla categoria precedente).
+        foreach ($byKey as $key => &$row) {
+            if ($row['instant_cap'] === 0) continue; // niente slot, niente da calcolare
+            $maxOccupied = 0;
+            foreach ($slots as $slot) {
+                $slotTime = substr((string)$slot['slot_time'], 0, 5);
+                if ($this->categoryForTime($cats, $slotTime) !== $key) continue;
+                $slotMin = $this->timeToMinutes((string)$slot['slot_time']);
+                $occupied = 0;
+                foreach ($bookings as $b) {
+                    // Una prenotazione è "presente" allo slotMin se
+                    // start <= slotMin < end. Stesso criterio di
+                    // Reservation::getOccupiedCovers.
+                    if ($b['start'] <= $slotMin && $slotMin < $b['end']) {
+                        $occupied += $b['size'];
+                    }
+                }
+                if ($occupied > $maxOccupied) $maxOccupied = $occupied;
+            }
+            $row['booked'] = $maxOccupied;
+        }
+        unset($row);
 
         return ['categories' => array_values($byKey), 'orphanSlots' => $orphanSlots];
     }
@@ -263,6 +310,13 @@ class HomeController
         [$sh, $sm] = array_map('intval', explode(':', $start) + [0, 0]);
         [$eh, $em] = array_map('intval', explode(':', $end)   + [0, 0]);
         return max(0, ($eh * 60 + $em) - ($sh * 60 + $sm));
+    }
+
+    /** Converte "HH:MM" o "HH:MM:SS" in minuti dalla mezzanotte. */
+    private function timeToMinutes(string $time): int
+    {
+        $parts = explode(':', $time);
+        return ((int)($parts[0] ?? 0)) * 60 + ((int)($parts[1] ?? 0));
     }
 
     /**

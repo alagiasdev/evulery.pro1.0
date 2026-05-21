@@ -257,7 +257,7 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
             <?php endif; ?>
             <div class="dh-meal-note">
                 <i class="bi bi-info-circle"></i>
-                Stima dei coperti del servizio: capienza × turni (durata pasto + buffer).
+                Coperti = picco di persone in sala durante il servizio (incluso spillover dal turno precedente). Capienza = capienza simultanea × turni.
             </div>
             <?php endif; ?>
         </div>
