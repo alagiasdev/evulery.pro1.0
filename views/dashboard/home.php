@@ -251,8 +251,8 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
             <?php if ($orphanSlots > 0): ?>
             <div class="dh-meal-orphan">
                 <i class="bi bi-info-circle-fill"></i>
-                <span><?= $orphanSlots ?> slot <?= $orphanSlots === 1 ? 'non è coperto' : 'non sono coperti' ?> da nessuna categoria pasto attiva.</span>
-                <a href="<?= url('dashboard/settings/meal-categories') ?>">Configura categorie</a>
+                <span>Hai <?= $orphanSlots ?> slot orari fuori dalle tue categorie pasto: i clienti possono prenotarli ma non rientrano in nessun servizio del riepilogo.</span>
+                <a href="<?= url('dashboard/settings/slots') ?>">Sistema gli orari</a>
             </div>
             <?php endif; ?>
             <div class="dh-meal-note">

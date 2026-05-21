@@ -219,7 +219,9 @@ class HomeController
 
             $catKey = $this->categoryForTime($cats, $time);
             if ($catKey === null) {
-                $orphanSlots++;
+                // Conto come orfano solo gli slot "vivi" (max_covers > 0):
+                // se l'operatore li ha gia' azzerati, non sono un problema.
+                if ($maxCovers > 0) $orphanSlots++;
                 continue;
             }
             if ($maxCovers > $byKey[$catKey]['instant_cap']) {

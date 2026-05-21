@@ -240,11 +240,16 @@ $DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
 </form>
 
 <script nonce="<?= csp_nonce() ?>">
-// Fill all buttons
+// Fill all buttons: agiscono solo sugli slot dentro una categoria pasto
+// attiva. Saltano automaticamente phantom (disabled), categorie inattive
+// (readonly) e "Fuori categoria" (row-orphan) — l'operatore puo' comunque
+// editare a mano un orphan se davvero lo vuole valorizzare.
 document.querySelectorAll('.tb-btn[data-fill]').forEach(function(btn) {
     btn.addEventListener('click', function() {
         var val = this.dataset.fill;
         document.querySelectorAll('.slot-input:not([disabled]):not([readonly])').forEach(function(input) {
+            var row = input.closest('tr');
+            if (row && row.classList.contains('row-orphan')) return; // fuori categoria
             input.value = val;
             input.className = 'slot-input ' + (parseInt(val) > 0 ? 'has-value' : 'zero');
         });
