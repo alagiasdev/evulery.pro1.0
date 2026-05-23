@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe Fase A — Combinazione multi-tavolo ad-hoc</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--brand:#00844A;--brand-light:#e6f4ed;--bg:#f5f6f8;--card:#fff;--text:#1a1d23;--muted:#6c757d;--border:#e9ecef;--radius:12px;--danger:#dc3545;--gold:#b8860b;--gold-bg:#fff8e0;--gold-border:#ffe082;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:system-ui,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);padding:24px;max-width:1280px;margin:0 auto;}
+  h2{font-size:1.35rem;font-weight:700;margin-bottom:.25rem;}
+  .subtitle{font-size:.82rem;color:var(--muted);margin-bottom:1rem;}
+  .section-divider{margin:36px 0;border:none;border-top:2px dashed #dee2e6;}
+  .section-label{font-size:1rem;font-weight:700;color:var(--brand);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+  .section-hint{font-size:.78rem;color:var(--muted);margin:0 0 14px;}
+  .ph{font-size:.56rem;font-weight:700;padding:2px 7px;border-radius:5px;text-transform:uppercase;vertical-align:middle;background:#d1e7dd;color:#0a5c36;border:1px solid #a3d2b6;}
+  .new-badge{background:var(--brand);color:#fff;font-size:.56rem;font-weight:700;padding:1px 6px;border-radius:4px;text-transform:uppercase;}
+
+  .mock-stage{position:relative;background:rgba(0,0,0,.08);border-radius:14px;padding:24px;display:flex;justify-content:center;}
+  .mock-box{background:var(--card);border-radius:var(--radius);box-shadow:0 8px 28px rgba(0,0,0,.15);width:520px;max-width:100%;overflow:hidden;}
+  .mock-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+  .mock-title{font-size:.92rem;font-weight:700;flex:1;display:flex;align-items:center;gap:6px;}
+  .mock-x{width:30px;height:30px;border-radius:7px;border:none;background:#f0f1f3;cursor:pointer;color:var(--muted);}
+  .mock-body{padding:18px 20px;}
+  .mock-foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border);background:#fafbfc;}
+
+  .btn{padding:8px 14px;border-radius:8px;font-size:.78rem;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
+  .btn-brand{background:var(--brand);color:#fff;}
+  .btn-brand:disabled{background:#c4d4cc;cursor:not-allowed;}
+  .btn-ghost{background:var(--card);color:var(--muted);border:1px solid var(--border);}
+
+  .fl{display:block;font-size:.68rem;font-weight:600;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;}
+  .fi{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:8px;font-size:.84rem;background:var(--card);}
+
+  /* Dropdown */
+  .dd{position:relative;}
+  .dd-toggle{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:.84rem;background:#fff;cursor:pointer;}
+  .dd-menu{margin-top:6px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:6px;}
+  .dd-item{padding:9px 11px;font-size:.8rem;border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:8px;}
+  .dd-item:hover{background:var(--brand-light);}
+  .dd-item.selected{background:var(--brand-light);color:var(--brand);font-weight:600;}
+  .dd-sep{height:1px;background:var(--border);margin:6px 0;}
+  .dd-special{color:var(--brand);font-weight:600;}
+  .dd-special i{font-size:.95rem;}
+
+  /* Tavolo card nel multi-select */
+  .tlist{display:flex;flex-direction:column;gap:6px;max-height:340px;overflow-y:auto;padding-right:4px;}
+  .trow{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .12s,background .12s;}
+  .trow:hover{border-color:#c4d4cc;}
+  .trow.on{border-color:var(--brand);background:var(--brand-light);}
+  .trow.busy{opacity:.55;cursor:not-allowed;background:#fafbfc;}
+  .tchk{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.85rem;color:transparent;flex-shrink:0;}
+  .trow.on .tchk{background:var(--brand);border-color:var(--brand);color:#fff;}
+  .tname{font-weight:700;font-size:.86rem;flex-shrink:0;min-width:60px;}
+  .tcap{font-size:.7rem;font-weight:700;background:#eef0f2;color:#5b6470;padding:2px 7px;border-radius:5px;flex-shrink:0;}
+  .tstatus{flex:1;font-size:.72rem;color:var(--muted);text-align:right;}
+  .tstatus.free{color:var(--brand);}
+  .tstatus.busy{color:#b3261e;}
+
+  /* Sum bar */
+  .sumbar{display:flex;align-items:center;gap:14px;padding:12px 14px;background:#fafbfc;border:1px solid var(--border);border-radius:10px;margin-bottom:14px;}
+  .sumbar.ok{background:#eef7f1;border-color:#cfe8d6;}
+  .sumbar.warn{background:var(--gold-bg);border-color:var(--gold-border);}
+  .sumbar.empty{background:#fafbfc;}
+  .sum-num{font-size:1.6rem;font-weight:800;color:var(--text);line-height:1;}
+  .sum-num strong{color:var(--brand);}
+  .sumbar.warn .sum-num strong{color:var(--gold);}
+  .sum-desc{font-size:.78rem;color:var(--muted);flex:1;}
+  .sum-desc strong{color:var(--text);}
+  .sumbar.ok .sum-desc strong{color:var(--brand);}
+  .sumbar.warn .sum-desc strong{color:#8a6d00;}
+  .sum-ico{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0;}
+  .sumbar.empty .sum-ico{background:#eef0f2;color:#6c757d;}
+  .sumbar.ok .sum-ico{background:var(--brand-light);color:var(--brand);}
+  .sumbar.warn .sum-ico{background:#fff3cd;color:var(--gold);}
+
+  /* Note */
+  .notes{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-top:14px;}
+  .notes h3{font-size:.92rem;font-weight:700;margin-bottom:10px;}
+  .notes ul{list-style:none;padding:0;}
+  .notes li{font-size:.78rem;line-height:1.55;padding:6px 0;border-bottom:1px dashed #f0f1f3;display:flex;gap:10px;align-items:flex-start;}
+  .notes li:last-child{border-bottom:none;}
+  .notes li i{color:var(--brand);font-size:.85rem;margin-top:1px;flex-shrink:0;}
+  .notes code{background:#f5f6f8;padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;font-size:.74rem;}
+
+  .scenarios{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:900px){.scenarios{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<h2>Wireframe Fase A <span class="ph">A</span> — Combinazione multi-tavolo <em>ad-hoc</em></h2>
+<p class="subtitle">Caso d'uso: arriva un party di 8, l'auto-assegnatore non trova niente perché non c'è una combinazione pre-definita. Il ristoratore combina 2-3 tavoli al volo per questa specifica prenotazione.</p>
+
+<!-- ===== SEZIONE 1 — Il dropdown con la nuova voce ===== -->
+<div class="section-label"><i class="bi bi-1-circle-fill"></i> Punto di ingresso — il dropdown "Tavolo assegnato"</div>
+<p class="section-hint">Nella scheda prenotazione (e nel popup della Mappa Sala) il dropdown attuale mostra tavoli singoli e combinazioni pre-definite. Aggiungiamo in fondo una voce speciale: <strong>"↔ Combina tavoli…"</strong>.</p>
+
+<div class="mock-stage">
+<div class="mock-box">
+    <div class="mock-head">
+        <span class="mock-title"><i class="bi bi-person" style="color:var(--brand);"></i> Rossi Mario · 8 persone · sabato 20:30</span>
+    </div>
+    <div class="mock-body">
+        <div style="background:#fff3cd;border:1px solid #ffe082;color:#664d03;padding:8px 12px;border-radius:8px;font-size:.78rem;margin-bottom:14px;">
+            <i class="bi bi-exclamation-triangle-fill"></i> <strong>Tavolo da assegnare</strong> — nessun tavolo o combinazione automatica copre 8 persone.
+        </div>
+
+        <label class="fl">Tavolo assegnato</label>
+        <div class="dd">
+            <div class="dd-toggle" style="background:#fafbfc;color:var(--muted);">Nessun tavolo selezionato <i class="bi bi-chevron-down"></i></div>
+            <div class="dd-menu">
+                <div class="dd-item"><i class="bi bi-circle" style="color:var(--muted);"></i> T1 — 2p · libero</div>
+                <div class="dd-item"><i class="bi bi-circle" style="color:var(--muted);"></i> T2 — 4p · libero</div>
+                <div class="dd-item"><i class="bi bi-circle" style="color:var(--muted);"></i> T3 — 4p · libero</div>
+                <div class="dd-item"><i class="bi bi-circle-fill" style="color:#dc3545;"></i> T4 — 4p · occupato 20:00</div>
+                <div class="dd-item"><i class="bi bi-link-45deg" style="color:var(--brand);"></i> T1 + T2 — combinazione, 6p</div>
+                <div class="dd-sep"></div>
+                <div class="dd-item dd-special"><i class="bi bi-grid-3x3-gap"></i> Combina tavoli… <span class="new-badge" style="margin-left:auto;">nuovo</span></div>
+            </div>
+        </div>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:8px;line-height:1.5;">
+            La nuova voce <strong>"Combina tavoli…"</strong> apre un piccolo pannello per scegliere a mano 2 o più tavoli da unire per questa prenotazione.
+        </div>
+    </div>
+</div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ===== SEZIONE 2 — Il modale, 4 stati ===== -->
+<div class="section-label"><i class="bi bi-2-circle-fill"></i> Il modale di selezione — 4 stati</div>
+<p class="section-hint">Click su "Combina tavoli…" apre questo pannello. La barra in alto mostra <strong>somma posti corrente / posti necessari</strong> e cambia colore in base alla validità. Tavoli occupati al turno mostrati greyed.</p>
+
+<div class="scenarios">
+
+<!-- Stato vuoto -->
+<div>
+<p style="font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:8px;">A · Stato iniziale (vuoto)</p>
+<div class="mock-stage" style="padding:18px;">
+<div class="mock-box" style="width:100%;">
+    <div class="mock-head">
+        <span class="mock-title"><i class="bi bi-grid-3x3-gap" style="color:var(--brand);"></i> Combina tavoli per Rossi (8 persone)</span>
+        <button class="mock-x"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="mock-body">
+        <div class="sumbar empty">
+            <div class="sum-ico"><i class="bi bi-dash-circle"></i></div>
+            <div><div class="sum-num">0 / <strong>8</strong></div></div>
+            <div class="sum-desc">Seleziona i tavoli da combinare. Servono <strong>almeno 8 posti</strong> per il gruppo.</div>
+        </div>
+        <div class="tlist">
+            <div class="trow"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T1</span><span class="tcap">2p</span><span class="tstatus free">libero</span></div>
+            <div class="trow"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T2</span><span class="tcap">4p</span><span class="tstatus free">libero</span></div>
+            <div class="trow"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T3</span><span class="tcap">4p</span><span class="tstatus free">libero</span></div>
+            <div class="trow busy"><div class="tchk"></div><span class="tname">T4</span><span class="tcap">4p</span><span class="tstatus busy">occupato 20:00</span></div>
+            <div class="trow"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T5</span><span class="tcap">4p</span><span class="tstatus free">libero</span></div>
+        </div>
+    </div>
+    <div class="mock-foot">
+        <button class="btn btn-ghost">Annulla</button>
+        <button class="btn btn-brand" disabled>Assegna combinazione</button>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- Stato somma insufficiente -->
+<div>
+<p style="font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:8px;">B · Somma ancora insufficiente</p>
+<div class="mock-stage" style="padding:18px;">
+<div class="mock-box" style="width:100%;">
+    <div class="mock-head">
+        <span class="mock-title"><i class="bi bi-grid-3x3-gap" style="color:var(--brand);"></i> Combina tavoli per Rossi (8 persone)</span>
+        <button class="mock-x"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="mock-body">
+        <div class="sumbar warn">
+            <div class="sum-ico"><i class="bi bi-exclamation-triangle"></i></div>
+            <div><div class="sum-num">6 / <strong>8</strong></div></div>
+            <div class="sum-desc"><strong>2 posti in meno</strong> rispetto al gruppo. Aggiungi un altro tavolo o conferma comunque se va bene così.</div>
+        </div>
+        <div class="tlist">
+            <div class="trow on"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T1</span><span class="tcap">2p</span><span class="tstatus free">libero</span></div>
+            <div class="trow on"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T2</span><span class="tcap">4p</span><span class="tstatus free">libero</span></div>
+            <div class="trow"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T3</span><span class="tcap">4p</span><span class="tstatus free">libero</span></div>
+            <div class="trow busy"><div class="tchk"></div><span class="tname">T4</span><span class="tcap">4p</span><span class="tstatus busy">occupato 20:00</span></div>
+            <div class="trow"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T5</span><span class="tcap">4p</span><span class="tstatus free">libero</span></div>
+        </div>
+    </div>
+    <div class="mock-foot">
+        <button class="btn btn-ghost">Annulla</button>
+        <button class="btn btn-brand">Assegna comunque</button>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- Stato perfetto -->
+<div>
+<p style="font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:8px;">C · Somma sufficiente</p>
+<div class="mock-stage" style="padding:18px;">
+<div class="mock-box" style="width:100%;">
+    <div class="mock-head">
+        <span class="mock-title"><i class="bi bi-grid-3x3-gap" style="color:var(--brand);"></i> Combina tavoli per Rossi (8 persone)</span>
+        <button class="mock-x"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="mock-body">
+        <div class="sumbar ok">
+            <div class="sum-ico"><i class="bi bi-check-circle-fill"></i></div>
+            <div><div class="sum-num">8 / <strong>8</strong></div></div>
+            <div class="sum-desc"><strong>Combinazione esatta per 8 persone.</strong> Pronto a salvare.</div>
+        </div>
+        <div class="tlist">
+            <div class="trow"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T1</span><span class="tcap">2p</span><span class="tstatus free">libero</span></div>
+            <div class="trow on"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T2</span><span class="tcap">4p</span><span class="tstatus free">libero</span></div>
+            <div class="trow on"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T3</span><span class="tcap">4p</span><span class="tstatus free">libero</span></div>
+            <div class="trow busy"><div class="tchk"></div><span class="tname">T4</span><span class="tcap">4p</span><span class="tstatus busy">occupato 20:00</span></div>
+            <div class="trow"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T5</span><span class="tcap">4p</span><span class="tstatus free">libero</span></div>
+        </div>
+    </div>
+    <div class="mock-foot">
+        <button class="btn btn-ghost">Annulla</button>
+        <button class="btn btn-brand"><i class="bi bi-check2"></i> Assegna combinazione</button>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- Stato sovrabbondante -->
+<div>
+<p style="font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:8px;">D · Somma in eccesso (ok lo stesso)</p>
+<div class="mock-stage" style="padding:18px;">
+<div class="mock-box" style="width:100%;">
+    <div class="mock-head">
+        <span class="mock-title"><i class="bi bi-grid-3x3-gap" style="color:var(--brand);"></i> Combina tavoli per Rossi (8 persone)</span>
+        <button class="mock-x"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="mock-body">
+        <div class="sumbar ok">
+            <div class="sum-ico"><i class="bi bi-check-circle-fill"></i></div>
+            <div><div class="sum-num">10 / <strong>8</strong></div></div>
+            <div class="sum-desc"><strong>10 posti per 8 persone</strong> — un po' di spazio in più va bene.</div>
+        </div>
+        <div class="tlist">
+            <div class="trow on"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T1</span><span class="tcap">2p</span><span class="tstatus free">libero</span></div>
+            <div class="trow on"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T2</span><span class="tcap">4p</span><span class="tstatus free">libero</span></div>
+            <div class="trow on"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T3</span><span class="tcap">4p</span><span class="tstatus free">libero</span></div>
+            <div class="trow busy"><div class="tchk"></div><span class="tname">T4</span><span class="tcap">4p</span><span class="tstatus busy">occupato 20:00</span></div>
+            <div class="trow"><div class="tchk"><i class="bi bi-check-lg"></i></div><span class="tname">T5</span><span class="tcap">4p</span><span class="tstatus free">libero</span></div>
+        </div>
+    </div>
+    <div class="mock-foot">
+        <button class="btn btn-ghost">Annulla</button>
+        <button class="btn btn-brand"><i class="bi bi-check2"></i> Assegna combinazione</button>
+    </div>
+</div>
+</div>
+</div>
+
+</div>
+
+<hr class="section-divider">
+
+<!-- ===== NOTE DI DESIGN ===== -->
+<div class="section-label"><i class="bi bi-3-circle-fill"></i> Note di design e implementazione</div>
+
+<div class="notes">
+    <h3>Comportamento UX</h3>
+    <ul>
+        <li><i class="bi bi-check-circle-fill"></i> <span><strong>Barra somma always-visible</strong> in alto: numero grande "X / Y" + descrizione. Cambia colore (grigio → ambra → verde) in base alla validità.</span></li>
+        <li><i class="bi bi-check-circle-fill"></i> <span><strong>Tavoli occupati sono visibili ma disabilitati</strong>: l'operatore vede tutta la sala, capisce subito cosa non può scegliere. Indicazione "occupato HH:MM" come tooltip o testo a destra.</span></li>
+        <li><i class="bi bi-check-circle-fill"></i> <span><strong>Bottone "Assegna" sempre abilitato a partire da 1 tavolo</strong> selezionato (anche se la somma è insufficiente). Il sistema avvisa ma non blocca — l'operatore può sapere qualcosa che il sistema non sa (es. tavolo grande in cui si stringono).</span></li>
+        <li><i class="bi bi-check-circle-fill"></i> <span><strong>Etichetta del bottone cambia</strong>: "Assegna combinazione" quando somma ≥ party, <strong>"Assegna comunque"</strong> quando somma &lt; party (= ammette consapevolmente lo "squeeze").</span></li>
+        <li><i class="bi bi-check-circle-fill"></i> <span><strong>Tavoli "solo manuale"</strong> (Fase B) e <strong>tavoli "extra liberati"</strong> appaiono nella lista come tutti gli altri — qui il discrimine è "libero o no", non "automatico o manuale".</span></li>
+        <li><i class="bi bi-check-circle-fill"></i> <span><strong>Tavoli "bloccati"</strong> (Fase E) NON appaiono nella lista — sono fuori uso per definizione.</span></li>
+    </ul>
+
+    <h3 style="margin-top:16px;">Dove vive il pulsante</h3>
+    <ul>
+        <li><i class="bi bi-geo-alt"></i> <span><strong>Scheda prenotazione</strong> (<code>/dashboard/reservations/show</code>) — dropdown "Tavolo assegnato"</span></li>
+        <li><i class="bi bi-geo-alt"></i> <span><strong>Popup Mappa Sala operativa</strong> (<code>/dashboard/sala</code>) — stesso dropdown nel popup della prenotazione</span></li>
+        <li><i class="bi bi-info-circle"></i> <span>Stesso componente JS condiviso, riusato in entrambi i punti.</span></li>
+    </ul>
+
+    <h3 style="margin-top:16px;">Conseguenze tecniche</h3>
+    <ul>
+        <li><i class="bi bi-bullseye"></i> <span><strong>Database</strong>: zero modifiche. <code>reservation_tables</code> già supporta N tavoli per prenotazione (PK composta su <code>reservation_id, table_id</code>).</span></li>
+        <li><i class="bi bi-bullseye"></i> <span><strong>Backend</strong>: <code>TableAssigner::setAssignment($resId, $tableIds, false)</code> già accetta un array — chiamata identica con N elementi.</span></li>
+        <li><i class="bi bi-bullseye"></i> <span><strong>Display nelle liste</strong>: il badge tavolo nella lista prenotazioni mostra <code>T2 + T3 + T5</code> (concatenato) quando la prenotazione ha 3+ tavoli.</span></li>
+        <li><i class="bi bi-bullseye"></i> <span><strong>Differenza da Fase D</strong>: qui assegniamo N tavoli a UNA prenotazione (ad-hoc, non riusabile). Salvare la combinazione come permanente richiede la Fase D (deferita).</span></li>
+    </ul>
+</div>
+
+</body>
+</html>

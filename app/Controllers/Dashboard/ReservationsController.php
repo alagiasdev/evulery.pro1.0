@@ -98,6 +98,7 @@ class ReservationsController
         $tableCurrentValue = '';
         $tableCurrentLabel = '';
         $tableCurrentAuto = false;
+        $allTables = []; // raw list per il modale "Combina tavoli..."
         if ($tableMgmt) {
             $assigner = new TableAssigner();
             $tenantId = (int)Auth::tenantId();
@@ -105,6 +106,8 @@ class ReservationsController
             // filtro capienza/turno. Il filtro serve all'auto-assegnazione, non
             // alla scelta dell'operatore, che non va mai bloccata.
             $tableOptions = $assigner->allTableOptions($tenantId);
+            // Lista raw tavoli attivi per il modale multi-select (Fase A combina ad-hoc)
+            $allTables = (new Table())->findActiveByTenant($tenantId);
             $current = $assigner->assignmentsFor([$id])[$id] ?? [];
             if (!empty($current)) {
                 $curIds = array_map(fn($x) => (int)$x['id'], $current);
@@ -134,6 +137,7 @@ class ReservationsController
             'tableCurrentValue' => $tableCurrentValue,
             'tableCurrentLabel' => $tableCurrentLabel,
             'tableCurrentAuto'  => $tableCurrentAuto,
+            'allTables'         => $allTables,
         ], 'dashboard');
     }
 

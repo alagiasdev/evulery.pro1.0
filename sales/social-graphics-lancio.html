@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Graphics — Lancio · Evulery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #00633A;
+    --brand-light: #E8F5E9;
+    --ink: #14181d;
+    --ink-soft: #4a5158;
+    --muted: #8a9098;
+    --line: #e6e8eb;
+    --paper: #ffffff;
+    --cream: #f7f8f6;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #2a2d33;
+    color: var(--ink);
+    padding: 30px 20px 80px;
+}
+
+/* === Barra istruzioni (non si esporta) === */
+.guide {
+    max-width: 1080px; margin: 0 auto 30px;
+    background: #fff; border-radius: 14px; padding: 22px 26px;
+}
+.guide h1 { font-size: 1.3rem; font-weight: 900; color: var(--brand); }
+.guide p { font-size: .9rem; color: var(--ink-soft); margin-top: 8px; line-height: 1.6; }
+.guide .how {
+    margin-top: 12px; background: var(--cream); border-radius: 10px;
+    padding: 12px 16px; font-size: .85rem; color: var(--ink-soft); line-height: 1.7;
+}
+.guide code {
+    background: #fff; border: 1px solid var(--line); border-radius: 4px;
+    padding: 1px 6px; font-size: .8rem;
+}
+
+/* === Intestazione post (non si esporta) === */
+.post-head {
+    max-width: 1080px; margin: 44px auto 16px;
+    color: #fff;
+}
+.post-head .tag {
+    display: inline-block; background: var(--brand); color: #fff;
+    font-size: .78rem; font-weight: 800; letter-spacing: .5px;
+    padding: 4px 12px; border-radius: 6px; text-transform: uppercase;
+}
+.post-head h2 { font-size: 1.25rem; font-weight: 800; margin-top: 10px; }
+.caption {
+    max-width: 1080px; margin: 0 auto 20px;
+    background: #1f2228; border: 1px dashed #3a3f47; border-radius: 10px;
+    padding: 16px 20px; color: #c8ccd2; font-size: .86rem; line-height: 1.65;
+    white-space: pre-line;
+}
+.caption .cap-label {
+    font-size: .72rem; font-weight: 800; color: var(--brand);
+    text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px;
+}
+
+/* === SLIDE: formato Instagram 1080 x 1350 (4:5) === */
+.slide {
+    width: 1080px; height: 1350px;
+    margin: 0 auto 26px;
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+    padding: 86px 90px;
+}
+.slide-paper { background: var(--paper); color: var(--ink); }
+.slide-brand { background: var(--brand); color: #fff; }
+.slide-brand-grad { background: linear-gradient(150deg, #00844A 0%, #00532F 100%); color: #fff; }
+.slide-dark { background: var(--ink); color: #fff; }
+
+/* angolo: numero slide */
+.slide-index {
+    position: absolute; top: 56px; right: 90px;
+    font-size: 24px; font-weight: 800; letter-spacing: 2px;
+    opacity: .55;
+}
+/* kicker */
+.kicker {
+    font-size: 26px; font-weight: 800; letter-spacing: 3px;
+    text-transform: uppercase;
+}
+.slide-paper .kicker { color: var(--brand); }
+.slide-brand .kicker, .slide-brand-grad .kicker, .slide-dark .kicker { color: #9be3bd; }
+
+/* titoli */
+.headline {
+    font-size: 78px; font-weight: 900; line-height: 1.08;
+    letter-spacing: -1.5px; margin-top: 22px;
+}
+.headline.sm { font-size: 64px; }
+.headline.lg { font-size: 92px; }
+
+/* numero gigante */
+.bignum {
+    font-size: 320px; font-weight: 900; line-height: .9;
+    letter-spacing: -8px;
+}
+.slide-paper .bignum { color: var(--brand); }
+
+/* corpo */
+.body-txt { font-size: 40px; font-weight: 500; line-height: 1.45; }
+.body-txt.soft { color: var(--ink-soft); }
+.slide-brand .body-txt.soft, .slide-brand-grad .body-txt.soft { color: #d4 efe1; color: #cfeadd; }
+
+/* lista problemi */
+.plist { margin-top: 14px; display: flex; flex-direction: column; gap: 26px; }
+.pitem { display: flex; align-items: center; gap: 26px; font-size: 44px; font-weight: 700; }
+.pitem .ic {
+    width: 76px; height: 76px; border-radius: 18px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 38px;
+    background: var(--brand-light); color: var(--brand);
+}
+
+/* badge step numerato */
+.step-badge {
+    width: 132px; height: 132px; border-radius: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 76px; font-weight: 900;
+}
+.slide-paper .step-badge { background: var(--brand-light); color: var(--brand); }
+.slide-brand .step-badge, .slide-brand-grad .step-badge { background: rgba(255,255,255,.16); color: #fff; }
+
+/* CTA pill */
+.cta-pill {
+    display: inline-flex; align-items: center; gap: 16px;
+    background: #fff; color: var(--brand);
+    font-size: 40px; font-weight: 800;
+    padding: 26px 44px; border-radius: 20px;
+}
+.slide-paper .cta-pill { background: var(--brand); color: #fff; }
+
+/* divisore sottile */
+.rule { height: 5px; width: 120px; border-radius: 3px; background: currentColor; opacity: .25; }
+
+/* spacer che spinge il footer in basso */
+.grow { flex: 1; }
+
+/* footer slide */
+.slide-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 28px;
+}
+.wordmark { font-weight: 900; letter-spacing: -.5px; }
+.wordmark .dot { color: #5dd29a; }
+.slide-paper .wordmark .dot { color: var(--brand); }
+.foot-payoff { font-weight: 500; font-style: italic; opacity: .8; font-size: 26px; }
+
+/* swipe hint */
+.swipe {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-size: 30px; font-weight: 700; opacity: .85;
+}
+</style>
+</head>
+<body>
+
+<div class="guide">
+    <h1>📸 Social Graphics — Sequenza di Lancio</h1>
+    <p>3 caroselli per Instagram + Facebook, formato <strong>1080 × 1350 px</strong> (4:5, il
+    rapporto che oggi rende di più su Instagram). Pubblicali in ordine, uno ogni 2-3 giorni:
+    Post 1 (manifesto) → Post 2 (costo no-show) → Post 3 (la soluzione).</p>
+    <div class="how">
+        <strong>Come esportare ogni slide in PNG perfetto:</strong><br>
+        1. Apri questa pagina in Chrome.<br>
+        2. Click destro su una slide → <code>Ispeziona</code>.<br>
+        3. Nel pannello che si apre, click destro sul nodo <code>&lt;div class="slide ..."&gt;</code>
+        evidenziato → <code>Capture node screenshot</code>.<br>
+        4. Chrome scarica un PNG esatto 1080×1350, pronto da caricare.<br>
+        <em>In alternativa: screenshot manuale, oppure ricostruisci in Canva usando queste come riferimento.</em>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- POST 1 — MANIFESTO                                            -->
+<!-- ============================================================ -->
+<div class="post-head">
+    <span class="tag">Post 1 · Lunedì</span>
+    <h2>Il manifesto — carosello 3 slide</h2>
+</div>
+<div class="caption">
+    <span class="cap-label">Caption pronta da copiare</span>Ho passato mesi a parlare con ristoratori. Una frase tornava sempre:
+"La sera siamo pieni, ma la mattina dopo i conti non tornano e sono stanco morto."
+
+Il problema non è il cibo. È tutto quello che gira intorno al tavolo: i no-show, il telefono che squilla durante il servizio, le commissioni delle piattaforme, le recensioni che non controlli.
+
+Per questo è nato Evulery: una piattaforma sola per gestire prenotazioni, sala, menu e reputazione. Pensata per ristoratori, non per ingegneri.
+
+👉 Pieni la sera, felici la mattina.
+Da oggi vi porto dentro questo progetto, passo dopo passo. Seguiteci.
+
+#ristorazione #ristoratori #gestioneristorante #foodtech #evulery
+</div>
+
+<!-- Slide 1/3 -->
+<div class="slide slide-brand-grad">
+    <div class="slide-index">01 / 03</div>
+    <div class="kicker">Evulery</div>
+    <div class="grow" style="display:flex;align-items:center;">
+        <div class="headline lg">La sera siete pieni.<br>La mattina i conti non tornano.</div>
+    </div>
+    <div class="slide-foot">
+        <span class="wordmark">evulery<span class="dot">.</span></span>
+        <span class="swipe">Scorri <i class="bi bi-arrow-right"></i></span>
+    </div>
+</div>
+
+<!-- Slide 2/3 -->
+<div class="slide slide-paper">
+    <div class="slide-index">02 / 03</div>
+    <div class="kicker">Il vero problema</div>
+    <div class="headline sm" style="margin-bottom:48px;">Non è il cibo. È tutto quello che gira intorno al tavolo.</div>
+    <div class="plist">
+        <div class="pitem"><span class="ic"><i class="bi bi-calendar-x"></i></span> I no-show</div>
+        <div class="pitem"><span class="ic"><i class="bi bi-telephone"></i></span> Il telefono in pieno servizio</div>
+        <div class="pitem"><span class="ic"><i class="bi bi-percent"></i></span> Le commissioni delle piattaforme</div>
+        <div class="pitem"><span class="ic"><i class="bi bi-star"></i></span> Le recensioni che non controlli</div>
+    </div>
+    <div class="grow"></div>
+    <div class="slide-foot">
+        <span class="wordmark">evulery<span class="dot">.</span></span>
+        <span class="swipe">Scorri <i class="bi bi-arrow-right"></i></span>
+    </div>
+</div>
+
+<!-- Slide 3/3 -->
+<div class="slide slide-brand">
+    <div class="slide-index">03 / 03</div>
+    <div class="kicker">La soluzione</div>
+    <div class="grow" style="display:flex;flex-direction:column;justify-content:center;">
+        <div class="headline">Una piattaforma sola per gestire tutto.</div>
+        <div class="rule" style="margin:46px 0;"></div>
+        <div class="body-txt" style="font-weight:600;font-style:italic;font-size:46px;">"Pieni la sera,<br>felici la mattina."</div>
+    </div>
+    <div style="margin-bottom:40px;"><span class="cta-pill"><i class="bi bi-heart-fill"></i> Seguici — parte il viaggio</span></div>
+    <div class="slide-foot">
+        <span class="wordmark">evulery<span class="dot">.</span>it</span>
+        <span class="foot-payoff">by alagias</span>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- POST 2 — IL COSTO DEL NO-SHOW                                 -->
+<!-- ============================================================ -->
+<div class="post-head">
+    <span class="tag">Post 2 · Mercoledì</span>
+    <h2>Il costo del no-show — carosello 5 slide</h2>
+</div>
+<div class="caption">
+    <span class="cap-label">Caption pronta da copiare</span>Un tavolo che non si presenta non è solo "un buco". È incasso che non torna più.
+
+Facciamo i conti veri 👇 (slide)
+
+La carta a garanzia ribalta la situazione: chi viene non paga nulla, chi non si presenta paga la penale che decidi tu. Niente più sabati sera regalati.
+
+Quanti no-show hai avuto questo mese? Scrivilo nei commenti 👇 — e salva questo post per rifare i conti con calma.
+
+#noshow #ristoranti #gestioneristorante #ristoratori #marketingristoranti
+</div>
+
+<!-- Slide 1/5 -->
+<div class="slide slide-brand-grad">
+    <div class="slide-index">01 / 05</div>
+    <div class="kicker">Facciamo i conti</div>
+    <div class="grow" style="display:flex;align-items:center;">
+        <div class="headline lg">Un tavolo che non si presenta ti costa più di quanto pensi.</div>
+    </div>
+    <div class="slide-foot">
+        <span class="wordmark">evulery<span class="dot">.</span></span>
+        <span class="swipe">Scorri <i class="bi bi-arrow-right"></i></span>
+    </div>
+</div>
+
+<!-- Slide 2/5 -->
+<div class="slide slide-paper">
+    <div class="slide-index">02 / 05</div>
+    <div class="kicker">Il costo diretto</div>
+    <div class="grow" style="display:flex;flex-direction:column;justify-content:center;">
+        <div class="bignum">€140</div>
+        <div class="body-txt soft" style="margin-top:30px;">Coperto medio <strong>€35</strong> × 4 persone.<br>In fumo, in una sola sera.</div>
+    </div>
+    <div class="slide-foot">
+        <span class="wordmark">evulery<span class="dot">.</span></span>
+        <span class="swipe">Scorri <i class="bi bi-arrow-right"></i></span>
+    </div>
+</div>
+
+<!-- Slide 3/5 -->
+<div class="slide slide-paper">
+    <div class="slide-index">03 / 05</div>
+    <div class="kicker">Il costo nascosto</div>
+    <div class="grow" style="display:flex;flex-direction:column;justify-content:center;">
+        <div class="headline">+ il tavolo che avresti potuto dare a qualcun altro.</div>
+        <div class="rule" style="margin:44px 0;color:var(--brand);"></div>
+        <div class="body-txt soft">Un sabato sera, quel tavolo vuoto è una lista d'attesa che hai mandato via.</div>
+    </div>
+    <div class="slide-foot">
+        <span class="wordmark">evulery<span class="dot">.</span></span>
+        <span class="swipe">Scorri <i class="bi bi-arrow-right"></i></span>
+    </div>
+</div>
+
+<!-- Slide 4/5 -->
+<div class="slide slide-dark">
+    <div class="slide-index">04 / 05</div>
+    <div class="kicker">In un mese</div>
+    <div class="grow" style="display:flex;flex-direction:column;justify-content:center;">
+        <div class="bignum" style="color:#5dd29a;">€1.600</div>
+        <div class="body-txt" style="margin-top:30px;color:#c8ccd2;">Con 3 no-show a settimana, è questo il mancato incasso che esce dalla cassa <strong style="color:#fff;">ogni mese</strong>.</div>
+    </div>
+    <div class="slide-foot">
+        <span class="wordmark" style="color:#fff;">evulery<span class="dot">.</span></span>
+        <span class="swipe">Scorri <i class="bi bi-arrow-right"></i></span>
+    </div>
+</div>
+
+<!-- Slide 5/5 -->
+<div class="slide slide-brand">
+    <div class="slide-index">05 / 05</div>
+    <div class="kicker">La soluzione</div>
+    <div class="grow" style="display:flex;flex-direction:column;justify-content:center;">
+        <div class="headline sm">La carta a garanzia ribalta tutto.</div>
+        <div class="rule" style="margin:42px 0;"></div>
+        <div class="body-txt" style="font-weight:600;">Chi viene <strong>non paga nulla</strong>.<br>Chi non si presenta paga la penale che decidi tu.</div>
+    </div>
+    <div style="margin-bottom:40px;"><span class="cta-pill"><i class="bi bi-bookmark-fill"></i> Salva il post · scrivici in DM</span></div>
+    <div class="slide-foot">
+        <span class="wordmark">evulery<span class="dot">.</span>it</span>
+        <span class="foot-payoff">Pieni la sera, felici la mattina.</span>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- POST 3 — LA SOLUZIONE, PASSO PER PASSO                        -->
+<!-- ============================================================ -->
+<div class="post-head">
+    <span class="tag">Post 3 · Venerdì</span>
+    <h2>Come funziona — carosello 4 slide</h2>
+</div>
+<div class="caption">
+    <span class="cap-label">Caption pronta da copiare</span>Mercoledì ti ho mostrato quanto costa un no-show.
+Oggi ti mostro come si chiude il problema — in 3 passi.
+
+Nessuna complicazione: il cliente prenota in 30 secondi, tu vedi tutto in un'unica dashboard, e se qualcuno non si presenta lo gestisci con un click.
+
+Questo è solo un pezzo di Evulery. Vuoi vedere il resto sul tuo ristorante?
+👉 Demo gratuita — link in bio.
+
+#foodtech #ristorazione #prenotazioni #gestioneristorante #evulery
+</div>
+
+<!-- Slide 1/4 -->
+<div class="slide slide-brand-grad">
+    <div class="slide-index">01 / 04</div>
+    <div class="kicker">Come funziona</div>
+    <div class="grow" style="display:flex;align-items:center;">
+        <div class="headline lg">Come Evulery cancella il no-show del sabato sera.</div>
+    </div>
+    <div class="slide-foot">
+        <span class="wordmark">evulery<span class="dot">.</span></span>
+        <span class="swipe">3 passi <i class="bi bi-arrow-right"></i></span>
+    </div>
+</div>
+
+<!-- Slide 2/4 -->
+<div class="slide slide-paper">
+    <div class="slide-index">02 / 04</div>
+    <div class="step-badge">1</div>
+    <div class="grow" style="display:flex;flex-direction:column;justify-content:center;">
+        <div class="headline">Il cliente prenota e lascia una carta a garanzia.</div>
+        <div class="body-txt soft" style="margin-top:34px;">30 secondi, dal telefono. <strong>Non paga nulla</strong> — è solo una garanzia.</div>
+    </div>
+    <div class="slide-foot">
+        <span class="wordmark">evulery<span class="dot">.</span></span>
+        <span class="swipe">Scorri <i class="bi bi-arrow-right"></i></span>
+    </div>
+</div>
+
+<!-- Slide 3/4 -->
+<div class="slide slide-paper">
+    <div class="slide-index">03 / 04</div>
+    <div class="step-badge">2</div>
+    <div class="grow" style="display:flex;flex-direction:column;justify-content:center;">
+        <div class="headline">Tu vedi tutto in un'unica dashboard.</div>
+        <div class="body-txt soft" style="margin-top:34px;">Chi arriva, a che ora, a che tavolo, con quante persone. Niente più agenda di carta.</div>
+    </div>
+    <div class="slide-foot">
+        <span class="wordmark">evulery<span class="dot">.</span></span>
+        <span class="swipe">Scorri <i class="bi bi-arrow-right"></i></span>
+    </div>
+</div>
+
+<!-- Slide 4/4 -->
+<div class="slide slide-brand">
+    <div class="slide-index">04 / 04</div>
+    <div class="step-badge">3</div>
+    <div class="grow" style="display:flex;flex-direction:column;justify-content:center;">
+        <div class="headline sm">Non si presenta? Un click e addebiti la penale.</div>
+        <div class="body-txt" style="margin-top:34px;font-weight:600;">Il sabato sera non lo regali più a nessuno.</div>
+    </div>
+    <div style="margin-bottom:40px;"><span class="cta-pill"><i class="bi bi-arrow-right-circle-fill"></i> Demo gratuita — link in bio</span></div>
+    <div class="slide-foot">
+        <span class="wordmark">evulery<span class="dot">.</span>it</span>
+        <span class="foot-payoff">Pieni la sera, felici la mattina.</span>
+    </div>
+</div>
+
+</body>
+</html>

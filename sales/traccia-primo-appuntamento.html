@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Traccia Primo Appuntamento · Evulery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #006837;
+    --brand-light: #E8F5E9;
+    --ink: #1a1d23;
+    --ink-soft: #495057;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --bg: #f5f6f8;
+    --warning: #f57c00;
+    --warning-light: #FFF3E0;
+    --gold: #b8860b;
+    --gold-light: #fff8e0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.6;
+    padding: 28px 18px 60px;
+}
+.wrap { max-width: 880px; margin: 0 auto; }
+
+/* === Hero === */
+.hero {
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+    color: #fff;
+    border-radius: 18px;
+    padding: 28px 30px;
+    margin-bottom: 22px;
+}
+.hero-kicker {
+    font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.4px; opacity: .8;
+}
+.hero h1 { font-size: 1.7rem; font-weight: 900; margin: 6px 0 4px; }
+.hero-payoff { font-size: .95rem; font-weight: 500; opacity: .92; font-style: italic; }
+.hero-howto {
+    margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.2);
+    font-size: .82rem; opacity: .9; display: flex; gap: 8px; align-items: flex-start;
+}
+.hero-howto i { margin-top: 2px; }
+
+/* === Card generica === */
+.card {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: 14px; padding: 20px 22px; margin-bottom: 16px;
+}
+.card-step {
+    font-size: .68rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--muted); margin-bottom: 4px;
+}
+
+/* === Apertura / Chiusura === */
+.special h2 { font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.special h2 i { color: var(--brand); }
+.special p { font-size: .92rem; color: var(--ink-soft); margin-top: 6px; }
+
+/* === Leva === */
+.leva { position: relative; transition: border-color .15s; }
+.leva.done { border-color: var(--brand); background: #fbfdfc; }
+.leva-head {
+    display: flex; align-items: center; gap: 12px; cursor: pointer;
+    user-select: none;
+}
+.leva-num {
+    width: 38px; height: 38px; flex-shrink: 0;
+    background: var(--brand-light); color: var(--brand-dark);
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 1.15rem;
+}
+.leva.done .leva-num { background: var(--brand); color: #fff; }
+.leva-title { font-size: 1.12rem; font-weight: 800; flex: 1; }
+.leva-check {
+    width: 26px; height: 26px; flex-shrink: 0; border-radius: 50%;
+    border: 2px solid var(--line); display: flex; align-items: center; justify-content: center;
+    color: transparent; font-size: .8rem;
+}
+.leva.done .leva-check { background: var(--brand); border-color: var(--brand); color: #fff; }
+
+.leva-body { margin-top: 14px; }
+.q-box {
+    background: var(--brand-light); border-left: 3px solid var(--brand);
+    border-radius: 0 8px 8px 0; padding: 10px 14px; margin-bottom: 12px;
+}
+.q-label {
+    font-size: .66rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: .8px; color: var(--brand-dark);
+}
+.q-text { font-size: .96rem; font-weight: 600; font-style: italic; color: var(--ink); margin-top: 2px; }
+
+.say-label {
+    font-size: .66rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: .8px; color: var(--muted); margin-bottom: 3px;
+}
+.say-text { font-size: .92rem; color: var(--ink-soft); }
+.say-text strong { color: var(--ink); font-weight: 700; }
+
+.why {
+    margin-top: 11px; font-size: .82rem; color: var(--muted);
+    display: flex; gap: 7px; align-items: flex-start;
+}
+.why i { color: var(--warning); margin-top: 2px; flex-shrink: 0; }
+.why strong { color: var(--ink-soft); }
+
+/* === Chiusura urgenza === */
+.closer {
+    background: var(--gold-light); border: 1px solid #ffe082;
+}
+.closer h2 i { color: var(--gold); }
+.closer .pill {
+    display: inline-block; background: var(--brand); color: #fff;
+    font-weight: 800; font-size: .9rem; padding: 4px 12px; border-radius: 8px;
+    margin: 0 2px;
+}
+
+/* === Materiali === */
+.tools { background: var(--ink); color: #fff; }
+.tools h2 { font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.tools-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 14px; }
+.tool {
+    background: #2a2d33; border-radius: 10px; padding: 13px 14px;
+}
+.tool-name { font-weight: 700; font-size: .9rem; display: flex; align-items: center; gap: 6px; }
+.tool-name i { color: #5dd29a; }
+.tool-desc { font-size: .78rem; color: #adb5bd; margin-top: 4px; }
+.tool-file { font-size: .72rem; color: #6c757d; margin-top: 6px; font-family: ui-monospace, monospace; }
+
+/* === Toolbar === */
+.toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px; font-size: .82rem; color: var(--muted);
+}
+.btn-reset {
+    background: #fff; border: 1px solid var(--line); border-radius: 8px;
+    padding: 6px 12px; font-size: .8rem; font-weight: 600; color: var(--ink-soft);
+    cursor: pointer; font-family: inherit;
+}
+.btn-reset:hover { border-color: var(--brand); color: var(--brand); }
+.progress-txt strong { color: var(--brand); }
+
+footer {
+    text-align: center; font-size: .75rem; color: var(--muted);
+    margin-top: 26px;
+}
+
+@media (max-width: 620px) {
+    .tools-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 1.4rem; }
+}
+@media print {
+    body { background: #fff; padding: 0; }
+    .toolbar, .leva-check, .btn-reset { display: none; }
+    .card, .hero { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+    <div class="hero">
+        <div class="hero-kicker">Traccia · Primo Appuntamento</div>
+        <h1>3 leve per far capire Evulery</h1>
+        <div class="hero-payoff">"Pieni la sera, felici la mattina."</div>
+        <div class="hero-howto">
+            <i class="bi bi-lightbulb-fill"></i>
+            <span>Non è un copione da leggere. Ogni leva parte da una <strong>domanda</strong>:
+            falla, lascia parlare il ristoratore, poi aggancia. Tocca una leva per segnarla come trattata.</span>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <span class="progress-txt">Leve trattate: <strong id="prog">0</strong> / 3</span>
+        <button class="btn-reset" id="reset">↺ Azzera</button>
+    </div>
+
+    <!-- APERTURA -->
+    <div class="card special">
+        <div class="card-step">Apertura — non partire dalle funzioni</div>
+        <h2><i class="bi bi-chat-quote-fill"></i> Fallo parlare per primo</h2>
+        <p>"Prima di mostrarti la piattaforma — raccontami una serata tipo.
+        Com'è la gestione delle prenotazioni adesso?"</p>
+        <p style="font-size:.84rem;color:var(--muted);margin-top:8px;">
+        Lascialo parlare 2 minuti. Annota le parole che usa lui (no-show, telefono, TheFork,
+        recensioni…) e aggancia la leva che ti serve.</p>
+    </div>
+
+    <!-- LEVA 1 -->
+    <div class="card leva" data-leva="1">
+        <div class="leva-head">
+            <div class="leva-num">1</div>
+            <div class="leva-title">Il no-show del sabato sera</div>
+            <div class="leva-check"><i class="bi bi-check-lg"></i></div>
+        </div>
+        <div class="leva-body">
+            <div class="q-box">
+                <div class="q-label">Domanda da fare</div>
+                <div class="q-text">"Quante volte al mese un tavolo prenotato non si presenta?
+                E un sabato sera, quanto vale un tavolo da 6 vuoto?"</div>
+            </div>
+            <div class="say-label">Cosa dire</div>
+            <div class="say-text">
+                Con Evulery, quando il cliente prenota online registra una <strong>carta a
+                garanzia in 30 secondi</strong> — non gli addebiti nulla. Se si presenta, tutto
+                liscio. Se non si presenta, con un click addebiti la penale che hai deciso tu.
+                È il modello TheFork, ma qui è <strong>tuo</strong>.
+            </div>
+            <div class="why">
+                <i class="bi bi-bullseye"></i>
+                <span><strong>Perché colpisce:</strong> il no-show è un dolore concreto e
+                quantificabile. Se gli fai dire "perdo 2-3 tavoli a settimana", hai già vinto:
+                gli stai mostrando come recuperare centinaia di euro al mese.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEVA 2 -->
+    <div class="card leva" data-leva="2">
+        <div class="leva-head">
+            <div class="leva-num">2</div>
+            <div class="leva-title">I clienti sono tuoi, non di una piattaforma</div>
+            <div class="leva-check"><i class="bi bi-check-lg"></i></div>
+        </div>
+        <div class="leva-body">
+            <div class="q-box">
+                <div class="q-label">Domanda da fare</div>
+                <div class="q-text">"Quando un cliente prenota da TheFork, quel contatto chi
+                ce l'ha? Tu o loro?"</div>
+            </div>
+            <div class="say-label">Cosa dire</div>
+            <div class="say-text">
+                Con le piattaforme paghi una commissione su ogni coperto <strong>e</strong> il
+                cliente resta loro. Con Evulery paghi un canone fisso, punto — e ogni persona
+                che prenota entra nella <strong>tua</strong> rubrica: nome, telefono, compleanno,
+                quante volte è venuto. Il giorno del suo compleanno parte un'email tua
+                "Auguri, ti aspettiamo" con il link per prenotare. Quella relazione la
+                costruisci tu, non la affitti.
+            </div>
+            <div class="why">
+                <i class="bi bi-bullseye"></i>
+                <span><strong>Perché colpisce:</strong> il ristoratore sa che paga TheFork ma
+                non si era mai chiesto "di chi è il cliente". Quando ci pensa, fa effetto.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEVA 3 -->
+    <div class="card leva" data-leva="3">
+        <div class="leva-head">
+            <div class="leva-num">3</div>
+            <div class="leva-title">Tutto il ristorante in un unico strumento</div>
+            <div class="leva-check"><i class="bi bi-check-lg"></i></div>
+        </div>
+        <div class="leva-body">
+            <div class="q-box">
+                <div class="q-label">Domanda da fare</div>
+                <div class="q-text">"Oggi per menu digitale, prenotazioni, asporto e recensioni
+                quanti servizi diversi paghi?"</div>
+            </div>
+            <div class="say-label">Cosa dire</div>
+            <div class="say-text">
+                Evulery è prenotazioni + menu digitale con QR + ordini d'asporto + gestione
+                sala con la mappa dei tavoli + raccolta recensioni <strong>già conforme alla
+                Legge 34/2026</strong> sulle recensioni verificate. Un solo abbonamento al
+                posto di 3-4 strumenti scollegati.
+            </div>
+            <div class="why">
+                <i class="bi bi-bullseye"></i>
+                <span><strong>Perché colpisce:</strong> il ristoratore medio ha un QR per il
+                menu, un sito, forse un gestionale, TheFork… tutto separato. "Uno strumento
+                solo" è un sollievo prima ancora che un risparmio.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHIUSURA -->
+    <div class="card special closer">
+        <div class="card-step">Chiusura — l'urgenza vera</div>
+        <h2><i class="bi bi-hourglass-split"></i> Il prezzo di lancio ha una scadenza</h2>
+        <p>
+            Il prezzo di lancio <span class="pill">€49</span> <span class="pill">€79</span>
+            <span class="pill">€129</span> al mese è valido <strong>fino al 30 settembre 2026</strong>.
+        </p>
+        <p>
+            Chi entra prima di quella data <strong>blocca quel prezzo per sempre</strong>, anche
+            quando passeremo al listino pieno (€69/109/169). Non è una promo finta — è una
+            finestra reale che si chiude.
+        </p>
+    </div>
+
+    <!-- MATERIALI DEMO -->
+    <div class="card tools">
+        <h2><i class="bi bi-tools"></i> Da aprire durante la demo vera e propria</h2>
+        <div class="tools-grid">
+            <div class="tool">
+                <div class="tool-name"><i class="bi bi-calculator"></i> ROI Calculator</div>
+                <div class="tool-desc">Calcola il recupero no-show con i numeri SUOI, non
+                inventati. Lo strumento più persuasivo che hai.</div>
+                <div class="tool-file">sales/roi-calculator.html</div>
+            </div>
+            <div class="tool">
+                <div class="tool-name"><i class="bi bi-shield-check"></i> Battlecard</div>
+                <div class="tool-desc">Confronto con TheFork e le altre piattaforme, obiezione
+                per obiezione.</div>
+                <div class="tool-file">sales/battlecard-piattaforme.html</div>
+            </div>
+            <div class="tool">
+                <div class="tool-name"><i class="bi bi-question-circle"></i> FAQ ristoratore</div>
+                <div class="tool-desc">15 risposte pronte da inviare dopo l'incontro al
+                prospect tiepido.</div>
+                <div class="tool-file">sales/faq-ristoratore.html</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>© 2026 Evulery · by alagias. - Soluzioni per il web</footer>
+
+</div>
+
+<script>
+(function () {
+    var KEY = 'evulery-traccia-appuntamento';
+    var levas = document.querySelectorAll('.leva');
+    var prog = document.getElementById('prog');
+
+    function load() {
+        try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
+        catch (e) { return []; }
+    }
+    function save(state) {
+        try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+    }
+    function refresh() {
+        var done = 0;
+        levas.forEach(function (l) { if (l.classList.contains('done')) done++; });
+        prog.textContent = done;
+    }
+    function apply(state) {
+        levas.forEach(function (l) {
+            var id = l.getAttribute('data-leva');
+            l.classList.toggle('done', state.indexOf(id) !== -1);
+        });
+        refresh();
+    }
+
+    apply(load());
+
+    levas.forEach(function (l) {
+        l.querySelector('.leva-head').addEventListener('click', function () {
+            l.classList.toggle('done');
+            var state = [];
+            levas.forEach(function (x) {
+                if (x.classList.contains('done')) state.push(x.getAttribute('data-leva'));
+            });
+            save(state);
+            refresh();
+        });
+    });
+
+    document.getElementById('reset').addEventListener('click', function () {
+        levas.forEach(function (l) { l.classList.remove('done'); });
+        save([]);
+        refresh();
+    });
+})();
+</script>
+
+</body>
+</html>

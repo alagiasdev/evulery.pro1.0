@@ -150,16 +150,46 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
         </div>
         <?php if (in_array((string)$reservation['status'], ['pending', 'confirmed'], true)): ?>
         <?php // Prenotazione non ancora servita: il tavolo si può cambiare ?>
-        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/table") ?>" class="res-table-form">
+        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/table") ?>" class="res-table-form" id="res-table-form" data-party-size="<?= (int)$reservation['party_size'] ?>" data-prev-value="<?= e($tableCurrentValue) ?>">
             <?= csrf_field() ?>
             <select name="table_option" class="form-select form-select-sm">
                 <option value="">&mdash; Nessun tavolo &mdash;</option>
                 <?php foreach ($tableOptions as $o): ?>
                 <option value="<?= e($o['value']) ?>" <?= $o['value'] === $tableCurrentValue ? 'selected' : '' ?>><?= e($o['label']) ?></option>
                 <?php endforeach; ?>
+                <?php if (!empty($allTables) && count($allTables) > 1): ?>
+                <option value="" disabled>──────────</option>
+                <option value="__multi__">↔ Combina tavoli…</option>
+                <?php endif; ?>
             </select>
             <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-check me-1"></i> Conferma tavolo</button>
         </form>
+        <?php
+            // Modale "Combina tavoli" — riusa il partial
+            if (!empty($allTables) && count($allTables) > 1) {
+                $mmTables = $allTables;
+                include __DIR__ . '/../../partials/tables-multiselect-modal.php';
+            }
+        ?>
+        <?php if (!empty($allTables) && count($allTables) > 1): ?>
+        <script nonce="<?= csp_nonce() ?>">
+        (function () {
+            var form = document.getElementById('res-table-form');
+            if (!form) return;
+            var sel = form.querySelector('select[name="table_option"]');
+            if (!sel) return;
+            sel.addEventListener('change', function () {
+                if (sel.value !== '__multi__') return;
+                window.EvuleryCombineTables.open({
+                    form:          form,
+                    partySize:     parseInt(form.dataset.partySize, 10) || 1,
+                    previousValue: form.dataset.prevValue || '',
+                    label:         '<?= e(($reservation['last_name'] ?? '') ? mb_strtoupper($reservation['last_name']) : 'prenotazione') ?>'
+                });
+            });
+        })();
+        </script>
+        <?php endif; ?>
         <?php if (empty($tableOptions) && $tableCurrentValue === ''): ?>
         <div class="res-section-hint">
             Nessun tavolo disponibile per questo turno. Configura i tavoli in

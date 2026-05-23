@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe Fase F — Workflow richieste gruppi grandi (2-stage)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--brand:#00844A;--brand-dark:#00633A;--brand-light:#e6f4ed;--bg:#f5f6f8;--card:#fff;--text:#1a1d23;--muted:#6c757d;--border:#e9ecef;--radius:12px;--danger:#dc3545;--info:#0d6efd;--info-light:#cfe2ff;--gold:#b8860b;--gold-bg:#fff8e0;--gold-border:#ffe082;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:system-ui,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);padding:24px;max-width:1280px;margin:0 auto;}
+  h2{font-size:1.35rem;font-weight:700;margin-bottom:.25rem;}
+  .subtitle{font-size:.82rem;color:var(--muted);margin-bottom:1rem;line-height:1.5;}
+  .section-divider{margin:36px 0;border:none;border-top:2px dashed #dee2e6;}
+  .section-label{font-size:1rem;font-weight:700;color:var(--brand);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+  .section-hint{font-size:.78rem;color:var(--muted);margin:0 0 14px;line-height:1.5;}
+  .ph{font-size:.56rem;font-weight:700;padding:2px 7px;border-radius:5px;text-transform:uppercase;vertical-align:middle;background:#fbd0d3;color:#8b1a23;border:1px solid #f4a8af;}
+  .new-badge{background:var(--brand);color:#fff;font-size:.56rem;font-weight:700;padding:1px 6px;border-radius:4px;text-transform:uppercase;}
+  .updated-badge{background:#fff3cd;color:#664d03;border:1px solid #ffe082;font-size:.56rem;font-weight:700;padding:1px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:.4px;}
+
+  /* Mock containers */
+  .mock-stage{position:relative;background:rgba(0,0,0,.08);border-radius:14px;padding:24px;display:flex;justify-content:center;align-items:flex-start;}
+  .mock-box{background:var(--card);border-radius:var(--radius);box-shadow:0 8px 28px rgba(0,0,0,.15);overflow:hidden;}
+  .mock-foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border);background:#fafbfc;}
+
+  /* Btns */
+  .btn{padding:8px 14px;border-radius:8px;font-size:.78rem;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
+  .btn-brand{background:var(--brand);color:#fff;}
+  .btn-ghost{background:#fff;color:var(--muted);border:1px solid var(--border);}
+  .btn-danger{background:#fdecea;color:#b3261e;border:1px solid #f5c2bd;}
+  .btn-success-out{background:#eef7f1;color:var(--brand);border:1px solid #cfe8d6;}
+
+  /* Form */
+  .fl{display:block;font-size:.68rem;font-weight:600;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;}
+  .fi{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:8px;font-size:.84rem;background:var(--card);}
+  textarea.fi{min-height:60px;resize:vertical;}
+
+  /* Widget mock (per cliente) */
+  .wmock{width:420px;max-width:100%;background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.12);overflow:hidden;}
+  .wmock-head{background:linear-gradient(135deg,var(--brand) 0%,var(--brand-dark) 100%);color:#fff;padding:16px 18px;}
+  .wmock-rest{font-size:.75rem;opacity:.85;}
+  .wmock-rest-name{font-weight:700;font-size:1rem;margin-top:2px;}
+  .wmock-body{padding:24px 22px;text-align:center;}
+  .wmock-ico{width:64px;height:64px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 14px;}
+  .wmock-title{font-size:1.05rem;font-weight:800;margin-bottom:6px;}
+  .wmock-msg{font-size:.86rem;color:var(--muted);line-height:1.55;}
+  .wmock-info{background:#fafbfc;border-radius:10px;padding:12px;margin-top:14px;font-size:.82rem;text-align:left;}
+  .wmock-info-row{display:flex;justify-content:space-between;padding:3px 0;}
+
+  /* Email mock */
+  .email{width:520px;max-width:100%;background:#fff;border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.1);overflow:hidden;font-family:Georgia,'Times New Roman',serif;}
+  .email-head{background:#f5f5f5;padding:10px 16px;border-bottom:1px solid var(--border);font-size:.75rem;color:var(--muted);font-family:system-ui;}
+  .email-from{font-weight:700;color:var(--text);}
+  .email-body{padding:24px 24px 20px;}
+  .email-subj{font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:14px;font-family:system-ui;}
+  .email-p{font-size:.88rem;color:#3a4047;line-height:1.65;margin-bottom:10px;}
+  .email-cta{display:inline-block;background:var(--brand);color:#fff;padding:10px 20px;border-radius:8px;font-weight:700;text-decoration:none;font-size:.85rem;font-family:system-ui;margin-top:8px;}
+  .email-cta.cta-pay{background:#0d6efd;}
+  .email-foot{padding:14px 24px;background:#fafbfc;font-size:.7rem;color:var(--muted);font-family:system-ui;text-align:center;}
+
+  /* Dashboard mock */
+  .dash{width:920px;max-width:100%;background:var(--bg);border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.1);overflow:hidden;}
+  .dash-head{background:#fff;padding:14px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+  .dash-title{font-size:1rem;font-weight:800;flex:1;}
+  .pill-alert{background:#fff3cd;border:1px solid #ffe082;color:#664d03;font-size:.74rem;font-weight:700;padding:4px 11px;border-radius:20px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;}
+  .pill-alert .dot{width:8px;height:8px;border-radius:50%;background:#f57c00;animation:pulse 2s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(245,124,0,.5);}70%{box-shadow:0 0 0 6px rgba(245,124,0,0);}100%{box-shadow:0 0 0 0 rgba(245,124,0,0);}}
+  .dash-body{padding:18px 22px;}
+
+  .reqs-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .reqs-head{padding:13px 18px;border-bottom:1px solid var(--border);background:#fafbfc;font-weight:700;font-size:.86rem;display:flex;align-items:center;gap:8px;}
+  .req-row{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid #f5f6f8;}
+  .req-row:last-child{border-bottom:none;}
+  .req-row:hover{background:#fafbfc;}
+  .req-time{background:#1a1d23;color:#fff;font-size:.74rem;font-weight:700;padding:4px 9px;border-radius:6px;flex-shrink:0;text-align:center;}
+  .req-time strong{display:block;font-size:.82rem;}
+  .req-time small{font-size:.62rem;opacity:.7;}
+  .req-info{flex:1;}
+  .req-name{font-weight:700;font-size:.88rem;}
+  .req-meta{font-size:.74rem;color:var(--muted);margin-top:2px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .req-party{background:var(--brand-light);color:var(--brand);font-weight:700;font-size:.74rem;padding:2px 8px;border-radius:5px;}
+  .req-timer{font-size:.72rem;color:#b3261e;font-weight:600;display:flex;align-items:center;gap:4px;}
+  .req-actions{display:flex;gap:6px;flex-shrink:0;}
+
+  /* Sub-stato icona */
+  .substate{font-size:.66rem;font-weight:700;padding:3px 8px;border-radius:5px;display:inline-flex;align-items:center;gap:4px;text-transform:uppercase;letter-spacing:.3px;}
+  .substate.ambra{background:#fff3cd;color:#664d03;border:1px solid #ffe082;}
+  .substate.azzurra{background:#cfe2ff;color:#084298;border:1px solid #9ec5fe;}
+
+  /* Modal */
+  .modal{background:#fff;border-radius:var(--radius);width:540px;max-width:100%;box-shadow:0 10px 36px rgba(0,0,0,.2);overflow:hidden;}
+  .modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;}
+  .modal-title{font-size:.95rem;font-weight:700;flex:1;}
+  .modal-x{width:30px;height:30px;border-radius:7px;border:none;background:#f0f1f3;cursor:pointer;color:var(--muted);}
+  .modal-body{padding:18px 20px;}
+  .modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border);background:#fafbfc;}
+
+  .reason-list{display:flex;flex-direction:column;gap:8px;}
+  .reason{padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;display:flex;gap:10px;align-items:flex-start;}
+  .reason:hover{border-color:#c4d4cc;}
+  .reason.on{border-color:var(--brand);background:var(--brand-light);}
+  .reason-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:2px;}
+  .reason.on .reason-dot{border-color:var(--brand);background:var(--brand);box-shadow:inset 0 0 0 3px #fff;}
+  .reason-txt{font-size:.82rem;line-height:1.5;}
+  .reason.on .reason-txt strong{color:var(--brand);}
+
+  /* Settings */
+  .set-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px dashed #f0f1f3;}
+  .set-row:last-child{border-bottom:none;}
+  .set-info{flex:1;}
+  .set-title{font-size:.86rem;font-weight:600;}
+  .set-desc{font-size:.72rem;color:var(--muted);margin-top:2px;line-height:1.5;}
+  .switch{position:relative;width:46px;height:26px;background:#dde0e3;border-radius:13px;cursor:pointer;flex-shrink:0;}
+  .switch::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:3px;left:3px;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:left .15s;}
+  .switch.on{background:var(--brand);}
+  .switch.on::after{left:23px;}
+
+  /* Tag */
+  .tag{display:inline-block;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:2px 7px;border-radius:5px;}
+  .tag-pending{background:#fff3cd;color:#664d03;border:1px solid #ffe082;}
+  .tag-pro{background:#cfe2ff;color:#084298;border:1px solid #9ec5fe;}
+
+  /* === Diagramma di flusso 4 stati === */
+  .flow{display:flex;flex-direction:column;gap:10px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px 20px;}
+  .flow-step{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:10px;}
+  .flow-step.start{background:var(--gold-bg);border:1px solid var(--gold-border);}
+  .flow-step.middle{background:var(--info-light);border:1px solid #9ec5fe;}
+  .flow-step.success{background:var(--brand-light);border:1px solid #cfe8d6;}
+  .flow-step.fail{background:#fdecea;border:1px solid #f5c2bd;}
+  .flow-num{width:36px;height:36px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;flex-shrink:0;}
+  .flow-step.start .flow-num{color:var(--gold);}
+  .flow-step.middle .flow-num{color:#084298;}
+  .flow-step.success .flow-num{color:var(--brand);}
+  .flow-step.fail .flow-num{color:#b3261e;}
+  .flow-info{flex:1;}
+  .flow-title{font-size:.92rem;font-weight:700;}
+  .flow-desc{font-size:.74rem;color:var(--muted);margin-top:3px;line-height:1.45;}
+  .flow-step.start .flow-desc{color:#664d03;}
+  .flow-step.middle .flow-desc{color:#084298;}
+  .flow-step.success .flow-desc{color:#0a5c36;}
+  .flow-step.fail .flow-desc{color:#8b1a23;}
+  .flow-meta{font-size:.7rem;font-family:ui-monospace,monospace;background:rgba(0,0,0,.05);padding:2px 7px;border-radius:4px;color:var(--text);flex-shrink:0;}
+  .flow-arrow{text-align:center;font-size:1.4rem;color:var(--muted);font-weight:700;line-height:1;padding:2px 0;}
+  .flow-branch{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:700px){.flow-branch{grid-template-columns:1fr;}}
+
+  /* Notes */
+  .notes{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-top:14px;}
+  .notes h3{font-size:.92rem;font-weight:700;margin-bottom:10px;}
+  .notes ul{list-style:none;padding:0;}
+  .notes li{font-size:.78rem;line-height:1.55;padding:6px 0;border-bottom:1px dashed #f0f1f3;display:flex;gap:10px;align-items:flex-start;}
+  .notes li:last-child{border-bottom:none;}
+  .notes li i{color:var(--brand);font-size:.85rem;margin-top:1px;flex-shrink:0;}
+  .notes code{background:#f5f6f8;padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;font-size:.74rem;}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+  /* Header banner — 2-stage callout */
+  .banner-v2{background:linear-gradient(90deg, #00844A 0%, #00633A 100%);color:#fff;border-radius:12px;padding:18px 22px;margin-bottom:18px;}
+  .banner-v2 .title{font-size:.95rem;font-weight:800;margin-bottom:5px;display:flex;align-items:center;gap:8px;}
+  .banner-v2 .desc{font-size:.82rem;opacity:.92;line-height:1.5;}
+</style>
+</head>
+<body>
+
+<h2>Wireframe Fase F <span class="ph">F</span> <span class="tag tag-pro" style="margin-left:6px;">Professional+</span> — Workflow gruppi a 2 stadi <span class="updated-badge" style="margin-left:6px;">v2 · 24/05/2026</span></h2>
+<p class="subtitle">Aggiornato: il "sì" del ristoratore conferma la <strong>disponibilità</strong>, non la prenotazione. Il tavolo si blocca davvero solo quando il cliente paga caparra o lascia carta a garanzia entro X ore. Niente più stalli con clienti fantasma.</p>
+
+<div class="banner-v2">
+    <div class="title"><i class="bi bi-arrow-repeat"></i> Cosa è cambiato</div>
+    <div class="desc">
+        <strong>v2</strong> · Flusso a 2 stadi: ristoratore accetta → cliente ha X ore per pagare → solo allora il tavolo è davvero suo. Se non paga, torna disponibile automaticamente.<br>
+        <strong>v2.1</strong> · Caparra ereditata dalla pagina Caparra esistente (tipo, IBAN, link, chiavi Stripe). Qui dentro solo importo e tempo limite specifici per i gruppi. Niente dati inseriti due volte.
+    </div>
+</div>
+
+<!-- ===== SEZIONE 1 — Schema dei 4 stati ===== -->
+<div class="section-label"><i class="bi bi-1-circle-fill"></i> Schema completo dei 4 stati <span class="new-badge">nuovo</span></div>
+<p class="section-hint">La prenotazione attraversa al massimo 4 stati prima di chiudersi. Il <strong>2° stadio</strong> ("accettata, in attesa caparra") è la novità che protegge il ristoratore dallo stallo.</p>
+
+<div class="mock-stage" style="padding:18px;">
+<div class="flow" style="width:100%;max-width:780px;">
+
+    <div class="flow-step start">
+        <div class="flow-num">1</div>
+        <div class="flow-info">
+            <div class="flow-title">Richiesta inviata</div>
+            <div class="flow-desc">Cliente prenota dal widget. Party oltre soglia → la prenotazione va in attesa di risposta del ristoratore.</div>
+        </div>
+        <div class="flow-meta">pending<br>requires_approval=1</div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <div class="flow-branch">
+        <div>
+            <div class="flow-step middle">
+                <div class="flow-num">2</div>
+                <div class="flow-info">
+                    <div class="flow-title">Accettata, in attesa caparra</div>
+                    <div class="flow-desc">Ristoratore ha confermato la disponibilità. Il cliente riceve email con link di pagamento. Tempo limite configurabile (4-24h).</div>
+                </div>
+                <div class="flow-meta">pending<br>awaiting_deposit=1</div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-branch">
+                <div>
+                    <div class="flow-step success">
+                        <div class="flow-num">3</div>
+                        <div class="flow-info">
+                            <div class="flow-title">Confermata</div>
+                            <div class="flow-desc">Cliente ha pagato/lasciato carta. Webhook → status finale.</div>
+                        </div>
+                        <div class="flow-meta">confirmed</div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flow-step fail">
+                        <div class="flow-num">4a</div>
+                        <div class="flow-info">
+                            <div class="flow-title">Scaduta (no pagamento)</div>
+                            <div class="flow-desc">Tempo esaurito. Cron auto-cancella + email "spiacenti".</div>
+                        </div>
+                        <div class="flow-meta">cancelled</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="flow-step fail" style="margin-top:0;">
+                <div class="flow-num">4b</div>
+                <div class="flow-info">
+                    <div class="flow-title">Declinata dal ristoratore</div>
+                    <div class="flow-desc">Ristoratore non può accogliere. Email di scuse con eventuale alternativa.</div>
+                </div>
+                <div class="flow-meta">cancelled</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ===== SEZIONE 2 — Cliente: pagina conferma ===== -->
+<div class="section-label"><i class="bi bi-2-circle-fill"></i> Cliente — Pagina di conferma post-prenotazione</div>
+<p class="section-hint">Il cliente prenota dal widget. Se il gruppo è oltre la soglia, NON vede "Confermata" ma <strong>"Richiesta inviata"</strong> con un'aspettativa precisa di tempistica.</p>
+
+<div class="mock-stage">
+<div class="wmock">
+    <div class="wmock-head">
+        <div class="wmock-rest">Trattoria</div>
+        <div class="wmock-rest-name">Da Mario · Roma</div>
+    </div>
+    <div class="wmock-body">
+        <div class="wmock-ico"><i class="bi bi-envelope-paper-heart"></i></div>
+        <div class="wmock-title">Richiesta inviata!</div>
+        <div class="wmock-msg">
+            Grazie Marco, abbiamo ricevuto la tua richiesta. I gruppi richiedono un piccolo coordinamento con il nostro team —
+            <strong>ti confermiamo entro 24 ore</strong> con tutti i dettagli.
+        </div>
+        <div class="wmock-info">
+            <div class="wmock-info-row"><span>Persone</span><strong>10</strong></div>
+            <div class="wmock-info-row"><span>Data</span><strong>Sabato 8 giugno</strong></div>
+            <div class="wmock-info-row"><span>Ora</span><strong>20:30</strong></div>
+            <div class="wmock-info-row"><span>Telefono</span><strong>340 1234567</strong></div>
+        </div>
+    </div>
+</div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ===== SEZIONE 3 — Email iniziali ===== -->
+<div class="section-label"><i class="bi bi-3-circle-fill"></i> Le 2 email immediate</div>
+<p class="section-hint">Appena il cliente conferma la richiesta partono due email: una calda al cliente (rassicura), una operativa al ristoratore (chiama all'azione).</p>
+
+<div class="two-col">
+
+<div>
+<p style="font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:8px;">A · Email al cliente</p>
+<div class="email">
+    <div class="email-head">Da: <span class="email-from">Trattoria Da Mario</span><br>A: marco.r@email.it</div>
+    <div class="email-body">
+        <div class="email-subj">Abbiamo ricevuto la tua richiesta — Sabato 8 giugno</div>
+        <p class="email-p">Ciao Marco,</p>
+        <p class="email-p">grazie per averci scelto per il tuo gruppo. La tua richiesta per <strong>10 persone sabato 8 giugno alle 20:30</strong> è arrivata correttamente.</p>
+        <p class="email-p">I gruppi grandi richiedono un coordinamento un po' più attento da parte nostra — vogliamo che tutto sia perfetto. <strong>Ti confermiamo entro 24 ore</strong> con i dettagli.</p>
+        <p class="email-p">A presto,<br>Mario e il team della Trattoria</p>
+    </div>
+    <div class="email-foot">Trattoria Da Mario · Via Roma 12, Roma · 06 1234567</div>
+</div>
+</div>
+
+<div>
+<p style="font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:8px;">B · Email al ristoratore</p>
+<div class="email">
+    <div class="email-head">Da: <span class="email-from">Evulery</span><br>A: mario@trattoriadamario.it</div>
+    <div class="email-body">
+        <div class="email-subj">🔔 Nuova richiesta gruppo — 10 persone sabato 20:30</div>
+        <p class="email-p">Ciao Mario,</p>
+        <p class="email-p">è arrivata una <strong>richiesta per un gruppo di 10 persone</strong> — supera la soglia che hai impostato, quindi attende la tua conferma.</p>
+        <div style="background:#fafbfc;border-radius:8px;padding:12px;font-size:.82rem;margin:10px 0;font-family:system-ui;">
+            <div><strong>Cliente:</strong> Marco Rossi · 340 1234567</div>
+            <div><strong>Quando:</strong> Sabato 8 giugno · 20:30</div>
+            <div><strong>Persone:</strong> 10</div>
+            <div><strong>Note cliente:</strong> Cena di compleanno, possiamo cantare?</div>
+        </div>
+        <a href="#" class="email-cta">Vai alla richiesta →</a>
+    </div>
+    <div class="email-foot">Evulery · evulery.it</div>
+</div>
+</div>
+
+</div>
+
+<hr class="section-divider">
+
+<!-- ===== SEZIONE 4 — Dashboard con 2 sotto-stati ===== -->
+<div class="section-label"><i class="bi bi-4-circle-fill"></i> Dashboard — Richieste in attesa con <strong>2 sotto-stati</strong> <span class="updated-badge">aggiornato</span></div>
+<p class="section-hint">La lista in dashboard mostra ora <strong>due tipologie di pending</strong>: quelle che aspettano la tua risposta (ambra ⏳) e quelle accettate ma in attesa che il cliente paghi (azzurra 💳). A colpo d'occhio capisci dove ti tocca agire e dove invece stai aspettando il cliente.</p>
+
+<div class="mock-stage">
+<div class="dash">
+    <div class="dash-head">
+        <span class="dash-title"><i class="bi bi-speedometer2" style="color:var(--brand);"></i> Dashboard · Sabato 8 giugno</span>
+        <span class="pill-alert"><span class="dot"></span> 1 richiesta da decidere</span>
+    </div>
+    <div class="dash-body">
+
+        <div class="reqs-card">
+            <div class="reqs-head">
+                <i class="bi bi-people-fill" style="color:var(--gold);"></i>
+                Richieste gruppi <span style="margin-left:auto;font-weight:500;font-size:.74rem;color:var(--muted);">3 in corso</span>
+            </div>
+
+            <!-- Stato 1: in attesa di te -->
+            <div class="req-row">
+                <div class="req-time"><strong>20:30</strong><small>sab 8 giu</small></div>
+                <div class="req-info">
+                    <div class="req-name">Marco Rossi <span class="req-party">10 persone</span></div>
+                    <div class="req-meta">
+                        <span class="substate ambra"><i class="bi bi-hourglass-split"></i> In attesa di tua risposta</span>
+                        <span class="req-timer"><i class="bi bi-clock-history"></i> risposta entro 22 ore</span>
+                    </div>
+                </div>
+                <div class="req-actions">
+                    <button class="btn btn-danger"><i class="bi bi-x-lg"></i> Rifiuta</button>
+                    <button class="btn btn-success-out"><i class="bi bi-check2"></i> Accetta</button>
+                </div>
+            </div>
+
+            <!-- Stato 2: accettata, in attesa caparra cliente -->
+            <div class="req-row">
+                <div class="req-time"><strong>21:00</strong><small>dom 9 giu</small></div>
+                <div class="req-info">
+                    <div class="req-name">Giulia Bianchi <span class="req-party">14 persone</span></div>
+                    <div class="req-meta">
+                        <span class="substate azzurra"><i class="bi bi-credit-card"></i> Accettata · in attesa caparra cliente</span>
+                        <span style="font-size:.7rem;color:var(--info);"><i class="bi bi-hourglass"></i> caparra entro 3h 12m</span>
+                    </div>
+                </div>
+                <div class="req-actions">
+                    <button class="btn btn-ghost" style="font-size:.74rem;"><i class="bi bi-envelope"></i> Reinvia link</button>
+                </div>
+            </div>
+
+            <!-- Stato 2 ma in scadenza imminente -->
+            <div class="req-row">
+                <div class="req-time"><strong>20:00</strong><small>ven 7 giu</small></div>
+                <div class="req-info">
+                    <div class="req-name">Luca Verdi <span class="req-party">12 persone</span></div>
+                    <div class="req-meta">
+                        <span class="substate azzurra"><i class="bi bi-credit-card"></i> Accettata · in attesa caparra cliente</span>
+                        <span class="req-timer"><i class="bi bi-exclamation-triangle-fill"></i> scade fra 24 min</span>
+                    </div>
+                </div>
+                <div class="req-actions">
+                    <button class="btn btn-ghost" style="font-size:.74rem;"><i class="bi bi-envelope"></i> Reinvia link</button>
+                </div>
+            </div>
+
+        </div>
+
+        <p style="font-size:.74rem;color:var(--muted);margin-top:12px;text-align:center;">
+            <i class="bi bi-info-circle"></i> Per le richieste in <span class="substate ambra"><i class="bi bi-hourglass-split"></i> ambra</span> agisci tu. Per quelle in <span class="substate azzurra"><i class="bi bi-credit-card"></i> azzurra</span> stai aspettando il cliente — puoi solo sollecitare via "Reinvia link".
+        </p>
+
+    </div>
+</div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ===== SEZIONE 5 — Modale "Rifiuta" ===== -->
+<div class="section-label"><i class="bi bi-5-circle-fill"></i> Il modale "Rifiuta"</div>
+<p class="section-hint">3 motivi predefiniti formulati in modo costruttivo + free text. Toggle "Proponi un'alternativa" che, se attivo, suggerisce al cliente di scrivere/chiamare per riformulare.</p>
+
+<div class="mock-stage">
+<div class="modal">
+    <div class="modal-head">
+        <span class="modal-title"><i class="bi bi-x-circle" style="color:#b3261e;"></i> Rifiuta richiesta · Marco Rossi (10 persone)</span>
+        <button class="modal-x"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="modal-body">
+        <label class="fl">Perché non puoi accettare?</label>
+        <div class="reason-list">
+            <div class="reason on">
+                <div class="reason-dot"></div>
+                <div class="reason-txt">
+                    <strong>Siamo al completo per gruppi grandi</strong> quel giorno<br>
+                    <span style="color:var(--muted);font-size:.76rem;">Il cliente leggerà che non c'è disponibilità per gruppi numerosi sabato 8 giugno</span>
+                </div>
+            </div>
+            <div class="reason">
+                <div class="reason-dot"></div>
+                <div class="reason-txt">
+                    <strong>Non offriamo servizio gruppi</strong> quel giorno<br>
+                    <span style="color:var(--muted);font-size:.76rem;">Es. evento privato, chiusura, menu speciale solo individuale</span>
+                </div>
+            </div>
+            <div class="reason">
+                <div class="reason-dot"></div>
+                <div class="reason-txt">
+                    <strong>Servono accordi diretti</strong> (menu, acconto…)<br>
+                    <span style="color:var(--muted);font-size:.76rem;">Inviti il cliente a chiamare per organizzare un menu dedicato</span>
+                </div>
+            </div>
+        </div>
+
+        <label class="fl" style="margin-top:14px;">Aggiungi qualcosa (facoltativo)</label>
+        <textarea class="fi" placeholder="Es. 'Avresti disponibilità il venerdì?' — apparirà nell'email al cliente"></textarea>
+
+        <div class="set-row" style="margin-top:8px;border:none;padding:8px 0;">
+            <div class="set-info">
+                <div class="set-title">Proponi un'alternativa nell'email</div>
+                <div class="set-desc">Suggerisce al cliente di chiamarti o scriverti per riformulare la richiesta.</div>
+            </div>
+            <div class="switch on"></div>
+        </div>
+    </div>
+    <div class="modal-foot">
+        <button class="btn btn-ghost">Annulla</button>
+        <button class="btn" style="background:#b3261e;color:#fff;"><i class="bi bi-send"></i> Invia rifiuto al cliente</button>
+    </div>
+</div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ===== SEZIONE 6 — 4 email del flusso 2-stage ===== -->
+<div class="section-label"><i class="bi bi-6-circle-fill"></i> Le email del flusso a 2 stadi <span class="updated-badge">aggiornato</span></div>
+<p class="section-hint">Con il flusso 2-stage le email diventano 4 (oltre alle iniziali della sezione 3). <strong>L'email "Accettata"</strong> è quella che cambia di più: non dice più "ti aspettiamo", dice "completa il pagamento per assicurarti il tavolo".</p>
+
+<div class="two-col">
+
+<!-- Email 1: ACCETTATA, paga caparra -->
+<div>
+<p style="font-size:.78rem;font-weight:700;color:#084298;margin-bottom:8px;"><i class="bi bi-credit-card-fill"></i> 1. Accettata — paga la caparra <span class="updated-badge">nuova</span></p>
+<div class="email">
+    <div class="email-head">Da: <span class="email-from">Trattoria Da Mario</span></div>
+    <div class="email-body">
+        <div class="email-subj">✓ Disponibilità confermata — assicurati il tavolo entro 4 ore</div>
+        <p class="email-p">Ciao Marco,</p>
+        <p class="email-p">ottime notizie: <strong>abbiamo disponibilità per il tuo gruppo</strong> sabato 8 giugno alle 20:30.</p>
+        <p class="email-p">Per i gruppi di 10+ persone ti chiediamo una piccola garanzia, così possiamo bloccare il tavolo. <strong>Completa entro 4 ore</strong> e tutto sarà confermato:</p>
+        <a href="#" class="email-cta cta-pay">💳 Paga caparra (€50) →</a>
+        <p class="email-p" style="margin-top:14px;font-size:.78rem;color:var(--muted);">
+            Se non completi entro le 4 ore la disponibilità verrà rilasciata e potrà essere assegnata ad altri clienti. Per qualsiasi cosa scrivici a info@trattoriadamario.it.
+        </p>
+        <p class="email-p">A presto,<br>Mario</p>
+    </div>
+</div>
+</div>
+
+<!-- Email 2: CONFERMATA dopo pagamento -->
+<div>
+<p style="font-size:.78rem;font-weight:700;color:var(--brand);margin-bottom:8px;"><i class="bi bi-check-circle-fill"></i> 2. Confermata dopo pagamento</p>
+<div class="email">
+    <div class="email-head">Da: <span class="email-from">Trattoria Da Mario</span></div>
+    <div class="email-body">
+        <div class="email-subj">🎉 Tutto pronto! Ti aspettiamo sabato 8 giugno</div>
+        <p class="email-p">Ciao Marco,</p>
+        <p class="email-p">caparra ricevuta, <strong>la tua prenotazione è confermata</strong>. Il nostro team ha preparato il tavolo per il vostro gruppo.</p>
+        <div style="background:var(--brand-light);border:1px solid #cfe8d6;border-radius:8px;padding:12px;font-size:.82rem;margin:10px 0;font-family:system-ui;">
+            <strong>Sabato 8 giugno · 20:30 · 10 persone</strong><br>
+            <span style="color:var(--muted);">Caparra €50 versata — verrà scalata dal conto a fine cena.</span>
+        </div>
+        <p class="email-p">A sabato!<br>Mario</p>
+    </div>
+</div>
+</div>
+
+<!-- Email 3: SCADUTA -->
+<div>
+<p style="font-size:.78rem;font-weight:700;color:#664d03;margin-bottom:8px;"><i class="bi bi-hourglass-bottom"></i> 3. Tempo scaduto — caparra non versata <span class="updated-badge">nuova</span></p>
+<div class="email">
+    <div class="email-head">Da: <span class="email-from">Trattoria Da Mario</span></div>
+    <div class="email-body">
+        <div class="email-subj">Disponibilità scaduta — possiamo riproporti la prenotazione?</div>
+        <p class="email-p">Ciao Marco,</p>
+        <p class="email-p">il tempo per completare la caparra è scaduto e abbiamo dovuto rilasciare la disponibilità per il <strong>sabato 8 giugno alle 20:30</strong>.</p>
+        <p class="email-p">Se ti interessa ancora prenotare per il tuo gruppo, <strong>scrivici o chiamaci</strong> — vediamo se c'è ancora disponibilità o troviamo una data alternativa.</p>
+        <p class="email-p" style="font-size:.78rem;color:var(--muted);">📞 06 1234567 · 📧 info@trattoriadamario.it</p>
+        <p class="email-p">A presto,<br>Mario</p>
+    </div>
+</div>
+</div>
+
+<!-- Email 4: DECLINATA dal ristoratore -->
+<div>
+<p style="font-size:.78rem;font-weight:700;color:#b3261e;margin-bottom:8px;"><i class="bi bi-x-circle-fill"></i> 4. Declinata dal ristoratore (con tono caldo)</p>
+<div class="email">
+    <div class="email-head">Da: <span class="email-from">Trattoria Da Mario</span></div>
+    <div class="email-body">
+        <div class="email-subj">Riguardo la tua richiesta per sabato 8 giugno</div>
+        <p class="email-p">Ciao Marco,</p>
+        <p class="email-p">ti scriviamo riguardo alla tua richiesta per <strong>10 persone sabato 8 giugno</strong>. Purtroppo per quel giorno <strong>siamo al completo per gruppi grandi</strong> — abbiamo già altre tavolate prenotate.</p>
+        <p class="email-p">Saremmo felici di accogliervi un altro giorno: <strong>scrivici o chiamaci</strong>, troviamo una data che funzioni per te.</p>
+        <p class="email-p">Grazie per averci pensato,<br>Mario</p>
+    </div>
+</div>
+</div>
+
+</div>
+
+<hr class="section-divider">
+
+<!-- ===== SEZIONE 7 — Settings: soglia + caparra (single source of truth) ===== -->
+<div class="section-label"><i class="bi bi-7-circle-fill"></i> Impostazioni — Soglia + Caparra <strong>ereditata</strong> dalla pagina Caparra <span class="updated-badge">v2.1 · 24/05</span></div>
+<p class="section-hint">
+    <strong>Principio:</strong> il <em>tipo</em> di pagamento (bonifico, link, Stripe carta a garanzia, ecc.) si configura <strong>UNA volta sola</strong> nella pagina <code>Impostazioni → Caparra</code>. Qui dentro decidiamo solo <strong>quando applicarla ai gruppi</strong>, <strong>con quale importo</strong> e <strong>con quale tempo limite</strong>. Niente dati duplicati.
+</p>
+
+<!-- === Stato A: caparra base GIÀ configurata === -->
+<p style="font-size:.78rem;font-weight:700;color:var(--brand);margin-bottom:10px;">A · Caparra base già configurata nella pagina Caparra</p>
+
+<div class="mock-stage">
+<div class="modal" style="width:680px;max-height:none;overflow:visible;">
+    <div class="modal-head">
+        <span class="modal-title"><i class="bi bi-people" style="color:var(--brand);"></i> Gestione richieste gruppi <span class="tag tag-pro" style="margin-left:8px;">Professional+</span></span>
+    </div>
+    <div class="modal-body">
+
+        <!-- Attivazione -->
+        <div class="set-row">
+            <div class="set-info">
+                <div class="set-title">Richiedi conferma per gruppi grandi</div>
+                <div class="set-desc">Le prenotazioni sopra la soglia non si confermano automaticamente — tu decidi se accettarle.</div>
+            </div>
+            <div class="switch on"></div>
+        </div>
+
+        <!-- Soglia/timeout -->
+        <div style="background:var(--brand-light);border-radius:10px;padding:14px;margin-top:8px;">
+            <label class="fl" style="color:var(--brand);">Soglia di attivazione</label>
+            <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:.86rem;">Richiedi conferma da</span>
+                <input class="fi" type="number" value="8" min="1" max="50" style="width:80px;">
+                <span style="font-size:.86rem;">persone in su</span>
+            </div>
+
+            <label class="fl" style="color:var(--brand);margin-top:12px;">Tempo limite per la tua risposta</label>
+            <select class="fi" style="max-width:200px;">
+                <option>24 ore (consigliato)</option>
+                <option>12 ore</option>
+                <option>48 ore</option>
+            </select>
+        </div>
+
+        <!-- NUOVA SEZIONE: caparra per gruppi — eredita il TIPO -->
+        <div style="margin-top:18px;border-top:2px dashed var(--border);padding-top:18px;">
+            <div class="set-row" style="border:none;">
+                <div class="set-info">
+                    <div class="set-title">Richiedi caparra/garanzia per i gruppi accettati <span class="new-badge">nuovo</span></div>
+                    <div class="set-desc">Quando accetti una richiesta, il cliente deve completare il pagamento entro X ore per assicurarsi il tavolo. Senza pagamento il tavolo torna disponibile automaticamente.</div>
+                </div>
+                <div class="switch on"></div>
+            </div>
+
+            <!-- Single Source of Truth — banner -->
+            <div style="background:#eef7f1;border:1px solid #cfe8d6;color:var(--brand);border-radius:10px;padding:12px 14px;font-size:.78rem;margin-top:8px;line-height:1.55;display:flex;gap:10px;align-items:flex-start;">
+                <i class="bi bi-link-45deg" style="font-size:1.1rem;margin-top:1px;"></i>
+                <div style="flex:1;">
+                    <strong>Modalità di pagamento ereditata da Impostazioni → Caparra</strong><br>
+                    <span style="font-weight:400;">Per i gruppi useremo lo stesso metodo che hai configurato per le prenotazioni normali. Configurato una volta, usato ovunque.</span>
+                </div>
+            </div>
+
+            <!-- Riassunto read-only del tipo configurato -->
+            <div style="background:#fafbfc;border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-top:10px;display:flex;align-items:center;gap:12px;">
+                <div style="width:38px;height:38px;border-radius:9px;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0;">
+                    <i class="bi bi-bank"></i>
+                </div>
+                <div style="flex:1;font-size:.82rem;">
+                    <div style="font-weight:700;">Bonifico bancario</div>
+                    <div style="color:var(--muted);font-size:.72rem;">IT60 X054 2811 1010 0000 0123 456 · Trattoria Da Mario SRL · Il cliente conferma manualmente l'avvenuto bonifico.</div>
+                </div>
+                <a href="#" style="font-size:.74rem;color:var(--brand);text-decoration:none;font-weight:600;white-space:nowrap;">
+                    <i class="bi bi-pencil"></i> Modifica →
+                </a>
+            </div>
+
+            <!-- Override SOLO per gruppi: importo + tempo -->
+            <div style="background:#fafbfc;border-radius:10px;padding:14px;margin-top:10px;">
+                <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;">⚙ Personalizzazioni solo per i gruppi</div>
+
+                <label class="fl">Importo caparra per i gruppi</label>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="font-size:.86rem;">€</span>
+                    <input class="fi" type="number" value="50" style="width:100px;">
+                    <span style="font-size:.72rem;color:var(--muted);">per il gruppo · default importo caparra base: <strong>€20</strong></span>
+                </div>
+
+                <label class="fl" style="margin-top:12px;">Tempo limite per il pagamento</label>
+                <select class="fi" style="max-width:200px;">
+                    <option>4 ore (consigliato)</option>
+                    <option>12 ore</option>
+                    <option>24 ore</option>
+                </select>
+                <div style="font-size:.7rem;color:var(--muted);margin-top:6px;">
+                    <i class="bi bi-info-circle"></i> Più corto del timeout caparra base perché il tavolo gruppi va liberato in fretta se il cliente non paga.
+                </div>
+            </div>
+        </div>
+
+        <!-- Messaggio personalizzato -->
+        <div style="margin-top:14px;">
+            <label class="fl">Messaggio personalizzato nelle email (facoltativo)</label>
+            <textarea class="fi" placeholder="Es. 'Per gruppi 10+ proponiamo un menu fisso a €35/persona, vino incluso.'"></textarea>
+        </div>
+
+    </div>
+    <div class="modal-foot">
+        <button class="btn btn-brand"><i class="bi bi-check2"></i> Salva impostazioni</button>
+    </div>
+</div>
+</div>
+
+<!-- === Stato B: caparra base NON configurata === -->
+<p style="font-size:.78rem;font-weight:700;color:#664d03;margin:24px 0 10px;">B · Caparra base non ancora configurata — sezione "bloccata" con CTA</p>
+
+<div class="mock-stage">
+<div class="modal" style="width:680px;max-height:none;overflow:visible;">
+    <div class="modal-head">
+        <span class="modal-title"><i class="bi bi-people" style="color:var(--brand);"></i> Gestione richieste gruppi</span>
+    </div>
+    <div class="modal-body">
+
+        <div style="font-size:.74rem;color:var(--muted);text-align:center;padding:4px 0 14px;font-style:italic;">↑ Soglia, timeout risposta e attivazione del workflow uguali al caso A. Sezione caparra invece bloccata:</div>
+
+        <div style="border-top:2px dashed var(--border);padding-top:18px;">
+            <div class="set-row" style="border:none;opacity:.55;">
+                <div class="set-info">
+                    <div class="set-title">Richiedi caparra/garanzia per i gruppi accettati</div>
+                    <div class="set-desc">Configura prima la caparra base per poter attivare questa funzione.</div>
+                </div>
+                <div class="switch" style="cursor:not-allowed;"></div>
+            </div>
+
+            <div style="background:var(--gold-bg);border:1px solid var(--gold-border);color:#664d03;border-radius:10px;padding:14px;font-size:.82rem;margin-top:8px;line-height:1.6;">
+                <div style="display:flex;gap:12px;align-items:flex-start;">
+                    <i class="bi bi-info-circle-fill" style="font-size:1.1rem;margin-top:1px;color:var(--gold);"></i>
+                    <div style="flex:1;">
+                        <strong>Configura prima la caparra base.</strong><br>
+                        Per richiedere una caparra ai gruppi devi prima decidere <em>come</em> incassarla (bonifico, link a pagamento esterno, Stripe, ecc.) nella pagina Caparra. Una volta configurata lì, sarà disponibile anche qui.
+                    </div>
+                </div>
+                <a href="#" class="btn btn-brand" style="margin-top:12px;display:inline-flex;">
+                    <i class="bi bi-gear"></i> Vai a Impostazioni → Caparra
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ===== NOTE DI DESIGN ===== -->
+<div class="section-label"><i class="bi bi-8-circle-fill"></i> Note di design e implementazione</div>
+
+<div class="notes">
+    <h3>Perché 2-stage e non 1-stage</h3>
+    <ul>
+        <li><i class="bi bi-shield-check"></i> <span><strong>Niente più stalli</strong>: il ristoratore non si ritrova mai con un tavolo bloccato da un cliente fantasma. Massimo perde X ore (= il tempo limite di pagamento).</span></li>
+        <li><i class="bi bi-shield-check"></i> <span><strong>Filtro qualità clienti</strong>: chi non paga una caparra ragionevole, probabilmente è proprio quello che ti avrebbe fatto no-show. La caparra è un test di serietà oltre che una garanzia economica.</span></li>
+        <li><i class="bi bi-shield-check"></i> <span><strong>Riusa l'infrastruttura caparra esistente</strong>: tutto il flusso Stripe (setup intent per carta a garanzia, payment intent per caparra fissa) è già operativo. Aggiungiamo solo il nuovo stato intermedio e i 2 nuovi template email.</span></li>
+    </ul>
+
+    <h3 style="margin-top:16px;">Caparra: single source of truth (no dati duplicati)</h3>
+    <ul>
+        <li><i class="bi bi-check-circle-fill"></i> <span><strong>Il TIPO di pagamento è uno solo</strong>: bonifico/link/Stripe/carta a garanzia si configurano UNA volta nella pagina <code>Impostazioni → Caparra</code>. La pagina Gruppi la eredita in sola lettura. Il ristoratore non inserisce mai due volte l'IBAN, due volte un link, due volte le chiavi Stripe.</span></li>
+        <li><i class="bi bi-check-circle-fill"></i> <span><strong>Solo importo e tempo limite sono "specifici per gruppi"</strong>: questi due valori cambiano spesso (un gruppo da 12 vale di più, va liberato più in fretta), quindi sono settings indipendenti. Default = stesso importo / 4h di tempo limite.</span></li>
+        <li><i class="bi bi-check-circle-fill"></i> <span><strong>Se la caparra base non è configurata</strong>: la sezione gruppi mostra una CTA "Vai a Impostazioni → Caparra" e blocca il toggle. Forziamo il flusso giusto: configura prima il "come incasso", poi decidi "quando applico questa logica anche ai gruppi".</span></li>
+        <li><i class="bi bi-check-circle-fill"></i> <span><strong>Niente <em>fork</em> della configurazione</strong>: se il ristoratore domani cambia banca e aggiorna l'IBAN nella pagina Caparra, le richieste gruppi ne beneficiano automaticamente. Mai il caso di "ho aggiornato l'IBAN ma le email gruppi mandano ancora il vecchio".</span></li>
+    </ul>
+
+    <h3 style="margin-top:16px;">UX delle 2 sotto-stati nella lista pending</h3>
+    <ul>
+        <li><i class="bi bi-eye"></i> <span><strong>Ambra "In attesa di tua risposta"</strong>: agisci tu, bottoni [Accetta] [Rifiuta] visibili. Timer rosso quando &lt; 6h.</span></li>
+        <li><i class="bi bi-eye"></i> <span><strong>Azzurra "Accettata · in attesa caparra cliente"</strong>: aspetti il cliente, bottone soft [Reinvia link] (manda di nuovo l'email con il link di pagamento — utile se il cliente ha smarrito la prima). Timer in rosso solo quando &lt; 30 min.</span></li>
+        <li><i class="bi bi-eye"></i> <span><strong>Pillola in header dashboard</strong>: conta solo le richieste in ambra (= dove serve la tua azione). Le azzurre stanno aspettando il cliente, non te.</span></li>
+    </ul>
+
+    <h3 style="margin-top:16px;">Tecnico</h3>
+    <ul>
+        <li><i class="bi bi-bullseye"></i> <span><strong>Stati reservation</strong>: <code>pending + requires_approval=1</code> (stadio 1) → <code>pending + awaiting_deposit=1</code> (stadio 2) → <code>confirmed</code> oppure <code>cancelled</code>. Due flag boolean nuovi su <code>reservations</code>.</span></li>
+        <li><i class="bi bi-bullseye"></i> <span><strong>Settings tenant</strong>: <code>group_request_threshold</code>, <code>group_request_response_timeout_hours</code>, <code>group_deposit_enabled</code>, <code>group_deposit_type</code>, <code>group_deposit_amount</code>, <code>group_deposit_payment_timeout_hours</code>, <code>group_request_message</code>.</span></li>
+        <li><i class="bi bi-bullseye"></i> <span><strong>Cron</strong>: estende quello esistente. Ogni 15 min controlla: (a) richieste in stadio 1 in scadenza → reminder/auto-decline; (b) richieste in stadio 2 in scadenza → auto-cancel + email "scaduta".</span></li>
+        <li><i class="bi bi-bullseye"></i> <span><strong>5 template email nuovi</strong>: richiesta-ricevuta cliente, richiesta-arrivata ristoratore, accettata-paga-caparra cliente, confermata cliente, scaduta cliente, rifiutata cliente.</span></li>
+        <li><i class="bi bi-bullseye"></i> <span><strong>Webhook Stripe</strong>: già gestisce <code>payment_intent.succeeded</code> e <code>setup_intent.succeeded</code>. Aggiungiamo logica: se la prenotazione è in <code>awaiting_deposit</code>, l'evento → status <code>confirmed</code> + email finale.</span></li>
+    </ul>
+
+    <h3 style="margin-top:16px;">Stima aggiornata</h3>
+    <ul>
+        <li><i class="bi bi-clock"></i> <span><strong>Vecchia stima (1-stage):</strong> ~11h</span></li>
+        <li><i class="bi bi-clock"></i> <span><strong>Nuova stima (2-stage):</strong> ~14h (+3h per: stato intermedio, 2 email aggiuntive, settings caparra-gruppi, cron auto-cancel pagamento, rework UI dashboard con 2 sotto-stati)</span></li>
+        <li><i class="bi bi-clock"></i> <span><strong>Complessità:</strong> media (invariata grazie al riuso massivo dell'infrastruttura caparra esistente)</span></li>
+    </ul>
+</div>
+
+</body>
+</html>

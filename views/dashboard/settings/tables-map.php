@@ -371,7 +371,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                 <?php endif; ?>
                 <?php if (in_array((string)$r['status'], ['pending', 'confirmed'], true)): ?>
                 <?php /* Prenotazione non ancora servita: il tavolo si può ancora cambiare */ ?>
-                <form method="POST" action="<?= url('dashboard/reservations/' . $rid . '/table') ?>">
+                <form method="POST" action="<?= url('dashboard/reservations/' . $rid . '/table') ?>" class="tm-pop-table-form" data-party-size="<?= (int)$r['party_size'] ?>" data-prev-value="<?= e($curOpt) ?>" data-res-label="<?= e(mb_strtoupper(trim((string)$r['last_name']))) ?>">
                     <?= csrf_field() ?>
                     <input type="hidden" name="redirect_back" value="<?= e($opBack) ?>">
                     <label class="tm-pop-label">Tavolo assegnato</label>
@@ -380,6 +380,10 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                         <?php foreach ($reassignOptions as $o): ?>
                         <option value="<?= e($o['value']) ?>" <?= $o['value'] === $curOpt ? 'selected' : '' ?>><?= e($o['label']) ?></option>
                         <?php endforeach; ?>
+                        <?php if (!empty($tables) && count($tables) > 1): ?>
+                        <option value="" disabled>──────────</option>
+                        <option value="__multi__">↔ Combina tavoli…</option>
+                        <?php endif; ?>
                     </select>
                     <div class="tm-pop-foot">
                         <a href="<?= url('dashboard/reservations/' . $rid) ?>" class="tm-pop-link">Apri scheda completa</a>
@@ -398,6 +402,34 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         </div>
     </div>
     <?php endforeach; ?>
+
+    <?php
+        // Modale "Combina tavoli" (Fase A) — UNA volta sola per pagina, riusato
+        // da tutti i popup tramite EvuleryCombineTables.open()
+        if (!empty($tables) && count($tables) > 1) {
+            $mmTables = $tables;
+            include __DIR__ . '/../../partials/tables-multiselect-modal.php';
+        }
+    ?>
+    <?php if (!empty($tables) && count($tables) > 1): ?>
+    <script nonce="<?= csp_nonce() ?>">
+    (function () {
+        document.querySelectorAll('.tm-pop-table-form').forEach(function (form) {
+            var sel = form.querySelector('select[name="table_option"]');
+            if (!sel) return;
+            sel.addEventListener('change', function () {
+                if (sel.value !== '__multi__') return;
+                window.EvuleryCombineTables.open({
+                    form:          form,
+                    partySize:     parseInt(form.dataset.partySize, 10) || 1,
+                    previousValue: form.dataset.prevValue || '',
+                    label:         form.dataset.resLabel || ''
+                });
+            });
+        });
+    })();
+    </script>
+    <?php endif; ?>
 
     <?php else: ?>
     <!-- ===== MODALITÀ SETUP ===== -->

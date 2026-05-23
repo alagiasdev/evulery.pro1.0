@@ -38,6 +38,12 @@ Decisione: NON costruirli in cieco, aspettare il segnale reale.
 - [ ] **Loyalty Program** — validazione con clienti Professional paganti (4 wireframe pronti)
 - [ ] **Dashboard redesign UX** — 5-10 ristoranti attivi da 1+ mese + feedback strutturato
 - [ ] **Sales Kit super admin** — quando arriva il 1° reseller B2B vero
+- [ ] **Combinazioni di N tavoli** (Gestione Tavoli — "Fase D") — oggi solo coppie
+  (`table_combinations.table_a_id/b_id`). TheFork supporta combinazioni di 3+ tavoli con
+  capienze proprie (es. 4 tavoli per una tavolata da 11). Schema: tabella `combinations`
+  + junction `combination_tables`. Stima 12-15h, complessità alta. **Trigger**: 1+
+  richiesta esplicita cliente per tavolate 10+ (cerimonie, comunioni, eventi). Per ora le
+  coppie coprono il 90% (party 5-8). Piano completo in memory `project_table_combinations_n.md`.
 - [ ] **Dominio personalizzato — RIATTIVARE** — feature NASCOSTA dalla UI il 19/05/2026
   (commit `b72803f`) perché non pronta. Codice/rotte/controller intatti. Per riattivarla:
   togliere `'hidden' => true` in (1) `settings_nav()` → `app/Helpers/functions.php` e
