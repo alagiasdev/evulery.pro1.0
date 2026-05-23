@@ -300,6 +300,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                     <?php if ($areaHasDot($tArea)): ?><span class="tm-area-dot" style="background:<?= e(area_color($tArea)) ?>;"></span><?php endif; ?>
                     <?php if ($inCombo): ?><span class="tm-combo-chain" title="In combinazione con altri tavoli"><i class="bi bi-link-45deg"></i></span><?php endif; ?>
                     <?php if ($occ): ?>
+                    <span class="tm-map-tag" title="<?= e($t['name']) ?>"><?= e($t['name']) ?></span>
                     <span class="tm-map-name"><?= e($occ['name']) ?></span>
                     <span class="tm-map-cap"><?= (int)$occ['party'] ?>p &middot; <?= e($occ['time']) ?></span>
                     <?php else: ?>
