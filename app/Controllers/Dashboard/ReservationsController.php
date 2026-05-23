@@ -108,6 +108,10 @@ class ReservationsController
             $tableOptions = $assigner->allTableOptions($tenantId);
             // Lista raw tavoli attivi per il modale multi-select (Fase A combina ad-hoc)
             $allTables = (new Table())->findActiveByTenant($tenantId);
+            // Tavoli occupati al MOMENTO di questa prenotazione (da altre prenotazioni
+            // che si sovrappongono temporalmente). Servono al modale "Combina tavoli"
+            // per disabilitare quelli non disponibili in quel turno.
+            $busyTableIds = $this->busyTablesForReservation($reservation, $tenantId);
             $current = $assigner->assignmentsFor([$id])[$id] ?? [];
             if (!empty($current)) {
                 $curIds = array_map(fn($x) => (int)$x['id'], $current);
@@ -138,7 +142,41 @@ class ReservationsController
             'tableCurrentLabel' => $tableCurrentLabel,
             'tableCurrentAuto'  => $tableCurrentAuto,
             'allTables'         => $allTables,
+            'busyTableIds'      => $busyTableIds ?? [],
         ], 'dashboard');
+    }
+
+    /**
+     * Lista degli id-tavolo occupati al momento di una prenotazione, escludendo
+     * la prenotazione stessa. Calcolata su sovrapposizione temporale con
+     * table_duration del tenant. Restituisce array di int.
+     */
+    private function busyTablesForReservation(array $reservation, int $tenantId): array
+    {
+        $tenant = (new Tenant())->findById($tenantId);
+        $tableDuration = max(15, (int)($tenant['table_duration'] ?? 90));
+        $rStart = strtotime($reservation['reservation_time']);
+        $rEnd   = $rStart + $tableDuration * 60;
+
+        $others = (new Reservation())->findByTenantAndDate($tenantId, $reservation['reservation_date']);
+        $otherIds = [];
+        foreach ($others as $o) {
+            if ((int)$o['id'] === (int)$reservation['id']) continue;
+            if (!in_array((string)$o['status'], ['confirmed', 'pending', 'arrived'], true)) continue;
+            $oStart = strtotime($o['reservation_time']);
+            $oEnd   = $oStart + $tableDuration * 60;
+            if (max($rStart, $oStart) < min($rEnd, $oEnd)) {
+                $otherIds[] = (int)$o['id'];
+            }
+        }
+        if (empty($otherIds)) return [];
+
+        $assignments = (new TableAssigner())->assignmentsFor($otherIds);
+        $busy = [];
+        foreach ($assignments as $tables) {
+            foreach ($tables as $t) $busy[(int)$t['id']] = true;
+        }
+        return array_keys($busy);
     }
 
     public function create(Request $request): void

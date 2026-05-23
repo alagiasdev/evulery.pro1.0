@@ -129,6 +129,32 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         foreach ($tids as $tid) $comboTableIds[$tid] = true;
     }
 
+    // Per ogni prenotazione del giorno, calcolo i tavoli "busy" — cioè quelli
+    // occupati da ALTRE prenotazioni che si sovrappongono temporalmente.
+    // Serve al modale "Combina tavoli ad-hoc" per disabilitare i tavoli che non
+    // sono disponibili per quel turno. Tempo di occupazione = table_duration del tenant.
+    $tableDuration = max(15, (int)($tenant['table_duration'] ?? 90));
+    $busyByReservation = [];
+    foreach ($dayReservations as $r) {
+        $rid = (int)$r['id'];
+        $rStart = strtotime($r['reservation_time']);
+        $rEnd   = $rStart + $tableDuration * 60;
+        $busy = [];
+        foreach ($dayReservations as $other) {
+            if ((int)$other['id'] === $rid) continue;
+            if (!in_array((string)$other['status'], ['confirmed', 'pending', 'arrived'], true)) continue;
+            $oStart = strtotime($other['reservation_time']);
+            $oEnd   = $oStart + $tableDuration * 60;
+            if (max($rStart, $oStart) < min($rEnd, $oEnd)) {
+                // sovrapposizione temporale: i tavoli di "other" sono busy per "r"
+                foreach ($assignments[(int)$other['id']] ?? [] as $t) {
+                    $busy[(int)$t['id']] = true;
+                }
+            }
+        }
+        $busyByReservation[$rid] = array_keys($busy);
+    }
+
     // Slot della fascia oraria con almeno una prenotazione attiva: una
     // prenotazione "occupa" lo slot da inizio a inizio+durata tavolo.
     $slotDuration = max(15, (int)($tenant['table_duration'] ?? 90));
@@ -370,7 +396,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                         ? implode(' + ', array_column($assignments[$rid] ?? [], 'name'))
                         : '';
                 ?>
-                <form method="POST" action="<?= url('dashboard/reservations/' . $rid . '/table') ?>" class="tm-pop-table-form" data-party-size="<?= (int)$r['party_size'] ?>" data-prev-value="<?= e($curOpt) ?>" data-res-label="<?= e(mb_strtoupper(trim((string)$r['last_name']))) ?>">
+                <form method="POST" action="<?= url('dashboard/reservations/' . $rid . '/table') ?>" class="tm-pop-table-form" data-party-size="<?= (int)$r['party_size'] ?>" data-prev-value="<?= e($curOpt) ?>" data-res-label="<?= e(mb_strtoupper(trim((string)$r['last_name']))) ?>" data-busy-ids="<?= e(implode(',', $busyByReservation[$rid] ?? [])) ?>">
                     <?= csrf_field() ?>
                     <input type="hidden" name="redirect_back" value="<?= e($opBack) ?>">
                     <label class="tm-pop-label">Tavolo assegnato</label>
@@ -421,11 +447,14 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
             if (!sel) return;
             sel.addEventListener('change', function () {
                 if (sel.value !== '__multi__') return;
+                var busyRaw = form.dataset.busyIds || '';
+                var busyIds = busyRaw ? busyRaw.split(',').map(function (s) { return parseInt(s, 10); }).filter(Boolean) : [];
                 window.EvuleryCombineTables.open({
                     form:          form,
                     partySize:     parseInt(form.dataset.partySize, 10) || 1,
                     previousValue: form.dataset.prevValue || '',
-                    label:         form.dataset.resLabel || ''
+                    label:         form.dataset.resLabel || '',
+                    busyIds:       busyIds
                 });
             });
         });

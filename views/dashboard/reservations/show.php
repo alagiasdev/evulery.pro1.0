@@ -150,7 +150,7 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
         </div>
         <?php if (in_array((string)$reservation['status'], ['pending', 'confirmed'], true)): ?>
         <?php // Prenotazione non ancora servita: il tavolo si può cambiare ?>
-        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/table") ?>" class="res-table-form" id="res-table-form" data-party-size="<?= (int)$reservation['party_size'] ?>" data-prev-value="<?= e($tableCurrentValue) ?>">
+        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/table") ?>" class="res-table-form" id="res-table-form" data-party-size="<?= (int)$reservation['party_size'] ?>" data-prev-value="<?= e($tableCurrentValue) ?>" data-busy-ids="<?= e(implode(',', $busyTableIds ?? [])) ?>">
             <?= csrf_field() ?>
             <select name="table_option" class="form-select form-select-sm">
                 <option value="">&mdash; Nessun tavolo &mdash;</option>
@@ -180,11 +180,14 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
             if (!sel) return;
             sel.addEventListener('change', function () {
                 if (sel.value !== '__multi__') return;
+                var busyRaw = form.dataset.busyIds || '';
+                var busyIds = busyRaw ? busyRaw.split(',').map(function (s) { return parseInt(s, 10); }).filter(Boolean) : [];
                 window.EvuleryCombineTables.open({
                     form:          form,
                     partySize:     parseInt(form.dataset.partySize, 10) || 1,
                     previousValue: form.dataset.prevValue || '',
-                    label:         '<?= e(($reservation['last_name'] ?? '') ? mb_strtoupper($reservation['last_name']) : 'prenotazione') ?>'
+                    label:         '<?= e(($reservation['last_name'] ?? '') ? mb_strtoupper($reservation['last_name']) : 'prenotazione') ?>',
+                    busyIds:       busyIds
                 });
             });
         })();
