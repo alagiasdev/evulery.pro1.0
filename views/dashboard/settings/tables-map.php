@@ -371,12 +371,25 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                 <?php endif; ?>
                 <?php if (in_array((string)$r['status'], ['pending', 'confirmed'], true)): ?>
                 <?php /* Prenotazione non ancora servita: il tavolo si può ancora cambiare */ ?>
+                <?php
+                    // Se l'attuale assegnazione è una combinazione ad-hoc non
+                    // presente in $reassignOptions (es. creata via "Combina tavoli"),
+                    // la prependo come opzione "attuale" così il select la riflette.
+                    $reassignKnown = array_column($reassignOptions, 'value');
+                    $curIsAdHoc = ($curOpt !== '' && !in_array($curOpt, $reassignKnown, true));
+                    $curAdHocLabel = $curIsAdHoc
+                        ? implode(' + ', array_column($assignments[$rid] ?? [], 'name'))
+                        : '';
+                ?>
                 <form method="POST" action="<?= url('dashboard/reservations/' . $rid . '/table') ?>" class="tm-pop-table-form" data-party-size="<?= (int)$r['party_size'] ?>" data-prev-value="<?= e($curOpt) ?>" data-res-label="<?= e(mb_strtoupper(trim((string)$r['last_name']))) ?>">
                     <?= csrf_field() ?>
                     <input type="hidden" name="redirect_back" value="<?= e($opBack) ?>">
                     <label class="tm-pop-label">Tavolo assegnato</label>
                     <select name="table_option" class="tm-fi">
                         <option value="">&mdash; Nessun tavolo &mdash;</option>
+                        <?php if ($curIsAdHoc): ?>
+                        <option value="<?= e($curOpt) ?>" selected><?= e($curAdHocLabel) ?> (attuale)</option>
+                        <?php endif; ?>
                         <?php foreach ($reassignOptions as $o): ?>
                         <option value="<?= e($o['value']) ?>" <?= $o['value'] === $curOpt ? 'selected' : '' ?>><?= e($o['label']) ?></option>
                         <?php endforeach; ?>
