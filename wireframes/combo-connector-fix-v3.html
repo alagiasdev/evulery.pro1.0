@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe v3 — Niente linea (l'unica scelta robusta)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{
+    --brand:#00844A;--brand-light:#e6f4ed;--bg:#f5f6f8;--card:#fff;
+    --text:#1a1d23;--muted:#6c757d;--border:#e9ecef;
+    --busy:#0d6efd;
+    --warn:#f57c00;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:system-ui,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);padding:24px;max-width:1280px;margin:0 auto;}
+  h2{font-size:1.35rem;font-weight:700;margin-bottom:.25rem;}
+  .subtitle{font-size:.82rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.55;}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+
+  .scene{background:var(--card);border-radius:14px;overflow:hidden;border:1px solid var(--border);}
+  .scene-head{padding:14px 18px;border-bottom:1px solid var(--border);}
+  .scene-head h3{font-size:1rem;font-weight:800;margin-bottom:5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .badge-pill{font-size:.6rem;font-weight:800;padding:2px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:.4px;}
+  .badge-bad{background:#fdecea;color:#b3261e;border:1px solid #f5c2bd;}
+  .badge-rec{background:var(--brand-light);color:var(--brand);border:1px solid #cfe8d6;}
+  .scene-head .desc{font-size:.78rem;color:var(--muted);line-height:1.5;}
+
+  /* Map area */
+  .map{position:relative;background:radial-gradient(circle,#dde1e6 1px,transparent 1px);background-size:18px 18px;background-color:#fcfcfd;height:280px;border-bottom:1px solid var(--border);overflow:hidden;}
+
+  .tbl{position:absolute;width:70px;height:70px;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.7rem;box-shadow:0 2px 6px rgba(0,0,0,.18);}
+  .tbl.free{background:var(--brand);}
+  .tbl.busy{background:var(--busy);}
+  .tbl small{font-size:.56rem;font-weight:500;opacity:.85;}
+
+  /* scenario corrente: posizioni reali simili allo screenshot */
+  /* riga 1: T1, T2, T3 */
+  .pos-T1{left:40px;top:40px;}
+  .pos-T2{left:130px;top:40px;}
+  .pos-T3{left:220px;top:40px;}
+  /* riga 2: T4 sotto T1, T5 sotto T2 */
+  .pos-T4{left:40px;top:140px;}
+  .pos-T5{left:130px;top:140px;}
+
+  /* === SCENARIO A: con linee (oggi) === */
+  .combo-bar{position:absolute;height:5px;background:var(--busy);border-radius:3px;margin-top:-2.5px;box-shadow:0 1px 3px rgba(0,0,0,.2);pointer-events:none;transform-origin:left center;}
+  .combo-badge{position:absolute;display:flex;align-items:center;gap:3px;padding:3px 8px;border-radius:13px;background:#fff;color:var(--busy);font-size:.66rem;font-weight:800;white-space:nowrap;box-shadow:0 0 0 2px var(--busy),0 1px 4px rgba(0,0,0,.25);z-index:5;transform:translate(-50%,-50%);}
+
+  /* combinazione 1: T1+T3 (orizzontale, riga 1) — linea sul bordo inferiore */
+  .bar-1{top:110px;left:75px;width:185px;} /* y=top_T1+70=110, x da centro T1 a centro T3 */
+  .badge-1{left:170px;top:110px;}
+
+  /* combinazione 2: T1+T4 (verticale) — linea dal bordo inferiore T1 al bordo inferiore T4 */
+  .bar-2{top:110px;left:75px;width:100px;transform:rotate(90deg);} /* da T1.bottom a T4.bottom, ma in realtà passa attraverso T4 */
+  .badge-2{left:75px;top:160px;}
+
+  /* combinazione 3: T4+T5 (orizzontale, riga 2) */
+  .bar-3{top:210px;left:75px;width:95px;}
+  .badge-3{left:122px;top:210px;}
+
+  /* === SCENARIO B: niente linee, alone + chain icon === */
+  .tbl.has-combo{box-shadow:0 0 0 2px #fff, 0 0 0 5px var(--busy), 0 2px 6px rgba(0,0,0,.18);}
+  .chain-corner{position:absolute;top:-9px;right:-9px;width:22px;height:22px;border-radius:50%;background:#fff;color:var(--busy);display:flex;align-items:center;justify-content:center;font-size:.78rem;box-shadow:0 0 0 2px var(--busy);}
+  /* badge "↔ con T3" sopra ogni tavolo combinato — opzione informativa */
+  .pair-tag{position:absolute;background:#fff;color:var(--busy);font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:10px;box-shadow:0 0 0 1.5px var(--busy);white-space:nowrap;z-index:5;display:flex;align-items:center;gap:3px;}
+
+  /* legenda + pro/con */
+  .pc{padding:12px 16px;font-size:.76rem;line-height:1.55;}
+  .pc-row{display:flex;gap:7px;padding:3px 0;}
+  .pc-row i{flex-shrink:0;margin-top:2px;font-size:.78rem;}
+  .pc-row.pro i{color:var(--brand);}
+  .pc-row.con i{color:var(--warn);}
+
+  .anno{position:absolute;background:rgba(255,255,255,.95);border:1px dashed var(--warn);padding:2px 7px;border-radius:5px;font-size:.6rem;color:var(--warn);font-weight:700;z-index:9;}
+
+  .footer-rec{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-top:20px;}
+  .footer-rec h4{font-size:.95rem;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+  .footer-rec p{font-size:.82rem;line-height:1.65;color:var(--text);}
+</style>
+</head>
+<body>
+
+<h2>Wireframe v3 — Quando ci sono 3+ combinazioni</h2>
+<p class="subtitle">
+    Scenario del tuo screenshot ricostruito: <strong>3 combinazioni simultanee</strong> in una sala compatta — T1+T3 (riga 1), T1+T4 (verticale), T4+T5 (riga 2). Con qualsiasi approccio "linea che unisce" le linee si attraversano e i badge si pestano. La soluzione robusta è abbandonare la linea.
+</p>
+
+<div class="grid">
+
+    <!-- ============================================== -->
+    <!-- Scenario A: linee (oggi)                      -->
+    <!-- ============================================== -->
+    <div class="scene">
+        <div class="scene-head">
+            <h3>Oggi · 3 combinazioni → caos <span class="badge-pill badge-bad">non scala</span></h3>
+            <div class="desc">Le 3 linee si intersecano in basso a sinistra, i 3 badge "6p" si avvicinano fino a sovrapporsi. Anche con la linea sul bordo inferiore (variante 2), il problema riemerge appena ci sono combinazioni non orizzontali.</div>
+        </div>
+        <div class="map">
+            <!-- tavoli -->
+            <div class="tbl busy pos-T1">T1<small>21:30</small></div>
+            <div class="tbl busy pos-T2">T2<small>21:30</small></div>
+            <div class="tbl busy pos-T3">T3<small>21:30</small></div>
+            <div class="tbl busy pos-T4">T4<small>21:30</small></div>
+            <div class="tbl busy pos-T5">T5<small>21:30</small></div>
+            <!-- linee combinazione -->
+            <div class="combo-bar bar-1"></div>
+            <div class="combo-badge badge-1"><i class="bi bi-link-45deg"></i> 6p</div>
+            <div class="combo-bar bar-2"></div>
+            <div class="combo-badge badge-2"><i class="bi bi-link-45deg"></i> 6p</div>
+            <div class="combo-bar bar-3"></div>
+            <div class="combo-badge badge-3"><i class="bi bi-link-45deg"></i> 6p</div>
+            <!-- annotazioni -->
+            <div class="anno" style="left:90px;top:228px;">linee si incrociano</div>
+            <div class="anno" style="left:140px;top:88px;">badge sovrapposti</div>
+        </div>
+        <div class="pc">
+            <div class="pc-row con"><i class="bi bi-x-circle-fill"></i> <span>Linee incrociate: non si capisce più <em>quale tavolo va con quale</em></span></div>
+            <div class="pc-row con"><i class="bi bi-x-circle-fill"></i> <span>Badge "6p" molto vicini → l'operatore deve indovinare a quale combinazione si riferisce ognuno</span></div>
+            <div class="pc-row con"><i class="bi bi-x-circle-fill"></i> <span>Il problema scala male: in una sala da 100 tavoli con 10-15 combinazioni serali diventa illeggibile</span></div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- Scenario B: niente linee                       -->
+    <!-- ============================================== -->
+    <div class="scene">
+        <div class="scene-head">
+            <h3>Proposta · Solo alone + chain icon <span class="badge-pill badge-rec">robusta</span></h3>
+            <div class="desc">Tolgo del tutto le linee. Ogni tavolo combinato ha un <strong>alone blu</strong> attorno e un'<strong>icona catenella</strong> in alto a destra. Per sapere "con chi", click sul tavolo → popup mostra l'elenco. Nessun visual conflict, scala a infinite combinazioni.</div>
+        </div>
+        <div class="map">
+            <!-- tavoli con alone + chain corner -->
+            <div class="tbl busy pos-T1 has-combo">T1<small>21:30</small><span class="chain-corner"><i class="bi bi-link-45deg"></i></span></div>
+            <div class="tbl busy pos-T2 has-combo">T2<small>21:30</small><span class="chain-corner"><i class="bi bi-link-45deg"></i></span></div>
+            <div class="tbl busy pos-T3 has-combo">T3<small>21:30</small><span class="chain-corner"><i class="bi bi-link-45deg"></i></span></div>
+            <div class="tbl busy pos-T4 has-combo">T4<small>21:30</small><span class="chain-corner"><i class="bi bi-link-45deg"></i></span></div>
+            <div class="tbl busy pos-T5 has-combo">T5<small>21:30</small><span class="chain-corner"><i class="bi bi-link-45deg"></i></span></div>
+            <!-- annotation positivo -->
+            <div class="anno" style="border-color:var(--brand);color:var(--brand);left:240px;top:240px;">tutto leggibile ✓</div>
+        </div>
+        <div class="pc">
+            <div class="pc-row pro"><i class="bi bi-check-circle-fill"></i> <span><strong>Nessun visual conflict</strong>: ogni tavolo è ben definito e cliccabile</span></div>
+            <div class="pc-row pro"><i class="bi bi-check-circle-fill"></i> <span><strong>Scala bene</strong>: che ci siano 1 o 100 combinazioni, la mappa resta pulita</span></div>
+            <div class="pc-row pro"><i class="bi bi-check-circle-fill"></i> <span>L'alone blu + catenella comunica subito "questo tavolo è in coppia"</span></div>
+            <div class="pc-row con"><i class="bi bi-exclamation-triangle-fill"></i> <span>Per sapere <em>con chi</em> è combinato, devi cliccare il tavolo → popup. Trade-off accettabile</span></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ============================================ -->
+<!-- COSA SUCCEDE NEL POPUP                       -->
+<!-- ============================================ -->
+<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-top:24px;">
+    <h3 style="font-size:1rem;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;"><i class="bi bi-window" style="color:var(--brand);"></i> Il dettaglio combinazione vive nel popup, non sulla mappa</h3>
+
+    <p style="font-size:.82rem;line-height:1.6;color:var(--text);margin-bottom:14px;">
+        Click su un tavolo con catenella → si apre il popup della prenotazione che lo occupa, e in cima vedi un riquadrino con <strong>tutti i tavoli della combinazione</strong> evidenziati. Pulito.
+    </p>
+
+    <div style="background:#fafbfc;border:1px solid var(--border);border-radius:10px;padding:14px 16px;max-width:380px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:.86rem;"><i class="bi bi-person" style="color:var(--brand);"></i> ALAGIA stefano</strong>
+            <button style="border:none;background:#f0f1f3;width:24px;height:24px;border-radius:6px;color:var(--muted);cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:10px;">6 persone · 21:30 · Confermata</div>
+
+        <div style="background:var(--brand-light);border:1px solid #cfe8d6;border-radius:8px;padding:9px 11px;margin-bottom:10px;">
+            <div style="font-size:.66rem;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;"><i class="bi bi-link-45deg"></i> Combinazione di 2 tavoli</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;">
+                <span style="background:#fff;color:var(--busy);font-weight:700;font-size:.78rem;padding:4px 10px;border-radius:6px;border:1px solid var(--busy);">T1</span>
+                <span style="background:#fff;color:var(--busy);font-weight:700;font-size:.78rem;padding:4px 10px;border-radius:6px;border:1px solid var(--busy);">T3</span>
+            </div>
+        </div>
+
+        <div style="font-size:.74rem;color:var(--muted);">Telefono · email · note del cliente · azioni stato...</div>
+    </div>
+</div>
+
+<div class="footer-rec">
+    <h4><i class="bi bi-lightbulb-fill" style="color:var(--brand);"></i> Verdetto onesto</h4>
+    <p>
+        Le linee funzionano <strong>solo nello scenario semplice</strong> (1 combinazione orizzontale visibile alla volta). Appena la sala si riempie con 3+ combinazioni — caso ordinario al sabato sera in un ristorante medio-grande — qualunque variante della linea fallisce visivamente.
+        <br><br>
+        <strong>Proposta:</strong> tolgo del tutto il connettore e il badge centrale. Ogni tavolo combinato ottiene un alone blu + una piccola catenella nell'angolo. Il dettaglio "con quale altro tavolo" lo si scopre dal popup, dove c'è già tutto lo spazio per mostrarlo bene.
+        <br><br>
+        Costo: ~30-40 min (rimozione del calcolo connettore + nuovo CSS per alone/chain + piccola sezione "combinazione" nel popup esistente). Rischio: zero, è solo CSS.
+    </p>
+</div>
+
+</body>
+</html>

@@ -116,39 +116,17 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
     ksort($byHour);
     $nUnassigned = count($unassigned);
 
-    // Connettore tavoli combinati: prenotazioni che occupano 2 tavoli a
-    // quest'ora. Barra tra il bordo INFERIORE dei due tavoli (tavolo = 76x76):
-    // così se c'è un tavolo intermedio sulla stessa riga, la linea passa sotto
-    // di esso senza coprirne il contenuto (nome, stato).
-    $tablePos = [];
-    foreach ($tables as $t) {
-        $tablePos[(int)$t['id']] = ['x' => (int)$t['_x'], 'y' => (int)$t['_y'], 'area' => (string)($t['area'] ?? '')];
-    }
+    // Tavoli che a quest'ora fanno parte di una combinazione (= prenotazione
+    // su 2+ tavoli). Ricevono alone blu + icona catenella in alto a destra.
+    // Il "con quale altro tavolo" lo si vede aprendo il popup della prenotazione.
     $resTablesNow = [];
     foreach ($floorState as $tid => $occ) {
         $resTablesNow[(int)$occ['reservation_id']][] = (int)$tid;
     }
-    $comboBars = [];
-    $comboTableIds = [];   // tavoli che fanno parte di una combinazione attiva
+    $comboTableIds = [];
     foreach ($resTablesNow as $tids) {
-        if (count($tids) < 2) continue;            // combinazioni = coppie
-        [$ta, $tb] = [$tids[0], $tids[1]];
-        if (!isset($tablePos[$ta], $tablePos[$tb])) continue;
-        $comboTableIds[$ta] = $comboTableIds[$tb] = true;
-        // x = centro orizzontale, y = bordo inferiore (era +38 = centro, ora +76 = bottom)
-        $c1x = $tablePos[$ta]['x'] + 38; $c1y = $tablePos[$ta]['y'] + 76;
-        $c2x = $tablePos[$tb]['x'] + 38; $c2y = $tablePos[$tb]['y'] + 76;
-        $dx = $c2x - $c1x; $dy = $c2y - $c1y;
-        $comboBars[] = [
-            'left'  => $c1x,
-            'top'   => $c1y,
-            'width' => sqrt($dx * $dx + $dy * $dy),
-            'angle' => rad2deg(atan2($dy, $dx)),
-            'bx'    => ($c1x + $c2x) / 2,
-            'by'    => ($c1y + $c2y) / 2,
-            'area'  => $tablePos[$ta]['area'],
-            'party' => (int)($floorState[$ta]['party'] ?? 0),
-        ];
+        if (count($tids) < 2) continue;
+        foreach ($tids as $tid) $comboTableIds[$tid] = true;
     }
 
     // Slot della fascia oraria con almeno una prenotazione attiva: una
@@ -282,36 +260,27 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
             </div>
             <div class="tm-map-canvas" id="tm-map">
                 <div class="tm-map-spacer" aria-hidden="true" style="width:<?= (int)$canvasContentW ?>px; height:<?= (int)$canvasContentH ?>px;"></div>
-                <?php /* Connettori tavoli combinati — dietro i tavoli */ ?>
-                <?php foreach ($comboBars as $cb): ?>
-                <div class="tm-combo-bar" data-area="<?= e($cb['area']) ?>"
-                     style="left:<?= $cb['left'] ?>px; top:<?= $cb['top'] ?>px; width:<?= round($cb['width'], 1) ?>px; transform:rotate(<?= round($cb['angle'], 2) ?>deg);"></div>
-                <?php endforeach; ?>
                 <?php foreach ($tables as $t): ?>
                 <?php
                     $tArea = (string)($t['area'] ?? '');
                     $hidden = false; // "Tutte le aree" è la vista iniziale
                     $occ = $floorState[(int)$t['id']] ?? null;
+                    $inCombo = isset($comboTableIds[(int)$t['id']]);
                 ?>
-                <div class="tm-map-table <?= $t['shape'] === 'round' ? 'round' : 'square' ?> <?= $occ ? 'busy' : 'freev' ?>"
+                <div class="tm-map-table <?= $t['shape'] === 'round' ? 'round' : 'square' ?> <?= $occ ? 'busy' : 'freev' ?><?= $inCombo ? ' in-combo' : '' ?>"
                      data-id="<?= (int)$t['id'] ?>" data-area="<?= e($tArea) ?>"
                      <?= $occ ? 'data-pop="tm-pop-res-' . (int)$occ['reservation_id'] . '"' : '' ?>
                      style="left:<?= (int)$t['_x'] ?>px; top:<?= (int)$t['_y'] ?>px;<?= $hidden ? 'display:none;' : '' ?>">
                     <?php if ($areaHasDot($tArea)): ?><span class="tm-area-dot" style="background:<?= e(area_color($tArea)) ?>;"></span><?php endif; ?>
+                    <?php if ($inCombo): ?><span class="tm-combo-chain" title="In combinazione con altri tavoli"><i class="bi bi-link-45deg"></i></span><?php endif; ?>
                     <?php if ($occ): ?>
                     <span class="tm-map-name"><?= e($occ['name']) ?></span>
-                    <?php // Tavolo in combinazione: niente party sul tavolo (è della coppia → sulla pastiglia) ?>
-                    <span class="tm-map-cap"><?php if (!isset($comboTableIds[(int)$t['id']])): ?><?= (int)$occ['party'] ?>p &middot; <?php endif; ?><?= e($occ['time']) ?></span>
+                    <span class="tm-map-cap"><?= (int)$occ['party'] ?>p &middot; <?= e($occ['time']) ?></span>
                     <?php else: ?>
                     <span class="tm-map-name"><?= e($t['name']) ?></span>
                     <span class="tm-map-cap"><?= format_capacity((int)($t['min_capacity'] ?? 1), (int)$t['capacity']) ?></span>
                     <?php endif; ?>
                 </div>
-                <?php endforeach; ?>
-                <?php /* Pastiglia catena al centro di ogni combinazione — sopra i tavoli */ ?>
-                <?php foreach ($comboBars as $cb): ?>
-                <div class="tm-combo-badge" data-area="<?= e($cb['area']) ?>"
-                     style="left:<?= round($cb['bx'], 1) ?>px; top:<?= round($cb['by'], 1) ?>px;"><i class="bi bi-link-45deg"></i> <?= (int)$cb['party'] ?>p</div>
                 <?php endforeach; ?>
             </div>
             <div class="tm-map-hint"><i class="bi bi-info-circle me-1"></i> Tavoli blu = occupati alle <?= e($opTime) ?>. Clicca un tavolo o una prenotazione per i dettagli.</div>
@@ -336,6 +305,23 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
             </div>
             <div class="tm-pop-body">
                 <div class="tm-pop-meta"><?= (int)$r['party_size'] ?> persone &middot; <?= e(substr((string)$r['reservation_time'], 0, 5)) ?> &middot; <?= e(status_label($r['status'])) ?></div>
+                <?php
+                    // Sezione combinazione: se la prenotazione ha 2+ tavoli, mostro
+                    // i pallini coi nomi così l'operatore vede subito "con quale
+                    // altro tavolo" senza dover guardare la mappa (ricorda: niente
+                    // più linea, l'info vive qui).
+                    $resTables = $assignments[$rid] ?? [];
+                ?>
+                <?php if (count($resTables) >= 2): ?>
+                <div class="tm-pop-combo">
+                    <span class="tm-pop-combo-lbl"><i class="bi bi-link-45deg"></i> Combinazione di <?= count($resTables) ?> tavoli</span>
+                    <div class="tm-pop-combo-list">
+                        <?php foreach ($resTables as $rt): ?>
+                        <span class="tm-pop-combo-chip"><?= e($rt['name']) ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
                 <?php if (!empty($r['phone']) || !empty($r['email'])): ?>
                 <div class="tm-pop-contact">
                     <?php if (!empty($r['phone'])): ?><a href="tel:<?= e(str_replace(' ', '', (string)$r['phone'])) ?>"><i class="bi bi-telephone"></i> <?= e($r['phone']) ?></a><?php endif; ?>
@@ -496,7 +482,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
             tab.classList.add('active');
             var all = tab.hasAttribute('data-all');
             var area = tab.getAttribute('data-area');
-            canvas.querySelectorAll('.tm-map-table, .tm-combo-bar, .tm-combo-badge').forEach(function (el) {
+            canvas.querySelectorAll('.tm-map-table').forEach(function (el) {
                 el.style.display = (all || el.getAttribute('data-area') === area) ? '' : 'none';
             });
         });

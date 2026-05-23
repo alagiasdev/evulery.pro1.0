@@ -4401,14 +4401,29 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-cap-warn-d a { color: var(--brand, #00844A); font-weight: 600; }
 .tm-cap-ok { display: flex; align-items: center; gap: 8px; margin-top: 16px; padding: 10px 14px; background: #eef7f1; border: 1px solid #cfe8d6; border-radius: 10px; font-size: .76rem; font-weight: 600; color: var(--brand, #00844A); }
 
-/* connettore tavoli combinati: barra tra i 2 tavoli + pastiglia catena */
-.tm-combo-bar { position: absolute; height: 8px; margin-top: -4px; background: #0d6efd; border-radius: 4px; transform-origin: left center; box-shadow: 0 1px 3px rgba(0,0,0,.2); pointer-events: none; }
-.tm-combo-badge { position: absolute; transform: translate(-50%,-50%); display: flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 11px; background: #fff; color: #0d6efd; font-size: .64rem; font-weight: 700; white-space: nowrap; box-shadow: 0 0 0 2px #0d6efd, 0 1px 4px rgba(0,0,0,.25); z-index: 5; pointer-events: none; }
+/* Tavolo in combinazione: alone blu intorno + icona catenella in alto a destra.
+   Sostituisce il vecchio "connettore con linea" (rimosso): scala bene anche con
+   N combinazioni simultanee in sala, niente linee che si incrociano. */
+.tm-map-table.in-combo { box-shadow: 0 0 0 2px #fff, 0 0 0 5px #0d6efd, 0 2px 6px rgba(0,0,0,.22); }
+.tm-combo-chain {
+    position: absolute; top: -9px; right: -9px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #fff; color: #0d6efd;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .8rem;
+    box-shadow: 0 0 0 2px #0d6efd;
+    z-index: 6;
+}
 /* pallino colore area: accento (solo aree aggiuntive), non riempimento */
 .tm-area-dot { position: absolute; top: -5px; right: -5px; width: 17px; height: 17px; border-radius: 50%; box-shadow: 0 0 0 2.5px #fff, 0 1px 3px rgba(0,0,0,.3); }
 .tm-area-tab-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; box-shadow: 0 0 0 1.5px rgba(255,255,255,.55); }
 .tm-pop-badge { font-size: .58rem; font-weight: 700; background: #e7f1ff; color: #0d6efd; border-radius: 5px; padding: 2px 6px; margin-left: 4px; vertical-align: middle; }
 .tm-pop-contact { display: flex; flex-direction: column; gap: 3px; margin-bottom: 11px; }
+/* Sezione combinazione tavoli nel popup (sostituisce la vecchia linea/badge sulla mappa) */
+.tm-pop-combo { background: #e7f1ff; border: 1px solid #b6d4fe; border-radius: 9px; padding: 9px 11px; margin-bottom: 11px; }
+.tm-pop-combo-lbl { font-size: .66rem; font-weight: 700; color: #0d6efd; text-transform: uppercase; letter-spacing: .4px; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 6px; }
+.tm-pop-combo-list { display: flex; flex-wrap: wrap; gap: 5px; }
+.tm-pop-combo-chip { display: inline-block; background: #fff; color: #0d6efd; font-weight: 700; font-size: .76rem; padding: 3px 9px; border-radius: 6px; border: 1px solid #0d6efd; }
 .tm-pop-contact a { font-size: .74rem; color: #6c757d; text-decoration: none; display: flex; align-items: center; gap: 6px; }
 .tm-pop-contact a:hover { color: var(--brand, #00844A); }
 .tm-pop-note { display: flex; gap: 7px; font-size: .72rem; color: #5b6470; background: #f5f6f8; border: 1px solid var(--border, #e9ecef); border-radius: 7px; padding: 7px 9px; margin-bottom: 12px; line-height: 1.45; }
