@@ -117,7 +117,9 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
     $nUnassigned = count($unassigned);
 
     // Connettore tavoli combinati: prenotazioni che occupano 2 tavoli a
-    // quest'ora. Barra tra i centri dei due tavoli (tavolo = 76x76).
+    // quest'ora. Barra tra il bordo INFERIORE dei due tavoli (tavolo = 76x76):
+    // così se c'è un tavolo intermedio sulla stessa riga, la linea passa sotto
+    // di esso senza coprirne il contenuto (nome, stato).
     $tablePos = [];
     foreach ($tables as $t) {
         $tablePos[(int)$t['id']] = ['x' => (int)$t['_x'], 'y' => (int)$t['_y'], 'area' => (string)($t['area'] ?? '')];
@@ -133,8 +135,9 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         [$ta, $tb] = [$tids[0], $tids[1]];
         if (!isset($tablePos[$ta], $tablePos[$tb])) continue;
         $comboTableIds[$ta] = $comboTableIds[$tb] = true;
-        $c1x = $tablePos[$ta]['x'] + 38; $c1y = $tablePos[$ta]['y'] + 38;
-        $c2x = $tablePos[$tb]['x'] + 38; $c2y = $tablePos[$tb]['y'] + 38;
+        // x = centro orizzontale, y = bordo inferiore (era +38 = centro, ora +76 = bottom)
+        $c1x = $tablePos[$ta]['x'] + 38; $c1y = $tablePos[$ta]['y'] + 76;
+        $c2x = $tablePos[$tb]['x'] + 38; $c2y = $tablePos[$tb]['y'] + 76;
         $dx = $c2x - $c1x; $dy = $c2y - $c1y;
         $comboBars[] = [
             'left'  => $c1x,

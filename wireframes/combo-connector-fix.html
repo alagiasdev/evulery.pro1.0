@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Fix connettore combinazione (3 opzioni)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{
+    --brand:#00844A;--brand-light:#e6f4ed;--bg:#f5f6f8;--card:#fff;
+    --text:#1a1d23;--muted:#6c757d;--border:#e9ecef;
+    --busy:#0d6efd;--busy-light:#cfe2ff;
+    --warn:#f57c00;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:system-ui,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);padding:24px;max-width:1280px;margin:0 auto;}
+  h2{font-size:1.35rem;font-weight:700;margin-bottom:.25rem;}
+  .subtitle{font-size:.82rem;color:var(--muted);margin-bottom:1.5rem;}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+
+  .scene{background:var(--card);border-radius:14px;overflow:hidden;border:1px solid var(--border);}
+  .scene-head{padding:14px 18px;border-bottom:1px solid var(--border);}
+  .scene-head h3{font-size:1rem;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+  .scene-head h3 .badge{font-size:.6rem;font-weight:800;padding:2px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:.5px;}
+  .scene-head h3 .badge-bad{background:#fdecea;color:#b3261e;border:1px solid #f5c2bd;}
+  .scene-head h3 .badge-rec{background:var(--brand-light);color:var(--brand);border:1px solid #cfe8d6;}
+  .scene-head h3 .badge-alt{background:#cfe2ff;color:#084298;border:1px solid #9ec5fe;}
+  .scene-head .desc{font-size:.78rem;color:var(--muted);line-height:1.5;}
+
+  /* === Map area === */
+  .map{position:relative;background:radial-gradient(circle,#dde1e6 1px,transparent 1px);background-size:18px 18px;background-color:#fcfcfd;height:200px;border-bottom:1px solid var(--border);overflow:hidden;}
+
+  /* tavolo base */
+  .tbl{position:absolute;width:76px;height:76px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.78rem;box-shadow:0 2px 6px rgba(0,0,0,.18);}
+  .tbl.free{background:var(--brand);}
+  .tbl.busy{background:var(--busy);}
+  .tbl small{font-size:.6rem;font-weight:500;opacity:.85;}
+
+  /* positions: 5 tavoli in fila */
+  .t-T1{left:30px;top:60px;}
+  .t-T2{left:130px;top:60px;}
+  .t-T3{left:230px;top:60px;}
+  .t-T4{left:330px;top:60px;}
+  .t-T5{left:430px;top:60px;}
+
+  /* connettore standard (linea + badge) - usato in scenario corrente e A */
+  .combo-bar{position:absolute;height:7px;background:var(--busy);border-radius:4px;margin-top:-3.5px;box-shadow:0 1px 3px rgba(0,0,0,.2);pointer-events:none;}
+  .combo-bar.std{top:98px;left:106px;width:124px;}
+  .combo-badge{position:absolute;display:flex;align-items:center;gap:4px;padding:4px 11px;border-radius:14px;background:#fff;color:var(--busy);font-size:.74rem;font-weight:800;white-space:nowrap;box-shadow:0 0 0 2px var(--busy),0 1px 4px rgba(0,0,0,.25);z-index:5;}
+  .combo-badge.std{left:168px;top:98px;transform:translate(-50%,-50%);}
+
+  /* OPTION A: badge spostato sopra */
+  .combo-badge.up{left:168px;top:60px;transform:translate(-50%,-50%);}
+
+  /* OPTION B: bordo evidenziato sui tavoli combinati + indicatore piccolo */
+  .tbl.combo-halo{box-shadow:0 0 0 3px #fff,0 0 0 6px var(--busy);}
+  .tbl-pair-badge{position:absolute;background:#fff;color:var(--busy);font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:11px;box-shadow:0 0 0 2px var(--busy);white-space:nowrap;z-index:5;display:flex;align-items:center;gap:4px;}
+
+  /* OPTION C: arco SVG */
+  .arc-svg{position:absolute;left:0;top:0;pointer-events:none;}
+
+  /* "Tav. 2 leggibile?" annotation */
+  .anno{position:absolute;background:rgba(255,255,255,.95);border:1px dashed var(--warn);padding:3px 8px;border-radius:5px;font-size:.66rem;color:var(--warn);font-weight:700;}
+
+  /* Pros & cons */
+  .pc{padding:14px 18px;font-size:.78rem;line-height:1.55;}
+  .pc-row{display:flex;gap:8px;padding:4px 0;}
+  .pc-row i{flex-shrink:0;margin-top:2px;}
+  .pc-row.pro i{color:var(--brand);}
+  .pc-row.con i{color:var(--warn);}
+  .pc-row strong{font-weight:700;}
+
+  .legenda{display:flex;gap:14px;font-size:.7rem;color:var(--muted);margin-top:8px;padding:10px 18px;background:#fafbfc;border-top:1px dashed var(--border);}
+  .legenda-item{display:flex;align-items:center;gap:5px;}
+  .legenda-sq{width:12px;height:12px;border-radius:3px;}
+  .legenda-sq.free{background:var(--brand);}
+  .legenda-sq.busy{background:var(--busy);}
+</style>
+</head>
+<body>
+
+<h2>Wireframe — Fix connettore combinazione tavoli</h2>
+<p class="subtitle">
+    Scenario: 5 tavoli in fila (T1...T5). T1 e T3 sono combinati per un party da 6 persone. T2 sta fisicamente in mezzo e oggi viene "mangiato" visivamente dal connettore. Confronto del comportamento attuale con 3 possibili fix.
+</p>
+
+<div class="grid">
+
+    <!-- ============================================== -->
+    <!-- SCENARIO CORRENTE (il problema)               -->
+    <!-- ============================================== -->
+    <div class="scene">
+        <div class="scene-head">
+            <h3>Oggi <span class="badge badge-bad">problema</span></h3>
+            <div class="desc">La linea blu unisce T1 e T3, e il badge "↔ 6p" si piazza esattamente sopra T2 — che viene coperto.</div>
+        </div>
+        <div class="map">
+            <div class="tbl busy t-T1">T1<small>21:30</small></div>
+            <div class="tbl free t-T2">T2<small>libero</small></div>
+            <div class="tbl busy t-T3">T3<small>21:30</small></div>
+            <div class="tbl free t-T4">T4<small>libero</small></div>
+            <div class="tbl free t-T5">T5<small>libero</small></div>
+            <!-- connettore standard -->
+            <div class="combo-bar std"></div>
+            <div class="combo-badge std"><i class="bi bi-link-45deg"></i> 6p</div>
+            <div class="anno" style="left:120px;top:155px;">↑ T2 coperto dal badge</div>
+        </div>
+        <div class="pc">
+            <div class="pc-row con"><i class="bi bi-x-circle-fill"></i> <span>T2 è nascosto dal badge: l'operatore non lo vede e non può cliccarlo</span></div>
+            <div class="pc-row con"><i class="bi bi-x-circle-fill"></i> <span>La linea blu attraversa T2: sembra parte della combinazione anche se non lo è</span></div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- OPTION A: badge offset verso l'alto           -->
+    <!-- ============================================== -->
+    <div class="scene">
+        <div class="scene-head">
+            <h3>Opzione A — Badge spostato sopra la linea <span class="badge badge-rec">raccomandata</span></h3>
+            <div class="desc">La linea blu resta dov'è ma il badge "↔ 6p" sale di ~35px così non copre più T2. ~20 min di CSS.</div>
+        </div>
+        <div class="map">
+            <div class="tbl busy t-T1">T1<small>21:30</small></div>
+            <div class="tbl free t-T2">T2<small>libero</small></div>
+            <div class="tbl busy t-T3">T3<small>21:30</small></div>
+            <div class="tbl free t-T4">T4<small>libero</small></div>
+            <div class="tbl free t-T5">T5<small>libero</small></div>
+            <!-- connettore con badge in alto -->
+            <div class="combo-bar std"></div>
+            <div class="combo-badge up"><i class="bi bi-link-45deg"></i> 6p</div>
+        </div>
+        <div class="pc">
+            <div class="pc-row pro"><i class="bi bi-check-circle-fill"></i> <span><strong>T2 di nuovo visibile e cliccabile</strong> — il badge non lo copre più</span></div>
+            <div class="pc-row pro"><i class="bi bi-check-circle-fill"></i> <span>Fix minimo (3-4 righe di CSS) e rischio zero</span></div>
+            <div class="pc-row con"><i class="bi bi-exclamation-triangle-fill"></i> <span>La linea blu continua a tagliare T2: il problema è ridotto, non eliminato</span></div>
+        </div>
+        <div class="legenda">
+            <span class="legenda-item"><span class="legenda-sq free"></span> Tavolo libero</span>
+            <span class="legenda-item"><span class="legenda-sq busy"></span> Tavolo occupato</span>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- OPTION B: niente linea, halo + badge piccoli  -->
+    <!-- ============================================== -->
+    <div class="scene">
+        <div class="scene-head">
+            <h3>Opzione B — Niente linea, alone sui tavoli combinati <span class="badge badge-alt">pulita</span></h3>
+            <div class="desc">Tolgo la linea di connessione. T1 e T3 hanno un alone blu, e sopra ognuno un piccolo badge "↔ con TX". T2 resta completamente intoccato.</div>
+        </div>
+        <div class="map">
+            <div class="tbl busy t-T1 combo-halo">T1<small>21:30</small></div>
+            <div class="tbl free t-T2">T2<small>libero</small></div>
+            <div class="tbl busy t-T3 combo-halo">T3<small>21:30</small></div>
+            <div class="tbl free t-T4">T4<small>libero</small></div>
+            <div class="tbl free t-T5">T5<small>libero</small></div>
+            <!-- piccoli badge "in coppia" -->
+            <div class="tbl-pair-badge" style="left:68px;top:28px;"><i class="bi bi-link-45deg"></i> con T3</div>
+            <div class="tbl-pair-badge" style="left:268px;top:28px;"><i class="bi bi-link-45deg"></i> con T1</div>
+        </div>
+        <div class="pc">
+            <div class="pc-row pro"><i class="bi bi-check-circle-fill"></i> <span><strong>T2 perfettamente intoccato</strong>: nessuna linea, nessun badge, nessuna ambiguità</span></div>
+            <div class="pc-row pro"><i class="bi bi-check-circle-fill"></i> <span>Funziona anche se T1 e T3 sono in punti distanti della sala (non solo in fila)</span></div>
+            <div class="pc-row con"><i class="bi bi-exclamation-triangle-fill"></i> <span>Perdi l'effetto visivo "linea che unisce" — devi leggere "con T3" per capire la coppia</span></div>
+            <div class="pc-row con"><i class="bi bi-exclamation-triangle-fill"></i> <span>~45 min di lavoro (rimuove connector + aggiunge badge sui singoli)</span></div>
+        </div>
+        <div class="legenda">
+            <span class="legenda-item"><span class="legenda-sq busy"></span> Tavolo con alone = parte di una combinazione</span>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- OPTION C: connettore ad arco                  -->
+    <!-- ============================================== -->
+    <div class="scene">
+        <div class="scene-head">
+            <h3>Opzione C — Linea ad arco sopra la riga <span class="badge badge-alt">elegante</span></h3>
+            <div class="desc">La linea parte dal bordo superiore di T1, fa un arco verso l'alto e scende sul bordo superiore di T3. Il badge sta sul punto più alto.</div>
+        </div>
+        <div class="map">
+            <div class="tbl busy t-T1">T1<small>21:30</small></div>
+            <div class="tbl free t-T2">T2<small>libero</small></div>
+            <div class="tbl busy t-T3">T3<small>21:30</small></div>
+            <div class="tbl free t-T4">T4<small>libero</small></div>
+            <div class="tbl free t-T5">T5<small>libero</small></div>
+            <!-- arco SVG -->
+            <svg class="arc-svg" width="500" height="200" viewBox="0 0 500 200">
+                <!-- curva da centro top T1 (68,60) a centro top T3 (268,60), apice (168,15) -->
+                <path d="M 68,60 Q 168,-15 268,60" stroke="#0d6efd" stroke-width="6" fill="none" stroke-linecap="round" />
+            </svg>
+            <div class="combo-badge" style="left:168px;top:20px;transform:translate(-50%,-50%);"><i class="bi bi-link-45deg"></i> 6p</div>
+        </div>
+        <div class="pc">
+            <div class="pc-row pro"><i class="bi bi-check-circle-fill"></i> <span>Visivamente <strong>elegante</strong>: la linea unisce ma non taglia mai un altro tavolo</span></div>
+            <div class="pc-row pro"><i class="bi bi-check-circle-fill"></i> <span>Mantieni l'effetto "linea che connette" che oggi è chiaro a colpo d'occhio</span></div>
+            <div class="pc-row con"><i class="bi bi-exclamation-triangle-fill"></i> <span>Più complessa da rendere (SVG con path) e più sforzo su mobile</span></div>
+            <div class="pc-row con"><i class="bi bi-exclamation-triangle-fill"></i> <span>Con molte combinazioni nella stessa riga gli archi si incrociano (caos)</span></div>
+            <div class="pc-row con"><i class="bi bi-exclamation-triangle-fill"></i> <span>~1h di lavoro</span></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ============================================ -->
+<!-- Riepilogo decisionale                       -->
+<!-- ============================================ -->
+<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-top:24px;">
+    <h3 style="font-size:1rem;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;"><i class="bi bi-lightbulb-fill" style="color:var(--brand);"></i> Riepilogo decisionale</h3>
+
+    <table style="width:100%;font-size:.82rem;border-collapse:collapse;">
+        <thead>
+            <tr style="border-bottom:1px solid var(--border);">
+                <th style="text-align:left;padding:8px 12px;font-weight:700;color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.4px;">Opzione</th>
+                <th style="text-align:center;padding:8px 12px;font-weight:700;color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.4px;">Risolve T2 nascosto?</th>
+                <th style="text-align:center;padding:8px 12px;font-weight:700;color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.4px;">Linea taglia T2?</th>
+                <th style="text-align:center;padding:8px 12px;font-weight:700;color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.4px;">Sforzo</th>
+                <th style="text-align:center;padding:8px 12px;font-weight:700;color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.4px;">Rischio</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom:1px solid #f5f6f8;">
+                <td style="padding:10px 12px;"><strong>A</strong> — Badge offset sopra</td>
+                <td style="text-align:center;padding:10px 12px;color:var(--brand);">✓ Sì</td>
+                <td style="text-align:center;padding:10px 12px;color:var(--warn);">⚠ Sì ancora</td>
+                <td style="text-align:center;padding:10px 12px;">20 min</td>
+                <td style="text-align:center;padding:10px 12px;color:var(--brand);">Zero</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f5f6f8;background:#fafbfc;">
+                <td style="padding:10px 12px;"><strong>B</strong> — Niente linea, alone sui tavoli</td>
+                <td style="text-align:center;padding:10px 12px;color:var(--brand);">✓ Sì</td>
+                <td style="text-align:center;padding:10px 12px;color:var(--brand);">✓ No</td>
+                <td style="text-align:center;padding:10px 12px;">45 min</td>
+                <td style="text-align:center;padding:10px 12px;color:var(--brand);">Basso</td>
+            </tr>
+            <tr>
+                <td style="padding:10px 12px;"><strong>C</strong> — Linea ad arco</td>
+                <td style="text-align:center;padding:10px 12px;color:var(--brand);">✓ Sì</td>
+                <td style="text-align:center;padding:10px 12px;color:var(--brand);">✓ No</td>
+                <td style="text-align:center;padding:10px 12px;">1h</td>
+                <td style="text-align:center;padding:10px 12px;color:var(--warn);">Medio (mobile/incroci)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p style="font-size:.82rem;line-height:1.55;margin-top:14px;color:var(--text);">
+        <strong>Raccomandazione senior:</strong> se vuoi <em>chiudere il problema subito</em> e a costo bassissimo, vai sulla <strong>A</strong>. Se preferisci <em>chiudere il problema una volta per tutte</em> a costo medio, la <strong>B</strong> è la scelta definitiva (e l'unica che funziona anche con tavoli combinati distanti, es. T1 ↔ T7 dall'altra parte della sala). La <strong>C</strong> è bella ma con casi reali a 3+ combinazioni in una sala diventa visivamente caotica.
+    </p>
+</div>
+
+</body>
+</html>
