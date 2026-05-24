@@ -207,7 +207,14 @@ window.EvuleryCombineTables = (function () {
         document.body.style.overflow = '';
         if (restorePrevious && current.form) {
             var sel = current.form.querySelector('select[name="table_option"]');
-            if (sel) sel.value = current.previousVal;
+            if (sel) {
+                sel.value = current.previousVal;
+                // Dispatch 'change' (bubbles) per ri-sincronizzare il dropdown custom
+                // (select-tavolo-enhance.php). Non innesca riapertura: il listener
+                // multi-select controlla `sel.value === '__multi__'` e qui il valore
+                // ripristinato è quello PRECEDENTE (mai __multi__).
+                sel.dispatchEvent(new Event('change', { bubbles: true }));
+            }
         }
     }
 

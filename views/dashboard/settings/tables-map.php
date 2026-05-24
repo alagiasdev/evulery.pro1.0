@@ -472,6 +472,9 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
             $mmTables = $tables;
             include __DIR__ . '/../../partials/tables-multiselect-modal.php';
         }
+        // Enhancement dropdown custom (sostituisce visivamente il <select> nativo).
+        // Da includere DOPO che tutti i select sono nel DOM. Idempotente.
+        include __DIR__ . '/../../partials/select-tavolo-enhance.php';
     ?>
     <?php if (!empty($tables) && count($tables) > 1): ?>
     <script nonce="<?= csp_nonce() ?>">

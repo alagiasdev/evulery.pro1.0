@@ -195,6 +195,9 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
                 $mmTables = $allTables;
                 include __DIR__ . '/../../partials/tables-multiselect-modal.php';
             }
+            // Enhancement dropdown custom (idempotente): sostituisce visivamente
+            // il <select> nativo. Va incluso DOPO che il select è nel DOM.
+            include __DIR__ . '/../../partials/select-tavolo-enhance.php';
         ?>
         <?php if (!empty($allTables) && count($allTables) > 1): ?>
         <script nonce="<?= csp_nonce() ?>">
