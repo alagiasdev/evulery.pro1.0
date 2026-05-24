@@ -168,6 +168,11 @@
 
         function refreshTrigger() {
             var curOpt = select.options[select.selectedIndex];
+            // Non aggiornare il trigger se il valore corrente e un_azione speciale
+            // (es. __multi__): l_apertura del modale e gestita da listener esterni
+            // e il valore tornera subito a una scelta valida. Evita il "flash"
+            // del trigger che mostra "Combina tavoli..." per pochi ms.
+            if (curOpt && curOpt.value === '__multi__') return;
             var p = curOpt ? parseOption(curOpt) : { type: 'none', label: 'Nessun tavolo', icon: 'none' };
             var icoCls = 'tse-trigger-ico';
             if (p.type === 'combo')  icoCls += ' tse-ico-combo';
