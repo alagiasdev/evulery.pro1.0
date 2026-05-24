@@ -66,13 +66,22 @@
     'use strict';
 
     var ICONS = {
-        none:   '<i class="bi bi-dash-circle"></i>',
-        single: '<i class="bi bi-square"></i>',
-        combo:  '<i class="bi bi-grid-3x3-gap-fill"></i>',
-        action: '<i class="bi bi-plus-lg"></i>',
-        check:  '<i class="bi bi-check-lg"></i>',
-        chevron:'<i class="bi bi-chevron-down"></i>'
+        none:         '<i class="bi bi-dash-circle"></i>',
+        single:       '<i class="bi bi-square"></i>',
+        singleFilled: '<i class="bi bi-square-fill"></i>',
+        combo:        '<i class="bi bi-grid-3x3-gap-fill"></i>',
+        action:       '<i class="bi bi-plus-lg"></i>',
+        check:        '<i class="bi bi-check-lg"></i>',
+        chevron:      '<i class="bi bi-chevron-down"></i>'
     };
+
+    // Restituisce la chiave ICONS giusta tenendo conto dello stato selected.
+    // Il quadrato dei tavoli singoli diventa pieno quando e selezionato:
+    // segnale visivo che la scelta e "fatta" e non una checkbox vuota.
+    function iconKeyFor(parsed, isSelected) {
+        if (parsed.type === 'single' && isSelected) return 'singleFilled';
+        return parsed.icon;
+    }
 
     // Parsing di una <option> nativa → tipo + status + label puliti
     function parseOption(opt) {
@@ -163,8 +172,11 @@
             var icoCls = 'tse-trigger-ico';
             if (p.type === 'combo')  icoCls += ' tse-ico-combo';
             else if (p.type === 'none' || p.type === 'separator') icoCls += ' tse-ico-none';
+            // Trigger = stato CORRENTE: per i tavoli singoli mostra l_icona piena
+            // (la scelta e fatta). Combo gia ha un icona piena di suo.
+            var iconKey = iconKeyFor(p, p.type === 'single');
             trigger.innerHTML =
-                '<span class="' + icoCls + '">' + (ICONS[p.icon || (p.type === 'combo' ? 'combo' : (p.type === 'none' ? 'none' : 'single'))]) + '</span>' +
+                '<span class="' + icoCls + '">' + (ICONS[iconKey] || ICONS.single) + '</span>' +
                 '<span class="tse-trigger-label">' + escapeHtml(p.label || 'Nessun tavolo') + (p.current ? ' <span style="font-weight:400;color:#6c757d;font-size:.78rem;">(attuale)</span>' : '') + '</span>' +
                 '<span class="tse-trigger-chevron">' + ICONS.chevron + '</span>';
         }
@@ -217,14 +229,18 @@
                 row.setAttribute('role', 'option');
                 row.setAttribute('data-idx', String(it.index));
 
+                var isSelected = it.index === select.selectedIndex;
                 var icoCls = 'tse-item-ico tse-ico-' + (it.parsed.icon || (it.parsed.type === 'combo' ? 'combo' : (it.parsed.type === 'action' ? 'action' : (it.parsed.type === 'none' ? 'none' : 'single'))));
+                // Voce selezionata = quadrato pieno (signifier "scelta fatta",
+                // non checkbox vuota). Le altre voci restano outline.
+                var iconKey = iconKeyFor(it.parsed, isSelected);
                 var subParts = [];
                 if (it.parsed.current) subParts.push('attuale');
                 if (it.parsed.busy && it.parsed.busyDetail) subParts.push(it.parsed.busyDetail);
                 var subHtml = subParts.length ? '<div class="tse-item-sub">' + escapeHtml(subParts.join(' · ')) + '</div>' : '';
 
                 row.innerHTML =
-                    '<span class="' + icoCls + '">' + ICONS[it.parsed.icon] + '</span>' +
+                    '<span class="' + icoCls + '">' + (ICONS[iconKey] || ICONS[it.parsed.icon]) + '</span>' +
                     '<div class="tse-item-body"><div class="tse-item-main">' + escapeHtml(it.parsed.label) + '</div>' + subHtml + '</div>' +
                     (it.parsed.busy ? '<span class="tse-tag-busy">occupato</span>' : '') +
                     (it.index === select.selectedIndex && !it.parsed.busy ? '<span class="tse-check">' + ICONS.check + '</span>' : '');
