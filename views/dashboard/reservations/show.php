@@ -152,10 +152,18 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
         <?php // Prenotazione non ancora servita: il tavolo si può cambiare ?>
         <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/table") ?>" class="res-table-form" id="res-table-form" data-party-size="<?= (int)$reservation['party_size'] ?>" data-prev-value="<?= e($tableCurrentValue) ?>" data-busy-ids="<?= e(implode(',', $busyTableIds ?? [])) ?>">
             <?= csrf_field() ?>
+            <?php $busySet = array_flip($busyTableIds ?? []); ?>
             <select name="table_option" class="form-select form-select-sm">
                 <option value="">&mdash; Nessun tavolo &mdash;</option>
                 <?php foreach ($tableOptions as $o): ?>
-                <option value="<?= e($o['value']) ?>" <?= $o['value'] === $tableCurrentValue ? 'selected' : '' ?>><?= e($o['label']) ?></option>
+                <?php
+                    $optBusy = false;
+                    foreach (explode(',', (string)$o['value']) as $oid) {
+                        if (isset($busySet[(int)$oid])) { $optBusy = true; break; }
+                    }
+                    $optLabel = $o['label'] . ($optBusy ? ' · occupato' : '');
+                ?>
+                <option value="<?= e($o['value']) ?>" <?= $o['value'] === $tableCurrentValue ? 'selected' : '' ?>><?= e($optLabel) ?></option>
                 <?php endforeach; ?>
                 <?php if (!empty($allTables) && count($allTables) > 1): ?>
                 <option value="" disabled>──────────</option>

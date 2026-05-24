@@ -154,9 +154,12 @@ class ReservationsController
     private function busyTablesForReservation(array $reservation, int $tenantId): array
     {
         $tenant = (new Tenant())->findById($tenantId);
-        $tableDuration = max(15, (int)($tenant['table_duration'] ?? 90));
+        // Finestra = durata pasto + buffer pulizia. Il buffer e' importante:
+        // un tavolo finito alle 21:30 con buffer 15 e' davvero libero solo a 21:45.
+        $tableWindow = max(15, (int)($tenant['table_duration'] ?? 90))
+                     + max(0, (int)($tenant['table_turnover_buffer'] ?? 15));
         $rStart = strtotime($reservation['reservation_time']);
-        $rEnd   = $rStart + $tableDuration * 60;
+        $rEnd   = $rStart + $tableWindow * 60;
 
         $others = (new Reservation())->findByTenantAndDate($tenantId, $reservation['reservation_date']);
         $otherIds = [];
@@ -164,7 +167,7 @@ class ReservationsController
             if ((int)$o['id'] === (int)$reservation['id']) continue;
             if (!in_array((string)$o['status'], ['confirmed', 'pending', 'arrived'], true)) continue;
             $oStart = strtotime($o['reservation_time']);
-            $oEnd   = $oStart + $tableDuration * 60;
+            $oEnd   = $oStart + $tableWindow * 60;
             if (max($rStart, $oStart) < min($rEnd, $oEnd)) {
                 $otherIds[] = (int)$o['id'];
             }

@@ -131,22 +131,26 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
 
     // Per ogni prenotazione del giorno, calcolo i tavoli "busy" — cioè quelli
     // occupati da ALTRE prenotazioni che si sovrappongono temporalmente.
-    // Serve al modale "Combina tavoli ad-hoc" per disabilitare i tavoli che non
-    // sono disponibili per quel turno. Tempo di occupazione = table_duration del tenant.
-    $tableDuration = max(15, (int)($tenant['table_duration'] ?? 90));
+    // Finestra di occupazione = table_duration + table_turnover_buffer (così
+    // i 15 min di pulizia/cambio post-pasto sono considerati come "ancora busy").
+    $tableWindow = max(15, (int)($tenant['table_duration'] ?? 90))
+                 + max(0, (int)($tenant['table_turnover_buffer'] ?? 15));
     $busyByReservation = [];
     foreach ($dayReservations as $r) {
         $rid = (int)$r['id'];
         $rStart = strtotime($r['reservation_time']);
-        $rEnd   = $rStart + $tableDuration * 60;
+        $rEnd   = $rStart + $tableWindow * 60;
         $busy = [];
         foreach ($dayReservations as $other) {
             if ((int)$other['id'] === $rid) continue;
             if (!in_array((string)$other['status'], ['confirmed', 'pending', 'arrived'], true)) continue;
             $oStart = strtotime($other['reservation_time']);
-            $oEnd   = $oStart + $tableDuration * 60;
+            $oEnd   = $oStart + $tableWindow * 60;
+            // Sovrapposizione standard a intervalli aperti: la prenotazione che
+            // inizia esattamente quando l'altra finisce (back-to-back) NON e' in
+            // conflitto. Il ristoratore controlla questa tolleranza via
+            // tenant.table_turnover_buffer (settabile da Impostazioni > Tavoli).
             if (max($rStart, $oStart) < min($rEnd, $oEnd)) {
-                // sovrapposizione temporale: i tavoli di "other" sono busy per "r"
                 foreach ($assignments[(int)$other['id']] ?? [] as $t) {
                     $busy[(int)$t['id']] = true;
                 }
@@ -396,6 +400,8 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                     $curAdHocLabel = $curIsAdHoc
                         ? implode(' + ', array_column($assignments[$rid] ?? [], 'name'))
                         : '';
+                    // Set busy per questo specifico turno (per marcare le opzioni occupate)
+                    $busySet = array_flip($busyByReservation[$rid] ?? []);
                 ?>
                 <form method="POST" action="<?= url('dashboard/reservations/' . $rid . '/table') ?>" class="tm-pop-table-form" data-party-size="<?= (int)$r['party_size'] ?>" data-prev-value="<?= e($curOpt) ?>" data-res-label="<?= e(mb_strtoupper(trim((string)$r['last_name']))) ?>" data-busy-ids="<?= e(implode(',', $busyByReservation[$rid] ?? [])) ?>">
                     <?= csrf_field() ?>
@@ -407,7 +413,15 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                         <option value="<?= e($curOpt) ?>" selected><?= e($curAdHocLabel) ?> (attuale)</option>
                         <?php endif; ?>
                         <?php foreach ($reassignOptions as $o): ?>
-                        <option value="<?= e($o['value']) ?>" <?= $o['value'] === $curOpt ? 'selected' : '' ?>><?= e($o['label']) ?></option>
+                        <?php
+                            // Opzione "busy" se almeno uno dei tavoli che la compongono e' occupato in questo turno
+                            $optBusy = false;
+                            foreach (explode(',', (string)$o['value']) as $oid) {
+                                if (isset($busySet[(int)$oid])) { $optBusy = true; break; }
+                            }
+                            $optLabel = $o['label'] . ($optBusy ? ' · occupato' : '');
+                        ?>
+                        <option value="<?= e($o['value']) ?>" <?= $o['value'] === $curOpt ? 'selected' : '' ?>><?= e($optLabel) ?></option>
                         <?php endforeach; ?>
                         <?php if (!empty($tables) && count($tables) > 1): ?>
                         <option value="" disabled>──────────</option>
