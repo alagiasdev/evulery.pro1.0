@@ -152,16 +152,33 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
         <?php // Prenotazione non ancora servita: il tavolo si può cambiare ?>
         <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/table") ?>" class="res-table-form" id="res-table-form" data-party-size="<?= (int)$reservation['party_size'] ?>" data-prev-value="<?= e($tableCurrentValue) ?>" data-busy-ids="<?= e(implode(',', $busyTableIds ?? [])) ?>">
             <?= csrf_field() ?>
-            <?php $busySet = array_flip($busyTableIds ?? []); ?>
+            <?php
+                $busySet = array_flip($busyTableIds ?? []);
+                $tableNamesById = [];
+                foreach (($allTables ?? []) as $tt) $tableNamesById[(int)$tt['id']] = $tt['name'];
+            ?>
             <select name="table_option" class="form-select form-select-sm">
                 <option value="">&mdash; Nessun tavolo &mdash;</option>
                 <?php foreach ($tableOptions as $o): ?>
                 <?php
-                    $optBusy = false;
-                    foreach (explode(',', (string)$o['value']) as $oid) {
-                        if (isset($busySet[(int)$oid])) { $optBusy = true; break; }
+                    // Suffisso "· occupato" per singoli e combo. Per combo con SOLO alcuni
+                    // tavoli busy, specifico quali (es. "· Tav. 4 occupato") cosi l_operatore
+                    // capisce a colpo d_occhio se puo' liberare il combo cambiando solo una parte.
+                    $valueIds = array_filter(array_map('intval', explode(',', (string)$o['value'])));
+                    $totalParts = count($valueIds);
+                    $busyNames = [];
+                    foreach ($valueIds as $oid) {
+                        if (isset($busySet[$oid])) $busyNames[] = $tableNamesById[$oid] ?? "T{$oid}";
                     }
-                    $optLabel = $o['label'] . ($optBusy ? ' · occupato' : '');
+                    $busyCount = count($busyNames);
+                    $optLabel = $o['label'];
+                    if ($busyCount > 0) {
+                        if ($busyCount === $totalParts) {
+                            $optLabel .= ' · occupato';
+                        } else {
+                            $optLabel .= ' · ' . implode(', ', $busyNames) . ' occupat' . ($busyCount > 1 ? 'i' : 'o');
+                        }
+                    }
                 ?>
                 <option value="<?= e($o['value']) ?>" <?= $o['value'] === $tableCurrentValue ? 'selected' : '' ?>><?= e($optLabel) ?></option>
                 <?php endforeach; ?>

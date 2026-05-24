@@ -402,6 +402,12 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                         : '';
                     // Set busy per questo specifico turno (per marcare le opzioni occupate)
                     $busySet = array_flip($busyByReservation[$rid] ?? []);
+                    // Lookup id → nome tavolo per il suffisso "Tav. X occupato"
+                    static $tableNamesById = null;
+                    if ($tableNamesById === null) {
+                        $tableNamesById = [];
+                        foreach ($tables as $tt) $tableNamesById[(int)$tt['id']] = $tt['name'];
+                    }
                 ?>
                 <form method="POST" action="<?= url('dashboard/reservations/' . $rid . '/table') ?>" class="tm-pop-table-form" data-party-size="<?= (int)$r['party_size'] ?>" data-prev-value="<?= e($curOpt) ?>" data-res-label="<?= e(mb_strtoupper(trim((string)$r['last_name']))) ?>" data-busy-ids="<?= e(implode(',', $busyByReservation[$rid] ?? [])) ?>">
                     <?= csrf_field() ?>
@@ -414,12 +420,25 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                         <?php endif; ?>
                         <?php foreach ($reassignOptions as $o): ?>
                         <?php
-                            // Opzione "busy" se almeno uno dei tavoli che la compongono e' occupato in questo turno
-                            $optBusy = false;
-                            foreach (explode(',', (string)$o['value']) as $oid) {
-                                if (isset($busySet[(int)$oid])) { $optBusy = true; break; }
+                            // Per ogni opzione (singolo tavolo o combinazione) raccolgo i nomi
+                            // dei tavoli che la compongono e che sono occupati in questo turno.
+                            $valueIds = array_filter(array_map('intval', explode(',', (string)$o['value'])));
+                            $totalParts = count($valueIds);
+                            $busyNames = [];
+                            foreach ($valueIds as $oid) {
+                                if (isset($busySet[$oid])) $busyNames[] = $tableNamesById[$oid] ?? "T{$oid}";
                             }
-                            $optLabel = $o['label'] . ($optBusy ? ' · occupato' : '');
+                            $busyCount = count($busyNames);
+                            $optLabel = $o['label'];
+                            if ($busyCount > 0) {
+                                if ($busyCount === $totalParts) {
+                                    // Singolo busy, oppure tutti i tavoli del combo busy: suffisso generico
+                                    $optLabel .= ' · occupato';
+                                } else {
+                                    // Combo con SOLO ALCUNI tavoli busy: specifica quali (es. "Tav. 4 occupato")
+                                    $optLabel .= ' · ' . implode(', ', $busyNames) . ' occupat' . ($busyCount > 1 ? 'i' : 'o');
+                                }
+                            }
                         ?>
                         <option value="<?= e($o['value']) ?>" <?= $o['value'] === $curOpt ? 'selected' : '' ?>><?= e($optLabel) ?></option>
                         <?php endforeach; ?>
