@@ -253,11 +253,13 @@
         function positionMenu() {
             var r = trigger.getBoundingClientRect();
             var gap = 4;
-            var minMenuH = 200;
             var maxMenuH = 380;
             var spaceBelow = window.innerHeight - r.bottom - gap - 8;
             var spaceAbove = r.top - gap - 8;
-            var openUp = spaceBelow < minMenuH && spaceAbove > spaceBelow;
+            // Dinamica intelligente: apre nella direzione con piu spazio.
+            // Cosi nei popup con trigger in basso (mappa sala) si apre sopra,
+            // mentre nei trigger in alto (es. scheda prenotazione header) sotto.
+            var openUp = spaceAbove > spaceBelow;
 
             menu.style.left = Math.max(8, r.left) + 'px';
             // Larghezza: almeno quella del trigger, max 360px (per non diventare troppo larga
