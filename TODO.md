@@ -24,6 +24,14 @@ Decisione: NON costruirli in cieco, aspettare il segnale reale.
   vuoto, il bottone "Prenota ora" viene saltato senza avviso. Warning in `store()`. ~20 min.
 
 ### Quick win riempitivi (1-3h l'uno)
+- [ ] **Tavolo in form nuova prenotazione manuale** — oggi nella form di creazione
+  (`/dashboard/reservations/create`) non si sceglie il tavolo: l'auto-assegnazione lo
+  fa al salvataggio, e l'override avviene poi da scheda/mappa. Idea: step opzionale
+  "TAVOLO" tra Sorgente e Note con dropdown AJAX (riusa partial `select-tavolo-enhance.php`)
+  che lista tavoli disponibili per data+ora+coperti correnti. Stima ~3h (endpoint
+  `available-tables?date&time&party` + JS dinamico). **Trigger**: 1+ ristoratore chiede
+  "come blocco il tavolo subito al telefono?" — finora l'auto-assegnazione copre il caso
+  normale, valore aggiunto marginale. Annotato 2026-05-24.
 - [ ] **Banner guida iOS push** — pagina Notifiche: istruzioni "Aggiungi a schermata Home"
   (le push su iPhone funzionano solo da PWA installata).
 - [ ] **Email re-iscrizione cliente** — quando il ristoratore re-iscrive un cliente
