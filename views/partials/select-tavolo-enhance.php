@@ -32,7 +32,10 @@
     .tse-trigger-chevron { color: #6c757d; font-size: .85rem; transition: transform .15s; flex-shrink: 0; }
     .tse-wrap.open .tse-trigger-chevron { transform: rotate(180deg); }
 
-    .tse-menu { position: absolute; left: 0; right: 0; top: calc(100% + 4px); background: #fff; border: 1px solid #e1e5ea; border-radius: 10px; box-shadow: 0 10px 28px rgba(0,0,0,.12); z-index: 1060; max-height: 380px; overflow-y: auto; padding: 4px; display: none; }
+    /* position: fixed (impostata via JS al momento dell_apertura) per evitare
+       di essere clippata da contenitori con overflow:hidden (es. .tm-pop dei
+       popup mappa sala). top/left/width/max-height vengono calcolati in JS. */
+    .tse-menu { position: fixed; background: #fff; border: 1px solid #e1e5ea; border-radius: 10px; box-shadow: 0 10px 28px rgba(0,0,0,.18); z-index: 2000; overflow-y: auto; padding: 4px; display: none; }
     .tse-wrap.open .tse-menu { display: block; }
     .tse-section-head { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #8893a1; padding: 8px 10px 4px; }
     .tse-section-head:first-child { padding-top: 4px; }
@@ -245,15 +248,59 @@
             return s;
         }
 
+        var winHandlers = null;
+
+        function positionMenu() {
+            var r = trigger.getBoundingClientRect();
+            var gap = 4;
+            var minMenuH = 200;
+            var maxMenuH = 380;
+            var spaceBelow = window.innerHeight - r.bottom - gap - 8;
+            var spaceAbove = r.top - gap - 8;
+            var openUp = spaceBelow < minMenuH && spaceAbove > spaceBelow;
+
+            menu.style.left = Math.max(8, r.left) + 'px';
+            // Larghezza: almeno quella del trigger, max 360px (per non diventare troppo larga
+            // se il trigger viene messo in popup molto stretti)
+            var w = Math.min(360, Math.max(r.width, 260));
+            menu.style.width = w + 'px';
+            // Se la width supererebbe il viewport, riduco
+            if (parseFloat(menu.style.left) + w > window.innerWidth - 8) {
+                menu.style.left = Math.max(8, window.innerWidth - w - 8) + 'px';
+            }
+
+            if (openUp) {
+                menu.style.top = Math.max(8, r.top - Math.min(maxMenuH, spaceAbove) - gap) + 'px';
+                menu.style.maxHeight = Math.min(maxMenuH, spaceAbove) + 'px';
+            } else {
+                menu.style.top = (r.bottom + gap) + 'px';
+                menu.style.maxHeight = Math.min(maxMenuH, spaceBelow) + 'px';
+            }
+        }
+
         function open() {
             buildMenu();
             wrap.classList.add('open');
             trigger.setAttribute('aria-expanded', 'true');
+            positionMenu();
+            // Riposiziona su scroll/resize. Su scroll del popup (capture:true serve
+            // a intercettare scroll su ancestor con overflow).
+            winHandlers = {
+                scroll: function () { positionMenu(); },
+                resize: function () { positionMenu(); }
+            };
+            window.addEventListener('scroll', winHandlers.scroll, true);
+            window.addEventListener('resize', winHandlers.resize);
         }
 
         function close() {
             wrap.classList.remove('open');
             trigger.setAttribute('aria-expanded', 'false');
+            if (winHandlers) {
+                window.removeEventListener('scroll', winHandlers.scroll, true);
+                window.removeEventListener('resize', winHandlers.resize);
+                winHandlers = null;
+            }
         }
 
         function toggle() {
