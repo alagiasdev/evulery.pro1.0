@@ -6,10 +6,7 @@ Task pronti, da fare quando emerge il trigger o c'è una finestra di lavoro.
 Decisione: NON costruirli in cieco, aspettare il segnale reale.
 
 ### Pianificato a data
-- [ ] **Auto-migration script** `scripts/migrate.php` — ~17-18 maggio 2026, PRIMA della
-  migrazione VPS. Tabella `migrations` che traccia i file `.sql` applicati, idempotente.
-  Deploy diventa: `git pull` + `php scripts/migrate.php`. Serve per popolare il DB del
-  server nuovo con le 53 migration in sequenza.
+_(nulla al momento — `scripts/migrate.php` completato 2026-05-30)_
 
 ### Edge case — in attesa di segnalazione cliente reale
 - [ ] **Asporto → "Ritiro in sede"** — il termine confonde (1 segnalazione 28/04).
