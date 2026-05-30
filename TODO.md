@@ -37,6 +37,11 @@ _(nulla al momento — `scripts/migrate.php` completato 2026-05-30)_
   `hub`, `promo`, `order`, `review`, `booking`, ecc. (igiene sicurezza URL).
 - [ ] **Routing fix `/{slug}/booking/success`** — in `config/routes.php` le 2 rotte
   booking stanno dopo la catch-all `/{slug}`: ordine da correggere.
+- [ ] **Colori tavoli mappa sala** (Gestione Tavoli — UX) — distinguere visivamente
+  3 stati: **libero** (verde), **prenotato** (giallo/ambra, prenotazione futura del giorno),
+  **occupato** (rosso/viola, status `arrived` = cliente seduto ORA). Oggi i tavoli sono
+  colorati ma la differenza prenotato-vs-occupato non si legge. Toccare `views/dashboard/settings/tables-map.php`
+  + CSS `.tm-*` + logica `floorState` in `TableAssigner`. Stima ~2-3h. Annotato 2026-05-30.
 
 ### Progetti grossi — deferiti coi loro trigger
 - [ ] **Analytics module** — dopo 20+ clienti (servono dati aggregati reali)
@@ -55,6 +60,38 @@ _(nulla al momento — `scripts/migrate.php` completato 2026-05-30)_
   (2) sezione `'dominio'` in `views/dashboard/help/_sections.php`. **Ma prima** sistemare
   il bug `cname_target` hardcoded in `DomainController.php` + test end-to-end con
   `dominio.evulery.it` (piano completo: `docs/` o memory `project_custom_domain.md`).
+- [ ] **Notifiche audio diversificate** (UX feedback ristoratore) — oggi le notifiche
+  sono visuali (campanella dashboard + push browser). Aggiungere **suono audio breve** per
+  ogni evento, diversificato per tipologia così l'orecchio del ristoratore riconosce
+  l'evento senza guardare lo schermo:
+  - Nuova prenotazione widget
+  - Prenotazione cancellata
+  - Caparra ricevuta / rimborsata
+  - Ordine online ricevuto / cancellato
+  - Feedback recensione ricevuto
+  - Notifica reseller (lead nuovo / commissione)
+
+  Implementazione: cartella `public/assets/sounds/`, suonarli via HTML5 Audio API in
+  `notifications.js`. Settings ristoratore per abilitare/disabilitare + scelta suono per
+  tipo (con preview). Volume globale. Stima ~5-6h (file audio + JS + UI settings).
+  **Trigger**: nessuno specifico, è un quick-win di UX importante per uso quotidiano.
+  Annotato 2026-05-30.
+- [ ] **Integrazione stampanti termiche** (Online Ordering — completamento operativo) —
+  oggi gli ordini online arrivano nella dashboard ma il ristoratore deve gestirli a video.
+  Vogliamo che si **stampino automaticamente** una comanda su stampante termica della cucina
+  (ESC/POS standard de facto). Tre approcci:
+  1. **PrintNode** (consigliato MVP): servizio bridge cloud-to-printer. Agent installato
+     sul PC cliente, API REST cloud-side. ~€4/mese per stampante a carico ristoratore.
+     Dev stimato: 10-15h
+  2. **CloudPRNT** (Star / Epson Connect): le stampanti recenti fanno polling al nostro
+     server, noi rispondiamo con ESC/POS. Niente agent ma serve hardware compatibile.
+     Dev stimato: 15-20h
+  3. **Agent locale custom**: scrivere un daemon Python/Node sul PC cucina che fa polling.
+     Massima flessibilità ma più manutenzione. Dev stimato: 30+h
+
+  **Trigger**: 1+ ristoratore Enterprise con online ordering attivo lo chiede esplicitamente.
+  Modello commerciale: feature solo Enterprise, eventualmente add-on hardware-as-a-service
+  con PrintNode incluso. Annotato 2026-05-30.
 
 ### Priorità reale a breve termine (NON in panchina)
 - [ ] **Migrazione VPS** — nuovo server 8core/32GB, attesa conferma Serverplan (PHP 8.2,
