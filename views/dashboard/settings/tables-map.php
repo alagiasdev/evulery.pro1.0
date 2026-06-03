@@ -252,8 +252,9 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         </div>
         <?php endif; ?>
         <span class="tm-op-legend">
-            <span><span class="tm-dot" style="background:#198754;"></span> Libero</span>
-            <span><span class="tm-dot" style="background:#0d6efd;"></span> Occupato</span>
+            <span><span class="tm-dot" style="background:#E6F4ED;box-shadow:inset 0 0 0 1.5px #b3dec7;"></span> Libero</span>
+            <span><span class="tm-dot" style="background:#00844A;"></span> Confermato</span>
+            <span><span class="tm-dot" style="background:#E0F2FE;box-shadow:inset 0 0 0 2px #0EA5E9;"></span> Arrivato</span>
         </span>
     </div>
 
@@ -325,15 +326,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                 </div>
                 <?php endforeach; ?>
             </div>
-            <div class="tm-map-hint tm-map-legend">
-                <span class="tm-leg-item"><span class="tm-leg-swatch tm-leg-free"></span> Libero</span>
-                <span class="tm-leg-item"><span class="tm-leg-swatch tm-leg-confirmed"></span> Confermato</span>
-                <span class="tm-leg-item"><span class="tm-leg-swatch tm-leg-arrived"></span> Arrivato (al tavolo)</span>
-                <span class="tm-leg-sep">·</span>
-                <span class="tm-leg-time">alle <?= e($opTime) ?></span>
-                <span class="tm-leg-sep">·</span>
-                <span>Clicca un tavolo per i dettagli</span>
-            </div>
+            <div class="tm-map-hint"><i class="bi bi-info-circle me-1"></i> Stato tavoli alle <?= e($opTime) ?>. Clicca un tavolo o una prenotazione per i dettagli.</div>
         </div>
     </div>
 
