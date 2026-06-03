@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Wireframe — Colori tavoli mappa sala (3 opzioni)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #00844A;
+            --brand-light: #E6F4ED;
+            --brand-dark: #013A1F;
+            --muted: #6c757d;
+            --border: #e9ecef;
+            --bg-page: #f5f7fa;
+            --text: #1a1d23;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-page);
+            color: var(--text);
+            margin: 0;
+            padding: 32px;
+            line-height: 1.5;
+        }
+        h1 { font-size: 1.5rem; font-weight: 800; margin: 0 0 6px; }
+        .subtitle { color: var(--muted); font-size: .9rem; margin: 0 0 32px; max-width: 700px; }
+
+        /* Section per ogni opzione */
+        .option {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.04);
+            border: 1px solid var(--border);
+        }
+        .opt-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+        .opt-badge {
+            background: var(--brand);
+            color: white;
+            font-weight: 800;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .opt-title { font-size: 1.2rem; font-weight: 700; }
+        .opt-tagline { font-size: .82rem; color: var(--muted); margin: 0 0 18px; }
+
+        /* Legenda */
+        .legend {
+            display: flex;
+            gap: 18px;
+            padding: 12px 16px;
+            background: #fafbfc;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .8rem;
+        }
+        .legend-swatch {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 1.5px solid var(--border);
+        }
+
+        /* Mappa sala simulata */
+        .floor {
+            background: #fafbfc;
+            background-image:
+                linear-gradient(rgba(0,0,0,.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            position: relative;
+            height: 320px;
+            padding: 20px;
+        }
+        .area-label {
+            position: absolute;
+            top: 12px;
+            left: 16px;
+            font-size: .65rem;
+            font-weight: 800;
+            color: #8893a1;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+        .table {
+            position: absolute;
+            min-width: 78px;
+            min-height: 78px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            font-weight: 700;
+            font-size: .85rem;
+            cursor: pointer;
+            transition: transform .15s, box-shadow .15s;
+            border: 2px solid transparent;
+        }
+        .table:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,.12);
+        }
+        .table .tname { font-size: .85rem; font-weight: 800; }
+        .table .tcap { font-size: .65rem; opacity: .8; margin-top: 2px; }
+        .table .tinfo {
+            font-size: .58rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+            margin-top: 4px;
+            opacity: .85;
+        }
+        .table.circle {
+            border-radius: 50%;
+            min-width: 84px;
+            min-height: 84px;
+        }
+
+        /* ========================================
+           OPZIONE D — SCELTA FINALE STEFANO
+           Coerente con convenzione UI dashboard:
+           - "Conferma tavolo" (verde brand) → Confermato = verde brand
+           - "Segna Arrivato" (blu sky) → Arrivato = blu sky
+           - Libero = brand-light (neutrale brand)
+           ======================================== */
+        .opt-d .table-free {
+            background: #E6F4ED;
+            color: #014b29;
+            border-color: #b3dec7;
+        }
+        .opt-d .table-reserved {
+            background: #00844A;
+            color: white;
+            border-color: #006c3c;
+        }
+        .opt-d .table-busy {
+            background: #E0F2FE;
+            color: #075985;
+            border-color: #0EA5E9;
+        }
+
+        /* Style per il badge "scelta" */
+        .opt-chosen {
+            border: 2.5px solid var(--brand);
+            background: linear-gradient(180deg, #f0faf4 0%, white 60%);
+        }
+        .opt-chosen-badge {
+            display: inline-block;
+            background: var(--brand);
+            color: white;
+            font-size: .65rem;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-left: 8px;
+        }
+
+        /* ========================================
+           OPZIONE A — Verde graduato (brand)
+           ======================================== */
+        .opt-a .table-free {
+            background: #E6F4ED;
+            color: #014b29;
+            border-color: #b3dec7;
+        }
+        .opt-a .table-reserved {
+            background: #00844A;
+            color: white;
+            border-color: #006c3c;
+        }
+        .opt-a .table-busy {
+            background: #013A1F;
+            color: white;
+            border-color: #002914;
+        }
+
+        /* ========================================
+           OPZIONE B — Neutro + blu + verde
+           ======================================== */
+        .opt-b .table-free {
+            background: #F8F9FA;
+            color: #495057;
+            border-color: #dee2e6;
+        }
+        .opt-b .table-reserved {
+            background: #E0F2FE;
+            color: #075985;
+            border-color: #0EA5E9;
+        }
+        .opt-b .table-busy {
+            background: #00844A;
+            color: white;
+            border-color: #006c3c;
+        }
+
+        /* ========================================
+           OPZIONE C — TheFork-style (fill soft + bordi)
+           ======================================== */
+        .opt-c .table-free {
+            background: white;
+            color: var(--brand);
+            border-color: var(--brand);
+            border-width: 2.5px;
+        }
+        .opt-c .table-reserved {
+            background: #FFFBEB;
+            color: #92400E;
+            border-color: #F59E0B;
+            border-width: 2.5px;
+        }
+        .opt-c .table-busy {
+            background: #E6F4ED;
+            color: var(--brand-dark);
+            border-color: var(--brand-dark);
+            border-width: 3px;
+        }
+
+        /* Pro/Contro footer di ogni opzione */
+        .prosc {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+            padding-top: 18px;
+            border-top: 1px dashed var(--border);
+        }
+        .prosc h4 {
+            font-size: .78rem;
+            font-weight: 800;
+            margin: 0 0 8px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+        .prosc .pro h4 { color: var(--brand); }
+        .prosc .con h4 { color: #b3261e; }
+        .prosc ul {
+            margin: 0;
+            padding-left: 18px;
+            font-size: .82rem;
+            color: #495057;
+        }
+        .prosc li { margin-bottom: 4px; }
+
+        /* Comparativa finale */
+        .compare {
+            background: white;
+            border: 2px solid var(--brand);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-top: 28px;
+        }
+        .compare h2 {
+            font-size: 1.1rem;
+            margin: 0 0 14px;
+            color: var(--brand);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .compare table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .85rem;
+        }
+        .compare th, .compare td {
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .compare th {
+            font-size: .68rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            font-weight: 700;
+        }
+        .compare td:first-child { font-weight: 700; }
+        .compare .score {
+            font-weight: 800;
+            font-size: 1rem;
+        }
+        .compare .ok { color: var(--brand); }
+        .compare .ko { color: #b3261e; }
+        .compare .mid { color: #b58105; }
+
+        /* Note */
+        .note {
+            background: #fff8e0;
+            border: 1px solid #ffe082;
+            border-radius: 10px;
+            padding: 14px 18px;
+            font-size: .85rem;
+            color: #664d03;
+            margin-top: 28px;
+        }
+        .note strong { color: #4d3902; }
+    </style>
+</head>
+<body>
+
+<h1>🎨 Colori tavoli mappa sala — opzioni a confronto</h1>
+<p class="subtitle">Stato dei tavoli nella mappa sala "Operativa" (Settings → Tavoli → Mappa). Proposte di palette per distinguere a colpo d'occhio: <strong>libero</strong>, <strong>prenotato</strong> (cliente arriverà più tardi), <strong>occupato</strong> (cliente già seduto, status <code>arrived</code>).</p>
+
+
+<!-- ===== OPZIONE D — SCELTA FINALE (coerenza con pulsanti backend) ===== -->
+<div class="option opt-d opt-chosen">
+    <div class="opt-head">
+        <div class="opt-badge" style="background:linear-gradient(135deg, #00844A 0%, #0EA5E9 100%);">D</div>
+        <div>
+            <div class="opt-title">Coerenza con pulsanti backend <span class="opt-chosen-badge">★ Scelta finale</span></div>
+            <p class="opt-tagline">I colori dei tavoli <strong>riflettono i pulsanti che li transitano in quel stato</strong>: "Conferma tavolo" (verde) → tavolo confermato verde. "Segna Arrivato" (blu) → tavolo arrivato blu. Una sola "grammatica cromatica" per tutta l'app.</p>
+        </div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#E6F4ED;border-color:#b3dec7;"></div>
+            <span><strong>Libero</strong> — brand-light <code>#E6F4ED</code></span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#00844A;border-color:#006c3c;"></div>
+            <span><strong>Confermato/Prenotato</strong> — brand <code>#00844A</code> = "Conferma tavolo"</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#E0F2FE;border-color:#0EA5E9;"></div>
+            <span><strong>Arrivato (seduto ora)</strong> — sky <code>#E0F2FE</code> = "Segna Arrivato"</span>
+        </div>
+    </div>
+
+    <div class="floor">
+        <div class="area-label">Sala principale</div>
+        <div class="table table-free" style="top:60px; left:30px;">
+            <div class="tname">Tav. 1</div>
+            <div class="tcap">2p</div>
+            <div class="tinfo">Libero</div>
+        </div>
+        <div class="table table-reserved" style="top:60px; left:140px;">
+            <div class="tname">Tav. 2</div>
+            <div class="tcap">4p</div>
+            <div class="tinfo">21:00 Rossi</div>
+        </div>
+        <div class="table table-busy" style="top:60px; left:250px;">
+            <div class="tname">Tav. 3</div>
+            <div class="tcap">4p</div>
+            <div class="tinfo">Bianchi •</div>
+        </div>
+        <div class="table table-reserved circle" style="top:180px; left:30px;">
+            <div class="tname">Tav. 4</div>
+            <div class="tcap">6p</div>
+            <div class="tinfo">21:30</div>
+        </div>
+        <div class="table table-free circle" style="top:180px; left:140px;">
+            <div class="tname">Tav. 5</div>
+            <div class="tcap">4p</div>
+            <div class="tinfo">Libero</div>
+        </div>
+        <div class="table table-busy circle" style="top:180px; left:250px;">
+            <div class="tname">Tav. 6</div>
+            <div class="tcap">2p</div>
+            <div class="tinfo">Verdi •</div>
+        </div>
+        <div class="table table-free" style="top:60px; left:360px;">
+            <div class="tname">Tav. 7</div>
+            <div class="tcap">8p</div>
+            <div class="tinfo">Libero</div>
+        </div>
+        <div class="table table-reserved" style="top:180px; left:360px;">
+            <div class="tname">Tav. 8</div>
+            <div class="tcap">2p</div>
+            <div class="tinfo">22:00</div>
+        </div>
+    </div>
+
+    <div class="prosc">
+        <div class="pro">
+            <h4>✓ Pro (logica vincente)</h4>
+            <ul>
+                <li><strong>Coerenza cromatica con UI esistente</strong>: il colore del tavolo riflette il pulsante che lo transita</li>
+                <li>Una sola "grammatica cromatica" da imparare per tutto il backend</li>
+                <li>"Conferma tavolo" verde → tavolo confermato verde (apprendimento immediato)</li>
+                <li>"Segna Arrivato" blu → tavolo arrivato blu (idem)</li>
+                <li>Libero in brand-light = neutralità ma identità brand</li>
+                <li>Niente rosso, niente ambra → zero allarmismi gratuiti</li>
+                <li>Massima distinguibilità tra stati a colpo d'occhio</li>
+            </ul>
+        </div>
+        <div class="con">
+            <h4>~ Da considerare</h4>
+            <ul>
+                <li>Il blu sky è l'unico colore "non-brand" — ma è già usato nella UI dashboard (pulsante Arrivato), quindi è ormai parte del vocabolario visuale dell'app</li>
+                <li>Importante mantenere questa convenzione anche per future feature: NON usare verde per "in attesa", NON usare blu per "confermato"</li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;padding:12px 16px;background:#fff8e0;border:1px solid #ffe082;border-radius:8px;font-size:.82rem;color:#664d03;">
+        <strong>📐 Implementazione:</strong> aggiungere classi CSS <code>.tm-status-free</code>, <code>.tm-status-confirmed</code>, <code>.tm-status-arrived</code> in <code>dashboard.css</code>. Backend in <code>TableAssigner</code> deve esporre lo stato calcolato (free/confirmed/arrived) per ogni tavolo nel <code>floorState</code>.
+        <br><br>
+        <strong>🎨 Convenzione cromatica Evulery (per future feature):</strong>
+        verde brand <code>#00844A</code> = confermato/success ·
+        blu sky <code>#E0F2FE</code>/<code>#0EA5E9</code> = arrivato/informativo ·
+        rosso <code>#b3261e</code> = no-show/errore ·
+        grigio <code>#6c757d</code> = annullato/neutro.
+        Salvata in memoria <code>feedback_ui_color_consistency.md</code>.
+    </div>
+</div>
+
+
+<hr style="border:none;border-top:2px dashed #e9ecef;margin:28px 0 22px;">
+<p style="text-align:center;color:#8893a1;font-size:.82rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">— Sotto: le 3 opzioni di partenza, per riferimento —</p>
+
+
+<!-- ===== OPZIONE A — Verde graduato ===== -->
+<div class="option opt-a">
+    <div class="opt-head">
+        <div class="opt-badge">A</div>
+        <div>
+            <div class="opt-title">Verde graduato (brand)</div>
+            <p class="opt-tagline">Tutti gli stati restano dentro la palette brand. Scala di intensità: chiaro = vuoto, brand = sistema attivo, scuro = occupato fisicamente.</p>
+        </div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#E6F4ED;border-color:#b3dec7;"></div>
+            <span><strong>Libero</strong> — nessuna prenotazione</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#00844A;border-color:#006c3c;"></div>
+            <span><strong>Prenotato</strong> — prenotazione futura</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#013A1F;border-color:#002914;"></div>
+            <span><strong>Occupato</strong> — cliente seduto ora</span>
+        </div>
+    </div>
+
+    <div class="floor">
+        <div class="area-label">Sala principale</div>
+        <div class="table table-free" style="top:60px; left:30px;">
+            <div class="tname">Tav. 1</div>
+            <div class="tcap">2p</div>
+            <div class="tinfo">Libero</div>
+        </div>
+        <div class="table table-reserved" style="top:60px; left:140px;">
+            <div class="tname">Tav. 2</div>
+            <div class="tcap">4p</div>
+            <div class="tinfo">21:00 Rossi</div>
+        </div>
+        <div class="table table-busy" style="top:60px; left:250px;">
+            <div class="tname">Tav. 3</div>
+            <div class="tcap">4p</div>
+            <div class="tinfo">Bianchi •</div>
+        </div>
+        <div class="table table-reserved circle" style="top:180px; left:30px;">
+            <div class="tname">Tav. 4</div>
+            <div class="tcap">6p</div>
+            <div class="tinfo">21:30</div>
+        </div>
+        <div class="table table-free circle" style="top:180px; left:140px;">
+            <div class="tname">Tav. 5</div>
+            <div class="tcap">4p</div>
+            <div class="tinfo">Libero</div>
+        </div>
+        <div class="table table-busy circle" style="top:180px; left:250px;">
+            <div class="tname">Tav. 6</div>
+            <div class="tcap">2p</div>
+            <div class="tinfo">Verdi •</div>
+        </div>
+        <div class="table table-free" style="top:60px; left:360px;">
+            <div class="tname">Tav. 7</div>
+            <div class="tcap">8p</div>
+            <div class="tinfo">Libero</div>
+        </div>
+        <div class="table table-reserved" style="top:180px; left:360px;">
+            <div class="tname">Tav. 8</div>
+            <div class="tcap">2p</div>
+            <div class="tinfo">22:00</div>
+        </div>
+    </div>
+
+    <div class="prosc">
+        <div class="pro">
+            <h4>✓ Pro</h4>
+            <ul>
+                <li>Coerenza estetica massima (tutto dentro brand)</li>
+                <li>Niente colori "allarmistici" — un tavolo occupato è un buon segno</li>
+                <li>Scala intuitiva di intensità (chiaro → scuro = vuoto → attivo)</li>
+                <li>Professionale, pulito, no semaforo "rotto"</li>
+            </ul>
+        </div>
+        <div class="con">
+            <h4>✗ Contro</h4>
+            <ul>
+                <li>Le 3 sfumature possono essere meno distinguibili a colpo d'occhio rispetto a 3 colori diversi</li>
+                <li>Da lontano (>2m) "prenotato" e "occupato" potrebbero confondersi</li>
+                <li>Difficile da distinguere su schermi con bassa fedeltà colore</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<!-- ===== OPZIONE B — Neutro + blu + verde ===== -->
+<div class="option opt-b">
+    <div class="opt-head">
+        <div class="opt-badge" style="background:#0EA5E9;">B</div>
+        <div>
+            <div class="opt-title">Neutro + blu informativo + verde attivo</div>
+            <p class="opt-tagline">Convention UI moderna: bianco = nulla, blu = informazione/registrato, verde = attivo. Massima distinguibilità.</p>
+        </div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#F8F9FA;border-color:#dee2e6;"></div>
+            <span><strong>Libero</strong> — nessuna prenotazione</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#E0F2FE;border-color:#0EA5E9;"></div>
+            <span><strong>Prenotato</strong> — prenotazione futura</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#00844A;border-color:#006c3c;"></div>
+            <span><strong>Occupato</strong> — cliente seduto ora</span>
+        </div>
+    </div>
+
+    <div class="floor">
+        <div class="area-label">Sala principale</div>
+        <div class="table table-free" style="top:60px; left:30px;">
+            <div class="tname">Tav. 1</div>
+            <div class="tcap">2p</div>
+            <div class="tinfo">Libero</div>
+        </div>
+        <div class="table table-reserved" style="top:60px; left:140px;">
+            <div class="tname">Tav. 2</div>
+            <div class="tcap">4p</div>
+            <div class="tinfo">21:00 Rossi</div>
+        </div>
+        <div class="table table-busy" style="top:60px; left:250px;">
+            <div class="tname">Tav. 3</div>
+            <div class="tcap">4p</div>
+            <div class="tinfo">Bianchi •</div>
+        </div>
+        <div class="table table-reserved circle" style="top:180px; left:30px;">
+            <div class="tname">Tav. 4</div>
+            <div class="tcap">6p</div>
+            <div class="tinfo">21:30</div>
+        </div>
+        <div class="table table-free circle" style="top:180px; left:140px;">
+            <div class="tname">Tav. 5</div>
+            <div class="tcap">4p</div>
+            <div class="tinfo">Libero</div>
+        </div>
+        <div class="table table-busy circle" style="top:180px; left:250px;">
+            <div class="tname">Tav. 6</div>
+            <div class="tcap">2p</div>
+            <div class="tinfo">Verdi •</div>
+        </div>
+        <div class="table table-free" style="top:60px; left:360px;">
+            <div class="tname">Tav. 7</div>
+            <div class="tcap">8p</div>
+            <div class="tinfo">Libero</div>
+        </div>
+        <div class="table table-reserved" style="top:180px; left:360px;">
+            <div class="tname">Tav. 8</div>
+            <div class="tcap">2p</div>
+            <div class="tinfo">22:00</div>
+        </div>
+    </div>
+
+    <div class="prosc">
+        <div class="pro">
+            <h4>✓ Pro</h4>
+            <ul>
+                <li>3 stati massimamente distinguibili anche da lontano</li>
+                <li>Convention UI familiare (blu = informativo, verde = success)</li>
+                <li>Lettura immediata in cucina o su tablet a parete</li>
+                <li>Tavoli liberi "scompaiono" visivamente, focus naturale su quelli prenotati/occupati</li>
+            </ul>
+        </div>
+        <div class="con">
+            <h4>✗ Contro</h4>
+            <ul>
+                <li>Introduce un colore (blu) fuori dalla brand di Evulery</li>
+                <li>Meno coerenza estetica con il resto della UI dashboard</li>
+                <li>Verde brand qui significa "occupato" mentre nel resto dell'app significa "success/conferma" — possibile dissonanza</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<!-- ===== OPZIONE C — TheFork-style (soft + bordi) ===== -->
+<div class="option opt-c">
+    <div class="opt-head">
+        <div class="opt-badge" style="background:#F59E0B;">C</div>
+        <div>
+            <div class="opt-title">TheFork-style — fill soft + bordi marcati</div>
+            <p class="opt-tagline">Approccio professionale del settore: fill chiarissimi, bordi colorati spessi che identificano lo stato. Meno "carico" visivo.</p>
+        </div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:white;border-color:#00844A;border-width:2.5px;"></div>
+            <span><strong>Libero</strong> — bordo brand</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#FFFBEB;border-color:#F59E0B;border-width:2.5px;"></div>
+            <span><strong>Prenotato</strong> — bordo ambra</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#E6F4ED;border-color:#013A1F;border-width:3px;"></div>
+            <span><strong>Occupato</strong> — bordo scuro spesso</span>
+        </div>
+    </div>
+
+    <div class="floor">
+        <div class="area-label">Sala principale</div>
+        <div class="table table-free" style="top:60px; left:30px;">
+            <div class="tname">Tav. 1</div>
+            <div class="tcap">2p</div>
+            <div class="tinfo">Libero</div>
+        </div>
+        <div class="table table-reserved" style="top:60px; left:140px;">
+            <div class="tname">Tav. 2</div>
+            <div class="tcap">4p</div>
+            <div class="tinfo">21:00 Rossi</div>
+        </div>
+        <div class="table table-busy" style="top:60px; left:250px;">
+            <div class="tname">Tav. 3</div>
+            <div class="tcap">4p</div>
+            <div class="tinfo">Bianchi •</div>
+        </div>
+        <div class="table table-reserved circle" style="top:180px; left:30px;">
+            <div class="tname">Tav. 4</div>
+            <div class="tcap">6p</div>
+            <div class="tinfo">21:30</div>
+        </div>
+        <div class="table table-free circle" style="top:180px; left:140px;">
+            <div class="tname">Tav. 5</div>
+            <div class="tcap">4p</div>
+            <div class="tinfo">Libero</div>
+        </div>
+        <div class="table table-busy circle" style="top:180px; left:250px;">
+            <div class="tname">Tav. 6</div>
+            <div class="tcap">2p</div>
+            <div class="tinfo">Verdi •</div>
+        </div>
+        <div class="table table-free" style="top:60px; left:360px;">
+            <div class="tname">Tav. 7</div>
+            <div class="tcap">8p</div>
+            <div class="tinfo">Libero</div>
+        </div>
+        <div class="table table-reserved" style="top:180px; left:360px;">
+            <div class="tname">Tav. 8</div>
+            <div class="tcap">2p</div>
+            <div class="tinfo">22:00</div>
+        </div>
+    </div>
+
+    <div class="prosc">
+        <div class="pro">
+            <h4>✓ Pro</h4>
+            <ul>
+                <li>Pulizia visiva massima, niente "blocchi colorati" pesanti</li>
+                <li>Convention del settore (TheFork, OpenTable usano pattern simili)</li>
+                <li>Tavoli ben distinguibili sia per fill che per bordo</li>
+                <li>Etichetta "21:00 Rossi" leggibile su sfondo chiaro</li>
+            </ul>
+        </div>
+        <div class="con">
+            <h4>✗ Contro</h4>
+            <ul>
+                <li>L'ambra (anche se discreto) può ancora dare sensazione "warning"</li>
+                <li>Più dettagli grafici da curare (bordi, hover, focus ring)</li>
+                <li>Bordi spessi possono "stringere" lo spazio interno del tavolo</li>
+                <li>Su schermi piccoli i bordi 2-3px sono meno percepibili</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<!-- ===== TABELLA COMPARATIVA ===== -->
+<div class="compare">
+    <h2><i class="bi bi-bar-chart-line-fill"></i> Comparativa rapida</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Criterio</th>
+                <th style="background:#f0faf4;">Opzione D ★<br><small>Combinata (scelta)</small></th>
+                <th>Opzione A<br><small>Verde graduato</small></th>
+                <th>Opzione B<br><small>Neutro + blu/verde</small></th>
+                <th>Opzione C<br><small>TheFork-style</small></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Coerenza brand</td>
+                <td style="background:#f0faf4;"><span class="score ok">★★★</span></td>
+                <td><span class="score ok">★★★</span></td>
+                <td><span class="score mid">★★</span></td>
+                <td><span class="score ok">★★★</span></td>
+            </tr>
+            <tr>
+                <td>Distinguibilità a colpo d'occhio</td>
+                <td style="background:#f0faf4;"><span class="score ok">★★★</span></td>
+                <td><span class="score mid">★★</span></td>
+                <td><span class="score ok">★★★</span></td>
+                <td><span class="score ok">★★★</span></td>
+            </tr>
+            <tr>
+                <td>Niente colori "allarmistici"</td>
+                <td style="background:#f0faf4;"><span class="score ok">★★★</span></td>
+                <td><span class="score ok">★★★</span></td>
+                <td><span class="score ok">★★★</span></td>
+                <td><span class="score mid">★★</span></td>
+            </tr>
+            <tr>
+                <td>Leggibilità da lontano</td>
+                <td style="background:#f0faf4;"><span class="score ok">★★★</span></td>
+                <td><span class="score mid">★★</span></td>
+                <td><span class="score ok">★★★</span></td>
+                <td><span class="score mid">★★</span></td>
+            </tr>
+            <tr>
+                <td>Facilità implementazione</td>
+                <td style="background:#f0faf4;"><span class="score ok">★★★</span></td>
+                <td><span class="score ok">★★★</span></td>
+                <td><span class="score ok">★★★</span></td>
+                <td><span class="score mid">★★</span></td>
+            </tr>
+            <tr>
+                <td>Look professionale</td>
+                <td style="background:#f0faf4;"><span class="score ok">★★★</span></td>
+                <td><span class="score ok">★★★</span></td>
+                <td><span class="score mid">★★</span></td>
+                <td><span class="score ok">★★★</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="note">
+    <strong>💡 Suggerimento test:</strong> apri questo file in modalità incognito sul tuo browser, poi guarda la mappa di ogni opzione <strong>da 2 metri di distanza</strong>. Quale dei 3 stati distingui meglio "a colpo d'occhio"? Quello è il vincitore pratico. Poi pensa: "in cucina, su un tablet a parete con luce di sera, quale dei 3 reggerebbe meglio?"
+</div>
+
+<div class="note" style="background:#e7f1ff;border-color:#b6d4fe;color:#0a4a86;">
+    <strong>ℹ️ Nota dettagli:</strong> i tavoli in stato <strong>"Occupato"</strong> mostrano un puntino "•" accanto al nome cliente — quello indica visivamente "sta consumando ora". Idee per altri segnali: timer (es. "1h 15m") accanto al cognome, oppure icona <code>bi-clock</code>. Da decidere insieme al colore.
+</div>
+
+</body>
+</html>

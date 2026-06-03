@@ -332,10 +332,13 @@ $router->get('/{slug}/review/open', [ReviewLandingController::class, 'trackOpen'
 $router->get('/{slug}/hub', [HubPublicController::class, 'show']);
 $router->get('/{slug}/promo', [PromotionsPublicController::class, 'show']);
 
-// --- PUBLIC BOOKING ROUTES (tenant-scoped, must be last) ---
-$router->get('/{slug}', [BookingController::class, 'show']);
+// --- PUBLIC BOOKING ROUTES (tenant-scoped) ---
+// Le rotte specifiche /{slug}/booking/* DEVONO venire PRIMA della catch-all /{slug},
+// altrimenti il router fa match prematuro con /{slug} interpretando "booking" come parte
+// dello slug. Bug fix 2026-06-03.
 $router->get('/{slug}/booking/success', [BookingController::class, 'success']);
 $router->get('/{slug}/booking/cancel', [BookingController::class, 'cancelPayment']);
+$router->get('/{slug}', [BookingController::class, 'show']);
 
 // --- HOME ---
 $router->get('/', [LoginController::class, 'showForm']);
