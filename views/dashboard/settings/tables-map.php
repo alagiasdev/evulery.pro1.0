@@ -254,7 +254,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         <span class="tm-op-legend">
             <span><span class="tm-dot" style="background:#E6F4ED;box-shadow:inset 0 0 0 1.5px #b3dec7;"></span> Libero</span>
             <span><span class="tm-dot" style="background:#00844A;"></span> Confermato</span>
-            <span><span class="tm-dot" style="background:#E0F2FE;box-shadow:inset 0 0 0 2px #0EA5E9;"></span> Arrivato</span>
+            <span><span class="tm-dot" style="background:#cfe2ff;box-shadow:inset 0 0 0 2px #0EA5E9;"></span> Arrivato</span>
         </span>
     </div>
 

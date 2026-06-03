@@ -4356,7 +4356,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-map-table.tm-status-free      { background: #E6F4ED; color: #014b29; cursor: default; box-shadow: inset 0 0 0 1.5px #b3dec7, 0 1px 3px rgba(0,0,0,.06); }
 .tm-map-table.tm-status-confirmed { background: var(--brand, #00844A); color: #fff; cursor: pointer; }
 .tm-map-table.tm-status-confirmed:hover { box-shadow: 0 4px 12px rgba(0,132,74,.35); }
-.tm-map-table.tm-status-arrived   { background: #E0F2FE; color: #075985; cursor: pointer; box-shadow: inset 0 0 0 2px #0EA5E9, 0 1px 3px rgba(0,0,0,.08); }
+.tm-map-table.tm-status-arrived   { background: #cfe2ff; color: #075985; cursor: pointer; box-shadow: inset 0 0 0 2px #0EA5E9, 0 1px 3px rgba(0,0,0,.08); }
 .tm-map-table.tm-status-arrived:hover { box-shadow: inset 0 0 0 2px #0EA5E9, 0 4px 12px rgba(14,165,233,.4); }
 
 /* Legenda colori nella mappa */
@@ -4365,7 +4365,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-leg-swatch { display: inline-block; width: 16px; height: 16px; border-radius: 4px; vertical-align: middle; }
 .tm-leg-free      { background: #E6F4ED; box-shadow: inset 0 0 0 1.5px #b3dec7; }
 .tm-leg-confirmed { background: var(--brand, #00844A); }
-.tm-leg-arrived   { background: #E0F2FE; box-shadow: inset 0 0 0 2px #0EA5E9; }
+.tm-leg-arrived   { background: #cfe2ff; box-shadow: inset 0 0 0 2px #0EA5E9; }
 .tm-leg-sep { color: #adb5bd; margin: 0 2px; }
 .tm-leg-time { font-weight: 600; color: #495057; }
 /* popup riassegnazione */
