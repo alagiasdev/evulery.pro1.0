@@ -296,8 +296,19 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                     $hidden = false; // "Tutte le aree" è la vista iniziale
                     $occ = $floorState[(int)$t['id']] ?? null;
                     $inCombo = isset($comboTableIds[(int)$t['id']]);
+
+                    // Classe di stato: distingue libero / confermato / arrivato.
+                    // Convenzione cromatica coerente con i pulsanti backend
+                    // ("Conferma tavolo" verde brand, "Segna Arrivato" blu sky).
+                    if (!$occ) {
+                        $statusClass = 'tm-status-free';
+                    } elseif (($occ['status'] ?? '') === 'arrived') {
+                        $statusClass = 'tm-status-arrived';
+                    } else {
+                        $statusClass = 'tm-status-confirmed';
+                    }
                 ?>
-                <div class="tm-map-table <?= $t['shape'] === 'round' ? 'round' : 'square' ?> <?= $occ ? 'busy' : 'freev' ?><?= $inCombo ? ' in-combo' : '' ?>"
+                <div class="tm-map-table <?= $t['shape'] === 'round' ? 'round' : 'square' ?> <?= $statusClass ?><?= $inCombo ? ' in-combo' : '' ?>"
                      data-id="<?= (int)$t['id'] ?>" data-area="<?= e($tArea) ?>"
                      <?= $occ ? 'data-pop="tm-pop-res-' . (int)$occ['reservation_id'] . '"' : '' ?>
                      style="left:<?= (int)$t['_x'] ?>px; top:<?= (int)$t['_y'] ?>px;<?= $hidden ? 'display:none;' : '' ?>">
@@ -314,7 +325,15 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                 </div>
                 <?php endforeach; ?>
             </div>
-            <div class="tm-map-hint"><i class="bi bi-info-circle me-1"></i> Tavoli blu = occupati alle <?= e($opTime) ?>. Clicca un tavolo o una prenotazione per i dettagli.</div>
+            <div class="tm-map-hint tm-map-legend">
+                <span class="tm-leg-item"><span class="tm-leg-swatch tm-leg-free"></span> Libero</span>
+                <span class="tm-leg-item"><span class="tm-leg-swatch tm-leg-confirmed"></span> Confermato</span>
+                <span class="tm-leg-item"><span class="tm-leg-swatch tm-leg-arrived"></span> Arrivato (al tavolo)</span>
+                <span class="tm-leg-sep">·</span>
+                <span class="tm-leg-time">alle <?= e($opTime) ?></span>
+                <span class="tm-leg-sep">·</span>
+                <span>Clicca un tavolo per i dettagli</span>
+            </div>
         </div>
     </div>
 
