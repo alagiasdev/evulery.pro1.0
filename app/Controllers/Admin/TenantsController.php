@@ -97,6 +97,13 @@ class TenantsController
 
         $slug = slugify($data['name']);
 
+        // Slug riservati dal sistema (vedi Tenant::RESERVED_SLUGS): se il nome del
+        // ristorante slugifica a uno di questi (es. ristorante "Admin"), aggiungiamo
+        // suffisso casuale per evitare collisioni con le route del routing.
+        if (Tenant::isReservedSlug($slug)) {
+            $slug .= '-' . bin2hex(random_bytes(4));
+        }
+
         // Check slug uniqueness
         $tenantModel = new Tenant();
         if ($tenantModel->findBySlug($slug)) {

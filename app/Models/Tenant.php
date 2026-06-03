@@ -7,6 +7,30 @@ use PDO;
 
 class Tenant
 {
+    /**
+     * Slug riservati dal sistema. Uno slug tenant non puo' essere uno di questi,
+     * altrimenti collide con route specifiche dichiarate in config/routes.php
+     * (es. /admin, /api/v1/..., /{slug}/menu) o crea ambiguita' di routing.
+     *
+     * Aggiornare questa lista quando si introducono nuove route top-level.
+     */
+    public const RESERVED_SLUGS = [
+        'admin', 'api', 'auth', 'reseller', 'dashboard', 'help',
+        'menu', 'hub', 'promo', 'order', 'review', 'booking', 'manage',
+        'unsubscribe', 'embed', 'stripe', 'webhook', 'cron',
+        'static', 'assets', 'uploads', 'public', 'storage', 'vendor',
+        'delivery', 'manage', 'app',
+    ];
+
+    /**
+     * True se lo slug e' riservato dal sistema (no whitelist match).
+     * Case-insensitive sui valori della whitelist.
+     */
+    public static function isReservedSlug(string $slug): bool
+    {
+        return in_array(strtolower(trim($slug)), self::RESERVED_SLUGS, true);
+    }
+
     private PDO $db;
 
     public function __construct()
