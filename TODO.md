@@ -42,6 +42,14 @@ _(nulla al momento — `scripts/migrate.php` completato 2026-05-30)_
   **occupato** (rosso/viola, status `arrived` = cliente seduto ORA). Oggi i tavoli sono
   colorati ma la differenza prenotato-vs-occupato non si legge. Toccare `views/dashboard/settings/tables-map.php`
   + CSS `.tm-*` + logica `floorState` in `TableAssigner`. Stima ~2-3h. Annotato 2026-05-30.
+- [ ] **Cloudflare davanti a `dash.evulery.it`** (sicurezza + performance) — proxy gratuito
+  che dà: DDoS protection automatico, bot mitigation, cache statica, rate limiting,
+  WAF base. Setup ~30 min (cambio nameserver dal registrar). Costo €0/mese (piano free).
+  **Trigger**: il 03/06/2026 il VPS ha subito un attacco scraping da 2 subnet cinesi
+  (89.106.110.0/24 e 149.62.193.0/24) con load avg fino a 77 su 8 core. Davide di
+  Serverplan è dovuto intervenire manualmente per bloccarli. Cloudflare assorbirebbe
+  automaticamente eventi simili senza intervento umano. Da fare prima del primo picco
+  reale (acquisizione clienti, lancio commerciale, picco mediatico).
 
 ### Progetti grossi — deferiti coi loro trigger
 - [ ] **Analytics module** — dopo 20+ clienti (servono dati aggregati reali)
