@@ -135,11 +135,13 @@ class CommunicationsController
 
         $tenant = TenantResolver::current();
         $credits = (int)($tenant['email_credits_balance'] ?? 0);
+        $tenantSlug = trim((string)($tenant['slug'] ?? ''));
 
         view('dashboard/communications/create', [
             'title'      => 'Nuova Comunicazione',
             'activeMenu' => 'communications',
             'credits'    => $credits,
+            'tenantSlug' => $tenantSlug,
         ], 'dashboard');
     }
 
@@ -202,6 +204,18 @@ class CommunicationsController
         $inactiveDays = $request->input('inactive_days', null);
         $inactiveDays = $inactiveDays !== null ? (int)$inactiveDays : null;
         $includeBookingCta = $request->input('include_booking_cta') ? 1 : 0;
+
+        // CTA "Prenota ora" funziona solo se il tenant ha uno slug pubblico
+        // configurato (necessario per costruire il link al widget). Se l'utente
+        // ha attivato il toggle ma lo slug e' vuoto, segnaliamo che il bottone
+        // non sara' incluso e disabilitiamo il flag per coerenza nel DB.
+        if ($includeBookingCta === 1) {
+            $slug = trim((string)($tenant['slug'] ?? ''));
+            if ($slug === '') {
+                flash('warning', 'Attenzione: il pulsante "Prenota ora" non è stato incluso perché lo slug del ristorante non è configurato. Vai in Impostazioni → Generali per impostarlo.');
+                $includeBookingCta = 0;
+            }
+        }
 
         // Validation
         if (empty($subject) || mb_strlen($subject) > 255) {

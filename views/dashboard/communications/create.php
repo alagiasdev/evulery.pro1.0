@@ -28,9 +28,10 @@
                 </div>
 
                 <!-- Booking CTA toggle -->
-                <div style="margin-bottom:1rem;padding:.75rem .9rem;border:1px solid #e9ecef;border-radius:8px;background:#fafbfc;">
-                    <label style="display:flex;align-items:flex-start;gap:.65rem;cursor:pointer;margin:0;">
-                        <input type="checkbox" name="include_booking_cta" value="1" id="include-booking-cta" style="margin-top:.2rem;accent-color:#00844A;width:18px;height:18px;flex-shrink:0;">
+                <?php $slugMissing = empty($tenantSlug); ?>
+                <div style="margin-bottom:1rem;padding:.75rem .9rem;border:1px solid <?= $slugMissing ? '#ffc107' : '#e9ecef' ?>;border-radius:8px;background:<?= $slugMissing ? '#fff8e1' : '#fafbfc' ?>;">
+                    <label style="display:flex;align-items:flex-start;gap:.65rem;cursor:<?= $slugMissing ? 'not-allowed' : 'pointer' ?>;margin:0;<?= $slugMissing ? 'opacity:.7;' : '' ?>">
+                        <input type="checkbox" name="include_booking_cta" value="1" id="include-booking-cta" <?= $slugMissing ? 'disabled' : '' ?> style="margin-top:.2rem;accent-color:#00844A;width:18px;height:18px;flex-shrink:0;">
                         <div style="flex:1;">
                             <div style="font-weight:600;font-size:.85rem;color:#1a1d23;">
                                 <i class="bi bi-calendar-check me-1" style="color:#00844A;"></i>
@@ -41,6 +42,15 @@
                             </div>
                         </div>
                     </label>
+                    <?php if ($slugMissing): ?>
+                    <div style="margin-top:.6rem;padding:.5rem .7rem;background:white;border:1px solid #ffc107;border-radius:6px;font-size:.74rem;color:#664d03;display:flex;align-items:flex-start;gap:.4rem;">
+                        <i class="bi bi-exclamation-triangle-fill" style="color:#ffc107;flex-shrink:0;margin-top:.1rem;"></i>
+                        <div>
+                            <strong>Slug ristorante non configurato.</strong> Il pulsante "Prenota ora" non può essere incluso finché non lo imposti.
+                            <a href="<?= url('dashboard/settings/general') ?>" style="color:#664d03;text-decoration:underline;font-weight:600;">Vai a Impostazioni Generali →</a>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Segment selection -->
