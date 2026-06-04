@@ -74,19 +74,25 @@ class Table
 
         $stmt = $this->db->prepare(
             'INSERT INTO restaurant_tables
-                (tenant_id, name, capacity, min_capacity, priority, area, shape, internal_note, is_active)
-             VALUES (:t, :name, :cap, :mincap, :prio, :area, :shape, :note, :active)'
+                (tenant_id, name, capacity, min_capacity, priority, area, shape, internal_note,
+                 is_active, is_bookable_online, is_blocked, block_reason)
+             VALUES (:t, :name, :cap, :mincap, :prio, :area, :shape, :note,
+                 :active, :bookable, :blocked, :reason)'
         );
         $stmt->execute([
-            't'      => $tenantId,
-            'name'   => $data['name'],
-            'cap'    => $max,
-            'mincap' => $min,
-            'prio'   => $maxPrio + 1,
-            'area'   => $data['area'] !== '' ? $data['area'] : null,
-            'shape'  => in_array($data['shape'] ?? 'square', ['square', 'round'], true) ? $data['shape'] : 'square',
-            'note'   => $data['internal_note'] !== '' ? $data['internal_note'] : null,
-            'active' => !empty($data['is_active']) ? 1 : 0,
+            't'        => $tenantId,
+            'name'     => $data['name'],
+            'cap'      => $max,
+            'mincap'   => $min,
+            'prio'     => $maxPrio + 1,
+            'area'     => $data['area'] !== '' ? $data['area'] : null,
+            'shape'    => in_array($data['shape'] ?? 'square', ['square', 'round'], true) ? $data['shape'] : 'square',
+            'note'     => $data['internal_note'] !== '' ? $data['internal_note'] : null,
+            'active'   => !empty($data['is_active']) ? 1 : 0,
+            'bookable' => !empty($data['is_bookable_online']) ? 1 : 0,
+            'blocked'  => !empty($data['is_blocked']) ? 1 : 0,
+            'reason'   => !empty($data['is_blocked']) && trim((string)($data['block_reason'] ?? '')) !== ''
+                          ? mb_substr(trim((string)$data['block_reason']), 0, 255) : null,
         ]);
         return (int)$this->db->lastInsertId();
     }
@@ -98,19 +104,24 @@ class Table
         $stmt = $this->db->prepare(
             'UPDATE restaurant_tables
              SET name = :name, capacity = :cap, min_capacity = :mincap, area = :area, shape = :shape,
-                 internal_note = :note, is_active = :active
+                 internal_note = :note, is_active = :active,
+                 is_bookable_online = :bookable, is_blocked = :blocked, block_reason = :reason
              WHERE id = :id AND tenant_id = :t'
         );
         return $stmt->execute([
-            'name'   => $data['name'],
-            'cap'    => $max,
-            'mincap' => $min,
-            'area'   => $data['area'] !== '' ? $data['area'] : null,
-            'shape'  => in_array($data['shape'] ?? 'square', ['square', 'round'], true) ? $data['shape'] : 'square',
-            'note'   => $data['internal_note'] !== '' ? $data['internal_note'] : null,
-            'active' => !empty($data['is_active']) ? 1 : 0,
-            'id'     => $id,
-            't'      => $tenantId,
+            'name'     => $data['name'],
+            'cap'      => $max,
+            'mincap'   => $min,
+            'area'     => $data['area'] !== '' ? $data['area'] : null,
+            'shape'    => in_array($data['shape'] ?? 'square', ['square', 'round'], true) ? $data['shape'] : 'square',
+            'note'     => $data['internal_note'] !== '' ? $data['internal_note'] : null,
+            'active'   => !empty($data['is_active']) ? 1 : 0,
+            'bookable' => !empty($data['is_bookable_online']) ? 1 : 0,
+            'blocked'  => !empty($data['is_blocked']) ? 1 : 0,
+            'reason'   => !empty($data['is_blocked']) && trim((string)($data['block_reason'] ?? '')) !== ''
+                          ? mb_substr(trim((string)$data['block_reason']), 0, 255) : null,
+            'id'       => $id,
+            't'        => $tenantId,
         ]);
     }
 

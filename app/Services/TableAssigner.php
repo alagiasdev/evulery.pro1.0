@@ -69,7 +69,15 @@ class TableAssigner
     public function pickTables(int $tenantId, string $date, string $time, int $partySize, int $excludeReservationId = 0): array
     {
         $window = $this->windowMinutes($tenantId);
-        $tables = (new Table())->findActiveByTenant($tenantId);
+        // Auto-assegnazione: esclude tavoli "solo manuale" (Fase B) e "bloccati" (Fase E).
+        // Solo i tavoli con is_bookable_online=1 AND is_blocked=0 sono candidati per
+        // l'algoritmo automatico. Gli altri restano assegnabili manualmente dal
+        // ristoratore via riassegnazione (vedi allTableOptions / availableOptions).
+        $tables = array_values(array_filter(
+            (new Table())->findActiveByTenant($tenantId),
+            fn($t) => (int)($t['is_bookable_online'] ?? 1) === 1
+                  && (int)($t['is_blocked'] ?? 0) === 0
+        ));
         if (empty($tables)) {
             return [];
         }
@@ -138,7 +146,12 @@ class TableAssigner
     public function availableOptions(int $tenantId, string $date, string $time, int $partySize, int $excludeReservationId = 0): array
     {
         $window = $this->windowMinutes($tenantId);
-        $tables = (new Table())->findActiveByTenant($tenantId);
+        // Override manuale: l'operatore puo' scegliere tavoli "solo manuale"
+        // (is_bookable_online=0) ma NON tavoli bloccati (is_blocked=1, fuori uso).
+        $tables = array_values(array_filter(
+            (new Table())->findActiveByTenant($tenantId),
+            fn($t) => (int)($t['is_blocked'] ?? 0) === 0
+        ));
         if (empty($tables)) {
             return [];
         }
@@ -301,7 +314,12 @@ class TableAssigner
      */
     public function allTableOptions(int $tenantId): array
     {
-        $tables = (new Table())->findActiveByTenant($tenantId);
+        // Riassegnazione manuale: esclude tavoli bloccati (fuori uso) ma include
+        // i "solo manuale" (l'operatore puo' assegnarli manualmente).
+        $tables = array_values(array_filter(
+            (new Table())->findActiveByTenant($tenantId),
+            fn($t) => (int)($t['is_blocked'] ?? 0) === 0
+        ));
         $byId = [];
         foreach ($tables as $t) {
             $byId[(int)$t['id']] = $t;

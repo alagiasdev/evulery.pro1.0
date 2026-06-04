@@ -298,23 +298,34 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                     $occ = $floorState[(int)$t['id']] ?? null;
                     $inCombo = isset($comboTableIds[(int)$t['id']]);
 
-                    // Classe di stato: distingue libero / confermato / arrivato.
-                    // Convenzione cromatica coerente con i pulsanti backend
-                    // ("Conferma tavolo" verde brand, "Segna Arrivato" blu sky).
-                    if (!$occ) {
+                    // Fase B + E: flag disponibilita' tavolo (migration 058)
+                    $tManualOnly = (int)($t['is_bookable_online'] ?? 1) === 0;
+                    $tBlocked    = (int)($t['is_blocked'] ?? 0) === 1;
+
+                    // Classe di stato: tavolo bloccato HA precedenza visiva (e' fuori uso);
+                    // poi libero / confermato / arrivato. Convenzione cromatica coerente
+                    // con i pulsanti backend ("Conferma tavolo" verde, "Segna Arrivato" blu).
+                    if ($tBlocked) {
+                        $statusClass = 'tm-status-blocked';
+                    } elseif (!$occ) {
                         $statusClass = 'tm-status-free';
                     } elseif (($occ['status'] ?? '') === 'arrived') {
                         $statusClass = 'tm-status-arrived';
                     } else {
                         $statusClass = 'tm-status-confirmed';
                     }
+                    $extraClasses = '';
+                    if ($tManualOnly) $extraClasses .= ' tm-only-manual';
+                    if ($inCombo)    $extraClasses .= ' in-combo';
                 ?>
-                <div class="tm-map-table <?= $t['shape'] === 'round' ? 'round' : 'square' ?> <?= $statusClass ?><?= $inCombo ? ' in-combo' : '' ?>"
+                <div class="tm-map-table <?= $t['shape'] === 'round' ? 'round' : 'square' ?> <?= $statusClass ?><?= $extraClasses ?>"
                      data-id="<?= (int)$t['id'] ?>" data-area="<?= e($tArea) ?>"
-                     <?= $occ ? 'data-pop="tm-pop-res-' . (int)$occ['reservation_id'] . '"' : '' ?>
+                     <?= $occ && !$tBlocked ? 'data-pop="tm-pop-res-' . (int)$occ['reservation_id'] . '"' : '' ?>
+                     title="<?= $tBlocked ? e('Bloccato' . (!empty($t['block_reason']) ? ' — ' . $t['block_reason'] : '')) : ($tManualOnly ? 'Solo manuale (tavolo jolly)' : '') ?>"
                      style="left:<?= (int)$t['_x'] ?>px; top:<?= (int)$t['_y'] ?>px;<?= $hidden ? 'display:none;' : '' ?>">
                     <?php if ($areaHasDot($tArea)): ?><span class="tm-area-dot" style="background:<?= e(area_color($tArea)) ?>;"></span><?php endif; ?>
-                    <?php if ($inCombo): ?><span class="tm-combo-chain" title="In combinazione con altri tavoli"><i class="bi bi-link-45deg"></i></span><?php endif; ?>
+                    <?php if ($tBlocked): ?><span class="tm-table-lock" title="Tavolo bloccato"><i class="bi bi-lock-fill"></i></span><?php endif; ?>
+                    <?php if ($inCombo && !$tBlocked): ?><span class="tm-combo-chain" title="In combinazione con altri tavoli"><i class="bi bi-link-45deg"></i></span><?php endif; ?>
                     <?php if ($occ): ?>
                     <span class="tm-map-tag" title="<?= e($t['name']) ?>"><?= e($t['name']) ?></span>
                     <span class="tm-map-name"><?= e($occ['name']) ?></span>

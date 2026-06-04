@@ -15,15 +15,18 @@ $tableCapById   = array_column($tables, 'capacity', 'id');
 $jsTables = [];
 foreach ($tables as $t) {
     $jsTables[] = [
-        'id'           => (int)$t['id'],
-        'name'         => $t['name'],
-        'capacity'     => (int)$t['capacity'],
-        'min_capacity' => (int)($t['min_capacity'] ?? 1),
-        'area'         => $t['area'] ?? '',
-        'shape'        => $t['shape'],
-        'note'         => $t['internal_note'] ?? '',
-        'active'       => (int)$t['is_active'],
-        'combinable'   => array_values(array_unique(array_map('intval', $comboMap[(int)$t['id']] ?? []))),
+        'id'                 => (int)$t['id'],
+        'name'               => $t['name'],
+        'capacity'           => (int)$t['capacity'],
+        'min_capacity'       => (int)($t['min_capacity'] ?? 1),
+        'area'               => $t['area'] ?? '',
+        'shape'              => $t['shape'],
+        'note'               => $t['internal_note'] ?? '',
+        'active'             => (int)$t['is_active'],
+        'bookable_online'    => (int)($t['is_bookable_online'] ?? 1),
+        'blocked'            => (int)($t['is_blocked'] ?? 0),
+        'block_reason'       => $t['block_reason'] ?? '',
+        'combinable'         => array_values(array_unique(array_map('intval', $comboMap[(int)$t['id']] ?? []))),
     ];
 }
 ?>
@@ -122,10 +125,12 @@ foreach ($tables as $t) {
         <?php $rank = 0; foreach ($tables as $t): ?>
         <?php
             $isActive = (int)$t['is_active'] === 1;
+            $isBookableOnline = (int)($t['is_bookable_online'] ?? 1) === 1;
+            $isBlocked = (int)($t['is_blocked'] ?? 0) === 1;
             if ($isActive) $rank++;
             $combo = $comboMap[(int)$t['id']] ?? [];
         ?>
-        <div class="tm-row<?= $isActive ? '' : ' tm-row-off' ?>" data-id="<?= (int)$t['id'] ?>" data-area="<?= e($t['area'] ?? '') ?>" draggable="true">
+        <div class="tm-row<?= $isActive ? '' : ' tm-row-off' ?><?= $isBlocked ? ' tm-row-blocked' : '' ?>" data-id="<?= (int)$t['id'] ?>" data-area="<?= e($t['area'] ?? '') ?>" draggable="true">
             <i class="bi bi-grip-vertical tm-drag" title="Trascina per riordinare"></i>
             <span class="tm-rank"><?= $isActive ? $rank : '—' ?></span>
             <?php
@@ -135,7 +140,18 @@ foreach ($tables as $t) {
             ?>
             <span class="tm-cap<?= $isElastic ? ' tm-cap-range' : '' ?>" title="<?= $isElastic ? 'Tavolo elastico: da ' . $tMin . ' a ' . $tMax . ' persone' : 'Tavolo rigido: ' . $tMax . ' posti' ?>"><?= format_capacity($tMin, $tMax, true) ?></span>
             <div class="tm-info">
-                <div class="tm-name"><?= e($t['name']) ?><?= $isActive ? '' : ' <span class="tm-tag tm-tag-off">disattivato</span>' ?></div>
+                <div class="tm-name">
+                    <?= e($t['name']) ?>
+                    <?= $isActive ? '' : ' <span class="tm-tag tm-tag-off">disattivato</span>' ?>
+                    <?php if ($isActive && !$isBookableOnline): ?>
+                    <span class="tm-tag tm-tag-manual" title="Tavolo escluso dall'auto-assegnazione e dal widget pubblico. Assegnabile solo a mano (tavolo jolly).">Solo manuale</span>
+                    <?php endif; ?>
+                    <?php if ($isActive && $isBlocked): ?>
+                    <span class="tm-tag tm-tag-blocked" <?= !empty($t['block_reason']) ? 'title="' . e($t['block_reason']) . '"' : '' ?>>
+                        <i class="bi bi-lock-fill"></i> Bloccato
+                    </span>
+                    <?php endif; ?>
+                </div>
                 <div class="tm-meta">
                     <?php if (!empty($t['area'])): ?><span><i class="bi bi-geo-alt"></i> <?= e($t['area']) ?></span><?php endif; ?>
                     <?php if (!empty($t['internal_note'])): ?><span><?= e($t['internal_note']) ?></span><?php endif; ?>
@@ -247,6 +263,41 @@ foreach ($tables as $t) {
                         </select>
                     </div>
                 </div>
+                <!-- ===== Sezione Disponibilità (Fase B + E migration 058) ===== -->
+                <div class="tm-fg tm-fg-section">
+                    <label class="tm-fl"><i class="bi bi-toggle-on me-1"></i>Disponibilità</label>
+
+                    <!-- Toggle Fase B: disponibile per prenotazioni online -->
+                    <div class="tm-toggle-row">
+                        <div class="tm-toggle-info">
+                            <div class="tm-toggle-title">Disponibile per prenotazioni online</div>
+                            <div class="tm-toggle-desc">Se disattivato, il tavolo non viene assegnato dall'algoritmo automatico e non incide sulla capacità del widget pubblico. Resta visibile in sala e assegnabile manualmente <em>(es. tavolo jolly di scorta)</em>.</div>
+                        </div>
+                        <label class="tm-switch">
+                            <input type="checkbox" name="is_bookable_online" id="tm-f-bookable" value="1" checked>
+                            <span class="tm-switch-track"></span>
+                        </label>
+                    </div>
+
+                    <!-- Toggle Fase E: blocca tavolo + motivo condizionale -->
+                    <div class="tm-toggle-row" style="border-top:1px dashed #eef0f2;">
+                        <div class="tm-toggle-info">
+                            <div class="tm-toggle-title">Blocca tavolo <span class="tm-toggle-meta">— blocco temporaneo</span></div>
+                            <div class="tm-toggle-desc">Es. sedia rotta, riservato a un cliente specifico, lavori. Toglilo quando il tavolo torna utilizzabile.</div>
+                        </div>
+                        <label class="tm-switch">
+                            <input type="checkbox" name="is_blocked" id="tm-f-blocked" value="1">
+                            <span class="tm-switch-track"></span>
+                        </label>
+                    </div>
+
+                    <!-- Campo Motivo: appare solo se blocked = on -->
+                    <div class="tm-fg" id="tm-f-block-reason-wrap" style="display:none; margin-top:10px; padding:10px 12px; background:#fff8e0; border:1px solid #ffe082; border-radius:8px;">
+                        <label class="tm-fl" style="text-transform:none; font-size:.74rem; font-weight:600;">Motivo del blocco <span style="font-weight:400; color:#adb5bd;">(opzionale, visibile come tooltip)</span></label>
+                        <input type="text" class="tm-fi" name="block_reason" id="tm-f-block-reason" maxlength="255" placeholder="es. Sedia rotta — in attesa di sostituzione">
+                    </div>
+                </div>
+
                 <div class="tm-info-box" id="tm-prio-note" style="display:none;">
                     <i class="bi bi-info-circle me-1"></i> La priorità si imposta trascinando il tavolo nella lista.
                 </div>
@@ -405,6 +456,18 @@ foreach ($tables as $t) {
         });
     }
 
+    // Fase B + E: campi disponibilità tavolo
+    var fBookable = document.getElementById('tm-f-bookable');
+    var fBlocked = document.getElementById('tm-f-blocked');
+    var fReason = document.getElementById('tm-f-block-reason');
+    var fReasonWrap = document.getElementById('tm-f-block-reason-wrap');
+
+    function updateBlockedReasonVisibility() {
+        fReasonWrap.style.display = fBlocked.checked ? '' : 'none';
+        if (!fBlocked.checked) fReason.value = '';
+    }
+    fBlocked.addEventListener('change', updateBlockedReasonVisibility);
+
     function openModal(table) {
         if (table) {
             modalTitle.innerHTML = '<i class="bi bi-pencil-square me-1"></i> Modifica ' + escapeHtml(table.name);
@@ -415,6 +478,9 @@ foreach ($tables as $t) {
             fArea.value = table.area;
             fNote.value = table.note;
             fActive.value = String(table.active);
+            fBookable.checked = (table.bookable_online !== 0); // default true
+            fBlocked.checked = (table.blocked === 1);
+            fReason.value = table.block_reason || '';
             form.querySelector('input[name="shape"][value="' + (table.shape === 'round' ? 'round' : 'square') + '"]').checked = true;
             buildCombinable(table.id, table.combinable || []);
             prioNote.style.display = '';
@@ -423,11 +489,15 @@ foreach ($tables as $t) {
             form.action = baseAction;
             fName.value = ''; fCap.value = 2; fMin.value = 1; fArea.value = ''; fNote.value = '';
             fActive.value = '1';
+            fBookable.checked = true;
+            fBlocked.checked = false;
+            fReason.value = '';
             form.querySelector('input[name="shape"][value="square"]').checked = true;
             buildCombinable(null, []);
             prioNote.style.display = 'none';
         }
         updateCapPreview();
+        updateBlockedReasonVisibility();
         modal.style.display = 'flex';
     }
     function closeModal() { modal.style.display = 'none'; }

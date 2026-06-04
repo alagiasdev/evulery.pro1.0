@@ -323,15 +323,30 @@ class TablesController
             if ($cid > 0) $combinable[] = $cid;
         }
 
+        // Fase B + E (migration 058): flag disponibilità tavolo.
+        // is_bookable_online: default 1 retrocompat (se il form non lo manda esplicito,
+        // mantiene "online" come da pre-migration). Il modale moderno lo invia sempre.
+        // is_blocked: opt-in, default 0. block_reason: opzionale, max 255, ignorato se blocked=0.
+        $isBookableOnline = array_key_exists('is_bookable_online', $d)
+            ? (!empty($d['is_bookable_online']) ? 1 : 0)
+            : 1;
+        $isBlocked = !empty($d['is_blocked']) ? 1 : 0;
+        $blockReason = $isBlocked
+            ? mb_substr(trim((string)($d['block_reason'] ?? '')), 0, 255)
+            : '';
+
         return [
-            'name'          => mb_substr($name, 0, 60),
-            'capacity'      => $capacity,
-            'min_capacity'  => $minCapacity,
-            'area'          => mb_substr(trim((string)($d['area'] ?? '')), 0, 60),
-            'shape'         => ($d['shape'] ?? 'square') === 'round' ? 'round' : 'square',
-            'internal_note' => mb_substr(trim((string)($d['internal_note'] ?? '')), 0, 255),
-            'is_active'     => !empty($d['is_active']) ? 1 : 0,
-            'combinable'    => $combinable,
+            'name'               => mb_substr($name, 0, 60),
+            'capacity'           => $capacity,
+            'min_capacity'       => $minCapacity,
+            'area'               => mb_substr(trim((string)($d['area'] ?? '')), 0, 60),
+            'shape'              => ($d['shape'] ?? 'square') === 'round' ? 'round' : 'square',
+            'internal_note'      => mb_substr(trim((string)($d['internal_note'] ?? '')), 0, 255),
+            'is_active'          => !empty($d['is_active']) ? 1 : 0,
+            'is_bookable_online' => $isBookableOnline,
+            'is_blocked'         => $isBlocked,
+            'block_reason'       => $blockReason,
+            'combinable'         => $combinable,
         ];
     }
 }
