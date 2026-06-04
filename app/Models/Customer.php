@@ -219,8 +219,9 @@ class Customer
         $existing = $this->findByTenantAndEmail($tenantId, $data['email']);
 
         // Birthday: se passato e non nullo, lo persistiamo. Per i clienti esistenti
-        // NON sovrascriviamo un birthday già valorizzato in DB (potrebbe averlo
-        // dato in una prenotazione precedente).
+        // permettiamo l'aggiornamento se il valore è cambiato (es. correzione di
+        // una data errata inserita in passato dal widget). Non c'è rischio reale:
+        // il cliente per modificarlo deve comunque conoscere email + nome.
         $birthday = !empty($data['birthday']) ? $data['birthday'] : null;
 
         // Marketing consent: regole intelligenti per non perdere consensi esistenti.
@@ -239,8 +240,11 @@ class Customer
                 'phone'      => $data['phone'],
             ];
 
-            // Birthday: scrivi solo se non già valorizzato e arriva un nuovo valore
-            if ($birthday !== null && empty($existing['birthday'])) {
+            // Birthday: scrivi se arriva un nuovo valore E e' diverso da quello in DB.
+            // Permette la correzione di una data inserita per sbaglio dal widget
+            // (es. cliente che aveva digitato 15/03 ma in realta' e' 15/05).
+            $existingBirthday = !empty($existing['birthday']) ? $existing['birthday'] : null;
+            if ($birthday !== null && $birthday !== $existingBirthday) {
                 $sets[] = 'birthday = :birthday';
                 $params['birthday'] = $birthday;
                 $existing['birthday'] = $birthday;
