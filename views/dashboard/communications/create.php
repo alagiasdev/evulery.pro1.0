@@ -105,13 +105,6 @@
                         <i class="bi bi-arrow-repeat" style="animation:spin 1s linear infinite;font-size:.85rem;color:#adb5bd;"></i>
                     </span>
                 </div>
-                <!-- Esclusi per mancato consenso GDPR (visibile solo se >0). -->
-                <div id="excluded-row" style="display:none;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #f0f0f0;background:#fff8e1;margin:0 -1rem;padding-left:1rem;padding-right:1rem;">
-                    <span style="font-size:.78rem;color:#664d03;display:flex;align-items:center;gap:.3rem;" title="Clienti che matchano il segmento ma non hanno dato consenso al marketing (GDPR). Non ricevono l'email. Possono essere re-iscritti dalla scheda cliente.">
-                        Esclusi (no consenso) <i class="bi bi-info-circle-fill" style="font-size:.72rem;opacity:.6;"></i>
-                    </span>
-                    <span style="font-size:.9rem;font-weight:700;color:#664d03;" id="excluded-count">0</span>
-                </div>
                 <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #f0f0f0;">
                     <span style="font-size:.82rem;color:#6c757d;">Crediti necessari</span>
                     <span style="font-size:.95rem;font-weight:700;color:#dc3545;" id="credits-needed">—</span>
@@ -125,6 +118,20 @@
                     <i class="bi bi-exclamation-triangle me-1"></i> Crediti insufficienti per questo invio.
                 </div>
             </div>
+
+            <!--
+                Hint trasparenza GDPR (fuori dal box Riepilogo per non sembrare un alert):
+                informa che alcuni clienti del segmento sono esclusi dalla campagna.
+                Mostrata solo se almeno una delle due categorie e' > 0.
+            -->
+            <div id="excluded-hint" style="display:none;margin-top:.75rem;padding:.6rem .75rem;background:#f8f9fa;border:1px solid #e9ecef;border-radius:6px;font-size:.78rem;color:#6c757d;line-height:1.5;">
+                <div>
+                    <i class="bi bi-info-circle me-1" style="color:#adb5bd;"></i>
+                    <span id="excluded-hint-total" style="font-weight:600;color:#495057;"></span>
+                </div>
+                <div id="excluded-hint-breakdown" style="font-size:.72rem;color:#868e96;margin-top:.25rem;padding-left:1.1rem;"></div>
+                <div style="font-size:.72rem;color:#adb5bd;margin-top:.35rem;padding-left:1.1rem;">Riattivazione possibile dalla scheda cliente.</div>
+            </div>
         </div>
     </div>
 </form>
@@ -134,8 +141,9 @@
     var previewUrl = '<?= url("dashboard/communications/preview") ?>';
     var credits = <?= (int)$credits ?>;
     var countEl = document.getElementById('recipient-count');
-    var excludedEl = document.getElementById('excluded-count');
-    var excludedRow = document.getElementById('excluded-row');
+    var excludedHint = document.getElementById('excluded-hint');
+    var excludedHintTotal = document.getElementById('excluded-hint-total');
+    var excludedHintBreakdown = document.getElementById('excluded-hint-breakdown');
     var neededEl = document.getElementById('credits-needed');
     var alertEl = document.getElementById('credits-alert');
     var submitBtn = document.getElementById('submit-btn');
@@ -168,16 +176,30 @@
             .then(function(data) {
                 var count = data.count || 0;
                 var excluded = data.excluded || 0;
+                var unsubscribed = data.unsubscribed || 0;
                 countEl.textContent = count.toLocaleString('it-IT');
                 neededEl.textContent = count.toLocaleString('it-IT');
 
-                // Mostra la riga "Esclusi" solo se ci sono effettivamente clienti
-                // esclusi per mancato consenso (altrimenti rumore visivo inutile).
-                if (excluded > 0) {
-                    excludedEl.textContent = excluded.toLocaleString('it-IT');
-                    excludedRow.style.display = 'flex';
+                // Hint trasparenza GDPR: header con totale esclusi + breakdown per
+                // categoria (senza consenso = mancato opt-in; disiscritti = revoca
+                // esplicita). Mostra anche solo header se una sola categoria > 0.
+                var totalExcluded = excluded + unsubscribed;
+                if (totalExcluded > 0) {
+                    excludedHintTotal.textContent = totalExcluded.toLocaleString('it-IT') + ' ' +
+                        (totalExcluded === 1 ? 'cliente del segmento non ricevera' : 'clienti del segmento non riceveranno') +
+                        ' l’email';
+
+                    var parts = [];
+                    if (excluded > 0) {
+                        parts.push(excluded.toLocaleString('it-IT') + ' ' + (excluded === 1 ? 'senza consenso marketing' : 'senza consenso marketing'));
+                    }
+                    if (unsubscribed > 0) {
+                        parts.push(unsubscribed.toLocaleString('it-IT') + ' ' + (unsubscribed === 1 ? 'disiscritto' : 'disiscritti'));
+                    }
+                    excludedHintBreakdown.textContent = parts.join(' · ');
+                    excludedHint.style.display = 'block';
                 } else {
-                    excludedRow.style.display = 'none';
+                    excludedHint.style.display = 'none';
                 }
 
                 if (count > credits) {
@@ -193,7 +215,7 @@
             })
             .catch(function() {
                 countEl.textContent = '?';
-                excludedRow.style.display = 'none';
+                excludedHint.style.display = 'none';
             });
     }
 

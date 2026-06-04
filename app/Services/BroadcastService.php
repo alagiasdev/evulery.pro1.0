@@ -72,6 +72,29 @@ class BroadcastService
     }
 
     /**
+     * Conta i clienti che matcherebbero il segmento ma sono disiscritti
+     * (unsubscribed=1, hanno cliccato il link "non desidero ricevere altre comunicazioni").
+     *
+     * Categoria distinta da [[countExcludedByConsent]]: qui c'e' stata una revoca
+     * ESPLICITA del cliente, mentre li' c'e' mancanza di consenso iniziale.
+     * Mostrare entrambi i numeri nella preview rende trasparente al ristoratore
+     * perche' i destinatari sono meno dei clienti totali del segmento.
+     */
+    public static function countUnsubscribed(int $tenantId, string $segment, ?int $inactiveDays, array $thresholds): int
+    {
+        $db = Database::getInstance();
+        $sql = 'SELECT COUNT(*) FROM customers
+                WHERE tenant_id = :tid AND is_blocked = 0 AND unsubscribed = 1';
+        $params = ['tid' => $tenantId];
+
+        $sql .= self::segmentWhere($segment, $inactiveDays, $thresholds);
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        return (int) $stmt->fetchColumn();
+    }
+
+    /**
      * Build segment WHERE clause (reuses Customer model logic).
      */
     private static function segmentWhere(string $segment, ?int $inactiveDays, array $thresholds): string
