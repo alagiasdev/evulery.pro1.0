@@ -4395,8 +4395,9 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-map-table.tm-status-blocked { background: #f1f3f5; color: #6c757d; cursor: not-allowed; opacity: .7; box-shadow: inset 0 0 0 1.5px #ced4da; }
 .tm-table-lock { position: absolute; top: 4px; right: 4px; font-size: .75rem; color: #b3261e; background: #fff; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
 /* Fase B: tavolo "solo manuale" — modifier che si sovrappone allo stato base
-   (libero/confermato/arrivato), bordo tratteggiato per distinguerlo a occhio */
-.tm-map-table.tm-only-manual { outline: 2px dashed #b58105; outline-offset: -2px; }
+   (libero/confermato/arrivato), bordo tratteggiato ambra brillante per
+   distinguerlo a occhio anche da lontano (cucina, tablet di sala). */
+.tm-map-table.tm-only-manual { outline: 3px dashed #F59E0B; outline-offset: -3px; box-shadow: 0 0 0 1px #FFFBEB, 0 2px 6px rgba(245,158,11,.25); }
 .tm-map-table.tm-only-manual.tm-status-free { background: #fff8e0; }
 
 /* Legenda colori nella mappa */
@@ -4412,7 +4413,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 /* Legenda stati permanenti del tavolo (modalita' Setup mappa sala) */
 .tm-setup-legend { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 10px 14px; background: #f8f9fa; border: 1px solid var(--border, #e9ecef); border-radius: 8px; margin-bottom: 12px; font-size: .78rem; color: #495057; }
 .tm-leg-setup-active  { background: var(--brand, #00844A); }
-.tm-leg-setup-manual  { background: var(--brand, #00844A); position: relative; outline: 2px dashed #b58105; outline-offset: -2px; }
+.tm-leg-setup-manual  { background: var(--brand, #00844A); position: relative; outline: 3px dashed #F59E0B; outline-offset: -3px; }
 .tm-leg-setup-blocked { background: #f1f3f5; box-shadow: inset 0 0 0 1.5px #ced4da; }
 .tm-leg-setup-off     { background: #adb5bd; }
 .tm-leg-hint { color: #8893a1; font-size: .72rem; font-weight: 400; }
