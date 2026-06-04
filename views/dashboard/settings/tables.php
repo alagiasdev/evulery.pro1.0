@@ -309,11 +309,12 @@ foreach ($tables as $t) {
                         <input type="text" class="tm-fi" name="internal_note" id="tm-f-note" maxlength="255" placeholder="es. vicino finestra">
                     </div>
                     <div class="tm-fg">
-                        <label class="tm-fl">Stato <span style="text-transform:none;font-weight:400;color:#adb5bd;">— archiviato = tavolo non più in uso ma conservato per lo storico</span></label>
+                        <label class="tm-fl">Stato</label>
                         <select class="tm-fi" name="is_active" id="tm-f-active">
                             <option value="1">Attivo</option>
                             <option value="0">Archiviato</option>
                         </select>
+                        <div class="tm-fhint">Archiviato = tavolo non più in uso ma conservato per lo storico delle prenotazioni passate.</div>
                     </div>
                 </div>
                 <!-- ===== Sezione Disponibilità (Fase B + E migration 058) ===== -->
