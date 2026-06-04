@@ -538,6 +538,13 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         </div>
     </div>
     <?php endif; ?>
+    <!-- Legenda stati permanenti del tavolo (Setup mode) -->
+    <div class="tm-setup-legend">
+        <span class="tm-leg-item"><span class="tm-leg-swatch tm-leg-setup-active"></span> Attivo</span>
+        <span class="tm-leg-item"><span class="tm-leg-swatch tm-leg-setup-manual"></span> Solo manuale (jolly)</span>
+        <span class="tm-leg-item"><span class="tm-leg-swatch tm-leg-setup-blocked"></span> <i class="bi bi-lock-fill" style="font-size:.7rem;color:#b3261e;"></i> Bloccato</span>
+        <span class="tm-leg-item"><span class="tm-leg-swatch tm-leg-setup-off"></span> Disattivato</span>
+    </div>
     <div class="tm-map-hint"><i class="bi bi-arrows-move me-1"></i> Trascina i tavoli per disporli come nella tua sala. Le posizioni si agganciano alla griglia. Ricordati di salvare.</div>
     <div class="tm-map-canvas" id="tm-map">
         <div class="tm-map-spacer" aria-hidden="true" style="width:<?= (int)$canvasContentW ?>px; height:<?= (int)$canvasContentH ?>px;"></div>
@@ -545,10 +552,18 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         <?php
             $tArea = (string)($t['area'] ?? '');
             $hidden = false; // "Tutte le aree" è la vista iniziale
+            $tManualOnly = (int)($t['is_bookable_online'] ?? 1) === 0;
+            $tBlocked    = (int)($t['is_blocked'] ?? 0) === 1;
+            $extraClasses = '';
+            if (!$t['is_active']) $extraClasses .= ' off';
+            if ($tBlocked)        $extraClasses .= ' tm-status-blocked';
+            if ($tManualOnly && !$tBlocked) $extraClasses .= ' tm-only-manual';
         ?>
-        <div class="tm-map-table <?= $t['shape'] === 'round' ? 'round' : 'square' ?><?= (int)$t['is_active'] ? '' : ' off' ?>"
+        <div class="tm-map-table <?= $t['shape'] === 'round' ? 'round' : 'square' ?><?= $extraClasses ?>"
              data-id="<?= (int)$t['id'] ?>" data-area="<?= e($tArea) ?>"
+             title="<?= $tBlocked ? e('Bloccato' . (!empty($t['block_reason']) ? ' — ' . $t['block_reason'] : '')) : ($tManualOnly ? 'Solo manuale (tavolo jolly)' : '') ?>"
              style="left:<?= (int)$t['_x'] ?>px; top:<?= (int)$t['_y'] ?>px;<?= $hidden ? 'display:none;' : '' ?>">
+            <?php if ($tBlocked): ?><span class="tm-table-lock" title="Tavolo bloccato"><i class="bi bi-lock-fill"></i></span><?php endif; ?>
             <?php if ($areaHasDot($tArea)): ?><span class="tm-area-dot" style="background:<?= e(area_color($tArea)) ?>;"></span><?php endif; ?>
             <span class="tm-map-name"><?= e($t['name']) ?></span>
             <span class="tm-map-cap"><?= format_capacity((int)($t['min_capacity'] ?? 1), (int)$t['capacity']) ?></span>

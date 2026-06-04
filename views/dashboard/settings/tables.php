@@ -468,6 +468,7 @@ foreach ($tables as $t) {
 
     // Fase B + E: campi disponibilità tavolo
     var fBookable = document.getElementById('tm-f-bookable');
+    var fBookableRow = fBookable.closest('.tm-toggle-row');
     var fBlocked = document.getElementById('tm-f-blocked');
     var fReason = document.getElementById('tm-f-block-reason');
     var fReasonWrap = document.getElementById('tm-f-block-reason-wrap');
@@ -476,7 +477,21 @@ foreach ($tables as $t) {
         fReasonWrap.style.display = fBlocked.checked ? '' : 'none';
         if (!fBlocked.checked) fReason.value = '';
     }
-    fBlocked.addEventListener('change', updateBlockedReasonVisibility);
+    // Quando il tavolo è bloccato, l'impostazione "Disponibile online" diventa
+    // irrilevante (il tavolo è fuori uso totale). Greyed-out + tooltip per chiarire
+    // che non c'è contraddizione: la configurazione di base resta, ma è "sospesa".
+    function updateBookableLocked() {
+        var locked = fBlocked.checked;
+        fBookable.disabled = locked;
+        fBookableRow.classList.toggle('tm-toggle-locked', locked);
+        fBookableRow.title = locked
+            ? 'Il tavolo è bloccato — sbloccalo prima per modificare questa impostazione. La configurazione di base verrà applicata dopo lo sblocco.'
+            : '';
+    }
+    fBlocked.addEventListener('change', function () {
+        updateBlockedReasonVisibility();
+        updateBookableLocked();
+    });
 
     function openModal(table) {
         if (table) {
@@ -508,6 +523,7 @@ foreach ($tables as $t) {
         }
         updateCapPreview();
         updateBlockedReasonVisibility();
+        updateBookableLocked();
         modal.style.display = 'flex';
     }
     function closeModal() { modal.style.display = 'none'; }
