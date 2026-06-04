@@ -329,12 +329,9 @@ class TablesController
         }
 
         // Fase B + E (migration 058): flag disponibilità tavolo.
-        // is_bookable_online: default 1 retrocompat (se il form non lo manda esplicito,
-        // mantiene "online" come da pre-migration). Il modale moderno lo invia sempre.
-        // is_blocked: opt-in, default 0. block_reason: opzionale, max 255, ignorato se blocked=0.
-        $isBookableOnline = array_key_exists('is_bookable_online', $d)
-            ? (!empty($d['is_bookable_online']) ? 1 : 0)
-            : 1;
+        // Il modale invia sempre entrambi i campi tramite pattern hidden+checkbox.
+        // block_reason: ignorato (vuoto) se blocked=0 — il Model lo NULLifica in DB.
+        $isBookableOnline = !empty($d['is_bookable_online']) ? 1 : 0;
         $isBlocked = !empty($d['is_blocked']) ? 1 : 0;
         $blockReason = $isBlocked
             ? mb_substr(trim((string)($d['block_reason'] ?? '')), 0, 255)

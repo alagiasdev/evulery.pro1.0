@@ -280,6 +280,8 @@ foreach ($tables as $t) {
                             <div class="tm-toggle-title">Disponibile per prenotazioni online</div>
                             <div class="tm-toggle-desc">Se disattivato, il tavolo non viene assegnato dall'algoritmo automatico e non incide sulla capacità del widget pubblico. Resta visibile in sala e assegnabile manualmente <em>(es. tavolo jolly di scorta)</em>.</div>
                         </div>
+                        <!-- hidden+checkbox: il browser invia sempre almeno value=0; checkbox ON sovrascrive a 1 -->
+                        <input type="hidden" name="is_bookable_online" value="0">
                         <label class="tm-switch">
                             <input type="checkbox" name="is_bookable_online" id="tm-f-bookable" value="1" checked>
                             <span class="tm-switch-track"></span>
@@ -292,6 +294,7 @@ foreach ($tables as $t) {
                             <div class="tm-toggle-title">Blocca tavolo <span class="tm-toggle-meta">— blocco temporaneo</span></div>
                             <div class="tm-toggle-desc">Es. sedia rotta, riservato a un cliente specifico, lavori. Toglilo quando il tavolo torna utilizzabile.</div>
                         </div>
+                        <input type="hidden" name="is_blocked" value="0">
                         <label class="tm-switch">
                             <input type="checkbox" name="is_blocked" id="tm-f-blocked" value="1">
                             <span class="tm-switch-track"></span>
