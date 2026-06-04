@@ -27,7 +27,7 @@ class MigrationsController
             'activeMenu' => 'migrations',
             'status'     => $status,
             'lastResult' => \App\Core\Session::getFlash('migration_result'),
-        ]);
+        ], 'admin');
     }
 
     public function run(Request $request): void
