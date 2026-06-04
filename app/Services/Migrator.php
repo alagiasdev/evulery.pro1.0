@@ -63,6 +63,8 @@ class Migrator
             return $result;
         }
 
+        // Il release del lock e' garantito dal finally — niente release manuali
+        // dentro il try per evitare doppio-release e branching error-prone.
         try {
             $this->ensureMigrationsTable();
             $all = $this->scanMigrationFiles();
@@ -76,7 +78,6 @@ class Migrator
                 }
                 if ($idx === null) {
                     $result['error'] = "Target '$target' non trovato tra le pending.";
-                    $this->releaseLock();
                     return $result;
                 }
                 $pending = array_slice($pending, 0, $idx + 1);
@@ -88,21 +89,22 @@ class Migrator
                 if ($sql === false || trim($sql) === '') {
                     $result['error'] = "File vuoto o illeggibile.";
                     $result['error_file'] = $f;
-                    $this->releaseLock();
                     return $result;
                 }
                 $t0 = microtime(true);
                 try {
                     $this->db->exec($sql);
+                    $ms = (int)((microtime(true) - $t0) * 1000);
+                    // markApplied dentro lo stesso try: se fallisce dopo l'SQL OK,
+                    // dobbiamo segnalare lo stato inconsistente (SQL applicato ma
+                    // non marcato) per evitare riapplicazione al prossimo run.
+                    $this->markApplied($path, $f, $ms);
+                    $result['applied'][] = ['filename' => $f, 'duration_ms' => $ms];
                 } catch (\Throwable $e) {
                     $result['error'] = $e->getMessage();
                     $result['error_file'] = $f;
-                    $this->releaseLock();
                     return $result;
                 }
-                $ms = (int)((microtime(true) - $t0) * 1000);
-                $this->markApplied($path, $f, $ms);
-                $result['applied'][] = ['filename' => $f, 'duration_ms' => $ms];
             }
 
             $result['success'] = true;
