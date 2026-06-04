@@ -121,13 +121,25 @@ foreach ($tables as $t) {
         L'ordine = priorità di auto-assegnazione: i tavoli più in alto si riempiono per primi.
         Trascina la maniglia per riordinare (solo in "Tutte le aree").
     </div>
+    <?php
+        // Separo tavoli attivi e archiviati per la doppia sezione di lista.
+        // Gli archiviati (is_active=0) sono "tavoli non piu' in uso ma conservati
+        // per lo storico delle prenotazioni passate" — vivono in una sezione
+        // dedicata in fondo alla lista, sono nascosti dalla mappa sala.
+        $activeTables = [];
+        $archivedTables = [];
+        foreach ($tables as $t) {
+            if ((int)$t['is_active'] === 1) $activeTables[] = $t;
+            else                            $archivedTables[] = $t;
+        }
+    ?>
     <div id="tm-list">
-        <?php $rank = 0; foreach ($tables as $t): ?>
+        <?php $rank = 0; foreach ($activeTables as $t): ?>
         <?php
-            $isActive = (int)$t['is_active'] === 1;
+            $isActive = true; // qui siamo solo sugli attivi
             $isBookableOnline = (int)($t['is_bookable_online'] ?? 1) === 1;
             $isBlocked = (int)($t['is_blocked'] ?? 0) === 1;
-            if ($isActive) $rank++;
+            $rank++;
             $combo = $comboMap[(int)$t['id']] ?? [];
         ?>
         <div class="tm-row<?= $isActive ? '' : ' tm-row-off' ?><?= $isBlocked ? ' tm-row-blocked' : '' ?>" data-id="<?= (int)$t['id'] ?>" data-area="<?= e($t['area'] ?? '') ?>" draggable="true">
@@ -193,6 +205,40 @@ foreach ($tables as $t) {
             </form>
         </div>
         <?php endforeach; ?>
+
+        <?php if (!empty($archivedTables)): ?>
+        <!-- Sezione Archivio: tavoli con is_active=0 (non più in uso, storico conservato) -->
+        <div class="tm-archive-header">
+            <i class="bi bi-archive"></i>
+            Archiviati <span class="tm-archive-count"><?= count($archivedTables) ?></span>
+            <span class="tm-archive-hint">— tavoli non più in uso ma conservati per lo storico delle prenotazioni. Per ripristinarli, modifica il loro Stato a "Attivo".</span>
+        </div>
+        <?php foreach ($archivedTables as $t): ?>
+        <?php
+            $combo = $comboMap[(int)$t['id']] ?? [];
+            $tMin = (int)($t['min_capacity'] ?? 1);
+            $tMax = (int)$t['capacity'];
+            $isElastic = $tMin !== $tMax;
+        ?>
+        <div class="tm-row tm-row-archived" data-id="<?= (int)$t['id'] ?>" data-area="<?= e($t['area'] ?? '') ?>">
+            <i class="bi bi-archive tm-drag-archived" title="Tavolo archiviato"></i>
+            <span class="tm-rank">—</span>
+            <span class="tm-cap<?= $isElastic ? ' tm-cap-range' : '' ?>"><?= format_capacity($tMin, $tMax, true) ?></span>
+            <div class="tm-info">
+                <div class="tm-name"><?= e($t['name']) ?> <span class="tm-tag tm-tag-archived">archiviato</span></div>
+                <div class="tm-meta">
+                    <?php if (!empty($t['area'])): ?><span><i class="bi bi-geo-alt"></i> <?= e($t['area']) ?></span><?php endif; ?>
+                    <?php if (!empty($t['internal_note'])): ?><span><?= e($t['internal_note']) ?></span><?php endif; ?>
+                </div>
+            </div>
+            <button type="button" class="tm-act tm-edit" data-id="<?= (int)$t['id'] ?>" title="Modifica / Ripristina"><i class="bi bi-arrow-counterclockwise"></i></button>
+            <form method="POST" action="<?= url('dashboard/settings/tables/' . (int)$t['id'] . '/delete') ?>" class="d-inline" data-confirm="Eliminare definitivamente il tavolo archiviato «<?= e($t['name']) ?>»? Lo storico delle prenotazioni passate perderà il riferimento.">
+                <?= csrf_field() ?>
+                <button type="submit" class="tm-act tm-act-danger" title="Elimina definitivamente"><i class="bi bi-trash3"></i></button>
+            </form>
+        </div>
+        <?php endforeach; ?>
+        <?php endif; ?>
     </div>
     <?php endif; ?>
 </div>
@@ -263,10 +309,10 @@ foreach ($tables as $t) {
                         <input type="text" class="tm-fi" name="internal_note" id="tm-f-note" maxlength="255" placeholder="es. vicino finestra">
                     </div>
                     <div class="tm-fg">
-                        <label class="tm-fl">Stato</label>
+                        <label class="tm-fl">Stato <span style="text-transform:none;font-weight:400;color:#adb5bd;">— archiviato = tavolo non più in uso ma conservato per lo storico</span></label>
                         <select class="tm-fi" name="is_active" id="tm-f-active">
                             <option value="1">Attivo</option>
-                            <option value="0">Disattivato</option>
+                            <option value="0">Archiviato</option>
                         </select>
                     </div>
                 </div>

@@ -293,6 +293,12 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                 <div class="tm-map-spacer" aria-hidden="true" style="width:<?= (int)$canvasContentW ?>px; height:<?= (int)$canvasContentH ?>px;"></div>
                 <?php foreach ($tables as $t): ?>
                 <?php
+                    // Tavoli archiviati (is_active=0) sono nascosti dalla mappa: il
+                    // tavolo non c'e' piu' fisicamente nella sala, non ha senso renderizzarlo
+                    // (lo storico delle prenotazioni passate vive nel DB ed e' indipendente
+                    // dalla visualizzazione della mappa).
+                    if ((int)$t['is_active'] === 0) continue;
+
                     $tArea = (string)($t['area'] ?? '');
                     $hidden = false; // "Tutte le aree" è la vista iniziale
                     $occ = $floorState[(int)$t['id']] ?? null;
@@ -538,24 +544,28 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         </div>
     </div>
     <?php endif; ?>
-    <!-- Legenda stati permanenti del tavolo (Setup mode) -->
+    <!-- Legenda stati permanenti del tavolo (Setup mode). I tavoli archiviati
+         non appaiono qui — sono visibili solo in "Elenco tavoli > Archiviati". -->
     <div class="tm-setup-legend">
         <span class="tm-leg-item"><span class="tm-leg-swatch tm-leg-setup-active"></span> Attivo</span>
         <span class="tm-leg-item"><span class="tm-leg-swatch tm-leg-setup-manual"></span> Solo manuale (jolly)</span>
         <span class="tm-leg-item"><span class="tm-leg-swatch tm-leg-setup-blocked"></span> <i class="bi bi-lock-fill" style="font-size:.7rem;color:#b3261e;"></i> Bloccato</span>
-        <span class="tm-leg-item"><span class="tm-leg-swatch tm-leg-setup-off"></span> Disattivato</span>
+        <span class="tm-leg-hint">— i tavoli <i class="bi bi-archive"></i> archiviati sono nascosti dalla mappa, gestiscili da <em>Elenco tavoli</em></span>
     </div>
     <div class="tm-map-hint"><i class="bi bi-arrows-move me-1"></i> Trascina i tavoli per disporli come nella tua sala. Le posizioni si agganciano alla griglia. Ricordati di salvare.</div>
     <div class="tm-map-canvas" id="tm-map">
         <div class="tm-map-spacer" aria-hidden="true" style="width:<?= (int)$canvasContentW ?>px; height:<?= (int)$canvasContentH ?>px;"></div>
         <?php foreach ($tables as $t): ?>
         <?php
+            // Setup: i tavoli archiviati (is_active=0) NON appaiono nella mappa.
+            // Sono accessibili solo dalla sezione "Archiviati" in lista tavoli.
+            if ((int)$t['is_active'] === 0) continue;
+
             $tArea = (string)($t['area'] ?? '');
             $hidden = false; // "Tutte le aree" è la vista iniziale
             $tManualOnly = (int)($t['is_bookable_online'] ?? 1) === 0;
             $tBlocked    = (int)($t['is_blocked'] ?? 0) === 1;
             $extraClasses = '';
-            if (!$t['is_active']) $extraClasses .= ' off';
             if ($tBlocked)        $extraClasses .= ' tm-status-blocked';
             if ($tManualOnly && !$tBlocked) $extraClasses .= ' tm-only-manual';
         ?>

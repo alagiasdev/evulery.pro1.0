@@ -4252,6 +4252,15 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-tag-manual  { background: #fff3cd; color: #664d03; }
 .tm-tag-blocked { background: #fdecea; color: #b3261e; }
 .tm-row-blocked .tm-cap, .tm-row-blocked .tm-name { opacity: .65; }
+/* Sezione "Archivio" in fondo alla lista tavoli */
+.tm-archive-header { display: flex; align-items: baseline; gap: 8px; margin-top: 24px; padding: 10px 14px; background: #f5f6f8; border: 1px solid var(--border, #e9ecef); border-radius: 8px; font-size: .78rem; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: .03em; flex-wrap: wrap; }
+.tm-archive-header i { color: #adb5bd; }
+.tm-archive-count { background: #adb5bd; color: white; font-size: .68rem; padding: 1px 8px; border-radius: 10px; font-weight: 700; letter-spacing: 0; }
+.tm-archive-hint { text-transform: none; font-weight: 400; color: #8893a1; font-size: .72rem; letter-spacing: 0; }
+.tm-row-archived { opacity: .65; background: #fafbfc; }
+.tm-row-archived .tm-rank { background: #f0f1f3; color: #adb5bd; }
+.tm-drag-archived { color: #adb5bd; cursor: default; }
+.tm-tag-archived { background: #eef0f2; color: #6c757d; }
 .tm-combo-tot { background: var(--brand, #00844A); color: #fff; font-weight: 600; padding: 0 5px; border-radius: 3px; margin-left: 2px; }
 .tm-tag-combo.off .tm-combo-tot { background: #9aa1a9; }
 .tm-act { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--border, #e9ecef); background: #fff; cursor: pointer; font-size: .72rem; color: #6c757d; flex-shrink: 0; }
@@ -4406,6 +4415,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-leg-setup-manual  { background: var(--brand, #00844A); position: relative; outline: 2px dashed #b58105; outline-offset: -2px; }
 .tm-leg-setup-blocked { background: #f1f3f5; box-shadow: inset 0 0 0 1.5px #ced4da; }
 .tm-leg-setup-off     { background: #adb5bd; }
+.tm-leg-hint { color: #8893a1; font-size: .72rem; font-weight: 400; }
 /* popup riassegnazione */
 .tm-pop-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1050; align-items: center; justify-content: center; padding: 16px; }
 .tm-pop { background: #fff; border-radius: 12px; width: 400px; max-width: 100%; box-shadow: 0 12px 40px rgba(0,0,0,.2); overflow: hidden; }
