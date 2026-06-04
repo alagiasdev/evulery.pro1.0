@@ -4300,6 +4300,9 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-switch-track::after { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #fff; top: 3px; left: 3px; transition: left .15s; }
 .tm-switch input:checked + .tm-switch-track { background: var(--brand, #00844A); }
 .tm-switch input:checked + .tm-switch-track::after { left: 23px; }
+/* Variante "blocco" in lista: ON = bloccato (rosso/danger), OFF = libero (grigio).
+   Coerente con la palette del badge "Bloccato" (#b3261e). */
+.tm-switch-block input:checked + .tm-switch-track { background: #b3261e; }
 
 /* Sezione "Disponibilita'" nel modale modifica tavolo (Fase B + E) */
 .tm-fg-section { padding-top: 12px; border-top: 1px solid var(--border, #e9ecef); margin-top: 4px; }

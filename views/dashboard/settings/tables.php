@@ -173,10 +173,17 @@ foreach ($tables as $t) {
                 </div>
             </div>
             <button type="button" class="tm-act tm-edit" data-id="<?= (int)$t['id'] ?>" title="Modifica"><i class="bi bi-pencil"></i></button>
+            <?php
+                // Toggle rapido in lista = blocco/sblocco (azione frequente).
+                // Per disattivazione permanente vedi select "Stato" nel modale.
+                $blockedLabel = $isBlocked
+                    ? 'Tavolo bloccato — clicca per sbloccare'
+                    : 'Tavolo disponibile — clicca per bloccare temporaneamente';
+            ?>
             <form method="POST" action="<?= url('dashboard/settings/tables/' . (int)$t['id'] . '/toggle') ?>" class="d-inline tm-toggle-form">
                 <?= csrf_field() ?>
-                <label class="tm-switch" title="<?= $isActive ? 'Tavolo attivo — clicca per disattivarlo' : 'Tavolo disattivato — clicca per attivarlo' ?>">
-                    <input type="checkbox" class="tm-toggle-input" <?= $isActive ? 'checked' : '' ?>>
+                <label class="tm-switch tm-switch-block" title="<?= e($blockedLabel) ?>">
+                    <input type="checkbox" class="tm-toggle-input" <?= $isBlocked ? 'checked' : '' ?>>
                     <span class="tm-switch-track"></span>
                 </label>
             </form>

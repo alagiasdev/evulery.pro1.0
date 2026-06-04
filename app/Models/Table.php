@@ -156,6 +156,39 @@ class Table
         return $stmt->execute(['id' => $id, 't' => $tenantId]);
     }
 
+    /**
+     * Toggle blocco rapido dalla lista tavoli (Fase E).
+     * - Se attualmente NON bloccato: setta is_blocked=1 e block_reason="Bloccato dal DD/MM/YYYY"
+     *   (motivo auto, modificabile dal modale dopo).
+     * - Se attualmente bloccato: setta is_blocked=0 e NULLifica block_reason.
+     * Ritorna lo stato finale (true se ora bloccato, false se sbloccato).
+     */
+    public function toggleBlocked(int $id, int $tenantId): bool
+    {
+        $current = $this->findById($id);
+        if (!$current || (int)$current['tenant_id'] !== $tenantId) {
+            return false;
+        }
+        $isBlocked = (int)($current['is_blocked'] ?? 0) === 1;
+        if ($isBlocked) {
+            // Sblocca: NULLifica motivo
+            $stmt = $this->db->prepare(
+                'UPDATE restaurant_tables SET is_blocked = 0, block_reason = NULL
+                 WHERE id = :id AND tenant_id = :t'
+            );
+            $stmt->execute(['id' => $id, 't' => $tenantId]);
+            return false;
+        }
+        // Blocca: motivo automatico "Bloccato dal DD/MM/YYYY"
+        $autoReason = 'Bloccato dal ' . date('d/m/Y');
+        $stmt = $this->db->prepare(
+            'UPDATE restaurant_tables SET is_blocked = 1, block_reason = :r
+             WHERE id = :id AND tenant_id = :t'
+        );
+        $stmt->execute(['id' => $id, 't' => $tenantId, 'r' => $autoReason]);
+        return true;
+    }
+
     /** Riordina la priorità in base alla sequenza di id ricevuta. */
     public function reorder(int $tenantId, array $orderedIds): void
     {

@@ -130,15 +130,20 @@ class TablesController
         Response::redirect(url('dashboard/settings/tables'));
     }
 
+    /**
+     * Toggle rapido dalla lista tavoli: blocca/sblocca il tavolo (Fase E).
+     * Azione frequente (sedia rotta, evento privato, lavori). Per la
+     * disattivazione permanente (rara), usare il select "Stato" nel modale.
+     */
     public function toggle(Request $request): void
     {
         if (gate_service('table_management', url('dashboard/settings/tables'))) return;
 
         $tenantId = Auth::tenantId();
         $id = (int)$request->param('id');
-        (new Table())->toggleActive($id, $tenantId);
+        $nowBlocked = (new Table())->toggleBlocked($id, $tenantId);
 
-        flash('success', 'Stato tavolo aggiornato.');
+        flash('success', $nowBlocked ? 'Tavolo bloccato.' : 'Tavolo sbloccato.');
         Response::redirect(url('dashboard/settings/tables'));
     }
 
