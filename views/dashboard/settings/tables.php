@@ -142,7 +142,7 @@ foreach ($tables as $t) {
             $rank++;
             $combo = $comboMap[(int)$t['id']] ?? [];
         ?>
-        <div class="tm-row<?= $isActive ? '' : ' tm-row-off' ?><?= $isBlocked ? ' tm-row-blocked' : '' ?>" data-id="<?= (int)$t['id'] ?>" data-area="<?= e($t['area'] ?? '') ?>" draggable="true">
+        <div class="tm-row<?= $isBlocked ? ' tm-row-blocked' : '' ?>" data-id="<?= (int)$t['id'] ?>" data-area="<?= e($t['area'] ?? '') ?>" draggable="true">
             <i class="bi bi-grip-vertical tm-drag" title="Trascina per riordinare"></i>
             <span class="tm-rank"><?= $isActive ? $rank : '—' ?></span>
             <?php
@@ -414,13 +414,16 @@ foreach ($tables as $t) {
     });
 
     // ---- Drag & drop reorder (solo "Tutte le aree") ----
+    // SOLO sui tavoli attivi (.tm-row senza .tm-row-archived). I tavoli archiviati
+    // non sono draggable e non partecipano al riordino delle priorita'.
     var list = document.getElementById('tm-list');
     var reorderForm = document.getElementById('tm-reorder-form');
     var reorderInput = document.getElementById('tm-reorder-order');
     var dragEl = null;
+    var ACTIVE_SEL = '.tm-row:not(.tm-row-archived)';
 
     if (list) {
-        list.querySelectorAll('.tm-row').forEach(function (row) {
+        list.querySelectorAll(ACTIVE_SEL).forEach(function (row) {
             row.addEventListener('dragstart', function (e) {
                 if (currentArea !== '') { e.preventDefault(); return; }
                 dragEl = row;
@@ -444,15 +447,15 @@ foreach ($tables as $t) {
 
     function syncReorder() {
         var ids = [];
-        list.querySelectorAll('.tm-row').forEach(function (r) { ids.push(r.getAttribute('data-id')); });
+        list.querySelectorAll(ACTIVE_SEL).forEach(function (r) { ids.push(r.getAttribute('data-id')); });
         reorderInput.value = ids.join(',');
         reorderForm.style.display = '';
-        // ricalcola i numeri di rango visibili
+        // Ricalcola i numeri di rango visibili (solo sui tavoli attivi)
         var rank = 0;
-        list.querySelectorAll('.tm-row').forEach(function (r) {
+        list.querySelectorAll(ACTIVE_SEL).forEach(function (r) {
             var badge = r.querySelector('.tm-rank');
-            if (!r.classList.contains('tm-row-off')) { rank++; badge.textContent = rank; }
-            else { badge.textContent = '—'; }
+            rank++;
+            badge.textContent = rank;
         });
     }
 
