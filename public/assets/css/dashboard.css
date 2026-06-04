@@ -4267,31 +4267,35 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-act:hover { border-color: var(--brand, #00844A); color: var(--brand, #00844A); }
 .tm-act-danger:hover { border-color: #dc3545; color: #dc3545; }
 
-/* Sticky in basso del viewport: la barra resta sempre visibile mentre l'utente
-   scrolla la lista tavoli, cosi' il bottone "Salva ordine" e' raggiungibile
-   senza dover scrollare a fondo pagina. Pattern usato da Notion/Linear/Figma. */
+/* Fixed in basso del viewport: la barra resta sempre visibile mentre l'utente
+   scrolla la lista tavoli, cosi' "Salva ordine" e' raggiungibile senza scroll.
+   Centrata orizzontalmente con max-width per non occupare tutta la finestra
+   sui monitor larghi. Pattern usato da Notion/Linear/Figma. */
 .tm-reorder-bar {
     display: flex;
     align-items: center;
     gap: 12px;
-    position: sticky;
-    bottom: 16px;
-    z-index: 50;
-    margin-top: 16px;
-    padding: 13px 18px;
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    z-index: 1040;
+    width: calc(100% - 48px);
+    max-width: 760px;
+    padding: 14px 20px;
     background: #fff3cd;
     border: 2px solid #ffc107;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: .82rem;
     font-weight: 600;
     color: #664d03;
-    box-shadow: 0 8px 24px rgba(255,193,7,.28), 0 2px 6px rgba(0,0,0,.08);
-    animation: tm-reorder-slide-in .3s ease-out;
+    box-shadow: 0 12px 32px rgba(255,193,7,.35), 0 4px 12px rgba(0,0,0,.12);
+    transform: translateX(-50%);
+    animation: tm-reorder-slide-in .35s cubic-bezier(.18,.89,.32,1.28);
 }
 .tm-reorder-bar span { flex: 1; }
 @keyframes tm-reorder-slide-in {
-    from { transform: translateY(24px); opacity: 0; }
-    to   { transform: translateY(0); opacity: 1; }
+    from { transform: translateX(-50%) translateY(40px); opacity: 0; }
+    to   { transform: translateX(-50%) translateY(0); opacity: 1; }
 }
 
 /* modale */
