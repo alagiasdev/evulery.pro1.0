@@ -105,6 +105,13 @@
                         <i class="bi bi-arrow-repeat" style="animation:spin 1s linear infinite;font-size:.85rem;color:#adb5bd;"></i>
                     </span>
                 </div>
+                <!-- Esclusi per mancato consenso GDPR (visibile solo se >0). -->
+                <div id="excluded-row" style="display:none;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #f0f0f0;background:#fff8e1;margin:0 -1rem;padding-left:1rem;padding-right:1rem;">
+                    <span style="font-size:.78rem;color:#664d03;display:flex;align-items:center;gap:.3rem;" title="Clienti che matchano il segmento ma non hanno dato consenso al marketing (GDPR). Non ricevono l'email. Possono essere re-iscritti dalla scheda cliente.">
+                        Esclusi (no consenso) <i class="bi bi-info-circle-fill" style="font-size:.72rem;opacity:.6;"></i>
+                    </span>
+                    <span style="font-size:.9rem;font-weight:700;color:#664d03;" id="excluded-count">0</span>
+                </div>
                 <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #f0f0f0;">
                     <span style="font-size:.82rem;color:#6c757d;">Crediti necessari</span>
                     <span style="font-size:.95rem;font-weight:700;color:#dc3545;" id="credits-needed">—</span>
@@ -127,6 +134,8 @@
     var previewUrl = '<?= url("dashboard/communications/preview") ?>';
     var credits = <?= (int)$credits ?>;
     var countEl = document.getElementById('recipient-count');
+    var excludedEl = document.getElementById('excluded-count');
+    var excludedRow = document.getElementById('excluded-row');
     var neededEl = document.getElementById('credits-needed');
     var alertEl = document.getElementById('credits-alert');
     var submitBtn = document.getElementById('submit-btn');
@@ -158,8 +167,18 @@
             .then(function(r) { return r.json(); })
             .then(function(data) {
                 var count = data.count || 0;
+                var excluded = data.excluded || 0;
                 countEl.textContent = count.toLocaleString('it-IT');
                 neededEl.textContent = count.toLocaleString('it-IT');
+
+                // Mostra la riga "Esclusi" solo se ci sono effettivamente clienti
+                // esclusi per mancato consenso (altrimenti rumore visivo inutile).
+                if (excluded > 0) {
+                    excludedEl.textContent = excluded.toLocaleString('it-IT');
+                    excludedRow.style.display = 'flex';
+                } else {
+                    excludedRow.style.display = 'none';
+                }
 
                 if (count > credits) {
                     alertEl.style.display = 'block';
@@ -174,6 +193,7 @@
             })
             .catch(function() {
                 countEl.textContent = '?';
+                excludedRow.style.display = 'none';
             });
     }
 

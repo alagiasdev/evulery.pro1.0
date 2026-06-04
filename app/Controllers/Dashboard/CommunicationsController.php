@@ -168,8 +168,9 @@ class CommunicationsController
             $segment = 'all';
         }
 
-        $count = BroadcastService::countRecipients($tenantId, $segment, $inactiveDays, $thresholds);
-        Response::json(['count' => $count]);
+        $count    = BroadcastService::countRecipients($tenantId, $segment, $inactiveDays, $thresholds);
+        $excluded = BroadcastService::countExcludedByConsent($tenantId, $segment, $inactiveDays, $thresholds);
+        Response::json(['count' => $count, 'excluded' => $excluded]);
     }
 
     public function store(Request $request): void

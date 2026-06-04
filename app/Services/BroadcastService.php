@@ -46,6 +46,32 @@ class BroadcastService
     }
 
     /**
+     * Conta i clienti che matcherebbero il segmento MA sono esclusi dal broadcast
+     * perché non hanno consenso marketing (marketing_consent IS NULL OR = 0).
+     *
+     * Usato nel preview UI per mostrare al ristoratore "X destinatari · Y esclusi
+     * per mancato consenso GDPR" → evita confusione tipica "perché vedo meno
+     * destinatari di quelli che ho nel CRM?".
+     *
+     * NON include is_blocked=1 e unsubscribed=1: quelli sono esclusi per scelta
+     * esplicita (ristoratore o cliente). Qui contiamo solo i "silenziosi GDPR".
+     */
+    public static function countExcludedByConsent(int $tenantId, string $segment, ?int $inactiveDays, array $thresholds): int
+    {
+        $db = Database::getInstance();
+        $sql = 'SELECT COUNT(*) FROM customers
+                WHERE tenant_id = :tid AND is_blocked = 0 AND unsubscribed = 0
+                  AND (marketing_consent IS NULL OR marketing_consent = 0)';
+        $params = ['tid' => $tenantId];
+
+        $sql .= self::segmentWhere($segment, $inactiveDays, $thresholds);
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        return (int) $stmt->fetchColumn();
+    }
+
+    /**
      * Build segment WHERE clause (reuses Customer model logic).
      */
     private static function segmentWhere(string $segment, ?int $inactiveDays, array $thresholds): string
