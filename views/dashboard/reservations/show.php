@@ -190,9 +190,12 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
             <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-check me-1"></i> Conferma tavolo</button>
         </form>
         <?php
-            // Modale "Combina tavoli" — riusa il partial
-            if (!empty($allTables) && count($allTables) > 1) {
-                $mmTables = $allTables;
+            // Modale "Combina tavoli" — riusa il partial.
+            // Esclude i tavoli bloccati (is_blocked=1): sono fuori uso e non
+            // selezionabili nemmeno nella combinazione manuale. I "solo manuale"
+            // (is_bookable_online=0) restano selezionabili.
+            $mmTables = array_values(array_filter($allTables, fn($t) => (int)($t['is_blocked'] ?? 0) === 0));
+            if (!empty($mmTables) && count($mmTables) > 1) {
                 include __DIR__ . '/../../partials/tables-multiselect-modal.php';
             }
             // Enhancement dropdown custom (idempotente): sostituisce visivamente

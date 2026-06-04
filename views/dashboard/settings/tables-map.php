@@ -497,8 +497,11 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
     <?php
         // Modale "Combina tavoli" (Fase A) — UNA volta sola per pagina, riusato
         // da tutti i popup tramite EvuleryCombineTables.open()
-        if (!empty($tables) && count($tables) > 1) {
-            $mmTables = $tables;
+        // Filtra fuori i tavoli bloccati: non possono essere combinati manualmente
+        // (sono fuori uso totale). I "solo manuale" (is_bookable_online=0) restano
+        // selezionabili — l'operatore puo' assegnarli manualmente.
+        $mmTables = array_values(array_filter($tables, fn($t) => (int)($t['is_blocked'] ?? 0) === 0));
+        if (!empty($mmTables) && count($mmTables) > 1) {
             include __DIR__ . '/../../partials/tables-multiselect-modal.php';
         }
         // Enhancement dropdown custom (sostituisce visivamente il <select> nativo).
