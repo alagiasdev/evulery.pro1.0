@@ -4267,8 +4267,32 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-act:hover { border-color: var(--brand, #00844A); color: var(--brand, #00844A); }
 .tm-act-danger:hover { border-color: #dc3545; color: #dc3545; }
 
-.tm-reorder-bar { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 11px 16px; background: #fff8e1; border: 1px solid #ffe082; border-radius: 10px; font-size: .78rem; color: #8a6d00; }
+/* Sticky in basso del viewport: la barra resta sempre visibile mentre l'utente
+   scrolla la lista tavoli, cosi' il bottone "Salva ordine" e' raggiungibile
+   senza dover scrollare a fondo pagina. Pattern usato da Notion/Linear/Figma. */
+.tm-reorder-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    bottom: 16px;
+    z-index: 50;
+    margin-top: 16px;
+    padding: 13px 18px;
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 10px;
+    font-size: .82rem;
+    font-weight: 600;
+    color: #664d03;
+    box-shadow: 0 8px 24px rgba(255,193,7,.28), 0 2px 6px rgba(0,0,0,.08);
+    animation: tm-reorder-slide-in .3s ease-out;
+}
 .tm-reorder-bar span { flex: 1; }
+@keyframes tm-reorder-slide-in {
+    from { transform: translateY(24px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+}
 
 /* modale */
 .tm-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 1050; padding: 16px; }
