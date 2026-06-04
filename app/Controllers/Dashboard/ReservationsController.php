@@ -121,9 +121,26 @@ class ReservationsController
                 $tableCurrentAuto = (bool)($current[0]['is_auto'] ?? 0);
                 $known = array_column($tableOptions, 'value');
                 if (!in_array($tableCurrentValue, $known, true)) {
+                    // L'opzione corrente non e' tra quelle valide (probabilmente
+                    // contiene tavoli bloccati). Aggiungo come opzione "(attuale)"
+                    // con suffisso esplicito sui tavoli bloccati per chiarezza.
+                    $blockedTablesById = [];
+                    foreach ($allTables as $tt) {
+                        if ((int)($tt['is_blocked'] ?? 0) === 1) {
+                            $blockedTablesById[(int)$tt['id']] = $tt['name'];
+                        }
+                    }
+                    $blockedInCurrent = [];
+                    foreach ($curIds as $cid) {
+                        if (isset($blockedTablesById[$cid])) $blockedInCurrent[] = $blockedTablesById[$cid];
+                    }
+                    $blockedSuffix = '';
+                    if (!empty($blockedInCurrent)) {
+                        $blockedSuffix = ' · ' . implode(', ', $blockedInCurrent) . ' bloccat' . (count($blockedInCurrent) > 1 ? 'i' : 'o');
+                    }
                     array_unshift($tableOptions, [
                         'value' => $tableCurrentValue,
-                        'label' => implode(' + ', array_column($current, 'name')) . ' (attuale)',
+                        'label' => implode(' + ', array_column($current, 'name')) . $blockedSuffix . ' (attuale)',
                     ]);
                 }
             }

@@ -431,11 +431,31 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                         : '';
                     // Set busy per questo specifico turno (per marcare le opzioni occupate)
                     $busySet = array_flip($busyByReservation[$rid] ?? []);
-                    // Lookup id → nome tavolo per il suffisso "Tav. X occupato"
+                    // Lookup id → nome tavolo per i suffissi "occupato" / "bloccato"
                     static $tableNamesById = null;
+                    static $blockedTablesById = null;
                     if ($tableNamesById === null) {
                         $tableNamesById = [];
-                        foreach ($tables as $tt) $tableNamesById[(int)$tt['id']] = $tt['name'];
+                        $blockedTablesById = [];
+                        foreach ($tables as $tt) {
+                            $tableNamesById[(int)$tt['id']] = $tt['name'];
+                            if ((int)($tt['is_blocked'] ?? 0) === 1) {
+                                $blockedTablesById[(int)$tt['id']] = $tt['name'];
+                            }
+                        }
+                    }
+                    // Warning per opzione "attuale" che contiene tavoli bloccati
+                    // (succede se la prenotazione era assegnata PRIMA del blocco).
+                    $curBlockedSuffix = '';
+                    if ($curIsAdHoc && $curOpt !== '') {
+                        $curIds = array_filter(array_map('intval', explode(',', (string)$curOpt)));
+                        $curBlockedNames = [];
+                        foreach ($curIds as $cid) {
+                            if (isset($blockedTablesById[$cid])) $curBlockedNames[] = $blockedTablesById[$cid];
+                        }
+                        if (!empty($curBlockedNames)) {
+                            $curBlockedSuffix = ' · ' . implode(', ', $curBlockedNames) . ' bloccat' . (count($curBlockedNames) > 1 ? 'i' : 'o');
+                        }
                     }
                 ?>
                 <form method="POST" action="<?= url('dashboard/reservations/' . $rid . '/table') ?>" class="tm-pop-table-form" data-party-size="<?= (int)$r['party_size'] ?>" data-prev-value="<?= e($curOpt) ?>" data-res-label="<?= e(mb_strtoupper(trim((string)$r['last_name']))) ?>" data-busy-ids="<?= e(implode(',', $busyByReservation[$rid] ?? [])) ?>">
@@ -445,7 +465,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                     <select name="table_option" class="tm-fi">
                         <option value="">&mdash; Nessun tavolo &mdash;</option>
                         <?php if ($curIsAdHoc): ?>
-                        <option value="<?= e($curOpt) ?>" selected><?= e($curAdHocLabel) ?> (attuale)</option>
+                        <option value="<?= e($curOpt) ?>" selected><?= e($curAdHocLabel . $curBlockedSuffix) ?> (attuale)</option>
                         <?php endif; ?>
                         <?php foreach ($reassignOptions as $o): ?>
                         <?php

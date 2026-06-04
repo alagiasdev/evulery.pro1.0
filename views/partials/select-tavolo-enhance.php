@@ -103,19 +103,23 @@
             return { type: 'none', label: raw.replace(/[—–-]/g, '').trim() || 'Nessun tavolo', icon: 'none' };
         }
 
-        // Rilevamento stato "occupato"
+        // Rilevamento stato "occupato" o "bloccato".
+        // Pattern: "... · occupato/occupati" oppure "... · Tav. X occupato/occupati"
+        //          "... · bloccato/bloccati" oppure "... · Tav. X bloccato/bloccati"
         var busy = false;
+        var busyKind = 'occupato'; // testo del tag (occupato/bloccato)
         var busyDetail = '';
-        // Pattern: "... · occupato" oppure "... · Tav. X occupato/occupati"
-        var mFull = raw.match(/\s+·\s+(occupato|occupati)$/);
-        var mPart = raw.match(/\s+·\s+(.+?\s+occupat[io])$/);
+        var mFull = raw.match(/\s+·\s+(occupato|occupati|bloccato|bloccati)$/);
+        var mPart = raw.match(/\s+·\s+(.+?\s+(?:occupat[io]|bloccat[io]))$/);
         var label = raw;
         if (mFull) {
             busy = true;
+            busyKind = /bloccat/.test(mFull[1]) ? 'bloccato' : 'occupato';
             busyDetail = '';
             label = raw.substring(0, raw.length - mFull[0].length);
         } else if (mPart) {
             busy = true;
+            busyKind = /bloccat/.test(mPart[1]) ? 'bloccato' : 'occupato';
             busyDetail = mPart[1].trim();
             label = raw.substring(0, raw.length - mPart[0].length);
         }
@@ -135,6 +139,7 @@
             label:      label,
             icon:       isCombo ? 'combo' : 'single',
             busy:       busy,
+            busyKind:   busyKind,
             busyDetail: busyDetail,
             current:    current
         };
@@ -247,7 +252,7 @@
                 row.innerHTML =
                     '<span class="' + icoCls + '">' + (ICONS[iconKey] || ICONS[it.parsed.icon]) + '</span>' +
                     '<div class="tse-item-body"><div class="tse-item-main">' + escapeHtml(it.parsed.label) + '</div>' + subHtml + '</div>' +
-                    (it.parsed.busy ? '<span class="tse-tag-busy">occupato</span>' : '') +
+                    (it.parsed.busy ? '<span class="tse-tag-busy">' + (it.parsed.busyKind || 'occupato') + '</span>' : '') +
                     (it.index === select.selectedIndex && !it.parsed.busy ? '<span class="tse-check">' + ICONS.check + '</span>' : '');
 
                 row.addEventListener('click', function () {
