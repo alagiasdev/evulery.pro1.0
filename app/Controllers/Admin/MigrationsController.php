@@ -26,7 +26,7 @@ class MigrationsController
             'title'      => 'Migration Database',
             'activeMenu' => 'migrations',
             'status'     => $status,
-            'lastResult' => \App\Core\Session::flash('migration_result'),
+            'lastResult' => \App\Core\Session::getFlash('migration_result'),
         ]);
     }
 
