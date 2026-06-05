@@ -372,6 +372,10 @@
         if (Notification.permission === 'denied') return;
         // Dismissed di recente → rispettiamo la scelta dell'utente
         if (isBannerDismissedRecently()) return;
+        // Su iOS non installato vediamo gia' il banner "Aggiungi a schermata
+        // Home" (maybeShowIosPwaBanner): qui evitiamo il doppio prompt e
+        // un'attivazione che fallirebbe comunque (push iOS richiede PWA).
+        if (isIOSDevice() && !isStandalonePWA()) return;
 
         // Aspettiamo la registration del SW per controllare lo stato sub
         var attempt = function () {
@@ -408,6 +412,53 @@
         if (dismissBtn) {
             dismissBtn.addEventListener('click', function () {
                 try { localStorage.setItem(BANNER_DISMISS_KEY, String(Date.now())); } catch (e) {}
+                banner.classList.remove('is-visible');
+            });
+        }
+    }
+
+    // ========== Banner iOS: installa PWA per ricevere le push ==========
+    // Su iOS le Web Push funzionano SOLO da PWA installata via Safari, da
+    // iOS 16.4+. Chrome/Edge/Firefox su iPhone sono wrapper WebKit e non
+    // supportano push. Quindi se il ristoratore apre la dashboard su iPhone
+    // senza "Aggiungi a schermata Home", non ricevera' MAI notifiche — qualunque
+    // pulsante "Attiva" cliccato resta inutile.
+    var IOS_BANNER_DISMISS_KEY = 'evulery_ios_pwa_banner_dismissed_at';
+    var IOS_BANNER_DISMISS_DAYS = 14;
+
+    function isIOSDevice() {
+        var ua = navigator.userAgent || '';
+        // iPad recenti si mascherano da MacOS Safari: distinguiamo via touch.
+        var isIPad = /iPad/.test(ua) ||
+                     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        return /iPhone|iPod/.test(ua) || isIPad;
+    }
+
+    function isStandalonePWA() {
+        return window.navigator.standalone === true ||
+               window.matchMedia('(display-mode: standalone)').matches;
+    }
+
+    function isIosBannerDismissedRecently() {
+        try {
+            var ts = parseInt(localStorage.getItem(IOS_BANNER_DISMISS_KEY) || '0', 10);
+            if (!ts) return false;
+            return (Date.now() - ts) / 86400000 < IOS_BANNER_DISMISS_DAYS;
+        } catch (e) { return false; }
+    }
+
+    function maybeShowIosPwaBanner() {
+        var banner = document.getElementById('ios-pwa-banner');
+        if (!banner) return;
+        if (!isIOSDevice()) return;
+        if (isStandalonePWA()) return;             // gia' installata
+        if (isIosBannerDismissedRecently()) return;
+        banner.classList.add('is-visible');
+
+        var dismissBtn = banner.querySelector('[data-ios-pwa-dismiss]');
+        if (dismissBtn) {
+            dismissBtn.addEventListener('click', function () {
+                try { localStorage.setItem(IOS_BANNER_DISMISS_KEY, String(Date.now())); } catch (e) {}
                 banner.classList.remove('is-visible');
             });
         }
@@ -461,4 +512,5 @@
     // Register service worker (permission asked on user gesture, e.g. banner CTA)
     registerServiceWorker();
     maybeShowPushBanner();
+    maybeShowIosPwaBanner();
 })();

@@ -4727,3 +4727,59 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     from { transform: rotate(0deg); }
     to   { transform: rotate(360deg); }
 }
+
+/* --- Banner installazione PWA su iOS Safari ---
+   Mostrato solo se: iOS Safari (non Chrome iOS, non standalone), non
+   dismessoo. Su iOS le web push funzionano SOLO da app installata da
+   Safari (iOS 16.4+). Senza "Aggiungi a schermata Home" il ristoratore
+   iPhone non riceve mai push, qualunque cosa clicchi nella dashboard. */
+.ios-pwa-banner {
+    display: none;
+    margin: 0 0 1.25rem;
+    padding: .85rem 1rem;
+    background: linear-gradient(180deg, #f0f7ff 0%, #d9eaff 100%);
+    border: 1px solid #b3d1f5;
+    border-left: 4px solid #007aff;
+    border-radius: 8px;
+    font-size: .85rem;
+    color: #0a3d80;
+    position: relative;
+}
+.ios-pwa-banner.is-visible { display: block; }
+.ios-pwa-banner-head {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    margin-bottom: .5rem;
+}
+.ios-pwa-banner-ic {
+    font-size: 1.4rem;
+    color: #007aff;
+    flex-shrink: 0;
+}
+.ios-pwa-banner-title { flex: 1; font-weight: 700; color: #052756; }
+.ios-pwa-banner-dismiss {
+    background: transparent;
+    border: 0;
+    color: #4a6e8e;
+    padding: .35rem .5rem;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.ios-pwa-banner-dismiss:hover { background: rgba(0, 122, 255, .12); }
+.ios-pwa-banner-steps {
+    margin: 0;
+    padding-left: 1.4rem;
+    font-size: .8rem;
+    line-height: 1.5;
+    color: #1a4d80;
+}
+.ios-pwa-banner-steps li { margin-bottom: .15rem; }
+.ios-pwa-banner-steps .bi { color: #007aff; font-size: .95rem; vertical-align: -2px; }
+
+@media (max-width: 576px) {
+    .ios-pwa-banner { font-size: .8rem; padding: .7rem .8rem; }
+    .ios-pwa-banner-steps { font-size: .75rem; }
+}

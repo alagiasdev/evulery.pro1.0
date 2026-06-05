@@ -52,6 +52,27 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
 
 <?php if (tenant_can('push_notifications')): ?>
 <!--
+    iOS PWA install banner — mostrato dal JS (dashboard-notifications.js)
+    solo se il device e' iPhone/iPad in Safari NON in modalita' standalone
+    (app non installata). Su iOS le Web Push funzionano SOLO da PWA
+    installata da iOS 16.4+: senza queste istruzioni il ristoratore iPhone
+    non riceve mai push qualunque pulsante "Attiva" clicchi.
+-->
+<div id="ios-pwa-banner" class="ios-pwa-banner" role="region" aria-label="Installa Evulery come app">
+    <div class="ios-pwa-banner-head">
+        <i class="bi bi-phone ios-pwa-banner-ic"></i>
+        <div class="ios-pwa-banner-title">Installa Evulery sull'iPhone per ricevere le notifiche</div>
+        <button type="button" class="ios-pwa-banner-dismiss" data-ios-pwa-dismiss aria-label="Chiudi">&times;</button>
+    </div>
+    <div style="font-size:.8rem;color:#1a4d80;margin-bottom:.4rem;">Su iPhone le notifiche push funzionano solo dall'app aggiunta alla schermata Home. Apri questa pagina in <strong>Safari</strong> e:</div>
+    <ol class="ios-pwa-banner-steps">
+        <li>Tocca l'icona <i class="bi bi-box-arrow-up"></i> <strong>Condividi</strong> in basso al centro</li>
+        <li>Scorri e tocca <strong>Aggiungi alla schermata Home</strong></li>
+        <li>Conferma. Apri Evulery dall'icona sulla Home e attiva le notifiche</li>
+    </ol>
+</div>
+
+<!--
     Push opt-in banner: lo mostra dashboard-notifications.js dopo aver
     verificato che il dispositivo non e' gia' subscribed, il permesso non e'
     'denied' e non e' stato dismessoo negli ultimi 7gg. Il click su "Attiva"
