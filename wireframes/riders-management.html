@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Wireframe — Gestione Rider</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    :root {
+        --brand: #00844A;
+        --brand-light: #E6F4ED;
+        --brand-dark: #006e3d;
+    }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        background: #f5f6f8;
+        color: #1a1d23;
+        padding: 24px 16px;
+    }
+    .wf-page { max-width: 1100px; margin: 0 auto; }
+    .wf-title { font-size: 1.5rem; font-weight: 700; margin: 0 0 .25rem; }
+    .wf-subtitle { font-size: .85rem; color: #6c757d; margin: 0 0 2rem; }
+
+    .wf-section {
+        background: #fff;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .wf-section-head {
+        display: flex; align-items: center; gap: .75rem;
+        margin-bottom: 1.25rem; padding-bottom: .65rem;
+        border-bottom: 1px solid #eef0f4;
+    }
+    .wf-section-title { font-size: 1rem; font-weight: 700; color: #495057; }
+    .wf-route {
+        font-family: ui-monospace, "SF Mono", Monaco, monospace;
+        font-size: .75rem;
+        background: #f0f3f6; color: #495057;
+        padding: 3px 10px; border-radius: 5px;
+    }
+    .wf-pill {
+        font-size: .7rem; font-weight: 600;
+        padding: 2px 9px; border-radius: 99px;
+        background: var(--brand-light); color: var(--brand);
+    }
+
+    /* === Generic dashboard look-and-feel === */
+    h1.page-title { font-size: 1.35rem; font-weight: 700; margin: 0; }
+    .page-subtitle { font-size: .82rem; color: #6c757d; margin: 4px 0 0; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+    .btn-success {
+        background: var(--brand); color: #fff; border: 0;
+        padding: .5rem 1rem; border-radius: 7px;
+        font-size: .85rem; font-weight: 600; cursor: pointer;
+        display: inline-flex; align-items: center; gap: .35rem;
+    }
+    .btn-success:hover { background: var(--brand-dark); }
+    .btn-outline {
+        background: #fff; color: #495057; border: 1px solid #d8dde3;
+        padding: .35rem .75rem; border-radius: 6px;
+        font-size: .78rem; cursor: pointer;
+    }
+    .btn-outline:hover { background: #f8f9fa; }
+    .btn-sm { padding: .3rem .65rem; font-size: .72rem; }
+
+    /* === Card === */
+    .card-block {
+        border: 1px solid #eef0f4;
+        border-radius: 10px;
+        background: #fff;
+    }
+
+    /* === Lista rider === */
+    .rider-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .rider-table th, .rider-table td {
+        padding: .75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: .85rem;
+    }
+    .rider-table th {
+        font-size: .72rem;
+        font-weight: 600;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+        background: #fafbfc;
+    }
+    .rider-table tr:last-child td { border-bottom: 0; }
+    .rider-table .rider-name { font-weight: 600; color: #1a1d23; display: flex; align-items: center; gap: .55rem; }
+    .rider-dot {
+        width: 14px; height: 14px;
+        border-radius: 50%;
+        display: inline-block;
+        flex-shrink: 0;
+        box-shadow: 0 0 0 2px rgba(0,0,0,.05);
+    }
+    .rider-status {
+        font-size: .7rem; font-weight: 600;
+        padding: 2px 9px; border-radius: 99px;
+    }
+    .rider-status.active   { background: #d4edda; color: #155724; }
+    .rider-status.inactive { background: #e9ecef; color: #6c757d; }
+
+    /* === KPI cards stats === */
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+    }
+    .kpi-card {
+        background: #fff;
+        border: 1px solid #eef0f4;
+        border-radius: 10px;
+        padding: 1rem 1.1rem;
+    }
+    .kpi-label { font-size: .72rem; color: #6c757d; text-transform: uppercase; letter-spacing: .02em; }
+    .kpi-value { font-size: 1.55rem; font-weight: 700; color: #1a1d23; margin-top: 4px; }
+    .kpi-trend { font-size: .72rem; color: #00844A; margin-top: 2px; }
+    .kpi-trend.neg { color: #dc3545; }
+
+    /* === Order list mockup === */
+    .order-row {
+        display: flex; align-items: center; gap: .85rem;
+        padding: .85rem 1rem;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fff;
+    }
+    .order-row:last-child { border-bottom: 0; }
+    .order-row:hover { background: #fafbfc; }
+    .order-time { font-size: .8rem; color: #6c757d; min-width: 50px; }
+    .order-meta { flex: 1; }
+    .order-customer { font-weight: 600; font-size: .9rem; }
+    .order-address { font-size: .75rem; color: #6c757d; margin-top: 2px; }
+    .order-total { font-weight: 700; color: var(--brand); min-width: 70px; text-align: right; }
+    .order-status {
+        font-size: .7rem; font-weight: 600;
+        padding: 3px 10px; border-radius: 5px;
+        min-width: 75px; text-align: center;
+    }
+    .order-status.preparing { background: #fff3cd; color: #856404; }
+    .order-status.ready     { background: #cfe2ff; color: #0a4b8a; }
+    .order-status.completed { background: #d4edda; color: #155724; }
+    .rider-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        font-size: .72rem;
+        font-weight: 600;
+        padding: 3px 9px 3px 7px;
+        border-radius: 99px;
+        color: #fff;
+    }
+    .rider-badge .dot {
+        width: 6px; height: 6px;
+        background: rgba(255,255,255,.85);
+        border-radius: 50%;
+    }
+    .rider-assign-empty {
+        font-size: .72rem; color: #6c757d;
+        font-style: italic;
+        padding: 3px 9px;
+        border: 1px dashed #d8dde3;
+        border-radius: 99px;
+    }
+
+    /* === Modal mock === */
+    .modal-mock {
+        max-width: 480px;
+        margin: 0 auto;
+        background: #fff;
+        border: 1px solid #d8dde3;
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: 0 12px 32px rgba(0,0,0,.12);
+    }
+    .modal-title { font-size: 1.05rem; font-weight: 700; margin: 0 0 1rem; }
+    .form-field { margin-bottom: .85rem; }
+    .form-label { font-size: .78rem; font-weight: 600; color: #495057; margin-bottom: 4px; display: block; }
+    .form-input {
+        width: 100%;
+        padding: .5rem .75rem;
+        border: 1px solid #d8dde3; border-radius: 6px;
+        font-size: .85rem;
+    }
+    .color-picker {
+        display: flex; gap: .5rem; flex-wrap: wrap;
+    }
+    .color-swatch {
+        width: 30px; height: 30px;
+        border-radius: 8px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: transform .1s;
+    }
+    .color-swatch.selected { border-color: #1a1d23; transform: scale(1.08); }
+    .toggle-row {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: .65rem .75rem;
+        background: #f8f9fa;
+        border-radius: 7px;
+    }
+
+    /* === Public delivery board mock === */
+    .board-mock {
+        background: #1a1d23;
+        color: #fff;
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+    .board-mock-head {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 1rem;
+    }
+    .board-mock-head h2 { font-size: 1.1rem; font-weight: 700; margin: 0; }
+    .board-mock-head .pin-info { font-size: .75rem; color: #adb5bd; }
+    .board-order {
+        background: #2a2d33;
+        border-radius: 8px;
+        padding: .85rem 1rem;
+        margin-bottom: .75rem;
+        display: flex; align-items: center; gap: .85rem;
+    }
+    .board-order-time { font-size: .85rem; color: #adb5bd; min-width: 50px; }
+    .board-order-meta { flex: 1; }
+    .board-order-customer { font-weight: 600; font-size: .9rem; }
+    .board-order-address { font-size: .75rem; color: #adb5bd; margin-top: 2px; }
+    .board-order-rider-empty {
+        font-size: .72rem; color: #ffd54f; font-style: italic;
+        margin-top: 4px;
+    }
+
+    .wf-note {
+        background: #fffbeb; border: 1px solid #f5e6a8; border-left: 4px solid #f59e0b;
+        padding: .85rem 1rem; border-radius: 8px;
+        font-size: .82rem; color: #5b4a05;
+        margin-top: 1.25rem;
+    }
+    .wf-note strong { color: #4a3c0a; }
+</style>
+</head>
+<body>
+<div class="wf-page">
+
+    <h1 class="wf-title">Wireframe — Gestione Rider + Statistiche</h1>
+    <p class="wf-subtitle">MVP minimale: anagrafica rider, assegnazione ordini dal dashboard, board pubblica che mostra il rider, statistiche per rider.</p>
+
+    <!-- ============================================= -->
+    <!-- 1. PAGINA RIDER — LISTA -->
+    <!-- ============================================= -->
+    <div class="wf-section">
+        <div class="wf-section-head">
+            <span class="wf-section-title">1 · Pagina Rider</span>
+            <span class="wf-route">/dashboard/riders</span>
+            <span class="wf-pill">Anagrafica</span>
+        </div>
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Rider</h1>
+                <p class="page-subtitle">Gestisci i fattorini per le consegne</p>
+            </div>
+            <div style="display:flex; gap:.5rem;">
+                <a href="#stats" class="btn-outline"><i class="bi bi-bar-chart me-1"></i> Statistiche</a>
+                <button class="btn-success"><i class="bi bi-plus-lg"></i> Nuovo rider</button>
+            </div>
+        </div>
+
+        <div class="card-block">
+            <table class="rider-table">
+                <thead>
+                    <tr>
+                        <th style="width:30%;">Nome</th>
+                        <th>Telefono</th>
+                        <th>Ordini gestiti (mese)</th>
+                        <th>Stato</th>
+                        <th style="width:120px;text-align:right;">Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="rider-name">
+                                <span class="rider-dot" style="background:#dc3545;"></span>
+                                Mario Rossi
+                            </div>
+                        </td>
+                        <td><a href="tel:+393334445566" style="color:#00844A;text-decoration:none;">+39 333 444 5566</a></td>
+                        <td>42</td>
+                        <td><span class="rider-status active">Attivo</span></td>
+                        <td style="text-align:right;">
+                            <button class="btn-outline btn-sm"><i class="bi bi-pencil"></i> Modifica</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="rider-name">
+                                <span class="rider-dot" style="background:#0d6efd;"></span>
+                                Luca Bianchi
+                            </div>
+                        </td>
+                        <td><a href="tel:+393998887766" style="color:#00844A;text-decoration:none;">+39 399 888 7766</a></td>
+                        <td>28</td>
+                        <td><span class="rider-status active">Attivo</span></td>
+                        <td style="text-align:right;">
+                            <button class="btn-outline btn-sm"><i class="bi bi-pencil"></i> Modifica</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="rider-name">
+                                <span class="rider-dot" style="background:#f59e0b;"></span>
+                                Giulia Verdi
+                            </div>
+                        </td>
+                        <td>—</td>
+                        <td>15</td>
+                        <td><span class="rider-status active">Attivo</span></td>
+                        <td style="text-align:right;">
+                            <button class="btn-outline btn-sm"><i class="bi bi-pencil"></i> Modifica</button>
+                        </td>
+                    </tr>
+                    <tr style="opacity:.6;">
+                        <td>
+                            <div class="rider-name">
+                                <span class="rider-dot" style="background:#6c757d;"></span>
+                                Andrea Neri
+                            </div>
+                        </td>
+                        <td>+39 320 111 2233</td>
+                        <td>0</td>
+                        <td><span class="rider-status inactive">Disattivato</span></td>
+                        <td style="text-align:right;">
+                            <button class="btn-outline btn-sm"><i class="bi bi-arrow-clockwise"></i> Riattiva</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="wf-note">
+            <strong>Note:</strong> rider disattivati restano in archivio (per storico stats) ma non possono ricevere nuovi ordini né appaiono nel dropdown di assegnazione. Niente delete fisico per preservare lo storico ordini con `rider_id`.
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- 2. MODALE CREA/MODIFICA RIDER -->
+    <!-- ============================================= -->
+    <div class="wf-section">
+        <div class="wf-section-head">
+            <span class="wf-section-title">2 · Modale crea/modifica rider</span>
+            <span class="wf-pill">Form essenziale</span>
+        </div>
+
+        <div class="modal-mock">
+            <h3 class="modal-title">Nuovo rider</h3>
+
+            <div class="form-field">
+                <label class="form-label">Nome <span style="color:#dc3545;">*</span></label>
+                <input type="text" class="form-input" value="Mario Rossi" placeholder="Es. Mario Rossi">
+            </div>
+
+            <div class="form-field">
+                <label class="form-label">Telefono (opzionale)</label>
+                <input type="tel" class="form-input" value="+39 333 444 5566" placeholder="+39 333 444 5566">
+                <div style="font-size:.7rem;color:#6c757d;margin-top:3px;">Verrà mostrato sulla board pubblica per i contatti urgenti.</div>
+            </div>
+
+            <div class="form-field">
+                <label class="form-label">Colore badge</label>
+                <div class="color-picker">
+                    <div class="color-swatch selected" style="background:#dc3545;"></div>
+                    <div class="color-swatch" style="background:#0d6efd;"></div>
+                    <div class="color-swatch" style="background:#f59e0b;"></div>
+                    <div class="color-swatch" style="background:#6f42c1;"></div>
+                    <div class="color-swatch" style="background:#0EA5E9;"></div>
+                    <div class="color-swatch" style="background:#10b981;"></div>
+                    <div class="color-swatch" style="background:#ec4899;"></div>
+                    <div class="color-swatch" style="background:#6c757d;"></div>
+                </div>
+                <div style="font-size:.7rem;color:#6c757d;margin-top:6px;">Usato per identificare a colpo d'occhio gli ordini di questo rider nella lista.</div>
+            </div>
+
+            <div class="toggle-row">
+                <div>
+                    <div style="font-size:.85rem;font-weight:600;">Attivo</div>
+                    <div style="font-size:.72rem;color:#6c757d;">Riceve nuove assegnazioni</div>
+                </div>
+                <label style="display:inline-block;width:40px;height:22px;background:var(--brand);border-radius:11px;position:relative;cursor:pointer;">
+                    <span style="position:absolute;top:2px;right:2px;width:18px;height:18px;background:#fff;border-radius:50%;"></span>
+                </label>
+            </div>
+
+            <div style="display:flex; gap:.5rem; justify-content:flex-end; margin-top:1.25rem;">
+                <button class="btn-outline">Annulla</button>
+                <button class="btn-success">Salva rider</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- 3. LISTA ORDINI DASHBOARD CON ASSEGNAZIONE -->
+    <!-- ============================================= -->
+    <div class="wf-section">
+        <div class="wf-section-head">
+            <span class="wf-section-title">3 · Lista ordini con assegnazione rider</span>
+            <span class="wf-route">/dashboard/orders</span>
+            <span class="wf-pill">Workflow</span>
+        </div>
+
+        <div class="card-block">
+            <div class="order-row">
+                <div class="order-time">20:35</div>
+                <div class="order-meta">
+                    <div class="order-customer">#12 · Anna Verdi <span class="rider-badge" style="background:#dc3545;margin-left:.4rem;"><span class="dot"></span> Mario Rossi</span></div>
+                    <div class="order-address"><i class="bi bi-geo-alt"></i> Via Roma 42, 20100 Milano</div>
+                </div>
+                <div class="order-status preparing">In preparazione</div>
+                <div class="order-total">€ 28,50</div>
+            </div>
+
+            <div class="order-row">
+                <div class="order-time">20:42</div>
+                <div class="order-meta">
+                    <div class="order-customer">#13 · Marco Gialli <span class="rider-badge" style="background:#0d6efd;margin-left:.4rem;"><span class="dot"></span> Luca Bianchi</span></div>
+                    <div class="order-address"><i class="bi bi-geo-alt"></i> Corso Buenos Aires 18, 20124 Milano</div>
+                </div>
+                <div class="order-status ready">Pronto</div>
+                <div class="order-total">€ 42,00</div>
+            </div>
+
+            <div class="order-row">
+                <div class="order-time">20:50</div>
+                <div class="order-meta">
+                    <div class="order-customer">#14 · Giorgia Blu <span class="rider-assign-empty" style="margin-left:.4rem;cursor:pointer;">+ Assegna rider</span></div>
+                    <div class="order-address"><i class="bi bi-geo-alt"></i> Viale Monza 67, 20127 Milano</div>
+                </div>
+                <div class="order-status preparing">In preparazione</div>
+                <div class="order-total">€ 18,00</div>
+            </div>
+
+            <div class="order-row" style="opacity:.6;">
+                <div class="order-time">19:50</div>
+                <div class="order-meta">
+                    <div class="order-customer">#11 · Stefano Neri <span class="rider-badge" style="background:#f59e0b;margin-left:.4rem;"><span class="dot"></span> Giulia Verdi</span></div>
+                    <div class="order-address"><i class="bi bi-geo-alt"></i> Via Vittorio Emanuele 12, 20121 Milano</div>
+                </div>
+                <div class="order-status completed">Completato</div>
+                <div class="order-total">€ 35,50</div>
+            </div>
+        </div>
+
+        <div class="wf-note">
+            <strong>UX:</strong> click sul badge rider apre dropdown con elenco rider attivi + opzione "Riassegna a..." / "Rimuovi assegnazione". Per gli ordini senza rider compare un pulsante tratteggiato "+ Assegna rider".
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- 4. PAGINA STATISTICHE RIDER -->
+    <!-- ============================================= -->
+    <div class="wf-section" id="stats">
+        <div class="wf-section-head">
+            <span class="wf-section-title">4 · Statistiche per rider</span>
+            <span class="wf-route">/dashboard/riders/stats</span>
+            <span class="wf-pill">Valore percepito</span>
+        </div>
+
+        <div style="margin-bottom:1.25rem; font-size:.82rem; color:#6c757d;">
+            Periodo: <strong style="color:#1a1d23;">Maggio 2026</strong> · 85 consegne · €2.450 gestiti complessivi
+        </div>
+
+        <!-- KPI globali -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Consegne totali</div>
+                <div class="kpi-value">85</div>
+                <div class="kpi-trend"><i class="bi bi-arrow-up"></i> +12% vs mese precedente</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Tempo medio consegna</div>
+                <div class="kpi-value">28 min</div>
+                <div class="kpi-trend"><i class="bi bi-arrow-down"></i> -3 min vs mese precedente</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Valore gestito</div>
+                <div class="kpi-value">€ 2.450</div>
+                <div class="kpi-trend"><i class="bi bi-arrow-up"></i> +8%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">% completate</div>
+                <div class="kpi-value">96%</div>
+                <div class="kpi-trend"><i class="bi bi-check-circle"></i> 3 annullate / 82 ok</div>
+            </div>
+        </div>
+
+        <!-- Tabella per rider -->
+        <div class="card-block">
+            <table class="rider-table">
+                <thead>
+                    <tr>
+                        <th style="width:25%;">Rider</th>
+                        <th>Consegne</th>
+                        <th>Tempo medio</th>
+                        <th>Valore gestito</th>
+                        <th>% completate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="rider-name">
+                                <span class="rider-dot" style="background:#dc3545;"></span>
+                                Mario Rossi
+                            </div>
+                        </td>
+                        <td><strong>42</strong></td>
+                        <td>25 min</td>
+                        <td>€ 1.180</td>
+                        <td>98% <span style="color:#6c757d;font-size:.72rem;">(1 annullata)</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="rider-name">
+                                <span class="rider-dot" style="background:#0d6efd;"></span>
+                                Luca Bianchi
+                            </div>
+                        </td>
+                        <td><strong>28</strong></td>
+                        <td>31 min</td>
+                        <td>€ 820</td>
+                        <td>93% <span style="color:#6c757d;font-size:.72rem;">(2 annullate)</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="rider-name">
+                                <span class="rider-dot" style="background:#f59e0b;"></span>
+                                Giulia Verdi
+                            </div>
+                        </td>
+                        <td><strong>15</strong></td>
+                        <td>27 min</td>
+                        <td>€ 450</td>
+                        <td>100% <span style="color:#6c757d;font-size:.72rem;">(0 annullate)</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="wf-note">
+            <strong>Tempo medio</strong> = differenza fra `rider_assigned_at` e quando l'ordine va in stato `completed`. Calcolato server-side aggregando dalla tabella `orders`. Filtri di periodo: mese corrente (default), 7gg, 30gg, custom range — selettore in alto a destra in v2 se richiesto.
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- 5. BOARD PUBBLICA con rider visibile -->
+    <!-- ============================================= -->
+    <div class="wf-section">
+        <div class="wf-section-head">
+            <span class="wf-section-title">5 · Board pubblica consegne (esistente, modificata)</span>
+            <span class="wf-route">/delivery/{token}</span>
+            <span class="wf-pill">Esistente · light update</span>
+        </div>
+
+        <div class="board-mock">
+            <div class="board-mock-head">
+                <h2><i class="bi bi-truck"></i> Consegne in corso</h2>
+                <div class="pin-info">Trattoria Da Mario · 4 consegne attive</div>
+            </div>
+
+            <div class="board-order">
+                <div class="board-order-time">20:35</div>
+                <div class="board-order-meta">
+                    <div class="board-order-customer">Anna Verdi · €28,50 <span class="rider-badge" style="background:#dc3545;margin-left:.4rem;"><span class="dot"></span> Mario Rossi</span></div>
+                    <div class="board-order-address"><i class="bi bi-geo-alt"></i> Via Roma 42, Milano · <i class="bi bi-telephone"></i> 333.222.1111</div>
+                </div>
+                <button class="btn-success btn-sm" style="background:#28a745;">Consegnato</button>
+            </div>
+
+            <div class="board-order">
+                <div class="board-order-time">20:42</div>
+                <div class="board-order-meta">
+                    <div class="board-order-customer">Marco Gialli · €42,00 <span class="rider-badge" style="background:#0d6efd;margin-left:.4rem;"><span class="dot"></span> Luca Bianchi</span></div>
+                    <div class="board-order-address"><i class="bi bi-geo-alt"></i> Corso Buenos Aires 18 · <i class="bi bi-telephone"></i> 347.111.2233</div>
+                </div>
+                <button class="btn-success btn-sm" style="background:#28a745;">Consegnato</button>
+            </div>
+
+            <div class="board-order">
+                <div class="board-order-time">20:50</div>
+                <div class="board-order-meta">
+                    <div class="board-order-customer">Giorgia Blu · €18,00</div>
+                    <div class="board-order-address"><i class="bi bi-geo-alt"></i> Viale Monza 67 · <i class="bi bi-telephone"></i> 320.333.4455</div>
+                    <div class="board-order-rider-empty">⚠ Rider non ancora assegnato — il ristoratore deve assegnarlo dal dashboard</div>
+                </div>
+                <button class="btn-success btn-sm" style="background:#28a745;opacity:.5;cursor:not-allowed;" disabled>Consegnato</button>
+            </div>
+        </div>
+
+        <div class="wf-note">
+            <strong>Modifiche board:</strong> ZERO autenticazione nuova (resta il PIN del ristoratore esistente). I rider continuano a usare la stessa board condivisa. Ora vedono solo che <strong>l'ordine ha un nome accanto</strong>: chi è di turno sa "Mario fa quelle rosse, Luca quelle blu". Il pulsante "Consegnato" resta sbloccato solo se c'è un rider assegnato — evita ambiguità su chi ha consegnato.
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- 6. DESIGN DECISIONS -->
+    <!-- ============================================= -->
+    <div class="wf-section" style="background:#fffbeb;border:1px solid #f5e6a8;">
+        <div class="wf-section-head" style="border-bottom-color:#f5e6a8;">
+            <span class="wf-section-title" style="color:#8a6d10;">📝 Design decisions principali</span>
+        </div>
+        <ul style="margin:0;padding-left:1.2rem;font-size:.85rem;color:#5b4a05;line-height:1.7;">
+            <li><strong>Niente login rider:</strong> board condivisa esistente intatta, PIN ristoratore unico, nessun rider DB user. Sopravvive con 2-5 rider; oltre serviranno login dedicati ma è step 2.</li>
+            <li><strong>Niente delete rider:</strong> solo toggle attivo/disattivato. Rider in archivio appaiono nelle stats storiche, non nel dropdown assegnazione. Preserva foreign key integrity (orders.rider_id).</li>
+            <li><strong>Colori da palette fissa (8 colori):</strong> evita color picker libero che produrrebbe ambiguità (rider con sfumature simili). 8 colori coprono il caso realistico (max 5-6 rider per ristorante).</li>
+            <li><strong>Stats come tabella, no grafici inizialmente:</strong> i numeri parlano da soli per la prima iterazione. Aggiungiamo Chart.js solo se i ristoratori chiedono "voglio vedere il trend nel tempo".</li>
+            <li><strong>Tempo medio = assignment → completed:</strong> non include il tempo in preparazione (responsabilità del rider parte dall'assegnazione). Più equo per misurare il rider, non la cucina.</li>
+            <li><strong>Pulsante "Consegnato" disabilitato se nessun rider:</strong> forza l'assegnazione prima del completamento. Garantisce dati puliti per le stats e identifica chi ha consegnato.</li>
+            <li><strong>Gating:</strong> sezione visibile solo se `ordering_enabled=1` AND `delivery_mode != 'none'`. Chi non ha delivery non vede nulla.</li>
+        </ul>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- 7. ROADMAP -->
+    <!-- ============================================= -->
+    <div class="wf-section">
+        <div class="wf-section-head">
+            <span class="wf-section-title">📍 Roadmap step incrementali</span>
+        </div>
+        <ol style="margin:0;padding-left:1.2rem;font-size:.85rem;line-height:1.7;color:#495057;">
+            <li><strong>MVP (questa sessione):</strong> migration, CRUD rider, dropdown assegnazione, badge colorato su ordini, board pubblica aggiornata, pagina stats con KPI cards + tabella per rider. ~6-7h.</li>
+            <li><strong>Step 2 (su richiesta):</strong> grafici trend Chart.js (consegne/giorno per rider), filtri data range (7gg, 30gg, custom), export CSV.</li>
+            <li><strong>Step 3 (trigger: cliente con 5+ rider):</strong> login dedicato rider, push notification "nuova consegna assegnata", geolocalizzazione minimale (Maps link).</li>
+            <li><strong>Step 4 (trigger: payroll):</strong> calcolo automatico paga (€ a consegna × n consegne) + export buste paga / commissioni.</li>
+        </ol>
+    </div>
+
+</div>
+</body>
+</html>

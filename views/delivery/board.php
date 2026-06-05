@@ -85,6 +85,22 @@
                 <span class="db-status-badge <?= $statusClass ?>"><?= $statusLabel ?></span>
             </div>
 
+            <?php if (!empty($order['rider_name'])): ?>
+            <!-- Rider assegnato: nome + colore. Per il rider e' il segnale
+                 "questo ordine e' mio" quando piu' rider lavorano sulla
+                 stessa board condivisa. -->
+            <div class="db-order-rider">
+                <span class="db-rider-badge" style="background:<?= e($order['rider_color_hex'] ?? '#6c757d') ?>;">
+                    <i class="bi bi-bicycle"></i> <?= e($order['rider_name']) ?>
+                </span>
+            </div>
+            <?php else: ?>
+            <div class="db-order-rider db-order-rider--empty">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                Rider non ancora assegnato — il ristoratore deve assegnarlo dal dashboard
+            </div>
+            <?php endif; ?>
+
             <?php if ($order['pickup_time']): ?>
             <div class="db-order-time">
                 <i class="bi bi-clock"></i> Consegna: <strong><?= date('H:i', strtotime($order['pickup_time'])) ?></strong>
@@ -147,12 +163,21 @@
             </div>
 
             <?php if ($order['status'] === 'ready'): ?>
-            <form method="POST" action="<?= url("delivery/{$token}/complete/{$order['id']}") ?>" class="db-complete-form">
-                <?= csrf_field() ?>
-                <button type="submit" class="db-complete-btn" data-confirm="Confermi la consegna di <?= e($order['order_number']) ?>?">
-                    <i class="bi bi-check-circle-fill me-1"></i> Consegnato
+                <?php if (empty($order['rider_id'])): ?>
+                <!-- Senza rider assegnato il pulsante e' disabilitato: forza
+                     dati puliti per le statistiche (rider_assigned_at e
+                     tempo medio consegna restano coerenti). -->
+                <button type="button" class="db-complete-btn" disabled style="opacity:.5;cursor:not-allowed;">
+                    <i class="bi bi-lock-fill me-1"></i> Assegnare rider per consegnare
                 </button>
-            </form>
+                <?php else: ?>
+                <form method="POST" action="<?= url("delivery/{$token}/complete/{$order['id']}") ?>" class="db-complete-form">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="db-complete-btn" data-confirm="Confermi la consegna di <?= e($order['order_number']) ?>?">
+                        <i class="bi bi-check-circle-fill me-1"></i> Consegnato
+                    </button>
+                </form>
+                <?php endif; ?>
             <?php else: ?>
             <div class="db-waiting-badge">
                 <i class="bi bi-hourglass-split me-1"></i> In attesa — non ancora pronto

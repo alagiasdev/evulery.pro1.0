@@ -21,6 +21,31 @@ $isLate = $minutes > 30;
         <div class="do-order-address"><i class="bi bi-geo-alt me-1"></i> <?= e(mb_substr($o['delivery_address'], 0, 40)) ?></div>
         <?php endif; ?>
         <div class="do-order-total">€ <?= number_format((float)$o['total'], 2, ',', '.') ?></div>
+
+        <?php if ($isDelivery && !empty($ridersEnabled)): ?>
+        <!--
+            Rider assignment: badge se assegnato, pulsante tratteggiato altrimenti.
+            Il dropdown viene aperto da JS (do-assign-trigger). Lo dropdown
+            elenco rider e' renderizzato una sola volta in fondo a orders/index.php
+            e usato/spostato dal JS al click.
+        -->
+        <div class="do-order-rider">
+            <?php if (!empty($o['rider_name'])): ?>
+                <button type="button" class="rider-badge-inline do-assign-trigger"
+                        style="background:<?= e($o['rider_color_hex'] ?? '#6c757d') ?>;border:0;cursor:pointer;"
+                        data-order-id="<?= (int)$o['id'] ?>"
+                        data-current-rider="<?= (int)($o['rider_id'] ?? 0) ?>">
+                    <span class="dot"></span> <?= e($o['rider_name']) ?>
+                </button>
+            <?php else: ?>
+                <button type="button" class="rider-assign-empty do-assign-trigger"
+                        data-order-id="<?= (int)$o['id'] ?>"
+                        data-current-rider="0">
+                    <i class="bi bi-plus-lg me-1"></i> Assegna rider
+                </button>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
     </div>
     <div class="do-order-card-timer <?= $isLate ? 'do-order-late' : '' ?>">
         <i class="bi bi-stopwatch me-1"></i> <?= $minutes ?> min

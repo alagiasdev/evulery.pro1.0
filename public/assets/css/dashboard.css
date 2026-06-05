@@ -4728,6 +4728,295 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     to   { transform: rotate(360deg); }
 }
 
+/* ===== Riders (.rd-*) — anagrafica rider + statistiche ===== */
+.rd-page-header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+}
+.rd-page-header h1 { font-size: 1.35rem; font-weight: 700; margin: 0; }
+.rd-page-sub { font-size: .82rem; color: #6c757d; margin: 3px 0 0; }
+.rd-page-actions { display: flex; gap: .5rem; }
+
+.rd-card { padding: 0; overflow: hidden; }
+.rd-table { width: 100%; border-collapse: collapse; }
+.rd-table th, .rd-table td {
+    padding: .75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: .85rem;
+}
+.rd-table th {
+    font-size: .72rem; font-weight: 600; color: #6c757d;
+    text-transform: uppercase; letter-spacing: .03em;
+    background: #fafbfc;
+}
+.rd-table tbody tr:last-child td { border-bottom: 0; }
+.rd-table tbody tr:hover { background: #fafbfc; }
+
+.rd-name {
+    font-weight: 600; color: #1a1d23;
+    display: flex; align-items: center; gap: .55rem;
+}
+.rd-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 2px rgba(0,0,0,.05);
+}
+.rd-phone { color: var(--brand, #00844A); text-decoration: none; }
+.rd-phone:hover { text-decoration: underline; }
+.rd-empty { color: #adb5bd; font-size: .82rem; }
+
+.rd-status {
+    font-size: .7rem; font-weight: 600;
+    padding: 2px 9px; border-radius: 99px;
+    display: inline-block;
+}
+.rd-status--active   { background: #d4edda; color: #155724; }
+.rd-status--inactive { background: #e9ecef; color: #6c757d; }
+.rd-row-inactive { opacity: .55; }
+
+/* Mobile card variant per la lista rider */
+.rd-card-m { padding: .85rem 1rem; margin-bottom: .65rem; }
+.rd-card-m-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: .5rem;
+}
+.rd-card-m-meta {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    font-size: .78rem; color: #495057;
+    margin-bottom: .65rem;
+    padding-bottom: .65rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+.rd-card-m-actions { display: flex; gap: .35rem; flex-wrap: wrap; }
+
+/* Modale crea/modifica */
+.rd-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(26, 29, 35, .55);
+    z-index: 1050;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem;
+    animation: rd-fade-in .15s ease-out;
+}
+@keyframes rd-fade-in { from { opacity: 0; } to { opacity: 1; } }
+.rd-modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem 1.5rem;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 12px 32px rgba(0,0,0,.18);
+}
+.rd-modal-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1rem;
+}
+.rd-modal-title { font-size: 1.05rem; font-weight: 700; margin: 0; }
+.rd-modal-close {
+    background: transparent; border: 0;
+    font-size: 1.4rem; line-height: 1;
+    color: #6c757d; cursor: pointer;
+    padding: 0 .35rem;
+}
+.rd-modal-close:hover { color: #1a1d23; }
+.rd-field { margin-bottom: .85rem; }
+.rd-field-label {
+    font-size: .78rem; font-weight: 600;
+    color: #495057; margin-bottom: 4px; display: block;
+}
+.rd-field-hint { font-size: .72rem; color: #6c757d; margin-top: 3px; }
+.rd-color-picker { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 4px; }
+.rd-color-swatch {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform .1s, border-color .1s;
+}
+.rd-color-swatch:hover { transform: scale(1.05); }
+.rd-color-swatch.selected { border-color: #1a1d23; transform: scale(1.08); }
+
+.rd-toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .7rem .85rem;
+    background: #f8f9fa;
+    border-radius: 7px;
+    margin-bottom: 1rem;
+}
+.rd-switch { position: relative; display: inline-block; width: 42px; height: 24px; cursor: pointer; }
+.rd-switch input { opacity: 0; width: 0; height: 0; }
+.rd-switch-slider {
+    position: absolute; inset: 0;
+    background: #ced4da;
+    border-radius: 12px;
+    transition: background .15s;
+}
+.rd-switch-slider::before {
+    content: ''; position: absolute;
+    width: 18px; height: 18px;
+    left: 3px; top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform .15s;
+    box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+.rd-switch input:checked + .rd-switch-slider { background: var(--brand, #00844A); }
+.rd-switch input:checked + .rd-switch-slider::before { transform: translateX(18px); }
+.rd-modal-actions { display: flex; gap: .5rem; justify-content: flex-end; }
+
+/* Statistiche */
+.rd-range-form {
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+}
+.rd-range-quick { display: flex; gap: .35rem; flex-wrap: wrap; }
+.rd-range-chip {
+    font-size: .78rem; color: #495057;
+    padding: .35rem .85rem;
+    background: #fff;
+    border: 1px solid #d8dde3;
+    border-radius: 99px;
+    text-decoration: none;
+    transition: background .1s;
+}
+.rd-range-chip:hover { background: #f0f3f6; color: #495057; }
+.rd-range-chip--active {
+    background: var(--brand, #00844A); border-color: var(--brand, #00844A); color: #fff;
+}
+.rd-range-chip--active:hover { background: var(--brand-dark, #006e3d); color: #fff; }
+.rd-range-custom {
+    display: flex; align-items: center; gap: .5rem;
+    margin-left: auto;
+}
+.rd-range-custom input[type="date"] { max-width: 140px; }
+
+.rd-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+.rd-kpi-card {
+    background: #fff;
+    border: 1px solid #eef0f4;
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+}
+.rd-kpi-label {
+    font-size: .72rem; color: #6c757d;
+    text-transform: uppercase; letter-spacing: .02em;
+}
+.rd-kpi-value { font-size: 1.65rem; font-weight: 700; color: #1a1d23; margin-top: 4px; }
+.rd-kpi-sub { font-size: .72rem; color: #6c757d; margin-top: 3px; }
+
+.rd-stats-note {
+    margin-top: 1rem;
+    padding: .75rem 1rem;
+    background: #f8f9fa;
+    border-left: 3px solid var(--brand, #00844A);
+    border-radius: 6px;
+    font-size: .78rem;
+    color: #495057;
+    line-height: 1.5;
+}
+.rd-stats-note .bi { color: var(--brand, #00844A); margin-right: .35rem; }
+
+/* Badge rider riusabile (lista ordini + board pubblica) */
+.rider-badge-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    font-size: .72rem;
+    font-weight: 600;
+    padding: 3px 9px 3px 7px;
+    border-radius: 99px;
+    color: #fff;
+    white-space: nowrap;
+}
+.rider-badge-inline .dot {
+    width: 6px; height: 6px;
+    background: rgba(255,255,255,.85);
+    border-radius: 50%;
+}
+.rider-assign-empty {
+    display: inline-flex;
+    align-items: center;
+    font-size: .72rem; color: #6c757d;
+    font-style: italic;
+    padding: 3px 10px;
+    border: 1px dashed #d8dde3;
+    border-radius: 99px;
+    background: none;
+    cursor: pointer;
+    transition: background .1s, border-color .1s;
+}
+.rider-assign-empty:hover {
+    background: #e8f5ee; border-color: var(--brand, #00844A); color: var(--brand, #00844A);
+}
+
+/* Popup assegnazione rider (lista ordini dashboard) */
+.rd-assign-popup {
+    position: fixed;
+    z-index: 1100;
+    background: #fff;
+    border: 1px solid #d8dde3;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    min-width: 180px;
+    max-width: 240px;
+    padding: .5rem 0;
+}
+.rd-assign-popup-head {
+    font-size: .7rem;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    padding: .25rem .85rem .5rem;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: .25rem;
+}
+.rd-assign-popup-list { max-height: 280px; overflow-y: auto; }
+.rd-assign-popup-item {
+    display: flex; align-items: center; gap: .55rem;
+    width: 100%;
+    background: none; border: 0;
+    padding: .5rem .85rem;
+    font-size: .82rem;
+    color: #1a1d23;
+    cursor: pointer;
+    text-align: left;
+}
+.rd-assign-popup-item:hover { background: #f8f9fa; }
+.rd-assign-popup-item.is-current { background: var(--brand-light, #E6F4ED); font-weight: 600; }
+.rd-assign-popup-clear {
+    border-top: 1px solid #f0f0f0;
+    color: #dc3545;
+    margin-top: .25rem;
+    padding-top: .55rem;
+}
+.rd-assign-popup-empty {
+    padding: .85rem;
+    font-size: .78rem;
+    color: #6c757d;
+    text-align: center;
+}
+.rd-assign-popup-empty a { color: var(--brand, #00844A); }
+
+/* Spaziatura badge rider dentro card ordine */
+.do-order-rider { margin-top: .5rem; }
+
+@media (max-width: 768px) {
+    .rd-kpi-grid { grid-template-columns: repeat(2, 1fr); gap: .65rem; }
+    .rd-kpi-value { font-size: 1.35rem; }
+    .rd-range-custom { margin-left: 0; width: 100%; }
+    .rd-range-form { flex-direction: column; align-items: flex-start; }
+}
+
 /* --- Banner installazione PWA su iOS Safari ---
    Mostrato solo se: iOS Safari (non Chrome iOS, non standalone), non
    dismessoo. Su iOS le web push funzionano SOLO da app installata da

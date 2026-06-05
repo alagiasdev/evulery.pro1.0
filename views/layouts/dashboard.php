@@ -88,6 +88,18 @@
                         <i class="bi bi-bag-check me-2"></i> Ordini
                     </a>
                 </li>
+                <?php
+                    // Rider: visibile solo se tenant ha delivery attivo (ordering_enabled
+                    // + delivery_mode != 'none'). Niente delivery = niente rider.
+                    $_t = tenant();
+                    if (!empty($_t['ordering_enabled']) && ($_t['delivery_mode'] ?? 'none') !== 'none'):
+                ?>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'riders' ? 'active' : '' ?>" href="<?= url('dashboard/riders') ?>">
+                        <i class="bi bi-bicycle me-2"></i> Rider
+                    </a>
+                </li>
+                <?php endif; ?>
                 <?php endif; ?>
                 <li class="nav-item">
                     <?php if (tenant_can('email_broadcast')): ?>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Wireframe — Banner Push Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        background: #f5f6f8;
+        color: #1a1d23;
+        padding: 24px 16px;
+    }
+    .wf-page {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+    .wf-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin: 0 0 .25rem;
+    }
+    .wf-subtitle {
+        font-size: .85rem;
+        color: #6c757d;
+        margin: 0 0 2rem;
+    }
+    .wf-section {
+        background: #fff;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .wf-section-head {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        margin-bottom: 1rem;
+        padding-bottom: .65rem;
+        border-bottom: 1px solid #eef0f4;
+    }
+    .wf-section-title {
+        font-size: .95rem;
+        font-weight: 700;
+        color: #495057;
+    }
+    .wf-pill {
+        font-size: .7rem;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 99px;
+        background: #e8f5ee;
+        color: #00844A;
+    }
+    .wf-pill--ios { background: #e0eeff; color: #007aff; }
+    .wf-pill--mobile { background: #fff3cd; color: #856404; }
+    .wf-pill--green { background: #e8f5ee; color: #00844A; }
+
+    /* Riproduzione layout dashboard reale */
+    .wf-fake-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.25rem;
+    }
+    .wf-fake-header h1 {
+        margin: 0 0 4px;
+        font-size: 1.35rem;
+        font-weight: 700;
+    }
+    .wf-fake-header p {
+        margin: 0;
+        font-size: .82rem;
+        color: #6c757d;
+    }
+    .wf-fake-cta {
+        background: #00844A;
+        color: #fff;
+        border: 0;
+        padding: .55rem 1rem;
+        border-radius: 7px;
+        font-size: .85rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .wf-date-badge {
+        display: inline-block;
+        background: #E6F4ED;
+        color: #00844A;
+        font-size: .72rem;
+        font-weight: 600;
+        padding: 2px 9px;
+        border-radius: 4px;
+        margin-left: 6px;
+    }
+
+    .wf-content-stub {
+        height: 70px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px dashed #d8dde3;
+        color: #adb5bd;
+        font-size: .78rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* === Banner iOS PWA === */
+    .ios-pwa-banner {
+        margin: 0 0 1.25rem;
+        padding: .85rem 1rem;
+        background: linear-gradient(180deg, #f0f7ff 0%, #d9eaff 100%);
+        border: 1px solid #b3d1f5;
+        border-left: 4px solid #007aff;
+        border-radius: 8px;
+        font-size: .85rem;
+        color: #0a3d80;
+    }
+    .ios-pwa-banner-head {
+        display: flex;
+        align-items: center;
+        gap: .65rem;
+        margin-bottom: .5rem;
+    }
+    .ios-pwa-banner-ic {
+        font-size: 1.4rem;
+        color: #007aff;
+        flex-shrink: 0;
+    }
+    .ios-pwa-banner-title {
+        flex: 1;
+        font-weight: 700;
+        color: #052756;
+    }
+    .ios-pwa-banner-dismiss {
+        background: transparent;
+        border: 0;
+        color: #4a6e8e;
+        padding: .35rem .5rem;
+        font-size: 1rem;
+        line-height: 1;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    .ios-pwa-banner-steps {
+        margin: 0;
+        padding-left: 1.4rem;
+        font-size: .8rem;
+        line-height: 1.5;
+        color: #1a4d80;
+    }
+    .ios-pwa-banner-steps li { margin-bottom: .15rem; }
+    .ios-pwa-banner-steps .bi { color: #007aff; font-size: .95rem; vertical-align: -2px; }
+
+    /* === Banner Push opt-in (verde) === */
+    .push-prompt-banner {
+        display: flex;
+        align-items: center;
+        gap: .85rem;
+        margin: 0 0 1.25rem;
+        padding: .75rem 1rem;
+        background: linear-gradient(180deg, #e8f5ee 0%, #d4ebdc 100%);
+        border: 1px solid #b8dcc6;
+        border-left: 4px solid #00844A;
+        border-radius: 8px;
+        font-size: .85rem;
+        color: #1a4d2e;
+    }
+    .push-prompt-banner-ic { font-size: 1.4rem; color: #00844A; flex-shrink: 0; }
+    .push-prompt-banner-text { flex: 1; line-height: 1.4; }
+    .push-prompt-banner-text strong { color: #0d3320; }
+    .push-prompt-banner-text small { display: block; color: #4a6e57; font-size: .75rem; margin-top: 2px; }
+    .push-prompt-banner-actions { display: flex; gap: .35rem; flex-shrink: 0; }
+    .push-prompt-banner-btn {
+        background: #00844A;
+        color: #fff;
+        border: 0;
+        padding: .45rem 1rem;
+        font-size: .8rem;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    .push-prompt-banner-dismiss {
+        background: transparent;
+        border: 0;
+        color: #4a6e57;
+        padding: .35rem .5rem;
+        font-size: 1rem;
+        line-height: 1;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    /* === Mobile viewport mock === */
+    .wf-mobile-frame {
+        max-width: 380px;
+        margin: 0 auto;
+        background: #fff;
+        border: 1px solid #d8dde3;
+        border-radius: 24px;
+        padding: 14px;
+        box-shadow: 0 4px 18px rgba(0,0,0,.08);
+    }
+    @media (max-width: 576px) {
+        .ios-pwa-banner { font-size: .8rem; padding: .7rem .8rem; }
+        .ios-pwa-banner-steps { font-size: .75rem; }
+        .push-prompt-banner { font-size: .8rem; padding: .55rem .75rem; gap: .55rem; }
+        .push-prompt-banner-text small { display: none; }
+        .push-prompt-banner-btn { padding: .3rem .7rem; font-size: .72rem; }
+    }
+
+    .wf-note {
+        margin-top: .75rem;
+        padding: .55rem .75rem;
+        background: #f8f9fa;
+        border-radius: 6px;
+        font-size: .75rem;
+        color: #6c757d;
+    }
+    .wf-note strong { color: #495057; }
+</style>
+</head>
+<body>
+<div class="wf-page">
+
+    <h1 class="wf-title">Wireframe — Banner notifiche dashboard</h1>
+    <p class="wf-subtitle">Anteprima dei due banner di onboarding push: iOS PWA install (azzurro) e Push opt-in (verde). Sono mutuamente esclusivi.</p>
+
+    <!-- Sezione 1: iOS Safari non installata -->
+    <div class="wf-section">
+        <div class="wf-section-head">
+            <span class="wf-section-title">Vista 1 — iPhone/iPad in Safari, app NON installata</span>
+            <span class="wf-pill wf-pill--ios">iOS detect</span>
+        </div>
+
+        <div class="wf-fake-header">
+            <div>
+                <h1>Buongiorno, Stefano</h1>
+                <p>Trattoria Da Mario · <span class="wf-date-badge">Ven 5 Giugno 2026</span></p>
+            </div>
+            <button type="button" class="wf-fake-cta"><i class="bi bi-plus-lg"></i> Nuova Prenotazione</button>
+        </div>
+
+        <div class="ios-pwa-banner">
+            <div class="ios-pwa-banner-head">
+                <i class="bi bi-phone ios-pwa-banner-ic"></i>
+                <div class="ios-pwa-banner-title">Installa Evulery sull'iPhone per ricevere le notifiche</div>
+                <button type="button" class="ios-pwa-banner-dismiss" aria-label="Chiudi">&times;</button>
+            </div>
+            <div style="font-size:.8rem;color:#1a4d80;margin-bottom:.4rem;">Su iPhone le notifiche push funzionano solo dall'app aggiunta alla schermata Home. Apri questa pagina in <strong>Safari</strong> e:</div>
+            <ol class="ios-pwa-banner-steps">
+                <li>Tocca l'icona <i class="bi bi-box-arrow-up"></i> <strong>Condividi</strong> in basso al centro</li>
+                <li>Scorri e tocca <strong>Aggiungi alla schermata Home</strong></li>
+                <li>Conferma. Apri Evulery dall'icona sulla Home e attiva le notifiche</li>
+            </ol>
+        </div>
+
+        <div class="wf-content-stub">↓ KPI cards, prenotazioni del giorno, prossimi arrivi…</div>
+
+        <div class="wf-note">
+            <strong>Quando appare:</strong> device iOS rilevato (iPhone/iPad o iPad mascherato MacOS), Safari NON in standalone mode, banner non già dismessoo negli ultimi 14 giorni.
+            <strong>Il banner verde push opt-in NON si mostra qui</strong>: l'attivazione fallirebbe finché la PWA non è installata.
+        </div>
+    </div>
+
+    <!-- Sezione 2: Desktop / Android / iOS standalone -->
+    <div class="wf-section">
+        <div class="wf-section-head">
+            <span class="wf-section-title">Vista 2 — Desktop, Android, o iOS PWA installata</span>
+            <span class="wf-pill wf-pill--green">push supportate</span>
+        </div>
+
+        <div class="wf-fake-header">
+            <div>
+                <h1>Buongiorno, Stefano</h1>
+                <p>Trattoria Da Mario · <span class="wf-date-badge">Ven 5 Giugno 2026</span></p>
+            </div>
+            <button type="button" class="wf-fake-cta"><i class="bi bi-plus-lg"></i> Nuova Prenotazione</button>
+        </div>
+
+        <div class="push-prompt-banner">
+            <i class="bi bi-bell-fill push-prompt-banner-ic"></i>
+            <div class="push-prompt-banner-text">
+                <strong>Attiva le notifiche</strong>
+                <small>Ricevi un avviso istantaneo per nuove prenotazioni, cancellazioni e caparre, anche con il browser in background.</small>
+            </div>
+            <div class="push-prompt-banner-actions">
+                <button type="button" class="push-prompt-banner-btn">Attiva</button>
+                <button type="button" class="push-prompt-banner-dismiss" aria-label="Chiudi">&times;</button>
+            </div>
+        </div>
+
+        <div class="wf-content-stub">↓ KPI cards, prenotazioni del giorno, prossimi arrivi…</div>
+
+        <div class="wf-note">
+            <strong>Quando appare:</strong> service worker supportato, permesso non già negato, dispositivo non ancora subscribed, non dismessoo negli ultimi 7 giorni. Click "Attiva" → dialog browser permesso → subscribe + sparisce.
+        </div>
+    </div>
+
+    <!-- Sezione 3: Mobile viewport -->
+    <div class="wf-section">
+        <div class="wf-section-head">
+            <span class="wf-section-title">Vista 3 — Anteprima iPhone (viewport ~ 380px)</span>
+            <span class="wf-pill wf-pill--mobile">mobile</span>
+        </div>
+
+        <div class="wf-mobile-frame">
+            <div class="wf-fake-header" style="flex-direction:column;align-items:flex-start;gap:6px;">
+                <h1 style="font-size:1.15rem;">Buongiorno, Stefano</h1>
+                <p style="font-size:.75rem;">Trattoria Da Mario</p>
+            </div>
+
+            <div class="ios-pwa-banner" style="font-size:.78rem;padding:.7rem .8rem;">
+                <div class="ios-pwa-banner-head">
+                    <i class="bi bi-phone ios-pwa-banner-ic"></i>
+                    <div class="ios-pwa-banner-title" style="font-size:.85rem;">Installa Evulery per ricevere le notifiche</div>
+                    <button type="button" class="ios-pwa-banner-dismiss">&times;</button>
+                </div>
+                <div style="font-size:.74rem;color:#1a4d80;margin-bottom:.35rem;">Apri in <strong>Safari</strong> e:</div>
+                <ol class="ios-pwa-banner-steps" style="font-size:.72rem;">
+                    <li>Tocca <i class="bi bi-box-arrow-up"></i> <strong>Condividi</strong></li>
+                    <li>Scorri → <strong>Aggiungi alla schermata Home</strong></li>
+                    <li>Apri dalla Home e attiva notifiche</li>
+                </ol>
+            </div>
+
+            <div class="wf-content-stub" style="height:50px;font-size:.7rem;">↓ Contenuto dashboard</div>
+        </div>
+    </div>
+
+    <div class="wf-section" style="background:#fffbeb;border:1px solid #f5e6a8;">
+        <div class="wf-section-head" style="border-bottom-color:#f5e6a8;">
+            <span class="wf-section-title" style="color:#8a6d10;">📝 Note design decisions</span>
+        </div>
+        <ul style="margin:0;padding-left:1.2rem;font-size:.82rem;color:#5b4a05;line-height:1.6;">
+            <li><strong>Colore azzurro iOS</strong>: scelto deliberatamente per non confondersi col verde del brand. L'azzurro è universalmente associato a iOS/Apple — rinforza il contesto "sei su iPhone, agisci di conseguenza".</li>
+            <li><strong>Step numerati</strong> invece di paragrafo: gli iPhone user sanno cosa fare se gli si elenca per passi.</li>
+            <li><strong>Icona Condividi inline</strong> (<i class="bi bi-box-arrow-up" style="color:#007aff;"></i>): l'utente la riconosce immediatamente sul suo telefono.</li>
+            <li><strong>Dismiss 14 giorni</strong> (vs 7 del verde): l'azione richiesta è più impegnativa, non vogliamo essere insistenti.</li>
+            <li><strong>Mutuamente esclusivo</strong>: su iOS non-standalone NON si mostra il banner verde push opt-in (l'attivazione fallirebbe). Su PWA installata sparisce questo banner azzurro e appare quello verde.</li>
+        </ul>
+    </div>
+
+</div>
+</body>
+</html>

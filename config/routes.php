@@ -36,6 +36,7 @@ use App\Controllers\Dashboard\CommunicationsController;
 use App\Controllers\Dashboard\NotificationController;
 use App\Controllers\Dashboard\PushController;
 use App\Controllers\Dashboard\OrderController;
+use App\Controllers\Dashboard\RidersController;
 use App\Controllers\ProfileController;
 use App\Controllers\UnsubscribeController;
 use App\Controllers\Menu\MenuPageController;
@@ -195,6 +196,14 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('/orders/api/stats', [OrderController::class, 'apiStats']);
     $r->get('/orders/{id}', [OrderController::class, 'show']);
     $r->post('/orders/{id}/status', [OrderController::class, 'updateStatus']);
+    // Rider management — anagrafica, statistiche, assegnazione ordine
+    // (rotta statica /stats prima di {id} per evitare conflitto col matching)
+    $r->get('/riders', [RidersController::class, 'index']);
+    $r->get('/riders/stats', [RidersController::class, 'stats']);
+    $r->post('/riders', [RidersController::class, 'store']);
+    $r->post('/riders/{id}/update', [RidersController::class, 'update']);
+    $r->post('/riders/{id}/toggle', [RidersController::class, 'toggleActive']);
+    $r->post('/orders/{id}/assign-rider', [RidersController::class, 'assignOrder']);
     // Reputation management
     $r->get('/reputation', [ReviewController::class, 'index']);
     $r->get('/reputation/feedback', [ReviewController::class, 'feedback']);

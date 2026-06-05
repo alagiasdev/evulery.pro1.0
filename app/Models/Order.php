@@ -181,12 +181,17 @@ class Order
      */
     public function getKanbanData(int $tenantId): array
     {
+        // LEFT JOIN con riders per inline-loading di nome+colore. Aggiunto
+        // post-Fase Rider (migration 060): rider_color_hex e rider_name
+        // sono NULL se l'ordine non e' ancora assegnato.
         $stmt = $this->db->prepare(
-            "SELECT * FROM orders
-             WHERE tenant_id = :tenant_id
-               AND DATE(created_at) = CURDATE()
-               AND status NOT IN ('completed','cancelled','rejected')
-             ORDER BY created_at ASC"
+            "SELECT o.*, r.name AS rider_name, r.color_hex AS rider_color_hex
+             FROM orders o
+             LEFT JOIN riders r ON r.id = o.rider_id
+             WHERE o.tenant_id = :tenant_id
+               AND DATE(o.created_at) = CURDATE()
+               AND o.status NOT IN ('completed','cancelled','rejected')
+             ORDER BY o.created_at ASC"
         );
         $stmt->execute(['tenant_id' => $tenantId]);
         $rows = $stmt->fetchAll();
@@ -307,13 +312,18 @@ class Order
      */
     public function findDeliveryReady(int $tenantId): array
     {
+        // LEFT JOIN riders per esporre nome+colore alla board pubblica.
+        // I rider vedono il proprio nome accanto agli ordini di loro
+        // competenza ("Mario fa i rossi, Luca i blu").
         $stmt = $this->db->prepare(
-            "SELECT * FROM orders
-             WHERE tenant_id = :tenant_id
-               AND order_type = 'delivery'
-               AND status IN ('accepted','preparing','ready')
-               AND DATE(created_at) = CURDATE()
-             ORDER BY FIELD(status, 'ready', 'preparing', 'accepted'), pickup_time ASC"
+            "SELECT o.*, r.name AS rider_name, r.color_hex AS rider_color_hex
+             FROM orders o
+             LEFT JOIN riders r ON r.id = o.rider_id
+             WHERE o.tenant_id = :tenant_id
+               AND o.order_type = 'delivery'
+               AND o.status IN ('accepted','preparing','ready')
+               AND DATE(o.created_at) = CURDATE()
+             ORDER BY FIELD(o.status, 'ready', 'preparing', 'accepted'), o.pickup_time ASC"
         );
         $stmt->execute(['tenant_id' => $tenantId]);
         return $stmt->fetchAll();
@@ -329,15 +339,18 @@ class Order
 
     /**
      * Ordini completati oggi (per kanban completed count).
+     * LEFT JOIN riders per mostrare chi ha consegnato anche nello storico.
      */
     public function getCompletedToday(int $tenantId): array
     {
         $stmt = $this->db->prepare(
-            "SELECT * FROM orders
-             WHERE tenant_id = :tenant_id
-               AND DATE(created_at) = CURDATE()
-               AND status IN ('completed','cancelled','rejected')
-             ORDER BY updated_at DESC
+            "SELECT o.*, r.name AS rider_name, r.color_hex AS rider_color_hex
+             FROM orders o
+             LEFT JOIN riders r ON r.id = o.rider_id
+             WHERE o.tenant_id = :tenant_id
+               AND DATE(o.created_at) = CURDATE()
+               AND o.status IN ('completed','cancelled','rejected')
+             ORDER BY o.updated_at DESC
              LIMIT 20"
         );
         $stmt->execute(['tenant_id' => $tenantId]);

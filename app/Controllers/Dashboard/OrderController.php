@@ -8,6 +8,7 @@ use App\Core\Response;
 use App\Core\TenantResolver;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Rider;
 use App\Services\AuditLog;
 use App\Services\NotificationService;
 
@@ -32,13 +33,24 @@ class OrderController
         $stats = $orderModel->getStats((int)$tenant['id']);
         $completed = $orderModel->getCompletedToday((int)$tenant['id']);
 
+        // Rider attivi per dropdown assegnazione (mostrato solo se il tenant
+        // ha delivery configurato — altrimenti non avrebbe senso il modulo).
+        $activeRiders = [];
+        $ridersEnabled = !empty($tenant['ordering_enabled'])
+                       && ($tenant['delivery_mode'] ?? 'none') !== 'none';
+        if ($ridersEnabled) {
+            $activeRiders = (new Rider())->findActive((int)$tenant['id']);
+        }
+
         view('dashboard/orders/index', [
-            'title'      => 'Ordini',
-            'activeMenu' => 'orders',
-            'tenant'     => $tenant,
-            'kanban'     => $kanban,
-            'stats'      => $stats,
-            'completed'  => $completed,
+            'title'         => 'Ordini',
+            'activeMenu'    => 'orders',
+            'tenant'        => $tenant,
+            'kanban'        => $kanban,
+            'stats'         => $stats,
+            'completed'     => $completed,
+            'activeRiders'  => $activeRiders,
+            'ridersEnabled' => $ridersEnabled,
         ], 'dashboard');
     }
 

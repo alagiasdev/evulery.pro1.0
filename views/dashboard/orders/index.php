@@ -101,3 +101,89 @@
     </div>
 </div>
 <?php endif; ?>
+
+<?php if (!empty($ridersEnabled)): ?>
+<!--
+    Popup assegnazione rider (singolo, riusato per ogni ordine).
+    Posizionato dal JS sotto il trigger cliccato. Lista rider attivi +
+    opzione "Rimuovi assegnazione" se l'ordine ha gia' un rider.
+-->
+<div class="rd-assign-popup" id="rd-assign-popup" style="display:none;" data-csrf="<?= csrf_token() ?>" data-base-url="<?= url('dashboard/orders') ?>">
+    <div class="rd-assign-popup-head">Assegna a:</div>
+    <div class="rd-assign-popup-list">
+        <?php if (empty($activeRiders)): ?>
+            <div class="rd-assign-popup-empty">
+                Nessun rider attivo. <a href="<?= url('dashboard/riders') ?>">Aggiungine uno</a>.
+            </div>
+        <?php else: ?>
+            <?php foreach ($activeRiders as $rider): ?>
+            <button type="button" class="rd-assign-popup-item" data-rider-id="<?= (int)$rider['id'] ?>">
+                <span class="rd-dot" style="background:<?= e($rider['color_hex']) ?>;"></span>
+                <?= e($rider['name']) ?>
+            </button>
+            <?php endforeach; ?>
+            <button type="button" class="rd-assign-popup-item rd-assign-popup-clear" data-rider-id="0" style="display:none;">
+                <i class="bi bi-x-circle me-1"></i> Rimuovi assegnazione
+            </button>
+        <?php endif; ?>
+    </div>
+</div>
+
+<script nonce="<?= csp_nonce() ?>">
+(function () {
+    var popup = document.getElementById('rd-assign-popup');
+    if (!popup) return;
+    var csrf = popup.getAttribute('data-csrf');
+    var baseUrl = popup.getAttribute('data-base-url');
+    var currentTrigger = null;
+
+    function openFor(trigger) {
+        var rect = trigger.getBoundingClientRect();
+        popup.style.position = 'fixed';
+        popup.style.top  = (rect.bottom + 6) + 'px';
+        popup.style.left = rect.left + 'px';
+        popup.style.display = 'block';
+        currentTrigger = trigger;
+        var clearBtn = popup.querySelector('.rd-assign-popup-clear');
+        if (clearBtn) {
+            clearBtn.style.display = (trigger.getAttribute('data-current-rider') !== '0') ? 'flex' : 'none';
+        }
+        var currentId = trigger.getAttribute('data-current-rider');
+        popup.querySelectorAll('.rd-assign-popup-item[data-rider-id]').forEach(function (item) {
+            item.classList.toggle('is-current', item.getAttribute('data-rider-id') === currentId);
+        });
+    }
+    function close() { popup.style.display = 'none'; currentTrigger = null; }
+
+    document.addEventListener('click', function (e) {
+        var trigger = e.target.closest('.do-assign-trigger');
+        if (trigger) {
+            e.preventDefault(); e.stopPropagation();
+            if (currentTrigger === trigger) { close(); return; }
+            openFor(trigger);
+            return;
+        }
+        if (!e.target.closest('#rd-assign-popup')) close();
+    });
+
+    popup.addEventListener('click', function (e) {
+        var item = e.target.closest('.rd-assign-popup-item');
+        if (!item || !currentTrigger) return;
+        var orderId = currentTrigger.getAttribute('data-order-id');
+        var riderId = item.getAttribute('data-rider-id');
+        var body = new URLSearchParams();
+        body.append('_csrf', csrf);
+        if (riderId !== '0') body.append('rider_id', riderId);
+        fetch(baseUrl + '/' + orderId + '/assign-rider', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+            body: body.toString()
+        }).then(function (r) { return r.json(); })
+          .then(function () { location.reload(); })
+          .catch(function () { alert('Errore assegnazione rider'); });
+        close();
+    });
+})();
+</script>
+<?php endif; ?>
