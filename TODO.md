@@ -31,6 +31,26 @@ _(nulla al momento — `scripts/migrate.php` completato 2026-05-30)_
   normale, valore aggiunto marginale. Annotato 2026-05-24.
 - [ ] **Banner guida iOS push** — pagina Notifiche: istruzioni "Aggiungi a schermata Home"
   (le push su iPhone funzionano solo da PWA installata).
+- [ ] **File MP3 notifiche audio — refining** (annotato 2026-06-05). I 5 file in
+  `public/assets/sounds/notification-*.mp3` sono fuori specs:
+  - Durata attuale **3.7-4.3 s**, target **0.8-1.5 s** → troppo invadenti se il
+    ristoratore riceve 15-20 push/ora (somma = ~80s di suoni continui).
+  - Bitrate **64 kbps**, target **128 kbps** → qualità "telefonata", non premium.
+  - Sample rate 48 kHz, stereo: ok.
+
+  Come sistemarli (drop-in replacement, NESSUN deploy o riavvio richiesto —
+  cache busting via filemtime automatico):
+  1. Rigenerare via ElevenLabs Sound Effects aggiungendo al prompt
+     `"Duration MUST be exactly 1.2 seconds, no longer. Quick decay, no long
+     reverb tail."` E export a 128 kbps.
+  2. Oppure trim dei file esistenti con Audacity (apri → seleziona 0-1.2s →
+     `Edit → Trim Audio` → `Effect → Fade Out` 100ms → Export MP3 128 kbps).
+  3. Sostituire i file mantenendo gli stessi nomi nella cartella → commit + push
+     → il prossimo client riceve la nuova versione al refresh.
+
+  Stima: 30-60 min. **Trigger**: feedback ristoratori "il suono è troppo lungo"
+  OR quando vuoi finalizzare il sound logo Evulery prima del lancio commerciale.
+  Riferimento prompt EN dettagliati per ogni evento: chat sessione 2026-06-05.
 - [ ] **Email re-iscrizione cliente** — quando il ristoratore re-iscrive un cliente
   disiscritto, inviargli email automatica con link disiscriviti (GDPR-friendly).
 - [ ] **Slug riservati validation** — impedire tenant con slug `admin`, `api`, `menu`,

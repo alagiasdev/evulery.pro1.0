@@ -418,14 +418,23 @@
         subscribe: function () { return subscribeToPush(); },
         getStatus: function () {
             // Promise resolved con { supported, permission, subscribed }
+            //
+            // IMPORTANTE: usiamo navigator.serviceWorker.ready invece della
+            // variabile locale swRegistration per evitare la race condition al
+            // primo render della pagina settings, quando register() e' ancora
+            // in volo e swRegistration e' null. .ready e' una Promise standard
+            // che si risolve quando il SW e' installato e attivo, e cattura
+            // anche eventuali SW registrati in chiamate precedenti.
             return new Promise(function (resolve) {
                 var supported = ('serviceWorker' in navigator) && ('PushManager' in window);
                 var permission = (typeof Notification !== 'undefined') ? Notification.permission : 'default';
-                if (!supported || !swRegistration) {
-                    resolve({ supported: supported, permission: permission, subscribed: false });
+                if (!supported) {
+                    resolve({ supported: false, permission: permission, subscribed: false });
                     return;
                 }
-                swRegistration.pushManager.getSubscription().then(function (sub) {
+                navigator.serviceWorker.ready.then(function (reg) {
+                    return reg.pushManager.getSubscription();
+                }).then(function (sub) {
                     resolve({ supported: true, permission: permission, subscribed: !!sub });
                 }).catch(function () {
                     resolve({ supported: supported, permission: permission, subscribed: false });
