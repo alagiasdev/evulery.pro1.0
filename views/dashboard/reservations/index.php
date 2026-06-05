@@ -128,6 +128,7 @@ $navQs = function (string $d) use ($status, $source): string {
     data-heartbeat-hash="<?= e($heartbeat['hash']) ?>"
     data-heartbeat-count="<?= (int)$heartbeat['count'] ?>"
     data-heartbeat-banner="#dh-refresh-banner"
+    data-heartbeat-label="le prenotazioni di questa pagina"
     style="display:none"></div>
 <?php endif; ?>
 

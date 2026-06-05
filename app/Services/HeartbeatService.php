@@ -56,4 +56,58 @@ class HeartbeatService
             'count'           => $count,
         ];
     }
+
+    /**
+     * Stato della "sala" per il giorno selezionato (modalita' operativa della
+     * mappa). Combina cambi su prenotazioni del giorno + cambi sui tavoli
+     * (blocco, jolly, archive, riordino). Il count e' la somma dei record
+     * monitorati: serve solo a forzare la variazione dell'hash su edit che non
+     * cambiano updated_at (eventualita' teorica). L'hash discrimina comunque.
+     *
+     * @return array{hash:string, last_updated_at:?string, count:int}
+     */
+    public static function forFloor(int $tenantId, string $date): array
+    {
+        $db = Database::getInstance();
+
+        $stmt = $db->prepare(
+            'SELECT
+                (SELECT MAX(updated_at) FROM reservations
+                    WHERE tenant_id = :tid1 AND reservation_date = :d) AS r_upd,
+                (SELECT COUNT(*) FROM reservations
+                    WHERE tenant_id = :tid2 AND reservation_date = :d2) AS r_cnt,
+                (SELECT MAX(updated_at) FROM restaurant_tables
+                    WHERE tenant_id = :tid3) AS t_upd,
+                (SELECT COUNT(*) FROM restaurant_tables
+                    WHERE tenant_id = :tid4) AS t_cnt'
+        );
+        $stmt->execute([
+            'tid1' => $tenantId, 'd'   => $date,
+            'tid2' => $tenantId, 'd2'  => $date,
+            'tid3' => $tenantId,
+            'tid4' => $tenantId,
+        ]);
+        $row = $stmt->fetch();
+
+        $rUpd = $row['r_upd'] ?: null;
+        $tUpd = $row['t_upd'] ?: null;
+        $rCnt = (int) ($row['r_cnt'] ?? 0);
+        $tCnt = (int) ($row['t_cnt'] ?? 0);
+
+        // GREATEST tra i due timestamp (null-safe): l'ultimo cambio della sala
+        $lastUpdated = null;
+        if ($rUpd && $tUpd) {
+            $lastUpdated = strcmp($rUpd, $tUpd) >= 0 ? $rUpd : $tUpd;
+        } else {
+            $lastUpdated = $rUpd ?? $tUpd;
+        }
+
+        $hash = sha1(($rUpd ?? 'n') . '|' . $rCnt . '|' . ($tUpd ?? 'n') . '|' . $tCnt);
+
+        return [
+            'hash'            => $hash,
+            'last_updated_at' => $lastUpdated,
+            'count'           => $rCnt + $tCnt,
+        ];
+    }
 }

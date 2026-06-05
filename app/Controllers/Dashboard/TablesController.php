@@ -185,6 +185,10 @@ class TablesController
         $opDate = (string)$request->query('date', date('Y-m-d'));
         $opTime = (string)$request->query('time', $this->defaultOpTime());
 
+        // Fase C — heartbeat solo per modalita' operativa (setup e' editing
+        // di posizione/disponibilita', non ha senso pollare in real-time).
+        $heartbeat = null;
+
         if ($canUse) {
             $model = new Table();
             $tables = $model->findByTenant((int)$tenant['id']);
@@ -209,6 +213,13 @@ class TablesController
                     sort($ids);
                     $currentMap[(int)$rid] = implode(',', $ids);
                 }
+
+                $hb = \App\Services\HeartbeatService::forFloor((int)$tenant['id'], $opDate);
+                $heartbeat = [
+                    'hash'  => $hb['hash'],
+                    'count' => $hb['count'],
+                    'url'   => url('dashboard/heartbeat/floor') . '?date=' . urlencode($opDate),
+                ];
             }
         }
 
@@ -227,6 +238,7 @@ class TablesController
             'currentMap'      => $currentMap,
             'dayReservations' => $dayReservations,
             'assignments'     => $assignments,
+            'heartbeat'       => $heartbeat,
         ], 'dashboard');
     }
 

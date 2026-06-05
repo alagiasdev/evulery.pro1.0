@@ -140,13 +140,18 @@
 
     /**
      * Auto-bind: ogni <div data-heartbeat-url="..." data-heartbeat-hash="..." data-heartbeat-count="..."
-     *               data-heartbeat-banner="#id-banner">
+     *               data-heartbeat-banner="#id-banner"
+     *               data-heartbeat-label="prenotazioni di oggi">
      * presente nel DOM avvia il polling alla DOMContentLoaded.
      *
      * Il banner referenziato deve avere la struttura .dh-refresh-banner con:
      *   - .dh-refresh-banner-text  (slot del messaggio)
      *   - button[data-heartbeat-reload]  (click = location.reload)
      *   - button[data-heartbeat-dismiss] (click = nasconde fino al prossimo cambio)
+     *
+     * Attributo data-heartbeat-label (opzionale):
+     *   testo del dataset monitorato, viene appeso alla frase del banner.
+     *   Default: "questa pagina". Esempi: "prenotazioni di oggi", "stato sala".
      */
     function autoBind() {
         const nodes = document.querySelectorAll('[data-heartbeat-url]');
@@ -156,6 +161,7 @@
             const count  = parseInt(node.getAttribute('data-heartbeat-count') || '0', 10);
             const interval = parseInt(node.getAttribute('data-heartbeat-interval') || '60000', 10);
             const bannerSel = node.getAttribute('data-heartbeat-banner');
+            const label    = node.getAttribute('data-heartbeat-label') || 'questa pagina';
             if (!url || !bannerSel) return;
 
             const banner   = document.querySelector(bannerSel);
@@ -172,11 +178,11 @@
                 const diff = Math.abs((data.count || 0) - (prev.count || 0));
                 let msg;
                 if (diff === 0) {
-                    msg = '<strong>Modifiche disponibili</strong> sulle prenotazioni di questa pagina.';
+                    msg = '<strong>Modifiche disponibili</strong> su ' + label + '.';
                 } else if (diff === 1) {
-                    msg = '<strong>1 modifica</strong> sulle prenotazioni di questa pagina.';
+                    msg = '<strong>1 modifica</strong> su ' + label + '.';
                 } else {
-                    msg = '<strong>' + diff + ' modifiche</strong> sulle prenotazioni di questa pagina.';
+                    msg = '<strong>' + diff + ' modifiche</strong> su ' + label + '.';
                 }
                 if (textEl) textEl.innerHTML = msg;
                 banner.classList.add('is-visible');

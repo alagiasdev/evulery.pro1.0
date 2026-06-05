@@ -9,6 +9,7 @@ use App\Core\Request;
 use App\Core\TenantResolver;
 use App\Models\Customer;
 use App\Models\Reservation;
+use App\Services\HeartbeatService;
 
 class HomeController
 {
@@ -83,6 +84,18 @@ class HomeController
         $tenant = TenantResolver::current();
         $userName = explode(' ', $user['name'] ?? '')[0]; // First name only
 
+        // Fase C — heartbeat per auto-refresh dashboard home. La home mostra
+        // sempre le prenotazioni del $date selezionato, quindi riusiamo lo
+        // stesso endpoint /heartbeat/reservations: l'unico dataset live e' la
+        // lista del giorno. KPI cards/no-show/sources sono aggregati cachati,
+        // si aggiornano al refresh manuale dell'utente.
+        $hb = HeartbeatService::forReservations($tenantId, $date);
+        $heartbeat = [
+            'hash'  => $hb['hash'],
+            'count' => $hb['count'],
+            'url'   => url('dashboard/heartbeat/reservations') . '?date=' . urlencode($date),
+        ];
+
         view('dashboard/home', [
             'title'         => 'Dashboard',
             'activeMenu'    => 'home',
@@ -99,6 +112,7 @@ class HomeController
             'birthdays'     => $birthdays,
             'userName'      => $userName,
             'tenantName'    => $tenant['name'] ?? '',
+            'heartbeat'     => $heartbeat,
         ], 'dashboard');
     }
 

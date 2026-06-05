@@ -4,8 +4,12 @@
  * Fase 2 (mappa) + Fase 3a (operativa a due pannelli: lista + mappa).
  * Variabili: $tenant, $canUse, $tables, $areas, $mode, $opDate, $opTime,
  *            $floorState, $reassignOptions, $currentMap,
- *            $dayReservations, $assignments
+ *            $dayReservations, $assignments, $heartbeat
  */
+// Fase C — auto-refresh polling solo in modalita' operativa con servizio attivo
+if (!empty($heartbeat)) {
+    $pageScripts = ['js/heartbeat-polling.js'];
+}
 // Posizione iniziale per i tavoli mai posizionati: griglia di fallback con
 // contatore GLOBALE — così due tavoli non posizionati non si sovrappongono mai.
 $fallbackIdx = 0;
@@ -67,6 +71,31 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
     <h2 style="font-size:1.35rem; font-weight:700; margin:0;"><i class="bi bi-grid-3x3 me-1" style="color:var(--brand);"></i> Sala</h2>
     <span class="dh-date-badge"><?= e($opDateLabel) ?></span>
 </div>
+<?php endif; ?>
+
+<?php if (!empty($heartbeat)): ?>
+<!--
+    Fase C — auto-refresh banner per la sala in modalita' operativa.
+    Pollia /heartbeat/floor che combina reservations + restaurant_tables.
+    Visibile solo quando il servizio table_management e' attivo: in caso di
+    revoca runtime l'endpoint ritorna 403 e il modulo entra in backoff
+    silenzioso senza disturbare l'utente.
+-->
+<div id="dh-refresh-banner" class="dh-refresh-banner" role="status" aria-live="polite">
+    <i class="bi bi-arrow-clockwise dh-refresh-banner-ic"></i>
+    <div class="dh-refresh-banner-text"></div>
+    <div class="dh-refresh-banner-actions">
+        <button type="button" class="dh-refresh-banner-btn" data-heartbeat-reload>Aggiorna</button>
+        <button type="button" class="dh-refresh-banner-dismiss" data-heartbeat-dismiss aria-label="Chiudi">&times;</button>
+    </div>
+</div>
+<div
+    data-heartbeat-url="<?= e($heartbeat['url']) ?>"
+    data-heartbeat-hash="<?= e($heartbeat['hash']) ?>"
+    data-heartbeat-count="<?= (int)$heartbeat['count'] ?>"
+    data-heartbeat-banner="#dh-refresh-banner"
+    data-heartbeat-label="lo stato della sala"
+    style="display:none"></div>
 <?php endif; ?>
 
 <?php if (!$canUse): ?>

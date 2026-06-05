@@ -77,6 +77,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('', [HomeController::class, 'index']);
     // Fase C — auto-refresh: endpoint heartbeat (light, polling 60s, ETag/304)
     $r->get('/heartbeat/reservations', [HeartbeatController::class, 'reservations']);
+    $r->get('/heartbeat/floor', [HeartbeatController::class, 'floor']);
     $r->get('/reservations', [ReservationsController::class, 'index']);
     $r->get('/reservations/create', [ReservationsController::class, 'create']);
     $r->get('/reservations/export', [ReservationsController::class, 'export']);

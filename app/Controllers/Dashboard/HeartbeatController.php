@@ -28,8 +28,38 @@ class HeartbeatController
         $dateTo = $dateTo ? $this->validDate($dateTo) : null;
 
         $state = HeartbeatService::forReservations($tenantId, $date, $dateTo);
+        $this->respondWithEtag($state);
+    }
 
-        // ETag = hash; If-None-Match arriva quotato dal browser
+    /**
+     * GET /dashboard/heartbeat/floor?date=YYYY-MM-DD
+     *
+     * Gatato sul servizio table_management (Enterprise): se il tenant non ha
+     * accesso ritorna 403, il polling lato JS smette di triggerare il banner.
+     */
+    public function floor(Request $request): void
+    {
+        if (!tenant_can('table_management')) {
+            http_response_code(403);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => 'service_not_available']);
+            exit;
+        }
+
+        $tenantId = Auth::tenantId();
+        $date = $this->validDate($request->query('date', date('Y-m-d')));
+
+        $state = HeartbeatService::forFloor($tenantId, $date);
+        $this->respondWithEtag($state);
+    }
+
+    /**
+     * Emette ETag + 304/200 JSON, factor comune per i due endpoint.
+     *
+     * @param array{hash:string, last_updated_at:?string, count:int} $state
+     */
+    private function respondWithEtag(array $state): void
+    {
         $etag = '"' . $state['hash'] . '"';
         $clientEtag = $_SERVER['HTTP_IF_NONE_MATCH'] ?? '';
 
