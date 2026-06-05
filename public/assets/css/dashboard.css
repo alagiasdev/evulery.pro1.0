@@ -4791,7 +4791,10 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     padding-bottom: .65rem;
     border-bottom: 1px solid #f0f0f0;
 }
-.rd-card-m-actions { display: flex; gap: .35rem; flex-wrap: wrap; }
+.rd-card-m-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+/* Layout pulsanti azione desktop: orizzontali e allineati a destra,
+   coerenti col pattern .btn-action usato in reservations/customers. */
+.rd-actions { display: flex; gap: .5rem; justify-content: flex-end; flex-wrap: wrap; }
 
 /* Modale crea/modifica */
 .rd-modal-overlay {

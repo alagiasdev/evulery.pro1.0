@@ -67,26 +67,30 @@ $defaultColor = '#dc3545';
                         <span class="rd-status rd-status--inactive">Archiviato</span>
                     <?php endif; ?>
                 </td>
-                <td style="text-align:right;">
-                    <button type="button" class="btn btn-sm btn-outline-secondary"
-                            data-rd-open="<?= (int)$r['id'] ?>"
-                            data-rd-name="<?= e($r['name']) ?>"
-                            data-rd-phone="<?= e($r['phone'] ?? '') ?>"
-                            data-rd-color="<?= e($r['color_hex']) ?>"
-                            data-rd-active="<?= (int)$r['is_active'] ?>">
-                        <i class="bi bi-pencil"></i> Modifica
-                    </button>
-                    <form method="POST" action="<?= url('dashboard/riders/' . (int)$r['id'] . '/toggle') ?>" style="display:inline;"
-                          data-confirm="<?= (int)$r['is_active'] === 1 ? 'Archiviare questo rider? Non potrà più ricevere nuovi ordini.' : 'Riattivare questo rider?' ?>">
-                        <?= csrf_field() ?>
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">
-                            <?php if ((int)$r['is_active'] === 1): ?>
-                                <i class="bi bi-archive"></i> Archivia
-                            <?php else: ?>
-                                <i class="bi bi-arrow-clockwise"></i> Riattiva
-                            <?php endif; ?>
+                <td>
+                    <div class="rd-actions">
+                        <button type="button" class="btn-action btn-act-edit"
+                                data-rd-open="<?= (int)$r['id'] ?>"
+                                data-rd-name="<?= e($r['name']) ?>"
+                                data-rd-phone="<?= e($r['phone'] ?? '') ?>"
+                                data-rd-color="<?= e($r['color_hex']) ?>"
+                                data-rd-active="<?= (int)$r['is_active'] ?>">
+                            <i class="bi bi-pencil"></i> Modifica
                         </button>
-                    </form>
+                        <form method="POST" action="<?= url('dashboard/riders/' . (int)$r['id'] . '/toggle') ?>" style="display:inline;"
+                              data-confirm="<?= (int)$r['is_active'] === 1 ? 'Archiviare questo rider? Non potrà più ricevere nuovi ordini.' : 'Riattivare questo rider?' ?>">
+                            <?= csrf_field() ?>
+                            <?php if ((int)$r['is_active'] === 1): ?>
+                            <button type="submit" class="btn-action btn-act-cancel">
+                                <i class="bi bi-archive"></i> Archivia
+                            </button>
+                            <?php else: ?>
+                            <button type="submit" class="btn-action btn-act-confirm">
+                                <i class="bi bi-arrow-clockwise"></i> Riattiva
+                            </button>
+                            <?php endif; ?>
+                        </form>
+                    </div>
                 </td>
             </tr>
             <?php endforeach; ?>
@@ -114,7 +118,7 @@ $defaultColor = '#dc3545';
             <span><strong><?= (int)$r['orders_this_month'] ?></strong> ordini mese</span>
         </div>
         <div class="rd-card-m-actions">
-            <button type="button" class="btn btn-sm btn-outline-secondary"
+            <button type="button" class="btn-action btn-act-edit"
                     data-rd-open="<?= (int)$r['id'] ?>"
                     data-rd-name="<?= e($r['name']) ?>"
                     data-rd-phone="<?= e($r['phone'] ?? '') ?>"
@@ -125,13 +129,15 @@ $defaultColor = '#dc3545';
             <form method="POST" action="<?= url('dashboard/riders/' . (int)$r['id'] . '/toggle') ?>" style="display:inline;"
                   data-confirm="<?= (int)$r['is_active'] === 1 ? 'Archiviare questo rider?' : 'Riattivare?' ?>">
                 <?= csrf_field() ?>
-                <button type="submit" class="btn btn-sm btn-outline-secondary">
-                    <?php if ((int)$r['is_active'] === 1): ?>
-                        <i class="bi bi-archive"></i> Archivia
-                    <?php else: ?>
-                        <i class="bi bi-arrow-clockwise"></i> Riattiva
-                    <?php endif; ?>
+                <?php if ((int)$r['is_active'] === 1): ?>
+                <button type="submit" class="btn-action btn-act-cancel">
+                    <i class="bi bi-archive"></i> Archivia
                 </button>
+                <?php else: ?>
+                <button type="submit" class="btn-action btn-act-confirm">
+                    <i class="bi bi-arrow-clockwise"></i> Riattiva
+                </button>
+                <?php endif; ?>
             </form>
         </div>
     </div>
