@@ -53,6 +53,25 @@ _(nulla al momento — `scripts/migrate.php` completato 2026-05-30)_
   Riferimento prompt EN dettagliati per ogni evento: chat sessione 2026-06-05.
 - [ ] **Email re-iscrizione cliente** — quando il ristoratore re-iscrive un cliente
   disiscritto, inviargli email automatica con link disiscriviti (GDPR-friendly).
+- [ ] **Refactor datepicker Evulery: estrarre in modulo riusabile** (annotato 2026-06-05).
+  Il calendario custom `.dr-cal-*` esiste gia' brandizzato ed e' duplicato inline in:
+  - `views/dashboard/home.php` (sorgente originale, completo con shortcut Oggi/Domani/Dopodomani)
+  - `views/dashboard/reservations/index.php`
+  - `views/dashboard/reservations/create.php` + `edit.php`
+  - `views/dashboard/settings/tables-map.php`
+  - `views/dashboard/riders/stats.php` (aggiunto 2026-06-05 con bottone "Oggi" interno al calendario)
+
+  Estrarre in `public/assets/js/evulery-datepicker.js` come modulo riusabile (pattern auto-bind
+  via `data-evulery-datepicker` simile a heartbeat-polling.js). Eliminare le duplicazioni inline
+  in ogni view + applicarlo anche agli `<input type="date">` nativi residui in:
+  - `views/dashboard/customers/show.php` (birthday)
+  - `views/dashboard/customers/stats.php` (filtri data)
+  - `views/dashboard/orders/history.php` (filtri data)
+  - `views/dashboard/reservations/index.php` (export CSV + filtro range)
+
+  Stima ~4-5h. Bonus: il bottone "Oggi" diventa standard ovunque. **Trigger**: quando ho una
+  sessione dedicata a "ripulire base codice" o quando 2+ ristoratori segnalano UX incoerente
+  fra le pagine. Per ora il workaround locale nelle stats riders e' sufficiente.
 - [ ] **Slug riservati validation** — impedire tenant con slug `admin`, `api`, `menu`,
   `hub`, `promo`, `order`, `review`, `booking`, ecc. (igiene sicurezza URL).
 - [ ] **Routing fix `/{slug}/booking/success`** — in `config/routes.php` le 2 rotte

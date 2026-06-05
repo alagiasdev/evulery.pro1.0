@@ -4897,6 +4897,61 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 }
 .rd-range-custom input[type="date"] { max-width: 140px; }
 
+/* Trigger Da/A per il calendario custom (stats riders).
+   Si appoggia al pattern .dr-cal-* esistente (home, reservations, sala). */
+.rd-date-trigger {
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .4rem .75rem;
+    background: #fff;
+    border: 1px solid #d8dde3;
+    border-radius: 7px;
+    font-size: .82rem;
+    color: #1a1d23;
+    cursor: pointer;
+    transition: border-color .15s;
+}
+.rd-date-trigger:hover { border-color: var(--brand, #00844A); }
+.rd-date-trigger .bi-calendar3 { color: var(--brand, #00844A); }
+.rd-date-trigger-label {
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #6c757d;
+    font-weight: 600;
+}
+.rd-date-trigger-value { font-weight: 600; font-family: ui-monospace, "SF Mono", monospace; }
+
+/* Dropdown calendario condiviso (riusa .dr-cal-* del pattern Evulery) */
+.rd-date-cal {
+    position: fixed;
+    z-index: 1100;
+    background: #fff;
+    border: 1px solid #d8dde3;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    padding: .75rem;
+    min-width: 280px;
+}
+.rd-cal-footer {
+    margin-top: .55rem;
+    padding-top: .55rem;
+    border-top: 1px solid #f0f0f0;
+    text-align: center;
+}
+.rd-cal-today-btn {
+    display: inline-flex; align-items: center;
+    background: var(--brand-light, #E6F4ED);
+    color: var(--brand, #00844A);
+    border: 0;
+    padding: .4rem 1rem;
+    font-size: .8rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .1s;
+}
+.rd-cal-today-btn:hover { background: var(--brand, #00844A); color: #fff; }
+
 .rd-kpi-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
