@@ -145,13 +145,32 @@ $periodLabel = (int)date('Y', $fromTs) === (int)date('Y', $toTs)
         var d = iso ? new Date(iso + 'T00:00:00') : today;
         calMonth = d.getMonth();
         calYear  = d.getFullYear();
-        // Posizionamento under-trigger
+
+        // Render prima per misurare le dimensioni reali del dropdown.
+        dropdown.style.display = 'block';
+        dropdown.style.visibility = 'hidden';
+        renderCal();
+
+        // Posizionamento intelligente: prova a sinistra del trigger; se sborda
+        // dal viewport, fai flip a destra (anchor bordo-destro al bordo-destro
+        // del trigger). Pattern usato anche dal dropdown tavoli (commit feb8c84).
         var rect = trigger.getBoundingClientRect();
+        var dropdownWidth = dropdown.offsetWidth;
+        var viewportWidth = window.innerWidth;
+        var margin = 12; // margine minimo dai bordi viewport
+
         dropdown.style.position = 'fixed';
         dropdown.style.top  = (rect.bottom + 6) + 'px';
-        dropdown.style.left = rect.left + 'px';
-        dropdown.style.display = 'block';
-        renderCal();
+        if (rect.left + dropdownWidth + margin <= viewportWidth) {
+            // Ci sta allineato a sinistra del trigger
+            dropdown.style.left  = rect.left + 'px';
+            dropdown.style.right = 'auto';
+        } else {
+            // Flip: allinea il bordo destro del calendario al bordo destro del trigger
+            dropdown.style.left  = 'auto';
+            dropdown.style.right = Math.max(margin, viewportWidth - rect.right) + 'px';
+        }
+        dropdown.style.visibility = 'visible';
     }
     function close() { dropdown.style.display = 'none'; currentTarget = null; }
     function pick(iso) {
