@@ -89,11 +89,28 @@ class SettingsController
         // Validate confirmation_mode
         $confirmationMode = ($data['confirmation_mode'] ?? 'auto') === 'manual' ? 'manual' : 'auto';
 
+        // Validate website_url: opzionale. Se valorizzato deve essere un URL
+        // valido; se manca lo schema lo aggiungiamo (https://) per default,
+        // cosi' il ristoratore puo' digitare "miosito.it" senza pensieri.
+        $websiteUrl = trim((string)($data['website_url'] ?? ''));
+        if ($websiteUrl !== '') {
+            if (!preg_match('/^https?:\/\//i', $websiteUrl)) {
+                $websiteUrl = 'https://' . $websiteUrl;
+            }
+            if (!filter_var($websiteUrl, FILTER_VALIDATE_URL) || mb_strlen($websiteUrl) > 255) {
+                flash('danger', 'L\'URL del sito web non è valido.');
+                Response::redirect(url('dashboard/settings/general'));
+            }
+        } else {
+            $websiteUrl = null;
+        }
+
         $updateData = [
             'name'                 => $data['name'] ?? '',
             'email'                => $data['email'] ?? '',
             'phone'                => $data['phone'] ?? null,
             'address'              => $data['address'] ?? null,
+            'website_url'          => $websiteUrl,
             'cancellation_policy'  => $data['cancellation_policy'] ?? null,
             'booking_instructions' => $data['booking_instructions'] ?? null,
             'confirmation_mode'    => $confirmationMode,

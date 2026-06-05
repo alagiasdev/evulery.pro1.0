@@ -154,7 +154,7 @@ class Tenant
         $fields = [];
         $params = ['id' => $id];
         $allowed = [
-            'slug', 'name', 'email', 'phone', 'address', 'logo_url',
+            'slug', 'name', 'email', 'phone', 'address', 'website_url', 'logo_url',
             'custom_domain', 'domain_status', 'cname_target',
             'plan', 'plan_id', 'plan_price', 'deposit_enabled', 'deposit_amount', 'deposit_mode', 'deposit_min_party_size',
             'deposit_days',

@@ -44,6 +44,13 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                             <label class="field-label">Indirizzo</label>
                             <input type="text" class="field-input" name="address" value="<?= e($tenant['address'] ?? '') ?>">
                         </div>
+                        <div class="col-md-6 field-row">
+                            <label class="field-label">Sito web (opzionale)</label>
+                            <input type="url" class="field-input" name="website_url"
+                                   value="<?= e($tenant['website_url'] ?? '') ?>"
+                                   placeholder="https://miosito.it" maxlength="255">
+                            <div class="field-hint">Se compilato, viene mostrato sul footer delle ricevute stampate degli ordini. Lascialo vuoto per usare il widget Evulery come riferimento.</div>
+                        </div>
                         <div class="col-12 field-row">
                             <label class="field-label">Logo</label>
                             <div class="field-hint" style="margin-bottom:.5rem;">Visibile solo nella pagina di prenotazione (widget)</div>
