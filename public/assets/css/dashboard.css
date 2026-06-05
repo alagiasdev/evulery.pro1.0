@@ -4919,7 +4919,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     color: #6c757d;
     font-weight: 600;
 }
-.rd-date-trigger-value { font-weight: 600; font-family: ui-monospace, "SF Mono", monospace; }
+.rd-date-trigger-value { font-weight: 600; }
 
 /* Dropdown calendario condiviso (riusa .dr-cal-* del pattern Evulery) */
 .rd-date-cal {
