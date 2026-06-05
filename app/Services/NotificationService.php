@@ -102,6 +102,11 @@ class NotificationService
             $data = [
                 'reservation_id' => (int)($reservation['id'] ?? 0),
                 'customer_name'  => "{$firstName} {$lastName}",
+                // Espone l'origine della cancellazione come campo strutturato.
+                // Usato dal modulo audio (Fase notifiche): suoniamo solo quando
+                // 'cliente', non quando 'staff' (sarebbe assurdo suonare al
+                // ristoratore subito dopo che ha cliccato Annulla).
+                'cancelled_by'   => $cancelledBy,
                 'url'            => url('dashboard/reservations'),
             ];
 
