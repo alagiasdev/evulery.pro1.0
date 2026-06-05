@@ -15,7 +15,7 @@ $periodLabel = (int)date('Y', $fromTs) === (int)date('Y', $toTs)
         <p class="rd-page-sub">Performance per rider · <?= e($periodLabel) ?></p>
     </div>
     <div class="rd-page-actions">
-        <a href="<?= url('dashboard/riders') ?>" class="btn btn-outline-secondary">
+        <a href="<?= url('dashboard/riders') ?>" class="btn btn-outline-success">
             <i class="bi bi-arrow-left me-1"></i> Anagrafica
         </a>
     </div>
