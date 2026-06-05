@@ -203,6 +203,22 @@
     <script nonce="<?= csp_nonce() ?>" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script nonce="<?= csp_nonce() ?>" src="<?= asset('js/app.js') ?>"></script>
     <?php if (tenant_can('push_notifications')): ?>
+    <?php
+        // Config per il modulo audio: leggiamo i flag dai campi tenant
+        // (default 1) e li passiamo JSON-encoded al data attribute. Hot-reload
+        // via window.EvuleryNotificationSounds.setConfig() quando l'utente
+        // salva da settings.
+        $_t = tenant();
+        $notifSoundsCfg = [
+            'enabled' => (int)($_t['notification_sound_enabled'] ?? 1),
+            'volume'  => (int)($_t['notification_sound_volume'] ?? 70),
+            'sound_on_new_reservation'  => (int)($_t['sound_on_new_reservation']  ?? 1),
+            'sound_on_cancellation'     => (int)($_t['sound_on_cancellation']     ?? 1),
+            'sound_on_deposit_received' => (int)($_t['sound_on_deposit_received'] ?? 1),
+            'sound_on_new_order'        => (int)($_t['sound_on_new_order']        ?? 1),
+            'sound_on_new_feedback'     => (int)($_t['sound_on_new_feedback']     ?? 1),
+        ];
+    ?>
     <script nonce="<?= csp_nonce() ?>" src="<?= asset('js/dashboard-notifications.js') ?>" defer
             data-unread-url="<?= url('dashboard/notifications/unread') ?>"
             data-recent-url="<?= url('dashboard/notifications/recent') ?>"
@@ -212,6 +228,14 @@
             data-vapid-url="<?= url('dashboard/push/vapid-key') ?>"
             data-subscribe-url="<?= url('dashboard/push/subscribe') ?>"
             data-csrf="<?= csrf_token() ?>"
+    ></script>
+    <script nonce="<?= csp_nonce() ?>" src="<?= asset('js/notification-sounds.js') ?>" defer
+            data-notif-sounds-config='<?= e(json_encode($notifSoundsCfg)) ?>'
+            data-sound-master="<?= asset('sounds/notification-master.mp3') ?>"
+            data-sound-cancellation="<?= asset('sounds/notification-cancellation.mp3') ?>"
+            data-sound-deposit="<?= asset('sounds/notification-deposit.mp3') ?>"
+            data-sound-order="<?= asset('sounds/notification-order.mp3') ?>"
+            data-sound-review="<?= asset('sounds/notification-review.mp3') ?>"
     ></script>
     <?php endif; ?>
     <script nonce="<?= csp_nonce() ?>">

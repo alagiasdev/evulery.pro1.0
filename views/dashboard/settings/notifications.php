@@ -53,6 +53,107 @@ $defaults = [
 
     <?php if (tenant_can('push_notifications')): ?>
     <!--
+        Notifiche audio — sound logo brandizzato per evento (Fase notifiche).
+        Toggle master + volume + 5 toggle per evento. Salvataggio nel form
+        principale di questa pagina; il modulo JS legge i flag al refresh
+        della pagina o tramite EvuleryNotificationSounds.setConfig().
+    -->
+    <div class="card section-card" style="margin-top:1rem;">
+        <div class="section-header">
+            <div class="section-icon" style="background:var(--brand);"><i class="bi bi-volume-up"></i></div>
+            <div>
+                <div class="section-title">Notifiche audio</div>
+                <div class="section-subtitle">Suono brandizzato Evulery per ogni evento, riconoscibile anche a distanza nel rumore del ristorante.</div>
+            </div>
+        </div>
+        <div class="form-body">
+            <!-- Master toggle + volume + anteprima -->
+            <div class="row g-3" style="margin-bottom:.75rem;">
+                <div class="col-12 field-row">
+                    <div class="form-check form-switch" style="padding-left:2.5em;">
+                        <input class="form-check-input" type="checkbox" name="notification_sound_enabled" value="1"
+                               id="sound-enabled" <?= !empty($tenant['notification_sound_enabled']) || !isset($tenant['notification_sound_enabled']) ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="sound-enabled" style="font-size:.88rem;font-weight:600;">
+                            Suoni notifiche attivi
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6 field-row">
+                    <label class="field-label">Volume</label>
+                    <div style="display:flex;align-items:center;gap:.75rem;">
+                        <input type="range" name="notification_sound_volume" id="sound-volume" min="0" max="100" step="5"
+                               value="<?= (int)($tenant['notification_sound_volume'] ?? 70) ?>"
+                               style="flex:1;">
+                        <span id="sound-volume-label" style="font-size:.85rem;font-weight:600;min-width:36px;text-align:right;color:#495057;"><?= (int)($tenant['notification_sound_volume'] ?? 70) ?>%</span>
+                    </div>
+                </div>
+                <div class="col-md-6 field-row" style="display:flex;align-items:flex-end;">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="sound-preview-btn">
+                        <i class="bi bi-play-circle me-1"></i> Anteprima suono
+                    </button>
+                </div>
+            </div>
+
+            <div style="border-top:1px solid #f0f0f0;padding-top:.75rem;margin-top:.25rem;">
+                <div style="font-size:.78rem;font-weight:600;color:#495057;margin-bottom:.5rem;">Eventi che riprodurranno il suono:</div>
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <div class="form-check form-switch" style="padding-left:2.5em;">
+                            <input class="form-check-input" type="checkbox" name="sound_on_new_reservation" value="1"
+                                   id="sound-new-res" data-preview="new_reservation"
+                                   <?= !empty($tenant['sound_on_new_reservation']) || !isset($tenant['sound_on_new_reservation']) ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="sound-new-res" style="font-size:.82rem;">
+                                Nuova prenotazione
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check form-switch" style="padding-left:2.5em;">
+                            <input class="form-check-input" type="checkbox" name="sound_on_cancellation" value="1"
+                                   id="sound-cancel" data-preview="cancellation"
+                                   <?= !empty($tenant['sound_on_cancellation']) || !isset($tenant['sound_on_cancellation']) ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="sound-cancel" style="font-size:.82rem;">
+                                Cancellazione (dal cliente)
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check form-switch" style="padding-left:2.5em;">
+                            <input class="form-check-input" type="checkbox" name="sound_on_deposit_received" value="1"
+                                   id="sound-deposit" data-preview="deposit_received"
+                                   <?= !empty($tenant['sound_on_deposit_received']) || !isset($tenant['sound_on_deposit_received']) ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="sound-deposit" style="font-size:.82rem;">
+                                Caparra ricevuta
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check form-switch" style="padding-left:2.5em;">
+                            <input class="form-check-input" type="checkbox" name="sound_on_new_order" value="1"
+                                   id="sound-order" data-preview="new_order"
+                                   <?= !empty($tenant['sound_on_new_order']) || !isset($tenant['sound_on_new_order']) ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="sound-order" style="font-size:.82rem;">
+                                Nuovo ordine online
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check form-switch" style="padding-left:2.5em;">
+                            <input class="form-check-input" type="checkbox" name="sound_on_new_feedback" value="1"
+                                   id="sound-feedback" data-preview="new_feedback"
+                                   <?= !empty($tenant['sound_on_new_feedback']) || !isset($tenant['sound_on_new_feedback']) ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="sound-feedback" style="font-size:.82rem;">
+                                Recensione ricevuta
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="field-hint" style="margin-top:.6rem;">Tap sul nome dell'evento per ascoltare un'anteprima.</div>
+            </div>
+        </div>
+    </div>
+
+    <!--
         Notifiche browser (push) — stato per dispositivo + CTA opt-in.
         Lo stato e' valutato lato client da window.EvuleryPush.getStatus():
         Notification.permission + presenza subscription nel browser corrente.
@@ -245,6 +346,43 @@ $defaults = [
     } else {
         render();
     }
+
+    // ========== Notifiche audio: anteprima + volume label live ==========
+    var volRange = document.getElementById('sound-volume');
+    var volLabel = document.getElementById('sound-volume-label');
+    if (volRange && volLabel) {
+        volRange.addEventListener('input', function () {
+            volLabel.textContent = volRange.value + '%';
+            // Hot-reload del volume nel modulo audio (no reload pagina)
+            if (window.EvuleryNotificationSounds) {
+                window.EvuleryNotificationSounds.setConfig({ volume: parseInt(volRange.value, 10) });
+            }
+        });
+    }
+    function previewSound(type) {
+        if (!window.EvuleryNotificationSounds) return;
+        // testSound bypassa i toggle: l'utente vuole sentire il suono per
+        // decidere se attivarlo, non e' bloccato dallo stato corrente.
+        window.EvuleryNotificationSounds.testSound(type);
+    }
+    var previewBtn = document.getElementById('sound-preview-btn');
+    if (previewBtn) {
+        previewBtn.addEventListener('click', function () { previewSound('new_reservation'); });
+    }
+    document.querySelectorAll('label.form-check-label[for^="sound-"]').forEach(function (lbl) {
+        var forId = lbl.getAttribute('for');
+        var input = document.getElementById(forId);
+        if (!input) return;
+        var type = input.getAttribute('data-preview');
+        if (!type) return;
+        lbl.style.cursor = 'pointer';
+        lbl.addEventListener('click', function (e) {
+            // Solo click sul testo del label, non sul toggle: il browser
+            // gestisce gia' il toggle nativamente. Aggiungiamo SOLO preview.
+            // (Il toggle scatta lo stesso perche' label e' associata via for.)
+            setTimeout(function () { previewSound(type); }, 100);
+        });
+    });
 })();
 </script>
 <?php endif; ?>

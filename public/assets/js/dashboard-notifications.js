@@ -21,6 +21,10 @@
 
     var POLL_INTERVAL = 30000; // 30 seconds
     var pollTimer = null;
+    // Tracker per il modulo audio: salviamo l'ID dell'ultima notifica vista
+    // dal client. Suoniamo solo quando arriva una notifica con id maggiore.
+    // Inizializzato al primo poll (baseline) per non suonare il "vecchio".
+    var lastSeenId = null;
 
     // ========== DOM refs ==========
     var bellBtn       = document.getElementById('notif-bell-btn');
@@ -48,7 +52,25 @@
     function pollUnread() {
         fetch(cfg.unreadUrl, { credentials: 'same-origin' })
             .then(function (r) { return r.json(); })
-            .then(function (data) { updateBadge(data.count); })
+            .then(function (data) {
+                updateBadge(data.count);
+
+                // Modulo audio: scegliamo il suono solo per notifiche NUOVE
+                // rispetto all'ultimo poll. La prima fetch dopo init definisce
+                // la baseline (lastSeenId): cosi' al primo accesso non
+                // suoniamo per notifiche pregresse.
+                var latest = data.latest;
+                if (latest && latest.id) {
+                    if (lastSeenId === null) {
+                        lastSeenId = latest.id; // baseline silenziosa
+                    } else if (latest.id > lastSeenId) {
+                        lastSeenId = latest.id;
+                        if (window.EvuleryNotificationSounds) {
+                            window.EvuleryNotificationSounds.playForNotification(latest);
+                        }
+                    }
+                }
+            })
             .catch(function () { /* silent */ });
     }
 

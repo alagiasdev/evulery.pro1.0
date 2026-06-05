@@ -209,6 +209,11 @@ class SettingsController
         $tenantId = Auth::tenantId();
         $data = $request->all();
 
+        // Volume: clamp 0-100 lato server (il range HTML potrebbe essere
+        // bypassato, e l'audio API ha bisogno di valori validi).
+        $volume = isset($data['notification_sound_volume']) ? (int)$data['notification_sound_volume'] : 70;
+        $volume = max(0, min(100, $volume));
+
         $updateData = [
             'notify_new_reservation'    => !empty($data['notify_new_reservation']) ? 1 : 0,
             'notify_cancellation'       => !empty($data['notify_cancellation']) ? 1 : 0,
@@ -218,6 +223,15 @@ class SettingsController
             'notif_body_cancellation'     => trim($data['notif_body_cancellation'] ?? '') ?: null,
             'notif_title_deposit'         => trim($data['notif_title_deposit'] ?? '') ?: null,
             'notif_body_deposit'          => trim($data['notif_body_deposit'] ?? '') ?: null,
+
+            // Notifiche audio (Fase notifiche sonore)
+            'notification_sound_enabled'  => !empty($data['notification_sound_enabled']) ? 1 : 0,
+            'notification_sound_volume'   => $volume,
+            'sound_on_new_reservation'    => !empty($data['sound_on_new_reservation']) ? 1 : 0,
+            'sound_on_cancellation'       => !empty($data['sound_on_cancellation']) ? 1 : 0,
+            'sound_on_deposit_received'   => !empty($data['sound_on_deposit_received']) ? 1 : 0,
+            'sound_on_new_order'          => !empty($data['sound_on_new_order']) ? 1 : 0,
+            'sound_on_new_feedback'       => !empty($data['sound_on_new_feedback']) ? 1 : 0,
         ];
 
         (new Tenant())->update($tenantId, $updateData);

@@ -36,13 +36,32 @@ class NotificationController
     }
 
     /**
-     * JSON: unread count for badge polling.
+     * JSON: unread count + ultima notifica per il polling.
+     * L'ultima notifica serve al modulo audio (notification-sounds.js) per
+     * scegliere il suono giusto e applicare filtri (es. cancelled_by). Un
+     * unico round-trip invece di due: count + recent.
      */
     public function apiUnread(Request $request): void
     {
         $tenantId = Auth::tenantId();
-        $count = (new Notification())->getUnreadCount($tenantId);
-        Response::json(['count' => $count]);
+        $model = new Notification();
+        $count = $model->getUnreadCount($tenantId);
+
+        $latest = null;
+        if ($count > 0) {
+            $recent = $model->getRecent($tenantId, 1);
+            if (!empty($recent[0])) {
+                $r = $recent[0];
+                $latest = [
+                    'id'         => (int)$r['id'],
+                    'type'       => $r['type'],
+                    'data'       => $r['data'] ?? null,
+                    'created_at' => $r['created_at'],
+                ];
+            }
+        }
+
+        Response::json(['count' => $count, 'latest' => $latest]);
     }
 
     /**
