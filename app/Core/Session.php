@@ -4,8 +4,10 @@ namespace App\Core;
 
 class Session
 {
-    private const IDLE_TIMEOUT = 1800;     // 30 minutes
-    private const ABSOLUTE_TIMEOUT = 28800; // 8 hours
+    private const IDLE_TIMEOUT = 1800;      // 30 minuti — protezione PC condivisi
+    private const ABSOLUTE_TIMEOUT = 43200; // 12 ore — copre il turno di lavoro tipico
+                                            // del ristoratore (es. 10:00-22:00) evitando
+                                            // un re-login obbligato a meta' giornata.
 
     public static function start(): void
     {
