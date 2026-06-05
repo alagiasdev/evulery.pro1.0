@@ -30,6 +30,7 @@ $periodLabel = (int)date('Y', $fromTs) === (int)date('Y', $toTs)
             $sevenAgo = date('Y-m-d', strtotime('-7 days'));
             $thirtyAgo = date('Y-m-d', strtotime('-30 days'));
             $ranges = [
+                'Oggi' => [$today, $today],
                 'Mese corrente' => [$monthStart, $today],
                 'Ultimi 7 giorni' => [$sevenAgo, $today],
                 'Ultimi 30 giorni' => [$thirtyAgo, $today],
