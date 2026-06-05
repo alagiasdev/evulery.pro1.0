@@ -16,6 +16,7 @@ use App\Controllers\Admin\UsersController;
 use App\Controllers\Admin\LeadsController;
 use App\Controllers\Dashboard\HomeController;
 use App\Controllers\Dashboard\HelpController;
+use App\Controllers\Dashboard\HeartbeatController;
 use App\Controllers\Dashboard\ReservationsController;
 use App\Controllers\Dashboard\CustomersController;
 use App\Controllers\Dashboard\SettingsController;
@@ -74,6 +75,8 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('/suspended', [SuspendedController::class, 'index']);
     $r->post('/stop-impersonation', [ImpersonationController::class, 'stop']);
     $r->get('', [HomeController::class, 'index']);
+    // Fase C — auto-refresh: endpoint heartbeat (light, polling 60s, ETag/304)
+    $r->get('/heartbeat/reservations', [HeartbeatController::class, 'reservations']);
     $r->get('/reservations', [ReservationsController::class, 'index']);
     $r->get('/reservations/create', [ReservationsController::class, 'create']);
     $r->get('/reservations/export', [ReservationsController::class, 'export']);

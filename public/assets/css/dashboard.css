@@ -4567,4 +4567,71 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .set-item-desc { font-size: .68rem; color: #6c757d; margin-top: 1px; line-height: 1.4; display: block; }
 .set-item-arrow { color: #c4c9ce; font-size: .8rem; margin-top: 2px; }
 .set-lock { color: #adb5bd; font-size: .7rem; }
+
+/* --- Fase C — Auto-refresh banner contestuale ---
+   Sticky in alto al contenuto della pagina (non al viewport globale).
+   Mostrato dal modulo heartbeat-polling.js quando il server segnala
+   modifiche sui dati visualizzati. Il refresh resta a discrezione
+   dell'utente — niente reload silenzioso. */
+.dh-refresh-banner {
+    position: sticky;
+    /* La .top-bar desktop e' gia' sticky a top:0 con z-index:50; ci appoggiamo
+       sotto evitando sovrapposizione. Su mobile la top-bar e' nascosta
+       (d-none d-md-flex) quindi top:0 e' corretto. */
+    top: 0;
+    z-index: 49;
+    display: none;
+    margin: -.5rem -1rem 1rem;
+    padding: .65rem 1rem;
+    background: linear-gradient(180deg, #fff8e1 0%, #fff3cd 100%);
+    border: 1px solid #ffe082;
+    border-left: 4px solid #f59e0b;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, .12);
+    font-size: .85rem;
+    color: #664d03;
+    animation: dh-refresh-slide .25s ease-out;
+}
+@media (min-width: 768px) {
+    /* Desktop: top-bar fissa ~52px, il banner si appoggia sotto */
+    .dh-refresh-banner { top: 52px; }
+}
+.dh-refresh-banner.is-visible { display: flex; align-items: center; gap: .75rem; }
+.dh-refresh-banner-ic { font-size: 1.05rem; color: #f59e0b; flex-shrink: 0; }
+.dh-refresh-banner-text { flex: 1; line-height: 1.35; }
+.dh-refresh-banner-text strong { color: #4a3c0a; }
+.dh-refresh-banner-actions { display: flex; gap: .35rem; flex-shrink: 0; }
+.dh-refresh-banner-btn {
+    background: #f59e0b;
+    color: #fff;
+    border: 0;
+    padding: .35rem .85rem;
+    font-size: .78rem;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background .15s ease;
+}
+.dh-refresh-banner-btn:hover { background: #d97706; }
+.dh-refresh-banner-dismiss {
+    background: transparent;
+    border: 0;
+    color: #8a6d10;
+    padding: .35rem .5rem;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.dh-refresh-banner-dismiss:hover { background: rgba(245, 158, 11, .15); }
+
+@keyframes dh-refresh-slide {
+    from { transform: translateY(-8px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 576px) {
+    .dh-refresh-banner { font-size: .8rem; padding: .55rem .75rem; }
+    .dh-refresh-banner-btn { padding: .3rem .7rem; font-size: .72rem; }
+}
 @media (max-width: 880px) { .set-grid { grid-template-columns: 1fr; } }

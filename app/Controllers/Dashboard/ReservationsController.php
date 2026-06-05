@@ -15,6 +15,7 @@ use App\Models\Table;
 use App\Models\Tenant;
 use App\Services\AuditLog;
 use App\Services\AvailabilityService;
+use App\Services\HeartbeatService;
 use App\Services\MailService;
 use App\Services\NotificationService;
 use App\Services\TableAssigner;
@@ -62,6 +63,20 @@ class ReservationsController
             $tableAssignments = (new TableAssigner())->assignmentsFor($allIds);
         }
 
+        // Fase C — heartbeat per auto-refresh: passa l'hash iniziale alla view
+        // solo per modalita' "data singola o range" (non upcoming, non ricerca:
+        // per quei due casi non c'e' una data fissa su cui pollare).
+        $heartbeat = null;
+        if (!$upcoming && $searchQuery === '') {
+            $hb = HeartbeatService::forReservations($tenantId, $date, $dateTo);
+            $heartbeat = [
+                'hash'  => $hb['hash'],
+                'count' => $hb['count'],
+                'url'   => url('dashboard/heartbeat/reservations') . '?date=' . urlencode($date)
+                           . ($dateTo && $dateTo !== $date ? '&date_to=' . urlencode($dateTo) : ''),
+            ];
+        }
+
         view('dashboard/reservations/index', [
             'title'        => 'Prenotazioni',
             'activeMenu'   => 'reservations',
@@ -76,6 +91,7 @@ class ReservationsController
             'searchResults' => $searchResults,
             'tableMgmt'        => $tableMgmt,
             'tableAssignments' => $tableAssignments,
+            'heartbeat'        => $heartbeat,
         ], 'dashboard');
     }
 

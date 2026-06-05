@@ -1,4 +1,10 @@
 <?php
+// Fase C — auto-refresh polling (60s) per la lista prenotazioni del giorno.
+// Iniettato solo se il controller ha calcolato $heartbeat (no upcoming, no search).
+if (!empty($heartbeat)) {
+    $pageScripts = ['js/heartbeat-polling.js'];
+}
+
 // Gestione Tavoli — aggancia l'assegnazione tavolo a ogni prenotazione
 if (!empty($tableMgmt)) {
     foreach ($reservations as &$_r) {
@@ -101,6 +107,29 @@ $navQs = function (string $d) use ($status, $source): string {
     <h1>Prenotazioni</h1>
     <span class="dh-date-badge"><?= e($headerBadge) ?></span>
 </div>
+
+<?php if (!empty($heartbeat)): ?>
+<!--
+    Fase C — auto-refresh banner contestuale.
+    L'attributo data-heartbeat-* viene letto da heartbeat-polling.js (auto-bind):
+    polling 60s, ETag/304, pausa su tab nascosto, banner visibile SOLO se il
+    server segnala cambi sui dati di questa pagina.
+-->
+<div id="dh-refresh-banner" class="dh-refresh-banner" role="status" aria-live="polite">
+    <i class="bi bi-arrow-clockwise dh-refresh-banner-ic"></i>
+    <div class="dh-refresh-banner-text"></div>
+    <div class="dh-refresh-banner-actions">
+        <button type="button" class="dh-refresh-banner-btn" data-heartbeat-reload>Aggiorna</button>
+        <button type="button" class="dh-refresh-banner-dismiss" data-heartbeat-dismiss aria-label="Chiudi">&times;</button>
+    </div>
+</div>
+<div
+    data-heartbeat-url="<?= e($heartbeat['url']) ?>"
+    data-heartbeat-hash="<?= e($heartbeat['hash']) ?>"
+    data-heartbeat-count="<?= (int)$heartbeat['count'] ?>"
+    data-heartbeat-banner="#dh-refresh-banner"
+    style="display:none"></div>
+<?php endif; ?>
 
 <!-- Search bar (global) -->
 <form method="GET" action="<?= url('dashboard/reservations') ?>" class="gs-form" id="global-search-form">
