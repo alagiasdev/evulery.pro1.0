@@ -49,7 +49,7 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                             <input type="url" class="field-input" name="website_url"
                                    value="<?= e($tenant['website_url'] ?? '') ?>"
                                    placeholder="https://miosito.it" maxlength="255">
-                            <div class="field-hint">Se compilato, viene mostrato sul footer delle ricevute stampate degli ordini. Lascialo vuoto per usare il widget Evulery come riferimento.</div>
+                            <div class="field-hint">L'URL del tuo sito vetrina, se ne hai uno. Lascialo vuoto se non ce l'hai.</div>
                         </div>
                         <div class="col-12 field-row">
                             <label class="field-label">Logo</label>
