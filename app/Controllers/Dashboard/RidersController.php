@@ -145,11 +145,12 @@ class RidersController
 
         $tenantId = Auth::tenantId();
 
-        // Range default: mese corrente. Override via query string per power user.
-        $dateFrom = $request->query('from', date('Y-m-01'));
+        // Range default: oggi (chi apre la pagina al volo vede subito i numeri
+        // del servizio in corso). Mese/7gg/30gg sono accessibili via chip.
+        $dateFrom = $request->query('from', date('Y-m-d'));
         $dateTo   = $request->query('to', date('Y-m-d'));
-        // Validazione minima formato; cade su mese corrente se input sporco
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateFrom)) $dateFrom = date('Y-m-01');
+        // Validazione minima formato; cade su oggi se input sporco
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateFrom)) $dateFrom = date('Y-m-d');
         if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateTo))   $dateTo   = date('Y-m-d');
 
         $stats = (new Rider())->getStats($tenantId, $dateFrom, $dateTo);
