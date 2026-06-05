@@ -65,7 +65,7 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
     data-heartbeat-hash="<?= e($heartbeat['hash']) ?>"
     data-heartbeat-count="<?= (int)$heartbeat['count'] ?>"
     data-heartbeat-banner="#dh-refresh-banner"
-    data-heartbeat-label="le prenotazioni di questa giornata"
+    data-heartbeat-label="sulle prenotazioni di questa giornata"
     style="display:none"></div>
 <?php endif; ?>
 

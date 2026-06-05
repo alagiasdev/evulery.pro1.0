@@ -150,8 +150,10 @@
      *   - button[data-heartbeat-dismiss] (click = nasconde fino al prossimo cambio)
      *
      * Attributo data-heartbeat-label (opzionale):
-     *   testo del dataset monitorato, viene appeso alla frase del banner.
-     *   Default: "questa pagina". Esempi: "prenotazioni di oggi", "stato sala".
+     *   pezzo di frase introdotto da preposizione articolata, viene appeso al
+     *   verbo. Default: "su questa pagina". Esempi: "sulle prenotazioni di
+     *   oggi", "sullo stato della sala". La preposizione e' nel label per
+     *   evitare casi come "su lo stato" che richiederebbero elisione manuale.
      */
     function autoBind() {
         const nodes = document.querySelectorAll('[data-heartbeat-url]');
@@ -161,7 +163,7 @@
             const count  = parseInt(node.getAttribute('data-heartbeat-count') || '0', 10);
             const interval = parseInt(node.getAttribute('data-heartbeat-interval') || '60000', 10);
             const bannerSel = node.getAttribute('data-heartbeat-banner');
-            const label    = node.getAttribute('data-heartbeat-label') || 'questa pagina';
+            const label    = node.getAttribute('data-heartbeat-label') || 'su questa pagina';
             if (!url || !bannerSel) return;
 
             const banner   = document.querySelector(bannerSel);
@@ -178,11 +180,11 @@
                 const diff = Math.abs((data.count || 0) - (prev.count || 0));
                 let msg;
                 if (diff === 0) {
-                    msg = '<strong>Modifiche disponibili</strong> su ' + label + '.';
+                    msg = '<strong>Modifiche disponibili</strong> ' + label + '.';
                 } else if (diff === 1) {
-                    msg = '<strong>1 modifica</strong> su ' + label + '.';
+                    msg = '<strong>1 modifica</strong> ' + label + '.';
                 } else {
-                    msg = '<strong>' + diff + ' modifiche</strong> su ' + label + '.';
+                    msg = '<strong>' + diff + ' modifiche</strong> ' + label + '.';
                 }
                 if (textEl) textEl.innerHTML = msg;
                 banner.classList.add('is-visible');

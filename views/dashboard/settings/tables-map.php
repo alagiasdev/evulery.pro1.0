@@ -94,7 +94,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
     data-heartbeat-hash="<?= e($heartbeat['hash']) ?>"
     data-heartbeat-count="<?= (int)$heartbeat['count'] ?>"
     data-heartbeat-banner="#dh-refresh-banner"
-    data-heartbeat-label="lo stato della sala"
+    data-heartbeat-label="sullo stato della sala"
     style="display:none"></div>
 <?php endif; ?>
 
