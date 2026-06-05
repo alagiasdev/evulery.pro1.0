@@ -346,21 +346,25 @@
         return outputArray;
     }
 
-    // ========== Banner attivazione push (opt-in esplicito) ==========
-    // Mostrato sulla home se: SW disponibile + tenant_can(push) +
-    // permission != 'denied' + non gia' subscribed + non dismissed di recente
-    // (localStorage 'evulery_push_banner_dismissed_at' con 7gg di grazia).
-    var BANNER_DISMISS_KEY = 'evulery_push_banner_dismissed_at';
-    var BANNER_DISMISS_DAYS = 7;
-
-    function isBannerDismissedRecently() {
+    // ========== Helper localStorage dismiss (usato da piu' banner) ==========
+    // Pattern unificato: usato sia dal banner push (7gg) che dal banner iOS
+    // (14gg). Try/catch perche' localStorage e' bloccato in Safari private mode.
+    function isBannerDismissedRecently(key, maxAgeDays) {
         try {
-            var ts = parseInt(localStorage.getItem(BANNER_DISMISS_KEY) || '0', 10);
+            var ts = parseInt(localStorage.getItem(key) || '0', 10);
             if (!ts) return false;
-            var ageDays = (Date.now() - ts) / 86400000;
-            return ageDays < BANNER_DISMISS_DAYS;
+            return (Date.now() - ts) / 86400000 < maxAgeDays;
         } catch (e) { return false; }
     }
+    function rememberBannerDismissed(key) {
+        try { localStorage.setItem(key, String(Date.now())); } catch (e) {}
+    }
+
+    // ========== Banner attivazione push (opt-in esplicito) ==========
+    // Mostrato sulla home se: SW disponibile + tenant_can(push) +
+    // permission != 'denied' + non gia' subscribed + non dismissed di recente.
+    var BANNER_DISMISS_KEY = 'evulery_push_banner_dismissed_at';
+    var BANNER_DISMISS_DAYS = 7;
 
     function maybeShowPushBanner() {
         var banner = document.getElementById('push-prompt-banner');
@@ -371,7 +375,7 @@
         // Permesso gia' negato → vai nelle settings, non insistere qui
         if (Notification.permission === 'denied') return;
         // Dismissed di recente → rispettiamo la scelta dell'utente
-        if (isBannerDismissedRecently()) return;
+        if (isBannerDismissedRecently(BANNER_DISMISS_KEY, BANNER_DISMISS_DAYS)) return;
         // Su iOS non installato vediamo gia' il banner "Aggiungi a schermata
         // Home" (maybeShowIosPwaBanner): qui evitiamo il doppio prompt e
         // un'attivazione che fallirebbe comunque (push iOS richiede PWA).
@@ -411,7 +415,7 @@
         }
         if (dismissBtn) {
             dismissBtn.addEventListener('click', function () {
-                try { localStorage.setItem(BANNER_DISMISS_KEY, String(Date.now())); } catch (e) {}
+                rememberBannerDismissed(BANNER_DISMISS_KEY);
                 banner.classList.remove('is-visible');
             });
         }
@@ -439,26 +443,18 @@
                window.matchMedia('(display-mode: standalone)').matches;
     }
 
-    function isIosBannerDismissedRecently() {
-        try {
-            var ts = parseInt(localStorage.getItem(IOS_BANNER_DISMISS_KEY) || '0', 10);
-            if (!ts) return false;
-            return (Date.now() - ts) / 86400000 < IOS_BANNER_DISMISS_DAYS;
-        } catch (e) { return false; }
-    }
-
     function maybeShowIosPwaBanner() {
         var banner = document.getElementById('ios-pwa-banner');
         if (!banner) return;
         if (!isIOSDevice()) return;
         if (isStandalonePWA()) return;             // gia' installata
-        if (isIosBannerDismissedRecently()) return;
+        if (isBannerDismissedRecently(IOS_BANNER_DISMISS_KEY, IOS_BANNER_DISMISS_DAYS)) return;
         banner.classList.add('is-visible');
 
         var dismissBtn = banner.querySelector('[data-ios-pwa-dismiss]');
         if (dismissBtn) {
             dismissBtn.addEventListener('click', function () {
-                try { localStorage.setItem(IOS_BANNER_DISMISS_KEY, String(Date.now())); } catch (e) {}
+                rememberBannerDismissed(IOS_BANNER_DISMISS_KEY);
                 banner.classList.remove('is-visible');
             });
         }
