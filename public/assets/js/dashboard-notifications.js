@@ -200,21 +200,22 @@
         if (dropdown) dropdown.classList.remove('open');
     }
 
-    // Desktop bell
+    // Desktop bell — apre il dropdown notifiche, niente push subscribe qui:
+    // l'iscrizione push e' un opt-in esplicito tramite banner home o pagina
+    // /dashboard/settings/notifications.
     if (bellBtn) {
         bellBtn.addEventListener('click', function (e) {
             e.stopPropagation();
             toggleDropdown();
-            // Trigger push permission on first click (requires user gesture)
-            subscribeToPush();
         });
     }
 
-    // Mobile bell — navigate to notifications page
+    // Mobile bell — naviga a /dashboard/notifications. NON triggerare
+    // subscribeToPush qui: l'unload immediato della pagina interrompe la
+    // promise async di pushManager.subscribe() prima che completi, lasciando
+    // il dispositivo senza subscription. Era il bug killer dei mobile.
     if (bellBtnMobile) {
         bellBtnMobile.addEventListener('click', function () {
-            // Trigger push permission on first click (requires user gesture)
-            subscribeToPush();
             window.location = cfg.markReadUrl; // -> /dashboard/notifications
         });
     }
@@ -252,30 +253,44 @@
         });
     }
 
+    // Promise-based: l'API esposta a window.EvuleryPush.subscribe() permette
+    // ai banner/CTA di sapere l'esito (permesso accordato / negato / errore)
+    // e mostrare il feedback corretto all'utente.
     function subscribeToPush() {
-        if (!swRegistration) return;
+        if (!swRegistration) {
+            return Promise.reject(new Error('service-worker-not-registered'));
+        }
 
-        // Check if already subscribed
-        swRegistration.pushManager.getSubscription().then(function (sub) {
-            if (sub) return; // already done
+        return swRegistration.pushManager.getSubscription().then(function (sub) {
+            if (sub) {
+                // Gia' subscribed: re-invia al server per sicurezza (potrebbe
+                // essere stato eliminato dal DB lato server).
+                sendSubscriptionToServer(sub);
+                return { status: 'already-subscribed' };
+            }
 
-            // Check permission status
-            if (Notification.permission === 'denied') return;
+            if (Notification.permission === 'denied') {
+                return { status: 'denied' };
+            }
 
-            // Get VAPID key and subscribe (triggered by user gesture)
-            fetch(cfg.vapidUrl, { credentials: 'same-origin' })
+            return fetch(cfg.vapidUrl, { credentials: 'same-origin' })
                 .then(function (r) { return r.json(); })
                 .then(function (data) {
-                    if (!data.key) return;
+                    if (!data.key) throw new Error('vapid-key-missing');
                     var vapidKey = urlBase64ToUint8Array(data.key);
-                    swRegistration.pushManager.subscribe({
+                    return swRegistration.pushManager.subscribe({
                         userVisibleOnly: true,
                         applicationServerKey: vapidKey
-                    }).then(function (subscription) {
-                        sendSubscriptionToServer(subscription);
-                    }).catch(function (err) {
-                        console.warn('Push subscription failed:', err);
                     });
+                })
+                .then(function (subscription) {
+                    sendSubscriptionToServer(subscription);
+                    return { status: 'subscribed' };
+                })
+                .catch(function (err) {
+                    // Tipici: NotAllowedError (utente nega), AbortError, errori rete
+                    var status = Notification.permission === 'denied' ? 'denied' : 'error';
+                    return { status: status, error: err };
                 });
         });
     }
@@ -309,6 +324,94 @@
         return outputArray;
     }
 
+    // ========== Banner attivazione push (opt-in esplicito) ==========
+    // Mostrato sulla home se: SW disponibile + tenant_can(push) +
+    // permission != 'denied' + non gia' subscribed + non dismissed di recente
+    // (localStorage 'evulery_push_banner_dismissed_at' con 7gg di grazia).
+    var BANNER_DISMISS_KEY = 'evulery_push_banner_dismissed_at';
+    var BANNER_DISMISS_DAYS = 7;
+
+    function isBannerDismissedRecently() {
+        try {
+            var ts = parseInt(localStorage.getItem(BANNER_DISMISS_KEY) || '0', 10);
+            if (!ts) return false;
+            var ageDays = (Date.now() - ts) / 86400000;
+            return ageDays < BANNER_DISMISS_DAYS;
+        } catch (e) { return false; }
+    }
+
+    function maybeShowPushBanner() {
+        var banner = document.getElementById('push-prompt-banner');
+        if (!banner) return; // pagina non lo include
+
+        // Non supporto Web Push → niente banner (es. Safari < 16.4 su iOS senza PWA)
+        if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+        // Permesso gia' negato → vai nelle settings, non insistere qui
+        if (Notification.permission === 'denied') return;
+        // Dismissed di recente → rispettiamo la scelta dell'utente
+        if (isBannerDismissedRecently()) return;
+
+        // Aspettiamo la registration del SW per controllare lo stato sub
+        var attempt = function () {
+            if (!swRegistration) { setTimeout(attempt, 300); return; }
+            swRegistration.pushManager.getSubscription().then(function (sub) {
+                if (sub) return; // gia' iscritto, banner inutile
+                banner.classList.add('is-visible');
+            }).catch(function () { /* fail silent */ });
+        };
+        attempt();
+
+        // Bind CTA: il click avvia subscribe SENZA navigare via dalla pagina.
+        var activateBtn = banner.querySelector('[data-push-activate]');
+        var dismissBtn  = banner.querySelector('[data-push-dismiss]');
+        if (activateBtn) {
+            activateBtn.addEventListener('click', function () {
+                activateBtn.disabled = true;
+                activateBtn.textContent = 'Attivazione…';
+                subscribeToPush().then(function (res) {
+                    if (res.status === 'subscribed' || res.status === 'already-subscribed') {
+                        banner.classList.remove('is-visible');
+                    } else if (res.status === 'denied') {
+                        activateBtn.disabled = false;
+                        activateBtn.textContent = 'Riprova';
+                        var txt = banner.querySelector('.push-prompt-banner-text');
+                        if (txt) txt.innerHTML = '<strong>Permesso negato.</strong> <small>Per riattivare le notifiche, cambia il permesso dalle impostazioni del browser e ricarica la pagina.</small>';
+                    } else {
+                        activateBtn.disabled = false;
+                        activateBtn.textContent = 'Riprova';
+                    }
+                });
+            });
+        }
+        if (dismissBtn) {
+            dismissBtn.addEventListener('click', function () {
+                try { localStorage.setItem(BANNER_DISMISS_KEY, String(Date.now())); } catch (e) {}
+                banner.classList.remove('is-visible');
+            });
+        }
+    }
+
+    // ========== API globale per CTA esterne (pagina settings, ecc) ==========
+    window.EvuleryPush = {
+        subscribe: function () { return subscribeToPush(); },
+        getStatus: function () {
+            // Promise resolved con { supported, permission, subscribed }
+            return new Promise(function (resolve) {
+                var supported = ('serviceWorker' in navigator) && ('PushManager' in window);
+                var permission = (typeof Notification !== 'undefined') ? Notification.permission : 'default';
+                if (!supported || !swRegistration) {
+                    resolve({ supported: supported, permission: permission, subscribed: false });
+                    return;
+                }
+                swRegistration.pushManager.getSubscription().then(function (sub) {
+                    resolve({ supported: true, permission: permission, subscribed: !!sub });
+                }).catch(function () {
+                    resolve({ supported: supported, permission: permission, subscribed: false });
+                });
+            });
+        }
+    };
+
     // ========== Init ==========
     pollUnread();
     pollTimer = setInterval(pollUnread, POLL_INTERVAL);
@@ -324,6 +427,7 @@
         }
     });
 
-    // Register service worker (permission asked on first bell click)
+    // Register service worker (permission asked on user gesture, e.g. banner CTA)
     registerServiceWorker();
+    maybeShowPushBanner();
 })();

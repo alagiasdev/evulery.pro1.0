@@ -8,6 +8,7 @@ use App\Core\Response;
 use App\Core\TenantResolver;
 use App\Core\Validator;
 use App\Models\DeliveryZone;
+use App\Models\PushSubscription;
 use App\Models\Tenant;
 use App\Services\AuditLog;
 
@@ -188,10 +189,18 @@ class SettingsController
 
     public function notifications(Request $request): void
     {
+        $tenantId = Auth::tenantId();
+
+        // Conteggio dispositivi push attualmente subscribed (mostra "1 dispositivo
+        // ricevera' le notifiche" / "Nessun dispositivo attivo" nella sezione
+        // diagnostica). Non distingue per-utente: il dato e' a livello tenant.
+        $pushDeviceCount = count((new PushSubscription())->getByTenant($tenantId));
+
         view('dashboard/settings/notifications', [
-            'title'      => 'Notifiche',
-            'activeMenu' => 'settings-notifications',
-            'tenant'     => TenantResolver::current(),
+            'title'           => 'Notifiche',
+            'activeMenu'      => 'settings-notifications',
+            'tenant'          => TenantResolver::current(),
+            'pushDeviceCount' => $pushDeviceCount,
         ], 'dashboard');
     }
 

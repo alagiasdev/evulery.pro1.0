@@ -4635,3 +4635,95 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     .dh-refresh-banner-btn { padding: .3rem .7rem; font-size: .72rem; }
 }
 @media (max-width: 880px) { .set-grid { grid-template-columns: 1fr; } }
+
+/* --- Push notifications: banner attivazione su /dashboard ---
+   Mostrato solo dal JS dopo aver verificato che il dispositivo non e' gia'
+   subscribed e l'utente non ha negato il permesso. Dismissibile (localStorage
+   con timestamp → ricompare dopo 7 giorni). */
+.push-prompt-banner {
+    display: none;
+    align-items: center;
+    gap: .85rem;
+    margin: 0 0 1.25rem;
+    padding: .75rem 1rem;
+    background: linear-gradient(180deg, #e8f5ee 0%, #d4ebdc 100%);
+    border: 1px solid #b8dcc6;
+    border-left: 4px solid #00844A;
+    border-radius: 8px;
+    font-size: .85rem;
+    color: #1a4d2e;
+}
+.push-prompt-banner.is-visible { display: flex; }
+.push-prompt-banner-ic {
+    font-size: 1.4rem;
+    color: #00844A;
+    flex-shrink: 0;
+}
+.push-prompt-banner-text { flex: 1; line-height: 1.4; }
+.push-prompt-banner-text strong { color: #0d3320; }
+.push-prompt-banner-text small { display: block; color: #4a6e57; font-size: .75rem; margin-top: 2px; }
+.push-prompt-banner-actions { display: flex; gap: .35rem; flex-shrink: 0; }
+.push-prompt-banner-btn {
+    background: #00844A;
+    color: #fff;
+    border: 0;
+    padding: .45rem 1rem;
+    font-size: .8rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .15s ease;
+}
+.push-prompt-banner-btn:hover { background: #006e3d; }
+.push-prompt-banner-btn:disabled { background: #9aaaa1; cursor: not-allowed; }
+.push-prompt-banner-dismiss {
+    background: transparent;
+    border: 0;
+    color: #4a6e57;
+    padding: .35rem .5rem;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.push-prompt-banner-dismiss:hover { background: rgba(0, 132, 74, .12); }
+
+@media (max-width: 576px) {
+    .push-prompt-banner { font-size: .8rem; padding: .6rem .75rem; gap: .55rem; }
+    .push-prompt-banner-btn { padding: .35rem .7rem; font-size: .72rem; }
+    .push-prompt-banner-text small { display: none; }
+}
+
+/* --- Stato push nella pagina /dashboard/settings/notifications --- */
+.push-status-box {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    background: #f8f9fa;
+    margin-bottom: 1rem;
+}
+.push-status-box.is-active   { background: #e8f5ee; border-color: #b8dcc6; }
+.push-status-box.is-denied   { background: #fff8e1; border-color: #ffe082; }
+.push-status-box.is-inactive { background: #f8f9fa; border-color: #e9ecef; }
+.push-status-ic {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; color: #fff; flex-shrink: 0;
+}
+.push-status-box.is-active   .push-status-ic { background: #00844A; }
+.push-status-box.is-denied   .push-status-ic { background: #f59e0b; }
+.push-status-box.is-inactive .push-status-ic { background: #adb5bd; }
+.push-status-body { flex: 1; min-width: 0; }
+.push-status-title { font-size: .9rem; font-weight: 700; color: #1a1d23; }
+.push-status-desc { font-size: .78rem; color: #6c757d; line-height: 1.4; margin-top: 2px; }
+.push-status-actions { flex-shrink: 0; }
+
+/* Keyframe usato dagli spinner inline (broadcast preview, push status, ecc).
+   Mancava: lo definiamo qui in modo che animation:spin funzioni ovunque. */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}

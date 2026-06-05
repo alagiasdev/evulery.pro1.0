@@ -51,6 +51,65 @@ $defaults = [
         </div>
     </div>
 
+    <?php if (tenant_can('push_notifications')): ?>
+    <!--
+        Notifiche browser (push) — stato per dispositivo + CTA opt-in.
+        Lo stato e' valutato lato client da window.EvuleryPush.getStatus():
+        Notification.permission + presenza subscription nel browser corrente.
+        Il count di dispositivi e' globale per tenant (lato server).
+    -->
+    <div class="card section-card" style="margin-top:1rem;">
+        <div class="section-header">
+            <div class="section-icon" style="background:var(--brand);"><i class="bi bi-phone"></i></div>
+            <div>
+                <div class="section-title">Notifiche browser (push)</div>
+                <div class="section-subtitle">Ricevi notifiche istantanee anche con il browser in background.
+                    <strong><?= (int)$pushDeviceCount ?> dispositiv<?= (int)$pushDeviceCount === 1 ? 'o' : 'i' ?></strong> ricev<?= (int)$pushDeviceCount === 1 ? 'e' : 'ono' ?> le notifiche per questo ristorante.</div>
+            </div>
+        </div>
+        <div class="form-body">
+            <!-- Box stato — popolato dal JS al load -->
+            <div id="push-status-loading" class="push-status-box is-inactive">
+                <div class="push-status-ic"><i class="bi bi-arrow-repeat" style="animation:spin 1s linear infinite;"></i></div>
+                <div class="push-status-body">
+                    <div class="push-status-title">Verifica stato in corso…</div>
+                </div>
+            </div>
+            <div id="push-status-unsupported" class="push-status-box is-inactive" style="display:none;">
+                <div class="push-status-ic"><i class="bi bi-slash-circle"></i></div>
+                <div class="push-status-body">
+                    <div class="push-status-title">Browser non supportato</div>
+                    <div class="push-status-desc">Questo browser non supporta le notifiche push. Su iPhone serve aggiungere Evulery alla schermata Home (PWA) con iOS 16.4 o superiore.</div>
+                </div>
+            </div>
+            <div id="push-status-denied" class="push-status-box is-denied" style="display:none;">
+                <div class="push-status-ic"><i class="bi bi-bell-slash"></i></div>
+                <div class="push-status-body">
+                    <div class="push-status-title">Permesso negato sul browser</div>
+                    <div class="push-status-desc">Hai negato il permesso di notifiche. Per riattivarle: clicca sull'icona del lucchetto/info accanto all'URL → Permessi → Notifiche → Consenti, poi ricarica la pagina.</div>
+                </div>
+            </div>
+            <div id="push-status-inactive" class="push-status-box is-inactive" style="display:none;">
+                <div class="push-status-ic"><i class="bi bi-bell"></i></div>
+                <div class="push-status-body">
+                    <div class="push-status-title">Notifiche non attive su questo dispositivo</div>
+                    <div class="push-status-desc">Clicca "Attiva" per ricevere le notifiche browser sul dispositivo che stai usando ora.</div>
+                </div>
+                <div class="push-status-actions">
+                    <button type="button" class="btn btn-success btn-sm" id="push-activate-btn"><i class="bi bi-bell-fill me-1"></i> Attiva</button>
+                </div>
+            </div>
+            <div id="push-status-active" class="push-status-box is-active" style="display:none;">
+                <div class="push-status-ic"><i class="bi bi-check-circle-fill"></i></div>
+                <div class="push-status-body">
+                    <div class="push-status-title">Notifiche attive su questo dispositivo</div>
+                    <div class="push-status-desc">Riceverai un avviso per nuove prenotazioni, cancellazioni, caparre ricevute e altri eventi importanti.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- Push templates -->
     <div class="card section-card" style="margin-top:1rem;">
         <div class="section-header">
@@ -138,3 +197,54 @@ $defaults = [
         <button type="submit" class="btn btn-success"><i class="bi bi-check-lg me-1"></i>Salva impostazioni</button>
     </div>
 </form>
+
+<?php if (tenant_can('push_notifications')): ?>
+<script nonce="<?= csp_nonce() ?>">
+// Stato push lato client: interroga window.EvuleryPush.getStatus() esposto da
+// dashboard-notifications.js e mostra il box corretto. Il JS principale e' gia'
+// caricato dal layout dashboard quando il tenant ha push_notifications attivo.
+(function () {
+    function showBox(id) {
+        ['push-status-loading','push-status-unsupported','push-status-denied','push-status-inactive','push-status-active']
+            .forEach(function (b) {
+                var el = document.getElementById(b);
+                if (el) el.style.display = (b === id) ? 'flex' : 'none';
+            });
+    }
+    function render() {
+        if (!window.EvuleryPush || !window.EvuleryPush.getStatus) {
+            // Modulo non ancora pronto: ritento a breve. Limite ~5s per evitare loop infinito.
+            if ((render._attempts = (render._attempts || 0) + 1) > 25) {
+                showBox('push-status-unsupported');
+                return;
+            }
+            setTimeout(render, 200);
+            return;
+        }
+        window.EvuleryPush.getStatus().then(function (s) {
+            if (!s.supported)             return showBox('push-status-unsupported');
+            if (s.permission === 'denied') return showBox('push-status-denied');
+            if (s.subscribed)             return showBox('push-status-active');
+            showBox('push-status-inactive');
+        });
+    }
+    var btn = document.getElementById('push-activate-btn');
+    if (btn) {
+        btn.addEventListener('click', function () {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="bi bi-arrow-repeat me-1" style="animation:spin 1s linear infinite;"></i> Attivazione…';
+            window.EvuleryPush.subscribe().then(function (res) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-bell-fill me-1"></i> Attiva';
+                render();
+            });
+        });
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', render);
+    } else {
+        render();
+    }
+})();
+</script>
+<?php endif; ?>

@@ -50,6 +50,27 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
     </div>
 </div>
 
+<?php if (tenant_can('push_notifications')): ?>
+<!--
+    Push opt-in banner: lo mostra dashboard-notifications.js dopo aver
+    verificato che il dispositivo non e' gia' subscribed, il permesso non e'
+    'denied' e non e' stato dismessoo negli ultimi 7gg. Il click su "Attiva"
+    triggera subscribeToPush() rimanendo sulla pagina (fix bug mobile dove
+    la navigazione immediata interrompeva la promise async).
+-->
+<div id="push-prompt-banner" class="push-prompt-banner" role="region" aria-label="Attivazione notifiche">
+    <i class="bi bi-bell-fill push-prompt-banner-ic"></i>
+    <div class="push-prompt-banner-text">
+        <strong>Attiva le notifiche</strong>
+        <small>Ricevi un avviso istantaneo per nuove prenotazioni, cancellazioni e caparre, anche con il browser in background.</small>
+    </div>
+    <div class="push-prompt-banner-actions">
+        <button type="button" class="push-prompt-banner-btn" data-push-activate>Attiva</button>
+        <button type="button" class="push-prompt-banner-dismiss" data-push-dismiss aria-label="Chiudi">&times;</button>
+    </div>
+</div>
+<?php endif; ?>
+
 <?php if (!empty($heartbeat)): ?>
 <!-- Fase C — auto-refresh banner contestuale (riusa endpoint /heartbeat/reservations) -->
 <div id="dh-refresh-banner" class="dh-refresh-banner" role="status" aria-live="polite">
