@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Wireframe — Stampa Ordine MVP + Plugin Pro</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    :root {
+        --brand: #00844A;
+        --brand-light: #E6F4ED;
+        --brand-dark: #006e3d;
+    }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        background: #f5f6f8;
+        color: #1a1d23;
+        padding: 24px 16px;
+    }
+    .wf-page { max-width: 1100px; margin: 0 auto; }
+    .wf-title { font-size: 1.5rem; font-weight: 700; margin: 0 0 .25rem; }
+    .wf-subtitle { font-size: .85rem; color: #6c757d; margin: 0 0 2rem; }
+
+    .wf-section {
+        background: #fff;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .wf-section-head {
+        display: flex; align-items: center; gap: .75rem;
+        margin-bottom: 1.25rem; padding-bottom: .65rem;
+        border-bottom: 1px solid #eef0f4;
+    }
+    .wf-section-title { font-size: 1rem; font-weight: 700; color: #495057; }
+    .wf-pill {
+        font-size: .7rem; font-weight: 600;
+        padding: 2px 9px; border-radius: 99px;
+        background: var(--brand-light); color: var(--brand);
+    }
+    .wf-pill--mvp { background: var(--brand-light); color: var(--brand); }
+    .wf-pill--pro { background: #fff3cd; color: #856404; }
+    .wf-pill--free { background: #e0eeff; color: #0a4b8a; }
+
+    /* ===== Ricevuta termica 80mm ===== */
+    .receipt-wrap {
+        display: flex;
+        gap: 2rem;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+    .receipt {
+        width: 280px;
+        background: #fff;
+        padding: 16px;
+        border: 1px solid #d8dde3;
+        font-family: "Courier New", "Roboto Mono", monospace;
+        font-size: 11px;
+        line-height: 1.4;
+        color: #000;
+        box-shadow: 0 4px 18px rgba(0,0,0,.06);
+        position: relative;
+    }
+    /* Tear effect top + bottom */
+    .receipt::before, .receipt::after {
+        content: '';
+        position: absolute;
+        left: 0; right: 0;
+        height: 8px;
+        background-image: linear-gradient(45deg, transparent 33%, #fff 34%), linear-gradient(-45deg, transparent 33%, #fff 34%);
+        background-size: 12px 12px;
+    }
+    .receipt::before { top: -8px; }
+    .receipt::after { bottom: -8px; transform: scaleY(-1); }
+
+    .rcp-center { text-align: center; }
+    .rcp-bold { font-weight: 700; }
+    .rcp-lg { font-size: 14px; }
+    .rcp-hr { border: 0; border-top: 1px dashed #555; margin: 8px 0; }
+    .rcp-row { display: flex; justify-content: space-between; gap: 8px; }
+    .rcp-section-title {
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        font-size: 10px;
+        margin-top: 8px;
+        margin-bottom: 4px;
+        background: #000;
+        color: #fff;
+        padding: 3px 6px;
+    }
+    .rcp-item { margin-bottom: 6px; }
+    .rcp-item-name { display: flex; justify-content: space-between; font-weight: 700; }
+    .rcp-item-detail { font-size: 10px; color: #444; padding-left: 8px; }
+    .rcp-note { font-style: italic; font-size: 10px; padding-left: 8px; color: #333; }
+    .rcp-total {
+        font-size: 14px;
+        font-weight: 700;
+        margin-top: 6px;
+        padding-top: 6px;
+        border-top: 1px solid #000;
+    }
+    .rcp-qr {
+        text-align: center;
+        margin: 8px 0;
+    }
+    .rcp-qr-box {
+        display: inline-block;
+        padding: 6px;
+        border: 1px solid #000;
+    }
+    .rcp-qr-placeholder {
+        width: 80px; height: 80px;
+        background: repeating-linear-gradient(45deg, #000 0 4px, #fff 4px 8px);
+    }
+    .rcp-footer {
+        text-align: center;
+        font-size: 10px;
+        margin-top: 10px;
+        padding-top: 6px;
+        border-top: 1px dashed #555;
+    }
+
+    /* ===== Mockup kanban card con pulsante stampa ===== */
+    .kanban-card {
+        background: #fff;
+        border: 1px solid #eef0f4;
+        border-radius: 8px;
+        padding: .75rem;
+        max-width: 280px;
+        margin-bottom: 1rem;
+    }
+    .kanban-card-head {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: .35rem;
+    }
+    .kanban-type {
+        display: inline-flex; align-items: center; gap: 3px;
+        font-size: .7rem; font-weight: 600;
+        background: #cfe2ff; color: #0a4b8a;
+        padding: 2px 8px; border-radius: 99px;
+    }
+    .kanban-customer { font-weight: 600; font-size: .85rem; margin-bottom: 2px; }
+    .kanban-address { font-size: .75rem; color: #6c757d; margin-bottom: 4px; }
+    .kanban-total { font-weight: 700; color: var(--brand); font-size: .9rem; margin-bottom: .5rem; }
+    .kanban-actions { display: flex; gap: .35rem; flex-wrap: wrap; }
+    .btn-mini {
+        display: inline-flex; align-items: center; gap: 3px;
+        background: var(--brand-light);
+        color: var(--brand);
+        border: 0;
+        padding: .35rem .6rem;
+        font-size: .72rem; font-weight: 600;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .btn-mini:hover { background: var(--brand); color: #fff; }
+    .btn-mini-secondary { background: #f0f3f6; color: #495057; }
+    .btn-mini-secondary:hover { background: #d8dde3; color: #1a1d23; }
+
+    /* ===== Plugin Pro card ===== */
+    .plugin-card {
+        background: linear-gradient(135deg, #fff8e1 0%, #ffe082 100%);
+        border: 1px solid #ffc107;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    .plugin-badge {
+        display: inline-flex; align-items: center; gap: .35rem;
+        background: #ffc107;
+        color: #5b4a05;
+        font-size: .72rem; font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 99px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        margin-bottom: .65rem;
+    }
+    .plugin-name { font-size: 1.3rem; font-weight: 700; color: #4a3c0a; margin: 0 0 .35rem; }
+    .plugin-tagline { font-size: .9rem; color: #6b5d10; margin: 0 0 1rem; }
+    .plugin-features {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: .65rem;
+        margin: 1rem 0;
+    }
+    .plugin-feat {
+        display: flex; align-items: center; gap: .5rem;
+        font-size: .82rem;
+        color: #4a3c0a;
+    }
+    .plugin-feat .bi { color: var(--brand); flex-shrink: 0; }
+    .plugin-cta {
+        background: var(--brand);
+        color: #fff;
+        border: 0;
+        padding: .6rem 1.25rem;
+        border-radius: 7px;
+        font-weight: 600;
+        font-size: .9rem;
+        cursor: pointer;
+    }
+    .plugin-cta:hover { background: var(--brand-dark); }
+    .plugin-price {
+        font-size: .82rem;
+        color: #6b5d10;
+        margin-top: .5rem;
+    }
+
+    .wf-note {
+        background: #f8f9fa;
+        border-left: 3px solid var(--brand);
+        padding: .85rem 1rem;
+        border-radius: 6px;
+        font-size: .82rem;
+        color: #495057;
+        line-height: 1.6;
+        margin-top: 1rem;
+    }
+    .wf-note strong { color: #1a1d23; }
+
+    .roadmap-step {
+        background: #fff;
+        border: 1px solid #eef0f4;
+        border-left: 4px solid var(--brand);
+        border-radius: 6px;
+        padding: .85rem 1rem;
+        margin-bottom: .6rem;
+    }
+    .roadmap-step.is-pro { border-left-color: #ffc107; background: #fffbeb; }
+    .roadmap-step-num {
+        display: inline-block;
+        font-size: .68rem; font-weight: 700;
+        color: var(--brand);
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        margin-bottom: 3px;
+    }
+    .roadmap-step.is-pro .roadmap-step-num { color: #856404; }
+    .roadmap-step-title { font-weight: 600; font-size: .9rem; }
+    .roadmap-step-desc { font-size: .78rem; color: #6c757d; margin-top: 3px; }
+
+    /* === Ticket cucina === stile compatto e impatto visivo alto */
+    .kitchen-ticket {
+        width: 280px;
+        background: #fff;
+        padding: 16px;
+        border: 1px solid #d8dde3;
+        font-family: "Courier New", "Roboto Mono", monospace;
+        color: #000;
+        box-shadow: 0 4px 18px rgba(0,0,0,.06);
+        position: relative;
+    }
+    .kitchen-ticket::before, .kitchen-ticket::after {
+        content: '';
+        position: absolute;
+        left: 0; right: 0;
+        height: 8px;
+        background-image: linear-gradient(45deg, transparent 33%, #fff 34%), linear-gradient(-45deg, transparent 33%, #fff 34%);
+        background-size: 12px 12px;
+    }
+    .kitchen-ticket::before { top: -8px; }
+    .kitchen-ticket::after { bottom: -8px; transform: scaleY(-1); }
+    .kt-restaurant { text-align: center; font-size: 12px; margin-bottom: 4px; }
+    .kt-order-number {
+        text-align: center;
+        font-size: 32px;
+        font-weight: 900;
+        letter-spacing: .08em;
+        background: #000;
+        color: #fff;
+        padding: 10px 0;
+        margin: 8px 0;
+    }
+    .kt-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #000;
+    }
+    .kt-section-title {
+        font-weight: 700;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        margin: 8px 0 4px;
+    }
+    .kt-item {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+    .kt-item-detail {
+        font-size: 12px;
+        font-weight: 400;
+        padding-left: 12px;
+        color: #333;
+    }
+    /* Note evidenziate: REVERSE VIDEO (sfondo nero, testo bianco). Le
+       termiche b/n stampano sfondi colorati come bianco (le scolora la
+       testina che si attiva solo per colori scuri). Il reverse video
+       invece e' lo standard ESC/POS: la termica riempie l'area di punti
+       neri e il testo bianco resta in negativo. Ben leggibile anche
+       a distanza. */
+    .kt-item-note {
+        font-size: 12px;
+        font-weight: 700;
+        padding: 3px 8px;
+        margin: 2px 0 4px 8px;
+        display: inline-block;
+        background: #000;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+    .kt-customer-block {
+        margin: 8px 0;
+        padding: 6px 8px;
+        border: 1px solid #000;
+        font-size: 12px;
+    }
+    .kt-customer-label {
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: #555;
+        margin-bottom: 2px;
+    }
+    .kt-customer-name {
+        font-size: 14px;
+        font-weight: 700;
+    }
+    .kt-footer {
+        text-align: center;
+        font-size: 10px;
+        margin-top: 12px;
+        padding-top: 6px;
+        border-top: 1px dashed #555;
+        color: #666;
+    }
+
+    /* Sezione staccabile "Conferma consegna" sotto il footer principale.
+       Linea tratteggiata + icona forbice come tear-off line. Il rider
+       taglia qui, fa firmare la metà sotto al cliente come prova consegna. */
+    .rcp-tear-line {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 12px 0 8px;
+        font-size: 11px;
+        color: #555;
+    }
+    .rcp-tear-line .scissors { font-size: 14px; }
+    .rcp-tear-line .dashes {
+        flex: 1;
+        border-top: 1px dashed #555;
+        height: 0;
+    }
+    .rcp-confirm-block {
+        padding-top: 4px;
+    }
+    .rcp-confirm-title {
+        font-weight: 700;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        margin-bottom: 6px;
+    }
+    .rcp-confirm-text {
+        font-size: 10px;
+        line-height: 1.5;
+        margin-bottom: 10px;
+    }
+    .rcp-signature-row {
+        margin-top: 8px;
+    }
+    .rcp-signature-label {
+        font-size: 10px;
+        color: #444;
+        margin-bottom: 2px;
+    }
+    .rcp-signature-line {
+        border-bottom: 1px solid #000;
+        height: 22px;
+        margin-bottom: 8px;
+    }
+</style>
+</head>
+<body>
+<div class="wf-page">
+
+    <h1 class="wf-title">Wireframe — Stampa Ordine (MVP + Plugin Pro)</h1>
+    <p class="wf-subtitle">MVP gratuito incluso in tutti i piani · Plugin "Stampa Pro" come addon a pagamento opzionale per esperienza tipo GloriaFood.</p>
+
+    <!-- ============================================================== -->
+    <!-- SEZIONE 1 — Workflow stampa contestuale per status -->
+    <!-- ============================================================== -->
+    <div class="wf-section">
+        <div class="wf-section-head">
+            <span class="wf-section-title">1 · Workflow stampa per status</span>
+            <span class="wf-pill wf-pill--mvp">MVP gratuito</span>
+        </div>
+        <p style="font-size:.85rem;color:#6c757d;margin-bottom:1.25rem;">Il pulsante stampa cambia in base allo status dell'ordine. Su <strong>Accettati/In preparazione</strong> si stampa il <strong>ticket cucina</strong> (sintetico, solo per la brigata). Su <strong>Pronto</strong> si stampa la <strong>ricevuta completa cliente</strong> (con sezione staccabile firma). In tutti gli stati, finché il rider non è assegnato, compare il dropdown "+ Assegna rider".</p>
+
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-start;">
+
+            <!-- Card Accettati -->
+            <div style="flex:1;min-width:260px;">
+                <div style="font-size:.75rem;font-weight:600;color:#6c757d;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.4rem;">Status: Accettati</div>
+                <div class="kanban-card" style="border-left:3px solid #cfe2ff;">
+                    <div class="kanban-card-head">
+                        <strong>#12</strong>
+                        <span class="kanban-type"><i class="bi bi-truck"></i> Delivery</span>
+                    </div>
+                    <div class="kanban-customer"><i class="bi bi-person me-1"></i> Bruno Tutiven</div>
+                    <div class="kanban-address"><i class="bi bi-geo-alt me-1"></i> Via Sant'Ambrogio 23</div>
+                    <div class="kanban-total">€ 20,60</div>
+                    <!-- dropdown rider visibile finché non assegnato -->
+                    <div style="margin:.5rem 0;">
+                        <button style="display:inline-flex;align-items:center;font-size:.72rem;color:#6c757d;font-style:italic;padding:3px 10px;border:1px dashed #d8dde3;border-radius:99px;background:none;cursor:pointer;"><i class="bi bi-plus-lg me-1"></i> Assegna rider</button>
+                    </div>
+                    <div class="kanban-actions">
+                        <button class="btn-mini" style="background:#fff3cd;color:#856404;"><i class="bi bi-fire"></i> Stampa cucina</button>
+                        <button class="btn-mini btn-mini-secondary" style="background:#cfe2ff;color:#0a4b8a;">In preparazione →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card In preparazione -->
+            <div style="flex:1;min-width:260px;">
+                <div style="font-size:.75rem;font-weight:600;color:#6c757d;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.4rem;">Status: In preparazione</div>
+                <div class="kanban-card" style="border-left:3px solid #fff3cd;">
+                    <div class="kanban-card-head">
+                        <strong>#12</strong>
+                        <span class="kanban-type"><i class="bi bi-truck"></i> Delivery</span>
+                    </div>
+                    <div class="kanban-customer"><i class="bi bi-person me-1"></i> Bruno Tutiven</div>
+                    <div class="kanban-address"><i class="bi bi-geo-alt me-1"></i> Via Sant'Ambrogio 23</div>
+                    <div class="kanban-total">€ 20,60</div>
+                    <!-- rider già assegnato → badge -->
+                    <div style="margin:.5rem 0;">
+                        <span style="display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;background:#dc3545;color:#fff;padding:3px 9px;border-radius:99px;"><span style="width:6px;height:6px;background:rgba(255,255,255,.85);border-radius:50%;"></span> Mario Rossi</span>
+                    </div>
+                    <div class="kanban-actions">
+                        <button class="btn-mini" style="background:#fff3cd;color:#856404;"><i class="bi bi-fire"></i> Ristampa cucina</button>
+                        <button class="btn-mini btn-mini-secondary" style="background:#d4edda;color:#155724;">Pronto →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Pronto -->
+            <div style="flex:1;min-width:260px;">
+                <div style="font-size:.75rem;font-weight:600;color:#6c757d;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.4rem;">Status: Pronto</div>
+                <div class="kanban-card" style="border-left:3px solid #d4edda;">
+                    <div class="kanban-card-head">
+                        <strong>#12</strong>
+                        <span class="kanban-type"><i class="bi bi-truck"></i> Delivery</span>
+                    </div>
+                    <div class="kanban-customer"><i class="bi bi-person me-1"></i> Bruno Tutiven</div>
+                    <div class="kanban-address"><i class="bi bi-geo-alt me-1"></i> Via Sant'Ambrogio 23</div>
+                    <div class="kanban-total">€ 20,60</div>
+                    <div style="margin:.5rem 0;">
+                        <span style="display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;background:#dc3545;color:#fff;padding:3px 9px;border-radius:99px;"><span style="width:6px;height:6px;background:rgba(255,255,255,.85);border-radius:50%;"></span> Mario Rossi</span>
+                    </div>
+                    <div class="kanban-actions">
+                        <button class="btn-mini" style="background:#e6f4ed;color:#00844A;"><i class="bi bi-printer-fill"></i> Stampa ordine</button>
+                        <button class="btn-mini btn-mini-secondary" style="background:#e9ecef;color:#495057;">Consegnato →</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="wf-note" style="margin-top:1.25rem;">
+            <strong>Flusso operativo:</strong>
+            <ol style="margin:.4rem 0 0;padding-left:1.2rem;font-size:.82rem;">
+                <li>Ordine arriva → ristoratore clicca <strong>Accetta</strong> → status diventa "Accettati"</li>
+                <li>Ristoratore clicca <strong>🍳 Stampa cucina</strong> → ticket sintetico parte verso la stampante della brigata. Niente prezzi, niente cliente, solo articoli + note</li>
+                <li>(Nel frattempo assegna il rider con il dropdown — o lo farà dopo)</li>
+                <li>Cucina lavora → ristoratore avanza a "In preparazione" → poi a "Pronto"</li>
+                <li>Su <strong>Pronto</strong> clicca <strong>🖨️ Stampa ordine</strong> → ricevuta completa per il cliente, con sezione staccabile firma in fondo</li>
+                <li>Rider parte → al cliente lascia la metà superiore, riporta la metà firmata "Conferma consegna" → segna "Consegnato"</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- SEZIONE 2 — Ricevuta termica MVP -->
+    <!-- ============================================================== -->
+    <div class="wf-section">
+        <div class="wf-section-head">
+            <span class="wf-section-title">2 · Ricevuta termica 80mm (template MVP fisso)</span>
+            <span class="wf-pill wf-pill--mvp">MVP gratuito</span>
+        </div>
+        <p style="font-size:.85rem;color:#6c757d;margin-bottom:1rem;">Template singolo "buono per tutti", visivamente identico a GloriaFood. Tutte le sezioni essenziali, NESSUNA configurazione. Zero editor, zero toggle.</p>
+
+        <div class="receipt-wrap">
+            <div class="receipt">
+                <div class="rcp-center rcp-bold rcp-lg">D'Istinto Pokè & Sushi Fusion</div>
+                <div class="rcp-center" style="font-size:10px;">Via Sant'Ambrogio 23, 16158 Genova GE</div>
+                <div class="rcp-center" style="font-size:10px;">+39 379 239 4528</div>
+
+                <hr class="rcp-hr">
+
+                <div class="rcp-section-title">Ordine #12 · Delivery</div>
+                <div class="rcp-row"><span>Ricevuto:</span><span>05/06 18:34</span></div>
+                <div class="rcp-row"><span>Pronto entro:</span><span>19:35</span></div>
+                <div class="rcp-row"><span>Pagamento:</span><span><strong>Contanti</strong></span></div>
+
+                <div class="rcp-section-title">Cliente</div>
+                <div><strong>Bruno Tutiven</strong></div>
+                <div>+39 379 239 4528</div>
+                <div style="font-size:10px;">distintosushi@gmail.com</div>
+
+                <div class="rcp-section-title">Indirizzo consegna</div>
+                <div>Via Sant'Ambrogio 23</div>
+                <div>16158 Genova GE</div>
+                <div style="font-style:italic;font-size:10px;margin-top:4px;">Note: Suonare al citofono 2B</div>
+
+                <div class="rcp-section-title">Articoli</div>
+                <div class="rcp-item">
+                    <div class="rcp-item-name"><span>2× Pizza Prosciutto</span><span>€ 11,60</span></div>
+                    <div class="rcp-item-detail">Size: Small · Crust: Fluffy</div>
+                    <div class="rcp-item-detail">+ Extra mozzarella (€ 1,50)</div>
+                    <div class="rcp-note">! Senza funghi</div>
+                </div>
+                <div class="rcp-item">
+                    <div class="rcp-item-name"><span>1× Combo Medium</span><span>€ 9,00</span></div>
+                    <div class="rcp-item-detail">- Pizza Prosciutto Medium</div>
+                    <div class="rcp-item-detail">- Pizza Pepperoni Medium</div>
+                </div>
+
+                <hr class="rcp-hr">
+                <div class="rcp-row"><span>Subtotale:</span><span>€ 20,60</span></div>
+                <div class="rcp-row"><span>Consegna:</span><span>€ 0,00</span></div>
+                <div class="rcp-row rcp-total"><span>TOTALE:</span><span>€ 20,60</span></div>
+
+                <div class="rcp-footer">
+                    Visita il nostro sito<br>
+                    <strong>distintosushi.it</strong><br>
+                    <span style="color:#666;font-size:9px;">Powered by Evulery</span>
+                </div>
+
+                <!-- Tear-off: il rider taglia qui, fa firmare la metà sotto al cliente -->
+                <div class="rcp-tear-line">
+                    <span class="scissors">✂</span>
+                    <span class="dashes"></span>
+                </div>
+
+                <div class="rcp-confirm-block">
+                    <div class="rcp-confirm-title">Conferma di consegna</div>
+                    <div class="rcp-confirm-text">
+                        Confermo di aver ricevuto l'ordine <strong>#12</strong> da <strong>D'Istinto Pokè &amp; Sushi Fusion</strong> in data <strong>05/06/2026</strong> per un totale di <strong>€ 20,60</strong> pagato in <strong>contanti</strong>.
+                    </div>
+
+                    <div class="rcp-signature-row">
+                        <div class="rcp-signature-label">Nome cliente:</div>
+                        <div class="rcp-signature-line"></div>
+                    </div>
+                    <div class="rcp-signature-row">
+                        <div class="rcp-signature-label">Firma:</div>
+                        <div class="rcp-signature-line"></div>
+                    </div>
+                    <div style="font-size:9px;color:#444;margin-top:6px;text-align:center;">Da consegnare al rider come prova di ricezione</div>
+                </div>
+            </div>
+
+            <div style="flex:1;min-width:300px;">
+                <h4 style="font-size:.95rem;margin:0 0 .65rem;">Sezioni della ricevuta MVP:</h4>
+                <ul style="font-size:.85rem;color:#495057;line-height:1.7;margin:0 0 1rem;padding-left:1.2rem;">
+                    <li><strong>Header</strong> — nome ristorante + indirizzo + telefono (da tenant DB)</li>
+                    <li><strong>Order info</strong> — # ordine, data/ora ricevuto, pronto entro, pagamento</li>
+                    <li><strong>Cliente</strong> — nome, telefono, email</li>
+                    <li><strong>Indirizzo consegna</strong> (solo delivery) — via, CAP, note custom</li>
+                    <li><strong>Articoli</strong> — quantità, nome, varianti, modificatori, note</li>
+                    <li><strong>Totali</strong> — subtotale, consegna, totale grande</li>
+                    <li><strong>Footer "Visita il nostro sito"</strong> — usa <code>tenants.website_url</code> se popolato; fallback automatico a <code>dash.evulery.it/{slug}</code>. Riduce la richiesta di "dominio personalizzato" come feature</li>
+                    <li><strong>"Powered by Evulery"</strong> piccolo in fondo (branding discreto)</li>
+                    <li><strong>Linea staccabile ✂ + sezione "Conferma di consegna"</strong> — il rider taglia qui, fa firmare al cliente la metà sotto, riporta la firma al ristorante come prova consegna. Pattern visto in GloriaFood</li>
+                    <li><span style="color:#856404;"><em>QR "Stato ordine" rimandato</em></span>: non esiste oggi una pagina pubblica di tracking ordine (orders manca <code>manage_token</code>). Da aggiungere quando facciamo il tracking pubblico (o nel plugin Print Pro)</li>
+                </ul>
+                <div class="wf-note" style="margin-top:1rem;">
+                    <strong>Zero configurazione.</strong> Stesso layout per tutti i ristoratori. Funziona out-of-the-box appena attivata la migrazione. Cosmeticamente equivalente alla ricevuta GloriaFood ma senza l'editor — il ristoratore non perde tempo a configurare 15 toggle.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- SEZIONE 2.5 — Ticket cucina (template separato) -->
+    <!-- ============================================================== -->
+    <div class="wf-section">
+        <div class="wf-section-head">
+            <span class="wf-section-title">2.5 · Ticket cucina (template sintetico)</span>
+            <span class="wf-pill wf-pill--mvp">MVP gratuito</span>
+        </div>
+        <p style="font-size:.85rem;color:#6c757d;margin-bottom:1rem;">Stampato dal pulsante "🍳 Stampa cucina". Pensato per la brigata: <strong>focus su cosa preparare</strong>, niente prezzi, niente dati cliente sensibili. Numero ordine GIGANTE per riconoscimento veloce. Le note in giallo per evitare di saltarle.</p>
+
+        <div class="receipt-wrap">
+            <div class="kitchen-ticket">
+                <div class="kt-restaurant">D'Istinto Pokè &amp; Sushi Fusion</div>
+
+                <div class="kt-order-number">#12</div>
+
+                <div class="kt-meta">
+                    <span><i class="bi bi-truck"></i> CONSEGNA</span>
+                    <span>⏰ 19:35</span>
+                </div>
+
+                <!-- Cliente: solo nome (per riconoscimento veloce in cucina).
+                     Email e telefono OSCURATI per privacy: il ticket gira
+                     nella brigata e puo' restare appeso/cadere in giro. -->
+                <div class="kt-customer-block">
+                    <div class="kt-customer-label">Cliente</div>
+                    <div class="kt-customer-name">Bruno Tutiven</div>
+                </div>
+
+                <div class="kt-section-title">Articoli</div>
+
+                <div class="kt-item">2× Pizza Prosciutto</div>
+                <div class="kt-item-detail">Size: Small · Crust: Fluffy</div>
+                <div class="kt-item-detail">+ Extra mozzarella</div>
+                <div class="kt-item-note">⚠ Senza funghi</div>
+
+                <div class="kt-item" style="margin-top:8px;">1× Combo Medium</div>
+                <div class="kt-item-detail">- Pizza Prosciutto Medium</div>
+                <div class="kt-item-detail">- Pizza Pepperoni Medium</div>
+
+                <div class="kt-footer">
+                    Stampato il 05/06/2026 18:34<br>
+                    <span style="font-size:9px;">Powered by Evulery</span>
+                </div>
+            </div>
+
+            <div style="flex:1;min-width:300px;">
+                <h4 style="font-size:.95rem;margin:0 0 .65rem;">Cosa è incluso (e cosa NO):</h4>
+                <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+                    <tr style="background:#f8f9fa;"><td style="padding:.4rem .6rem;border:1px solid #eef0f4;">Header nome ristorante</td><td style="padding:.4rem .6rem;border:1px solid #eef0f4;text-align:center;">✅</td></tr>
+                    <tr><td style="padding:.4rem .6rem;border:1px solid #eef0f4;"># ordine GIGANTE (riconoscimento veloce)</td><td style="padding:.4rem .6rem;border:1px solid #eef0f4;text-align:center;">✅</td></tr>
+                    <tr style="background:#f8f9fa;"><td style="padding:.4rem .6rem;border:1px solid #eef0f4;">Tipo (Delivery/Asporto) + orario pronto</td><td style="padding:.4rem .6rem;border:1px solid #eef0f4;text-align:center;">✅</td></tr>
+                    <tr><td style="padding:.4rem .6rem;border:1px solid #eef0f4;"><strong>Nome cliente</strong> (per riconoscimento ordine)</td><td style="padding:.4rem .6rem;border:1px solid #eef0f4;text-align:center;">✅</td></tr>
+                    <tr style="background:#f8f9fa;"><td style="padding:.4rem .6rem;border:1px solid #eef0f4;">Articoli con varianti, modificatori, note</td><td style="padding:.4rem .6rem;border:1px solid #eef0f4;text-align:center;">✅</td></tr>
+                    <tr><td style="padding:.4rem .6rem;border:1px solid #eef0f4;">Note in <strong>reverse video</strong> (nero/bianco, ESC/POS standard)</td><td style="padding:.4rem .6rem;border:1px solid #eef0f4;text-align:center;">✅</td></tr>
+                    <tr style="background:#f8f9fa;"><td style="padding:.4rem .6rem;border:1px solid #eef0f4;color:#dc3545;">Prezzi</td><td style="padding:.4rem .6rem;border:1px solid #eef0f4;text-align:center;color:#dc3545;">❌</td></tr>
+                    <tr><td style="padding:.4rem .6rem;border:1px solid #eef0f4;color:#dc3545;">Telefono cliente</td><td style="padding:.4rem .6rem;border:1px solid #eef0f4;text-align:center;color:#dc3545;">❌</td></tr>
+                    <tr style="background:#f8f9fa;"><td style="padding:.4rem .6rem;border:1px solid #eef0f4;color:#dc3545;">Email cliente</td><td style="padding:.4rem .6rem;border:1px solid #eef0f4;text-align:center;color:#dc3545;">❌</td></tr>
+                    <tr><td style="padding:.4rem .6rem;border:1px solid #eef0f4;color:#dc3545;">Indirizzo consegna</td><td style="padding:.4rem .6rem;border:1px solid #eef0f4;text-align:center;color:#dc3545;">❌</td></tr>
+                    <tr style="background:#f8f9fa;"><td style="padding:.4rem .6rem;border:1px solid #eef0f4;color:#dc3545;">Metodo pagamento</td><td style="padding:.4rem .6rem;border:1px solid #eef0f4;text-align:center;color:#dc3545;">❌</td></tr>
+                </table>
+
+                <div class="wf-note" style="margin-top:1rem;">
+                    <strong>Privacy:</strong> il ticket cucina passa di mano in mano nella brigata e puo' restare appeso o caderne in giro. <strong>Nome cliente sì</strong> (utile per riconoscimento veloce "ordine di Mario Rossi"), <strong>telefono/email/indirizzo no</strong>: quelli vanno solo sulla ricevuta consegnata al rider.
+                </div>
+
+                <div class="wf-note" style="margin-top:.65rem;background:#fffbeb;border-left-color:#f59e0b;">
+                    <strong>⚠ Nota tecnica termica b/n:</strong> le stampanti termiche (Epson TM-m30III di Distinto Sushi incluse) sono bianco/nero pure. <strong>Sfondi colorati come il giallo vengono stampati come bianco</strong> — la testina termica si attiva solo per colori scuri. Per evidenziare le note usiamo <strong>reverse video</strong> (sfondo nero, testo bianco): la termica riempie l'area di punti neri e il testo resta in negativo. È lo standard ESC/POS, ben leggibile a distanza.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- SEZIONE 3 — Plugin "Evulery Print Pro" anticipazione -->
+    <!-- ============================================================== -->
+    <div class="wf-section">
+        <div class="wf-section-head">
+            <span class="wf-section-title">3 · Anticipazione plugin marketplace</span>
+            <span class="wf-pill wf-pill--pro">Addon a pagamento</span>
+        </div>
+        <p style="font-size:.85rem;color:#6c757d;margin-bottom:1rem;">Ipotesi visiva di come il plugin "Stampa Pro" appare al ristoratore — venduto come addon. Si attiva il flusso GloriaFood-like che cerca Distinto Sushi.</p>
+
+        <div class="plugin-card">
+            <div class="plugin-badge"><i class="bi bi-gem"></i> Addon</div>
+            <h2 class="plugin-name">Evulery Print Pro</h2>
+            <p class="plugin-tagline">Stampa automatica degli ordini sulla termica della tua cassa, senza un click.</p>
+
+            <div class="plugin-features">
+                <div class="plugin-feat"><i class="bi bi-check-circle-fill"></i> Stampa automatica all'arrivo dell'ordine</div>
+                <div class="plugin-feat"><i class="bi bi-check-circle-fill"></i> Multi-template (cliente, cucina, packaging)</div>
+                <div class="plugin-feat"><i class="bi bi-check-circle-fill"></i> Editor template visuale</div>
+                <div class="plugin-feat"><i class="bi bi-check-circle-fill"></i> Multi-stampante (banco + cucina)</div>
+                <div class="plugin-feat"><i class="bi bi-check-circle-fill"></i> Cronologia stampe 30gg</div>
+                <div class="plugin-feat"><i class="bi bi-check-circle-fill"></i> Supporto Epson, Star, Citizen, generiche</div>
+            </div>
+
+            <button class="plugin-cta"><i class="bi bi-bag-plus-fill me-1"></i> Aggiungi al tuo piano</button>
+            <div class="plugin-price">A partire da <strong>€ 19/mese per dispositivo</strong> · Setup gratuito · Cancellabile in qualsiasi momento</div>
+        </div>
+
+        <div class="wf-note">
+            <strong>Strategia commerciale:</strong> il plugin sblocca esperienza tipo GloriaFood. Per Distinto Sushi (che oggi usa Epson TM-m30III + tablet con GloriaFood) è la via per migrare ad Evulery senza perdere automazione. Prezzo simile o inferiore a quello che paga oggi a GloriaFood = win-win.
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- SEZIONE 4 — Roadmap implementativa -->
+    <!-- ============================================================== -->
+    <div class="wf-section">
+        <div class="wf-section-head">
+            <span class="wf-section-title">4 · Roadmap step-by-step</span>
+        </div>
+
+        <div class="roadmap-step">
+            <span class="roadmap-step-num">FASE 1 · MVP (~5-7h) · gratuito</span>
+            <div class="roadmap-step-title">Stampa HTML+CSS print, 2 template contestuali (questa sessione)</div>
+            <div class="roadmap-step-desc">
+                Approccio: <strong>HTML + CSS @media print</strong>, zero librerie PDF. CSS <code>@page { size: 80mm auto; margin: 0 }</code>, apertura nuova tab, Ctrl+P del browser. Funziona con qualsiasi stampante.
+                <br><br>
+                <strong>2 viste separate, 2 endpoint:</strong>
+                <ul style="margin:.25rem 0;padding-left:1.2rem;">
+                    <li><code>GET /dashboard/orders/{id}/print/kitchen</code> → vista <code>print-kitchen.php</code> (ticket cucina sintetico, niente prezzi/cliente/indirizzo)</li>
+                    <li><code>GET /dashboard/orders/{id}/print/receipt</code> → vista <code>print-receipt.php</code> (ricevuta cliente completa con sezione staccabile firma)</li>
+                </ul>
+                <strong>Pulsanti contestuali in <code>_card.php</code>:</strong>
+                <ul style="margin:.25rem 0;padding-left:1.2rem;">
+                    <li>Su status <code>accepted</code> + <code>preparing</code>: pulsante "🍳 Stampa cucina"</li>
+                    <li>Su status <code>ready</code>: pulsante "🖨️ Stampa ordine" (ricevuta cliente)</li>
+                </ul>
+                <strong>Cliente pilot Distinto Sushi</strong>: Epson TM-m30III via LAN + tablet Galaxy Tab A → Chrome Android via Mopria.
+                <br>+ Migration <code>tenants.website_url</code> (✅ fatta ieri commit <code>6ce661a</code>).
+            </div>
+        </div>
+
+        <div class="roadmap-step">
+            <span class="roadmap-step-num">FASE 1.5 · TRACKING ORDINE (~2-3h) · gratuito</span>
+            <div class="roadmap-step-title">Pagina pubblica "a che punto è il mio ordine"</div>
+            <div class="roadmap-step-desc">
+                Migration <code>orders.tracking_token</code>, controller pubblico read-only <code>/order/{token}</code> con timeline stato (Ricevuto → Confermato → In preparazione → Pronto/In consegna → Consegnato), ETA stimato, contatti ristorante. Link incluso nell'email di conferma ordine.
+                <br>Una volta pronto, il QR "Stato ordine" entra nella ricevuta MVP.
+            </div>
+        </div>
+
+        <div class="roadmap-step is-pro">
+            <span class="roadmap-step-num">FASE 2 · Plugin Print Pro (futuro, ~15-20h)</span>
+            <div class="roadmap-step-title">Auto-print via PrintNode + ticket cucina</div>
+            <div class="roadmap-step-desc">
+                Integrazione PrintNode (servizio cloud print). Tenant configura API key + printer ID dalle settings. Ordini auto-stampati appena ricevuti. Aggiungiamo template "ticket cucina" senza prezzi. <strong>Trigger</strong>: lancio piattaforma + Distinto Sushi come pilot.
+            </div>
+        </div>
+
+        <div class="roadmap-step is-pro">
+            <span class="roadmap-step-num">FASE 3 · Plugin Print Pro Plus (lontano, ~30h)</span>
+            <div class="roadmap-step-title">Editor template visuale + multi-stampante</div>
+            <div class="roadmap-step-desc">
+                Replica completa esperienza GloriaFood: editor visuale con toggle live, multi-template (cliente/cucina/quality check), multi-stampante per device, printing history 30gg con error tracking. <strong>Trigger</strong>: 5+ clienti che usano il plugin base e chiedono customization.
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- SEZIONE 5 — Note strategiche marketplace plugin -->
+    <!-- ============================================================== -->
+    <div class="wf-section" style="background:#fffbeb;border:1px solid #f5e6a8;">
+        <div class="wf-section-head" style="border-bottom-color:#f5e6a8;">
+            <span class="wf-section-title" style="color:#8a6d10;">📝 Strategia plugin marketplace (note design decisions)</span>
+        </div>
+        <ul style="margin:0;padding-left:1.2rem;font-size:.85rem;color:#5b4a05;line-height:1.7;">
+            <li><strong>MVP gratuito incluso in tutti i piani</strong>: la stampa PDF è un'aspettativa di base nel 2026. Non un servizio premium.</li>
+            <li><strong>Plugin a pagamento solo per automazione e customizzazione avanzata</strong>: il valore percepito è "tempo risparmiato all'arrivo dell'ordine" + "esperienza professionale tipo casse della grande distribuzione".</li>
+            <li><strong>Naming plugin da definire</strong>: candidati "Evulery Print Pro", "Evulery Stampa Auto", "Print Cloud by Evulery". Decisione finale in sessione brand.</li>
+            <li><strong>Marketplace pattern</strong>: questa è la PRIMA feature che diventa addon. Apre la strada a una sezione <code>/dashboard/marketplace</code> dove i ristoratori comprano funzionalità extra. Esempi futuri possibili: Loyalty Pro, Analytics Pro, Whatsapp Notifications, Riders App Companion.</li>
+            <li><strong>Distinto Sushi come cliente pilot</strong>: migrazione da GloriaFood → Evulery + plugin Print Pro. Se accettano, validazione del modello commerciale + caso di studio per landing.</li>
+            <li><strong>Pricing ipotetico</strong>: €19/mese per device (sotto GloriaFood ~€29) oppure setup fee one-shot €99 + €9/mese. Da validare con Distinto Sushi.</li>
+        </ul>
+    </div>
+
+</div>
+</body>
+</html>
