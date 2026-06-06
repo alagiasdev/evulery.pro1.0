@@ -75,6 +75,7 @@ $isZones = ($tenant['delivery_mode'] ?? '') === 'zones';
                                     value="<?= (int)($tenant['ordering_prep_minutes'] ?? 30) ?>">
                                 <span class="input-group-text">min</span>
                             </div>
+                            <div style="font-size:.68rem;color:#6c757d;margin-top:.25rem;">Quanto tempo serve per preparare un ordine. Il primo slot disponibile sarà a partire da questi minuti rispetto ad adesso.</div>
                         </div>
                         <div class="col-md-4">
                             <label class="field-label">Intervallo slot</label>
@@ -83,11 +84,13 @@ $isZones = ($tenant['delivery_mode'] ?? '') === 'zones';
                                 <option value="<?= $int ?>" <?= (int)($tenant['ordering_pickup_interval'] ?? 15) === $int ? 'selected' : '' ?>><?= $int ?> min</option>
                                 <?php endforeach; ?>
                             </select>
+                            <div style="font-size:.68rem;color:#6c757d;margin-top:.25rem;">Ogni quanti minuti viene generato uno slot. Es. 15 → 12:00, 12:15, 12:30…</div>
                         </div>
                         <div class="col-md-4">
                             <label class="field-label">Max per slot</label>
                             <input type="number" class="form-control form-control-sm" name="ordering_max_per_slot" min="1" max="100"
                                 value="<?= (int)($tenant['ordering_max_per_slot'] ?? 10) ?>">
+                            <div style="font-size:.68rem;color:#6c757d;margin-top:.25rem;">Quanti ordini al massimo concentri nello stesso slot. Raggiunto il limite, lo slot sparisce dal widget.</div>
                         </div>
                     </div>
                     <div class="mt-3">

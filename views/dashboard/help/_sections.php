@@ -284,8 +284,8 @@ HTML
         'color'       => '#F57F17',
         'category'    => 'avanzati',
         'count_label' => '1 articolo',
-        'keywords'    => 'ordini online asporto delivery consegna domicilio kanban cap zone store',
-        'read_time'   => 3,
+        'keywords'    => 'ordini online asporto delivery consegna domicilio kanban cap zone store slot intervallo max per slot tempo preparazione',
+        'read_time'   => 4,
         'body' => <<<'HTML'
 <p>Ogni ristorante ha il suo store online per asporto e consegna, raggiungibile su <code>dominio/nome-ristorante/order</code>.</p>
 <p>Dalla sezione <em>Ordini</em> gestisci tutto con un <strong>kanban visuale</strong>:</p>
@@ -296,6 +296,18 @@ HTML
     <li><strong>Pronti</strong>: pronti per ritiro o consegna</li>
 </ul>
 <p>Per le consegne puoi configurare <strong>zone per CAP</strong> con costi e minimi d&rsquo;ordine differenziati.</p>
+
+<h4>Come funzionano gli slot di ritiro/consegna</h4>
+<p>Quando un cliente apre il tuo store, vede una lista di <strong>orari disponibili</strong> per ritirare o ricevere l&rsquo;ordine. Tre parametri controllano come questi orari vengono generati e quanti ordini ci possono entrare:</p>
+<ul>
+    <li><strong>Tempo preparazione</strong>: quanti minuti ti servono per preparare un ordine. Il primo orario proposto al cliente parte da questo intervallo rispetto ad adesso. Esempio: se imposti 30 min e sono le 12:00, il primo slot disponibile sar&agrave; alle 12:30.</li>
+    <li><strong>Intervallo slot</strong>: ogni quanti minuti viene creato uno slot di ritiro/consegna. Esempio: con 15 min il cliente vede 12:30, 12:45, 13:00, 13:15&hellip; Con 30 min vede 12:30, 13:00, 13:30&hellip;</li>
+    <li><strong>Max per slot</strong>: quanti ordini al massimo possono concentrarsi nello stesso orario. Raggiunto il limite, quello slot <strong>sparisce</strong> dal widget e il cliente deve sceglierne un altro pi&ugrave; tardi. Serve a non sovraccaricare la cucina o i rider.</li>
+</ul>
+
+<div class="hg-info"><strong><i class="bi bi-info-circle me-1"></i>Esempio pratico:</strong> tempo preparazione 30 min, intervallo 15 min, max 10 per slot. Se sono le 12:00 e alle 13:00 hai gi&agrave; 10 ordini, il cliente che ordina ora <em>non vede</em> l&rsquo;orario 13:00 nel widget e sceglie 13:15 (con 3/10) o pi&ugrave; tardi. La cucina non viene mai sommersa da pi&ugrave; di 10 ordini per quarto d&rsquo;ora.</div>
+
+<div class="hg-tip"><strong><i class="bi bi-lightbulb me-1"></i>Quando cambiarli:</strong> intervallo a 30 o 60 min se la tua cucina prepara ordini complessi e ha bisogno di pi&ugrave; respiro tra le consegne. Max per slot pi&ugrave; basso (5&ndash;6) per spalmare gli ordini su pi&ugrave; orari; pi&ugrave; alto (15&ndash;20) se hai cucina grande con preparazione parallela.</div>
 HTML
     ],
 
