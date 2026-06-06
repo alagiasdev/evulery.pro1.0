@@ -150,6 +150,20 @@
 
         var transitions = getTransitions(o.status);
         var actionsHtml = '';
+
+        // Pulsante stampa contestuale (replica della logica PHP _card.php):
+        //  - accepted/preparing → "Cucina" (ticket sintetico)
+        //  - ready              → "Stampa" (ricevuta cliente completa)
+        if (o.status === 'accepted' || o.status === 'preparing') {
+            actionsHtml += '<a href="' + BASE + '/dashboard/orders/' + o.id + '/print/kitchen" target="_blank"'
+                + ' class="btn btn-sm do-print-btn-kitchen" title="Stampa ticket cucina">'
+                + '<i class="bi bi-fire"></i> Cucina</a>';
+        } else if (o.status === 'ready') {
+            actionsHtml += '<a href="' + BASE + '/dashboard/orders/' + o.id + '/print/receipt" target="_blank"'
+                + ' class="btn btn-sm do-print-btn-receipt" title="Stampa ricevuta cliente">'
+                + '<i class="bi bi-printer-fill"></i> Stampa</a>';
+        }
+
         transitions.forEach(function (next) {
             if (next === 'rejected') {
                 actionsHtml += '<button class="btn btn-sm btn-outline-danger do-status-btn" data-order-id="' + o.id + '" data-status="rejected" title="Rifiuta"><i class="bi bi-x-circle"></i></button>';

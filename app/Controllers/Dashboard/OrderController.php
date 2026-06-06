@@ -82,6 +82,83 @@ class OrderController
     }
 
     /**
+     * GET /dashboard/orders/{id}/print/kitchen — Ticket cucina sintetico.
+     *
+     * Apertura in nuova tab dal pulsante "Stampa cucina" sui card kanban
+     * in stato accepted/preparing. Stampa via Ctrl+P del browser su
+     * stampante termica 80mm (CSS @page).
+     *
+     * Mostra: nome cliente, articoli, varianti, note in reverse video.
+     * NON mostra: telefono/email/indirizzo cliente, prezzi, pagamento.
+     * Privacy: il ticket gira nella brigata.
+     */
+    public function printKitchen(Request $request): void
+    {
+        if ($this->gate()) return;
+        $tenantId = Auth::tenantId();
+        $id = (int)$request->param('id');
+
+        $order = (new Order())->findById($id, $tenantId);
+        if (!$order) {
+            flash('danger', 'Ordine non trovato.');
+            Response::redirect(url('dashboard/orders'));
+        }
+        $items = (new OrderItem())->findByOrder($id);
+
+        view('dashboard/orders/print-kitchen', [
+            'title'  => "Ticket cucina {$order['order_number']}",
+            'tenant' => TenantResolver::current(),
+            'order'  => $order,
+            'items'  => $items,
+        ]);
+    }
+
+    /**
+     * GET /dashboard/orders/{id}/print/receipt — Ricevuta completa cliente.
+     *
+     * Apertura in nuova tab dal pulsante "Stampa ordine" sui card kanban
+     * in stato ready. Include la sezione staccabile "Conferma di consegna"
+     * in fondo: il rider taglia, fa firmare al cliente, riporta la metà
+     * firmata come prova ricezione.
+     *
+     * Footer: usa tenants.website_url se popolato, altrimenti fallback al
+     * widget Evulery dash.evulery.it/{slug}.
+     */
+    public function printReceipt(Request $request): void
+    {
+        if ($this->gate()) return;
+        $tenantId = Auth::tenantId();
+        $id = (int)$request->param('id');
+
+        $order = (new Order())->findById($id, $tenantId);
+        if (!$order) {
+            flash('danger', 'Ordine non trovato.');
+            Response::redirect(url('dashboard/orders'));
+        }
+        $items = (new OrderItem())->findByOrder($id);
+
+        $tenant = TenantResolver::current();
+        // Footer link: sito esterno del ristoratore se configurato (es.
+        // trattoriamario.it), altrimenti widget Evulery come riferimento
+        // per l'ordine successivo.
+        $footerUrl = !empty($tenant['website_url'])
+            ? $tenant['website_url']
+            : url($tenant['slug'] ?? '');
+        // Per visualizzare l'URL pulito (senza https://www.) nel footer
+        $footerLabel = preg_replace('#^https?://(www\.)?#i', '', $footerUrl);
+        $footerLabel = rtrim($footerLabel, '/');
+
+        view('dashboard/orders/print-receipt', [
+            'title'       => "Ricevuta {$order['order_number']}",
+            'tenant'      => $tenant,
+            'order'       => $order,
+            'items'       => $items,
+            'footerUrl'   => $footerUrl,
+            'footerLabel' => $footerLabel,
+        ]);
+    }
+
+    /**
      * POST /dashboard/orders/{id}/status — Cambio stato.
      */
     public function updateStatus(Request $request): void

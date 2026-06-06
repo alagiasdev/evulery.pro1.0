@@ -194,6 +194,10 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('/orders/history/csv', [OrderController::class, 'exportCsv']);
     $r->get('/orders/api/kanban', [OrderController::class, 'apiKanban']);
     $r->get('/orders/api/stats', [OrderController::class, 'apiStats']);
+    // Stampa: due viste standalone (no layout dashboard) renderizzate per
+    // l'apertura in nuova tab. Vanno PRIMA di /{id} per il matching.
+    $r->get('/orders/{id}/print/kitchen', [OrderController::class, 'printKitchen']);
+    $r->get('/orders/{id}/print/receipt', [OrderController::class, 'printReceipt']);
     $r->get('/orders/{id}', [OrderController::class, 'show']);
     $r->post('/orders/{id}/status', [OrderController::class, 'updateStatus']);
     // Rider management — anagrafica, statistiche, assegnazione ordine

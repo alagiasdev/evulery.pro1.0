@@ -51,6 +51,27 @@ $isLate = $minutes > 30;
         <i class="bi bi-stopwatch me-1"></i> <?= $minutes ?> min
     </div>
     <div class="do-order-card-actions">
+        <?php
+            // Stampa contestuale per status:
+            //  - accepted / preparing → "Stampa cucina" (ticket sintetico per la brigata)
+            //  - ready → "Stampa ordine" (ricevuta completa per il cliente con sezione staccabile)
+            $status = $o['status'] ?? '';
+            $printType = match ($status) {
+                'accepted', 'preparing' => 'kitchen',
+                'ready'                  => 'receipt',
+                default                  => null,
+            };
+            if ($printType): ?>
+        <a href="<?= url("dashboard/orders/{$o['id']}/print/{$printType}") ?>" target="_blank"
+           class="btn btn-sm <?= $printType === 'kitchen' ? 'do-print-btn-kitchen' : 'do-print-btn-receipt' ?>"
+           title="<?= $printType === 'kitchen' ? 'Stampa ticket cucina' : 'Stampa ricevuta cliente' ?>">
+            <?php if ($printType === 'kitchen'): ?>
+                <i class="bi bi-fire"></i> Cucina
+            <?php else: ?>
+                <i class="bi bi-printer-fill"></i> Stampa
+            <?php endif; ?>
+        </a>
+        <?php endif; ?>
         <?php $transitions = (new \App\Models\Order())->getValidTransitions($o['status']); ?>
         <?php foreach ($transitions as $next): ?>
             <?php if ($next === 'rejected'): ?>

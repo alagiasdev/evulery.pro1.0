@@ -3430,6 +3430,29 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     font-size: .72rem;
     padding: .3rem .55rem;
 }
+/* Pulsanti stampa contestuali sui card kanban.
+   - cucina: ambra/giallo (status accepted/preparing)
+   - ricevuta: verde brand-light (status ready) */
+.do-print-btn-kitchen {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffe082;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+}
+.do-print-btn-kitchen:hover { background: #f59e0b; color: #fff; border-color: #f59e0b; }
+.do-print-btn-receipt {
+    background: var(--brand-light, #E6F4ED);
+    color: var(--brand, #00844A);
+    border: 1px solid #b8dcc6;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+}
+.do-print-btn-receipt:hover { background: var(--brand, #00844A); color: #fff; border-color: var(--brand, #00844A); }
 
 /* New order pulse animation */
 .do-order-card[data-new="1"] {
