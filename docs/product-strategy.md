@@ -398,7 +398,7 @@ Il copy per il cliente finale deve comunicare semplicita:
 
 ---
 
-## 12. Ordini Online — Asporto e Consegna a Domicilio
+## 15. Ordini Online — Asporto e Consegna a Domicilio
 
 ### Filosofia: Lo Store del Ristorante
 Ogni ristorante ha il suo store online (/slug/order) dove i clienti possono ordinare per asporto o consegna. Non e un marketplace — il ristorante controlla i prezzi, le zone di consegna e i tempi.
@@ -418,7 +418,7 @@ Ogni ristorante ha il suo store online (/slug/order) dove i clienti possono ordi
 
 ---
 
-## 13. Gestione Reputazione — Recensioni Verificate
+## 16. Gestione Reputazione — Recensioni Verificate
 
 ### Filosofia: Proteggere e Costruire la Reputazione
 Il ristoratore ha bisogno di recensioni positive su Google per attirare clienti, ma non puo permettersi recensioni negative ingiustificate. Evulery agisce come filtro intelligente tra la visita e la recensione pubblica.
@@ -457,4 +457,179 @@ Le nuove norme sulle recensioni online impongono:
 
 ---
 
-*Documento aggiornato al 7 Aprile 2026*
+## 17. Gestione Tavoli e Sala Virtuale
+
+### Filosofia: dalla lista alla mappa visuale
+La gestione tavoli avanzata e' pensata per ristoranti che vogliono ottimizzare lo sfruttamento dei posti senza perdersi tra fogli excel. Tre livelli di profondita': lista, auto-assegnazione, mappa operativa.
+
+### Funzionalita' Chiave
+- **Anagrafica tavoli**: nome, capacita' elastica (min/max), area, forma, combinazioni con altri tavoli
+- **Auto-assegnazione**: il sistema sceglie il tavolo piu' calzante (fit-primario) tra quelli liberi nella fascia richiesta, rispettando priorita' configurabile via drag
+- **Stati del tavolo**: jolly (solo manuale, escluso dal widget pubblico), bloccato (con motivo + lucchetto), archiviato (nascosto da sala ma storico preservato)
+- **Mappa Setup**: drag&drop delle posizioni reali per riprodurre il layout del locale
+- **Mappa Operativa**: vista live con scorri-orari, palette colori per stato (libero / confermato / arrivato / jolly / bloccato), popup dettaglio per riassegnazione manuale
+- **Capacita' elastica min/max**: tavolo 2-4 posti accetta gruppi da 2, 3 o 4 persone; fit-primario sceglie il tavolo con meno posti sprecati
+- **Combinazioni tavoli**: coppie configurabili per gruppi grandi (oltre cura tavoli singoli); N tavoli deferito a fase futura
+
+### Copy per Marketing
+- "Sala virtuale: trascina i tavoli per riprodurre il tuo locale, il sistema fa il resto."
+- "Auto-assegnazione intelligente: il cliente prenota, il tavolo giusto si occupa da solo."
+- "Tavolo jolly, bloccato, archiviato: ogni stato controllato senza scartoffie."
+
+---
+
+## 18. Caparra a 4 Livelli
+
+### Filosofia: caparra adatta al business model
+Non tutti i ristoranti hanno bisogno della caparra Stripe. Quattro modalita' coprono ogni esigenza, dal piu' semplice al piu' strutturato.
+
+### Le 4 Modalita'
+- **Info**: il widget mostra solo un avviso "richiediamo X euro di caparra", senza riscossione digitale. Il ristoratore gestisce il deposito offline.
+- **Link**: il widget include un link a un sistema esterno di pagamento (es. PayPal.me). Riscossione manuale ma il cliente vede il riferimento.
+- **Stripe** (online): caparra incassata via Stripe Checkout, accreditata sul conto Stripe del ristoratore (chiavi per-tenant cifrate AES-256-GCM).
+- **Guarantee** (carta a garanzia): SetupIntent Stripe (`mode=setup`) — la carta del cliente viene registrata come impronta, senza addebito. Il ristoratore puo' addebitare la penale solo in caso di no-show.
+
+### Caparra Condizionale
+Configurabile per **giorno della settimana** e **fascia oraria** (meal category). Es: caparra solo nei weekend dopo le 19:00. Default retrocompatibili.
+
+### Copy per Marketing
+- "Caparra come la vuoi tu: info, link esterno, online o solo garanzia."
+- "Carta a garanzia: pagano solo se non si presentano."
+
+---
+
+## 19. Notifiche Multi-Canale
+
+### Filosofia: il ristoratore deve sapere subito
+Quattro canali differenziati e gerarchici per non perdere nulla — email per la tranquillita', campanella in app per il follow-up, push browser per l'urgenza, audio brandizzato per il riconoscimento a colpo d'orecchio.
+
+### I 4 Canali
+1. **Email**: per ogni evento (nuova prenotazione, cancellazione, caparra, ecc.) — tutti i piani
+2. **Campanella dashboard**: badge + dropdown con storia 30gg — tutti i piani
+3. **Push browser** (Professional/Enterprise): notifica nativa anche con browser in background; su iOS richiede PWA installata
+4. **Audio brandizzato**: sound logo Evulery diversificato per evento (nuova prenotazione, cancellazione cliente, caparra, ordine, recensione) — riconoscibile a distanza
+
+### Filtro Privacy
+La cancellazione genera audio solo se da cliente (`cancelled_by='cliente'`), non se dal ristoratore stesso (`'staff'`). Coerenza UX: il sistema non "suona addosso" a chi ha appena cliccato.
+
+### Banner Onboarding
+- Banner verde "Attiva notifiche" sulla home → opt-in esplicito (no piu' subscribe on-bell-click che era fragile)
+- Banner azzurro iOS PWA install per iPhone Safari non-standalone
+
+---
+
+## 20. Auto-refresh Dashboard (Fase C)
+
+### Filosofia: dashboard live senza rompere l'UX
+Il polling silenzioso completo rompe form aperti, scroll, popup. Lo standard di mercato (Gmail, Slack, Linear) e' il banner "X modifiche disponibili", lasciando all'utente il controllo del momento di refresh.
+
+### Architettura
+- Endpoint `/dashboard/heartbeat/reservations` e `/dashboard/heartbeat/floor` con ETag/If-None-Match → 304 quando nulla cambia (payload zero)
+- Polling 60s con pausa automatica su `document.hidden`
+- Backoff esponenziale su errori (cap 5 min)
+- Banner contestuale ambra sticky-top: appare solo se l'hash cambia, dismiss persistente
+
+### Pagine coperte
+- Home dashboard, Prenotazioni, Sala (modalita' operativa)
+
+---
+
+## 21. Stampa Ordini MVP
+
+### Filosofia: zero dipendenze, massimo valore
+Approccio HTML + CSS `@page` print, niente librerie PDF. Apertura in nuova tab, dialog stampa parte automatico, l'utente fa Ctrl+P del browser e stampa su qualsiasi stampante (termica 80mm, 58mm, A4 fallback).
+
+### I 2 Template Contestuali
+- **Ticket cucina** (su status `accepted` / `preparing`): sintetico per la brigata. # ordine GIGANTE, articoli con varianti e note in reverse video. **Niente prezzi, telefono, email, indirizzo** (privacy: il ticket gira di mano in mano)
+- **Ricevuta cliente** (su status `ready`): completa con tutti i dati. Footer dinamico `tenants.website_url` con fallback widget Evulery. Sezione staccabile ✂ "Conferma di consegna" per la firma del cliente (solo delivery)
+
+### Plugin Print Pro (futuro a pagamento)
+Auto-print via PrintNode/Star CloudPRNT, editor template visuale, multi-template (cliente/cucina/quality check), multi-stampante per device. Cliente pilot identificato: D'Istinto Sushi (oggi su GloriaFood).
+
+---
+
+## 22. Rider Management
+
+### Filosofia: anagrafica leggera + statistiche concrete
+Per ristoranti con delivery in-house e 2-5 rider, niente login dedicati (la board pubblica condivisa basta) ma serve sapere chi consegna cosa, in quanto tempo, con quale valore gestito.
+
+### Funzionalita' MVP
+- CRUD anagrafica rider (nome, telefono opzionale, colore badge da palette di 8, attivo/archiviato)
+- Assegnazione ordini delivery via popup nella card kanban
+- Board pubblica `/delivery/{token}` mostra nome rider accanto a ogni ordine
+- Pulsante "Consegnato" disabilitato senza rider assegnato (forza dati puliti per stats)
+- Statistiche per rider: consegne totali, tempo medio consegna (da `rider_assigned_at` a `updated_at`), valore gestito, % completate
+- Range stats: oggi (default), mese corrente, 7gg, 30gg, custom
+
+### Da non confondere con
+"Rider App Companion" (plugin futuro): app Android dedicata con notifiche push individuali, login proprio. Solo se 5+ rider per ristoratore.
+
+---
+
+## 23. Vetrina Digitale (Hub)
+
+### Filosofia: link-in-bio brandizzato Evulery
+Una pagina pubblica del ristorante che raggruppa in una sola schermata tutte le azioni del cliente: prenotare tavolo, vedere menu, ordinare online, lasciare recensione, scoprire promozioni, contattare su WhatsApp, vedere mappa.
+
+### Use Case
+- Link nella biografia Instagram (sostituisce LinkTree)
+- QR code stampato sui tavoli, biglietti da visita, volantini
+- Smartphone-first: pagina ottimizzata per tap
+
+### Personalizzazione
+6 palette predefinite + 8 azioni preset + custom (Enterprise). QR code generato client-side, niente trafffico server.
+
+---
+
+## 24. Programma Reseller B2B
+
+### Filosofia: pipeline commerciale parallela
+Oltre alla vendita diretta, Evulery permette ai reseller (consulenti, agenzie web) di portare ristoratori e guadagnare commissioni configurabili per-reseller.
+
+### Architettura Commissioni (v3 2026-05-11)
+- Tabella `reseller_profiles` con 4 commissioni configurabili: setup default 130€, starter 120€, professional 200€, enterprise 320€
+- Snapshot reseller al momento conversione lead→tenant (`tenants.acquired_by_reseller_id`)
+- Setup 249€ al cliente + sconti annuale 12% / semestrale 5% off-site
+- Crediti ricarica email broadcast con approvazione admin
+
+### Materiali Commerciali
+3 strumenti interattivi HTML in `sales/`: demo script con cronometro, ROI calculator (live, no numeri inventati), FAQ ristoratore per follow-up.
+
+---
+
+## 25. Marketplace Plugin (strategia commerciale 2026-06-05)
+
+### Filosofia: secondo flusso di ricavi via addon
+Le feature avanzate ad alto costo dev ma utilita' niche entrano come plugin attivabili (es. Print Pro, Loyalty Pro, Analytics Pro, WhatsApp Notifications, Riders App Companion). I MVP core restano gratuiti nei piani.
+
+### Criteri Addon vs Core
+- < 30% utilizzo previsto → addon
+- Richiede setup/onboarding dedicato → addon
+- Costo runtime su servizi terzi (PrintNode, ecc.) → addon
+- Verticale di segmento → addon
+
+### Primo Plugin Candidato
+**Evulery Print Pro** (~15-20h dev): auto-print PrintNode + editor template visuale + multi-template + printing history. Pricing ipotesi €19/mese per device. Cliente pilot identificato.
+
+---
+
+## 26. Service Gating Architettura
+
+### Filosofia: piani come bundle di servizi attivabili
+Ogni feature avanzata e' un servizio key (`digital_menu`, `promotions`, `custom_domain`, `export_csv`, `email_reminder`, `deposit`, `statistics`, `email_broadcast`, `online_ordering`, `review_management`, `table_management`, `push_notifications`). I piani Starter/Professional/Enterprise mappano insiemi di servizi.
+
+### Pattern di Gating
+- Helper `tenant_can('service_key')` per check sicuro
+- Controller: `gate_service('service_key')` redirect a dashboard se bloccato
+- Sidebar: voce nascosta o lucchetto se non disponibile
+- API: 403 con messaggio chiaro
+- Public pages: errore + CTA "Funzionalita' non disponibile"
+- Cron: skip silenzioso
+
+### UX Lock Card
+Partial `views/partials/service-locked.php` per coerenza visiva: tutte le pagine gatate mostrano lo stesso pattern (icona, nome servizio, CTA contatta supporto).
+
+---
+
+*Documento aggiornato al 6 Giugno 2026*
+*Storico iniziale: 7 Aprile 2026. Sezioni 17-26 aggiunte 2026-06-06 per allineare con stato implementazione.*

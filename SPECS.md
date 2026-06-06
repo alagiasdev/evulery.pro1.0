@@ -1,3 +1,16 @@
+> ⚠️ **DOCUMENTO STORICO — Marzo 2026**
+>
+> Questo file è il **concept document originale** del progetto, scritto prima dell'MVP. Il prodotto attuale (Giugno 2026) include molte più feature di quelle descritte qui sotto: gestione tavoli avanzata, ordini online, vetrina digitale, caparra a 4 livelli, reputation management, comunicazioni broadcast, rider management, notifiche multi-canale, programma reseller B2B, e molto altro.
+>
+> **Per la visione product corrente** consulta:
+> - [`docs/product-strategy.md`](docs/product-strategy.md) — 26 sezioni con ragionamenti e decisioni di prodotto aggiornati
+> - [`CHANGELOG.md`](CHANGELOG.md) — storico release con date e categorie
+> - [`README.md`](README.md) — overview tecnico + setup + deploy
+>
+> **Lasciato in repository come archeologia di prodotto**: utile per capire da dove siamo partiti e cosa è cambiato. Le sezioni 1-3 (architettura multi-tenant + routing) sono ancora valide nel design.
+>
+> ---
+
 PROGETTO: SISTEMA PRENOTAZIONI RISTORANTE MODELLO: SaaS EMBEDDABILE /
 WHITE LABEL IBRIDO
 
