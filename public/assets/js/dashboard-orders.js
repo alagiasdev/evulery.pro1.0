@@ -161,6 +161,35 @@
         });
         actionsHtml += '<a href="' + BASE + '/dashboard/orders/' + o.id + '" class="btn btn-sm btn-outline-secondary" title="Dettaglio"><i class="bi bi-eye"></i></a>';
 
+        // Rider markup: replica della logica PHP _card.php. Visibile solo se
+        // il tenant ha riders abilitato (presenza dropdown popup nel DOM) e
+        // l'ordine e' delivery. Era il bug del 2026-06-06: renderOrderCard
+        // saltava questo blocco, quindi dopo cambio status il pulsante
+        // "Assegna rider" spariva fino al refresh manuale (F5).
+        var ridersEnabled = !!document.getElementById('rd-assign-popup');
+        var riderHtml = '';
+        if (isDelivery && ridersEnabled) {
+            if (o.rider_name) {
+                var color = o.rider_color_hex || '#6c757d';
+                riderHtml = '<div class="do-order-rider">'
+                    + '<button type="button" class="rider-badge-inline do-assign-trigger"'
+                    +   ' style="background:' + escapeHtml(color) + ';border:0;cursor:pointer;"'
+                    +   ' data-order-id="' + o.id + '"'
+                    +   ' data-current-rider="' + (o.rider_id || 0) + '">'
+                    +   '<span class="dot"></span> ' + escapeHtml(o.rider_name)
+                    + '</button>'
+                    + '</div>';
+            } else {
+                riderHtml = '<div class="do-order-rider">'
+                    + '<button type="button" class="rider-assign-empty do-assign-trigger"'
+                    +   ' data-order-id="' + o.id + '"'
+                    +   ' data-current-rider="0">'
+                    +   '<i class="bi bi-plus-lg me-1"></i> Assegna rider'
+                    + '</button>'
+                    + '</div>';
+            }
+        }
+
         return '<div class="do-order-card" data-order-id="' + o.id + '">'
             + '<div class="do-order-card-header">'
             + '<strong>' + escapeHtml(o.order_number) + '</strong>'
@@ -171,6 +200,7 @@
             + pickupHtml
             + addressHtml
             + '<div class="do-order-total">€ ' + formatPrice(o.total) + '</div>'
+            + riderHtml
             + '</div>'
             + '<div class="do-order-card-timer' + (isLate ? ' do-order-late' : '') + '">'
             + '<i class="bi bi-stopwatch me-1"></i> ' + minutes + ' min'
