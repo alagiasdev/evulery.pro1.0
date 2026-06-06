@@ -267,9 +267,12 @@ $subtotal    = $total - $deliveryFee + $discount;
     </div>
     <?php endif; ?>
 
+    <?php if ($isDelivery): ?>
     <!--
-        Tear-off: il rider taglia qui, fa firmare la meta' sotto al cliente
-        come prova di consegna, riporta la meta' firmata al ristorante.
+        Tear-off: SOLO per delivery. Il rider taglia qui, fa firmare la
+        meta' sotto al cliente come prova di consegna, riporta la meta'
+        firmata al ristorante. Per asporto non ha senso (il cliente ritira
+        di persona, nessun rider) e la sezione viene omessa.
     -->
     <div class="rcp-tear-line">
         <span>✂</span>
@@ -292,6 +295,7 @@ $subtotal    = $total - $deliveryFee + $discount;
         </div>
         <div style="font-size:9px;color:#444;margin-top:6px;text-align:center;">Da consegnare al rider come prova di ricezione</div>
     </div>
+    <?php endif; ?>
 </div>
 
 <script nonce="<?= csp_nonce() ?>">
