@@ -156,14 +156,14 @@ $subtotal    = $total - $deliveryFee + $discount;
         background: #fff;
         color: #6c757d;
         border: 1px solid #d8dde3;
-        /* Stessa altezza/border-radius dei pulsanti Stampa/Chiudi
-           (padding-y 10px + font 14px ~= 40px totali; border-radius 6px) */
-        width: 40px;
-        height: 40px;
+        /* Altezza calcolata dal padding (no width/height fissi) per matchare
+           ESATTAMENTE Stampa/Chiudi: padding-y 9px = 10px - 1px del bordo,
+           line-height esplicito per stabilita' tra browser. */
+        padding: 9px 11px;
         border-radius: 6px;
         font-size: 14px;
+        line-height: 1.2;
         cursor: pointer;
-        padding: 0;
         margin: 0 4px;
         vertical-align: middle;
         display: inline-flex;
