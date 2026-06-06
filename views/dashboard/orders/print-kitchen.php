@@ -183,8 +183,8 @@ $createdAt = !empty($order['created_at']) ? date('d/m/Y H:i', strtotime($order['
 <div class="toolbar no-print">
     <button type="button" id="btnPrint">🖨 Stampa</button>
     <button type="button" class="secondary" id="btnClose">Chiudi</button>
-    <button type="button" class="hint-show" id="btnHintShow" title="Mostra suggerimento stampa termica" style="display:none;">💡</button>
-    <div class="hint" id="hintBox">
+    <button type="button" class="hint-show" id="btnHintShow" title="Mostra suggerimento stampa termica">💡</button>
+    <div class="hint" id="hintBox" style="display:none;">
         💡 <strong>Stampante termica 80mm?</strong> Nel dialog Chrome → <em>Altre impostazioni</em> → <em>Formato carta</em> → seleziona <strong>80×297mm</strong> oppure <em>"Personalizzato"</em> con larghezza 80mm.
         <br><button type="button" class="hint-dismiss" id="btnHintHide">Nascondi suggerimento</button>
     </div>
@@ -236,22 +236,25 @@ $createdAt = !empty($order['created_at']) ? date('d/m/Y H:i', strtotime($order['
         setTimeout(function () { window.print(); }, 300);
     });
 
-    // Hint stampante termica: dismissable, preferenza salvata in localStorage
-    // (chiave condivisa tra kitchen + receipt: se la nascondi una volta, resta
-    // nascosta su entrambe le viste).
-    var HINT_KEY = 'evulery_print_hint_hidden';
+    // Hint stampante termica: CHIUSO di default, riapribile via icona 💡
+    // sempre presente nella toolbar. La preferenza "aperto" e' salvata in
+    // localStorage condivisa tra kitchen + receipt (chiave evulery_print_hint_open).
+    // Default chiuso: dopo aver capito la prima volta non ricompare ad ogni stampa.
+    var HINT_KEY = 'evulery_print_hint_open';
     var hintBox  = document.getElementById('hintBox');
     var showBtn  = document.getElementById('btnHintShow');
     var hideBtn  = document.getElementById('btnHintHide');
-    function setHintHidden(hidden) {
-        hintBox.style.display = hidden ? 'none' : '';
-        showBtn.style.display = hidden ? '' : 'none';
-        try { localStorage.setItem(HINT_KEY, hidden ? '1' : '0'); } catch (e) {}
+    function setHintOpen(open) {
+        hintBox.style.display = open ? '' : 'none';
+        try { localStorage.setItem(HINT_KEY, open ? '1' : '0'); } catch (e) {}
     }
-    hideBtn.addEventListener('click', function () { setHintHidden(true); });
-    showBtn.addEventListener('click', function () { setHintHidden(false); });
+    hideBtn.addEventListener('click', function () { setHintOpen(false); });
+    showBtn.addEventListener('click', function () {
+        setHintOpen(hintBox.style.display === 'none');
+    });
     try {
-        if (localStorage.getItem(HINT_KEY) === '1') setHintHidden(true);
+        // Apri solo se l'utente l'aveva esplicitamente aperto in precedenza
+        if (localStorage.getItem(HINT_KEY) === '1') setHintOpen(true);
     } catch (e) {}
 </script>
 </body>

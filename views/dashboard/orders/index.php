@@ -69,10 +69,16 @@
     <?php endforeach; ?>
 </div>
 
-<!-- Completed today (collapsed) -->
-<?php if (!empty($completed)): ?>
-<div class="mt-4">
-    <h6 class="text-muted"><i class="bi bi-check-all me-1"></i> Completati/Chiusi oggi (<?= count($completed) ?>)</h6>
+<!--
+    Completed today — container SEMPRE renderizzato (anche se vuoto) cosi'
+    il JS updateCompletedTable() puo' popolarlo via polling senza richiedere
+    F5. Il container e' nascosto se ci sono 0 completati.
+-->
+<div class="mt-4" id="doCompletedSection" style="<?= empty($completed) ? 'display:none;' : '' ?>">
+    <h6 class="text-muted">
+        <i class="bi bi-check-all me-1"></i>
+        Completati/Chiusi oggi (<span id="doCompletedCount"><?= count($completed) ?></span>)
+    </h6>
     <div class="table-responsive">
         <table class="table table-sm table-striped align-middle">
             <thead>
@@ -85,7 +91,7 @@
                     <th></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="doCompletedTbody">
                 <?php foreach ($completed as $co): ?>
                 <tr>
                     <td><strong><?= e($co['order_number']) ?></strong></td>
@@ -100,7 +106,6 @@
         </table>
     </div>
 </div>
-<?php endif; ?>
 
 <?php if (!empty($ridersEnabled)): ?>
 <!--

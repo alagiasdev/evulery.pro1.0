@@ -224,8 +224,51 @@
     }
 
     function updateCompletedTable(completed) {
-        // Simple: we won't re-render the completed table on poll since it's less critical
-        // The full page refresh on status change handles this
+        var section = document.getElementById('doCompletedSection');
+        var tbody   = document.getElementById('doCompletedTbody');
+        var counter = document.getElementById('doCompletedCount');
+        if (!section || !tbody) return;
+
+        if (!completed || completed.length === 0) {
+            section.style.display = 'none';
+            tbody.innerHTML = '';
+            if (counter) counter.textContent = '0';
+            return;
+        }
+
+        section.style.display = '';
+        if (counter) counter.textContent = completed.length;
+
+        var html = '';
+        completed.forEach(function (o) {
+            html += '<tr>'
+                + '<td><strong>' + escapeHtml(o.order_number) + '</strong></td>'
+                + '<td>' + escapeHtml(o.customer_name || '') + '</td>'
+                + '<td>' + escapeHtml(getOrderTypeLabel(o.order_type)) + '</td>'
+                + '<td>€ ' + formatPrice(o.total) + '</td>'
+                + '<td>' + renderStatusBadge(o.status) + '</td>'
+                + '<td><a href="' + BASE + '/dashboard/orders/' + o.id + '" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a></td>'
+                + '</tr>';
+        });
+        tbody.innerHTML = html;
+    }
+
+    function getOrderTypeLabel(type) {
+        return type === 'delivery' ? 'Consegna' : 'Asporto';
+    }
+
+    function renderStatusBadge(status) {
+        var label = getStatusLabel(status);
+        var cls = ({
+            'pending':   'bg-warning text-dark',
+            'accepted':  'bg-info text-dark',
+            'preparing': 'bg-primary',
+            'ready':     'bg-success',
+            'completed': 'bg-secondary',
+            'cancelled': 'bg-danger',
+            'rejected':  'bg-dark'
+        })[status] || 'bg-secondary';
+        return '<span class="badge ' + cls + '">' + escapeHtml(label) + '</span>';
     }
 
     function getTransitions(status) {

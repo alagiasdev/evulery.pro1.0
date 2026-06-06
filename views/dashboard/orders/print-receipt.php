@@ -172,8 +172,8 @@ $subtotal    = $total - $deliveryFee + $discount;
 <div class="toolbar no-print">
     <button type="button" id="btnPrint">🖨 Stampa</button>
     <button type="button" class="secondary" id="btnClose">Chiudi</button>
-    <button type="button" class="hint-show" id="btnHintShow" title="Mostra suggerimento stampa termica" style="display:none;">💡</button>
-    <div class="hint" id="hintBox">
+    <button type="button" class="hint-show" id="btnHintShow" title="Mostra suggerimento stampa termica">💡</button>
+    <div class="hint" id="hintBox" style="display:none;">
         💡 <strong>Stampante termica 80mm?</strong> Nel dialog Chrome → <em>Altre impostazioni</em> → <em>Formato carta</em> → seleziona <strong>80×297mm</strong> oppure <em>"Personalizzato"</em> con larghezza 80mm.
         <br><button type="button" class="hint-dismiss" id="btnHintHide">Nascondi suggerimento</button>
     </div>
@@ -291,21 +291,24 @@ $subtotal    = $total - $deliveryFee + $discount;
         setTimeout(function () { window.print(); }, 300);
     });
 
-    // Hint stampante termica: dismissable, preferenza condivisa con la
-    // vista kitchen via stessa chiave localStorage.
-    var HINT_KEY = 'evulery_print_hint_hidden';
+    // Hint stampante termica: CHIUSO di default, riapribile via icona 💡
+    // sempre presente. Preferenza condivisa con kitchen via stessa chiave
+    // localStorage. Default chiuso: niente fastidio dopo che l'utente ha
+    // gia' capito come configurare la stampante la prima volta.
+    var HINT_KEY = 'evulery_print_hint_open';
     var hintBox  = document.getElementById('hintBox');
     var showBtn  = document.getElementById('btnHintShow');
     var hideBtn  = document.getElementById('btnHintHide');
-    function setHintHidden(hidden) {
-        hintBox.style.display = hidden ? 'none' : '';
-        showBtn.style.display = hidden ? '' : 'none';
-        try { localStorage.setItem(HINT_KEY, hidden ? '1' : '0'); } catch (e) {}
+    function setHintOpen(open) {
+        hintBox.style.display = open ? '' : 'none';
+        try { localStorage.setItem(HINT_KEY, open ? '1' : '0'); } catch (e) {}
     }
-    hideBtn.addEventListener('click', function () { setHintHidden(true); });
-    showBtn.addEventListener('click', function () { setHintHidden(false); });
+    hideBtn.addEventListener('click', function () { setHintOpen(false); });
+    showBtn.addEventListener('click', function () {
+        setHintOpen(hintBox.style.display === 'none');
+    });
     try {
-        if (localStorage.getItem(HINT_KEY) === '1') setHintHidden(true);
+        if (localStorage.getItem(HINT_KEY) === '1') setHintOpen(true);
     } catch (e) {}
 </script>
 </body>
