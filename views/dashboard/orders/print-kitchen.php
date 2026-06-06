@@ -135,12 +135,30 @@ $createdAt = !empty($order['created_at']) ? date('d/m/Y H:i', strtotime($order['
         color: #495057;
         border: 1px solid #d8dde3;
     }
+    .toolbar .hint {
+        margin-top: 12px;
+        padding: 10px 14px;
+        background: #fff8e1;
+        border: 1px solid #ffe082;
+        border-left: 4px solid #f59e0b;
+        border-radius: 6px;
+        font-size: 12px;
+        line-height: 1.5;
+        text-align: left;
+        color: #5b4a05;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    .toolbar .hint em { font-style: normal; background: #fff; padding: 1px 6px; border-radius: 3px; }
+    .toolbar .hint strong { color: #4a3c0a; }
 </style>
 </head>
 <body>
 <div class="toolbar no-print">
     <button type="button" id="btnPrint">🖨 Stampa</button>
     <button type="button" class="secondary" id="btnClose">Chiudi</button>
+    <div class="hint">
+        💡 <strong>Stampante termica 80mm?</strong> Nel dialog Chrome → <em>Altre impostazioni</em> → <em>Formato carta</em> → seleziona <strong>80×297mm</strong> oppure <em>"Personalizzato"</em> con larghezza 80mm.
+    </div>
 </div>
 <div class="receipt">
     <div class="kt-restaurant"><?= e($tenant['name'] ?? '') ?></div>
