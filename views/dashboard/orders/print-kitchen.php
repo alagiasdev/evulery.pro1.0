@@ -164,26 +164,34 @@ $createdAt = !empty($order['created_at']) ? date('d/m/Y H:i', strtotime($order['
     }
     .toolbar .hint-dismiss:hover { color: #4a3c0a; }
     .toolbar .hint-show {
-        background: #fff8e1;
-        color: #856404;
-        border: 1px solid #ffe082;
-        width: 38px;
-        height: 38px;
-        font-size: 18px;
+        background: #fff;
+        color: #6c757d;
+        border: 1px solid #d8dde3;
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
         border-radius: 50%;
         cursor: pointer;
         padding: 0;
         margin: 0 4px;
         vertical-align: middle;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
-    .toolbar .hint-show:hover { background: #f59e0b; color: #fff; }
+    .toolbar .hint-show:hover { color: #00844A; border-color: #00844A; }
 </style>
 </head>
 <body>
 <div class="toolbar no-print">
     <button type="button" id="btnPrint">🖨 Stampa</button>
     <button type="button" class="secondary" id="btnClose">Chiudi</button>
-    <button type="button" class="hint-show" id="btnHintShow" title="Mostra suggerimento stampa termica">💡</button>
+    <button type="button" class="hint-show" id="btnHintShow" title="Mostra suggerimento stampa termica" aria-label="Suggerimento">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+        </svg>
+    </button>
     <div class="hint" id="hintBox" style="display:none;">
         💡 <strong>Stampante termica 80mm?</strong> Nel dialog Chrome → <em>Altre impostazioni</em> → <em>Formato carta</em> → seleziona <strong>80×297mm</strong> oppure <em>"Personalizzato"</em> con larghezza 80mm.
         <br><button type="button" class="hint-dismiss" id="btnHintHide">Nascondi suggerimento</button>
