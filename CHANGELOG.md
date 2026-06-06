@@ -12,7 +12,11 @@ Aggiornamenti documentazione in corso, nessuna feature nuova in pipeline. Backlo
 
 ---
 
-## 2026-06-06 — Stampa ordini MVP + documentazione
+## 2026-06-06 — Security audit + Stampa ordini MVP + documentazione
+
+### Security
+- **Audit completo** a 3 mesi dal precedente (file privato `SECURITY_AUDIT_2026-06-06.md`, gitignored). Verdetto: buono stato di sicurezza, pattern dell'audit di Marzo applicati consistentemente alle nuove feature (Riders, Heartbeat, Print MVP, Notifiche multi-canale, Reseller B2B). 3 findings totali: nessuno HIGH/CRITICAL, 1 MEDIUM (security headers HTTP — fix 5 min raccomandato prima del lancio), 2 LOW (SVG upload, token expiry).
+
 
 ### Added
 - **Stampa ordini MVP**: due viste standalone HTML+CSS `@page print` con dialog browser automatico
