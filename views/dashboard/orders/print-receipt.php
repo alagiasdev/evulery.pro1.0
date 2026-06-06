@@ -139,14 +139,43 @@ $subtotal    = $total - $deliveryFee + $discount;
     }
     .toolbar .hint em { font-style: normal; background: #fff; padding: 1px 6px; border-radius: 3px; }
     .toolbar .hint strong { color: #4a3c0a; }
+    .toolbar .hint-dismiss {
+        display: inline-block;
+        margin-top: 8px;
+        background: transparent;
+        border: 0;
+        color: #856404;
+        font-size: 11px;
+        text-decoration: underline;
+        cursor: pointer;
+        padding: 0;
+        font-family: inherit;
+    }
+    .toolbar .hint-dismiss:hover { color: #4a3c0a; }
+    .toolbar .hint-show {
+        background: #fff8e1;
+        color: #856404;
+        border: 1px solid #ffe082;
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+        border-radius: 50%;
+        cursor: pointer;
+        padding: 0;
+        margin: 0 4px;
+        vertical-align: middle;
+    }
+    .toolbar .hint-show:hover { background: #f59e0b; color: #fff; }
 </style>
 </head>
 <body>
 <div class="toolbar no-print">
     <button type="button" id="btnPrint">🖨 Stampa</button>
     <button type="button" class="secondary" id="btnClose">Chiudi</button>
-    <div class="hint">
+    <button type="button" class="hint-show" id="btnHintShow" title="Mostra suggerimento stampa termica" style="display:none;">💡</button>
+    <div class="hint" id="hintBox">
         💡 <strong>Stampante termica 80mm?</strong> Nel dialog Chrome → <em>Altre impostazioni</em> → <em>Formato carta</em> → seleziona <strong>80×297mm</strong> oppure <em>"Personalizzato"</em> con larghezza 80mm.
+        <br><button type="button" class="hint-dismiss" id="btnHintHide">Nascondi suggerimento</button>
     </div>
 </div>
 <div class="receipt">
@@ -261,6 +290,23 @@ $subtotal    = $total - $deliveryFee + $discount;
     window.addEventListener('load', function () {
         setTimeout(function () { window.print(); }, 300);
     });
+
+    // Hint stampante termica: dismissable, preferenza condivisa con la
+    // vista kitchen via stessa chiave localStorage.
+    var HINT_KEY = 'evulery_print_hint_hidden';
+    var hintBox  = document.getElementById('hintBox');
+    var showBtn  = document.getElementById('btnHintShow');
+    var hideBtn  = document.getElementById('btnHintHide');
+    function setHintHidden(hidden) {
+        hintBox.style.display = hidden ? 'none' : '';
+        showBtn.style.display = hidden ? '' : 'none';
+        try { localStorage.setItem(HINT_KEY, hidden ? '1' : '0'); } catch (e) {}
+    }
+    hideBtn.addEventListener('click', function () { setHintHidden(true); });
+    showBtn.addEventListener('click', function () { setHintHidden(false); });
+    try {
+        if (localStorage.getItem(HINT_KEY) === '1') setHintHidden(true);
+    } catch (e) {}
 </script>
 </body>
 </html>
