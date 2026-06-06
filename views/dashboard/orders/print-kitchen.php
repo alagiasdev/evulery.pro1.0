@@ -167,10 +167,12 @@ $createdAt = !empty($order['created_at']) ? date('d/m/Y H:i', strtotime($order['
         background: #fff;
         color: #6c757d;
         border: 1px solid #d8dde3;
-        width: 32px;
-        height: 32px;
+        /* Stessa altezza/border-radius dei pulsanti Stampa/Chiudi
+           (padding-y 10px + font 14px ~= 40px totali; border-radius 6px) */
+        width: 40px;
+        height: 40px;
+        border-radius: 6px;
         font-size: 14px;
-        border-radius: 50%;
         cursor: pointer;
         padding: 0;
         margin: 0 4px;
