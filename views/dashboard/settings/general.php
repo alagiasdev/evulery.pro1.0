@@ -61,7 +61,7 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                                     <div class="logo-preview-actions">
                                         <label class="logo-change-btn" title="Cambia logo">
                                             <i class="bi bi-pencil"></i>
-                                            <input type="file" name="logo" accept="image/jpeg,image/png,image/webp,image/svg+xml" class="d-none" id="logo-input">
+                                            <input type="file" name="logo" accept="image/jpeg,image/png,image/webp" class="d-none" id="logo-input">
                                         </label>
                                         <button type="button" class="logo-remove-btn" title="Rimuovi logo" id="logo-remove-btn">
                                             <i class="bi bi-trash"></i>
@@ -74,7 +74,7 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                                     <i class="bi bi-image" style="font-size:1.5rem;color:#adb5bd;"></i>
                                     <span class="logo-dropzone-text">Clicca per caricare il logo</span>
                                     <span class="logo-dropzone-hint">JPG, PNG, WebP o SVG &middot; Max 2 MB</span>
-                                    <input type="file" name="logo" accept="image/jpeg,image/png,image/webp,image/svg+xml" class="d-none" id="logo-input">
+                                    <input type="file" name="logo" accept="image/jpeg,image/png,image/webp" class="d-none" id="logo-input">
                                 </label>
                                 <?php endif; ?>
                             </div>
@@ -328,7 +328,7 @@ document.querySelectorAll('[data-copy-text]').forEach(function(btn) {
                     // Re-append the input (it was removed by innerHTML)
                     var newInput = document.createElement('input');
                     newInput.type = 'file'; newInput.name = 'logo'; newInput.id = 'logo-input';
-                    newInput.accept = 'image/jpeg,image/png,image/webp,image/svg+xml';
+                    newInput.accept = 'image/jpeg,image/png,image/webp';
                     newInput.className = 'd-none';
                     newInput.files = input.files;
                     area.appendChild(newInput);

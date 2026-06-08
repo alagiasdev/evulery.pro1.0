@@ -146,14 +146,18 @@ class SettingsController
     private function handleLogoUpload(int $tenantId): string|false
     {
         $file = $_FILES['logo'];
-        $allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+        // Solo formati bitmap: gli SVG sono XML e possono contenere
+        // <script> embedded eseguibili se l'URL del file viene aperto
+        // direttamente in una nuova tab (Apache serve come image/svg+xml).
+        // Rimossi 2026-06-08 per chiudere il vettore XSS (audit finding #2).
+        $allowed = ['image/jpeg', 'image/png', 'image/webp'];
         $maxSize = 2 * 1024 * 1024; // 2MB
 
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $mime = $finfo->file($file['tmp_name']);
 
         if (!in_array($mime, $allowed)) {
-            flash('danger', 'Formato logo non valido. Usa JPG, PNG, WebP o SVG.');
+            flash('danger', 'Formato logo non valido. Usa JPG, PNG o WebP.');
             return false;
         }
 
@@ -166,11 +170,10 @@ class SettingsController
         $this->deleteOldLogo(TenantResolver::current());
 
         $ext = match ($mime) {
-            'image/jpeg'    => 'jpg',
-            'image/png'     => 'png',
-            'image/webp'    => 'webp',
-            'image/svg+xml' => 'svg',
-            default         => 'png',
+            'image/jpeg' => 'jpg',
+            'image/png'  => 'png',
+            'image/webp' => 'webp',
+            default      => 'png',
         };
 
         $uploadDir = BASE_PATH . '/public/uploads/tenants/';

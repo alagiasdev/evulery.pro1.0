@@ -1,5 +1,28 @@
 RewriteEngine On
 
+# ============================================================================
+# Security headers (defense-in-depth)
+# ============================================================================
+<IfModule mod_headers.c>
+    # Impedisce al browser di "indovinare" il MIME (no MIME sniffing attack)
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Limita il referrer leak verso domini esterni: mantieni origine + path
+    # solo same-origin, verso altri domini manda solo l'origine
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Anti-clickjacking legacy (duplica CSP frame-ancestors gia' settata
+    # da App::boot() — utile per browser/proxy che non supportano CSP)
+    Header always set X-Frame-Options "DENY"
+
+    # Disabilita API browser non usate dalla dashboard
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(self), interest-cohort=()"
+
+    # HSTS: forza HTTPS per 1 anno (solo se la connessione e' gia' HTTPS,
+    # cosi' non rompe il dev locale http://localhost)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on'"
+</IfModule>
+
 # Block access to sensitive files
 <Files .env>
     Require all denied

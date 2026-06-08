@@ -12,6 +12,17 @@ Aggiornamenti documentazione in corso, nessuna feature nuova in pipeline. Backlo
 
 ---
 
+## 2026-06-08 — Security audit findings risolti
+
+### Security
+- **Security headers HTTP** aggiunti in `.htaccess` root: `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: DENY`, `Permissions-Policy` (disabilita camera/mic/geo non usate), `Strict-Transport-Security` 1 anno condizionale a HTTPS. Defense-in-depth contro MIME sniffing, info leak, clickjacking legacy, downgrade attack.
+- **Upload SVG disabilitato** in logo settings: rimosso `image/svg+xml` dai formati accettati (controller + view + JS dinamico). Gli SVG potevano contenere `<script>` eseguibili se l'URL del file veniva aperto direttamente. Ora solo JPG/PNG/WebP.
+- **Magic link prenotazione con scadenza 30 giorni**: `ManageReservationController` ora controlla `isTokenExpired($reservation)` in `show()` e `cancel()`. Dopo 30 giorni dalla `reservation_date` il link risponde con una pagina "Link scaduto" dedicata. Mitigation contro link leakati/condivisi/dimenticati in caselle email.
+
+I 3 findings dell'audit `SECURITY_AUDIT_2026-06-06.md` sono tutti risolti. Prossimo audit pianificato per 2026-09-08.
+
+---
+
 ## 2026-06-06 — Security audit + Stampa ordini MVP + documentazione
 
 ### Security
