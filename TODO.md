@@ -48,6 +48,29 @@ Decisione: NON costruirli in cieco, aspettare il segnale reale.
   - Test: `curl -I https://dash.evulery.it` deve avere header `cf-ray:`
   - Test email outbound (invia test e verifica header SPF/DKIM pass)
 
+### Monitoraggio (warning ricorrenti nei log)
+
+- [ ] **CSRF FAIL su `/auth/logout`** — annotato 2026-06-09 — warning nei log produzione del tipo:
+  ```
+  [2026-06-09 12:53:10] [warning] CSRF FAIL uri=/auth/logout method=POST
+  session_id=... has_cookie=yes submitted_token=eafc3a1f...
+  session_token=f40ccb80... idle_sec=0 referer=/dashboard/settings/tables
+  ```
+  Token submitted ≠ token in sessione, ma `idle_sec=0` (sessione attiva). Probabili
+  cause: (1) utente con 2 tab aperte, logout in una rigenera token e l'altra ha
+  ancora il vecchio → comportamento atteso, non bug; (2) auto-refresh heartbeat o
+  qualche evento rigenera la sessione invalidando i form statici.
+
+  **Da monitorare**: contare quante volte appare al giorno nei log di prod
+  (`storage/logs/YYYY-MM-DD.log` → `grep "CSRF FAIL uri=/auth/logout"`):
+  - **<5/giorno**: rumore atteso (utenti multi-tab), nessuna azione
+  - **>10/giorno**: investigare meccanismo rotazione token in `Session::start()` o
+    rendere logout "soft CSRF" (accetta token scaduto per la sola rotta /auth/logout,
+    razionale: il logout e' azione sicura — peggior caso = logout-CSRF, annoyance
+    minore). Stima fix soft logout: ~30 min.
+
+  **Decisione**: aspettare 7 giorni di osservazione log prima di agire.
+
 ### Edge case — in attesa di segnalazione cliente reale
 - [ ] **Asporto → "Ritiro in sede"** — il termine confonde (1 segnalazione 28/04).
   Toccare solo con 3+ segnalazioni. Globale 5-10 min, oppure `pickup_label` per tenant 3-4h.
