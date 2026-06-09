@@ -48,17 +48,25 @@ class Plan
         $maxSort = (int)$this->db->query('SELECT COALESCE(MAX(sort_order), 0) FROM plans')->fetchColumn();
 
         $stmt = $this->db->prepare(
-            'INSERT INTO plans (name, slug, description, price, color, is_active, sort_order)
-             VALUES (:name, :slug, :description, :price, :color, :is_active, :sort_order)'
+            'INSERT INTO plans (name, slug, description, price, price_semiannual, price_annual,
+                                billing_months_semi, billing_months_annual,
+                                color, is_active, sort_order)
+             VALUES (:name, :slug, :description, :price, :price_semiannual, :price_annual,
+                     :billing_months_semi, :billing_months_annual,
+                     :color, :is_active, :sort_order)'
         );
         $stmt->execute([
-            'name'        => $data['name'],
-            'slug'        => $data['slug'],
-            'description' => $data['description'] ?? null,
-            'price'       => $data['price'],
-            'color'       => $data['color'] ?? '#1565C0',
-            'is_active'   => $data['is_active'] ?? 1,
-            'sort_order'  => $maxSort + 1,
+            'name'                  => $data['name'],
+            'slug'                  => $data['slug'],
+            'description'           => $data['description'] ?? null,
+            'price'                 => $data['price'],
+            'price_semiannual'      => $data['price_semiannual'] ?? null,
+            'price_annual'          => $data['price_annual'] ?? null,
+            'billing_months_semi'   => $data['billing_months_semi'] ?? 5,
+            'billing_months_annual' => $data['billing_months_annual'] ?? 10,
+            'color'                 => $data['color'] ?? '#1565C0',
+            'is_active'             => $data['is_active'] ?? 1,
+            'sort_order'            => $maxSort + 1,
         ]);
         return (int)$this->db->lastInsertId();
     }
@@ -67,7 +75,8 @@ class Plan
     {
         $fields = [];
         $params = ['id' => $id];
-        $allowed = ['name', 'slug', 'description', 'price', 'billing_months_semi', 'billing_months_annual', 'color', 'is_active', 'sort_order'];
+        $allowed = ['name', 'slug', 'description', 'price', 'price_semiannual', 'price_annual',
+                    'billing_months_semi', 'billing_months_annual', 'color', 'is_active', 'sort_order'];
 
         foreach ($allowed as $field) {
             if (array_key_exists($field, $data)) {

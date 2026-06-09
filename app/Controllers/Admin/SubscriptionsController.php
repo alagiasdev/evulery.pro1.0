@@ -226,12 +226,19 @@ class SubscriptionsController
 
         $billingMonthsSemi   = max(1, min(6, (int)$request->input('billing_months_semi', 5)));
         $billingMonthsAnnual = max(1, min(12, (int)$request->input('billing_months_annual', 10)));
+        // Prezzi diretti opzionali: stringa vuota -> NULL (fallback ai billing_months_*)
+        $priceSemiInput   = trim((string)$request->input('price_semiannual', ''));
+        $priceAnnualInput = trim((string)$request->input('price_annual', ''));
+        $priceSemi   = $priceSemiInput   === '' ? null : max(0, (float)$priceSemiInput);
+        $priceAnnual = $priceAnnualInput === '' ? null : max(0, (float)$priceAnnualInput);
 
         $id = $planModel->create([
             'name'                 => $name,
             'slug'                 => $slug,
             'description'          => $desc ?: null,
             'price'                => $price,
+            'price_semiannual'     => $priceSemi,
+            'price_annual'         => $priceAnnual,
             'color'                => $color,
             'billing_months_semi'  => $billingMonthsSemi,
             'billing_months_annual'=> $billingMonthsAnnual,
@@ -301,12 +308,19 @@ class SubscriptionsController
 
         $billingMonthsSemi   = max(1, min(6, (int)$request->input('billing_months_semi', 5)));
         $billingMonthsAnnual = max(1, min(12, (int)$request->input('billing_months_annual', 10)));
+        // Prezzi diretti opzionali: stringa vuota -> NULL (fallback ai billing_months_*)
+        $priceSemiInput   = trim((string)$request->input('price_semiannual', ''));
+        $priceAnnualInput = trim((string)$request->input('price_annual', ''));
+        $priceSemi   = $priceSemiInput   === '' ? null : max(0, (float)$priceSemiInput);
+        $priceAnnual = $priceAnnualInput === '' ? null : max(0, (float)$priceAnnualInput);
 
         // Slug only if name changed
         $data = [
             'name'                 => $name,
             'description'          => $desc ?: null,
             'price'                => $price,
+            'price_semiannual'     => $priceSemi,
+            'price_annual'         => $priceAnnual,
             'color'                => $color,
             'billing_months_semi'  => $billingMonthsSemi,
             'billing_months_annual'=> $billingMonthsAnnual,
