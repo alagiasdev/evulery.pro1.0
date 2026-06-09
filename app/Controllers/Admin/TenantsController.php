@@ -67,7 +67,7 @@ class TenantsController
             'title'            => 'Nuovo Ristorante',
             'activeMenu'       => 'tenants',
             'plans'            => $plans,
-            'prefill'          => $request->query(),
+            'prefill'          => $request->all(),
             'sourceLead'       => $sourceLead,
             'leadResellerName' => $leadResellerName,
         ], 'admin');
