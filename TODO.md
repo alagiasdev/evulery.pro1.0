@@ -71,6 +71,28 @@ Decisione: NON costruirli in cieco, aspettare il segnale reale.
 
   **Decisione**: aspettare 7 giorni di osservazione log prima di agire.
 
+### Polish UX (coda follow-up)
+
+- [ ] **Nome ristorante nascosto se logo presente — pagine secondarie** (annotato 2026-06-09).
+  Il fix e' stato applicato a 3 view principali (booking widget, menu pubblico, hub vetrina)
+  dove il logo e' grande e centrale. Restano 3 view pubbliche secondarie con stesso pattern
+  `<img logo> + <h1>nome` che andrebbero uniformate per coerenza:
+  - `views/menu/unavailable.php` (menu offline)
+  - `views/hub/unavailable.php` (vetrina offline)
+  - `views/booking/suspended.php` (tenant sospeso)
+  - `views/reviews/landing.php` (pagina pubblica recensioni)
+
+  Pattern da applicare (gia' nelle 3 view fatte):
+  - Logo presente → ingrandire (+20-30px) e nascondere h1 con classe `*-sr-only` (utility
+    visually-hidden definita per CSS module)
+  - Logo assente → h1 visibile (default attuale)
+
+  **NON applicabile** a `views/ordering/store.php` (layout TheFork-style con header
+  compatto orizzontale + status "Aperto/Chiuso oggi" sotto il nome → il nome serve come
+  ancoraggio del status, nasconderlo crea un sottotitolo orfano).
+
+  Stima: 15-20 min. Priorita' bassa, sono pagine che il cliente vede raramente.
+
 ### Edge case — in attesa di segnalazione cliente reale
 - [ ] **Asporto → "Ritiro in sede"** — il termine confonde (1 segnalazione 28/04).
   Toccare solo con 3+ segnalazioni. Globale 5-10 min, oppure `pickup_label` per tenant 3-4h.

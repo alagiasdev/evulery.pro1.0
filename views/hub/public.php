@@ -80,7 +80,7 @@ $wa = $settings['whatsapp_number'] ?? '';
     </div>
 
     <div class="hub-public-body">
-        <h1 class="hub-public-name"><?= e($tenantName) ?></h1>
+        <h1 class="hub-public-name<?= $logoUrl ? ' hub-sr-only' : '' ?>"><?= e($tenantName) ?></h1>
         <?php if ($subtitle): ?>
         <p class="hub-public-tag"><?= e($subtitle) ?></p>
         <?php endif; ?>

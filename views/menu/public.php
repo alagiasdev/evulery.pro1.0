@@ -23,9 +23,9 @@
     <?php endif; ?>
     <div class="dm-hero-content">
         <?php if ($tenantLogo): ?>
-        <img src="<?= e($tenantLogo) ?>" alt="<?= e($tenantName) ?>" class="dm-hero-logo">
+        <img src="<?= e($tenantLogo) ?>" alt="<?= e($tenantName) ?>" class="dm-hero-logo dm-hero-logo--solo">
         <?php endif; ?>
-        <h1 class="dm-hero-name"><?= e($tenantName) ?></h1>
+        <h1 class="dm-hero-name<?= $tenantLogo ? ' dm-sr-only' : '' ?>"><?= e($tenantName) ?></h1>
         <?php if ($tagline): ?>
         <p class="dm-hero-tagline"><?= e($tagline) ?></p>
         <?php endif; ?>

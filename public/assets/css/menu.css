@@ -83,11 +83,27 @@ body {
     margin-bottom: .85rem;
     background: rgba(255,255,255,.1);
 }
+/* Logo "da solo" (h1 nome nascosto): aumenta dimensione per occupare lo spazio */
+.dm-hero-logo--solo {
+    width: 88px; height: 88px;
+    margin-bottom: 1.25rem;
+}
 .dm-hero-name {
     font-size: 1.65rem;
     font-weight: 800;
     letter-spacing: -.02em;
     margin: 0 0 .2rem;
+}
+/* Visually hidden — accessibile a screen reader, invisibile a vista.
+   Usato per il <h1> nome quando il logo lo contiene gia'. */
+.dm-sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 .dm-hero-tagline {
     font-size: .85rem;

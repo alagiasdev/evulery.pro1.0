@@ -15,10 +15,11 @@
             <div class="col-lg-5 col-md-7">
                 <!-- Header -->
                 <div class="text-center mb-4">
-                    <?php if (!empty($tenantLogo)): ?>
-                        <img src="<?= e($tenantLogo) ?>" alt="<?= e($tenantName ?? '') ?>" class="mb-3" style="max-height: 80px;">
+                    <?php $hasLogo = !empty($tenantLogo); ?>
+                    <?php if ($hasLogo): ?>
+                        <img src="<?= e($tenantLogo) ?>" alt="<?= e($tenantName ?? '') ?>" class="mb-3" style="max-height: 100px;">
                     <?php endif; ?>
-                    <h2 class="fw-bold"><?= e($tenantName ?? 'Ristorante') ?></h2>
+                    <h2 class="fw-bold<?= $hasLogo ? ' visually-hidden' : '' ?>"><?= e($tenantName ?? 'Ristorante') ?></h2>
                     <p class="text-muted mb-0">Prenota un tavolo</p>
                     <?php if (!empty($petFriendly) || !empty($kidsFriendly)): ?>
                     <div class="bw-badges">
