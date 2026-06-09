@@ -6,11 +6,47 @@ Task pronti, da fare quando emerge il trigger o c'è una finestra di lavoro.
 Decisione: NON costruirli in cieco, aspettare il segnale reale.
 
 ### Pianificato a data
-- [ ] **Cloudflare davanti a `dash.evulery.it`** — pianificato per il pomeriggio del 2026-06-08, prima del lancio commerciale.
+- [ ] **Cloudflare davanti a `dash.evulery.it` + `evulery.it` + `app.evulery.it`** — pianificato per il pomeriggio del 2026-06-08, **sospeso 2026-06-09 in fase di setup** perche' migrazione DNS piu' complessa del previsto: serve sessione dedicata ~1-2h.
   Proxy gratuito che dà: DDoS protection automatico, bot mitigation, cache statica, rate limiting, WAF base.
-  Setup ~30 min lato registrar dominio (cambio nameserver).
   **Driver di urgenza**: il 03/06/2026 il VPS ha subito un attacco scraping da 2 subnet cinesi (89.106.110.0/24 e 149.62.193.0/24) con load avg fino a 77 su 8 core. Davide di Serverplan è dovuto intervenire manualmente. Cloudflare assorbirebbe automaticamente eventi simili senza intervento umano.
   **Pre-requisito** per portare in produzione il primo cliente pagante.
+
+  **Stato attuale (sospeso 2026-06-09)**:
+  - Account Cloudflare creato, dominio `evulery.it` aggiunto, piano Free
+  - Import automatico Cloudflare ha preso solo ~25 record su ~70 reali della zona cPanel
+  - I 9 record di servizio (cpanel, whm, ftp, webdisk, autoconfig, autodiscover, cpcalendars, cpcontacts, webmail) sono stati portati a DNS only (grigio)
+  - Proxiati correttamente: `evulery.it` root, `www`, `dash`, `app`
+  - **Nameserver NON ancora cambiati al registrar** — la zona Cloudflare e' incompleta
+
+  **Cosa manca da importare manualmente in Cloudflare** (prima di "Continue to activation"):
+  - **3 record DKIM** TXT (lunghi, da copiare interi dal cPanel zone editor):
+    - `default._domainkey.evulery.it`
+    - `default._domainkey.app.evulery.it`
+    - `default._domainkey.dash.evulery.it`
+  - **TurboSMTP DKIM** TXT: `turbo-smtp._domainkey.evulery.it` (transazionali finiscono in spam se manca)
+  - **SRV autodiscover**: `_autodiscover._tcp.evulery.it` (+ varianti `.app` e `.dash`) destinazione `cpanelemaildiscovery.cpanel.net`, porta 443 — autoconfig client Outlook/Thunderbird
+  - **Tutti i sottodomini `*.app.evulery.it`** (autoconfig.app, autodiscover.app, cpanel.app, cpcalendars.app, cpcontacts.app, ftp.app, webdisk.app, webmail.app, whm.app, www.app, _caldav/_carddav SRV+TXT) — servono ai 4-5 clienti dell'app legacy
+  - **Tutti i sottodomini `*.dash.evulery.it`** equivalenti
+  - **TXT SPF `dash.evulery.it`**: `v=spf1 +a +mx -all`
+  - **4 record NS delega PowerMail** (per la posta):
+    - `mail.evulery.it` NS `ns1.powermailhost.com`
+    - `mail.evulery.it` NS `ns2.powermailhost.com`
+    - `default._domainkey.evulery.it` NS `ns1.powermailhost.com`
+    - `default._domainkey.evulery.it` NS `ns2.powermailhost.com`
+    - (Nota: questi sostituiscono il record TXT DKIM se PowerMail richiede sub-zone delegation;
+     verificare con doc Serverplan https://supporto.serverplan.com → Powermail → "Configurare MX con DNS esterno")
+
+  **Strategia di completamento** (~1-2h, opzioni):
+  - **A. Manuale**: copiare i record uno-a-uno dal cPanel zone editor a Cloudflare. Sicuro, lungo.
+  - **B. AXFR**: aprire ticket Serverplan chiedendo export zona DNS in formato BIND, importarlo in Cloudflare ("Import DNS records" sotto DNS → Records). Veloce ma serve attendere il ticket (24-48h).
+
+  **Dopo il completamento**:
+  - Verifica zona Cloudflare = zona cPanel (record per record, no campioni)
+  - SSL/TLS → Full (Strict), Always Use HTTPS ON
+  - NON attivare Auto Minify, Rocket Loader, Email Obfuscation (rompono JS/mailto)
+  - Cambio nameserver al registrar
+  - Test: `curl -I https://dash.evulery.it` deve avere header `cf-ray:`
+  - Test email outbound (invia test e verifica header SPF/DKIM pass)
 
 ### Edge case — in attesa di segnalazione cliente reale
 - [ ] **Asporto → "Ritiro in sede"** — il termine confonde (1 segnalazione 28/04).
