@@ -30,6 +30,15 @@
     </div>
 </header>
 
+<!-- ===== CLOSED BANNER (oggi non si ordina) ===== -->
+<div class="os-closed-banner" id="osClosedBanner" style="display:none;">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <div class="os-closed-banner-body">
+        <p class="os-closed-banner-title" id="osClosedBannerTitle">Oggi gli ordini online non sono attivi</p>
+        <p class="os-closed-banner-text" id="osClosedBannerText"></p>
+    </div>
+</div>
+
 <!-- ===== MODE TOGGLE (takeaway / delivery) ===== -->
 <div class="os-mode-bar" id="osModeBar" style="display:none;">
     <button class="os-mode-btn os-mode-active" data-mode="takeaway">
@@ -116,7 +125,14 @@
 
         <!-- Pickup time -->
         <div class="os-checkout-section">
-            <h3>Orario di ritiro</h3>
+            <h3 id="osPickupTimeLabel">Orario di ritiro</h3>
+            <div class="os-closed-banner os-closed-banner--checkout" id="osCheckoutClosedBanner" style="display:none;">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <div class="os-closed-banner-body">
+                    <p class="os-closed-banner-title">Oggi non accettiamo ordini online</p>
+                    <p class="os-closed-banner-text" id="osCheckoutClosedBannerText"></p>
+                </div>
+            </div>
             <select class="os-select" id="osPickupTime">
                 <option value="">Seleziona orario...</option>
             </select>

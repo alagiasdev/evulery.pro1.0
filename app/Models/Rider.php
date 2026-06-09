@@ -22,19 +22,25 @@ class Rider
 
     public function findById(int $id, int $tenantId): ?array
     {
+        // Esclude i rider soft-deleted: la UI non deve mai mostrarli ne'
+        // permetterne l'uso (es. assegnazione, modifica). Lo storico ordini
+        // fa JOIN diretto, non passa da qui.
         $stmt = $this->db->prepare(
-            'SELECT * FROM riders WHERE id = :id AND tenant_id = :tid LIMIT 1'
+            'SELECT * FROM riders
+             WHERE id = :id AND tenant_id = :tid AND deleted_at IS NULL
+             LIMIT 1'
         );
         $stmt->execute(['id' => $id, 'tid' => $tenantId]);
         $row = $stmt->fetch();
         return $row ?: null;
     }
 
-    /** Tutti i rider del tenant, attivi e archiviati (ordinati per stato + nome). */
+    /** Tutti i rider del tenant, attivi e archiviati (esclusi i soft-deleted). */
     public function findAll(int $tenantId): array
     {
         $stmt = $this->db->prepare(
-            'SELECT * FROM riders WHERE tenant_id = :tid
+            'SELECT * FROM riders
+             WHERE tenant_id = :tid AND deleted_at IS NULL
              ORDER BY is_active DESC, name ASC'
         );
         $stmt->execute(['tid' => $tenantId]);
@@ -46,7 +52,7 @@ class Rider
     {
         $stmt = $this->db->prepare(
             'SELECT id, name, color_hex FROM riders
-             WHERE tenant_id = :tid AND is_active = 1
+             WHERE tenant_id = :tid AND is_active = 1 AND deleted_at IS NULL
              ORDER BY name ASC'
         );
         $stmt->execute(['tid' => $tenantId]);
@@ -90,9 +96,28 @@ class Rider
     {
         $stmt = $this->db->prepare(
             'UPDATE riders SET is_active = 1 - is_active
-             WHERE id = :id AND tenant_id = :tid'
+             WHERE id = :id AND tenant_id = :tid AND deleted_at IS NULL'
         );
         return $stmt->execute(['id' => $id, 'tid' => $tenantId]);
+    }
+
+    /**
+     * Soft delete: nasconde definitivamente il rider dalla UI ma mantiene
+     * la riga in DB cosi' lo storico ordini (FK orders.rider_id) continua
+     * a poter fare JOIN e mostrare il nome del rider che ha consegnato.
+     *
+     * Vincolo: consentito solo su rider gia' archiviati (is_active=0)
+     * per evitare eliminazioni accidentali di rider operativi.
+     */
+    public function softDelete(int $id, int $tenantId): bool
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE riders SET deleted_at = NOW()
+             WHERE id = :id AND tenant_id = :tid
+               AND is_active = 0 AND deleted_at IS NULL'
+        );
+        $stmt->execute(['id' => $id, 'tid' => $tenantId]);
+        return $stmt->rowCount() > 0;
     }
 
     /**
@@ -118,7 +143,7 @@ class Rider
                 LEFT JOIN orders o ON o.rider_id = r.id
                     AND o.tenant_id = :tid_o
                     AND DATE(o.created_at) BETWEEN :df AND :dt
-                WHERE r.tenant_id = :tid_r
+                WHERE r.tenant_id = :tid_r AND r.deleted_at IS NULL
                 GROUP BY r.id, r.name, r.color_hex, r.is_active
                 ORDER BY total DESC, r.name ASC';
 

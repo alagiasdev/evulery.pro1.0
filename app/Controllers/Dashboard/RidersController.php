@@ -138,6 +138,42 @@ class RidersController
         Response::redirect(url('dashboard/riders'));
     }
 
+    /**
+     * POST /dashboard/riders/{id}/delete — soft delete definitivo.
+     * Consentito SOLO su rider archiviati (is_active=0): evita eliminazioni
+     * accidentali di rider operativi. La riga resta nel DB cosi' lo storico
+     * ordini conserva il link al nome del rider per JOIN.
+     */
+    public function destroy(Request $request): void
+    {
+        if ($this->gate()) return;
+
+        $tenantId = Auth::tenantId();
+        $id = (int)$request->param('id');
+        $model = new Rider();
+        $rider = $model->findById($id, $tenantId);
+        if (!$rider) {
+            flash('danger', 'Rider non trovato.');
+            Response::redirect(url('dashboard/riders'));
+            return;
+        }
+        if ((int)$rider['is_active'] === 1) {
+            flash('warning', 'Archivia il rider prima di eliminarlo definitivamente.');
+            Response::redirect(url('dashboard/riders'));
+            return;
+        }
+
+        if (!$model->softDelete($id, $tenantId)) {
+            flash('danger', 'Impossibile eliminare il rider.');
+            Response::redirect(url('dashboard/riders'));
+            return;
+        }
+
+        AuditLog::log('rider_deleted', "Rider eliminato definitivamente: {$rider['name']} (#{$id})", Auth::id(), $tenantId);
+        flash('success', "Rider \"{$rider['name']}\" eliminato definitivamente.");
+        Response::redirect(url('dashboard/riders'));
+    }
+
     /** GET /dashboard/riders/stats — KPI globali + tabella per rider. */
     public function stats(Request $request): void
     {

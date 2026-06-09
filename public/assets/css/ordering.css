@@ -174,6 +174,47 @@ body {
 }
 .os-promo-banner strong { color: #6d4c00; }
 
+/* ===== CLOSED BANNER (oggi non si ordina) ===== */
+.os-closed-banner {
+    margin: 1rem 1.25rem;
+    background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+    border: 1px solid #ffb74d;
+    border-left: 4px solid #f57c00;
+    border-radius: 10px;
+    padding: .85rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    color: #6d3a00;
+}
+.os-closed-banner > i {
+    font-size: 1.4rem;
+    color: #e65100;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.os-closed-banner-body {
+    flex: 1;
+    line-height: 1.5;
+}
+.os-closed-banner-title {
+    font-weight: 700;
+    font-size: .92rem;
+    margin: 0 0 .25rem;
+    color: #5a2f00;
+}
+.os-closed-banner-text {
+    font-size: .82rem;
+    margin: 0;
+}
+.os-closed-banner-text strong {
+    color: #5a2f00;
+    font-weight: 700;
+}
+.os-closed-banner--checkout {
+    margin: 0 0 1rem;
+}
+
 /* ===== SEARCH ===== */
 .os-search-wrap {
     margin: 0 1.25rem .75rem;

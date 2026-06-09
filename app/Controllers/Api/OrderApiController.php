@@ -85,6 +85,7 @@ class OrderApiController
                 'delivery_min_amount'     => (float)($tenant['delivery_min_amount'] ?? 0),
                 'delivery_description'    => $tenant['delivery_description'] ?? '',
                 'today_hours'             => $todayHours,
+                'ordering_hours'          => $hours,
             ],
             'slots'          => $slots,
             'delivery_zones' => $deliveryZones,
@@ -238,15 +239,31 @@ class OrderApiController
             }
         }
 
-        // Pickup time + slot capacity
+        // Pickup time: obbligatorio + deve essere uno degli slot generati server-side.
+        // generatePickupSlots() esclude gia' slot nel passato, fuori ordering_hours
+        // e slot saturi (countBySlot >= max_per_slot), quindi il match copre tutto.
         $pickupTime = $data['pickup_time'] ?? null;
-        if ($pickupTime) {
-            $orderModel = new Order();
-            $slotCount = $orderModel->countBySlot((int)$tenant['id'], $pickupTime);
-            $maxPerSlot = (int)($tenant['ordering_max_per_slot'] ?? 10);
-            if ($slotCount >= $maxPerSlot) {
-                Response::error('Lo slot selezionato è pieno. Scegli un altro orario.', 'SLOT_FULL', 422);
+        if (empty($pickupTime)) {
+            $msg = $orderType === 'delivery'
+                ? 'Seleziona un orario di consegna.'
+                : 'Seleziona un orario di ritiro.';
+            Response::error($msg, 'PICKUP_TIME_REQUIRED', 422);
+        }
+
+        $availableSlots = $this->generatePickupSlots($tenant);
+        $validSlot = false;
+        foreach ($availableSlots as $slot) {
+            if ($slot['datetime'] === $pickupTime) {
+                $validSlot = true;
+                break;
             }
+        }
+        if (!$validSlot) {
+            Response::error(
+                'L\'orario selezionato non è più disponibile. Ricarica la pagina e scegli un altro orario.',
+                'SLOT_INVALID',
+                422
+            );
         }
 
         // Calculate discount amount (original subtotal - discounted subtotal)

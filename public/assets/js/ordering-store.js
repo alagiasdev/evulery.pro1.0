@@ -70,6 +70,13 @@
     var $submitOrder = document.getElementById('osSubmitOrder');
     var $submitText = document.getElementById('osSubmitText');
     var $submitSpinner = document.getElementById('osSubmitSpinner');
+    var $closedBanner = document.getElementById('osClosedBanner');
+    var $closedBannerText = document.getElementById('osClosedBannerText');
+    var $checkoutClosedBanner = document.getElementById('osCheckoutClosedBanner');
+    var $checkoutClosedBannerText = document.getElementById('osCheckoutClosedBannerText');
+
+    var DAY_NAMES_SHORT = ['', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+    var DAY_NAMES_LONG  = ['', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato', 'domenica'];
 
     // ===== INIT =====
     fetchMenu();
@@ -153,6 +160,9 @@
         // Promo banner
         renderPromoBanner();
 
+        // Closed banner (oggi non si ordina)
+        renderClosedBanner();
+
         // Search bar
         initSearch();
 
@@ -197,6 +207,12 @@
 
     // ===== DELIVERY INFO =====
     function updateDeliveryInfo() {
+        // Pickup time label: cambia in base a takeaway/delivery
+        var $pickupLabel = document.getElementById('osPickupTimeLabel');
+        if ($pickupLabel) {
+            $pickupLabel.textContent = orderMode === 'delivery' ? 'Orario di consegna' : 'Orario di ritiro';
+        }
+
         if (orderMode !== 'delivery' || !isDeliveryAvailable()) {
             $deliveryInfo.style.display = 'none';
             $checkoutDelivery.style.display = 'none';
@@ -677,6 +693,107 @@
         return settings.ordering_min_amount || 0;
     }
 
+    // ===== CLOSED BANNER (oggi non si ordina) =====
+    // Raggruppa giorni con stesso orario apertura/chiusura.
+    // Es. [{open:"20:00",close:"22:00",days:[1,3,5]}, {open:"18:00",close:"23:00",days:[6]}]
+    function getOrderingScheduleGroups() {
+        var hours = settings.ordering_hours || {};
+        var groups = [];
+        for (var d = 1; d <= 7; d++) {
+            var h = hours[d] || hours[String(d)];
+            if (!h || !h.open || !h.close) continue;
+            var key = h.open + '-' + h.close;
+            var existing = null;
+            for (var i = 0; i < groups.length; i++) {
+                if (groups[i].key === key) { existing = groups[i]; break; }
+            }
+            if (existing) {
+                existing.days.push(d);
+            } else {
+                groups.push({ key: key, open: h.open, close: h.close, days: [d] });
+            }
+        }
+        return groups;
+    }
+
+    function formatHours(hhmm) {
+        // "20:00" → "20:00", "20:00:00" → "20:00"
+        return hhmm.substring(0, 5);
+    }
+
+    function formatDaysList(days) {
+        return days.map(function (d) { return DAY_NAMES_SHORT[d]; }).join(', ');
+    }
+
+    function formatOrderingSchedule() {
+        var groups = getOrderingScheduleGroups();
+        if (groups.length === 0) return '';
+        return groups.map(function (g) {
+            return formatDaysList(g.days) + ' ' + formatHours(g.open) + '-' + formatHours(g.close);
+        }).join(' · ');
+    }
+
+    // Calcola la prossima apertura ordini a partire da adesso.
+    // Ritorna {day:int, open:"HH:MM"} o null se nessun giorno valido.
+    function getNextOpening() {
+        var hours = settings.ordering_hours || {};
+        var now = new Date();
+        var nowDay = now.getDay() === 0 ? 7 : now.getDay(); // 1=Lun ... 7=Dom
+        var nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+        for (var offset = 0; offset < 7; offset++) {
+            var d = ((nowDay - 1 + offset) % 7) + 1;
+            var h = hours[d] || hours[String(d)];
+            if (!h || !h.open) continue;
+            var openParts = h.open.split(':');
+            var openMin = parseInt(openParts[0], 10) * 60 + parseInt(openParts[1], 10);
+            if (offset === 0 && openMin <= nowMinutes) continue; // oggi gia' passato
+            return { day: d, open: formatHours(h.open), offset: offset };
+        }
+        return null;
+    }
+
+    function buildClosedMessage() {
+        var schedule = formatOrderingSchedule();
+        var next = getNextOpening();
+        var parts = [];
+
+        if (next) {
+            var when;
+            if (next.offset === 0) {
+                when = 'oggi alle <strong>' + next.open + '</strong>';
+            } else if (next.offset === 1) {
+                when = 'domani alle <strong>' + next.open + '</strong>';
+            } else {
+                when = '<strong>' + DAY_NAMES_LONG[next.day] + '</strong> alle <strong>' + next.open + '</strong>';
+            }
+            parts.push('Torna ' + when + '.');
+        }
+        if (schedule) {
+            parts.push('Disponibile: <strong>' + schedule + '</strong>');
+        }
+
+        return parts.join(' ') || 'Riprova in un altro momento.';
+    }
+
+    function renderClosedBanner() {
+        var isClosed = slots.length === 0;
+        if (!isClosed) {
+            if ($closedBanner) $closedBanner.style.display = 'none';
+            if ($checkoutClosedBanner) $checkoutClosedBanner.style.display = 'none';
+            return;
+        }
+        var msg = buildClosedMessage();
+        if ($closedBanner && $closedBannerText) {
+            $closedBannerText.innerHTML = msg;
+            $closedBanner.style.display = 'flex';
+        }
+        if ($checkoutClosedBanner && $checkoutClosedBannerText) {
+            $checkoutClosedBannerText.innerHTML = msg;
+            $checkoutClosedBanner.style.display = 'flex';
+        }
+    }
+
     // ===== PICKUP SLOTS =====
     function renderPickupSlots() {
         var html = '<option value="">Seleziona orario...</option>';
@@ -868,6 +985,11 @@
 
         if (!name.trim()) return showError('Inserisci il tuo nome.');
         if (!phone.trim()) return showError('Inserisci il tuo numero di telefono.');
+        if (!pickup) {
+            return showError(orderMode === 'delivery'
+                ? 'Seleziona un orario di consegna.'
+                : 'Seleziona un orario di ritiro.');
+        }
 
         var items = [];
         Object.keys(cart).forEach(function (id) {

@@ -207,6 +207,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/riders', [RidersController::class, 'store']);
     $r->post('/riders/{id}/update', [RidersController::class, 'update']);
     $r->post('/riders/{id}/toggle', [RidersController::class, 'toggleActive']);
+    $r->post('/riders/{id}/delete', [RidersController::class, 'destroy']);
     $r->post('/orders/{id}/assign-rider', [RidersController::class, 'assignOrder']);
     // Reputation management
     $r->get('/reputation', [ReviewController::class, 'index']);

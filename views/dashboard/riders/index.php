@@ -90,6 +90,15 @@ $defaultColor = '#dc3545';
                             </button>
                             <?php endif; ?>
                         </form>
+                        <?php if ((int)$r['is_active'] === 0): ?>
+                        <form method="POST" action="<?= url('dashboard/riders/' . (int)$r['id'] . '/delete') ?>" style="display:inline;"
+                              data-confirm="Eliminare definitivamente «<?= e($r['name']) ?>»? L'azione non può essere annullata. Lo storico ordini consegnati da questo rider resterà intatto.">
+                            <?= csrf_field() ?>
+                            <button type="submit" class="btn-action btn-act-noshow">
+                                <i class="bi bi-trash"></i> Elimina
+                            </button>
+                        </form>
+                        <?php endif; ?>
                     </div>
                 </td>
             </tr>
@@ -139,6 +148,15 @@ $defaultColor = '#dc3545';
                 </button>
                 <?php endif; ?>
             </form>
+            <?php if ((int)$r['is_active'] === 0): ?>
+            <form method="POST" action="<?= url('dashboard/riders/' . (int)$r['id'] . '/delete') ?>" style="display:inline;"
+                  data-confirm="Eliminare definitivamente «<?= e($r['name']) ?>»? L'azione non può essere annullata.">
+                <?= csrf_field() ?>
+                <button type="submit" class="btn-action btn-act-noshow">
+                    <i class="bi bi-trash"></i> Elimina
+                </button>
+            </form>
+            <?php endif; ?>
         </div>
     </div>
     <?php endforeach; ?>
