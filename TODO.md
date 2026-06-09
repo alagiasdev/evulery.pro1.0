@@ -143,6 +143,33 @@ Decisione: NON costruirli in cieco, aspettare il segnale reale.
   **Trigger**: 1+ ristoratore Enterprise con online ordering attivo lo chiede esplicitamente.
   Modello commerciale: feature solo Enterprise, eventualmente add-on hardware-as-a-service
   con PrintNode incluso. Annotato 2026-05-30.
+- [ ] **Servizio gestione Google My Business** (upsell post-launch) — vendere la
+  gestione GMB come servizio mensile abbinato a Evulery. Sinergia naturale con
+  reputation: recensioni interne alimentano GMB. 3 piani proposti:
+  - **GMB Essential** €99/mese + €299 setup: 1 post/sett, risposta entro 48h, 2 foto/mese
+  - **GMB Plus** €149/mese + €299 setup: 2 post/sett, risposta 24h, 4 foto/mese, Q&A monitoring
+  - **GMB Pro** €249/mese + €399 setup: 3 post/sett, risposta 12h, 8 foto/mese, foto pro 1x/anno, Local SEO
+
+  Sconto annuale -10%. Capacity: 10-15 clienti gestiti direttamente (~25h/sett),
+  oltre serve freelance social media manager. Bundle Evulery Enterprise + GMB Plus -10%
+  per sticky retention. **Trigger**: dopo stabilizzazione 15 Early Adopter Evulery
+  (~settembre 2026), quando ho clienti come case study. Annotato 2026-06-09.
+  Piano completo: memory `project_gmb_service.md`.
+- [ ] **Card NFC per recensioni in-locale** (add-on hardware) — card NFC fisiche
+  brandizzate posizionate sui tavoli, tap & go → landing review Evulery. Sistema
+  review backend (Fase 23) supporta gia' canale NFC, manca solo prodotto fisico
+  + modello commerciale. Conversione attesa +30-50% vs QR sticker (benchmark Linq/Popl).
+
+  Modello commerciale:
+  - **Incluse** nei piani Pro (3 card) ed Enterprise (10 card + sostituzione 1 anno)
+  - **Kit Recensioni NFC** standalone €149 una tantum (5 card brandizzate + 3 sticker QR)
+  - **Card aggiuntive** €15 cad o €60 pack 5
+
+  Economics: card NTAG215 bianca €0,80 + stampa logo €2 + spedizione €5 → costo nostro
+  ~€8 per pack 3, margine 70-90%. Limite capacity 20-30 nuovi clienti/mese gestiti
+  direttamente, oltre serve stamperia partner drop-shipping. **Trigger**: dopo 5+
+  Early Adopter attivi con flusso review QR validato (~agosto 2026). Annotato 2026-06-09.
+  Piano completo: memory `project_nfc_review_cards.md`.
 
 ### Priorità reale a breve termine (NON in panchina)
 - [ ] **Migrazione VPS** — nuovo server 8core/32GB, attesa conferma Serverplan (PHP 8.2,
