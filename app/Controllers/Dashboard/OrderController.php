@@ -196,7 +196,7 @@ class OrderController
             $tenant = TenantResolver::current();
             (new NotificationService())->notifyOrderStatusChange($updatedOrder, $tenant, $newStatus);
         } catch (\Throwable $e) {
-            error_log('Order status notification failed: ' . $e->getMessage());
+            app_log('Order status notification failed: ' . $e->getMessage(), 'warning');
         }
 
         flash('success', 'Stato ordine aggiornato: ' . order_status_label($newStatus));

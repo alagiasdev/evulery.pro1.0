@@ -328,7 +328,7 @@ class OrderApiController
         try {
             (new NotificationService())->notifyNewOrder($order, $tenant);
         } catch (\Throwable $e) {
-            error_log('Order notification failed: ' . $e->getMessage());
+            app_log('Order notification failed: ' . $e->getMessage(), 'warning');
         }
 
         $responseData = [

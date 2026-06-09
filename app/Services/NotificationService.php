@@ -202,7 +202,7 @@ class NotificationService
                 }
             }
         } catch (\Throwable $e) {
-            error_log("NotificationService: push failed for tenant {$tenantId}: " . $e->getMessage());
+            app_log("NotificationService: push failed for tenant {$tenantId}: " . $e->getMessage(), 'warning');
         }
     }
 

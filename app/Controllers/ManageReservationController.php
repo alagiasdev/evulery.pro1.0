@@ -99,7 +99,7 @@ class ManageReservationController
             try {
                 (new NotificationService())->notifyCancellation($reservation, $tenant, 'cliente');
             } catch (\Throwable $e) {
-                error_log('Cancellation notification failed: ' . $e->getMessage());
+                app_log('Cancellation notification failed (magic link): ' . $e->getMessage(), 'warning');
             }
         }
 

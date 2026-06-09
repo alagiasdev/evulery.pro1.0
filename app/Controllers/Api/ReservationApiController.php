@@ -262,7 +262,7 @@ class ReservationApiController
                 (new NotificationService())->notifyNewReservation($fullRes, $tenant);
             }
         } catch (\Throwable $e) {
-            error_log('Notification failed: ' . $e->getMessage());
+            app_log('Reservation creation notification failed (API): ' . $e->getMessage(), 'warning');
         }
 
         // Auto-assegnazione tavolo — non bloccante: un errore qui non deve
@@ -452,7 +452,7 @@ class ReservationApiController
         try {
             (new NotificationService())->notifyCancellation($reservation, $tenant, 'cliente');
         } catch (\Throwable $e) {
-            error_log('Cancellation notification failed: ' . $e->getMessage());
+            app_log('Cancellation notification failed (API): ' . $e->getMessage(), 'warning');
         }
 
         AuditLog::log(AuditLog::RESERVATION_STATUS, "Prenotazione #{$id}: cancelled (API)", null, (int)$tenant['id']);

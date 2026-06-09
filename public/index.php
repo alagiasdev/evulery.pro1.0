@@ -42,14 +42,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS' && str_starts_with($_SERVER['REQUES
     exit;
 }
 
-// Error handling
-if (env('APP_DEBUG', false)) {
+// Error handling. APP_DEBUG e' una stringa "true"/"false" in .env, va castato
+// in bool — env() ritorna la stringa come-e', e "false" e' truthy in PHP.
+$appDebug = filter_var(env('APP_DEBUG', false), FILTER_VALIDATE_BOOLEAN);
+if ($appDebug) {
     error_reporting(E_ALL);
     ini_set('display_errors', '1');
 } else {
-    error_reporting(0);
+    // In prod: cattura warning/error tramite handler ma sopprime visualizzazione.
+    // Notice/Deprecated/Strict esclusi per non spammare i log con rumore legacy.
+    error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_USER_NOTICE & ~E_USER_DEPRECATED);
     ini_set('display_errors', '0');
 }
+
+// PHP warning/error handler: cattura warning runtime che prima erano persi
+// nel log di sistema. Rispetta il @-suppression operator (error_reporting()
+// torna 0 durante l'errore se chiamante usa @file_get_contents ecc.).
+set_error_handler(function (int $severity, string $message, string $file, int $line): bool {
+    if (!(error_reporting() & $severity)) {
+        return false; // errore @-soppresso o filtrato da error_reporting → lascia stare
+    }
+    $labels = [
+        E_WARNING           => 'php_warning',
+        E_USER_WARNING      => 'php_warning',
+        E_RECOVERABLE_ERROR => 'php_error',
+        E_USER_ERROR        => 'php_error',
+        E_CORE_WARNING      => 'php_warning',
+        E_COMPILE_WARNING   => 'php_warning',
+    ];
+    $label = $labels[$severity] ?? 'php';
+    app_log("[{$label}] {$message} in {$file}:{$line}", 'warning');
+    return true; // intercettato, non chiamare default handler
+});
 
 // Set error handler
 set_exception_handler(function (\Throwable $e) {

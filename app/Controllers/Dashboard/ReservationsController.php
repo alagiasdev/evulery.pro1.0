@@ -356,7 +356,7 @@ class ReservationsController
                 );
             }
         } catch (\Throwable $e) {
-            error_log('Auto-assegnazione tavolo (dashboard) fallita: ' . $e->getMessage());
+            app_log('Auto-assegnazione tavolo (dashboard) fallita: ' . $e->getMessage(), 'warning');
         }
 
         flash('success', 'Prenotazione creata con successo.');
@@ -415,7 +415,7 @@ class ReservationsController
                 try {
                     (new NotificationService())->notifyCancellation($full, $tenant, 'staff');
                 } catch (\Throwable $e) {
-                    error_log('Cancellation notification failed: ' . $e->getMessage());
+                    app_log('Cancellation notification failed (dashboard): ' . $e->getMessage(), 'warning');
                 }
             }
         }
