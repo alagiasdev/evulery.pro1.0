@@ -224,13 +224,24 @@ class Reservation
         return $stmt->fetch() ?: null;
     }
 
-    public function updateStatus(int $id, string $status): bool
+    /**
+     * Aggiorna lo stato di una prenotazione.
+     *
+     * @param string $status         confirmed|pending|arrived|noshow|cancelled
+     * @param string|null $cancelledBy customer|staff|system — usato SOLO se status='cancelled'.
+     *                                 Default null = mantiene il valore eventuale gia' presente in DB.
+     */
+    public function updateStatus(int $id, string $status, ?string $cancelledBy = null): bool
     {
         $data = ['id' => $id, 'status' => $status];
         $sql = 'UPDATE reservations SET status = :status';
 
         if ($status === 'cancelled') {
             $sql .= ', cancelled_at = NOW()';
+            if ($cancelledBy !== null) {
+                $sql .= ', cancelled_by = :cancelled_by';
+                $data['cancelled_by'] = $cancelledBy;
+            }
         }
 
         $sql .= ' WHERE id = :id';

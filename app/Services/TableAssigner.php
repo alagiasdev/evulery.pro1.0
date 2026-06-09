@@ -20,11 +20,13 @@ use PDO;
  * allarga la forbice quando vuole.
  *
  * Auto-assegnazione: tra i tavoli liberi e validi sceglie il "fit più
- * stretto" (quello che spreca meno posti rispetto al party); a parità
- * di fit, vince la priorità manuale (ordine in lista); a parità ancora,
- * l'id più basso (deterministico). Le combinazioni si attivano SOLO se
- * nessun tavolo singolo valido è libero — altrimenti spreca due tavoli
- * per fare il lavoro di uno. Mai bloccante.
+ * stretto" (quello che spreca meno posti rispetto al party); a parità di
+ * fit, vince il tavolo con range più stretto (`max - min` minore: un secco
+ * `2-2p` batte un `1-2p` perché esprime un intent piu' netto del ristoratore);
+ * a parità ancora, la priorità manuale (ordine in lista) e infine l'id più
+ * basso (deterministico). Le combinazioni si attivano SOLO se nessun tavolo
+ * singolo valido è libero — altrimenti spreca due tavoli per fare il lavoro
+ * di uno. Mai bloccante.
  */
 class TableAssigner
 {
@@ -62,7 +64,9 @@ class TableAssigner
      * Algoritmo:
      *  1. Filtra i tavoli validi (min≤P≤max) e liberi nel turno.
      *  2. Sceglie il "fit più stretto" (capacity - P minore); tiebreaker
-     *     su priority asc, poi id asc per determinismo.
+     *     su elasticity asc (range max-min: un secco vince un range che
+     *     include P, perché il ristoratore l'ha configurato con intent
+     *     dedicato), poi priority asc, poi id asc per determinismo.
      *  3. Se nessun singolo è disponibile, prova una combinazione di
      *     due tavoli (entrambi liberi e con max_a + max_b ≥ P).
      */
@@ -95,12 +99,14 @@ class TableAssigner
             $candidates[] = [
                 'id'    => (int)$t['id'],
                 'fit'   => $max - $partySize,   // spreco di posti (più basso = meglio)
+                'elast' => $max - $min,          // range del tavolo (0 = secco, n>0 = elastico)
                 'prio'  => $idx,                 // posizione in lista (già ordinata per priority)
             ];
         }
         if (!empty($candidates)) {
             usort($candidates, function ($a, $b) {
-                return [$a['fit'], $a['prio'], $a['id']] <=> [$b['fit'], $b['prio'], $b['id']];
+                return [$a['fit'], $a['elast'], $a['prio'], $a['id']]
+                   <=> [$b['fit'], $b['elast'], $b['prio'], $b['id']];
             });
             return [$candidates[0]['id']];
         }

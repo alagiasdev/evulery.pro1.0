@@ -215,6 +215,21 @@ function status_label(string $status): string
 }
 
 /**
+ * Label per il campo reservations.cancelled_by.
+ * Ritorna stringa vuota se NULL (reservation non cancellata o cancellata
+ * prima della migration 063 senza traccia dell'autore).
+ */
+function cancelled_by_label(?string $cancelledBy): string
+{
+    return match ($cancelledBy) {
+        'customer' => 'dal cliente',
+        'staff'    => 'dal ristoratore',
+        'system'   => 'dal sistema (pagamento scaduto)',
+        default    => '',
+    };
+}
+
+/**
  * Colore identificativo di un'area sala, derivato in modo deterministico
  * dal nome (crc32 → palette fissa). La stessa area ha sempre lo stesso
  * colore, senza alcuna configurazione. Palette scelta per non confondersi

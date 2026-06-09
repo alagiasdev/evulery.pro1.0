@@ -105,7 +105,7 @@ class WebhookController
                     $reservation = $reservationModel->findById((int)$reservationId);
                     if ($reservation && $reservation['status'] === 'pending' && !$reservation['deposit_paid']) {
                         $isGuarantee = ($reservation['guarantee_status'] ?? 'none') === 'pending';
-                        $reservationModel->updateStatus((int)$reservationId, 'cancelled');
+                        $reservationModel->updateStatus((int)$reservationId, 'cancelled', 'system');
                         $logModel->create(
                             (int)$reservationId, 'pending', 'cancelled', null,
                             $isGuarantee ? 'Carta a garanzia non registrata' : 'Pagamento scaduto'

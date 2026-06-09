@@ -445,7 +445,7 @@ class ReservationApiController
             Response::error('Questa prenotazione non può essere annullata.', 'INVALID_STATUS', 400);
         }
 
-        $reservationModel->updateStatus($id, 'cancelled');
+        $reservationModel->updateStatus($id, 'cancelled', 'customer');
         (new ReservationLog())->create($id, $reservation['status'], 'cancelled', null, 'Annullata dal cliente');
 
         // Notify restaurant owner (email + campanella + push)

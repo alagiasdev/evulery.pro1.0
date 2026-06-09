@@ -143,6 +143,23 @@ Decisione: NON costruirli in cieco, aspettare il segnale reale.
   **Trigger**: 1+ ristoratore Enterprise con online ordering attivo lo chiede esplicitamente.
   Modello commerciale: feature solo Enterprise, eventualmente add-on hardware-as-a-service
   con PrintNode incluso. Annotato 2026-05-30.
+- [ ] **Modale ibrido cancellazione/rifiuto prenotazioni** (UX) — generalizzare il
+  pattern del wireframe `wireframes/fase-f-richieste-gruppi.html` a TUTTE le cancellazioni
+  di prenotazione, inclusi i tavoli 1-2 persone. Oggi (2026-06-09) e' stato implementato
+  solo il label "Annullata da: ristoratore/cliente/sistema" (campo `cancelled_by`). Il
+  pattern futuro prevede una modale leggera quando il ristoratore clicca "Annulla":
+  - 3-4 chip preselezionate (es. "Forza maggiore", "Errore prenotazione", "Su richiesta
+    cliente", "Tavolo non disponibile piu'") con descrizione lunga sotto
+  - Textarea opzionale "Aggiungi qualcosa" libera
+  - Toggle "Proponi un'alternativa nell'email" (suggerisce al cliente di richiamare)
+  - Bottone "Invia annullamento al cliente" (parte email con motivazione)
+
+  Il pattern e' bello perche': pochi click, motivazione chiara per il cliente (la riceve
+  in email), niente friction se il ristoratore ha fretta (textarea opzionale).
+  **Trigger**: 5+ ristoratori in prod oppure 1+ segnalazione "vorrei dire al cliente
+  perche' ho cancellato". Stima ~4-5h (modale + email template + 4 chip per scenario).
+  Riusa l'idea della tabella `reservation_logs.note` esistente.
+  Annotato 2026-06-09.
 - [ ] **Servizio gestione Google My Business** (upsell post-launch) — vendere la
   gestione GMB come servizio mensile abbinato a Evulery. Sinergia naturale con
   reputation: recensioni interne alimentano GMB. 3 piani proposti:

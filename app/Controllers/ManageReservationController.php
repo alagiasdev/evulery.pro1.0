@@ -84,7 +84,7 @@ class ManageReservationController
             Response::redirect(url("manage/{$token}"));
         }
 
-        $reservationModel->updateStatus($reservation['id'], 'cancelled');
+        $reservationModel->updateStatus($reservation['id'], 'cancelled', 'customer');
         (new ReservationLog())->create(
             $reservation['id'],
             $reservation['status'],

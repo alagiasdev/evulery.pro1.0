@@ -382,7 +382,10 @@ class ReservationsController
             Response::redirect(url('dashboard/reservations'));
         }
 
-        $reservationModel->updateStatus($id, $newStatus);
+        // Cancellazione: traccia chi ha annullato (solo per status=cancelled,
+        // altrimenti il parametro e' ignorato dal modello).
+        $cancelledBy = ($newStatus === 'cancelled') ? 'staff' : null;
+        $reservationModel->updateStatus($id, $newStatus, $cancelledBy);
 
         // Log the change
         (new ReservationLog())->create($id, $reservation['status'], $newStatus, Auth::id());

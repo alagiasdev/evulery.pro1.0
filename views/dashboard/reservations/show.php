@@ -39,6 +39,21 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
         <span class="status-badge <?= e($reservation['status']) ?>"><?= status_label($reservation['status']) ?></span>
     </div>
 
+    <?php
+    // Riga "Annullata da [chi] il [quando]" — visibile solo se status=cancelled
+    // e abbiamo traccia dell'autore (NULL per reservation cancellate pre-migration 063).
+    if ($reservation['status'] === 'cancelled' && !empty($reservation['cancelled_by'])):
+        $cancelLabel = cancelled_by_label($reservation['cancelled_by']);
+        $cancelWhen = !empty($reservation['cancelled_at'])
+            ? format_date($reservation['cancelled_at'], 'd/m/Y') . ' alle ' . format_time(substr($reservation['cancelled_at'], 11, 5))
+            : '';
+    ?>
+    <div style="margin-top:.5rem;padding:.5rem .75rem;background:#fff4e5;border-left:3px solid #f57c00;border-radius:4px;font-size:.82rem;color:#6d3a00;">
+        <i class="bi bi-info-circle"></i>
+        Annullata <strong><?= e($cancelLabel) ?></strong><?= $cancelWhen ? ' &middot; ' . e($cancelWhen) : '' ?>
+    </div>
+    <?php endif; ?>
+
     <div class="hero-details">
         <div>
             <div class="detail-label"><i class="bi bi-calendar3 me-1"></i>Data</div>
