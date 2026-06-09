@@ -101,8 +101,16 @@ class Plan
     /**
      * Calcola il prezzo totale per un ciclo di fatturazione.
      *
-     * @param array  $plan          Piano (con price, billing_months_semi, billing_months_annual)
-     * @param string $cycle         'semiannual' o 'annual'
+     * Priorita' di calcolo:
+     * 1. Se il piano ha `price_semiannual`/`price_annual` valorizzato (cifra
+     *    tonda decisa dal listino, es. €729/€1290 Enterprise) -> usa quella
+     *    cifra come subtotal, ignorando billing_months_*.
+     * 2. Altrimenti calcola subtotal = monthly_price * billing_months_*
+     *    (modello legacy basato su "mesi pagati su X").
+     * 3. Sull'subtotal si applica eventualmente l'extra_discount admin.
+     *
+     * @param array  $plan          Piano (con price, price_semiannual, price_annual, billing_months_*)
+     * @param string $cycle         'monthly' | 'semiannual' | 'annual'
      * @param float  $extraDiscount Sconto extra % (0-100)
      * @return array {total: prezzo totale ciclo, monthly: equivalente mensile, months_paid: mesi pagati, months_cycle: mesi ciclo}
      */
@@ -110,15 +118,31 @@ class Plan
     {
         $monthlyPrice = (float)$plan['price'];
 
-        if ($cycle === 'semiannual') {
+        if ($cycle === 'monthly') {
+            $monthsCycle = 1;
+            $monthsPaid  = 1;
+            $subtotal    = $monthlyPrice;
+        } elseif ($cycle === 'semiannual') {
             $monthsCycle = 6;
-            $monthsPaid  = max(1, min(6, (int)($plan['billing_months_semi'] ?? 5)));
-        } else {
+            // Se price_semiannual e' valorizzato, usa il prezzo diretto.
+            // months_paid e' calcolato per back-compat (es. UI che lo mostra).
+            if (!empty($plan['price_semiannual']) && (float)$plan['price_semiannual'] > 0) {
+                $subtotal   = (float)$plan['price_semiannual'];
+                $monthsPaid = $monthlyPrice > 0 ? round($subtotal / $monthlyPrice, 2) : 6;
+            } else {
+                $monthsPaid = max(1, min(6, (int)($plan['billing_months_semi'] ?? 5)));
+                $subtotal   = $monthlyPrice * $monthsPaid;
+            }
+        } else { // annual
             $monthsCycle = 12;
-            $monthsPaid  = max(1, min(12, (int)($plan['billing_months_annual'] ?? 10)));
+            if (!empty($plan['price_annual']) && (float)$plan['price_annual'] > 0) {
+                $subtotal   = (float)$plan['price_annual'];
+                $monthsPaid = $monthlyPrice > 0 ? round($subtotal / $monthlyPrice, 2) : 12;
+            } else {
+                $monthsPaid = max(1, min(12, (int)($plan['billing_months_annual'] ?? 10)));
+                $subtotal   = $monthlyPrice * $monthsPaid;
+            }
         }
-
-        $subtotal = $monthlyPrice * $monthsPaid;
 
         // Sconto extra admin
         $extraDiscount = max(0, min(100, $extraDiscount));

@@ -20,7 +20,8 @@ class SubscriptionsController
 
         // KPI — MRR totale + split (da reseller / diretto)
         $activeSubs = $db->query(
-            "SELECT p.price, p.billing_months_semi, p.billing_months_annual,
+            "SELECT p.price, p.price_semiannual, p.price_annual,
+                    p.billing_months_semi, p.billing_months_annual,
                     s.billing_cycle, s.extra_discount,
                     t.acquired_by_reseller_id
              FROM subscriptions s
@@ -70,6 +71,7 @@ class SubscriptionsController
             "SELECT s.*, t.name as tenant_name, t.slug as tenant_slug,
                     t.acquired_by_reseller_id,
                     p.name as plan_name, p.color as plan_color, p.price as plan_price,
+                    p.price_semiannual, p.price_annual,
                     p.billing_months_semi, p.billing_months_annual,
                     u.first_name AS reseller_first_name, u.last_name AS reseller_last_name
              FROM subscriptions s
@@ -126,6 +128,7 @@ class SubscriptionsController
         $periodEnd     = $request->input('period_end', '') ?: null;
         $billingCycle  = $request->input('billing_cycle', 'annual');
         $extraDiscount = (float)$request->input('extra_discount', 0);
+        $lockedUntil   = trim((string)$request->input('locked_price_until', '')) ?: null;
 
         // Validate status
         $validStatuses = ['active', 'trialing', 'past_due', 'cancelled'];
@@ -134,8 +137,13 @@ class SubscriptionsController
         }
 
         // Validate billing cycle
-        if (!in_array($billingCycle, ['semiannual', 'annual'])) {
+        if (!in_array($billingCycle, ['monthly', 'semiannual', 'annual'])) {
             $billingCycle = 'annual';
+        }
+
+        // Validate locked_price_until (YYYY-MM-DD o null)
+        if ($lockedUntil !== null && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $lockedUntil)) {
+            $lockedUntil = null;
         }
 
         // Clamp extra discount 0-100
@@ -148,7 +156,7 @@ class SubscriptionsController
         $db->prepare(
             "UPDATE subscriptions
              SET plan_id = :pid, price = :price, billing_cycle = :bc,
-                 extra_discount = :ed, status = :status,
+                 extra_discount = :ed, locked_price_until = :lu, status = :status,
                  current_period_start = :ps, current_period_end = :pe
              WHERE id = :id"
         )->execute([
@@ -156,6 +164,7 @@ class SubscriptionsController
             'price'  => $calc['total'],
             'bc'     => $billingCycle,
             'ed'     => $extraDiscount,
+            'lu'     => $lockedUntil,
             'status' => $status,
             'ps'     => $periodStart,
             'pe'     => $periodEnd,

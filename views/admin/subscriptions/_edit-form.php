@@ -19,6 +19,7 @@
                 <label class="adm-form-label">Ciclo</label>
                 <?php $sCycle = $s['billing_cycle'] ?? 'annual'; ?>
                 <select name="billing_cycle" class="adm-form-input">
+                    <option value="monthly" <?= $sCycle === 'monthly' ? 'selected' : '' ?>>Mensile</option>
                     <option value="semiannual" <?= $sCycle === 'semiannual' ? 'selected' : '' ?>>Semestrale</option>
                     <option value="annual" <?= $sCycle === 'annual' ? 'selected' : '' ?>>Annuale</option>
                 </select>
@@ -46,6 +47,14 @@
                 <label class="adm-form-label">Scadenza</label>
                 <input type="date" name="period_end" class="adm-form-input"
                        value="<?= $s['current_period_end'] ? date('Y-m-d', strtotime($s['current_period_end'])) : '' ?>">
+            </div>
+            <div>
+                <label class="adm-form-label" title="Data fino alla quale il prezzo resta congelato anche se il listino aumenta. Es. Early Adopter: data attivazione + 36 mesi.">
+                    Prezzo bloccato fino a
+                </label>
+                <input type="date" name="locked_price_until" class="adm-form-input"
+                       value="<?= !empty($s['locked_price_until']) ? date('Y-m-d', strtotime($s['locked_price_until'])) : '' ?>"
+                       placeholder="Es. attivazione + 36 mesi">
             </div>
         </div>
         <div class="adm-sub-edit-actions">

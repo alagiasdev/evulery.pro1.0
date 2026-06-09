@@ -90,7 +90,11 @@ $tabs = [
         $s['_extraDisc'] = (float)($s['extra_discount'] ?? 0);
         $planForCalc = array_merge($s, ['price' => $s['plan_price'] ?? $s['price']]);
         $s['_calcPrice'] = \App\Models\Plan::calculatePrice($planForCalc, $s['_cycle'], $s['_extraDisc']);
-        $s['_cycleLabel'] = $s['_cycle'] === 'semiannual' ? '6 mesi' : '12 mesi';
+        $s['_cycleLabel'] = match ($s['_cycle']) {
+            'monthly'    => '1 mese',
+            'semiannual' => '6 mesi',
+            default      => '12 mesi',
+        };
         // Status badge
         if ($s['status'] === 'active') {
             $endTs2 = $s['current_period_end'] ? strtotime($s['current_period_end']) : null;
