@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evulery — Playbook Primo Incontro (uso interno)</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A;
+    --brand-dark: #006837;
+    --brand-darker: #042418;
+    --brand-light: #E8F5E9;
+    --brand-tint: #f0faf4;
+    --ink: #1a1d23;
+    --ink-soft: #495057;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --bg: #f5f6f8;
+    --warning: #E65100;
+    --warning-light: #FFF3E0;
+    --danger: #b71c1c;
+    --danger-light: #fde8ea;
+    --info: #0277bd;
+    --info-light: #e3f2fd;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.6;
+    padding: 24px 18px 60px;
+}
+@page { size: A4; margin: 14mm 12mm; }
+@media print {
+    body { background: #fff; padding: 0; font-size: 11pt; }
+    .no-print { display: none !important; }
+    .wrap { max-width: 100%; }
+    .section { page-break-inside: avoid; }
+    .turn { page-break-inside: avoid; }
+    h2 { page-break-after: avoid; }
+    .hero { page-break-after: avoid; }
+}
+
+.wrap { max-width: 920px; margin: 0 auto; }
+
+/* === Toolbar === */
+.toolbar {
+    background: #fff;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    font-size: 13px;
+}
+.toolbar button {
+    background: var(--brand);
+    color: #fff;
+    border: 0;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.toolbar button:hover { background: var(--brand-dark); }
+
+/* === Hero === */
+.hero {
+    background: linear-gradient(135deg, var(--brand-darker) 0%, var(--brand) 100%);
+    color: #fff;
+    border-radius: 18px;
+    padding: 32px 36px;
+    margin-bottom: 24px;
+}
+.hero-eyebrow {
+    font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2px; opacity: .85; margin-bottom: 8px;
+}
+.hero h1 { font-size: 1.8rem; font-weight: 900; letter-spacing: -.5px; margin-bottom: 6px; }
+.hero-payoff { font-size: 1rem; opacity: .9; font-style: italic; margin-bottom: 16px; }
+.hero-meta {
+    display: flex; flex-wrap: wrap; gap: 18px;
+    padding-top: 14px; border-top: 1px solid rgba(255,255,255,.18);
+    font-size: .82rem;
+}
+.hero-meta strong { display: block; opacity: .75; font-size: .68rem; text-transform: uppercase; letter-spacing: 1.5px; }
+
+/* === Scenario box === */
+.scenario {
+    background: #fff8e1;
+    border-left: 4px solid var(--warning);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+}
+.scenario-label {
+    font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.5px; color: var(--warning); margin-bottom: 6px;
+}
+.scenario p { font-size: .92rem; color: var(--ink); margin-bottom: 6px; }
+.scenario p:last-child { margin-bottom: 0; }
+
+/* === Section === */
+.section {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+}
+.section-num {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--brand);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+.section h2 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -.3px;
+    margin-bottom: 6px;
+}
+.section-sub {
+    font-size: .88rem;
+    color: var(--muted);
+    margin-bottom: 16px;
+}
+.section h3 {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--brand);
+    margin: 18px 0 8px;
+}
+
+/* === Checklist === */
+.checklist {
+    list-style: none;
+    padding: 0;
+}
+.checklist li {
+    padding: 6px 0 6px 28px;
+    position: relative;
+    font-size: .92rem;
+}
+.checklist li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--line);
+    border-radius: 3px;
+    background: #fff;
+}
+.checklist li.done::before {
+    background: var(--brand);
+    border-color: var(--brand);
+}
+.checklist li.done::after {
+    content: "✓";
+    position: absolute;
+    left: 3px; top: 5px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* === Dialogo === */
+.dialog {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin: 10px 0 14px;
+}
+.turn {
+    margin-bottom: 14px;
+}
+.turn:last-child { margin-bottom: 0; }
+.turn-who {
+    font-size: .68rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+.turn.you .turn-who { color: var(--brand); }
+.turn.them .turn-who { color: var(--ink-soft); }
+.turn.note .turn-who { color: var(--warning); }
+.turn-text {
+    background: #fff;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: .94rem;
+    line-height: 1.55;
+    border: 1px solid var(--line);
+}
+.turn.you .turn-text {
+    background: #fff;
+    border-left: 3px solid var(--brand);
+}
+.turn.them .turn-text {
+    background: var(--brand-tint);
+    border-left: 3px solid var(--ink-soft);
+    font-style: italic;
+}
+.turn.note .turn-text {
+    background: var(--warning-light);
+    border-left: 3px solid var(--warning);
+    font-size: .86rem;
+    color: var(--ink-soft);
+}
+.turn.note .turn-text strong { color: var(--warning); }
+
+/* === Obiezioni === */
+.objection {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+}
+.objection-q {
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--danger);
+    margin-bottom: 6px;
+}
+.objection-q::before {
+    content: "\"";
+    margin-right: 2px;
+}
+.objection-q::after {
+    content: "\"";
+    margin-left: 2px;
+}
+.objection-a {
+    font-size: .92rem;
+    color: var(--ink-soft);
+}
+.objection-a strong { color: var(--ink); }
+
+/* === Errore === */
+.error-list {
+    list-style: none;
+    padding: 0;
+}
+.error-list li {
+    padding: 10px 16px 10px 40px;
+    position: relative;
+    background: var(--danger-light);
+    border-left: 3px solid var(--danger);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: .92rem;
+}
+.error-list li::before {
+    content: "\f659";
+    font-family: 'bootstrap-icons';
+    position: absolute;
+    left: 14px; top: 10px;
+    color: var(--danger);
+    font-size: 1.05rem;
+}
+
+/* === Material list === */
+.material-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.material-list li {
+    padding: 12px 16px;
+    background: var(--brand-tint);
+    border-radius: 8px;
+    border-left: 3px solid var(--brand);
+    font-size: .9rem;
+}
+.material-list li strong { display: block; margin-bottom: 2px; }
+.material-list li .ref {
+    font-size: .76rem;
+    color: var(--muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* === Tip === */
+.tip {
+    background: var(--info-light);
+    border-left: 3px solid var(--info);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 12px 0;
+    font-size: .88rem;
+    color: var(--ink-soft);
+}
+.tip strong { color: var(--info); }
+
+/* === KPI / numeri === */
+.numero-time {
+    display: inline-block;
+    background: #fff;
+    border: 2px solid var(--brand);
+    color: var(--brand);
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-size: .76rem;
+    font-weight: 700;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+/* === Footer === */
+footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: .78rem;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+}
+
+@media (max-width: 640px) {
+    .material-list { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 1.4rem; }
+    .hero { padding: 22px 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<div class="toolbar no-print">
+    <span>Playbook uso interno &middot; portare cartaceo al primo periodo</span>
+    <button type="button" onclick="window.print()"><i class="bi bi-printer"></i> Stampa A4</button>
+</div>
+
+<!-- ============== HERO ============== -->
+<div class="hero">
+    <div class="hero-eyebrow">Playbook commerciale &middot; uso interno</div>
+    <h1>Primo incontro col ristoratore</h1>
+    <p class="hero-payoff">Cosa dire, in che ordine, e cosa NON dire — il dialogo simulato fase per fase.</p>
+    <div class="hero-meta">
+        <div><strong>Durata target</strong>30-45 min</div>
+        <div><strong>Pre-requisito</strong>Volantino gia' consegnato</div>
+        <div><strong>Obiettivo</strong>Firma o data follow-up</div>
+        <div><strong>Esito da evitare</strong>"Ti faccio sapere"</div>
+    </div>
+</div>
+
+<!-- ============== SCENARIO ============== -->
+<div class="scenario">
+    <div class="scenario-label"><i class="bi bi-person-badge"></i> Scenario di riferimento</div>
+    <p><strong>Trattoria Da Mario</strong> — 55 coperti, Pisa centro. Titolare Mario, 52 anni, in attivita' da 18 anni. Ha ricevuto il volantino 4 giorni fa (consegnato a pranzo). Ha chiamato lui per fissare l'appuntamento. Riceve oggi alle 11:00 in trattoria, prima del servizio pranzo.</p>
+    <p><strong>Cosa sai gia':</strong> usa TheFork da 3 anni, ha 1 sito statico vecchio, prenotazioni le prende quasi tutte al telefono. No-show frequenti il venerdi'/sabato sera. Recensioni Google 4,2 con 87 recensioni.</p>
+</div>
+
+<!-- ============== SEZIONE 1 - PRE-INCONTRO ============== -->
+<div class="section">
+    <div class="section-num"><i class="bi bi-clipboard-check"></i> 1 · Pre-incontro</div>
+    <h2>Cosa preparare prima di entrare</h2>
+    <p class="section-sub">Da fare in macchina/in ufficio nei 15 minuti prima. Non improvvisare.</p>
+
+    <h3>Materiale fisico da portare</h3>
+    <ul class="checklist">
+        <li>Volantino A4 (un'altra copia, anche se l'ha gia' visto)</li>
+        <li>Regolamento offerta stampato (2 copie, una resta a lui)</li>
+        <li>Biglietto da visita</li>
+        <li>Tablet o laptop carico, con demo gia' caricata in browser</li>
+        <li>Penna nera + blocco appunti (NO foglietti volanti)</li>
+    </ul>
+
+    <h3>Materiale digitale da aprire (browser, tab gia' pronte)</h3>
+    <ul class="checklist">
+        <li>Dashboard Evulery di un tenant demo (Trattoria Esempio)</li>
+        <li>Pagina pubblica vetrina digitale demo</li>
+        <li>ROI calculator (`sales/roi-calculator.html`) gia' aperto</li>
+        <li>FAQ ristoratore in tab di backup (`sales/faq-ristoratore.html`)</li>
+    </ul>
+
+    <h3>Verifica preventiva su Google (5 min)</h3>
+    <ul class="checklist">
+        <li>Quante recensioni ha su Google? Voto medio? Ultima recensione di che giorno?</li>
+        <li>Ha gia' un widget prenotazioni sul sito? Quale?</li>
+        <li>E' su TheFork? Su quale piano (Standard, Premium)?</li>
+        <li>Tipo di cucina, fascia di prezzo media</li>
+    </ul>
+
+    <div class="tip"><strong>Perche'</strong>: il ristoratore percepisce subito se sei "uno che vende a chiunque" o "uno che ha studiato il MIO caso". Cinque minuti di Google fanno la differenza.</div>
+</div>
+
+<!-- ============== SEZIONE 2 - DIALOGO ============== -->
+<div class="section">
+    <div class="section-num"><i class="bi bi-chat-square-text"></i> 2 · Il dialogo, fase per fase</div>
+    <h2>Simulazione completa</h2>
+    <p class="section-sub">Le battute sono esempi realistici. Adatta il tono al ristoratore che hai davanti, ma rispetta l'ORDINE delle fasi.</p>
+
+    <!-- FASE 2.1 -->
+    <h3>2.1 &middot; Apertura<span class="numero-time">3 min</span></h3>
+    <div class="dialog">
+        <div class="turn you">
+            <div class="turn-who">TU (entrando, sorriso)</div>
+            <div class="turn-text">Buongiorno Mario, grazie del tempo. So che tra un'ora apri, quindi vado dritto al punto. Prima di mostrarti qualcosa pero', vorrei capire come gestisci oggi le prenotazioni. Mi racconti una serata tipo del venerdi'?</div>
+        </div>
+        <div class="turn them">
+            <div class="turn-who">Mario</div>
+            <div class="turn-text">Eh, il venerdi'. Il telefono inizia a squillare dalle 10 del mattino. Mia moglie segna sul quaderno. Poi nel pomeriggio chi vuole spostare, chi non si presenta, chi prenota TheFork e noi dobbiamo bloccare il tavolo a parte...</div>
+        </div>
+        <div class="turn note">
+            <div class="turn-who">Nota tattica</div>
+            <div class="turn-text"><strong>Ha gia' detto 3 parole d'oro</strong>: "telefono", "quaderno", "non si presenta". Non interrompere. Annota. Lo sfrutti nelle leve dopo.</div>
+        </div>
+    </div>
+
+    <!-- FASE 2.2 -->
+    <h3>2.2 &middot; Discovery — fai le domande giuste<span class="numero-time">10 min</span></h3>
+    <p style="font-size:.9rem;color:var(--ink-soft);margin-bottom:10px;">Tre domande aperte, in quest'ordine. NON parlare di Evulery ancora.</p>
+    <div class="dialog">
+        <div class="turn you">
+            <div class="turn-who">TU - domanda 1 (numeri)</div>
+            <div class="turn-text">Quanti no-show ti capitano la settimana? Diciamo un sabato tipo: prenoti 30 tavoli, quanti non si presentano?</div>
+        </div>
+        <div class="turn them">
+            <div class="turn-who">Mario</div>
+            <div class="turn-text">Sabato? Almeno 4-5. A volte 2 tavoli da 6 vuoti. Sono 80 euro a tavolo che butto.</div>
+        </div>
+        <div class="turn you">
+            <div class="turn-who">TU - domanda 2 (TheFork)</div>
+            <div class="turn-text">E TheFork, quanto ti porta a fine mese? Intendo: tra quello che ti arriva e quello che paghi a loro, quanto ti resta?</div>
+        </div>
+        <div class="turn them">
+            <div class="turn-who">Mario</div>
+            <div class="turn-text">Boh, mi porta i suoi 25-30 coperti al mese, ma con la fee e il Yums... a fine anno mi viene una botta. Pero' senza non saprei...</div>
+        </div>
+        <div class="turn you">
+            <div class="turn-who">TU - domanda 3 (rubrica)</div>
+            <div class="turn-text">Ultima cosa: quando una persona prenota da TheFork e poi torna 3 volte, quel cliente per te chi e'? Hai il suo numero?</div>
+        </div>
+        <div class="turn them">
+            <div class="turn-who">Mario (pausa)</div>
+            <div class="turn-text">No, in effetti no... ce l'ha TheFork. Strano, non ci avevo pensato cosi'.</div>
+        </div>
+        <div class="turn note">
+            <div class="turn-who">Tre leve acquisite</div>
+            <div class="turn-text"><strong>1) Perdita no-show quantificata</strong> (~€320/mese minimi) &middot; <strong>2) Frustrazione TheFork</strong> &middot; <strong>3) Insight sui clienti</strong>. Adesso puoi mostrare la demo MIRATA su questi tre punti.</div>
+        </div>
+    </div>
+
+    <!-- FASE 2.3 -->
+    <h3>2.3 &middot; Demo mirata — mostra 3 cose, non 30<span class="numero-time">12 min</span></h3>
+    <p style="font-size:.9rem;color:var(--ink-soft);margin-bottom:10px;">Apri il tablet ORA, non prima. Mostra ESATTAMENTE i 3 punti emersi nel discovery.</p>
+    <div class="dialog">
+        <div class="turn you">
+            <div class="turn-who">TU</div>
+            <div class="turn-text">OK, ti faccio vedere 3 cose, in 10 minuti. La prima: <strong>il no-show del sabato</strong>. Guarda qua. Una persona prenota online, e a fine prenotazione gli compare questa schermata...</div>
+        </div>
+        <div class="turn note">
+            <div class="turn-who">Cosa mostri sul tablet</div>
+            <div class="turn-text">Demo widget con <strong>Carta a garanzia</strong>. Mostra come il cliente registra Visa in 30 secondi, nessun addebito. Spiega: "Se non si presenta, con un click addebiti la penale che hai deciso TU. Niente discussioni, niente telefonate. E' il modello TheFork, ma qui e' SUO."</div>
+        </div>
+        <div class="turn you">
+            <div class="turn-who">TU - leva 2</div>
+            <div class="turn-text">Seconda cosa: <strong>i tuoi clienti restano tuoi</strong>. Ogni persona che prenota qui finisce nella tua rubrica. Guarda: questo e' Andrea, ha prenotato 6 volte, festeggia il compleanno il 15 marzo, gli piace il tavolo accanto alla finestra...</div>
+        </div>
+        <div class="turn note">
+            <div class="turn-who">Cosa mostri</div>
+            <div class="turn-text">Dashboard <strong>Clienti</strong>. Mostra la scheda cliente con storico visite, note, compleanno. Mostra come parte un'email automatica il giorno del compleanno con CTA "prenota ora".</div>
+        </div>
+        <div class="turn you">
+            <div class="turn-who">TU - leva 3</div>
+            <div class="turn-text">Terza cosa: una sola schermata per tutto. Ordini d'asporto, recensioni, prenotazioni, menu digitale col QR sui tavoli. Non 4 strumenti che parlano lingue diverse, ma uno solo.</div>
+        </div>
+        <div class="turn note">
+            <div class="turn-who">Cosa mostri</div>
+            <div class="turn-text">Vetrina digitale pubblica (pagina QR). Mostra come col QR sul tavolo il cliente vede menu + prenotazioni + ordini d'asporto + lascia recensione. <strong>Aggiungi</strong>: "E le recensioni qui sono gia' conformi alla Legge 34/2026, che dal prossimo gennaio diventa obbligatoria."</div>
+        </div>
+    </div>
+    <div class="tip"><strong>Regola d'oro demo</strong>: massimo 12 minuti, 3 funzionalita'. Se Mario fa una domanda di approfondimento su una quarta, e' un ottimo segno — vuol dire che e' interessato. Rispondi, ma NON aggiungere di tua iniziativa altri pezzi.</div>
+
+    <!-- FASE 2.4 -->
+    <h3>2.4 &middot; Pricing — l'ancoraggio<span class="numero-time">5 min</span></h3>
+    <div class="dialog">
+        <div class="turn you">
+            <div class="turn-who">TU - preparazione</div>
+            <div class="turn-text">Mario, il listino normale di Evulery e' EUR 169 al mese per il piano Enterprise che ti ho mostrato. Ma per te, fino al 30 giugno, abbiamo un'offerta specifica.</div>
+        </div>
+        <div class="turn note">
+            <div class="turn-who">Stacca un attimo, lascia respirare</div>
+            <div class="turn-text">Adesso prendi il <strong>regolamento stampato</strong> e lo metti sul tavolo davanti a lui. Niente fretta. Lascia che lo veda con i suoi occhi.</div>
+        </div>
+        <div class="turn you">
+            <div class="turn-who">TU - i 3 punti</div>
+            <div class="turn-text">Tre cose. <strong>Uno</strong>: 90 giorni Enterprise gratis, configuriamo tutto noi. <strong>Due</strong>: EUR 249 di setup una tantum oggi, e quello e' tutto quello che paghi nei primi 90 giorni. <strong>Tre</strong>: dopo 90 giorni se vuoi continuare il prezzo Enterprise per te resta bloccato a EUR 129 al mese per 3 anni. Anche quando dal primo ottobre passeremo a EUR 169 per tutti i nuovi.</div>
+        </div>
+        <div class="turn them">
+            <div class="turn-who">Mario (guarda il foglio)</div>
+            <div class="turn-text">Quindi se pago annuale?</div>
+        </div>
+        <div class="turn you">
+            <div class="turn-who">TU</div>
+            <div class="turn-text">Annuale EUR 1.290, sconto 17%. Semestrale EUR 729, sconto 6%. Mensile EUR 129. Decidi solo a fine giugno, dopo che hai provato 3 mesi gratis. Non ti chiedo di scegliere oggi quale, ti chiedo solo se vuoi aderire all'offerta entro il 30 giugno.</div>
+        </div>
+    </div>
+
+    <!-- FASE 2.5 -->
+    <h3>2.5 &middot; Chiusura<span class="numero-time">5 min</span></h3>
+    <p style="font-size:.9rem;color:var(--ink-soft);margin-bottom:10px;">Tre scenari. Uno dei tre, sempre.</p>
+    <div class="dialog">
+        <div class="turn you">
+            <div class="turn-who">TU (silenzio voluto 2 secondi, poi)</div>
+            <div class="turn-text">Mario, vuoi essere uno dei 15? Restano 8 posti.</div>
+        </div>
+        <div class="turn them">
+            <div class="turn-who">SCENARIO A — accetta subito</div>
+            <div class="turn-text">"Si', dai. Cosa devo fare?"</div>
+        </div>
+        <div class="turn you">
+            <div class="turn-who">TU - chiusura A</div>
+            <div class="turn-text">"Perfetto. Mi firmi il regolamento qui (2 copie, una resta a te), e ti mando l'IBAN per il bonifico di EUR 249. Appena vedo l'incasso, oggi pomeriggio ti chiamiamo per fissare la configurazione (1-2 ore). Da domani sei attivo."</div>
+        </div>
+        <div class="turn them">
+            <div class="turn-who">SCENARIO B — vuole pensarci</div>
+            <div class="turn-text">"Mi sembra interessante, ne devo parlare con mia moglie / il commercialista / il socio."</div>
+        </div>
+        <div class="turn you">
+            <div class="turn-who">TU - chiusura B</div>
+            <div class="turn-text">"Giusto, e' una decisione importante. Ti lascio il regolamento stampato cosi' lo vedete con calma. Una cosa pero': i posti sono 15 e stanno andando via. Possiamo sentirci giovedi' alle 15? Ti chiamo io. Se la risposta e' si', firmiamo per telefono e bonifichi. Se e' no, nessun problema." <strong>FISSA LA DATA NEL CALENDARIO INSIEME.</strong></div>
+        </div>
+        <div class="turn them">
+            <div class="turn-who">SCENARIO C — dice no chiaramente</div>
+            <div class="turn-text">"Per adesso no, non mi convince."</div>
+        </div>
+        <div class="turn you">
+            <div class="turn-who">TU - chiusura C</div>
+            <div class="turn-text">"Tranquillo, ognuno ha i suoi tempi. Ti lascio comunque la FAQ ristoratore (link via WhatsApp), cosi' se ti vengono dubbi piu' avanti hai dove guardare. Ti scrivo a settembre per un saluto e una battuta. Grazie del tempo Mario, buon servizio."</div>
+        </div>
+        <div class="turn note">
+            <div class="turn-who">Regola della chiusura</div>
+            <div class="turn-text"><strong>Mai uscire senza un esito</strong>: firma OPPURE data precisa di follow-up OPPURE no esplicito. "Ti faccio sapere" e' il peggior risultato possibile — perdi il lead in 48 ore.</div>
+        </div>
+    </div>
+</div>
+
+<!-- ============== SEZIONE 3 - OBIEZIONI ============== -->
+<div class="section">
+    <div class="section-num"><i class="bi bi-shield-exclamation"></i> 3 · Obiezioni piu' frequenti</div>
+    <h2>5 obiezioni e come rispondere</h2>
+    <p class="section-sub">Risposte brevi. Una frase di empatia + un fatto concreto. Mai discutere.</p>
+
+    <div class="objection">
+        <div class="objection-q">Costa, e' tanto. 249 di setup + 129 al mese...</div>
+        <div class="objection-a">Capisco. Pensiamoci insieme: hai detto che perdi 4-5 no-show a sabato. A 80 euro a tavolo, son 320 euro a settimana, <strong>1.280 al mese</strong>. Se Evulery te ne recupera anche solo il 50%, sono 640 al mese. <strong>Il piano si ripaga 5 volte.</strong></div>
+    </div>
+
+    <div class="objection">
+        <div class="objection-q">Con TheFork mi trovo bene. I clienti me li porta.</div>
+        <div class="objection-a">Va bene, non ti chiedo di abbandonare TheFork. Puoi tenere entrambi nei primi mesi. Pero' pensaci: di quei 25 coperti che ti porta TheFork, <strong>quanti tornano spontaneamente</strong> senza prenotare di nuovo da TheFork? Se la risposta e' "boh", hai gia' la mia risposta. Evulery ti da la rubrica, e quella rubrica e' tua.</div>
+    </div>
+
+    <div class="objection">
+        <div class="objection-q">Sono vecchio, non sono pratico col computer.</div>
+        <div class="objection-a">Per questo c'e' il setup dedicato. Veniamo noi, configuriamo tutto, ti facciamo una formazione di un'ora a te e a chi vuoi tu (moglie, figlio, cameriere capo). Dopo si vede solo l'app sul telefono. <strong>Lo gestisci come WhatsApp.</strong></div>
+    </div>
+
+    <div class="objection">
+        <div class="objection-q">Sono gia' pieno, non mi serve.</div>
+        <div class="objection-a">Buono per te, e' il tuo punto di forza. Allora non lo prendi per le prenotazioni, lo prendi per <strong>le recensioni</strong> e <strong>la rubrica clienti</strong>. Le recensioni guidano il tuo prezzo: piu' sei sopra 4,5 stelle piu' puoi alzare i coperti medi. E la rubrica e' la tua assicurazione per quando arriva un periodo lento — sai a chi mandare l'email "ti aspettiamo".</div>
+    </div>
+
+    <div class="objection">
+        <div class="objection-q">E se dopo 90 giorni decido di uscire?</div>
+        <div class="objection-a">Esci. Senza penali, senza scuse. Esportiamo i tuoi dati in CSV (rubrica, prenotazioni, recensioni) e cancelliamo l'account in 30 giorni. <strong>Il setup di 249 non e' rimborsabile</strong>, l'abbiamo dichiarato nel regolamento. Ma il canone mensile non lo paghi mai se non confermi.</div>
+    </div>
+</div>
+
+<!-- ============== SEZIONE 4 - ERRORI ============== -->
+<div class="section">
+    <div class="section-num"><i class="bi bi-exclamation-triangle"></i> 4 · Errori da evitare</div>
+    <h2>I 6 errori che bruciano la trattativa</h2>
+    <ul class="error-list">
+        <li><strong>Spiegare cos'e' Evulery nei primi 10 minuti.</strong> Il volantino l'ha gia' letto. Se inizi a fare il "noi siamo una piattaforma multi-tenant...", perdi.</li>
+        <li><strong>Mostrare tutto il software.</strong> Una demo di 25 funzionalita' e' una demo che il ristoratore dimentica. Massimo 3 cose, mirate ai SUOI problemi.</li>
+        <li><strong>Attaccare TheFork con aggressivita'.</strong> Forse Mario ci lavora bene. Distingui (commissioni vs canone fisso, clienti loro vs clienti tuoi) senza attaccare.</li>
+        <li><strong>Parlare di tecnologia.</strong> "Multi-tenant, API REST, cloud..." sono parole che il ristoratore non ascolta. Parla di problemi, non di tecnologie.</li>
+        <li><strong>Sconti improvvisati.</strong> Non offrire mai sconti aggiuntivi sul setup o sul canone "per chiudere oggi". Il prezzo e' quello del regolamento. La leva e' il blocco a 36 mesi, non lo sconto.</li>
+        <li><strong>Andare via senza follow-up.</strong> "Ti faccio sapere" e' un no mascherato. Forza sempre una data precisa. Apri il calendario insieme.</li>
+    </ul>
+</div>
+
+<!-- ============== SEZIONE 5 - COSA LASCIARE ============== -->
+<div class="section">
+    <div class="section-num"><i class="bi bi-briefcase"></i> 5 · Cosa lasciare al ristoratore</div>
+    <h2>Materiale da consegnare uscendo</h2>
+    <p class="section-sub">Fisico, non promesse digitali. Il "te lo mando via email dopo" e' un'altra forma di "ti faccio sapere".</p>
+
+    <ul class="material-list">
+        <li>
+            <strong>Regolamento offerta (cartaceo)</strong>
+            <span>Una copia firmata da entrambi se ha aderito. Una copia bianca se sta valutando.</span>
+            <span class="ref">sales/early-adopter-regolamento.html</span>
+        </li>
+        <li>
+            <strong>Volantino A4</strong>
+            <span>Anche se l'ha gia' visto, lasciane una copia. Spesso lo passano a colleghi/parenti.</span>
+            <span class="ref">sales/volantino-early-adopter-a4.html</span>
+        </li>
+        <li>
+            <strong>Biglietto da visita</strong>
+            <span>Con cellulare diretto (no centralino) e WhatsApp.</span>
+            <span class="ref">stampa cartaceo</span>
+        </li>
+        <li>
+            <strong>FAQ ristoratore (link WhatsApp)</strong>
+            <span>Inviata via WhatsApp APPENA esci dal locale, non aspettare di tornare in ufficio.</span>
+            <span class="ref">sales/faq-ristoratore.html</span>
+        </li>
+    </ul>
+</div>
+
+<!-- ============== SEZIONE 6 - FOLLOW-UP ============== -->
+<div class="section">
+    <div class="section-num"><i class="bi bi-arrow-repeat"></i> 6 · Follow-up</div>
+    <h2>Cosa fare dopo l'incontro</h2>
+    <p class="section-sub">Le prime 4 ore dopo sono cruciali. Tre azioni in ordine.</p>
+
+    <h3>Entro 30 minuti (dal parcheggio in macchina)</h3>
+    <ul class="checklist">
+        <li>WhatsApp di ringraziamento al ristoratore con link FAQ + il tuo cellulare diretto</li>
+        <li>Annota nel CRM/tracker: data incontro, esito (firma/follow-up/no), data prossimo step</li>
+        <li>Se ha aderito: invia IBAN per setup EUR 249 + conferma orario per setup configurazione</li>
+    </ul>
+
+    <h3>Entro 24 ore</h3>
+    <ul class="checklist">
+        <li>Se ha aderito: ricevi bonifico, attivi tenant, inviti il ristoratore alla call di setup</li>
+        <li>Se follow-up: prepara una mini-proposta personalizzata con i 3 punti emersi nel discovery</li>
+        <li>Se no: salva il contatto nel CRM con tag "lead freddo &middot; risentire ottobre"</li>
+    </ul>
+
+    <h3>Entro 7 giorni (solo se follow-up)</h3>
+    <ul class="checklist">
+        <li>Conferma con WhatsApp il giorno prima della call concordata</li>
+        <li>Manda il link al ROI calculator con i numeri SUOI compilati (4-5 no-show a sabato → 1.280 EUR/mese)</li>
+        <li>NON insistere oltre la call: se dice no la seconda volta, non insistere</li>
+    </ul>
+
+    <div class="tip"><strong>Numero d'oro</strong>: il 30% dei follow-up programmati con DATA si converte. Il 5% di quelli con "ti faccio sapere" si converte. Per questo l'unica cosa che conta uscendo dal primo incontro e' aver fissato la data, NON aver ricevuto un "si'".</div>
+</div>
+
+<footer>
+    Evulery.Pro 1.0 &middot; Playbook commerciale primo incontro v1.0 &middot; uso interno<br>
+    &copy; 2026 Evulery &middot; by alagias. - Soluzioni per il web &middot; P.IVA 01855570766
+</footer>
+
+</div>
+
+<script>
+(function () {
+    var KEY = 'evulery-playbook-primo-incontro';
+    var items = document.querySelectorAll('.checklist li');
+
+    function load() {
+        try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
+        catch (e) { return []; }
+    }
+    function save(state) {
+        try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+    }
+    function apply(state) {
+        items.forEach(function (li, i) {
+            li.classList.toggle('done', state.indexOf(i) !== -1);
+        });
+    }
+    apply(load());
+    items.forEach(function (li, i) {
+        li.style.cursor = 'pointer';
+        li.addEventListener('click', function () {
+            li.classList.toggle('done');
+            var state = [];
+            items.forEach(function (x, j) {
+                if (x.classList.contains('done')) state.push(j);
+            });
+            save(state);
+        });
+    });
+})();
+</script>
+
+</body>
+</html>

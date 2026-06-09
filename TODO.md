@@ -6,7 +6,11 @@ Task pronti, da fare quando emerge il trigger o c'è una finestra di lavoro.
 Decisione: NON costruirli in cieco, aspettare il segnale reale.
 
 ### Pianificato a data
-_(nulla al momento — `scripts/migrate.php` completato 2026-05-30)_
+- [ ] **Cloudflare davanti a `dash.evulery.it`** — pianificato per il pomeriggio del 2026-06-08, prima del lancio commerciale.
+  Proxy gratuito che dà: DDoS protection automatico, bot mitigation, cache statica, rate limiting, WAF base.
+  Setup ~30 min lato registrar dominio (cambio nameserver).
+  **Driver di urgenza**: il 03/06/2026 il VPS ha subito un attacco scraping da 2 subnet cinesi (89.106.110.0/24 e 149.62.193.0/24) con load avg fino a 77 su 8 core. Davide di Serverplan è dovuto intervenire manualmente. Cloudflare assorbirebbe automaticamente eventi simili senza intervento umano.
+  **Pre-requisito** per portare in produzione il primo cliente pagante.
 
 ### Edge case — in attesa di segnalazione cliente reale
 - [ ] **Asporto → "Ritiro in sede"** — il termine confonde (1 segnalazione 28/04).

@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Evulery — Volantino promo A4</title>
+<style>
+@page { size: A4; margin: 0; }
+@media print {
+    body { margin: 0; }
+    .no-print { display: none; }
+    .page { page-break-after: always; }
+    .page:last-child { page-break-after: auto; }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: #e9ecef;
+    color: #1a1d23;
+    line-height: 1.4;
+}
+
+/* Toolbar stampa (solo schermo) */
+.toolbar {
+    background: #fff;
+    padding: 16px;
+    text-align: center;
+    border-bottom: 2px solid #e9ecef;
+}
+.toolbar button {
+    background: #00844A; color: #fff; border: 0;
+    padding: 12px 28px; font-size: 15px; font-weight: 700;
+    border-radius: 8px; cursor: pointer;
+}
+.toolbar .hint {
+    font-size: 13px; color: #6c757d; margin-top: 8px;
+}
+
+/* Pagina A4 */
+.page {
+    width: 210mm; height: 297mm;
+    margin: 16px auto;
+    background: #fff;
+    box-shadow: 0 4px 24px rgba(0,0,0,.12);
+    overflow: hidden;
+    position: relative;
+    color: #1a1d23;
+    display: flex;
+    flex-direction: column;
+}
+@media print {
+    .page { margin: 0; box-shadow: none; }
+}
+
+/* ============ FRONTE ============ */
+.front {
+    background: linear-gradient(180deg, #042418 0%, #00844A 55%, #fff 55%);
+    color: #fff;
+}
+.hero {
+    padding: 18mm 16mm 14mm;
+    flex: 0 0 auto;
+}
+.brand-mark {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12mm;
+}
+.brand-name {
+    font-size: 26pt; font-weight: 900; letter-spacing: -1.5px;
+    margin: 0;
+}
+.brand-sub {
+    font-size: 9.5pt; opacity: .9; margin: 1mm 0 0;
+}
+.early-tag {
+    display: inline-block;
+    background: rgba(255,255,255,.15);
+    border: 1.5px solid rgba(255,255,255,.4);
+    padding: 4px 14px;
+    border-radius: 100px;
+    font-size: 9.5pt;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.hero-title {
+    font-size: 38pt;
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin: 0 0 6mm;
+}
+.hero-title span,
+.hero-title em {
+    display: block;
+    font-style: normal;
+}
+.hero-title em {
+    color: #b6f3d0;
+}
+.hero-signoff {
+    font-size: 13pt;
+    font-style: italic;
+    opacity: .92;
+    margin: 0 0 4mm;
+    font-weight: 500;
+    letter-spacing: .2px;
+}
+.hero-payoff {
+    font-size: 13pt;
+    font-weight: 400;
+    opacity: .9;
+    line-height: 1.4;
+    margin: 0 0 8mm;
+}
+
+/* Card centrale offerta (a cavallo del gradiente) */
+.offer-card {
+    background: #fff;
+    margin: 0 16mm;
+    padding: 10mm;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.18);
+    color: #1a1d23;
+    border: 2px solid #00844A;
+}
+.offer-title {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #00844A;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0 0 3mm;
+}
+.offer-big {
+    font-size: 30pt;
+    font-weight: 900;
+    color: #1a1d23;
+    letter-spacing: -1px;
+    line-height: 1;
+    margin: 0 0 4mm;
+}
+.offer-big strong { color: #00844A; }
+.offer-list {
+    list-style: none;
+    padding: 0;
+    margin: 4mm 0 0;
+}
+.offer-list li {
+    padding: 2.5mm 0 2.5mm 8mm;
+    font-size: 11.5pt;
+    position: relative;
+    border-bottom: 1px solid #e9ecef;
+}
+.offer-list li:last-child { border-bottom: 0; }
+.offer-list li::before {
+    content: "\2713";
+    position: absolute;
+    left: 0; top: 2.5mm;
+    color: #00844A;
+    font-weight: 900;
+    font-size: 13pt;
+}
+
+/* Fascia perche' Evulery (sotto la card) */
+.why-band {
+    margin-top: auto;
+    background: #fff;
+    padding: 10mm 16mm 14mm;
+}
+.why-title {
+    font-size: 14pt;
+    font-weight: 800;
+    color: #1a1d23;
+    margin: 0 0 5mm;
+    text-align: center;
+}
+.why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6mm;
+}
+.why-item {
+    text-align: center;
+}
+.why-icon {
+    width: 14mm; height: 14mm;
+    background: #f0faf4;
+    border: 2px solid #00844A;
+    border-radius: 50%;
+    margin: 0 auto 3mm;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20pt; color: #00844A; font-weight: 900;
+}
+.why-h {
+    font-size: 11pt;
+    font-weight: 700;
+    margin: 0 0 1mm;
+}
+.why-p {
+    font-size: 9.5pt;
+    color: #495057;
+    line-height: 1.35;
+    margin: 0;
+}
+
+/* ============ RETRO ============ */
+.back {
+    background: #fff;
+    padding: 14mm 16mm;
+    color: #1a1d23;
+}
+.back-header {
+    border-bottom: 3px solid #00844A;
+    padding-bottom: 5mm;
+    margin-bottom: 8mm;
+}
+.back-title {
+    font-size: 20pt;
+    font-weight: 900;
+    letter-spacing: -.8px;
+    margin: 0 0 2mm;
+    color: #1a1d23;
+}
+.back-sub {
+    font-size: 11pt;
+    color: #495057;
+    margin: 0;
+}
+
+.compliance-band {
+    background: #fff8e1;
+    border-left: 4px solid #f59e0b;
+    padding: 5mm 6mm;
+    border-radius: 4px;
+    margin-bottom: 7mm;
+}
+.compliance-band strong { color: #b45309; }
+.compliance-band p { margin: 0; font-size: 10.5pt; line-height: 1.45; }
+
+.features-h {
+    font-size: 13pt;
+    font-weight: 800;
+    color: #00844A;
+    margin: 0 0 4mm;
+}
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4mm 8mm;
+    margin-bottom: 8mm;
+}
+.feat {
+    display: flex;
+    gap: 3mm;
+    align-items: flex-start;
+}
+.feat-dot {
+    flex: 0 0 5mm;
+    width: 5mm; height: 5mm;
+    background: #00844A; color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9pt; font-weight: 900;
+    margin-top: .8mm;
+}
+.feat-body {
+    flex: 1;
+}
+.feat-h {
+    font-size: 10.5pt;
+    font-weight: 700;
+    margin: 0 0 .5mm;
+}
+.feat-p {
+    font-size: 9.5pt;
+    color: #495057;
+    margin: 0;
+    line-height: 1.35;
+}
+
+/* Pricing teaser */
+.pricing-teaser {
+    background: linear-gradient(135deg, #042418 0%, #00844A 100%);
+    color: #fff;
+    border-radius: 10px;
+    padding: 7mm 8mm;
+    margin-bottom: 7mm;
+    display: flex;
+    align-items: center;
+    gap: 6mm;
+}
+.pricing-left {
+    flex: 1;
+}
+.pricing-eye {
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    opacity: .9;
+    margin: 0 0 2mm;
+}
+.pricing-big {
+    font-size: 26pt;
+    font-weight: 900;
+    line-height: 1;
+    margin: 0 0 2mm;
+    letter-spacing: -1px;
+}
+.pricing-sub {
+    font-size: 10pt;
+    opacity: .92;
+    margin: 0;
+    line-height: 1.4;
+}
+.pricing-right {
+    text-align: right;
+    border-left: 1.5px solid rgba(255,255,255,.25);
+    padding-left: 6mm;
+}
+.pricing-vs {
+    font-size: 9pt;
+    opacity: .85;
+    margin: 0 0 1.5mm;
+}
+.pricing-list {
+    font-size: 13pt;
+    font-weight: 700;
+    text-decoration: line-through;
+    opacity: .85;
+    margin: 0 0 1mm;
+}
+.pricing-list-sub {
+    font-size: 8.5pt;
+    opacity: .8;
+    margin: 0;
+}
+
+/* CTA finale */
+.cta-band {
+    border: 2px dashed #00844A;
+    border-radius: 10px;
+    padding: 6mm 8mm;
+    text-align: center;
+    margin-bottom: 6mm;
+}
+.cta-h {
+    font-size: 14pt;
+    font-weight: 800;
+    margin: 0 0 3mm;
+    color: #1a1d23;
+}
+.cta-row {
+    display: flex;
+    justify-content: center;
+    gap: 8mm;
+    flex-wrap: wrap;
+    font-size: 11pt;
+}
+.cta-row .item strong { color: #00844A; }
+.cta-row .item {
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+}
+.qr-row {
+    display: flex;
+    gap: 6mm;
+    align-items: center;
+    background: #fafbfc;
+    border-radius: 10px;
+    padding: 6mm;
+    margin-bottom: 4mm;
+}
+.qr-placeholder {
+    flex: 0 0 30mm;
+    width: 30mm; height: 30mm;
+    background: #fff;
+    border: 2px solid #1a1d23;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 7.5pt; color: #1a1d23; font-weight: 600;
+    text-align: center;
+    line-height: 1.2;
+}
+.qr-text {
+    flex: 1;
+    font-size: 10pt;
+    color: #1a1d23;
+    line-height: 1.45;
+}
+.qr-text strong { color: #00844A; font-size: 11pt; }
+
+/* Footer */
+.foot {
+    margin-top: auto;
+    padding-top: 5mm;
+    border-top: 1px solid #d8dde3;
+    font-size: 8pt;
+    color: #6c757d;
+    text-align: center;
+    line-height: 1.5;
+}
+.foot strong { color: #1a1d23; }
+</style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+    <button type="button" onclick="window.print()">Stampa volantino A4 fronte-retro</button>
+    <div class="hint">Stampa con orientamento verticale, fronte-retro lato lungo. Senza margini.</div>
+</div>
+
+<!-- ================== FRONTE ================== -->
+<div class="page front">
+
+    <div class="hero">
+        <div class="brand-mark">
+            <div>
+                <p class="brand-name">EVULERY</p>
+                <p class="brand-sub">Soluzioni per il web &middot; by alagias.</p>
+            </div>
+            <span class="early-tag">Solo 15 posti</span>
+        </div>
+
+        <h1 class="hero-title">
+            <span>Meno no-show.</span>
+            <span>Piu' coperti.</span>
+            <em>Zero commissioni.</em>
+        </h1>
+
+        <p class="hero-signoff">&mdash; Pieni la sera, felici la mattina.</p>
+
+        <p class="hero-payoff">
+            Il sistema completo per gestire prenotazioni, tavoli, ordini online e recensioni del tuo ristorante. Conforme Legge 34/2026.
+        </p>
+    </div>
+
+    <div class="offer-card">
+        <p class="offer-title">Offerta valida fino al 30 giugno 2026</p>
+        <div class="offer-big"><strong>90 giorni</strong> Enterprise gratis</div>
+        <ul class="offer-list">
+            <li><strong>Tutte le funzionalita'</strong> Enterprise sbloccate, senza limiti</li>
+            <li><strong>Setup dedicato</strong> da noi: configuriamo tutto insieme (1-2 ore)</li>
+            <li><strong>Prezzo bloccato a EUR 129/mese per 36 mesi</strong> (listino EUR 169)</li>
+            <li>Setup una tantum EUR 249 &middot; <em>nessun rinnovo automatico</em></li>
+            <li>Adesione entro il <strong>30 giugno 2026</strong> &middot; solo per i primi 15</li>
+        </ul>
+    </div>
+
+    <div class="why-band">
+        <h2 class="why-title">Perche' i ristoratori scelgono Evulery</h2>
+        <div class="why-grid">
+            <div class="why-item">
+                <div class="why-icon">&minus;</div>
+                <h3 class="why-h">Meno no-show</h3>
+                <p class="why-p">Caparra Stripe, conferme automatiche e reminder. Recupero fino al 90% delle perdite.</p>
+            </div>
+            <div class="why-item">
+                <div class="why-icon">+</div>
+                <h3 class="why-h">Piu' coperti</h3>
+                <p class="why-p">Sala virtuale e auto-assegnazione tavoli. Riempi senza saturare lo staff.</p>
+            </div>
+            <div class="why-item">
+                <div class="why-icon">&#9733;</div>
+                <h3 class="why-h">Reputazione</h3>
+                <p class="why-p">Recensioni gestite e conformi alla Legge 34/2026. Feedback privato per chi e' scontento.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ================== RETRO ================== -->
+<div class="page back">
+
+    <div class="back-header">
+        <h2 class="back-title">Cosa c'e' dentro Enterprise</h2>
+        <p class="back-sub">Tutte le funzionalita' incluse, da subito, gratis per 90 giorni.</p>
+    </div>
+
+    <div class="compliance-band">
+        <p><strong>Conforme Legge 34/2026</strong> sulle recensioni online. Evulery e' uno dei pochi sistemi italiani gia' adeguato alla normativa: tracciabilita' completa, identita' verificata, diritto di replica strutturato.</p>
+    </div>
+
+    <h3 class="features-h">Funzionalita' principali</h3>
+    <div class="features-grid">
+        <div class="feat">
+            <div class="feat-dot">1</div>
+            <div class="feat-body">
+                <p class="feat-h">Prenotazioni illimitate</p>
+                <p class="feat-p">Widget da incollare sul tuo sito. Niente commissioni per coperto.</p>
+            </div>
+        </div>
+        <div class="feat">
+            <div class="feat-dot">2</div>
+            <div class="feat-body">
+                <p class="feat-h">Sala virtuale e tavoli</p>
+                <p class="feat-p">Mappa drag&amp;drop, auto-assegnazione intelligente, tavoli combinabili.</p>
+            </div>
+        </div>
+        <div class="feat">
+            <div class="feat-dot">3</div>
+            <div class="feat-body">
+                <p class="feat-h">Caparra Stripe</p>
+                <p class="feat-p">4 modalita': info, link, addebito immediato, carta a garanzia (impronta).</p>
+            </div>
+        </div>
+        <div class="feat">
+            <div class="feat-dot">4</div>
+            <div class="feat-body">
+                <p class="feat-h">Ordini takeaway/delivery</p>
+                <p class="feat-p">Store pubblico, kanban dashboard, zone di consegna, gestione rider.</p>
+            </div>
+        </div>
+        <div class="feat">
+            <div class="feat-dot">5</div>
+            <div class="feat-body">
+                <p class="feat-h">Email broadcast e crediti</p>
+                <p class="feat-p">Newsletter ai clienti, segmenti automatici, GDPR-compliant.</p>
+            </div>
+        </div>
+        <div class="feat">
+            <div class="feat-dot">6</div>
+            <div class="feat-body">
+                <p class="feat-h">Recensioni gestite</p>
+                <p class="feat-p">Richiesta automatica post-visita, filtro stelle, feedback privato per i critici.</p>
+            </div>
+        </div>
+        <div class="feat">
+            <div class="feat-dot">7</div>
+            <div class="feat-body">
+                <p class="feat-h">Vetrina digitale</p>
+                <p class="feat-p">Una pagina QR-friendly che racchiude menu, prenotazioni, ordini, social.</p>
+            </div>
+        </div>
+        <div class="feat">
+            <div class="feat-dot">8</div>
+            <div class="feat-body">
+                <p class="feat-h">Notifiche multi-canale</p>
+                <p class="feat-p">Email + campanella dashboard + push browser/mobile. Stampa ticket cucina.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="pricing-teaser">
+        <div class="pricing-left">
+            <p class="pricing-eye">Il tuo prezzo, bloccato</p>
+            <div class="pricing-big">EUR 129<span style="font-size:13pt;font-weight:600;opacity:.85;">/mese</span></div>
+            <p class="pricing-sub">Garantito per 36 mesi dall'attivazione. Sconto annuale -17% (EUR 1.290) o semestrale -6% (EUR 729).</p>
+        </div>
+        <div class="pricing-right">
+            <p class="pricing-vs">Listino dal 1&deg; ott 2026</p>
+            <p class="pricing-list">EUR 169</p>
+            <p class="pricing-list-sub">/mese</p>
+        </div>
+    </div>
+
+    <div class="cta-band">
+        <h3 class="cta-h">Vuoi aderire? Parliamone.</h3>
+        <div class="cta-row">
+            <div class="item">
+                <strong>Tel</strong>
+                <span>+39 ___ ___ ____</span>
+            </div>
+            <div class="item">
+                <strong>Email</strong>
+                <span>info@evulery.it</span>
+            </div>
+            <div class="item">
+                <strong>Web</strong>
+                <span>evulery.it</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="qr-row">
+        <div class="qr-placeholder">QR<br>evulery.it</div>
+        <div class="qr-text">
+            <strong>Scansiona per la demo.</strong><br>
+            Inquadra il QR con la fotocamera del telefono. Si apre la pagina con video demo, prezzi e modulo per fissare un appuntamento in 30 minuti.
+        </div>
+    </div>
+
+    <div class="foot">
+        <strong>Evulery.Pro 1.0</strong> &middot; Offerta riservata ai primi 15 ristoranti, valida fino al 30 giugno 2026<br>
+        alagias. Soluzioni per il web &middot; P.IVA 01855570766 &middot; info@evulery.it &middot; evulery.it<br>
+        <em>Importi non soggetti a IVA ai sensi dell'art. 1 commi 54-89 L. 190/2014 (regime forfettario).</em>
+    </div>
+
+</div>
+
+</body>
+</html>

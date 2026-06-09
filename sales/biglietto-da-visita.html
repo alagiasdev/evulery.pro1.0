@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evulery — Biglietto da visita</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+@page { size: A4 portrait; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+    margin: 0; padding: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #e9ecef;
+    color: #1a1d23;
+}
+
+/* ====== Toolbar (solo schermo) ====== */
+.toolbar {
+    background: #fff;
+    padding: 14px 20px;
+    text-align: center;
+    border-bottom: 2px solid #e9ecef;
+    position: sticky;
+    top: 0; z-index: 10;
+}
+.toolbar button {
+    background: #00844A; color: #fff; border: 0;
+    padding: 10px 22px; font-size: 14px; font-weight: 700;
+    border-radius: 6px; cursor: pointer; margin: 0 4px;
+}
+.toolbar button:hover { background: #006837; }
+.toolbar .hint {
+    font-size: 12px; color: #6c757d; margin-top: 8px;
+}
+@media print {
+    .toolbar, .preview-wrap { display: none !important; }
+    body { background: #fff; }
+}
+
+/* ====== ANTEPRIMA A SCHERMO (singolo biglietto x2) ====== */
+.preview-wrap {
+    padding: 30px 20px 50px;
+    text-align: center;
+}
+.preview-label {
+    font-size: 13px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    margin: 20px 0 12px;
+}
+.preview-flex {
+    display: inline-flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* ====== BIGLIETTO 85×55mm ====== */
+.card {
+    width: 85mm;
+    height: 55mm;
+    background: #fff;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 18px rgba(0,0,0,.15);
+    color: #1a1d23;
+    border-radius: 2mm;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* ============ FRONTE ============ */
+.card.front {
+    background: linear-gradient(135deg, #042418 0%, #00844A 100%);
+    color: #fff;
+    padding: 7mm 8mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.card.front::before {
+    content: "";
+    position: absolute;
+    top: -20mm; right: -20mm;
+    width: 50mm; height: 50mm;
+    background: radial-gradient(circle, #4ade80 0%, transparent 70%);
+    opacity: .14;
+    pointer-events: none;
+}
+.front-top {
+    position: relative;
+}
+.front-brand {
+    font-size: 22pt;
+    font-weight: 900;
+    letter-spacing: -.8px;
+    line-height: 1;
+    margin: 0;
+}
+.front-sub {
+    font-size: 6.5pt;
+    opacity: .82;
+    margin-top: 1mm;
+    letter-spacing: .3px;
+}
+.front-payoff {
+    font-size: 7pt;
+    font-style: italic;
+    opacity: .92;
+    margin-top: 3mm;
+    line-height: 1.3;
+    border-left: 1.5px solid rgba(255,255,255,.6);
+    padding-left: 2.5mm;
+    max-width: 50mm;
+}
+.front-bottom {
+    position: relative;
+}
+.front-name {
+    font-size: 11pt;
+    font-weight: 800;
+    letter-spacing: -.2px;
+    line-height: 1.1;
+    margin: 0;
+}
+.front-role {
+    font-size: 7.5pt;
+    font-weight: 500;
+    opacity: .85;
+    margin-top: .8mm;
+    letter-spacing: .2px;
+}
+
+/* ============ RETRO ============ */
+.card.back {
+    background: #fff;
+    padding: 7mm 8mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-top: 4mm solid #00844A;
+    border-radius: 2mm;
+}
+.back-h {
+    font-size: 7.5pt;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin: 0 0 2mm;
+}
+.back-contacts {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.back-contacts li {
+    font-size: 8.5pt;
+    line-height: 1.55;
+    color: #1a1d23;
+    display: flex;
+    gap: 2mm;
+    align-items: center;
+    margin-bottom: .5mm;
+}
+.back-contacts .icon {
+    flex: 0 0 4mm;
+    width: 4mm;
+    height: 4mm;
+    background: #00844A;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 6pt;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1;
+}
+.back-contacts strong { color: #00844A; font-weight: 700; }
+.back-footer {
+    border-top: .5pt solid #d8dde3;
+    padding-top: 1.5mm;
+    margin-top: 2mm;
+    font-size: 6pt;
+    color: #6c757d;
+    letter-spacing: .2px;
+    line-height: 1.3;
+}
+.back-footer strong { color: #1a1d23; }
+
+/* ====== STAMPA A4 (10 biglietti per pagina) ======
+   Pagina A4 = 210×297mm.
+   10 biglietti = 2 colonne × 5 righe di 85×55mm = 170×275mm.
+   Margini auto: 20mm laterali totali, 22mm verticali totali. */
+.print-sheet {
+    display: none;
+    width: 210mm;
+    height: 297mm;
+    margin: 0 auto;
+    padding: 11mm 20mm;
+    background: #fff;
+    page-break-after: always;
+}
+.print-sheet:last-child { page-break-after: auto; }
+.print-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 85mm);
+    grid-template-rows: repeat(5, 55mm);
+    gap: 0;
+    justify-content: space-between;
+    align-content: space-between;
+    width: 100%;
+    height: 100%;
+}
+.print-grid .card {
+    box-shadow: none;
+    border-radius: 0;
+    border: .25pt dashed rgba(0,0,0,.15);
+}
+.print-grid .card.front::before {
+    /* radial decoration anche in stampa, leggermente attenuato */
+    opacity: .12;
+}
+
+@media print {
+    .print-sheet {
+        display: block;
+        margin: 0;
+        padding: 11mm 20mm;
+    }
+    .print-grid .card { border: none; }
+    body { background: #fff; }
+}
+
+/* ====== MOBILE / piccolo ====== */
+@media (max-width: 600px) {
+    .preview-flex { flex-direction: column; gap: 20px; }
+    .card { transform: scale(.92); }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== Toolbar (solo schermo) ====== -->
+<div class="toolbar">
+    <button type="button" onclick="window.print()">Stampa A4 (10 biglietti per foglio)</button>
+    <div class="hint">
+        Stampa fronte-retro <strong>lato corto</strong>, senza margini, su cartoncino 300g.
+        Taglia lungo le guide. Per stamparli da tipografia, esporta in PDF e invia.
+    </div>
+</div>
+
+<!-- ====== Anteprima a schermo ====== -->
+<div class="preview-wrap">
+
+    <div class="preview-label">Anteprima fronte / retro &middot; dimensione reale 85 × 55 mm</div>
+    <div class="preview-flex">
+
+        <!-- FRONTE ANTEPRIMA -->
+        <div class="card front">
+            <div class="front-top">
+                <h1 class="front-brand">EVULERY</h1>
+                <div class="front-sub">Soluzioni per il web &middot; by alagias.</div>
+                <div class="front-payoff">Pieni la sera,<br>felici la mattina.</div>
+            </div>
+            <div class="front-bottom">
+                <p class="front-name">Stefano Alagia</p>
+                <div class="front-role">Fondatore</div>
+            </div>
+        </div>
+
+        <!-- RETRO ANTEPRIMA -->
+        <div class="card back">
+            <div>
+                <p class="back-h">Contatti</p>
+                <ul class="back-contacts">
+                    <li><span class="icon">T</span><span><strong>+39 ___ ___ ____</strong></span></li>
+                    <li><span class="icon">@</span><span>stefano@evulery.it</span></li>
+                    <li><span class="icon">W</span><span>evulery.it</span></li>
+                    <li><span class="icon">L</span><span>linkedin.com/in/stefanoalagia</span></li>
+                </ul>
+            </div>
+            <div class="back-footer">
+                <strong>alagias.</strong> Soluzioni per il web &middot; P.IVA 01855570766<br>
+                Sede: Pisa &middot; info@evulery.it
+            </div>
+        </div>
+
+    </div>
+
+    <div class="preview-label" style="margin-top:38px;">Note operative</div>
+    <div style="max-width:520px;margin:0 auto;font-size:13px;color:#495057;line-height:1.6;text-align:left;background:#fff;padding:18px 22px;border-radius:10px;">
+        <strong style="color:#1a1d23;">Prima di stampare:</strong>
+        <ul style="margin:6px 0 0 18px;padding:0;">
+            <li>Sostituisci <code>+39 ___ ___ ____</code> col tuo numero (anche WhatsApp).</li>
+            <li>Verifica che l'email personale <code>stefano@evulery.it</code> sia attiva (altrimenti usa <code>info@evulery.it</code>).</li>
+            <li>Aggiusta il link LinkedIn al tuo profilo reale o rimuovilo se non vuoi metterlo.</li>
+            <li>Per la tipografia: <strong>esporta in PDF</strong> con Ctrl+P → "Salva come PDF" e mandalo a stampa. Specifica cartoncino opaco 350g.</li>
+        </ul>
+    </div>
+
+</div>
+
+<!-- ====== STAMPA FRONTE (10 biglietti) ====== -->
+<div class="print-sheet">
+    <div class="print-grid">
+
+        <!-- Ripeti 10 volte il fronte -->
+        <div class="card front">
+            <div class="front-top">
+                <h1 class="front-brand">EVULERY</h1>
+                <div class="front-sub">Soluzioni per il web &middot; by alagias.</div>
+                <div class="front-payoff">Pieni la sera,<br>felici la mattina.</div>
+            </div>
+            <div class="front-bottom">
+                <p class="front-name">Stefano Alagia</p>
+                <div class="front-role">Fondatore</div>
+            </div>
+        </div>
+        <div class="card front">
+            <div class="front-top">
+                <h1 class="front-brand">EVULERY</h1>
+                <div class="front-sub">Soluzioni per il web &middot; by alagias.</div>
+                <div class="front-payoff">Pieni la sera,<br>felici la mattina.</div>
+            </div>
+            <div class="front-bottom">
+                <p class="front-name">Stefano Alagia</p>
+                <div class="front-role">Fondatore</div>
+            </div>
+        </div>
+        <div class="card front">
+            <div class="front-top">
+                <h1 class="front-brand">EVULERY</h1>
+                <div class="front-sub">Soluzioni per il web &middot; by alagias.</div>
+                <div class="front-payoff">Pieni la sera,<br>felici la mattina.</div>
+            </div>
+            <div class="front-bottom">
+                <p class="front-name">Stefano Alagia</p>
+                <div class="front-role">Fondatore</div>
+            </div>
+        </div>
+        <div class="card front">
+            <div class="front-top">
+                <h1 class="front-brand">EVULERY</h1>
+                <div class="front-sub">Soluzioni per il web &middot; by alagias.</div>
+                <div class="front-payoff">Pieni la sera,<br>felici la mattina.</div>
+            </div>
+            <div class="front-bottom">
+                <p class="front-name">Stefano Alagia</p>
+                <div class="front-role">Fondatore</div>
+            </div>
+        </div>
+        <div class="card front">
+            <div class="front-top">
+                <h1 class="front-brand">EVULERY</h1>
+                <div class="front-sub">Soluzioni per il web &middot; by alagias.</div>
+                <div class="front-payoff">Pieni la sera,<br>felici la mattina.</div>
+            </div>
+            <div class="front-bottom">
+                <p class="front-name">Stefano Alagia</p>
+                <div class="front-role">Fondatore</div>
+            </div>
+        </div>
+        <div class="card front">
+            <div class="front-top">
+                <h1 class="front-brand">EVULERY</h1>
+                <div class="front-sub">Soluzioni per il web &middot; by alagias.</div>
+                <div class="front-payoff">Pieni la sera,<br>felici la mattina.</div>
+            </div>
+            <div class="front-bottom">
+                <p class="front-name">Stefano Alagia</p>
+                <div class="front-role">Fondatore</div>
+            </div>
+        </div>
+        <div class="card front">
+            <div class="front-top">
+                <h1 class="front-brand">EVULERY</h1>
+                <div class="front-sub">Soluzioni per il web &middot; by alagias.</div>
+                <div class="front-payoff">Pieni la sera,<br>felici la mattina.</div>
+            </div>
+            <div class="front-bottom">
+                <p class="front-name">Stefano Alagia</p>
+                <div class="front-role">Fondatore</div>
+            </div>
+        </div>
+        <div class="card front">
+            <div class="front-top">
+                <h1 class="front-brand">EVULERY</h1>
+                <div class="front-sub">Soluzioni per il web &middot; by alagias.</div>
+                <div class="front-payoff">Pieni la sera,<br>felici la mattina.</div>
+            </div>
+            <div class="front-bottom">
+                <p class="front-name">Stefano Alagia</p>
+                <div class="front-role">Fondatore</div>
+            </div>
+        </div>
+        <div class="card front">
+            <div class="front-top">
+                <h1 class="front-brand">EVULERY</h1>
+                <div class="front-sub">Soluzioni per il web &middot; by alagias.</div>
+                <div class="front-payoff">Pieni la sera,<br>felici la mattina.</div>
+            </div>
+            <div class="front-bottom">
+                <p class="front-name">Stefano Alagia</p>
+                <div class="front-role">Fondatore</div>
+            </div>
+        </div>
+        <div class="card front">
+            <div class="front-top">
+                <h1 class="front-brand">EVULERY</h1>
+                <div class="front-sub">Soluzioni per il web &middot; by alagias.</div>
+                <div class="front-payoff">Pieni la sera,<br>felici la mattina.</div>
+            </div>
+            <div class="front-bottom">
+                <p class="front-name">Stefano Alagia</p>
+                <div class="front-role">Fondatore</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ====== STAMPA RETRO (10 biglietti) ====== -->
+<div class="print-sheet">
+    <div class="print-grid">
+
+        <div class="card back">
+            <div>
+                <p class="back-h">Contatti</p>
+                <ul class="back-contacts">
+                    <li><span class="icon">T</span><span><strong>+39 ___ ___ ____</strong></span></li>
+                    <li><span class="icon">@</span><span>stefano@evulery.it</span></li>
+                    <li><span class="icon">W</span><span>evulery.it</span></li>
+                    <li><span class="icon">L</span><span>linkedin.com/in/stefanoalagia</span></li>
+                </ul>
+            </div>
+            <div class="back-footer">
+                <strong>alagias.</strong> Soluzioni per il web &middot; P.IVA 01855570766<br>
+                Sede: Pisa &middot; info@evulery.it
+            </div>
+        </div>
+        <div class="card back">
+            <div>
+                <p class="back-h">Contatti</p>
+                <ul class="back-contacts">
+                    <li><span class="icon">T</span><span><strong>+39 ___ ___ ____</strong></span></li>
+                    <li><span class="icon">@</span><span>stefano@evulery.it</span></li>
+                    <li><span class="icon">W</span><span>evulery.it</span></li>
+                    <li><span class="icon">L</span><span>linkedin.com/in/stefanoalagia</span></li>
+                </ul>
+            </div>
+            <div class="back-footer">
+                <strong>alagias.</strong> Soluzioni per il web &middot; P.IVA 01855570766<br>
+                Sede: Pisa &middot; info@evulery.it
+            </div>
+        </div>
+        <div class="card back">
+            <div>
+                <p class="back-h">Contatti</p>
+                <ul class="back-contacts">
+                    <li><span class="icon">T</span><span><strong>+39 ___ ___ ____</strong></span></li>
+                    <li><span class="icon">@</span><span>stefano@evulery.it</span></li>
+                    <li><span class="icon">W</span><span>evulery.it</span></li>
+                    <li><span class="icon">L</span><span>linkedin.com/in/stefanoalagia</span></li>
+                </ul>
+            </div>
+            <div class="back-footer">
+                <strong>alagias.</strong> Soluzioni per il web &middot; P.IVA 01855570766<br>
+                Sede: Pisa &middot; info@evulery.it
+            </div>
+        </div>
+        <div class="card back">
+            <div>
+                <p class="back-h">Contatti</p>
+                <ul class="back-contacts">
+                    <li><span class="icon">T</span><span><strong>+39 ___ ___ ____</strong></span></li>
+                    <li><span class="icon">@</span><span>stefano@evulery.it</span></li>
+                    <li><span class="icon">W</span><span>evulery.it</span></li>
+                    <li><span class="icon">L</span><span>linkedin.com/in/stefanoalagia</span></li>
+                </ul>
+            </div>
+            <div class="back-footer">
+                <strong>alagias.</strong> Soluzioni per il web &middot; P.IVA 01855570766<br>
+                Sede: Pisa &middot; info@evulery.it
+            </div>
+        </div>
+        <div class="card back">
+            <div>
+                <p class="back-h">Contatti</p>
+                <ul class="back-contacts">
+                    <li><span class="icon">T</span><span><strong>+39 ___ ___ ____</strong></span></li>
+                    <li><span class="icon">@</span><span>stefano@evulery.it</span></li>
+                    <li><span class="icon">W</span><span>evulery.it</span></li>
+                    <li><span class="icon">L</span><span>linkedin.com/in/stefanoalagia</span></li>
+                </ul>
+            </div>
+            <div class="back-footer">
+                <strong>alagias.</strong> Soluzioni per il web &middot; P.IVA 01855570766<br>
+                Sede: Pisa &middot; info@evulery.it
+            </div>
+        </div>
+        <div class="card back">
+            <div>
+                <p class="back-h">Contatti</p>
+                <ul class="back-contacts">
+                    <li><span class="icon">T</span><span><strong>+39 ___ ___ ____</strong></span></li>
+                    <li><span class="icon">@</span><span>stefano@evulery.it</span></li>
+                    <li><span class="icon">W</span><span>evulery.it</span></li>
+                    <li><span class="icon">L</span><span>linkedin.com/in/stefanoalagia</span></li>
+                </ul>
+            </div>
+            <div class="back-footer">
+                <strong>alagias.</strong> Soluzioni per il web &middot; P.IVA 01855570766<br>
+                Sede: Pisa &middot; info@evulery.it
+            </div>
+        </div>
+        <div class="card back">
+            <div>
+                <p class="back-h">Contatti</p>
+                <ul class="back-contacts">
+                    <li><span class="icon">T</span><span><strong>+39 ___ ___ ____</strong></span></li>
+                    <li><span class="icon">@</span><span>stefano@evulery.it</span></li>
+                    <li><span class="icon">W</span><span>evulery.it</span></li>
+                    <li><span class="icon">L</span><span>linkedin.com/in/stefanoalagia</span></li>
+                </ul>
+            </div>
+            <div class="back-footer">
+                <strong>alagias.</strong> Soluzioni per il web &middot; P.IVA 01855570766<br>
+                Sede: Pisa &middot; info@evulery.it
+            </div>
+        </div>
+        <div class="card back">
+            <div>
+                <p class="back-h">Contatti</p>
+                <ul class="back-contacts">
+                    <li><span class="icon">T</span><span><strong>+39 ___ ___ ____</strong></span></li>
+                    <li><span class="icon">@</span><span>stefano@evulery.it</span></li>
+                    <li><span class="icon">W</span><span>evulery.it</span></li>
+                    <li><span class="icon">L</span><span>linkedin.com/in/stefanoalagia</span></li>
+                </ul>
+            </div>
+            <div class="back-footer">
+                <strong>alagias.</strong> Soluzioni per il web &middot; P.IVA 01855570766<br>
+                Sede: Pisa &middot; info@evulery.it
+            </div>
+        </div>
+        <div class="card back">
+            <div>
+                <p class="back-h">Contatti</p>
+                <ul class="back-contacts">
+                    <li><span class="icon">T</span><span><strong>+39 ___ ___ ____</strong></span></li>
+                    <li><span class="icon">@</span><span>stefano@evulery.it</span></li>
+                    <li><span class="icon">W</span><span>evulery.it</span></li>
+                    <li><span class="icon">L</span><span>linkedin.com/in/stefanoalagia</span></li>
+                </ul>
+            </div>
+            <div class="back-footer">
+                <strong>alagias.</strong> Soluzioni per il web &middot; P.IVA 01855570766<br>
+                Sede: Pisa &middot; info@evulery.it
+            </div>
+        </div>
+        <div class="card back">
+            <div>
+                <p class="back-h">Contatti</p>
+                <ul class="back-contacts">
+                    <li><span class="icon">T</span><span><strong>+39 ___ ___ ____</strong></span></li>
+                    <li><span class="icon">@</span><span>stefano@evulery.it</span></li>
+                    <li><span class="icon">W</span><span>evulery.it</span></li>
+                    <li><span class="icon">L</span><span>linkedin.com/in/stefanoalagia</span></li>
+                </ul>
+            </div>
+            <div class="back-footer">
+                <strong>alagias.</strong> Soluzioni per il web &middot; P.IVA 01855570766<br>
+                Sede: Pisa &middot; info@evulery.it
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

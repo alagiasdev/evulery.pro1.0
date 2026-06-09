@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Day 1 — Benvenuto in Evulery</title>
+</head>
+<body style="margin:0;padding:0;background:#f5f6f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+
+<!-- =========================
+     OGGETTO:
+     Benvenuto in Evulery, {{nome_ristoratore}} - eccoti tutto quello che serve
+
+     PREVIEW:
+     Trial Enterprise attivo, link al regolamento e contatto diretto
+     ========================= -->
+
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background:#f5f6f8;padding:32px 16px;">
+<tr><td align="center">
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);">
+
+<!-- Header brand -->
+<tr><td style="background:linear-gradient(135deg,#042418 0%,#00844A 100%);padding:32px 40px;color:#fff;">
+<div style="font-size:20px;font-weight:800;letter-spacing:-.5px;">EVULERY</div>
+<div style="font-size:12px;opacity:.8;margin-top:4px;">Offerta promozionale &middot; valida fino al 30 giugno 2026</div>
+</td></tr>
+
+<!-- Body -->
+<tr><td style="padding:36px 40px 24px;color:#1a1d23;font-size:15px;line-height:1.6;">
+
+<h1 style="font-size:24px;font-weight:800;margin:0 0 16px;color:#1a1d23;">Benvenuto in Evulery, {{nome_ristoratore}}!</h1>
+
+<p style="margin:0 0 16px;">Grazie per aver scelto Evulery. Sei uno dei <strong>15 ristoratori</strong> che hanno aderito alla nostra offerta promozionale di apertura: ti scrivo per confermarti che tutto e' attivo.</p>
+
+<p style="margin:0 0 20px;">Da oggi, il tuo piano <strong>Enterprise gratuito per 90 giorni</strong> e' attivo. Hai accesso a tutte le funzionalita': prenotazioni illimitate, gestione tavoli con sala virtuale, ordini online, gestione recensioni conforme alla Legge 34/2026, email broadcast e molto altro.</p>
+
+<!-- Box info -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background:#f0faf4;border-left:3px solid #00844A;border-radius:6px;margin:8px 0 24px;">
+<tr><td style="padding:14px 18px;font-size:14px;color:#1a1d23;">
+<strong>I tuoi dati chiave</strong><br>
+&middot; Scadenza trial: <strong>{{data_scadenza_trial}}</strong> (giorno 91)<br>
+&middot; Setup pagato: <strong>EUR 249</strong> (ricevuta in allegato)<br>
+&middot; Prezzo bloccato post-trial: <strong>EUR 129 / mese per 36 mesi</strong>
+</td></tr>
+</table>
+
+<h2 style="font-size:17px;font-weight:700;margin:24px 0 12px;color:#00844A;">Primi passi consigliati</h2>
+
+<ol style="margin:0 0 20px;padding-left:22px;">
+<li style="margin-bottom:8px;">Accedi alla dashboard: <a href="https://dash.evulery.it/login" style="color:#00844A;text-decoration:none;font-weight:600;">dash.evulery.it/login</a></li>
+<li style="margin-bottom:8px;">Verifica anagrafica tavoli, orari e capienze (le abbiamo gia' configurate insieme)</li>
+<li style="margin-bottom:8px;">Pubblica il link prenotazione sul tuo sito o su Instagram</li>
+<li style="margin-bottom:8px;">Stampa il QR code della vetrina digitale e mettilo sui tavoli</li>
+</ol>
+
+<h2 style="font-size:17px;font-weight:700;margin:24px 0 12px;color:#00844A;">Cosa ti aspetta nei prossimi 90 giorni</h2>
+
+<p style="margin:0 0 8px;">Ti scriveremo periodicamente per accompagnarti:</p>
+<ul style="margin:0 0 20px;padding-left:22px;">
+<li style="margin-bottom:6px;"><strong>Giorno 60</strong>: come ti trovi? raccogliamo i tuoi feedback</li>
+<li style="margin-bottom:6px;"><strong>Giorno 75</strong>: anteprima delle opzioni a fine trial</li>
+<li style="margin-bottom:6px;"><strong>Giorno 85</strong>: piani e prezzi dettagliati</li>
+<li style="margin-bottom:6px;"><strong>Giorno 89</strong>: ultima call prima della scadenza</li>
+</ul>
+
+<!-- CTA -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:24px 0 16px;">
+<tr><td>
+<a href="{{link_regolamento}}" style="display:inline-block;background:#00844A;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:6px;font-weight:700;font-size:15px;">Apri il regolamento</a>
+</td></tr>
+</table>
+
+<p style="margin:20px 0 8px;font-size:14px;color:#495057;">Per qualsiasi cosa, scrivici direttamente. Risponde sempre una persona, non un bot.</p>
+
+<p style="margin:0 0 4px;font-size:14px;">a presto,<br>
+<strong>il team di Evulery</strong></p>
+<p style="margin:0;font-size:13px;color:#6c757d;"><a href="mailto:info@evulery.it" style="color:#00844A;text-decoration:none;">info@evulery.it</a></p>
+
+</td></tr>
+
+<!-- Footer -->
+<tr><td style="background:#fafbfc;border-top:1px solid #e9ecef;padding:20px 40px;font-size:11px;color:#6c757d;line-height:1.5;">
+&copy; 2026 Evulery &middot; by alagias. - Soluzioni per il web<br>
+P.IVA 01855570766 &middot; <a href="https://evulery.it" style="color:#6c757d;">evulery.it</a> &middot; <a href="mailto:info@evulery.it" style="color:#6c757d;">info@evulery.it</a>
+</td></tr>
+
+</table>
+</td></tr>
+</table>
+
+</body>
+</html>
