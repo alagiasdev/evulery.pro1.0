@@ -38,6 +38,12 @@ class SettingsController
         $tenantId = Auth::tenantId();
         $data = $request->all();
 
+        // Step orari attuale, PRIMA dell'update: serve per avvisare il
+        // ristoratore se lo cambia. Gli orari del widget vengono dalla
+        // griglia "Orari e Coperti" (tabella time_slots), non dallo step:
+        // senza risalvare la griglia il widget resta sui vecchi orari.
+        $oldTimeStep = (int)(TenantResolver::current()['time_step'] ?? 30);
+
         $v = Validator::make($data)
             ->required('name', 'Nome ristorante')
             ->required('email', 'Email')
@@ -136,7 +142,12 @@ class SettingsController
         $tenant = (new Tenant())->findById($tenantId);
         TenantResolver::setCurrent($tenant);
 
-        flash('success', 'Impostazioni aggiornate.');
+        $newTimeStep = (int)($data['time_step'] ?? 30);
+        if ($newTimeStep !== $oldTimeStep) {
+            flash('warning', "Impostazioni aggiornate. Hai cambiato lo step orari da {$oldTimeStep} a {$newTimeStep} minuti: ora vai in Impostazioni → Orari e Coperti e risalva la griglia, altrimenti il widget continuerà a proporre i vecchi orari.");
+        } else {
+            flash('success', 'Impostazioni aggiornate.');
+        }
         Response::redirect(url('dashboard/settings/general'));
     }
 
