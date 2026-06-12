@@ -272,8 +272,9 @@ Decisione: NON costruirli in cieco, aspettare il segnale reale.
 ### Priorità reale a breve termine (NON in panchina)
 - [ ] **Migrazione VPS** — nuovo server 8core/32GB, attesa conferma Serverplan (PHP 8.2,
   parallelismo). Rischio #1: testare il DB dump su MariaDB 11.4 prima dello switch.
-- [ ] **Pagine legali** — completare `privacy.html`/`terms.html`/`cookies.html` con
-  P.IVA e ragione sociale prima del go-live commerciale.
+- [x] **Pagine legali** — ~~completare `privacy.html`/`terms.html`/`cookies.html` con
+  P.IVA e ragione sociale prima del go-live commerciale.~~ **Verificato 2026-06-10**:
+  P.IVA 01855570766 e ragione sociale gia' presenti nei file, nessun placeholder residuo.
 
 ---
 
