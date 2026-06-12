@@ -16,6 +16,9 @@ Thumbs.db
 # Security audit (contiene dettagli vulnerabilita)
 SECURITY_AUDIT*.md
 
+# Script di debug temporanei (scratch locali, mai committati)
+/scripts/_test_*
+
 # Composer binary
 composer.phar
 
