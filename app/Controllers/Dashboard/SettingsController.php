@@ -5,6 +5,7 @@ namespace App\Controllers\Dashboard;
 use App\Core\Auth;
 use App\Core\Request;
 use App\Core\Response;
+use App\Core\Session;
 use App\Core\TenantResolver;
 use App\Core\Validator;
 use App\Models\DeliveryZone;
@@ -142,11 +143,14 @@ class SettingsController
         $tenant = (new Tenant())->findById($tenantId);
         TenantResolver::setCurrent($tenant);
 
+        flash('success', 'Impostazioni aggiornate.');
+
+        // Step orari cambiato: flash dedicato, renderizzato come banner
+        // ambra brand-coerente in general.php (il flash generico escapa
+        // l'HTML e non permette il link a "Orari e Coperti").
         $newTimeStep = (int)($data['time_step'] ?? 30);
         if ($newTimeStep !== $oldTimeStep) {
-            flash('warning', "Impostazioni aggiornate. Hai cambiato lo step orari da {$oldTimeStep} a {$newTimeStep} minuti: ora vai in Impostazioni → Orari e Coperti e risalva la griglia, altrimenti il widget continuerà a proporre i vecchi orari.");
-        } else {
-            flash('success', 'Impostazioni aggiornate.');
+            Session::flash('time_step_changed', ['from' => $oldTimeStep, 'to' => $newTimeStep]);
         }
         Response::redirect(url('dashboard/settings/general'));
     }

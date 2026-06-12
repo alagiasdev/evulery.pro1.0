@@ -11,6 +11,16 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
 
 <?php $activeKey = 'settings'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
+<?php $stepChanged = \App\Core\Session::getFlash('time_step_changed'); ?>
+<?php if (is_array($stepChanged)): ?>
+<div style="background:#FFF8E1; border-left:3px solid #FFB300; padding:10px 14px; border-radius:8px; margin-bottom:1rem; font-size:.78rem; color:#5D4037; line-height:1.5;">
+    <i class="bi bi-info-circle me-1" style="color:#F57F17;"></i>
+    <strong>Step orari cambiato</strong> da <strong><?= (int)$stepChanged['from'] ?></strong> a <strong><?= (int)$stepChanged['to'] ?> minuti</strong>:
+    ora vai in <a href="<?= url('dashboard/settings/slots') ?>" style="color:#E65100; text-decoration:underline;">Orari e Coperti</a> e risalva la griglia,
+    altrimenti il widget continuer&agrave; a proporre i vecchi orari.
+</div>
+<?php endif; ?>
+
 <form method="POST" action="<?= url('dashboard/settings/general') ?>" enctype="multipart/form-data">
     <?= csrf_field() ?>
     <div class="row g-4">
