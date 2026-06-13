@@ -701,6 +701,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     '<div class="bw-conf-row"><span>Data</span><strong>' + formatDatePill(body.date) + ' (' + formatDateDMY(body.date) + ')</strong></div>' +
                     '<div class="bw-conf-row"><span>Orario</span><strong>' + body.time + '</strong></div>' +
                     '<div class="bw-conf-row"><span>Persone</span><strong>' + body.party_size + '</strong></div>' +
+                    (state.selectedEndTime ? '<div class="bw-conf-row"><span>Tavolo riservato</span><strong>fino alle ' + state.selectedEndTime + '</strong></div>' : '') +
                     '<div class="bw-conf-row"><span>Nome</span><strong>' + escapeHtml(firstName + ' ' + lastName) + '</strong></div>';
 
                 if (state.selectedDiscount > 0) {
