@@ -40,12 +40,34 @@ $tlStart = 9; $tlEnd = 24; $tlSpan = $tlEnd - $tlStart;
                 <?php endif; ?>
             </div>
 
-            <?php foreach ($categories as $i => $cat):
+            <?php
+            $canAdvancedTurns = tenant_can('advanced_turns');
+            $globalDuration = (int)($tenant['table_duration'] ?? 90);
+            ?>
+            <?php if (!$canAdvancedTurns): ?>
+            <div class="cat-dur-locked">
+                <i class="bi bi-lock-fill"></i>
+                <span><strong>Durata tavolo per fascia</strong> (es. aperitivo più corto, cena più lunga, weekend diverso)
+                è disponibile dal piano <strong>Professional</strong>. Con il piano attuale si usa la durata unica
+                di <?= $globalDuration ?> min (Impostazioni → Generali).
+                <a href="mailto:<?= e(env('SUPPORT_EMAIL', '')) ?>">Passa a Professional</a></span>
+            </div>
+            <?php endif; ?>
+            <?php
+            foreach ($categories as $i => $cat):
                 $style = $catStyles[$cat['name']] ?? $defaultStyle;
                 $isActive = (bool)$cat['is_active'];
                 $borderColor = $isActive ? $style['color'] : '#9E9E9E';
                 $iconBg = $isActive ? $style['bg'] : '#F5F5F5';
                 $iconColor = $isActive ? $style['text'] : '#757575';
+                $catDur     = $cat['duration_minutes'] !== null ? (int)$cat['duration_minutes'] : null;
+                $catDurAlt  = $cat['duration_minutes_alt'] !== null ? (int)$cat['duration_minutes_alt'] : null;
+                $catAltDays = [];
+                if (!empty($cat['duration_alt_days'])) {
+                    $dec = json_decode($cat['duration_alt_days'], true);
+                    if (is_array($dec)) $catAltDays = array_map('intval', $dec);
+                }
+                $dayLabels = [1 => 'Lun', 2 => 'Mar', 3 => 'Mer', 4 => 'Gio', 5 => 'Ven', 6 => 'Sab', 7 => 'Dom'];
             ?>
             <div class="cat-card <?= $isActive ? '' : 'inactive' ?>" style="border-left-color:<?= $borderColor ?>;">
                 <input type="hidden" name="categories[<?= $i ?>][name]" value="<?= e($cat['name']) ?>">
@@ -58,6 +80,14 @@ $tlStart = 9; $tlEnd = 24; $tlSpan = $tlEnd - $tlStart;
                         <div class="cat-name"><?= e($cat['display_name']) ?></div>
                         <div class="cat-key"><?= e($cat['name']) ?></div>
                     </div>
+                    <?php if ($canAdvancedTurns && $catDur !== null): ?>
+                    <span class="cat-dur-pill" title="Durata tavolo per questa fascia">
+                        <i class="bi bi-hourglass-split"></i> <?= $catDur ?> min<?php
+                        if ($catDurAlt !== null && !empty($catAltDays)):
+                            $lbls = array_map(fn($d) => mb_strtolower($dayLabels[$d] ?? ''), $catAltDays);
+                            ?><span class="cat-dur-alt"><?= implode(',', $lbls) ?> <?= $catDurAlt ?>'</span><?php endif; ?>
+                    </span>
+                    <?php endif; ?>
                     <div class="cat-time-range">
                         <span><?= substr($cat['start_time'], 0, 5) ?></span>
                         <i class="bi bi-arrow-right"></i>
@@ -89,6 +119,42 @@ $tlStart = 9; $tlEnd = 24; $tlSpan = $tlEnd - $tlStart;
                         </div>
                     </div>
                     <input type="hidden" name="categories[<?= $i ?>][sort_order]" value="<?= (int)$cat['sort_order'] ?>">
+
+                    <?php if ($canAdvancedTurns): ?>
+                    <!-- Durata per fascia (servizio advanced_turns) -->
+                    <div class="cat-dur-block">
+                        <div class="cat-dur-row">
+                            <label class="edit-label" style="margin:0;">
+                                <i class="bi bi-hourglass-split" style="color:#F57F17;"></i> Durata tavolo
+                            </label>
+                            <input type="number" class="edit-input cat-dur-input" name="categories[<?= $i ?>][duration_minutes]"
+                                   value="<?= $catDur !== null ? $catDur : '' ?>" min="15" max="300" step="5"
+                                   placeholder="<?= $globalDuration ?> (globale)">
+                            <span class="cat-dur-unit">min · vuoto = durata globale (<?= $globalDuration ?>)</span>
+                        </div>
+                        <details class="cat-dur-ovr" <?= ($catDurAlt !== null && !empty($catAltDays)) ? 'open' : '' ?>>
+                            <summary>Durata diversa in alcuni giorni <span class="cat-dur-hint">(es. weekend più corto)</span></summary>
+                            <div class="cat-dur-ovr-body">
+                                <label class="edit-label">Giorni con durata diversa</label>
+                                <div class="cat-dur-days">
+                                    <?php foreach ($dayLabels as $dnum => $dlbl): ?>
+                                    <label class="cat-day-chk <?= in_array($dnum, $catAltDays, true) ? 'sel' : '' ?>">
+                                        <input type="checkbox" name="categories[<?= $i ?>][duration_alt_days][]" value="<?= $dnum ?>"
+                                               <?= in_array($dnum, $catAltDays, true) ? 'checked' : '' ?>>
+                                        <?= $dlbl ?>
+                                    </label>
+                                    <?php endforeach; ?>
+                                </div>
+                                <label class="edit-label">Durata in questi giorni</label>
+                                <div class="cat-dur-row">
+                                    <input type="number" class="edit-input cat-dur-input" name="categories[<?= $i ?>][duration_minutes_alt]"
+                                           value="<?= $catDurAlt !== null ? $catDurAlt : '' ?>" min="15" max="300" step="5" placeholder="es. 60">
+                                    <span class="cat-dur-unit">min</span>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
             <?php endforeach; ?>

@@ -36,6 +36,15 @@ class MealCategory
         return $stmt->fetchAll();
     }
 
+    public function findByName(int $tenantId, string $name): ?array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT * FROM meal_categories WHERE tenant_id = :t AND name = :n LIMIT 1'
+        );
+        $stmt->execute(['t' => $tenantId, 'n' => $name]);
+        return $stmt->fetch() ?: null;
+    }
+
     public function categorizeTime(array $categories, string $slotTime): ?array
     {
         $slotMinutes = $this->timeToMinutes($slotTime);
@@ -58,23 +67,29 @@ class MealCategory
     public function upsert(int $tenantId, array $data): void
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO meal_categories (tenant_id, name, display_name, start_time, end_time, sort_order, is_active)
-             VALUES (:tenant_id, :name, :display_name, :start_time, :end_time, :sort_order, :is_active)
+            'INSERT INTO meal_categories (tenant_id, name, display_name, start_time, end_time, sort_order, is_active, duration_minutes, duration_minutes_alt, duration_alt_days)
+             VALUES (:tenant_id, :name, :display_name, :start_time, :end_time, :sort_order, :is_active, :duration_minutes, :duration_minutes_alt, :duration_alt_days)
              ON DUPLICATE KEY UPDATE
                 display_name = VALUES(display_name),
                 start_time = VALUES(start_time),
                 end_time = VALUES(end_time),
                 sort_order = VALUES(sort_order),
-                is_active = VALUES(is_active)'
+                is_active = VALUES(is_active),
+                duration_minutes = VALUES(duration_minutes),
+                duration_minutes_alt = VALUES(duration_minutes_alt),
+                duration_alt_days = VALUES(duration_alt_days)'
         );
         $stmt->execute([
-            'tenant_id'    => $tenantId,
-            'name'         => $data['name'],
-            'display_name' => $data['display_name'],
-            'start_time'   => $data['start_time'],
-            'end_time'     => $data['end_time'],
-            'sort_order'   => (int)($data['sort_order'] ?? 0),
-            'is_active'    => $data['is_active'] ? 1 : 0,
+            'tenant_id'            => $tenantId,
+            'name'                 => $data['name'],
+            'display_name'         => $data['display_name'],
+            'start_time'           => $data['start_time'],
+            'end_time'             => $data['end_time'],
+            'sort_order'           => (int)($data['sort_order'] ?? 0),
+            'is_active'            => $data['is_active'] ? 1 : 0,
+            'duration_minutes'     => $data['duration_minutes'] ?? null,
+            'duration_minutes_alt' => $data['duration_minutes_alt'] ?? null,
+            'duration_alt_days'    => $data['duration_alt_days'] ?? null,
         ]);
     }
 

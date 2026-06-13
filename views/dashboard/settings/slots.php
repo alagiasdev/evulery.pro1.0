@@ -85,7 +85,33 @@ $DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
         Lascia <strong>0</strong> per chiudere una fascia.
         <div style="margin-top:.35rem;">
             <span class="info-pill"><i class="bi bi-clock"></i> Step: <?= $timeStep ?> min</span>
-            <span class="info-pill" style="margin-left:.25rem;"><i class="bi bi-hourglass-split"></i> Durata tavolo: <?= (int)$tenant['table_duration'] ?> min</span>
+            <?php
+            $globalDur = (int)$tenant['table_duration'];
+            // Categorie attive con durata custom (solo se il tenant ha advanced_turns)
+            $durCats = [];
+            if (tenant_can('advanced_turns') && !empty($allCategories)) {
+                $dayLbl = [1=>'lun',2=>'mar',3=>'mer',4=>'gio',5=>'ven',6=>'sab',7=>'dom'];
+                foreach ($allCategories as $c) {
+                    if (empty($c['is_active']) || $c['duration_minutes'] === null) continue;
+                    $alt = '';
+                    if ($c['duration_minutes_alt'] !== null && !empty($c['duration_alt_days'])) {
+                        $days = json_decode($c['duration_alt_days'], true);
+                        if (is_array($days)) {
+                            $lbls = array_map(fn($d) => $dayLbl[(int)$d] ?? '', $days);
+                            $alt = ' · ' . implode(',', $lbls) . ' ' . (int)$c['duration_minutes_alt'] . "'";
+                        }
+                    }
+                    $durCats[] = e($c['display_name']) . ': ' . (int)$c['duration_minutes'] . ' min' . $alt;
+                }
+            }
+            ?>
+            <?php if (!empty($durCats)): ?>
+                <?php foreach ($durCats as $dc): ?>
+                <span class="info-pill" style="margin-left:.25rem;"><i class="bi bi-hourglass-split"></i> <?= $dc ?></span>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <span class="info-pill" style="margin-left:.25rem;"><i class="bi bi-hourglass-split"></i> Durata tavolo: <?= $globalDur ?> min</span>
+            <?php endif; ?>
         </div>
         <div style="margin-top:.5rem; font-size:.75rem; color:#6c757d;">
             <i class="bi bi-lightbulb me-1" style="color:#FFB300;"></i>
