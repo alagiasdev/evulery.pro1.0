@@ -160,6 +160,11 @@
             </div>
             <?php endif; ?>
 
+            <div class="bw-stay-info" id="stay-info" style="display:none;">
+                <i class="bi bi-clock-history"></i>
+                <span id="stay-text"></span>
+            </div>
+
             <button type="button" class="bw-submit" id="btn-submit">
                 Conferma Prenotazione
             </button>

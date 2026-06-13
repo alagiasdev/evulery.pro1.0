@@ -12,6 +12,9 @@ if ($hasDetails) {
     $resId = (int)($reservation['booking_number'] ?? $reservation['id']);
     $depositAmount = $reservation['deposit_amount'] ? number_format((float)$reservation['deposit_amount'], 2, ',', '.') : null;
     $guaranteeSecured = ($reservation['guarantee_status'] ?? 'none') === 'secured';
+    // Permanenza al tavolo (durata snapshot della prenotazione, fallback 90)
+    $durMin = (int)($reservation['duration_minutes'] ?? 90);
+    $stayEnd = $durMin > 0 ? date('H:i', strtotime($reservation['reservation_time']) + $durMin * 60) : '';
 }
 ?>
 
@@ -49,6 +52,12 @@ if ($hasDetails) {
                 <div class="bw-conf-detail-label">Prenotazione</div>
             </div>
         </div>
+        <?php if (!empty($stayEnd)): ?>
+        <div class="bw-conf-stay" style="display:flex;align-items:center;gap:.5rem;background:#E8F4FD;border-radius:8px;padding:.6rem .85rem;margin-top:.75rem;font-size:.84rem;color:#0d5a8a;">
+            <i class="bi bi-clock-history"></i>
+            <span>Il tuo tavolo resta riservato fino alle <strong><?= $stayEnd ?></strong>.</span>
+        </div>
+        <?php endif; ?>
         <?php endif; ?>
 
         <?php if (!empty($depositPaid) && $depositAmount): ?>

@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         currentStep: 1,
         selectedDate: null,
         selectedTime: null,
+        selectedEndTime: null,
         selectedPartySize: null,
         calendarMonth: new Date().getMonth(),
         calendarYear: new Date().getFullYear(),
@@ -202,6 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function selectDate(dateStr) {
         state.selectedDate = dateStr;
         state.selectedTime = null;
+        state.selectedEndTime = null;
         state.maxPartyForDate = null;
         updatePill('date', formatDatePill(dateStr));
         if (pills.time) pills.time.style.display = 'none';
@@ -316,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var promoBadge = (slot.discount_percent && slot.discount_percent > 0)
                     ? '<span class="bw-promo-badge">-' + slot.discount_percent + '%</span>'
                     : '';
-                html += '<button type="button" class="bw-slot-btn' + active + disabled + '" data-time="' + slot.time + '" data-discount="' + (slot.discount_percent || 0) + '" title="' + title + '"' + (!slot.is_available ? ' disabled' : '') + '>' + slot.time + promoBadge + '</button>';
+                html += '<button type="button" class="bw-slot-btn' + active + disabled + '" data-time="' + slot.time + '" data-end="' + (slot.end_time || '') + '" data-discount="' + (slot.discount_percent || 0) + '" title="' + title + '"' + (!slot.is_available ? ' disabled' : '') + '>' + slot.time + promoBadge + '</button>';
             });
             html += '</div></div>';
         });
@@ -334,9 +336,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 slotsContainer.querySelectorAll('.bw-slot-btn').forEach(function(b) { b.classList.remove('bw-slot-active'); });
                 this.classList.add('bw-slot-active');
                 state.selectedTime = this.dataset.time;
+                state.selectedEndTime = this.dataset.end || null;
                 state.selectedDiscount = parseInt(this.dataset.discount) || 0;
                 updatePill('time', state.selectedTime);
                 updateDepositInfo();
+                updateStayInfo();
                 setTimeout(function() { goToStep(4); }, 250);
             });
         });
@@ -393,6 +397,19 @@ document.addEventListener('DOMContentLoaded', function() {
         return true;
     }
 
+    // Permanenza al tavolo nello step di review (pre-conferma).
+    function updateStayInfo() {
+        var wrap = getEl('stay-info');
+        var txt = getEl('stay-text');
+        if (!wrap || !txt) return;
+        if (state.selectedEndTime) {
+            txt.innerHTML = 'Il tuo tavolo resta riservato fino alle <strong>' + state.selectedEndTime + '</strong>.';
+            wrap.style.display = 'flex';
+        } else {
+            wrap.style.display = 'none';
+        }
+    }
+
     function updateDepositInfo() {
         var el = getEl('deposit-text');
         var wrap = getEl('deposit-info');
@@ -436,6 +453,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.classList.add('bw-party-active');
                 state.selectedPartySize = parseInt(this.dataset.size);
                 state.selectedTime = null;
+        state.selectedEndTime = null;
                 if (pills.time) pills.time.style.display = 'none';
                 updatePill('party', state.selectedPartySize + ' Pers.');
                 updateDepositInfo();
@@ -989,6 +1007,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         state.selectedDate = rbDate;
         state.selectedTime = null;
+        state.selectedEndTime = null;
         state.maxPartyForDate = null;
         updatePill('date', formatDatePill(rbDate));
         renderCalendar();

@@ -94,6 +94,30 @@ class MailService
 
         $dateFormatted = self::formatDateItalian($date);
 
+        // Permanenza al tavolo: durata snapshot (fallback durata globale tenant, poi 90)
+        $stayDur = (int)($reservation['duration_minutes'] ?? $tenant['table_duration'] ?? 90);
+        $stayEnd = ($time && $stayDur > 0)
+            ? date('H:i', strtotime($reservation['reservation_time']) + $stayDur * 60)
+            : '';
+        // Riga riepilogo "Tavolo riservato fino alle HH:MM" (heredoc-ready)
+        $stayRowHtml = '';
+        if ($stayEnd !== '') {
+            $stayRowHtml = <<<HTML
+                        <tr><td style="border-top:1px solid #e9ecef;"></td></tr>
+                        <tr>
+                            <td style="padding:10px 0;">
+                                <table cellpadding="0" cellspacing="0" border="0"><tr>
+                                    <td style="width:36px;height:36px;border-radius:10px;background:#fff;color:#00844A;text-align:center;font-size:15px;line-height:36px;" width="36">&#9203;</td>
+                                    <td style="padding-left:12px;">
+                                        <div style="font-size:11px;color:#6c757d;font-weight:500;text-transform:uppercase;letter-spacing:.3px;">Tavolo riservato</div>
+                                        <div style="font-size:15px;font-weight:600;color:#1a1d23;">fino alle {$stayEnd}</div>
+                                    </td>
+                                </tr></table>
+                            </td>
+                        </tr>
+            HTML;
+        }
+
         $restaurantName    = e($tenant['name'] ?? '');
         $restaurantAddress = e($tenant['address'] ?? '');
         $restaurantPhone   = e($tenant['phone'] ?? '');
@@ -266,6 +290,7 @@ class MailService
                                 </tr></table>
                             </td>
                         </tr>
+                        {$stayRowHtml}
                         <tr><td style="border-top:1px solid #e9ecef;"></td></tr>
                         <tr>
                             <td style="padding:10px 0;">

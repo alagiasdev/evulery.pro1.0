@@ -55,6 +55,7 @@ class AvailabilityService
         $reservationModel = new Reservation();
         $promotionModel = new Promotion();
         $canUsePromos = (new \App\Models\Tenant())->canUseService($tenantId, 'promotions');
+        $durationResolver = new \App\Services\MealDurationResolver();
         $result = [];
 
         foreach ($slots as $slot) {
@@ -90,6 +91,10 @@ class AvailabilityService
                 ? $promotionModel->findApplicable($tenantId, $date, $slotTime)
                 : null;
 
+            // Durata occupazione per questo slot (fascia+giorno) -> il widget
+            // mostra "tavolo riservato fino alle HH:MM" prima della conferma.
+            $slotDuration = $durationResolver->resolve($tenantId, $date, $slotTime);
+
             $result[] = [
                 'time'             => $slotTime,
                 'max_covers'       => $maxCovers,
@@ -97,6 +102,8 @@ class AvailabilityService
                 'available_covers' => max(0, $available),
                 'is_available'     => $available >= $partySize,
                 'is_past'          => $isPast,
+                'duration'         => $slotDuration,
+                'end_time'         => date('H:i', strtotime($slotTime) + $slotDuration * 60),
                 'discount_percent' => ($promo && !($promoWidgetOnly && $source !== 'widget'))
                     ? (int)$promo['discount_percent'] : 0,
             ];

@@ -615,6 +615,19 @@
 
 .bw-deposit-info i { margin-right: 4px; }
 
+.bw-stay-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #E8F4FD;
+    border-radius: var(--bw-radius-xs);
+    padding: 12px 14px;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #0d5a8a;
+}
+.bw-stay-info i { font-size: 1rem; flex-shrink: 0; }
+
 .bw-submit {
     width: 100%;
     padding: 14px;
