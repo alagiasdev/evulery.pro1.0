@@ -11,8 +11,7 @@ $isGuarantee = $depositType === 'guarantee';
 // Permanenza al tavolo: durata snapshot della prenotazione (fallback globale).
 $durMin = (int)($reservation['duration_minutes'] ?? $tenant['table_duration'] ?? 90);
 $stayEnd = ($time && $durMin > 0) ? date('H:i', strtotime($reservation['reservation_time']) + $durMin * 60) : '';
-$durH = intdiv($durMin, 60); $durM = $durMin % 60;
-$durLabel = trim(($durH > 0 ? $durH . 'h' : '') . ($durM > 0 ? ($durH > 0 ? sprintf('%02d', $durM) : $durM . 'min') : ''));
+$stayText = $stayEnd ? 'dalle ' . $time . ' alle ' . $stayEnd . ' (' . format_duration_label($durMin) . ')' : '';
 
 // CTA "Prenota di nuovo": riapre il widget precompilato con data e coperti
 $rebookUrl = url($slug) . '?rebook=1&date=' . urlencode($date) . '&party=' . $party;
@@ -24,7 +23,7 @@ $recapBox = '<div style="background:#f8f9fa;border:1px solid #e9ecef;border-radi
     . '<div style="display:flex;justify-content:space-between;padding:5px 0;border-top:1px solid #eef0f2;"><span style="color:#6c757d;">Data</span><strong>' . e($dateIt) . '</strong></div>'
     . '<div style="display:flex;justify-content:space-between;padding:5px 0;border-top:1px solid #eef0f2;"><span style="color:#6c757d;">Orario</span><strong>' . e($time) . '</strong></div>'
     . '<div style="display:flex;justify-content:space-between;padding:5px 0;border-top:1px solid #eef0f2;"><span style="color:#6c757d;">Persone</span><strong>' . $party . '</strong></div>'
-    . ($stayEnd ? '<div style="display:flex;justify-content:space-between;padding:5px 0;border-top:1px solid #eef0f2;"><span style="color:#6c757d;">Tavolo riservato</span><strong>fino alle ' . $stayEnd . ' (' . $durLabel . ')</strong></div>' : '')
+    . ($stayText ? '<div style="display:flex;justify-content:space-between;padding:5px 0;border-top:1px solid #eef0f2;"><span style="color:#6c757d;">Tavolo riservato</span><strong>' . $stayText . '</strong></div>' : '')
     . '</div>';
 ?>
 <div class="bw-conf-card">

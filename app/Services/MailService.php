@@ -99,6 +99,7 @@ class MailService
         $stayEnd = ($time && $stayDur > 0)
             ? date('H:i', strtotime($reservation['reservation_time']) + $stayDur * 60)
             : '';
+        $stayText = $stayEnd ? "dalle {$time} alle {$stayEnd} (" . format_duration_label($stayDur) . ')' : '';
         // Riga riepilogo "Tavolo riservato fino alle HH:MM" (heredoc-ready)
         $stayRowHtml = '';
         if ($stayEnd !== '') {
@@ -110,7 +111,7 @@ class MailService
                                     <td style="width:36px;height:36px;border-radius:10px;background:#fff;color:#00844A;text-align:center;font-size:15px;line-height:36px;" width="36">&#9203;</td>
                                     <td style="padding-left:12px;">
                                         <div style="font-size:11px;color:#6c757d;font-weight:500;text-transform:uppercase;letter-spacing:.3px;">Tavolo riservato</div>
-                                        <div style="font-size:15px;font-weight:600;color:#1a1d23;">fino alle {$stayEnd}</div>
+                                        <div style="font-size:15px;font-weight:600;color:#1a1d23;">{$stayText}</div>
                                     </td>
                                 </tr></table>
                             </td>

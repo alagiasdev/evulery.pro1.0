@@ -230,6 +230,20 @@ function cancelled_by_label(?string $cancelledBy): string
 }
 
 /**
+ * Formato leggibile di una durata in minuti: 45 -> "45 min", 90 -> "1h30",
+ * 120 -> "2h", 75 -> "1h15". Usato per la permanenza al tavolo.
+ */
+function format_duration_label(int $minutes): string
+{
+    if ($minutes < 60) {
+        return $minutes . ' min';
+    }
+    $h = intdiv($minutes, 60);
+    $m = $minutes % 60;
+    return $m === 0 ? $h . 'h' : $h . 'h' . sprintf('%02d', $m);
+}
+
+/**
  * Colore identificativo di un'area sala, derivato in modo deterministico
  * dal nome (crc32 → palette fissa). La stessa area ha sempre lo stesso
  * colore, senza alcuna configurazione. Palette scelta per non confondersi

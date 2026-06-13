@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedDate: null,
         selectedTime: null,
         selectedEndTime: null,
+        selectedDuration: 0,
         selectedPartySize: null,
         calendarMonth: new Date().getMonth(),
         calendarYear: new Date().getFullYear(),
@@ -204,6 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
         state.selectedDate = dateStr;
         state.selectedTime = null;
         state.selectedEndTime = null;
+        state.selectedDuration = 0;
         state.maxPartyForDate = null;
         updatePill('date', formatDatePill(dateStr));
         if (pills.time) pills.time.style.display = 'none';
@@ -318,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var promoBadge = (slot.discount_percent && slot.discount_percent > 0)
                     ? '<span class="bw-promo-badge">-' + slot.discount_percent + '%</span>'
                     : '';
-                html += '<button type="button" class="bw-slot-btn' + active + disabled + '" data-time="' + slot.time + '" data-end="' + (slot.end_time || '') + '" data-discount="' + (slot.discount_percent || 0) + '" title="' + title + '"' + (!slot.is_available ? ' disabled' : '') + '>' + slot.time + promoBadge + '</button>';
+                html += '<button type="button" class="bw-slot-btn' + active + disabled + '" data-time="' + slot.time + '" data-end="' + (slot.end_time || '') + '" data-duration="' + (slot.duration || 0) + '" data-discount="' + (slot.discount_percent || 0) + '" title="' + title + '"' + (!slot.is_available ? ' disabled' : '') + '>' + slot.time + promoBadge + '</button>';
             });
             html += '</div></div>';
         });
@@ -337,6 +339,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.classList.add('bw-slot-active');
                 state.selectedTime = this.dataset.time;
                 state.selectedEndTime = this.dataset.end || null;
+                state.selectedDuration = parseInt(this.dataset.duration) || 0;
                 state.selectedDiscount = parseInt(this.dataset.discount) || 0;
                 updatePill('time', state.selectedTime);
                 updateDepositInfo();
@@ -397,13 +400,29 @@ document.addEventListener('DOMContentLoaded', function() {
         return true;
     }
 
+    // Formato durata: 45 -> "45 min", 90 -> "1h30", 120 -> "2h".
+    function formatDur(min) {
+        min = parseInt(min, 10) || 0;
+        if (min < 60) return min + ' min';
+        var h = Math.floor(min / 60), m = min % 60;
+        return m === 0 ? h + 'h' : h + 'h' + ('0' + m).slice(-2);
+    }
+
+    // Testo permanenza: "dalle 18:30 alle 19:15 (45 min)".
+    function stayPhrase() {
+        if (!state.selectedTime || !state.selectedEndTime) return '';
+        var dur = state.selectedDuration ? ' (' + formatDur(state.selectedDuration) + ')' : '';
+        return 'dalle ' + state.selectedTime + ' alle ' + state.selectedEndTime + dur;
+    }
+
     // Permanenza al tavolo nello step di review (pre-conferma).
     function updateStayInfo() {
         var wrap = getEl('stay-info');
         var txt = getEl('stay-text');
         if (!wrap || !txt) return;
-        if (state.selectedEndTime) {
-            txt.innerHTML = 'Il tuo tavolo resta riservato fino alle <strong>' + state.selectedEndTime + '</strong>.';
+        var phrase = stayPhrase();
+        if (phrase) {
+            txt.innerHTML = 'Il tuo tavolo resta riservato <strong>' + phrase + '</strong>.';
             wrap.style.display = 'flex';
         } else {
             wrap.style.display = 'none';
@@ -454,6 +473,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 state.selectedPartySize = parseInt(this.dataset.size);
                 state.selectedTime = null;
         state.selectedEndTime = null;
+        state.selectedDuration = 0;
                 if (pills.time) pills.time.style.display = 'none';
                 updatePill('party', state.selectedPartySize + ' Pers.');
                 updateDepositInfo();
@@ -701,7 +721,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     '<div class="bw-conf-row"><span>Data</span><strong>' + formatDatePill(body.date) + ' (' + formatDateDMY(body.date) + ')</strong></div>' +
                     '<div class="bw-conf-row"><span>Orario</span><strong>' + body.time + '</strong></div>' +
                     '<div class="bw-conf-row"><span>Persone</span><strong>' + body.party_size + '</strong></div>' +
-                    (state.selectedEndTime ? '<div class="bw-conf-row"><span>Tavolo riservato</span><strong>fino alle ' + state.selectedEndTime + '</strong></div>' : '') +
+                    (stayPhrase() ? '<div class="bw-conf-row"><span>Tavolo riservato</span><strong>' + stayPhrase() + '</strong></div>' : '') +
                     '<div class="bw-conf-row"><span>Nome</span><strong>' + escapeHtml(firstName + ' ' + lastName) + '</strong></div>';
 
                 if (state.selectedDiscount > 0) {
@@ -1009,6 +1029,7 @@ document.addEventListener('DOMContentLoaded', function() {
         state.selectedDate = rbDate;
         state.selectedTime = null;
         state.selectedEndTime = null;
+        state.selectedDuration = 0;
         state.maxPartyForDate = null;
         updatePill('date', formatDatePill(rbDate));
         renderCalendar();

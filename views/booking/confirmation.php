@@ -15,6 +15,7 @@ if ($hasDetails) {
     // Permanenza al tavolo (durata snapshot della prenotazione, fallback 90)
     $durMin = (int)($reservation['duration_minutes'] ?? 90);
     $stayEnd = $durMin > 0 ? date('H:i', strtotime($reservation['reservation_time']) + $durMin * 60) : '';
+    $stayText = $stayEnd ? 'dalle ' . $timeFormatted . ' alle ' . $stayEnd . ' (' . format_duration_label($durMin) . ')' : '';
 }
 ?>
 
@@ -52,10 +53,10 @@ if ($hasDetails) {
                 <div class="bw-conf-detail-label">Prenotazione</div>
             </div>
         </div>
-        <?php if (!empty($stayEnd)): ?>
+        <?php if (!empty($stayText)): ?>
         <div class="bw-conf-stay" style="display:flex;align-items:center;gap:.5rem;background:#E8F4FD;border-radius:8px;padding:.6rem .85rem;margin-top:.75rem;font-size:.84rem;color:#0d5a8a;">
             <i class="bi bi-clock-history"></i>
-            <span>Il tuo tavolo resta riservato fino alle <strong><?= $stayEnd ?></strong>.</span>
+            <span>Il tuo tavolo resta riservato <strong><?= $stayText ?></strong>.</span>
         </div>
         <?php endif; ?>
         <?php endif; ?>
