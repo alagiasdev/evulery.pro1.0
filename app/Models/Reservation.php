@@ -144,9 +144,20 @@ class Reservation
         $tenantId = (int)$data['tenant_id'];
         $bookingNumber = $this->allocateBookingNumber($tenantId);
 
+        // Snapshot durata: punto unico per TUTTI i flussi di creazione
+        // (widget/API via atomicBook, dashboard diretto). Risolve la durata
+        // dalla fascia+giorno e la congela sulla prenotazione. Se il chiamante
+        // l'ha gia' fornita (es. override manuale futuro) la rispetta.
+        $durationMinutes = $data['duration_minutes']
+            ?? (new \App\Services\MealDurationResolver())->resolve(
+                $tenantId,
+                $data['reservation_date'],
+                $data['reservation_time']
+            );
+
         $stmt = $this->db->prepare(
-            'INSERT INTO reservations (tenant_id, customer_id, reservation_date, reservation_time, party_size, status, deposit_required, deposit_amount, guarantee_status, source, discount_percent, promotion_id, manage_token, customer_notes, booking_number)
-             VALUES (:tenant_id, :customer_id, :reservation_date, :reservation_time, :party_size, :status, :deposit_required, :deposit_amount, :guarantee_status, :source, :discount_percent, :promotion_id, :manage_token, :customer_notes, :booking_number)'
+            'INSERT INTO reservations (tenant_id, customer_id, reservation_date, reservation_time, party_size, duration_minutes, status, deposit_required, deposit_amount, guarantee_status, source, discount_percent, promotion_id, manage_token, customer_notes, booking_number)
+             VALUES (:tenant_id, :customer_id, :reservation_date, :reservation_time, :party_size, :duration_minutes, :status, :deposit_required, :deposit_amount, :guarantee_status, :source, :discount_percent, :promotion_id, :manage_token, :customer_notes, :booking_number)'
         );
         $stmt->execute([
             'tenant_id'        => $tenantId,
@@ -154,6 +165,7 @@ class Reservation
             'reservation_date' => $data['reservation_date'],
             'reservation_time' => $data['reservation_time'],
             'party_size'       => $data['party_size'],
+            'duration_minutes' => $durationMinutes,
             'status'           => $data['status'] ?? 'pending',
             'deposit_required' => $data['deposit_required'] ?? 0,
             'deposit_amount'   => $data['deposit_amount'] ?? null,

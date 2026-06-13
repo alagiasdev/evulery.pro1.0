@@ -117,6 +117,7 @@ return array(
     'App\\Services\\HubService' => $baseDir . '/app/Services/HubService.php',
     'App\\Services\\LoginThrottle' => $baseDir . '/app/Services/LoginThrottle.php',
     'App\\Services\\MailService' => $baseDir . '/app/Services/MailService.php',
+    'App\\Services\\MealDurationResolver' => $baseDir . '/app/Services/MealDurationResolver.php',
     'App\\Services\\Migrator' => $baseDir . '/app/Services/Migrator.php',
     'App\\Services\\NotificationService' => $baseDir . '/app/Services/NotificationService.php',
     'App\\Services\\RateLimit' => $baseDir . '/app/Services/RateLimit.php',

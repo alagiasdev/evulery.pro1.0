@@ -230,6 +230,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Services\\HubService' => __DIR__ . '/../..' . '/app/Services/HubService.php',
         'App\\Services\\LoginThrottle' => __DIR__ . '/../..' . '/app/Services/LoginThrottle.php',
         'App\\Services\\MailService' => __DIR__ . '/../..' . '/app/Services/MailService.php',
+        'App\\Services\\MealDurationResolver' => __DIR__ . '/../..' . '/app/Services/MealDurationResolver.php',
         'App\\Services\\Migrator' => __DIR__ . '/../..' . '/app/Services/Migrator.php',
         'App\\Services\\NotificationService' => __DIR__ . '/../..' . '/app/Services/NotificationService.php',
         'App\\Services\\RateLimit' => __DIR__ . '/../..' . '/app/Services/RateLimit.php',
