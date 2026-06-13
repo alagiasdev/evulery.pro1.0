@@ -72,7 +72,9 @@ class TableAssigner
      */
     public function pickTables(int $tenantId, string $date, string $time, int $partySize, int $excludeReservationId = 0): array
     {
-        $window = $this->windowMinutes($tenantId);
+        $timing = $this->tenantTiming($tenantId);
+        $buffer = $timing['buffer'];
+        $newDur = (new MealDurationResolver())->resolve($tenantId, $date, $time);
         // Auto-assegnazione: esclude tavoli "solo manuale" (Fase B) e "bloccati" (Fase E).
         // Solo i tavoli con is_bookable_online=1 AND is_blocked=0 sono candidati per
         // l'algoritmo automatico. Gli altri restano assegnabili manualmente dal
@@ -86,7 +88,7 @@ class TableAssigner
             return [];
         }
 
-        $occ = $this->occupationMap($tenantId, $date, $excludeReservationId);
+        $occ = $this->occupationMap($tenantId, $date, $excludeReservationId, $timing['global']);
         $start = $this->timeToMinutes($time);
 
         // 1) singolo tavolo: tutti i candidati validi e liberi, poi ordina per fit.
@@ -95,7 +97,7 @@ class TableAssigner
             $min = (int)($t['min_capacity'] ?? 1);
             $max = (int)$t['capacity'];
             if ($partySize < $min || $partySize > $max) continue;
-            if (!$this->isFree((int)$t['id'], $start, $occ, $window)) continue;
+            if (!$this->isFree((int)$t['id'], $start, $newDur, $occ, $buffer)) continue;
             $candidates[] = [
                 'id'    => (int)$t['id'],
                 'fit'   => $max - $partySize,   // spreco di posti (più basso = meglio)
@@ -130,8 +132,8 @@ class TableAssigner
             if ($partySize <= max($maxA, $maxB)) continue;
             $cap = $maxA + $maxB;
             if ($cap < $partySize) continue;
-            if (!$this->isFree($a, $start, $occ, $window)) continue;
-            if (!$this->isFree($b, $start, $occ, $window)) continue;
+            if (!$this->isFree($a, $start, $newDur, $occ, $buffer)) continue;
+            if (!$this->isFree($b, $start, $newDur, $occ, $buffer)) continue;
             $comboCandidates[] = [
                 'ids' => [$a, $b],
                 'fit' => $cap - $partySize,
@@ -151,7 +153,9 @@ class TableAssigner
      */
     public function availableOptions(int $tenantId, string $date, string $time, int $partySize, int $excludeReservationId = 0): array
     {
-        $window = $this->windowMinutes($tenantId);
+        $timing = $this->tenantTiming($tenantId);
+        $buffer = $timing['buffer'];
+        $newDur = (new MealDurationResolver())->resolve($tenantId, $date, $time);
         // Override manuale: l'operatore puo' scegliere tavoli "solo manuale"
         // (is_bookable_online=0) ma NON tavoli bloccati (is_blocked=1, fuori uso).
         $tables = array_values(array_filter(
@@ -161,7 +165,7 @@ class TableAssigner
         if (empty($tables)) {
             return [];
         }
-        $occ = $this->occupationMap($tenantId, $date, $excludeReservationId);
+        $occ = $this->occupationMap($tenantId, $date, $excludeReservationId, $timing['global']);
         $start = $this->timeToMinutes($time);
 
         $byId = [];
@@ -175,7 +179,7 @@ class TableAssigner
             $min = (int)($t['min_capacity'] ?? 1);
             $max = (int)$t['capacity'];
             if ($partySize < $min || $partySize > $max) continue;
-            if (!$this->isFree((int)$t['id'], $start, $occ, $window)) continue;
+            if (!$this->isFree((int)$t['id'], $start, $newDur, $occ, $buffer)) continue;
             $options[] = [
                 'table_ids' => [(int)$t['id']],
                 'capacity'  => $max,
@@ -194,8 +198,8 @@ class TableAssigner
             if ($partySize <= max($maxA, $maxB)) continue;
             $cap = $maxA + $maxB;
             if ($cap < $partySize) continue;
-            if (!$this->isFree($a, $start, $occ, $window)) continue;
-            if (!$this->isFree($b, $start, $occ, $window)) continue;
+            if (!$this->isFree($a, $start, $newDur, $occ, $buffer)) continue;
+            if (!$this->isFree($b, $start, $newDur, $occ, $buffer)) continue;
             $options[] = [
                 'table_ids' => [$a, $b],
                 'capacity'  => $cap,
@@ -360,23 +364,29 @@ class TableAssigner
 
     // ─── interni ─────────────────────────────────────────────────
 
-    /** Durata occupazione + buffer pulizia, in minuti. */
-    private function windowMinutes(int $tenantId): int
+    /**
+     * Durata globale (fallback) + buffer turnover del tenant, in minuti.
+     * @return array{global:int, buffer:int}
+     */
+    private function tenantTiming(int $tenantId): array
     {
         $tenant = (new Tenant())->findById($tenantId);
-        $duration = (int)($tenant['table_duration'] ?? 90);
-        $buffer   = (int)($tenant['table_turnover_buffer'] ?? 15);
-        return max(15, $duration) + max(0, $buffer);
+        return [
+            'global' => max(15, (int)($tenant['table_duration'] ?? 90)),
+            'buffer' => max(0, (int)($tenant['table_turnover_buffer'] ?? 15)),
+        ];
     }
 
     /**
-     * Orari di inizio (in minuti) delle prenotazioni che occupano ciascun
-     * tavolo nella data indicata: tableId => [start1, start2, ...].
+     * Occupazioni per tavolo nella data: tableId => [['start'=>min, 'dur'=>min], ...].
+     * La durata e' lo snapshot della prenotazione (duration_minutes); per le
+     * righe storiche senza snapshot si usa $globalDur come fallback. Cosi'
+     * aperitivo 45' e cena 120' occupano il tavolo per la finestra giusta.
      */
-    private function occupationMap(int $tenantId, string $date, int $excludeReservationId): array
+    private function occupationMap(int $tenantId, string $date, int $excludeReservationId, int $globalDur): array
     {
         $statuses = "'" . implode("','", self::BUSY_STATUSES) . "'";
-        $sql = "SELECT rt.table_id, r.reservation_time
+        $sql = "SELECT rt.table_id, r.reservation_time, r.duration_minutes
                 FROM reservation_tables rt
                 JOIN reservations r ON r.id = rt.reservation_id
                 WHERE r.tenant_id = :t
@@ -388,16 +398,26 @@ class TableAssigner
 
         $map = [];
         foreach ($stmt->fetchAll() as $row) {
-            $map[(int)$row['table_id']][] = $this->timeToMinutes($row['reservation_time']);
+            $map[(int)$row['table_id']][] = [
+                'start' => $this->timeToMinutes($row['reservation_time']),
+                'dur'   => $row['duration_minutes'] !== null ? (int)$row['duration_minutes'] : $globalDur,
+            ];
         }
         return $map;
     }
 
-    /** Un tavolo è libero al minuto $start se nessuna occupazione dista < $window. */
-    private function isFree(int $tableId, int $start, array $occ, int $window): bool
+    /**
+     * Un tavolo e' libero per una nuova prenotazione [start, start+newDur]
+     * se nessuna occupazione esistente si sovrappone, considerando il buffer
+     * di pulizia tra due turni. Due intervalli [a,b] e [c,d] confliggono se
+     * a < d+buffer AND c < b+buffer.
+     */
+    private function isFree(int $tableId, int $start, int $newDur, array $occ, int $buffer): bool
     {
-        foreach ($occ[$tableId] ?? [] as $busyStart) {
-            if (abs($start - $busyStart) < $window) {
+        $newEnd = $start + $newDur;
+        foreach ($occ[$tableId] ?? [] as $o) {
+            $occEnd = $o['start'] + $o['dur'];
+            if ($start < $occEnd + $buffer && $o['start'] < $newEnd + $buffer) {
                 return false;
             }
         }

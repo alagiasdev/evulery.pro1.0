@@ -394,6 +394,16 @@ class Reservation
         $this->db->prepare('DELETE FROM reservations WHERE id = :id')->execute(['id' => $id]);
     }
 
+    /**
+     * Coperti occupati in un dato slot, considerando le sovrapposizioni.
+     *
+     * Ogni prenotazione "preme" sullo slot se l'ha iniziato prima/al pari
+     * e finisce dopo. La durata usata e' quella SNAPSHOT della singola
+     * prenotazione (reservations.duration_minutes), cosi' aperitivo 45' e
+     * cena 120' pesano ciascuno per la propria finestra. $tableDuration
+     * resta come FALLBACK per le prenotazioni storiche senza snapshot
+     * (duration_minutes NULL) -> retrocompatibile.
+     */
     public function getOccupiedCovers(int $tenantId, string $date, string $slotTime, int $tableDuration): int
     {
         $stmt = $this->db->prepare(
@@ -402,7 +412,7 @@ class Reservation
              WHERE tenant_id = :tenant_id
              AND reservation_date = :date
              AND reservation_time <= CAST(:slot_time AS TIME)
-             AND ADDTIME(reservation_time, SEC_TO_TIME(:duration * 60)) > CAST(:slot_time2 AS TIME)
+             AND ADDTIME(reservation_time, SEC_TO_TIME(COALESCE(duration_minutes, :duration) * 60)) > CAST(:slot_time2 AS TIME)
              AND status IN ("confirmed", "pending")'
         );
         $stmt->execute([
