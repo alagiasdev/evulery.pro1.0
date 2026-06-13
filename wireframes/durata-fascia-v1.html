@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Durata servizio per fascia v1</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A; --brand-dark: #006837;
+    --ink: #1a1d23; --muted: #6c757d; --line: #e9ecef; --bg: #f5f6f8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--ink);
+    font-size: 15px; line-height: 1.5; padding: 28px 16px 80px;
+}
+.wrap { max-width: 880px; margin: 0 auto; }
+
+.wf-header {
+    background: linear-gradient(135deg, #042418, var(--brand));
+    color: #fff; border-radius: 14px; padding: 22px 26px; margin-bottom: 22px;
+}
+.wf-header h1 { font-size: 1.3rem; font-weight: 800; }
+.wf-header p { font-size: .85rem; opacity: .9; margin-top: 4px; }
+.wf-tag {
+    display: inline-block; background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.3); border-radius: 100px;
+    font-size: .68rem; font-weight: 700; letter-spacing: 1.5px;
+    padding: 3px 12px; text-transform: uppercase; margin-bottom: 10px;
+}
+
+.section {
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px 22px; margin-bottom: 18px;
+}
+.section-num {
+    display: inline-block; background: var(--brand); color: #fff;
+    font-size: .68rem; font-weight: 800; letter-spacing: 1px;
+    padding: 3px 11px; border-radius: 100px; text-transform: uppercase;
+    margin-bottom: 8px;
+}
+.section h2 { font-size: 1.05rem; font-weight: 800; margin-bottom: 4px; }
+.section-sub { font-size: .82rem; color: var(--muted); margin-bottom: 16px; }
+
+/* ===== Cat card (replica UI reale) ===== */
+.cat-card {
+    background: #fff; border: 1px solid var(--line); border-left: 3px solid;
+    border-radius: 10px; margin-bottom: 10px; overflow: hidden;
+}
+.cat-card.inactive { opacity: .55; }
+.cat-header {
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+}
+.cat-drag { color: #ced4da; font-size: .9rem; cursor: grab; }
+.cat-icon {
+    width: 36px; height: 36px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    flex-shrink: 0;
+}
+.cat-info { flex: 1; min-width: 0; }
+.cat-name { font-weight: 700; font-size: .92rem; }
+.cat-key { font-size: .7rem; color: #adb5bd; }
+.cat-time-range {
+    display: flex; align-items: center; gap: 6px;
+    font-size: .8rem; color: var(--muted); font-weight: 600;
+}
+.cat-time-range i { font-size: .7rem; }
+
+/* NUOVO: pill durata */
+.cat-duration {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #FFF8E1; border: 1px solid #FFE082; color: #8b6914;
+    font-size: .74rem; font-weight: 700;
+    padding: 3px 10px; border-radius: 100px; white-space: nowrap;
+}
+.cat-duration i { font-size: .72rem; color: #F57F17; }
+.cat-duration.is-global {
+    background: #f8f9fa; border-color: var(--line); color: #adb5bd;
+}
+.cat-duration.is-global i { color: #ced4da; }
+
+.cat-toggle {
+    width: 38px; height: 22px; border-radius: 100px; background: #dee2e6;
+    position: relative; cursor: pointer; flex-shrink: 0;
+}
+.cat-toggle.on { background: var(--brand); }
+.cat-toggle::after {
+    content: ""; position: absolute; top: 2px; left: 2px;
+    width: 18px; height: 18px; border-radius: 50%; background: #fff;
+    transition: left .15s;
+}
+.cat-toggle.on::after { left: 18px; }
+
+/* Edit form espanso */
+.cat-edit {
+    border-top: 1px dashed var(--line); padding: 14px;
+    background: #fbfdfc;
+}
+.edit-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px;
+}
+.edit-label {
+    font-size: .7rem; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 4px;
+}
+.edit-input {
+    width: 100%; border: 1px solid #ced4da; border-radius: 8px;
+    padding: 8px 10px; font-size: .88rem;
+}
+.edit-input:focus { outline: 2px solid rgba(0,132,74,.25); border-color: var(--brand); }
+.edit-hint { font-size: .7rem; color: #adb5bd; margin-top: 3px; }
+.field-new {
+    position: relative;
+    background: #FFFDE7; border: 1px dashed #FBC02D; border-radius: 10px; padding: 10px;
+    grid-column: 1 / -1;
+}
+.field-new .badge-new {
+    position: absolute; top: -9px; right: 10px;
+    background: #F57F17; color: #fff; font-size: .62rem; font-weight: 800;
+    letter-spacing: 1px; padding: 2px 9px; border-radius: 100px;
+}
+.field-new .edit-input { max-width: 200px; }
+
+/* ===== Box info griglia ===== */
+.grid-info {
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start;
+}
+.grid-info-icon {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: #E8F5E9; color: var(--brand);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.grid-info-body { flex: 1; font-size: .82rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #f8f9fa; border: 1px solid var(--line);
+    font-size: .74rem; font-weight: 600; color: #495057;
+    padding: 4px 11px; border-radius: 100px;
+}
+.chip i { font-size: .72rem; }
+.chip-fascia { border-left: 3px solid; }
+
+/* ===== Demo occupazione ===== */
+.demo-controls {
+    display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+    background: #f8f9fa; border-radius: 10px; padding: 12px 14px; margin-bottom: 16px;
+    font-size: .82rem;
+}
+.demo-controls label { font-weight: 700; }
+.demo-controls input {
+    width: 70px; border: 1px solid #ced4da; border-radius: 8px;
+    padding: 6px 8px; font-size: .88rem; text-align: center;
+}
+.tl-row { margin-bottom: 18px; }
+.tl-title { font-size: .78rem; font-weight: 700; margin-bottom: 6px; }
+.tl-title .pill {
+    display: inline-block; font-size: .66rem; padding: 2px 8px;
+    border-radius: 100px; margin-left: 6px; vertical-align: 1px;
+}
+.pill-old { background: #fde8ea; color: #b3261e; }
+.pill-new { background: #E8F5E9; color: #2E7D32; }
+.tl-track {
+    position: relative; height: 44px; background: #f1f3f5;
+    border-radius: 8px; overflow: hidden;
+}
+.tl-slot {
+    position: absolute; top: 0; bottom: 0; border-left: 1px dashed #ced4da;
+    font-size: .62rem; color: #adb5bd; padding: 2px 0 0 4px;
+}
+.tl-block {
+    position: absolute; top: 16px; height: 22px; border-radius: 6px;
+    font-size: .68rem; font-weight: 700; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    white-space: nowrap; overflow: hidden;
+}
+.tl-legend { font-size: .72rem; color: var(--muted); margin-top: 6px; }
+.tl-legend strong { color: var(--ink); }
+
+/* ===== Note design ===== */
+.notes { list-style: none; }
+.notes li {
+    padding: 9px 0 9px 30px; position: relative;
+    font-size: .85rem; border-bottom: 1px solid #f4f5f7;
+}
+.notes li:last-child { border-bottom: 0; }
+.notes li::before {
+    content: "\F26B"; font-family: "bootstrap-icons";
+    position: absolute; left: 4px; top: 9px; color: var(--brand);
+}
+.notes li strong { color: var(--ink); }
+
+footer { text-align: center; color: #adb5bd; font-size: .75rem; margin-top: 28px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="wf-header">
+    <div class="wf-tag">Wireframe · v1 · 2026-06-12</div>
+    <h1>Durata servizio per fascia oraria</h1>
+    <p>Il ristoratore imposta quanto resta occupato un tavolo per ogni categoria pasto
+    (aperitivo 45', pranzo 90', cena 120'). Fallback: durata globale attuale.</p>
+</div>
+
+<!-- ============ MOCKUP A ============ -->
+<div class="section">
+    <span class="section-num">A · Impostazioni → Categorie Pasto</span>
+    <h2>Nuovo campo "Durata tavolo" per categoria</h2>
+    <p class="section-sub">Pill ambra nell'header della card (visibile a colpo d'occhio) + campo
+    nel form di modifica. La card <strong>Aperitivo</strong> è mostrata espansa. Prova a cambiare i valori →
+    si aggiornano pill, box info (B) e demo (C).</p>
+
+    <!-- Pranzo -->
+    <div class="cat-card" style="border-left-color:#4CAF50;">
+        <div class="cat-header">
+            <i class="bi bi-grip-vertical cat-drag"></i>
+            <div class="cat-icon" style="background:#E8F5E9;color:#2E7D32;"><i class="bi bi-sun"></i></div>
+            <div class="cat-info">
+                <div class="cat-name">Pranzo</div>
+                <div class="cat-key">pranzo</div>
+            </div>
+            <span class="cat-duration" id="pill-pranzo"><i class="bi bi-hourglass-split"></i> 90 min</span>
+            <div class="cat-time-range"><span>11:30</span> <i class="bi bi-arrow-right"></i> <span>14:30</span></div>
+            <div class="cat-toggle on"></div>
+        </div>
+    </div>
+
+    <!-- Aperitivo (espansa) -->
+    <div class="cat-card" style="border-left-color:#FF9800;">
+        <div class="cat-header">
+            <i class="bi bi-grip-vertical cat-drag"></i>
+            <div class="cat-icon" style="background:#FFF3E0;color:#E65100;"><i class="bi bi-cup-straw"></i></div>
+            <div class="cat-info">
+                <div class="cat-name">Aperitivo</div>
+                <div class="cat-key">aperitivo</div>
+            </div>
+            <span class="cat-duration" id="pill-aperitivo"><i class="bi bi-hourglass-split"></i> 45 min</span>
+            <div class="cat-time-range"><span>17:00</span> <i class="bi bi-arrow-right"></i> <span>18:30</span></div>
+            <div class="cat-toggle on"></div>
+        </div>
+        <div class="cat-edit">
+            <div class="edit-grid">
+                <div>
+                    <label class="edit-label">Nome visualizzato</label>
+                    <input type="text" class="edit-input" value="Aperitivo">
+                </div>
+                <div>
+                    <label class="edit-label">Chiave (sistema)</label>
+                    <input type="text" class="edit-input" value="aperitivo" readonly style="background:#f8f9fa;color:#adb5bd;">
+                </div>
+                <div>
+                    <label class="edit-label">Ora inizio</label>
+                    <input type="time" class="edit-input" value="17:00">
+                </div>
+                <div>
+                    <label class="edit-label">Ora fine</label>
+                    <input type="time" class="edit-input" value="18:30">
+                </div>
+                <div class="field-new">
+                    <span class="badge-new">NUOVO</span>
+                    <label class="edit-label">Durata tavolo (minuti)</label>
+                    <input type="number" class="edit-input" id="dur-aperitivo" value="45" min="15" max="300" step="5" placeholder="90 (globale)">
+                    <div class="edit-hint">Quanto resta occupato un tavolo prenotato in questa fascia.
+                    <strong>Lascia vuoto</strong> per usare la durata globale (90 min, da Generali).</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cena -->
+    <div class="cat-card" style="border-left-color:#5C6BC0;">
+        <div class="cat-header">
+            <i class="bi bi-grip-vertical cat-drag"></i>
+            <div class="cat-icon" style="background:#E8EAF6;color:#3949AB;"><i class="bi bi-moon-stars"></i></div>
+            <div class="cat-info">
+                <div class="cat-name">Cena</div>
+                <div class="cat-key">cena</div>
+            </div>
+            <span class="cat-duration" id="pill-cena"><i class="bi bi-hourglass-split"></i> 120 min</span>
+            <div class="cat-time-range"><span>19:00</span> <i class="bi bi-arrow-right"></i> <span>22:00</span></div>
+            <div class="cat-toggle on"></div>
+        </div>
+    </div>
+
+    <!-- After dinner: senza durata custom -> eredita globale -->
+    <div class="cat-card" style="border-left-color:#7E57C2;">
+        <div class="cat-header">
+            <i class="bi bi-grip-vertical cat-drag"></i>
+            <div class="cat-icon" style="background:#EDE7F6;color:#4527A0;"><i class="bi bi-stars"></i></div>
+            <div class="cat-info">
+                <div class="cat-name">After Dinner</div>
+                <div class="cat-key">after_dinner</div>
+            </div>
+            <span class="cat-duration is-global"><i class="bi bi-hourglass-split"></i> 90 min · globale</span>
+            <div class="cat-time-range"><span>22:30</span> <i class="bi bi-arrow-right"></i> <span>23:30</span></div>
+            <div class="cat-toggle on"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ MOCKUP B ============ -->
+<div class="section">
+    <span class="section-num">B · Impostazioni → Orari e Coperti</span>
+    <h2>Box info aggiornato con le durate per fascia</h2>
+    <p class="section-sub">Oggi il box mostra un solo chip "Durata tavolo: 90 min".
+    Con le durate per fascia diventa:</p>
+
+    <div class="grid-info">
+        <div class="grid-info-icon"><i class="bi bi-info-lg"></i></div>
+        <div class="grid-info-body">
+            Imposta i <strong>coperti massimi</strong> per ogni fascia oraria e giorno della settimana. Lascia <strong>0</strong> per chiudere una fascia.
+            <div class="chips" id="chips-grid">
+                <span class="chip"><i class="bi bi-clock"></i> Step: 30 min</span>
+                <span class="chip chip-fascia" style="border-left-color:#4CAF50;" id="chip-pranzo"><i class="bi bi-hourglass-split"></i> Pranzo: 90 min</span>
+                <span class="chip chip-fascia" style="border-left-color:#FF9800;" id="chip-aperitivo"><i class="bi bi-hourglass-split"></i> Aperitivo: 45 min</span>
+                <span class="chip chip-fascia" style="border-left-color:#5C6BC0;" id="chip-cena"><i class="bi bi-hourglass-split"></i> Cena: 120 min</span>
+                <span class="chip chip-fascia" style="border-left-color:#7E57C2;"><i class="bi bi-hourglass-split"></i> After Dinner: 90 min (globale)</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ DEMO C ============ -->
+<div class="section">
+    <span class="section-num">C · Perché conviene — demo occupazione</span>
+    <h2>Aperitivo alle 18:30: cosa blocca davvero?</h2>
+    <p class="section-sub">Una prenotazione aperitivo alle 18:30. Confronto tra OGGI (durata globale unica)
+    e DOMANI (durata per fascia). Cambia la durata aperitivo qui sotto e guarda l'effetto.</p>
+
+    <div class="demo-controls">
+        <label for="demo-dur">Durata aperitivo:</label>
+        <input type="number" id="demo-dur" value="45" min="15" max="180" step="15"> minuti
+        <span style="color:#adb5bd;">· Durata globale oggi: 90 min · Cena inizia alle 19:00</span>
+    </div>
+
+    <div class="tl-row">
+        <div class="tl-title">OGGI — durata unica 90 min <span class="pill pill-old">blocca 2 slot di cena</span></div>
+        <div class="tl-track" id="track-old"></div>
+        <div class="tl-legend">Il tavolo resta "occupato" fino alle <strong>20:00</strong>:
+        consuma coperti degli slot cena <strong>19:00 e 19:30</strong> anche se l'aperitivo dura molto meno.</div>
+    </div>
+
+    <div class="tl-row">
+        <div class="tl-title">DOMANI — durata fascia aperitivo <span class="pill pill-new" id="pill-demo">libera alle 19:15</span></div>
+        <div class="tl-track" id="track-new"></div>
+        <div class="tl-legend" id="legend-new">Con 45 min il tavolo si libera alle <strong>19:15</strong>:
+        tocca solo lo slot delle 19:00, la cena respira.</div>
+    </div>
+</div>
+
+<!-- ============ NOTE ============ -->
+<div class="section">
+    <span class="section-num">D · Note di design (per lo sviluppo)</span>
+    <h2>Decisioni architetturali</h2>
+    <ul class="notes">
+        <li><strong>Snapshot sulla prenotazione</strong>: la durata viene "congelata" su ogni prenotazione
+        alla creazione (campo <code>duration_minutes</code>). Cambiare la durata di una fascia non sposta
+        le prenotazioni gia' prese. Abilita in futuro l'override manuale per singola prenotazione.</li>
+        <li><strong>Fallback retrocompatibile</strong>: fascia senza durata → durata globale del tenant.
+        Tenant che non tocca nulla → comportamento identico a oggi.</li>
+        <li><strong>Fascia decisa dall'orario di INIZIO</strong>: prenotazione 18:30 = fascia aperitivo
+        anche se finisce dentro la cena. Slot fuori fascia ("Altro") → durata globale.</li>
+        <li><strong>Sconfinamento corretto</strong>: l'aperitivo che finisce alle 19:15 consuma coperti
+        dello slot cena 19:00 — fisica reale del tavolo, non bug. Da spiegare nell'hint della griglia.</li>
+        <li><strong>Validazione</strong>: 15–300 min come la durata globale. Step 5 min.</li>
+        <li><strong>A valle (fase 2)</strong>: widget ultimo step, thank-you page ed email mostrano
+        "Il tuo tavolo resta riservato fino alle HH:MM" usando la durata della fascia giusta.</li>
+    </ul>
+</div>
+
+<footer>Evulery.Pro 1.0 · wireframe interno · durata-fascia-v1</footer>
+</div>
+
+<script>
+(function () {
+    // Timeline: 17:00 → 22:00 (300 min di span)
+    var SPAN_START = 17 * 60, SPAN_END = 22 * 60, SPAN = SPAN_END - SPAN_START;
+    var BOOK_AT = 18 * 60 + 30; // prenotazione 18:30
+    var GLOBAL_DUR = 90;
+
+    function pct(min) { return ((min - SPAN_START) / SPAN * 100).toFixed(2) + '%'; }
+    function wpct(dur) { return (dur / SPAN * 100).toFixed(2) + '%'; }
+    function fmt(min) {
+        var h = Math.floor(min / 60), m = min % 60;
+        return ('0' + h).slice(-2) + ':' + ('0' + m).slice(-2);
+    }
+
+    function renderTrack(el, dur, color) {
+        var html = '';
+        for (var t = SPAN_START; t <= SPAN_END; t += 30) {
+            html += '<div class="tl-slot" style="left:' + pct(t) + '">' + fmt(t) + '</div>';
+        }
+        html += '<div class="tl-block" style="left:' + pct(BOOK_AT) + ';width:' + wpct(dur) + ';background:' + color + ';">'
+              + '18:30 → ' + fmt(BOOK_AT + dur) + '</div>';
+        el.innerHTML = html;
+    }
+
+    var trackOld = document.getElementById('track-old');
+    var trackNew = document.getElementById('track-new');
+    var demoDur  = document.getElementById('demo-dur');
+    var durAper  = document.getElementById('dur-aperitivo');
+    var pillAper = document.getElementById('pill-aperitivo');
+    var chipAper = document.getElementById('chip-aperitivo');
+    var pillDemo = document.getElementById('pill-demo');
+    var legendNew = document.getElementById('legend-new');
+
+    renderTrack(trackOld, GLOBAL_DUR, '#b3261e');
+
+    function update(dur) {
+        dur = Math.max(15, Math.min(300, parseInt(dur, 10) || GLOBAL_DUR));
+        renderTrack(trackNew, dur, '#00844A');
+        var endT = fmt(BOOK_AT + dur);
+        pillDemo.textContent = 'libera alle ' + endT;
+        // Slot cena toccati (slot ogni 30' da 19:00)
+        var touched = [];
+        for (var t = 19 * 60; t < BOOK_AT + dur && t <= SPAN_END; t += 30) touched.push(fmt(t));
+        legendNew.innerHTML = 'Con <strong>' + dur + ' min</strong> il tavolo si libera alle <strong>' + endT + '</strong>: '
+            + (touched.length === 0
+                ? 'nessuno slot cena toccato.'
+                : 'tocca ' + (touched.length === 1 ? 'solo lo slot delle <strong>' + touched[0] + '</strong>.' : 'gli slot <strong>' + touched.join(', ') + '</strong>.'));
+        pillAper.innerHTML = '<i class="bi bi-hourglass-split"></i> ' + dur + ' min';
+        chipAper.innerHTML = '<i class="bi bi-hourglass-split"></i> Aperitivo: ' + dur + ' min';
+        if (demoDur.value != dur) demoDur.value = dur;
+        if (durAper.value != dur) durAper.value = dur;
+    }
+    update(45);
+
+    demoDur.addEventListener('input', function () { update(this.value); });
+    durAper.addEventListener('input', function () { update(this.value); });
+})();
+</script>
+</body>
+</html>

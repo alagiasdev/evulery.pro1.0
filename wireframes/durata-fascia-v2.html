@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Durata per fascia + giorno v2</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root {
+    --brand: #00844A; --brand-dark: #006837;
+    --ink: #1a1d23; --muted: #6c757d; --line: #e9ecef; --bg: #f5f6f8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--ink);
+    font-size: 15px; line-height: 1.5; padding: 28px 16px 80px;
+}
+.wrap { max-width: 880px; margin: 0 auto; }
+
+.wf-header {
+    background: linear-gradient(135deg, #042418, var(--brand));
+    color: #fff; border-radius: 14px; padding: 22px 26px; margin-bottom: 22px;
+}
+.wf-header h1 { font-size: 1.3rem; font-weight: 800; }
+.wf-header p { font-size: .85rem; opacity: .9; margin-top: 4px; }
+.wf-tag {
+    display: inline-block; background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.3); border-radius: 100px;
+    font-size: .68rem; font-weight: 700; letter-spacing: 1.5px;
+    padding: 3px 12px; text-transform: uppercase; margin-bottom: 10px;
+}
+
+.section {
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px 22px; margin-bottom: 18px;
+}
+.section-num {
+    display: inline-block; background: var(--brand); color: #fff;
+    font-size: .68rem; font-weight: 800; letter-spacing: 1px;
+    padding: 3px 11px; border-radius: 100px; text-transform: uppercase;
+    margin-bottom: 8px;
+}
+.section h2 { font-size: 1.05rem; font-weight: 800; margin-bottom: 4px; }
+.section-sub { font-size: .82rem; color: var(--muted); margin-bottom: 16px; }
+
+/* ===== Cat card ===== */
+.cat-card {
+    background: #fff; border: 1px solid var(--line); border-left: 3px solid;
+    border-radius: 10px; margin-bottom: 10px; overflow: hidden;
+}
+.cat-header { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
+.cat-drag { color: #ced4da; font-size: .9rem; cursor: grab; }
+.cat-icon {
+    width: 36px; height: 36px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;
+}
+.cat-info { flex: 1; min-width: 0; }
+.cat-name { font-weight: 700; font-size: .92rem; }
+.cat-key { font-size: .7rem; color: #adb5bd; }
+.cat-time-range {
+    display: flex; align-items: center; gap: 6px;
+    font-size: .8rem; color: var(--muted); font-weight: 600;
+}
+.cat-time-range i { font-size: .7rem; }
+
+.cat-duration {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #FFF8E1; border: 1px solid #FFE082; color: #8b6914;
+    font-size: .74rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; white-space: nowrap;
+}
+.cat-duration i { font-size: .72rem; color: #F57F17; }
+.cat-duration.is-global { background: #f8f9fa; border-color: var(--line); color: #adb5bd; }
+.cat-duration.is-global i { color: #ced4da; }
+.cat-duration .alt-part { color: #6a4caf; border-left: 1px solid #FFE082; padding-left: 6px; margin-left: 1px; }
+
+.cat-toggle {
+    width: 38px; height: 22px; border-radius: 100px; background: #dee2e6;
+    position: relative; cursor: pointer; flex-shrink: 0;
+}
+.cat-toggle.on { background: var(--brand); }
+.cat-toggle::after {
+    content: ""; position: absolute; top: 2px; left: 2px;
+    width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left .15s;
+}
+.cat-toggle.on::after { left: 18px; }
+
+.cat-edit { border-top: 1px dashed var(--line); padding: 14px; background: #fbfdfc; }
+.edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; }
+.edit-label {
+    font-size: .7rem; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 4px;
+}
+.edit-input {
+    width: 100%; border: 1px solid #ced4da; border-radius: 8px; padding: 8px 10px; font-size: .88rem;
+}
+.edit-input:focus { outline: 2px solid rgba(0,132,74,.25); border-color: var(--brand); }
+.edit-hint { font-size: .7rem; color: #adb5bd; margin-top: 3px; }
+
+.field-dur {
+    grid-column: 1 / -1;
+    background: #FFFDE7; border: 1px dashed #FBC02D; border-radius: 10px; padding: 12px;
+    position: relative;
+}
+.field-dur .badge-new {
+    position: absolute; top: -9px; right: 10px;
+    background: #F57F17; color: #fff; font-size: .62rem; font-weight: 800;
+    letter-spacing: 1px; padding: 2px 9px; border-radius: 100px;
+}
+.dur-base-row { display: flex; align-items: center; gap: 8px; }
+.dur-base-row .edit-input { max-width: 110px; }
+.dur-base-row .unit { font-size: .82rem; color: var(--muted); }
+
+/* toggle override */
+.ovr-toggle-row {
+    display: flex; align-items: center; gap: 9px; margin-top: 12px;
+    padding-top: 12px; border-top: 1px dashed #FBC02D;
+    cursor: pointer; user-select: none;
+}
+.ovr-switch {
+    width: 34px; height: 20px; border-radius: 100px; background: #dee2e6;
+    position: relative; flex-shrink: 0; transition: background .15s;
+}
+.ovr-switch.on { background: #7E57C2; }
+.ovr-switch::after {
+    content: ""; position: absolute; top: 2px; left: 2px;
+    width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: left .15s;
+}
+.ovr-switch.on::after { left: 16px; }
+.ovr-toggle-row .lbl { font-size: .84rem; font-weight: 700; }
+.ovr-toggle-row .sub { font-size: .72rem; color: var(--muted); font-weight: 400; }
+
+.ovr-panel { margin-top: 12px; display: none; }
+.ovr-panel.open { display: block; }
+.ovr-days { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.day-chip {
+    width: 42px; text-align: center; padding: 7px 0; border-radius: 8px;
+    border: 1.5px solid var(--line); background: #fff; font-size: .76rem; font-weight: 700;
+    color: var(--muted); cursor: pointer; user-select: none; transition: all .12s;
+}
+.day-chip.sel {
+    background: #EDE7F6; border-color: #7E57C2; color: #4527A0;
+}
+.ovr-dur-row { display: flex; align-items: center; gap: 8px; }
+.ovr-dur-row .edit-input { max-width: 110px; }
+
+/* ===== Box info griglia ===== */
+.grid-info {
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start;
+}
+.grid-info-icon {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: #E8F5E9; color: var(--brand);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.grid-info-body { flex: 1; font-size: .82rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #f8f9fa; border: 1px solid var(--line);
+    font-size: .74rem; font-weight: 600; color: #495057;
+    padding: 4px 11px; border-radius: 100px;
+}
+.chip i { font-size: .72rem; }
+.chip-fascia { border-left: 3px solid; }
+.chip .alt { color: #6a4caf; font-weight: 700; }
+
+/* ===== Demo ===== */
+.demo-controls {
+    display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+    background: #f8f9fa; border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; font-size: .82rem;
+}
+.seg {
+    display: inline-flex; border: 1px solid #ced4da; border-radius: 8px; overflow: hidden;
+}
+.seg button {
+    border: 0; background: #fff; padding: 7px 16px; font-size: .82rem; font-weight: 700;
+    cursor: pointer; color: var(--muted);
+}
+.seg button.on { background: var(--brand); color: #fff; }
+.tl-row { margin-bottom: 18px; }
+.tl-title { font-size: .8rem; font-weight: 700; margin-bottom: 6px; }
+.tl-title .pill { display: inline-block; font-size: .66rem; padding: 2px 8px; border-radius: 100px; margin-left: 6px; vertical-align: 1px; }
+.pill-week { background: #E3F2FD; color: #1565C0; }
+.pill-wend { background: #EDE7F6; color: #4527A0; }
+.tl-track { position: relative; height: 44px; background: #f1f3f5; border-radius: 8px; overflow: hidden; }
+.tl-slot { position: absolute; top: 0; bottom: 0; border-left: 1px dashed #ced4da; font-size: .62rem; color: #adb5bd; padding: 2px 0 0 4px; }
+.tl-block {
+    position: absolute; top: 16px; height: 22px; border-radius: 6px;
+    font-size: .68rem; font-weight: 700; color: #fff;
+    display: flex; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden;
+}
+.tl-legend { font-size: .72rem; color: var(--muted); margin-top: 6px; }
+.tl-legend strong { color: var(--ink); }
+
+/* ===== Note ===== */
+.notes { list-style: none; }
+.notes li { padding: 9px 0 9px 30px; position: relative; font-size: .85rem; border-bottom: 1px solid #f4f5f7; }
+.notes li:last-child { border-bottom: 0; }
+.notes li::before { content: "\F26B"; font-family: "bootstrap-icons"; position: absolute; left: 4px; top: 9px; color: var(--brand); }
+.notes li strong { color: var(--ink); }
+code { background: #f1f3f5; padding: 1px 6px; border-radius: 4px; font-size: .82em; }
+
+footer { text-align: center; color: #adb5bd; font-size: .75rem; margin-top: 28px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="wf-header">
+    <div class="wf-tag">Wireframe · v2 · livello 2 · 2026-06-13</div>
+    <h1>Durata per fascia + override per giorno</h1>
+    <p>Durata base della fascia (uguale tutti i giorni) + durata alternativa opzionale per
+    giorni selezionati. Esempio: cena 120' tutti i giorni, ma sab+dom 90' per far girare i tavoli.</p>
+</div>
+
+<!-- ============ A ============ -->
+<div class="section">
+    <span class="section-num">A · Categorie Pasto — form categoria</span>
+    <h2>Durata base + toggle "Durata diversa in alcuni giorni"</h2>
+    <p class="section-sub">La card <strong>Cena</strong> è espansa con l'override <strong>attivo</strong>
+    (sab+dom). Prova: attiva/disattiva il toggle, seleziona i giorni, cambia i numeri →
+    pill, box info (B) e demo (C) si aggiornano live.</p>
+
+    <!-- Pranzo: solo base -->
+    <div class="cat-card" style="border-left-color:#4CAF50;">
+        <div class="cat-header">
+            <i class="bi bi-grip-vertical cat-drag"></i>
+            <div class="cat-icon" style="background:#E8F5E9;color:#2E7D32;"><i class="bi bi-sun"></i></div>
+            <div class="cat-info"><div class="cat-name">Pranzo</div><div class="cat-key">pranzo</div></div>
+            <span class="cat-duration"><i class="bi bi-hourglass-split"></i> 90 min</span>
+            <div class="cat-time-range"><span>11:30</span> <i class="bi bi-arrow-right"></i> <span>15:00</span></div>
+            <div class="cat-toggle on"></div>
+        </div>
+    </div>
+
+    <!-- Cena: espansa, override attivo -->
+    <div class="cat-card" style="border-left-color:#5C6BC0;">
+        <div class="cat-header">
+            <i class="bi bi-grip-vertical cat-drag"></i>
+            <div class="cat-icon" style="background:#E8EAF6;color:#3949AB;"><i class="bi bi-moon-stars"></i></div>
+            <div class="cat-info"><div class="cat-name">Cena</div><div class="cat-key">cena</div></div>
+            <span class="cat-duration" id="pill-cena"><i class="bi bi-hourglass-split"></i> <span id="pill-base">120 min</span><span class="alt-part" id="pill-alt">sab,dom 90'</span></span>
+            <div class="cat-time-range"><span>19:00</span> <i class="bi bi-arrow-right"></i> <span>22:30</span></div>
+            <div class="cat-toggle on"></div>
+        </div>
+        <div class="cat-edit">
+            <div class="edit-grid">
+                <div>
+                    <label class="edit-label">Nome visualizzato</label>
+                    <input type="text" class="edit-input" value="Cena">
+                </div>
+                <div>
+                    <label class="edit-label">Chiave (sistema)</label>
+                    <input type="text" class="edit-input" value="cena" readonly style="background:#f8f9fa;color:#adb5bd;">
+                </div>
+                <div>
+                    <label class="edit-label">Ora inizio</label>
+                    <input type="time" class="edit-input" value="19:00">
+                </div>
+                <div>
+                    <label class="edit-label">Ora fine</label>
+                    <input type="time" class="edit-input" value="22:30">
+                </div>
+
+                <!-- BLOCCO DURATA -->
+                <div class="field-dur">
+                    <span class="badge-new">NUOVO</span>
+                    <label class="edit-label">Durata tavolo</label>
+                    <div class="dur-base-row">
+                        <input type="number" class="edit-input" id="dur-base" value="120" min="15" max="300" step="5">
+                        <span class="unit">minuti (base, tutti i giorni)</span>
+                    </div>
+                    <div class="edit-hint">Lascia vuoto per usare la durata globale (90 min, da Generali).</div>
+
+                    <div class="ovr-toggle-row" id="ovr-toggle">
+                        <div class="ovr-switch on" id="ovr-switch"></div>
+                        <div>
+                            <div class="lbl">Durata diversa in alcuni giorni</div>
+                            <div class="sub">Es. weekend più corto per far girare i tavoli</div>
+                        </div>
+                    </div>
+
+                    <div class="ovr-panel open" id="ovr-panel">
+                        <label class="edit-label">Giorni con durata diversa</label>
+                        <div class="ovr-days" id="ovr-days">
+                            <div class="day-chip" data-day="1">Lun</div>
+                            <div class="day-chip" data-day="2">Mar</div>
+                            <div class="day-chip" data-day="3">Mer</div>
+                            <div class="day-chip" data-day="4">Gio</div>
+                            <div class="day-chip" data-day="5">Ven</div>
+                            <div class="day-chip sel" data-day="6">Sab</div>
+                            <div class="day-chip sel" data-day="7">Dom</div>
+                        </div>
+                        <label class="edit-label">Durata in questi giorni</label>
+                        <div class="ovr-dur-row">
+                            <input type="number" class="edit-input" id="dur-alt" value="90" min="15" max="300" step="5">
+                            <span class="unit">minuti</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aperitivo: solo base, override chiuso -->
+    <div class="cat-card" style="border-left-color:#FF9800;">
+        <div class="cat-header">
+            <i class="bi bi-grip-vertical cat-drag"></i>
+            <div class="cat-icon" style="background:#FFF3E0;color:#E65100;"><i class="bi bi-cup-straw"></i></div>
+            <div class="cat-info"><div class="cat-name">Aperitivo</div><div class="cat-key">aperitivo</div></div>
+            <span class="cat-duration"><i class="bi bi-hourglass-split"></i> 45 min</span>
+            <div class="cat-time-range"><span>17:00</span> <i class="bi bi-arrow-right"></i> <span>19:00</span></div>
+            <div class="cat-toggle on"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ B ============ -->
+<div class="section">
+    <span class="section-num">B · Orari e Coperti — box info</span>
+    <h2>Le durate per fascia, con nota override</h2>
+    <p class="section-sub">Il chip della fascia con override mostra base + variante giorni.</p>
+    <div class="grid-info">
+        <div class="grid-info-icon"><i class="bi bi-info-lg"></i></div>
+        <div class="grid-info-body">
+            Imposta i <strong>coperti massimi</strong> per ogni fascia e giorno. Lascia <strong>0</strong> per chiudere una fascia.
+            <div class="chips">
+                <span class="chip"><i class="bi bi-clock"></i> Step: 30 min</span>
+                <span class="chip chip-fascia" style="border-left-color:#4CAF50;"><i class="bi bi-hourglass-split"></i> Pranzo: 90 min</span>
+                <span class="chip chip-fascia" style="border-left-color:#FF9800;"><i class="bi bi-hourglass-split"></i> Aperitivo: 45 min</span>
+                <span class="chip chip-fascia" style="border-left-color:#5C6BC0;" id="chip-cena"><i class="bi bi-hourglass-split"></i> Cena: 120 min <span class="alt" id="chip-alt">· sab,dom 90'</span></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ C ============ -->
+<div class="section">
+    <span class="section-num">C · Demo — stesso slot, giorno diverso</span>
+    <h2>Cena alle 20:00: feriale vs weekend</h2>
+    <p class="section-sub">Prenotazione cena alle 20:00. Il sistema applica la durata in base al
+    giorno di prenotazione. Switcha giorno e guarda quanto resta occupato il tavolo.</p>
+
+    <div class="demo-controls">
+        <span style="font-weight:700;">Giorno prenotazione:</span>
+        <div class="seg" id="seg-day">
+            <button data-d="week" class="on">Mercoledì (feriale)</button>
+            <button data-d="wend">Sabato (weekend)</button>
+        </div>
+    </div>
+
+    <div class="tl-row">
+        <div class="tl-title">Occupazione tavolo <span class="pill" id="demo-pill">feriale · 120 min</span></div>
+        <div class="tl-track" id="track"></div>
+        <div class="tl-legend" id="legend"></div>
+    </div>
+</div>
+
+<!-- ============ GATING ============ -->
+<div class="section">
+    <span class="section-num">D · Gating — vista piano Starter</span>
+    <h2>Cosa vede chi NON ha "Durata turni avanzata"</h2>
+    <p class="section-sub">Servizio gatato a <strong>Professional + Enterprise</strong>. Su Starter, la sezione
+    durata per fascia nel form categoria è sostituita dalla lock card standard (partial
+    <code>service-locked.php</code>). La durata globale unica (Generali) resta disponibile per tutti.</p>
+
+    <!-- Card categoria su Starter: durata base bloccata -->
+    <div class="cat-card" style="border-left-color:#5C6BC0;">
+        <div class="cat-header">
+            <i class="bi bi-grip-vertical cat-drag"></i>
+            <div class="cat-icon" style="background:#E8EAF6;color:#3949AB;"><i class="bi bi-moon-stars"></i></div>
+            <div class="cat-info"><div class="cat-name">Cena</div><div class="cat-key">cena</div></div>
+            <div class="cat-time-range"><span>19:00</span> <i class="bi bi-arrow-right"></i> <span>22:30</span></div>
+            <div class="cat-toggle on"></div>
+        </div>
+        <div class="cat-edit">
+            <div class="edit-grid">
+                <div>
+                    <label class="edit-label">Nome visualizzato</label>
+                    <input type="text" class="edit-input" value="Cena">
+                </div>
+                <div>
+                    <label class="edit-label">Ora inizio</label>
+                    <input type="time" class="edit-input" value="19:00">
+                </div>
+                <!-- al posto del blocco durata: lock card -->
+                <div style="grid-column:1 / -1;">
+                    <div style="padding:1.8rem 1.5rem;text-align:center;border:2px dashed #dee2e6;background:#fafafa;border-radius:12px;">
+                        <i class="bi bi-lock-fill" style="font-size:2rem;color:#adb5bd;"></i>
+                        <h5 style="margin-top:.75rem;font-weight:700;font-size:1rem;">Durata per fascia non inclusa nel tuo piano</h5>
+                        <p style="color:#6c757d;font-size:.84rem;margin:.5rem 0 1rem;">
+                            La durata tavolo diversa per fascia e per giorno è disponibile dal piano <strong>Professional</strong>.<br>
+                            Con Starter usi la durata unica impostata in Generali (90 min).
+                        </p>
+                        <a href="#" style="display:inline-block;border:1px solid var(--brand);color:var(--brand);background:#fff;text-decoration:none;font-size:.82rem;font-weight:700;padding:7px 16px;border-radius:8px;">
+                            <i class="bi bi-arrow-up-circle"></i> Passa a Professional
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="background:#E8F5E9;border-left:3px solid var(--brand);border-radius:8px;padding:11px 14px;font-size:.8rem;color:#1b5e20;margin-top:4px;">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <strong>Downgrade (grandfathering)</strong>: un ex-Professional che passa a Starter <strong>mantiene</strong> le durate
+        per fascia già configurate (continuano a funzionare), ma vede questa lock card e non può più modificarle.
+        Per cambiarle torna a Professional. Riapertura futura a Starter = zero codice (assegnazione servizio al piano).
+    </div>
+</div>
+
+<!-- ============ E ============ -->
+<div class="section">
+    <span class="section-num">E · Note di design</span>
+    <h2>Modello dati e regole</h2>
+    <ul class="notes">
+        <li><strong>3 campi su <code>meal_categories</code></strong>: <code>duration_minutes</code> (base),
+        <code>duration_minutes_alt</code> (alternativa, opz.), <code>duration_alt_days</code>
+        (JSON dei giorni, es. <code>[6,7]</code>).</li>
+        <li><strong>Risoluzione alla creazione (snapshot)</strong>: orario inizio → fascia; giorno
+        prenotazione ∈ <code>duration_alt_days</code>? → usa <code>alt</code>, altrimenti <code>base</code>;
+        fascia senza durata → durata globale. Il risultato si congela in
+        <code>reservations.duration_minutes</code>.</li>
+        <li><strong>Retrocompatibile</strong>: tutto vuoto = comportamento di oggi (durata globale,
+        uguale tutti i giorni).</li>
+        <li><strong>UI progressiva</strong>: senza il toggle attivo, la card mostra solo "Durata base"
+        — identica al livello 1. L'override è opt-in, non appesantisce chi non lo usa.</li>
+        <li><strong>Un solo set di override</strong> per categoria (non 7 durate diverse): copre il caso
+        reale "weekend diverso" senza trasformare il form in una matrice. Se un domani servisse di più,
+        il campo JSON è già pronto a contenere mapping per-giorno.</li>
+        <li><strong>Niente "weekend" hardcoded</strong>: il ristoratore sceglie i giorni con i chip
+        (chi chiude la domenica seleziona solo sabato, ecc.).</li>
+        <li><strong>Gating solo UI</strong>: servizio <code>advanced_turns</code> ("Durata turni avanzata")
+        su Professional+. Il runtime applica sempre i dati salvati (grandfathering al downgrade) → un solo
+        gate, niente check sparsi nel motore disponibilità.</li>
+    </ul>
+</div>
+
+<footer>Evulery.Pro 1.0 · wireframe interno · durata-fascia-v2 · confronta con durata-fascia-v1 (livello 1)</footer>
+</div>
+
+<script>
+(function () {
+    var SPAN_START = 19 * 60, SPAN_END = 23 * 60, SPAN = SPAN_END - SPAN_START;
+    var BOOK_AT = 20 * 60;
+    var GLOBAL = 90;
+
+    var ovrOn = true, altDays = [6, 7], durBase = 120, durAlt = 90, demoDay = 'week';
+
+    function pct(m) { return ((m - SPAN_START) / SPAN * 100).toFixed(2) + '%'; }
+    function wpct(d) { return (d / SPAN * 100).toFixed(2) + '%'; }
+    function fmt(m) { var h = Math.floor(m/60), x = m%60; return ('0'+h).slice(-2)+':'+('0'+x).slice(-2); }
+    var DAYNAME = {1:'lun',2:'mar',3:'mer',4:'gio',5:'ven',6:'sab',7:'dom'};
+
+    var pillBase = document.getElementById('pill-base');
+    var pillAlt  = document.getElementById('pill-alt');
+    var chipCena = document.getElementById('chip-cena');
+    var chipAlt  = document.getElementById('chip-alt');
+    var track    = document.getElementById('track');
+    var legend   = document.getElementById('legend');
+    var demoPill = document.getElementById('demo-pill');
+
+    function altLabel() {
+        if (!ovrOn || altDays.length === 0) return '';
+        var sorted = altDays.slice().sort();
+        return sorted.map(function(d){return DAYNAME[d];}).join(',') + ' ' + durAlt + "'";
+    }
+
+    function renderTrack() {
+        var dur = (demoDay === 'wend' && ovrOn && altDays.indexOf(6) !== -1) ? durAlt : durBase;
+        var color = (demoDay === 'wend') ? '#7E57C2' : '#1565C0';
+        var html = '';
+        for (var t = SPAN_START; t <= SPAN_END; t += 30)
+            html += '<div class="tl-slot" style="left:'+pct(t)+'">'+fmt(t)+'</div>';
+        html += '<div class="tl-block" style="left:'+pct(BOOK_AT)+';width:'+wpct(dur)+';background:'+color+';">20:00 → '+fmt(BOOK_AT+dur)+'</div>';
+        track.innerHTML = html;
+        demoPill.className = 'pill ' + (demoDay === 'wend' ? 'pill-wend' : 'pill-week');
+        demoPill.textContent = (demoDay === 'wend' ? 'sabato · ' : 'feriale · ') + dur + ' min';
+        var slots = [];
+        for (var s = BOOK_AT; s < BOOK_AT + dur && s <= SPAN_END; s += 30) slots.push(fmt(s));
+        legend.innerHTML = 'Tavolo occupato fino alle <strong>'+fmt(BOOK_AT+dur)+'</strong> ('+dur+' min): '
+            + 'consuma coperti degli slot <strong>'+slots.join(', ')+'</strong>.'
+            + (demoDay === 'wend' && ovrOn && altDays.indexOf(6) !== -1
+                ? ' Nel weekend il tavolo si libera <strong>'+(durBase-durAlt)+' min prima</strong> → più giri.'
+                : '');
+    }
+
+    function syncPills() {
+        pillBase.textContent = durBase + ' min';
+        var lbl = altLabel();
+        pillAlt.textContent = lbl;
+        pillAlt.style.display = lbl ? '' : 'none';
+        if (lbl) { chipAlt.textContent = '· ' + lbl; chipAlt.style.display = ''; }
+        else { chipAlt.style.display = 'none'; }
+    }
+
+    function refresh() { syncPills(); renderTrack(); }
+
+    // toggle override
+    document.getElementById('ovr-toggle').addEventListener('click', function () {
+        ovrOn = !ovrOn;
+        document.getElementById('ovr-switch').classList.toggle('on', ovrOn);
+        document.getElementById('ovr-panel').classList.toggle('open', ovrOn);
+        refresh();
+    });
+    // chip giorni
+    document.querySelectorAll('#ovr-days .day-chip').forEach(function (c) {
+        c.addEventListener('click', function () {
+            var d = parseInt(c.dataset.day, 10);
+            var i = altDays.indexOf(d);
+            if (i === -1) { altDays.push(d); c.classList.add('sel'); }
+            else { altDays.splice(i, 1); c.classList.remove('sel'); }
+            refresh();
+        });
+    });
+    document.getElementById('dur-base').addEventListener('input', function () { durBase = parseInt(this.value,10)||GLOBAL; refresh(); });
+    document.getElementById('dur-alt').addEventListener('input', function () { durAlt = parseInt(this.value,10)||GLOBAL; refresh(); });
+    document.querySelectorAll('#seg-day button').forEach(function (b) {
+        b.addEventListener('click', function () {
+            document.querySelectorAll('#seg-day button').forEach(function(x){x.classList.remove('on');});
+            b.classList.add('on'); demoDay = b.dataset.d; renderTrack();
+        });
+    });
+
+    refresh();
+})();
+</script>
+</body>
+</html>
