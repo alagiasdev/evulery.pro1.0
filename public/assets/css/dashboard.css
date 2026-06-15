@@ -88,13 +88,14 @@ a.sidebar-user:hover { color: #adb5bd; }
     padding: .5rem 1.25rem; border: 2px solid #dee2e6; border-radius: 10px;
     background: #fff; text-decoration: none; color: #495057;
     transition: all .15s; cursor: pointer; white-space: nowrap; min-width: 90px;
+    flex-shrink: 0;
 }
 .date-chip:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
 .date-chip.active { border-color: var(--brand); background: var(--brand); color: #fff; }
 .date-chip .chip-label { font-weight: 600; font-size: .9rem; }
 .date-chip .chip-sub { font-size: .72rem; opacity: .65; margin-top: 1px; }
 .date-chip.active .chip-sub { opacity: .85; }
-.date-chip-cal { position: relative; }
+.date-chip-cal { position: relative; flex-shrink: 0; }
 
 /* Frecce navigazione giorno ±1 — coerenti con .date-chip (grande) e .date-chip-sm */
 .date-nav-arrow {
@@ -104,6 +105,7 @@ a.sidebar-user:hover { color: #adb5bd; }
     border: 2px solid #dee2e6; border-radius: 10px;
     background: #fff; color: #495057; text-decoration: none;
     font-size: 1.05rem; cursor: pointer; transition: all .15s;
+    flex-shrink: 0;
 }
 .date-nav-arrow:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
 
