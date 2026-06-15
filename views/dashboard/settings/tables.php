@@ -422,8 +422,19 @@ foreach ($tables as $t) {
     var dragEl = null;
     var ACTIVE_SEL = '.tm-row:not(.tm-row-archived)';
 
+    // Sposta dragEl prima/dopo la riga sotto il punto Y indicato (logica
+    // condivisa tra drag desktop e touch mobile).
+    function moveOver(overRow, clientY) {
+        if (!dragEl || dragEl === overRow) return;
+        if (!overRow || overRow.parentNode !== list || overRow.classList.contains('tm-row-archived')) return;
+        var rect = overRow.getBoundingClientRect();
+        var after = (clientY - rect.top) > rect.height / 2;
+        list.insertBefore(dragEl, after ? overRow.nextSibling : overRow);
+    }
+
     if (list) {
         list.querySelectorAll(ACTIVE_SEL).forEach(function (row) {
+            // --- Desktop: HTML5 Drag API ---
             row.addEventListener('dragstart', function (e) {
                 if (currentArea !== '') { e.preventDefault(); return; }
                 dragEl = row;
@@ -438,10 +449,34 @@ foreach ($tables as $t) {
             row.addEventListener('dragover', function (e) {
                 if (!dragEl || dragEl === row) return;
                 e.preventDefault();
-                var rect = row.getBoundingClientRect();
-                var after = (e.clientY - rect.top) > rect.height / 2;
-                list.insertBefore(dragEl, after ? row.nextSibling : row);
+                moveOver(row, e.clientY);
             });
+
+            // --- Mobile: touch sulla maniglia (l'HTML5 drag non risponde al touch) ---
+            var handle = row.querySelector('.tm-drag');
+            if (handle) {
+                handle.addEventListener('touchstart', function () {
+                    if (currentArea !== '') return;
+                    dragEl = row;
+                    row.classList.add('tm-dragging');
+                }, { passive: true });
+                handle.addEventListener('touchmove', function (e) {
+                    if (!dragEl) return;
+                    e.preventDefault(); // blocca lo scroll della pagina durante il trascinamento
+                    var t = e.touches[0];
+                    var el = document.elementFromPoint(t.clientX, t.clientY);
+                    var overRow = el ? el.closest('.tm-row') : null;
+                    if (overRow) moveOver(overRow, t.clientY);
+                }, { passive: false });
+                var endTouch = function () {
+                    if (!dragEl) return;
+                    row.classList.remove('tm-dragging');
+                    dragEl = null;
+                    syncReorder();
+                };
+                handle.addEventListener('touchend', endTouch);
+                handle.addEventListener('touchcancel', endTouch);
+            }
         });
     }
 
