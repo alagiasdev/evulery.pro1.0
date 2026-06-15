@@ -1032,7 +1032,9 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 
 /* ===== FAB (mobile) ===== */
 .fab {
-    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    position: fixed; right: 1.5rem;
+    /* sopra la home-indicator iOS (env=0 dove non serve) */
+    bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
     width: 56px; height: 56px; border-radius: 50%;
     background: var(--brand); color: #fff; border: none;
     font-size: 1.5rem; display: none;
@@ -1064,9 +1066,13 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 
 /* ===== Mobile Header ===== */
 .mobile-header {
-    position: fixed; top: 0; left: 0; right: 0; height: 56px;
+    position: fixed; top: 0; left: 0; right: 0;
+    /* Estende lo sfondo nero sotto la status bar (notch/Dynamic Island):
+       env() = 0 su dispositivi senza safe area, quindi innocuo altrove. */
+    height: calc(56px + env(safe-area-inset-top, 0px));
+    padding-top: env(safe-area-inset-top, 0px);
     background: #1a1d23; color: #fff;
-    display: flex; align-items: center; padding: 0 16px; gap: 12px;
+    display: flex; align-items: center; padding-left: 16px; padding-right: 16px; gap: 12px;
     z-index: 90; box-shadow: 0 2px 8px rgba(0,0,0,.15);
 }
 .mobile-header-toggle {
@@ -2158,7 +2164,7 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 @media (max-width: 768px) {
     #sidebar { margin-left: calc(var(--sidebar-w) * -1); }
     #sidebar.show { margin-left: 0; }
-    #main-content { margin-left: 0; padding-top: 56px; }
+    #main-content { margin-left: 0; padding-top: calc(56px + env(safe-area-inset-top, 0px)); }
     .date-strip { gap: .4rem; }
     .date-chip { padding: .4rem .75rem; min-width: 75px; }
     .date-chip .chip-label { font-size: .8rem; }
