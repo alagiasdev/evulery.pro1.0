@@ -31,7 +31,7 @@ $segLabels = [
     <span class="badge <?= $sb[2] ?>" style="font-size:.8rem;"><?= $sb[0] ?></span>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 300px;gap:1.25rem;align-items:start;">
+<div class="comm-detail-grid">
     <!-- Left: Message content -->
     <div>
         <div class="card" style="padding:1.25rem;">
@@ -128,9 +128,3 @@ $segLabels = [
         </div>
     </div>
 </div>
-
-<style nonce="<?= csp_nonce() ?>">
-@media (max-width: 768px) {
-    .page-body > div:last-child { grid-template-columns: 1fr !important; }
-}
-</style>

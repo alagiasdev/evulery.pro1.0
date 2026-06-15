@@ -378,6 +378,31 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 .stat-pill .sp-num { font-size: .9rem; font-weight: 700; }
 .stat-pill .sp-label { font-size: .7rem; color: #6c757d; }
 
+/* Dettaglio comunicazione: messaggio + statistiche affiancati (desktop),
+   impilati su mobile (riga 2 statistiche a piena larghezza). */
+.comm-detail-grid { display: grid; grid-template-columns: 1fr 300px; gap: 1.25rem; align-items: start; }
+@media (max-width: 768px) {
+    .comm-detail-grid { grid-template-columns: 1fr; }
+}
+
+/* Lista comunicazioni — card su mobile (la tabella resta su desktop) */
+.comm-cards { display: flex; flex-direction: column; }
+.comm-card {
+    display: block; text-decoration: none; color: inherit;
+    padding: .85rem 1rem; border-bottom: 1px solid #f0f0f0;
+}
+.comm-card:last-child { border-bottom: 0; }
+.comm-card:active { background: #f8f9fa; }
+.comm-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: .5rem; }
+.comm-card-subject { font-size: .92rem; color: #1a1d23; }
+.comm-card-badge { font-size: .68rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+.comm-card-meta {
+    display: flex; align-items: center; flex-wrap: wrap; gap: .5rem .75rem;
+    margin-top: .5rem; font-size: .78rem; color: #6c757d;
+}
+.comm-card-seg { font-size: .72rem; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+.comm-card-date { margin-left: auto; }
+
 /* ===== Meal divider (reservation list) ===== */
 .meal-divider {
     display: flex; align-items: center; gap: .5rem;
@@ -2305,11 +2330,11 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     .filter-group label { min-width: 30px; }
     .filter-group select.filter-input, .filter-group input.filter-input { flex: 1; }
     .date-chips { flex-wrap: wrap; }
-    /* Phase B: stat pills — 3-col grid on mobile */
-    .stats-mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: .35rem; }
-    .stat-pill { justify-content: center; padding: .4rem .5rem; }
-    .sp-label { font-size: .68rem; }
-    .sp-num { font-size: .82rem; }
+    /* stat pills — griglia 2x2 su mobile (4 KPI bilanciati, font leggibile) */
+    .stats-mini { display: grid; grid-template-columns: repeat(2, 1fr); gap: .5rem; }
+    .stat-pill { justify-content: flex-start; padding: .55rem .7rem; }
+    .sp-label { font-size: .72rem; }
+    .sp-num { font-size: .95rem; }
     /* Phase B: pagination compact */
     .pagination-bar { flex-direction: column; gap: .5rem; align-items: center; }
     .pagination-info { font-size: .75rem; }

@@ -61,7 +61,27 @@
         <p>Nessuna comunicazione ancora inviata.</p>
     </div>
     <?php else: ?>
-    <div class="table-responsive">
+    <?php
+    // Label condivise tra tabella desktop e card mobile.
+    $segLabels = [
+        'all' => ['Tutti', '#6c757d'],
+        'nuovo' => ['Nuovi', '#0dcaf0'],
+        'occasionale' => ['Occasionali', '#ffc107'],
+        'abituale' => ['Abituali', '#198754'],
+        'vip' => ['VIP', '#E65100'],
+        'inactive' => ['Inattivi', '#dc3545'],
+    ];
+    $statusBadges = [
+        'draft'   => ['Bozza', '#6c757d'],
+        'queued'  => ['In coda', '#ffc107'],
+        'sending' => ['Invio...', '#0d6efd'],
+        'sent'    => ['Inviata', '#198754'],
+        'failed'  => ['Fallita', '#dc3545'],
+    ];
+    $commDate = fn($c) => $c['sent_at'] ? date('d/m/Y H:i', strtotime($c['sent_at'])) : date('d/m/Y', strtotime($c['created_at']));
+    ?>
+    <!-- Desktop: tabella -->
+    <div class="table-responsive d-none d-md-block">
         <table class="table table-hover mb-0" style="font-size:.85rem;">
             <thead>
                 <tr>
@@ -75,52 +95,43 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($campaigns as $c): ?>
+                <?php foreach ($campaigns as $c): $seg = $segLabels[$c['segment_filter']] ?? ['—', '#6c757d']; $sb = $statusBadges[$c['status']] ?? ['—', '#6c757d']; ?>
                 <tr style="cursor:pointer;" data-url="<?= url("dashboard/communications/{$c['id']}") ?>">
+                    <td><strong><?= e($c['subject']) ?></strong></td>
                     <td>
-                        <strong><?= e($c['subject']) ?></strong>
-                    </td>
-                    <td>
-                        <?php
-                        $segLabels = [
-                            'all' => ['Tutti', '#6c757d'],
-                            'nuovo' => ['Nuovi', '#0dcaf0'],
-                            'occasionale' => ['Occasionali', '#ffc107'],
-                            'abituale' => ['Abituali', '#198754'],
-                            'vip' => ['VIP', '#E65100'],
-                            'inactive' => ['Inattivi', '#dc3545'],
-                        ];
-                        $seg = $segLabels[$c['segment_filter']] ?? ['—', '#6c757d'];
-                        ?>
-                        <span style="font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:4px;background:<?= $seg[1] ?>15;color:<?= $seg[1] ?>;">
-                            <?= $seg[0] ?>
-                        </span>
+                        <span style="font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:4px;background:<?= $seg[1] ?>15;color:<?= $seg[1] ?>;"><?= $seg[0] ?></span>
                     </td>
                     <td class="text-center"><?= (int)$c['total_recipients'] ?></td>
                     <td class="text-center" style="color:#198754;font-weight:600;"><?= (int)$c['sent_count'] ?></td>
                     <td class="text-center" style="color:<?= (int)$c['failed_count'] > 0 ? '#dc3545' : '#adb5bd' ?>;"><?= (int)$c['failed_count'] ?></td>
                     <td>
-                        <?php
-                        $statusBadges = [
-                            'draft'   => ['Bozza', '#6c757d'],
-                            'queued'  => ['In coda', '#ffc107'],
-                            'sending' => ['Invio...', '#0d6efd'],
-                            'sent'    => ['Inviata', '#198754'],
-                            'failed'  => ['Fallita', '#dc3545'],
-                        ];
-                        $sb = $statusBadges[$c['status']] ?? ['—', '#6c757d'];
-                        ?>
-                        <span style="font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:4px;background:<?= $sb[1] ?>18;color:<?= $sb[1] ?>;">
-                            <?= $sb[0] ?>
-                        </span>
+                        <span style="font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:4px;background:<?= $sb[1] ?>18;color:<?= $sb[1] ?>;"><?= $sb[0] ?></span>
                     </td>
-                    <td style="color:#6c757d;font-size:.8rem;white-space:nowrap;">
-                        <?= $c['sent_at'] ? date('d/m/Y H:i', strtotime($c['sent_at'])) : date('d/m/Y', strtotime($c['created_at'])) ?>
-                    </td>
+                    <td style="color:#6c757d;font-size:.8rem;white-space:nowrap;"><?= $commDate($c) ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
+    </div>
+
+    <!-- Mobile: card -->
+    <div class="comm-cards d-md-none">
+        <?php foreach ($campaigns as $c): $seg = $segLabels[$c['segment_filter']] ?? ['—', '#6c757d']; $sb = $statusBadges[$c['status']] ?? ['—', '#6c757d']; ?>
+        <a href="<?= url("dashboard/communications/{$c['id']}") ?>" class="comm-card">
+            <div class="comm-card-top">
+                <strong class="comm-card-subject"><?= e($c['subject']) ?></strong>
+                <span class="comm-card-badge" style="background:<?= $sb[1] ?>18;color:<?= $sb[1] ?>;"><?= $sb[0] ?></span>
+            </div>
+            <div class="comm-card-meta">
+                <span class="comm-card-seg" style="background:<?= $seg[1] ?>15;color:<?= $seg[1] ?>;"><?= $seg[0] ?></span>
+                <span><i class="bi bi-people me-1"></i><?= (int)$c['total_recipients'] ?></span>
+                <?php if ((int)$c['failed_count'] > 0): ?>
+                <span style="color:#dc3545;"><i class="bi bi-x-circle me-1"></i><?= (int)$c['failed_count'] ?> falliti</span>
+                <?php endif; ?>
+                <span class="comm-card-date"><?= $commDate($c) ?></span>
+            </div>
+        </a>
+        <?php endforeach; ?>
     </div>
     <?php if ($pagination): ?>
     <div class="pagination-bar">
