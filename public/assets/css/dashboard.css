@@ -2260,15 +2260,12 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     /* Prenotazioni: stesso pattern della home. Chip scrollabili a riempire,
        frecce sotto affiancate 50/50 (presenti solo in vista giorno singolo). */
     .res-datebar { flex-wrap: wrap; width: 100%; }
-    .res-datebar-chips {
-        order: 0; flex: 1 1 100%; flex-wrap: nowrap;
-        overflow-x: auto; -webkit-overflow-scrolling: touch;
-        scrollbar-width: none; -ms-overflow-style: none;
-    }
-    .res-datebar-chips::-webkit-scrollbar { display: none; }
-    .res-datebar-chips > .date-chip-sm,
-    .res-datebar-chips > .date-chip-cal { flex: 1 1 auto; }
-    .res-datebar-chips > .date-chip-cal > .date-chip-sm { width: 100%; }
+    /* I chip vanno a capo (wrap), tutti visibili, niente swipe laterale.
+       I chip-giorno si espandono per riempire le righe; il calendario resta
+       un'icona compatta. */
+    .res-datebar-chips { order: 0; flex: 1 1 100%; flex-wrap: wrap; }
+    .res-datebar-chips > .date-chip-sm { flex: 1 1 auto; text-align: center; }
+    .res-datebar-chips > .date-chip-cal { flex: 0 0 auto; }
     .res-datebar .date-nav-arrow.sm {
         flex: 1 1 calc(50% - .2rem);
         justify-content: center; gap: .35rem;
