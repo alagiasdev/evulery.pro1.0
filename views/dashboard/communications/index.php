@@ -29,25 +29,23 @@
 </div>
 
 <!-- Action bar -->
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-    <div style="display:flex;align-items:center;gap:1rem;">
-        <h5 style="font-weight:700;margin:0;"><?= $showArchived ? 'Archivio' : 'Comunicazioni' ?></h5>
-        <?php if ($showArchived): ?>
-            <a href="<?= url('dashboard/communications') ?>" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-arrow-left me-1"></i> Torna alle attive
-            </a>
-        <?php elseif ($archivedCount > 0): ?>
-            <a href="<?= url('dashboard/communications') ?>?archived=1" style="font-size:.82rem;color:#6c757d;text-decoration:none;">
-                <i class="bi bi-archive me-1"></i> Archivio (<?= $archivedCount ?>)
-            </a>
-        <?php endif; ?>
-    </div>
+<div class="comm-header">
+    <h5 class="comm-title"><?= $showArchived ? 'Archivio' : 'Comunicazioni' ?></h5>
+    <?php if ($showArchived): ?>
+        <a href="<?= url('dashboard/communications') ?>" class="comm-archive-link">
+            <i class="bi bi-arrow-left me-1"></i> Torna alle attive
+        </a>
+    <?php elseif ($archivedCount > 0): ?>
+        <a href="<?= url('dashboard/communications') ?>?archived=1" class="comm-archive-link">
+            <i class="bi bi-archive me-1"></i> Archivio (<?= $archivedCount ?>)
+        </a>
+    <?php endif; ?>
     <?php if ($credits > 0): ?>
-    <a href="<?= url('dashboard/communications/create') ?>" class="btn btn-outline-success btn-sm">
+    <a href="<?= url('dashboard/communications/create') ?>" class="btn btn-outline-success btn-sm comm-new-btn">
         <i class="bi bi-envelope-plus me-1"></i> Nuova comunicazione
     </a>
     <?php else: ?>
-    <button class="btn btn-secondary btn-sm" disabled title="Crediti esauriti">
+    <button class="btn btn-secondary btn-sm comm-new-btn" disabled title="Crediti esauriti">
         <i class="bi bi-envelope-plus me-1"></i> Nuova comunicazione
     </button>
     <?php endif; ?>

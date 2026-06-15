@@ -385,6 +385,19 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     .comm-detail-grid { grid-template-columns: 1fr; }
 }
 
+/* Header comunicazioni: titolo + archivio + bottone "Nuova".
+   Desktop: tutto in riga (archivio accanto al titolo, bottone a destra).
+   Mobile: titolo + bottone in riga 1, archivio su riga 2 (non piu' schiacciato). */
+.comm-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.comm-title { font-weight: 700; margin: 0; }
+.comm-archive-link { font-size: .82rem; color: #6c757d; text-decoration: none; }
+.comm-new-btn { margin-left: auto; }
+@media (max-width: 768px) {
+    .comm-header { flex-wrap: wrap; row-gap: .5rem; }
+    .comm-new-btn { order: 2; margin-left: auto; }
+    .comm-archive-link { order: 3; flex-basis: 100%; }
+}
+
 /* Lista comunicazioni — card su mobile (la tabella resta su desktop) */
 .comm-cards { display: flex; flex-direction: column; }
 .comm-card {
