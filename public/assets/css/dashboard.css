@@ -2284,6 +2284,19 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
         min-width: 58px; padding: 0 1rem; font-size: 1rem;
     }
     .filter-toolbar-mobile .btn-filter { flex: 1 1 auto; justify-content: center; }
+    /* Sala (date-bar) mobile — griglia deterministica, stesso pattern:
+       riga 1: Oggi / Domani / Dopodomani (2 colonne ciascuno, data impilata)
+       riga 2: [‹][›] + Altra data (frecce compatte, calendario riempie) */
+    .tm-datebar { display: grid; grid-template-columns: repeat(6, 1fr); gap: .4rem; width: 100%; }
+    .tm-datebar .tm-day {
+        grid-row: 1; grid-column: span 2;
+        display: flex; flex-direction: column; align-items: center; line-height: 1.2;
+    }
+    .tm-datebar .tm-day .chip-day { margin-left: 0; }
+    .tm-datebar .tm-arrow-prev { grid-row: 2; grid-column: 1; justify-content: center; }
+    .tm-datebar .tm-arrow-next { grid-row: 2; grid-column: 2; justify-content: center; }
+    .tm-datebar .tm-cal { grid-row: 2; grid-column: 3 / 7; }
+    .tm-datebar .tm-cal > .date-chip-sm { display: flex; align-items: center; justify-content: center; width: 100%; }
     /* Phase B: filter bar stacking — quando .show, su mobile va in colonna */
     .filter-row.filter-advanced.show { flex-direction: column; align-items: stretch; }
     .filter-row .filter-actions { display: none; }

@@ -245,14 +245,14 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
     }
     ?>
     <div class="tm-op-bar">
-        <div class="date-chips">
-            <a class="date-nav-arrow sm" href="<?= $opUrl ?>?date=<?= $prev ?>&time=<?= e($opTime) ?>" title="Giorno precedente"><i class="bi bi-chevron-left"></i></a>
+        <div class="date-chips tm-datebar">
+            <a class="date-nav-arrow sm tm-arrow-prev" href="<?= $opUrl ?>?date=<?= $prev ?>&time=<?= e($opTime) ?>" title="Giorno precedente"><i class="bi bi-chevron-left"></i></a>
             <?php foreach ($salaChips as $chip): ?>
-            <a href="<?= $opUrl ?>?date=<?= $chip['date'] ?>&time=<?= e($opTime) ?>" class="date-chip-sm <?= $opDate === $chip['date'] ? 'active' : '' ?>"><?= $chip['label'] ?> <span class="chip-day"><?= $chip['sub'] ?></span></a>
+            <a href="<?= $opUrl ?>?date=<?= $chip['date'] ?>&time=<?= e($opTime) ?>" class="date-chip-sm tm-day <?= $opDate === $chip['date'] ? 'active' : '' ?>"><?= $chip['label'] ?> <span class="chip-day"><?= $chip['sub'] ?></span></a>
             <?php endforeach; ?>
-            <a class="date-nav-arrow sm" href="<?= $opUrl ?>?date=<?= $next ?>&time=<?= e($opTime) ?>" title="Giorno successivo"><i class="bi bi-chevron-right"></i></a>
-            <div class="date-chip-cal">
-                <a href="#" class="date-chip-sm" id="tm-cal-toggle" title="Scegli una data"><i class="bi bi-calendar3"></i></a>
+            <a class="date-nav-arrow sm tm-arrow-next" href="<?= $opUrl ?>?date=<?= $next ?>&time=<?= e($opTime) ?>" title="Giorno successivo"><i class="bi bi-chevron-right"></i></a>
+            <div class="date-chip-cal tm-cal">
+                <a href="#" class="date-chip-sm" id="tm-cal-toggle" title="Scegli una data"><i class="bi bi-calendar3 me-1"></i>Altra data</a>
                 <div class="home-cal-dropdown" id="tm-cal-dropdown" style="display:none;">
                     <div class="dr-cal-header">
                         <button type="button" class="dr-cal-nav" id="tm-cal-prev"><i class="bi bi-chevron-left"></i></button>
