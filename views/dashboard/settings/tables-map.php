@@ -287,13 +287,15 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         </span>
     </div>
 
-    <!-- Tab (solo mobile): commuta lista / mappa -->
+    <!-- Tab (solo mobile): commuta lista / mappa. Default mobile = lista
+         ospiti (piu' utile della mappa su schermo piccolo). Su desktop i
+         due pannelli sono affiancati e show-map/show-list e' irrilevante. -->
     <div class="tm-vtabs">
-        <button type="button" class="tm-vtab" data-pane="list">Prenotazioni<?php if ($nUnassigned > 0): ?> <span class="tm-vtab-badge"><?= $nUnassigned ?></span><?php endif; ?></button>
-        <button type="button" class="tm-vtab active" data-pane="map">Mappa</button>
+        <button type="button" class="tm-vtab active" data-pane="list">Prenotazioni<?php if ($nUnassigned > 0): ?> <span class="tm-vtab-badge"><?= $nUnassigned ?></span><?php endif; ?></button>
+        <button type="button" class="tm-vtab" data-pane="map">Mappa</button>
     </div>
 
-    <div class="tm-twopane show-map" id="tm-twopane">
+    <div class="tm-twopane show-list" id="tm-twopane">
         <!-- Pannello sinistro: prenotazioni del giorno -->
         <div class="tm-pane-list">
             <?php if (empty($dayReservations)): ?>
