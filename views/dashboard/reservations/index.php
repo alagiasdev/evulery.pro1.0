@@ -189,8 +189,8 @@ $navQs = function (string $d) use ($status, $source): string {
     <div class="filter-row">
         <div class="res-datebar">
             <?php if (!$isUpcoming && !$isRange): ?>
-            <a href="<?= e($navQs($prevDate)) ?>" class="date-nav-arrow sm" id="res-day-prev" title="Giorno precedente (←)">
-                <i class="bi bi-chevron-left"></i><span class="date-nav-label">Precedente</span>
+            <a href="<?= e($navQs($prevDate)) ?>" class="date-nav-arrow sm res-arrow-desktop" id="res-day-prev" title="Giorno precedente (←)">
+                <i class="bi bi-chevron-left"></i>
             </a>
             <?php endif; ?>
             <div class="res-datebar-chips">
@@ -205,7 +205,7 @@ $navQs = function (string $d) use ($status, $source): string {
                 </a>
                 <?php endforeach; ?>
                 <div class="date-chip-cal">
-                    <a href="#" class="date-chip-sm" id="res-cal-toggle"><i class="bi bi-calendar3"></i></a>
+                    <a href="#" class="date-chip-sm" id="res-cal-toggle"><i class="bi bi-calendar3 me-1"></i>Altra data</a>
                     <div class="home-cal-dropdown" id="res-cal-dropdown" style="display:none;">
                         <div class="dr-cal-header">
                             <button type="button" class="dr-cal-nav" id="res-cal-prev"><i class="bi bi-chevron-left"></i></button>
@@ -226,8 +226,8 @@ $navQs = function (string $d) use ($status, $source): string {
                 </div>
             </div>
             <?php if (!$isUpcoming && !$isRange): ?>
-            <a href="<?= e($navQs($nextDate)) ?>" class="date-nav-arrow sm" id="res-day-next" title="Giorno successivo (→)">
-                <span class="date-nav-label">Successivo</span><i class="bi bi-chevron-right"></i>
+            <a href="<?= e($navQs($nextDate)) ?>" class="date-nav-arrow sm res-arrow-desktop" id="res-day-next" title="Giorno successivo (→)">
+                <i class="bi bi-chevron-right"></i>
             </a>
             <?php endif; ?>
         </div>
@@ -247,8 +247,16 @@ $navQs = function (string $d) use ($status, $source): string {
         </div>
     </div>
 
-    <!-- Mobile: Filtri + CSV row -->
+    <!-- Mobile: frecce giorno (solo single-day) + Filtri + CSV su una riga -->
     <div class="filter-toolbar-mobile d-md-none">
+        <?php if (!$isUpcoming && !$isRange): ?>
+        <a href="<?= e($navQs($prevDate)) ?>" class="date-nav-arrow sm res-arrow-mobile" title="Giorno precedente">
+            <i class="bi bi-chevron-left"></i>
+        </a>
+        <a href="<?= e($navQs($nextDate)) ?>" class="date-nav-arrow sm res-arrow-mobile" title="Giorno successivo">
+            <i class="bi bi-chevron-right"></i>
+        </a>
+        <?php endif; ?>
         <button type="button" class="btn-filter btn-filter-outline js-filter-toggle" id="filter-toggle-btn">
             <i class="bi bi-funnel me-1"></i>Filtri<?php if ($status || $source): ?> <span class="filter-active-dot"></span><?php endif; ?>
         </button>

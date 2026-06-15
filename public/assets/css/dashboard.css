@@ -2257,23 +2257,28 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     #home-day-prev { order: 1; }
     #home-day-next { order: 2; }
     #home-date-strip .date-nav-label { display: inline; font-weight: 600; font-size: .85rem; }
-    /* Prenotazioni: stesso pattern della home. Chip scrollabili a riempire,
-       frecce sotto affiancate 50/50 (presenti solo in vista giorno singolo). */
+    /* Prenotazioni mobile — 3 righe ordinate, niente swipe:
+       riga 1: Prossime + Altra data (50% ciascuno)
+       riga 2: Oggi / Domani / Dopodomani (33% ciascuno)
+       riga 3: frecce ‹ › + Filtri + CSV (toolbar mobile) */
     .res-datebar { flex-wrap: wrap; width: 100%; }
-    /* I chip vanno a capo (wrap), tutti visibili, niente swipe laterale.
-       I chip-giorno si espandono per riempire le righe; il calendario resta
-       un'icona compatta. */
-    .res-datebar-chips { order: 0; flex: 1 1 100%; flex-wrap: wrap; }
-    .res-datebar-chips > .date-chip-sm { flex: 1 1 auto; text-align: center; }
-    .res-datebar-chips > .date-chip-cal { flex: 0 0 auto; }
-    .res-datebar .date-nav-arrow.sm {
-        flex: 1 1 calc(50% - .2rem);
-        justify-content: center; gap: .35rem;
-        padding: .45rem; font-size: .9rem;
+    .res-datebar-chips { order: 0; flex: 1 1 100%; flex-wrap: wrap; gap: .4rem; }
+    /* riga 1 */
+    .res-datebar-chips > .date-chip-sm:first-child { order: 1; flex: 1 1 calc(50% - .2rem); }
+    .res-datebar-chips > .date-chip-cal { order: 2; flex: 1 1 calc(50% - .2rem); }
+    .res-datebar-chips > .date-chip-cal > .date-chip-sm { width: 100%; }
+    /* riga 2 */
+    .res-datebar-chips > .date-chip-sm:not(:first-child) { order: 3; flex: 1 1 calc(33.333% - .27rem); }
+    .res-datebar-chips .date-chip-sm { justify-content: center; text-align: center; }
+    /* frecce: nascoste qui (vanno nella toolbar mobile, riga 3) */
+    .res-arrow-desktop { display: none !important; }
+    /* riga 3: frecce compatte + Filtri/CSV che riempiono */
+    .filter-toolbar-mobile { align-items: stretch; }
+    .res-arrow-mobile {
+        flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+        min-width: 44px; padding: 0 .6rem; font-size: 1rem;
     }
-    #res-day-prev { order: 1; }
-    #res-day-next { order: 2; }
-    .res-datebar .date-nav-label { display: inline; font-weight: 600; font-size: .82rem; }
+    .filter-toolbar-mobile .btn-filter { flex: 1 1 auto; justify-content: center; }
     /* Phase B: filter bar stacking — quando .show, su mobile va in colonna */
     .filter-row.filter-advanced.show { flex-direction: column; align-items: stretch; }
     .filter-row .filter-actions { display: none; }
