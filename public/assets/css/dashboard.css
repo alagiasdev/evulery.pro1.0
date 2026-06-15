@@ -351,6 +351,10 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 
 /* ===== Date chips (small, inline) ===== */
 .date-chips { display: flex; gap: .4rem; align-items: center; }
+/* Barra navigazione date pagina Prenotazioni: frecce ai lati + chip in mezzo
+   (desktop). Su mobile diventa chip scrollabili + frecce sotto (media query). */
+.res-datebar { display: flex; align-items: center; gap: .4rem; }
+.res-datebar-chips { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
 .date-chip-sm {
     padding: .3rem .7rem; border: 1.5px solid #dee2e6; border-radius: 8px;
     background: #fff; font-size: .78rem; font-weight: 600; color: #495057;
@@ -2253,6 +2257,26 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     #home-day-prev { order: 1; }
     #home-day-next { order: 2; }
     #home-date-strip .date-nav-label { display: inline; font-weight: 600; font-size: .85rem; }
+    /* Prenotazioni: stesso pattern della home. Chip scrollabili a riempire,
+       frecce sotto affiancate 50/50 (presenti solo in vista giorno singolo). */
+    .res-datebar { flex-wrap: wrap; width: 100%; }
+    .res-datebar-chips {
+        order: 0; flex: 1 1 100%; flex-wrap: nowrap;
+        overflow-x: auto; -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .res-datebar-chips::-webkit-scrollbar { display: none; }
+    .res-datebar-chips > .date-chip-sm,
+    .res-datebar-chips > .date-chip-cal { flex: 1 1 auto; }
+    .res-datebar-chips > .date-chip-cal > .date-chip-sm { width: 100%; }
+    .res-datebar .date-nav-arrow.sm {
+        flex: 1 1 calc(50% - .2rem);
+        justify-content: center; gap: .35rem;
+        padding: .45rem; font-size: .9rem;
+    }
+    #res-day-prev { order: 1; }
+    #res-day-next { order: 2; }
+    .res-datebar .date-nav-label { display: inline; font-weight: 600; font-size: .82rem; }
     /* Phase B: filter bar stacking — quando .show, su mobile va in colonna */
     .filter-row.filter-advanced.show { flex-direction: column; align-items: stretch; }
     .filter-row .filter-actions { display: none; }

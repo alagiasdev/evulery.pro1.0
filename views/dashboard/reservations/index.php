@@ -187,47 +187,49 @@ $navQs = function (string $d) use ($status, $source): string {
 <div class="filter-bar">
     <!-- Row 1: Quick date chips + actions -->
     <div class="filter-row">
-        <div class="date-chips">
+        <div class="res-datebar">
             <?php if (!$isUpcoming && !$isRange): ?>
             <a href="<?= e($navQs($prevDate)) ?>" class="date-nav-arrow sm" id="res-day-prev" title="Giorno precedente (←)">
-                <i class="bi bi-chevron-left"></i>
+                <i class="bi bi-chevron-left"></i><span class="date-nav-label">Precedente</span>
             </a>
             <?php endif; ?>
-            <a href="<?= url('dashboard/reservations?upcoming=1' . ($status ? '&status=' . e($status) : '') . ($source ? '&source=' . e($source) : '')) ?>"
-               class="date-chip-sm <?= $isUpcoming ? 'active' : '' ?>" title="Le prossime 15 prenotazioni">
-                <i class="bi bi-fast-forward-fill me-1"></i>Prossime
-            </a>
-            <?php foreach ($chipDates as $chip): ?>
-            <a href="<?= url('dashboard/reservations?date=' . $chip['date'] . ($status ? '&status=' . e($status) : '') . ($source ? '&source=' . e($source) : '')) ?>"
-               class="date-chip-sm <?= !$isUpcoming && $date === $chip['date'] && !$isRange ? 'active' : '' ?>">
-                <?= $chip['label'] ?> <span class="chip-day"><?= $chip['sub'] ?></span>
-            </a>
-            <?php endforeach; ?>
+            <div class="res-datebar-chips">
+                <a href="<?= url('dashboard/reservations?upcoming=1' . ($status ? '&status=' . e($status) : '') . ($source ? '&source=' . e($source) : '')) ?>"
+                   class="date-chip-sm <?= $isUpcoming ? 'active' : '' ?>" title="Le prossime 15 prenotazioni">
+                    <i class="bi bi-fast-forward-fill me-1"></i>Prossime
+                </a>
+                <?php foreach ($chipDates as $chip): ?>
+                <a href="<?= url('dashboard/reservations?date=' . $chip['date'] . ($status ? '&status=' . e($status) : '') . ($source ? '&source=' . e($source) : '')) ?>"
+                   class="date-chip-sm <?= !$isUpcoming && $date === $chip['date'] && !$isRange ? 'active' : '' ?>">
+                    <?= $chip['label'] ?> <span class="chip-day"><?= $chip['sub'] ?></span>
+                </a>
+                <?php endforeach; ?>
+                <div class="date-chip-cal">
+                    <a href="#" class="date-chip-sm" id="res-cal-toggle"><i class="bi bi-calendar3"></i></a>
+                    <div class="home-cal-dropdown" id="res-cal-dropdown" style="display:none;">
+                        <div class="dr-cal-header">
+                            <button type="button" class="dr-cal-nav" id="res-cal-prev"><i class="bi bi-chevron-left"></i></button>
+                            <span class="dr-cal-month" id="res-cal-month"></span>
+                            <button type="button" class="dr-cal-nav" id="res-cal-next"><i class="bi bi-chevron-right"></i></button>
+                        </div>
+                        <div class="dr-cal-days-header">
+                            <div class="dr-cal-day-name">lun</div>
+                            <div class="dr-cal-day-name">mar</div>
+                            <div class="dr-cal-day-name">mer</div>
+                            <div class="dr-cal-day-name">gio</div>
+                            <div class="dr-cal-day-name">ven</div>
+                            <div class="dr-cal-day-name">sab</div>
+                            <div class="dr-cal-day-name">dom</div>
+                        </div>
+                        <div class="dr-cal-grid" id="res-cal-grid"></div>
+                    </div>
+                </div>
+            </div>
             <?php if (!$isUpcoming && !$isRange): ?>
             <a href="<?= e($navQs($nextDate)) ?>" class="date-nav-arrow sm" id="res-day-next" title="Giorno successivo (→)">
-                <i class="bi bi-chevron-right"></i>
+                <span class="date-nav-label">Successivo</span><i class="bi bi-chevron-right"></i>
             </a>
             <?php endif; ?>
-        </div>
-        <div class="date-chip-cal">
-            <a href="#" class="date-chip-sm" id="res-cal-toggle"><i class="bi bi-calendar3"></i></a>
-            <div class="home-cal-dropdown" id="res-cal-dropdown" style="display:none;">
-                <div class="dr-cal-header">
-                    <button type="button" class="dr-cal-nav" id="res-cal-prev"><i class="bi bi-chevron-left"></i></button>
-                    <span class="dr-cal-month" id="res-cal-month"></span>
-                    <button type="button" class="dr-cal-nav" id="res-cal-next"><i class="bi bi-chevron-right"></i></button>
-                </div>
-                <div class="dr-cal-days-header">
-                    <div class="dr-cal-day-name">lun</div>
-                    <div class="dr-cal-day-name">mar</div>
-                    <div class="dr-cal-day-name">mer</div>
-                    <div class="dr-cal-day-name">gio</div>
-                    <div class="dr-cal-day-name">ven</div>
-                    <div class="dr-cal-day-name">sab</div>
-                    <div class="dr-cal-day-name">dom</div>
-                </div>
-                <div class="dr-cal-grid" id="res-cal-grid"></div>
-            </div>
         </div>
         <div class="filter-actions">
             <button type="button" class="btn-filter btn-filter-outline js-filter-toggle" title="Mostra/nascondi filtri">
