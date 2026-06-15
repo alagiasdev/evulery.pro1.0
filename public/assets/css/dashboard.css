@@ -2239,6 +2239,12 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
         scrollbar-width: none; -ms-overflow-style: none;
     }
     .date-strip-chips::-webkit-scrollbar { display: none; }
+    /* I chip si espandono per riempire la larghezza (proporzioni naturali,
+       Dopodomani resta il piu' largo). min-width:auto di default evita la
+       compressione: niente sbordamento, e se manca spazio si scrolla. */
+    .date-strip-chips > .date-chip,
+    .date-strip-chips > .date-chip-cal { flex: 1 1 auto; }
+    .date-strip-chips > .date-chip-cal > .date-chip { width: 100%; }
     #home-date-strip .date-nav-arrow {
         flex: 1 1 calc(50% - .2rem);
         justify-content: center; gap: .35rem;
