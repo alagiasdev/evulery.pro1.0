@@ -119,8 +119,9 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
 <!-- Date strip -->
 <div class="date-strip" id="home-date-strip">
     <a href="<?= url('dashboard') ?>?date=<?= e($prevDate) ?>" class="date-nav-arrow" id="home-day-prev" title="Giorno precedente (←)">
-        <i class="bi bi-chevron-left"></i>
+        <i class="bi bi-chevron-left"></i><span class="date-nav-label">Precedente</span>
     </a>
+    <div class="date-strip-chips">
     <a href="#" class="date-chip" data-offset="0">
         <span class="chip-label">Oggi</span>
         <span class="chip-sub" id="home-chip-0"></span>
@@ -153,8 +154,9 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
             <div class="dr-cal-grid" id="home-cal-grid"></div>
         </div>
     </div>
+    </div><!-- /.date-strip-chips -->
     <a href="<?= url('dashboard') ?>?date=<?= e($nextDate) ?>" class="date-nav-arrow" id="home-day-next" title="Giorno successivo (→)">
-        <i class="bi bi-chevron-right"></i>
+        <span class="date-nav-label">Successivo</span><i class="bi bi-chevron-right"></i>
     </a>
 </div>
 

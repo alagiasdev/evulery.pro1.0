@@ -83,6 +83,11 @@ a.sidebar-user:hover { color: #adb5bd; }
     display: flex; align-items: stretch; gap: .5rem;
     margin-bottom: 1.25rem; overflow: visible;
 }
+/* Contenitore dei chip: su desktop fila normale ai lati delle frecce;
+   su mobile diventa una riga scrollabile (vedi media query). */
+.date-strip-chips { display: flex; align-items: stretch; gap: .5rem; }
+/* Etichetta testuale frecce: nascosta su desktop (solo icona), visibile su mobile. */
+.date-nav-label { display: none; }
 .date-chip {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     padding: .5rem 1.25rem; border: 2px solid #dee2e6; border-radius: 10px;
@@ -2226,8 +2231,22 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
     .amount-preview { flex-direction: column; text-align: center; }
     .dns-record-row { flex-direction: column; gap: .15rem; }
     /* Phase B: date strip horizontal scroll */
-    .date-strip { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
-    .date-strip::-webkit-scrollbar { display: none; }
+    /* Mobile: i chip scorrono in una riga, le frecce vanno sotto affiancate (50/50). */
+    .date-strip { flex-wrap: wrap; overflow: visible; }
+    .date-strip-chips {
+        order: 0; flex: 1 1 100%;
+        overflow-x: auto; -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .date-strip-chips::-webkit-scrollbar { display: none; }
+    #home-date-strip .date-nav-arrow {
+        flex: 1 1 calc(50% - .2rem);
+        justify-content: center; gap: .35rem;
+        padding: .5rem; font-size: .95rem;
+    }
+    #home-day-prev { order: 1; }
+    #home-day-next { order: 2; }
+    #home-date-strip .date-nav-label { display: inline; font-weight: 600; font-size: .85rem; }
     /* Phase B: filter bar stacking — quando .show, su mobile va in colonna */
     .filter-row.filter-advanced.show { flex-direction: column; align-items: stretch; }
     .filter-row .filter-actions { display: none; }
