@@ -195,16 +195,16 @@ $navQs = function (string $d) use ($status, $source): string {
             <?php endif; ?>
             <div class="res-datebar-chips">
                 <a href="<?= url('dashboard/reservations?upcoming=1' . ($status ? '&status=' . e($status) : '') . ($source ? '&source=' . e($source) : '')) ?>"
-                   class="date-chip-sm <?= $isUpcoming ? 'active' : '' ?>" title="Le prossime 15 prenotazioni">
+                   class="date-chip-sm rb-prossime <?= $isUpcoming ? 'active' : '' ?>" title="Le prossime 15 prenotazioni">
                     <i class="bi bi-fast-forward-fill me-1"></i>Prossime
                 </a>
                 <?php foreach ($chipDates as $chip): ?>
                 <a href="<?= url('dashboard/reservations?date=' . $chip['date'] . ($status ? '&status=' . e($status) : '') . ($source ? '&source=' . e($source) : '')) ?>"
-                   class="date-chip-sm <?= !$isUpcoming && $date === $chip['date'] && !$isRange ? 'active' : '' ?>">
+                   class="date-chip-sm rb-day <?= !$isUpcoming && $date === $chip['date'] && !$isRange ? 'active' : '' ?>">
                     <?= $chip['label'] ?> <span class="chip-day"><?= $chip['sub'] ?></span>
                 </a>
                 <?php endforeach; ?>
-                <div class="date-chip-cal">
+                <div class="date-chip-cal rb-cal">
                     <a href="#" class="date-chip-sm" id="res-cal-toggle"><i class="bi bi-calendar3 me-1"></i>Altra data</a>
                     <div class="home-cal-dropdown" id="res-cal-dropdown" style="display:none;">
                         <div class="dr-cal-header">
