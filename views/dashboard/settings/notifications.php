@@ -207,6 +207,51 @@ $defaults = [
                     <div class="push-status-desc">Riceverai un avviso per nuove prenotazioni, cancellazioni, caparre ricevute e altri eventi importanti.</div>
                 </div>
             </div>
+
+            <?php
+                // Etichetta leggibile + icona dal user-agent (closure locale: niente
+                // nuova classe da autoload-are).
+                $deviceInfo = function (?string $ua): array {
+                    $ua = (string)$ua;
+                    $os = 'Dispositivo';
+                    if (stripos($ua, 'Windows') !== false) $os = 'Windows';
+                    elseif (stripos($ua, 'iPhone') !== false) $os = 'iPhone';
+                    elseif (stripos($ua, 'iPad') !== false) $os = 'iPad';
+                    elseif (stripos($ua, 'Android') !== false) $os = 'Android';
+                    elseif (stripos($ua, 'Macintosh') !== false || stripos($ua, 'Mac OS') !== false) $os = 'Mac';
+                    elseif (stripos($ua, 'Linux') !== false) $os = 'Linux';
+                    $browser = 'Browser'; $icon = 'bi-globe2';
+                    if (stripos($ua, 'Edg') !== false) { $browser = 'Edge'; $icon = 'bi-browser-edge'; }
+                    elseif (stripos($ua, 'SamsungBrowser') !== false) { $browser = 'Samsung Internet'; $icon = 'bi-browser-chrome'; }
+                    elseif (stripos($ua, 'OPR') !== false || stripos($ua, 'Opera') !== false) { $browser = 'Opera'; $icon = 'bi-globe2'; }
+                    elseif (stripos($ua, 'Firefox') !== false || stripos($ua, 'FxiOS') !== false) { $browser = 'Firefox'; $icon = 'bi-browser-firefox'; }
+                    elseif (stripos($ua, 'CriOS') !== false || stripos($ua, 'Chrome') !== false) { $browser = 'Chrome'; $icon = 'bi-browser-chrome'; }
+                    elseif (stripos($ua, 'Safari') !== false) { $browser = 'Safari'; $icon = 'bi-browser-safari'; }
+                    return ['label' => $browser . ' · ' . $os, 'icon' => $icon];
+                };
+                $MESI_IT = ['', 'gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
+            ?>
+            <?php if (!empty($pushDevices)): ?>
+            <div class="push-devices">
+                <div class="push-devices-h"><i class="bi bi-hdd-stack me-1"></i> Dispositivi collegati (<?= count($pushDevices) ?>)</div>
+                <?php foreach ($pushDevices as $d): ?>
+                <?php
+                    $info = $deviceInfo($d['user_agent'] ?? '');
+                    $ts = !empty($d['created_at']) ? strtotime((string)$d['created_at']) : 0;
+                    $dataLbl = $ts ? (date('j', $ts) . ' ' . $MESI_IT[(int)date('n', $ts)] . ' ' . date('Y', $ts)) : '';
+                ?>
+                <div class="push-device" data-endpoint="<?= e($d['endpoint']) ?>">
+                    <div class="push-device-ic"><i class="bi <?= e($info['icon']) ?>"></i></div>
+                    <div class="push-device-info">
+                        <div class="push-device-name"><?= e($info['label']) ?> <span class="push-device-current" style="display:none;">Questo dispositivo</span></div>
+                        <?php if ($dataLbl !== ''): ?><div class="push-device-meta">Collegato il <?= e($dataLbl) ?></div><?php endif; ?>
+                    </div>
+                    <button type="button" class="push-device-remove" data-push-remove title="Rimuovi dalle notifiche"><i class="bi bi-x-lg"></i></button>
+                </div>
+                <?php endforeach; ?>
+                <div class="push-devices-hint"><i class="bi bi-info-circle me-1"></i> Rimuovendo un dispositivo ancora in uso potrebbe ricomparire alla riapertura della dashboard. Per spegnerle definitivamente su un dispositivo, usa "Rimuovi" da quel dispositivo.</div>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
     <?php endif; ?>
@@ -323,9 +368,12 @@ $defaults = [
             return;
         }
         window.EvuleryPush.getStatus().then(function (s) {
-            if (!s.supported)             return showBox('push-status-unsupported');
+            if (!s.supported)              return showBox('push-status-unsupported');
+            // SW non diventato pronto entro il timeout (es. contesto non sicuro):
+            // mostra "non supportato qui" invece dello spinner perpetuo.
+            if (s.ready === false)         return showBox('push-status-unsupported');
             if (s.permission === 'denied') return showBox('push-status-denied');
-            if (s.subscribed)             return showBox('push-status-active');
+            if (s.subscribed)              return showBox('push-status-active');
             showBox('push-status-inactive');
         });
     }
@@ -383,6 +431,63 @@ $defaults = [
             setTimeout(function () { previewSound(type); }, 100);
         });
     });
+
+    // ========== Dispositivi collegati: marca "questo dispositivo" + rimozione ==========
+    (function () {
+        var rows = Array.prototype.slice.call(document.querySelectorAll('.push-device'));
+        if (!rows.length) return;
+        var CSRF = <?= json_encode(csrf_token()) ?>;
+        var UNSUB_URL = <?= json_encode(url('dashboard/push/unsubscribe')) ?>;
+        var currentEndpoint = null;
+
+        // Riconosci il dispositivo corrente confrontando l'endpoint della sua subscription
+        if ('serviceWorker' in navigator && navigator.serviceWorker.ready) {
+            navigator.serviceWorker.ready
+                .then(function (reg) { return reg.pushManager.getSubscription(); })
+                .then(function (sub) {
+                    if (!sub) return;
+                    currentEndpoint = sub.endpoint;
+                    rows.forEach(function (row) {
+                        if (row.getAttribute('data-endpoint') === currentEndpoint) {
+                            var badge = row.querySelector('.push-device-current');
+                            if (badge) badge.style.display = '';
+                        }
+                    });
+                }).catch(function () {});
+        }
+
+        function removeFromServer(endpoint) {
+            var body = new URLSearchParams();
+            body.append('_csrf', CSRF);
+            body.append('endpoint', endpoint);
+            fetch(UNSUB_URL, {
+                method: 'POST', credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body.toString()
+            }).then(function () { location.reload(); }).catch(function () { location.reload(); });
+        }
+
+        rows.forEach(function (row) {
+            var btn = row.querySelector('[data-push-remove]');
+            if (!btn) return;
+            btn.addEventListener('click', function () {
+                var endpoint = row.getAttribute('data-endpoint');
+                if (!endpoint || !window.confirm('Rimuovere questo dispositivo dalle notifiche?')) return;
+                btn.disabled = true;
+                // Se e' il dispositivo CORRENTE: disiscrivi davvero il browser
+                // (rimozione permanente), poi rimuovi dal server.
+                if (currentEndpoint && endpoint === currentEndpoint && 'serviceWorker' in navigator) {
+                    navigator.serviceWorker.ready
+                        .then(function (reg) { return reg.pushManager.getSubscription(); })
+                        .then(function (sub) { return sub ? sub.unsubscribe() : null; })
+                        .then(function () { removeFromServer(endpoint); })
+                        .catch(function () { removeFromServer(endpoint); });
+                } else {
+                    removeFromServer(endpoint);
+                }
+            });
+        });
+    })();
 })();
 </script>
 <?php endif; ?>

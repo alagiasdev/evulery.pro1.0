@@ -226,16 +226,16 @@ class SettingsController
     {
         $tenantId = Auth::tenantId();
 
-        // Conteggio dispositivi push attualmente subscribed (mostra "1 dispositivo
-        // ricevera' le notifiche" / "Nessun dispositivo attivo" nella sezione
-        // diagnostica). Non distingue per-utente: il dato e' a livello tenant.
-        $pushDeviceCount = count((new PushSubscription())->getByTenant($tenantId));
+        // Elenco dispositivi push attualmente subscribed per il tenant (mostrati
+        // nella sezione "Dispositivi collegati" + conteggio). Dato a livello tenant.
+        $pushDevices = (new PushSubscription())->getByTenant($tenantId);
 
         view('dashboard/settings/notifications', [
             'title'           => 'Notifiche',
             'activeMenu'      => 'settings-notifications',
             'tenant'          => TenantResolver::current(),
-            'pushDeviceCount' => $pushDeviceCount,
+            'pushDeviceCount' => count($pushDevices),
+            'pushDevices'     => $pushDevices,
         ], 'dashboard');
     }
 

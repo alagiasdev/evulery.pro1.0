@@ -4934,6 +4934,19 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     background: #f8f9fa;
     margin-bottom: 1rem;
 }
+/* Elenco dispositivi collegati alle notifiche push */
+.push-devices { margin-top: 1rem; border-top: 1px solid #eef0f2; padding-top: 1rem; }
+.push-devices-h { font-size: .8rem; font-weight: 700; color: #5b6470; margin-bottom: .6rem; }
+.push-device { display: flex; align-items: center; gap: .8rem; padding: .7rem .85rem; border: 1px solid #e9ecef; border-radius: 10px; margin-bottom: .5rem; }
+.push-device-ic { width: 38px; height: 38px; border-radius: 9px; background: #eef3f0; color: var(--brand, #00844A); display: flex; align-items: center; justify-content: center; font-size: 1.05rem; flex-shrink: 0; }
+.push-device-info { flex: 1; min-width: 0; }
+.push-device-name { font-size: .86rem; font-weight: 700; color: #1a1d23; }
+.push-device-current { font-size: .66rem; font-weight: 700; background: #e8f5ee; color: #006b3c; border-radius: 20px; padding: 1px 8px; margin-left: 5px; vertical-align: middle; }
+.push-device-meta { font-size: .72rem; color: #8893a1; margin-top: 1px; }
+.push-device-remove { border: 1px solid #e9ecef; background: #fff; color: #adb5bd; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.push-device-remove:hover { border-color: #f1a9a2; color: #b3261e; background: #fdecea; }
+.push-device-remove:disabled { opacity: .5; cursor: default; }
+.push-devices-hint { font-size: .72rem; color: #8893a1; margin-top: .5rem; line-height: 1.5; }
 .push-status-box.is-active   { background: #e8f5ee; border-color: #b8dcc6; }
 .push-status-box.is-denied   { background: #fff8e1; border-color: #ffe082; }
 .push-status-box.is-inactive { background: #f8f9fa; border-color: #e9ecef; }

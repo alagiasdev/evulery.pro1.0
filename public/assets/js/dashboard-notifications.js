@@ -485,15 +485,25 @@
                 var supported = ('serviceWorker' in navigator) && ('PushManager' in window);
                 var permission = (typeof Notification !== 'undefined') ? Notification.permission : 'default';
                 if (!supported) {
-                    resolve({ supported: false, permission: permission, subscribed: false });
+                    resolve({ supported: false, permission: permission, subscribed: false, ready: false });
                     return;
                 }
+                // Timeout di sicurezza: navigator.serviceWorker.ready NON si risolve
+                // mai se il SW non si attiva (es. contesto non sicuro: http su IP/
+                // dominio invece di https o localhost). Senza questo, la UI resta
+                // sullo spinner "Verifica in corso…" all'infinito. Dopo 6s diamo
+                // un esito "non pronto" cosi' la pagina mostra uno stato finale.
+                var settled = false;
+                var done = function (res) { if (!settled) { settled = true; resolve(res); } };
+                setTimeout(function () {
+                    done({ supported: true, permission: permission, subscribed: false, ready: false });
+                }, 6000);
                 navigator.serviceWorker.ready.then(function (reg) {
                     return reg.pushManager.getSubscription();
                 }).then(function (sub) {
-                    resolve({ supported: true, permission: permission, subscribed: !!sub });
+                    done({ supported: true, permission: permission, subscribed: !!sub, ready: true });
                 }).catch(function () {
-                    resolve({ supported: supported, permission: permission, subscribed: false });
+                    done({ supported: supported, permission: permission, subscribed: false, ready: true });
                 });
             });
         }
