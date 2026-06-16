@@ -386,6 +386,15 @@
             if (!swRegistration) { setTimeout(attempt, 300); return; }
             swRegistration.pushManager.getSubscription().then(function (sub) {
                 if (sub) return; // gia' iscritto, banner inutile
+                // Permesso GIA' concesso ma manca la subscription sul dispositivo
+                // (persa/scaduta o SW ri-registrato): NON mostrare il banner
+                // "Attiva" — sarebbe assurdo chiedere di attivare cio' che per
+                // l'utente e' gia' attivo. La ricreiamo in silenzio (il permesso
+                // c'e', nessun prompt) e la risincronizziamo col server.
+                if (Notification.permission === 'granted') {
+                    subscribeToPush();
+                    return;
+                }
                 banner.classList.add('is-visible');
             }).catch(function () { /* fail silent */ });
         };
