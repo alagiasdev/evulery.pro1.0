@@ -265,9 +265,17 @@
 
         navigator.serviceWorker.register('/sw-push.js').then(function (reg) {
             swRegistration = reg;
-            // If already subscribed, nothing more to do
             reg.pushManager.getSubscription().then(function (sub) {
-                if (sub) return;
+                if (sub) {
+                    // Self-heal: re-invia la subscription al server a ogni avvio.
+                    // Cosi', se era stata rimossa lato server (es. "Rimuovi" da un
+                    // altro dispositivo) ma il browser ce l'ha ancora e il permesso
+                    // e' attivo, questo dispositivo torna registrato da solo —
+                    // senza chiedere nulla all'utente. Operazione idempotente
+                    // (upsert per endpoint lato DB).
+                    sendSubscriptionToServer(sub);
+                    return;
+                }
                 // Not subscribed yet — will subscribe on first bell click
             });
         }).catch(function (err) {
