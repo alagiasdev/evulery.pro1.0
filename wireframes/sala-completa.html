@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sala — pagina completa (A+B) · Wireframe di implementazione</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{
+    --brand:#00844A; --brand-d:#006b3c;
+    --free-bg:#E6F4ED; --free-bd:#b3dec7;
+    --conf:#00844A; --arr-bg:#cfe2ff; --arr-bd:#0EA5E9;
+    --next-bd:#f0a500; --danger:#dc3545;
+    --ink:#1a1d23; --muted:#6c757d; --line:#eceff2;
+  }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:14px}
+  .wrap{max-width:1100px;margin:0 auto;padding:20px 16px 90px}
+  .topnote{font-size:.82rem;color:var(--muted);margin:0 0 14px}
+  .topnote b{color:var(--ink)}
+
+  /* device toggle (solo per il wireframe, non va in prod) */
+  .dev{display:flex;gap:8px;margin-bottom:16px}
+  .dev button{border:1.5px solid #d4dade;background:#fff;border-radius:8px;padding:6px 14px;font-weight:700;font-size:.8rem;cursor:pointer;color:var(--muted)}
+  .dev button.on{border-color:var(--brand);background:var(--brand);color:#fff}
+
+  .frame{margin:0 auto;transition:max-width .2s}
+  .frame.desktop{max-width:1060px}
+  .frame.mobile{max-width:390px}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+
+  /* header */
+  .head{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--line)}
+  .head .ttl{font-weight:800;font-size:1.05rem}
+  .head .ttl i{color:var(--brand)}
+  .badge-date{background:#e8f5ee;color:var(--brand-d);font-weight:700;font-size:.78rem;padding:4px 10px;border-radius:20px}
+  .spacer{flex:1}
+  .mode-toggle{display:inline-flex;border:1.5px solid #e0e4e7;border-radius:9px;overflow:hidden}
+  .mode-toggle a{padding:6px 12px;font-size:.78rem;font-weight:700;color:var(--muted);text-decoration:none}
+  .mode-toggle a.on{background:var(--brand);color:#fff}
+
+  /* date bar */
+  .datebar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line)}
+  .arrow{width:34px;height:34px;border:1.5px solid #d4dade;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer}
+  .chip{border:1.5px solid #d4dade;background:#fff;border-radius:8px;padding:6px 12px;font-weight:600;font-size:.78rem;color:var(--ink);cursor:pointer}
+  .chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+  .chip small{color:#9aa3aa;font-weight:500;margin-left:3px}
+  .chip.on small{color:#cdebd9}
+  .chip.cal{margin-left:auto}
+
+  /* KPI + occupancy bar (B) */
+  .kpis{display:flex;gap:16px;flex-wrap:wrap;padding:11px 16px;background:#fbfdfc;border-bottom:1px solid var(--line);font-size:.83rem}
+  .kpi{display:flex;align-items:center;gap:6px}
+  .kpi b{font-size:1rem}
+  .kpi .dot{width:9px;height:9px;border-radius:50%}
+  .kpi.warn{color:#a8400a;font-weight:600}
+  .occ{display:flex;gap:2px;padding:14px 12px 6px;align-items:flex-end;border-bottom:1px solid var(--line)}
+  .occ-col{flex:1;text-align:center;cursor:pointer;border-radius:8px;padding:5px 1px 4px}
+  .occ-col:hover{background:#f0f4f2}
+  .occ-col.on{background:#e8f5ee}
+  .occ-bar-wrap{height:64px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:5px}
+  .occ-bar{width:62%;max-width:30px;border-radius:5px 5px 0 0;background:linear-gradient(180deg,var(--brand),#3aa873);min-height:4px}
+  .occ-bar.peak{background:linear-gradient(180deg,#006b3c,var(--brand))}
+  .occ-time{font-weight:700;font-size:.72rem}
+  .occ-people{font-size:.7rem;color:var(--brand-d);font-weight:700}
+  .occ-tables{font-size:.63rem;color:var(--muted)}
+
+  /* view tabs */
+  .vtabs{display:flex;gap:4px;padding:10px 16px 0}
+  .vtab{border:none;background:#f1f4f6;border-radius:9px 9px 0 0;padding:9px 16px;font-weight:700;font-size:.84rem;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px}
+  .vtab.on{background:#fff;color:var(--brand-d);box-shadow:0 -2px 0 var(--brand) inset}
+  .vtab .b{background:var(--danger);color:#fff;border-radius:10px;font-size:.66rem;padding:1px 6px;font-weight:700}
+
+  .view{display:none;padding:0}
+  .view.on{display:block}
+
+  /* ===== two-pane: lista (sx) + pannello dx con tab ===== */
+  .twopane{display:grid;grid-template-columns:330px 1fr}
+  .pane-list{border-right:1px solid var(--line);min-height:380px}
+  .pane-list-h{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--line);font-weight:800;font-size:.86rem}
+  .pane-list-h .b{background:var(--danger);color:#fff;border-radius:10px;font-size:.66rem;padding:1px 7px}
+  .pane-right{min-width:0}
+  .rtabs{display:flex;gap:4px;padding:10px 14px 0;border-bottom:1px solid var(--line)}
+  .rtab{border:none;background:#f1f4f6;border-radius:9px 9px 0 0;padding:8px 15px;font-weight:700;font-size:.82rem;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px}
+  .rtab.on{background:#fff;color:var(--brand-d);box-shadow:0 -2px 0 var(--brand) inset}
+  /* mobile-only top tabs */
+  .mtabs{display:none}
+  .frame.mobile .mtabs{display:flex;gap:4px;padding:10px 14px 0}
+  .frame.mobile .mtab{border:none;background:#f1f4f6;border-radius:9px 9px 0 0;padding:8px 13px;font-weight:700;font-size:.8rem;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px}
+  .frame.mobile .mtab.on{background:#fff;color:var(--brand-d);box-shadow:0 -2px 0 var(--brand) inset}
+  .frame.mobile .mtab .b{background:var(--danger);color:#fff;border-radius:10px;font-size:.62rem;padding:1px 6px}
+  /* su mobile il two-pane collassa: una sezione alla volta */
+  .frame.mobile .twopane{grid-template-columns:1fr}
+  .frame.mobile .pane-list{border-right:none}
+  .frame.mobile .rtabs{display:none}
+
+  /* ---- TIMELINE ---- */
+  .tl-scroll{overflow-x:auto;padding:6px 0 0}
+  .tl{min-width:720px}
+  .tl-row{display:grid;grid-template-columns:108px 1fr;border-bottom:1px solid #f4f6f8;min-height:44px}
+  .tl-row.head{position:sticky;top:0;background:#fff;z-index:2}
+  .tl-row.danger{background:#fff7f6}
+  .tl-lbl{display:flex;flex-direction:column;justify-content:center;padding:5px 10px;border-right:1px solid var(--line);background:#fbfdfc}
+  .tl-lbl .tn{font-weight:800;font-size:.82rem}
+  .tl-lbl .tc{font-size:.68rem;color:var(--muted)}
+  .tl-lbl.danger .tn{color:var(--danger)}
+  .tl-track{position:relative}
+  .tl-grid{position:absolute;inset:0;display:flex}
+  .tl-gcell{flex:1;border-right:1px dashed #eef1f3}
+  .tl-hours{display:flex;height:28px;align-items:center}
+  .tl-hcell{flex:1;font-size:.68rem;color:var(--muted);font-weight:600;padding-left:5px;border-right:1px dashed #eef1f3}
+  .tl-bar{position:absolute;top:6px;height:31px;border-radius:7px;display:flex;align-items:center;gap:5px;padding:0 8px;font-size:.73rem;font-weight:700;color:#fff;cursor:pointer;overflow:hidden;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .tl-bar.arr{background:var(--arr-bd)} .tl-bar.conf{background:var(--conf)}
+  .tl-bar.next{background:#fff;color:#a8650a;border:1.5px dashed var(--next-bd);box-shadow:none}
+  .tl-bar.unassigned{background:repeating-linear-gradient(45deg,#f3b0a8,#f3b0a8 6px,#e98c82 6px,#e98c82 12px);color:#7a1d14}
+  .tl-bar small{font-weight:500;opacity:.85}
+  .tl-now{position:absolute;top:0;bottom:0;width:2px;background:#ff5722;z-index:3}
+  .tl-now::before{content:"ora";position:absolute;top:-1px;left:3px;font-size:.58rem;color:#ff5722;font-weight:700;background:#fff;padding:0 3px}
+
+  /* ---- MAP ---- */
+  .map{display:flex;flex-wrap:wrap;gap:13px;padding:18px}
+  .map-hint{padding:0 18px 16px;font-size:.76rem;color:var(--muted)}
+  .mt{width:102px;height:78px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;border:2px solid transparent;font-size:.71rem}
+  .mt .mt-n{font-weight:800;font-size:.8rem}.mt .mt-c{font-size:.65rem;opacity:.85}
+  .mt .who{font-weight:800;font-size:.73rem}
+  .mt.free{background:var(--free-bg);border-color:var(--free-bd);color:#2f6f4f}
+  .mt.conf{background:var(--conf);color:#fff}
+  .mt.arr{background:var(--arr-bg);border-color:var(--arr-bd);color:#0b4a73}
+
+  /* ---- LIST ---- */
+  .list{padding:6px 0 8px}
+  .grp{display:flex;align-items:center;gap:6px;padding:9px 16px;font-size:.76rem;font-weight:700;color:var(--muted);background:#fbfdfc;text-transform:uppercase;letter-spacing:.02em}
+  .grp.danger{color:var(--danger);background:#fff7f6}
+  .row{display:flex;align-items:center;gap:11px;padding:11px 16px;border-bottom:1px solid #f4f6f8;cursor:pointer}
+  .row:hover{background:#fafcfb}
+  .r-time{font-weight:800;font-size:.86rem;width:46px;color:var(--ink)}
+  .r-info{flex:1;min-width:0}
+  .r-name{font-size:.9rem}.r-name b{font-weight:800}
+  .r-sub{display:flex;gap:8px;flex-wrap:wrap;font-size:.74rem;color:var(--muted);margin-top:2px;align-items:center}
+  .r-stat{font-weight:700;padding:1px 7px;border-radius:5px;font-size:.68rem}
+  .r-stat.arr{background:var(--arr-bg);color:#0b4a73}.r-stat.conf{background:#e8f5ee;color:var(--brand-d)}
+  .r-chip{background:#f0f2f4;border-radius:5px;padding:1px 6px}
+  .r-table{font-weight:800;font-size:.76rem;border-radius:7px;padding:5px 10px;white-space:nowrap}
+  .r-table.set{background:#eef3f7;color:#37536b}
+  .r-table.none{background:#fdecea;color:var(--danger);border:1px dashed #f1a9a2}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;padding:11px 16px;font-size:.74rem;color:var(--muted);border-top:1px solid var(--line)}
+  .legend i{width:16px;height:10px;border-radius:3px;display:inline-block;vertical-align:middle;margin-right:4px}
+
+  /* popup mock */
+  .ov{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+  .ov.on{display:flex}
+  .pop{background:#fff;border-radius:14px;width:340px;max-width:100%;overflow:hidden}
+  .pop-h{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:1px solid var(--line);font-weight:800}
+  .pop-h button{border:none;background:none;font-size:1.3rem;cursor:pointer;color:var(--muted)}
+  .pop-b{padding:15px}
+  .pop-meta{color:var(--muted);font-size:.82rem;margin-bottom:12px}
+  .pop-lbl{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin:10px 0 5px}
+  .pop-sp{display:flex;gap:6px;flex-wrap:wrap}
+  .pop-sp button{border:1.5px solid #d4dade;background:#fff;border-radius:8px;padding:7px 11px;font-size:.78rem;font-weight:700;cursor:pointer}
+  .pop-sp .arr{border-color:var(--arr-bd);color:#0b4a73}.pop-sp .conf{border-color:var(--brand);color:var(--brand-d)}.pop-sp .no{border-color:#f1a9a2;color:var(--danger)}
+  .pop select{width:100%;padding:8px;border:1.5px solid #d4dade;border-radius:8px;font-size:.85rem}
+  .pop-foot{display:flex;justify-content:space-between;align-items:center;margin-top:13px}
+  .pop-foot a{color:var(--brand-d);font-size:.8rem;font-weight:600;text-decoration:none}
+  .pop-foot button{background:var(--brand);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-weight:700;font-size:.82rem;cursor:pointer}
+
+  .mob-only{display:none}
+  .frame.mobile .desk-tab{display:none}
+  .frame.mobile .mob-only{display:flex}
+  .frame.mobile .occ{padding-bottom:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="topnote"><b>Pagina Sala — versione finale (A+B).</b> Barra di occupazione sempre in cima. Su <b>desktop</b> la lista prenotazioni resta a sinistra (come oggi) e il pannello destro ha il tab <b>Timeline | Mappa</b> — niente sparisce. Su <b>mobile</b> le tre sezioni diventano tab (default Prenotazioni). Usa il toggle qui sotto.</p>
+  <div class="dev">
+    <button class="on" data-dev="desktop"><i class="bi bi-display"></i> Desktop</button>
+    <button data-dev="mobile"><i class="bi bi-phone"></i> Mobile</button>
+  </div>
+
+  <div class="frame desktop" id="frame">
+    <div class="card">
+      <!-- header -->
+      <div class="head">
+        <span class="ttl"><i class="bi bi-grid-3x3"></i> Sala</span>
+        <span class="badge-date">Sab 13 Giugno 2026</span>
+        <span class="spacer"></span>
+        <span class="mode-toggle"><a href="#" class="on"><i class="bi bi-eye"></i> Operativa</a><a href="#"><i class="bi bi-pencil"></i> Setup</a></span>
+      </div>
+      <!-- date bar -->
+      <div class="datebar">
+        <span class="arrow"><i class="bi bi-chevron-left"></i></span>
+        <span class="chip on">Oggi <small>sab 13/6</small></span>
+        <span class="chip">Domani <small>dom 14/6</small></span>
+        <span class="chip">Dopodomani <small>lun 15/6</small></span>
+        <span class="arrow"><i class="bi bi-chevron-right"></i></span>
+        <span class="chip cal"><i class="bi bi-calendar3"></i> Altra data</span>
+      </div>
+      <!-- KPI -->
+      <div class="kpis">
+        <span class="kpi"><span class="dot" style="background:var(--brand)"></span> <b>36</b> coperti</span>
+        <span class="kpi"><span class="dot" style="background:var(--arr-bd)"></span> <b>13</b> prenotazioni</span>
+        <span class="kpi"><i class="bi bi-grid-3x3-gap" style="color:var(--muted)"></i> <b>13</b>/23 tavoli</span>
+        <span class="kpi warn"><i class="bi bi-exclamation-triangle-fill"></i> <b>1</b> da assegnare</span>
+      </div>
+      <!-- B: occupancy bar (sempre, full width) -->
+      <div class="occ" id="occ"></div>
+
+      <!-- mobile-only: tab tra le 3 sezioni (su desktop sono affiancate) -->
+      <div class="mtabs">
+        <button class="mtab on" data-m="list"><i class="bi bi-list-ul"></i> Prenotazioni <span class="b">1</span></button>
+        <button class="mtab" data-m="tl"><i class="bi bi-bar-chart-steps"></i> Timeline</button>
+        <button class="mtab" data-m="map"><i class="bi bi-grid-3x3"></i> Mappa</button>
+      </div>
+
+      <!-- ===== DUE PANNELLI: lista (sx, sempre) + dx con tab Timeline|Mappa ===== -->
+      <div class="twopane" id="twopane">
+
+        <!-- SX: lista prenotazioni — sempre visibile come oggi -->
+        <div class="pane-list" id="pane-list">
+          <div class="pane-list-h"><span><i class="bi bi-list-ul" style="color:var(--brand)"></i> Prenotazioni</span><span class="b">1 da assegnare</span></div>
+          <div class="list" id="list"></div>
+        </div>
+
+        <!-- DX: tab Timeline | Mappa -->
+        <div class="pane-right" id="pane-right">
+          <div class="rtabs">
+            <button class="rtab on" data-v="tl"><i class="bi bi-bar-chart-steps"></i> Timeline</button>
+            <button class="rtab" data-v="map"><i class="bi bi-grid-3x3"></i> Mappa</button>
+          </div>
+
+          <div class="view on" data-view="tl">
+            <div class="tl-scroll"><div class="tl" id="tl"></div></div>
+            <div class="legend">
+              <span><i style="background:var(--arr-bd)"></i> Arrivato</span>
+              <span><i style="background:var(--conf)"></i> Confermato</span>
+              <span><i style="background:#fff;border:1.5px dashed var(--next-bd)"></i> Turno succ.</span>
+              <span><i style="background:repeating-linear-gradient(45deg,#f3b0a8,#f3b0a8 4px,#e98c82 4px,#e98c82 8px)"></i> Da assegnare</span>
+              <span style="margin-left:auto"><i style="background:#ff5722;width:3px"></i> ora</span>
+            </div>
+          </div>
+
+          <div class="view" data-view="map">
+            <div class="map" id="map"></div>
+            <div class="map-hint"><i class="bi bi-info-circle"></i> Stato dei tavoli alle <b>21:00</b> (fascia selezionata sulla barra sopra). Clicca un tavolo per i dettagli.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- popup mock -->
+<div class="ov" id="ov">
+  <div class="pop">
+    <div class="pop-h"><span id="pop-name"><i class="bi bi-person"></i> —</span><button onclick="closePop()">&times;</button></div>
+    <div class="pop-b">
+      <div class="pop-meta" id="pop-meta"></div>
+      <div class="pop-lbl">Cambia stato</div>
+      <div class="pop-sp"><button class="conf"><i class="bi bi-check-circle"></i> Confermata</button><button class="arr"><i class="bi bi-box-arrow-in-right"></i> Arrivato</button><button class="no"><i class="bi bi-x-circle"></i> No-show</button></div>
+      <div class="pop-lbl">Tavolo assegnato</div>
+      <select><option>— Nessun tavolo —</option><option selected id="pop-table">T4</option><option>↔ Combina tavoli…</option></select>
+      <div class="pop-foot"><a href="#">Apri scheda completa</a><button><i class="bi bi-check"></i> Salva</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const T0=19*60, T1=23*60+30, SPAN=T1-T0, DUR=90;
+const toMin=s=>+s.slice(0,2)*60+ +s.slice(3,5);
+const pct=m=>((m-T0)/SPAN*100);
+
+const TABLES=[{n:'T4',cap:'2-4p'},{n:'T7',cap:'2p'},{n:'T12',cap:'4p'},{n:'T5',cap:'4p'},{n:'T6',cap:'2p'},{n:'T8',cap:'4p'},{n:'T11',cap:'2p'},{n:'T9',cap:'5p'},{n:'T10',cap:'3p'},{n:'T13',cap:'2p'}];
+const RES={
+  'T4':[{who:'TRULSSON',p:2,t:'19:30',st:'arr'}],
+  'T7':[{who:'BISCARO',p:2,t:'19:30',st:'arr',note:'🎂'}],
+  'T12':[{who:'GRANATI',p:4,t:'19:30',st:'arr'},{who:'SELESTINO',p:3,t:'22:00',st:'next'}],
+  'T5':[{who:'WATSON',p:4,t:'20:45',st:'conf'}],
+  'T6':[{who:'WORDSWORTH',p:2,t:'20:45',st:'conf'}],
+  'T8':[{who:'NIKOLOVSKI',p:4,t:'20:45',st:'conf'},{who:'TABENI',p:2,t:'22:15',st:'next'}],
+  'T11':[{who:'BOOGAARD',p:2,t:'20:45',st:'conf'}],
+  'T9':[],'T10':[],'T13':[]
+};
+const UNASSIGNED=[{who:'ROSSI',p:4,t:'21:00',st:'unassigned'}];
+
+// ---- timeline ----
+function renderTL(el){
+  let h='<div class="tl-row head"><div class="tl-lbl"><span class="tn">Tavolo</span></div><div class="tl-track"><div class="tl-hours">';
+  ['19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30','23:00'].forEach(hr=>h+='<div class="tl-hcell">'+hr+'</div>');
+  h+='</div></div></div>';
+  h+=rowTL({n:'⚠',cap:'da ass.'},UNASSIGNED,true);
+  TABLES.forEach(tb=>h+=rowTL(tb,RES[tb.n]||[],false));
+  el.innerHTML=h;
+  el.querySelectorAll('.tl-bar').forEach(b=>b.onclick=()=>openPop(b.dataset.who,b.dataset.meta,b.dataset.tbl));
+}
+function rowTL(tb,list,danger){
+  let bars='<div class="tl-grid">';for(let i=0;i<9;i++)bars+='<div class="tl-gcell"></div>';bars+='</div>';
+  bars+='<div class="tl-now" style="left:'+pct(21*60)+'%"></div>';
+  list.forEach(r=>{
+    bars+='<div class="tl-bar '+r.st+'" data-who="'+r.who+'" data-meta="'+r.p+'p · '+r.t+'" data-tbl="'+tb.n+'" style="left:'+pct(toMin(r.t))+'%;width:'+(DUR/SPAN*100)+'%">'+(r.note?r.note+' ':'')+r.who+' <small>'+r.p+'p</small></div>';
+  });
+  return '<div class="tl-row'+(danger?' danger':'')+'"><div class="tl-lbl'+(danger?' danger':'')+'"><span class="tn">'+tb.n+'</span><span class="tc">'+tb.cap+'</span></div><div class="tl-track">'+bars+'</div></div>';
+}
+// ---- occupancy ----
+function renderOcc(el){
+  const slots=['19:30','20:00','20:30','21:00','21:30','22:00','22:30','23:00'];
+  const all=Object.values(RES).flat().concat(UNASSIGNED);
+  const data=slots.map(s=>{const m=toMin(s);let p=0,t=0;all.forEach(r=>{const st=toMin(r.t);if(m>=st&&m<st+DUR){p+=r.p;t++;}});return{s,p,t};});
+  const max=Math.max(...data.map(d=>d.p),1);
+  el.innerHTML=data.map(d=>{
+    const hgt=Math.max(Math.round(d.p/max*64),4),peak=d.p===max?' peak':'',on=d.s==='21:00'?' on':'';
+    return '<div class="occ-col'+on+'"><div class="occ-bar-wrap"><div class="occ-bar'+peak+'" style="height:'+hgt+'px"></div></div><div class="occ-time">'+d.s+'</div><div class="occ-people">'+d.p+'p</div><div class="occ-tables">'+d.t+'/23</div></div>';
+  }).join('');
+  el.querySelectorAll('.occ-col').forEach(c=>c.onclick=()=>{el.querySelectorAll('.occ-col').forEach(x=>x.classList.remove('on'));c.classList.add('on');});
+}
+// ---- map ----
+function renderMap(el){
+  const hour=21*60;
+  el.innerHTML=TABLES.map(tb=>{
+    const cur=(RES[tb.n]||[]).find(r=>{const st=toMin(r.t);return hour>=st&&hour<st+DUR&&r.st!=='next';});
+    if(cur){const cls=cur.st==='arr'?'arr':'conf';return '<div class="mt '+cls+'" data-who="'+cur.who+'" data-meta="'+cur.p+'p · '+cur.t+'" data-tbl="'+tb.n+'"><span class="mt-n">'+tb.n+'</span><span class="who">'+cur.who+'</span><span class="mt-c">'+cur.p+'p · '+cur.t+'</span></div>';}
+    return '<div class="mt free"><span class="mt-n">'+tb.n+'</span><span class="mt-c">'+tb.cap+'</span></div>';
+  }).join('');
+  el.querySelectorAll('.mt[data-who]').forEach(m=>m.onclick=()=>openPop(m.dataset.who,m.dataset.meta,m.dataset.tbl));
+}
+// ---- list ----
+function renderList(el){
+  // costruisci prenotazioni piatte
+  let res=[];Object.entries(RES).forEach(([tn,l])=>l.forEach(r=>res.push({...r,tbl:tn})));
+  res=res.concat(UNASSIGNED.map(r=>({...r,tbl:null})));
+  let h='';
+  // da assegnare
+  const un=res.filter(r=>!r.tbl);
+  if(un.length){h+='<div class="grp danger"><i class="bi bi-exclamation-triangle-fill"></i> Da assegnare · '+un.length+'</div>';un.forEach(r=>h+=rowList(r));}
+  // per ora
+  const byH={};res.filter(r=>r.tbl).forEach(r=>{const hr=r.t.slice(0,2);(byH[hr]=byH[hr]||[]).push(r);});
+  Object.keys(byH).sort().forEach(hr=>{h+='<div class="grp"><i class="bi bi-clock"></i> Ore '+hr+':00</div>';byH[hr].forEach(r=>h+=rowList(r));});
+  el.innerHTML=h;
+  el.querySelectorAll('.row').forEach(rw=>rw.onclick=()=>openPop(rw.dataset.who,rw.dataset.meta,rw.dataset.tbl||'—'));
+}
+function rowList(r){
+  const stCls=r.st==='arr'?'arr':r.st==='unassigned'?'':'conf';
+  const stLbl=r.st==='arr'?'Arrivato':r.st==='unassigned'?'Da confermare':r.st==='next'?'Confermato':'Confermato';
+  const tbl=r.tbl?'<span class="r-table set">'+r.tbl+'</span>':'<span class="r-table none">Assegna</span>';
+  return '<div class="row" data-who="'+r.who+'" data-meta="'+r.p+'p · '+r.t+'" data-tbl="'+(r.tbl||'')+'">'
+    +'<span class="r-time">'+r.t+'</span>'
+    +'<div class="r-info"><div class="r-name"><b>'+r.who+'</b></div><div class="r-sub"><span>'+r.p+' persone</span>'
+    +(stCls?'<span class="r-stat '+stCls+'">'+stLbl+'</span>':'<span class="r-stat" style="background:#fff4e0;color:#a8650a">'+stLbl+'</span>')
+    +(r.note?'<span class="r-chip"><i class="bi bi-gift"></i> '+r.note+'</span>':'')+'</div></div>'+tbl+'</div>';
+}
+// popup
+function openPop(who,meta,tbl){document.getElementById('pop-name').innerHTML='<i class="bi bi-person"></i> '+who;document.getElementById('pop-meta').textContent=meta;document.getElementById('pop-table').textContent=tbl;document.getElementById('ov').classList.add('on');}
+function closePop(){document.getElementById('ov').classList.remove('on');}
+document.getElementById('ov').onclick=e=>{if(e.target.id==='ov')closePop();};
+
+// init
+renderTL(document.getElementById('tl'));
+renderOcc(document.getElementById('occ'));
+renderMap(document.getElementById('map'));
+renderList(document.getElementById('list'));
+
+// --- pannello destro: Timeline | Mappa (desktop e mobile) ---
+function setRightView(v){
+  document.querySelectorAll('.rtab').forEach(x=>x.classList.toggle('on',x.dataset.v===v));
+  document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.dataset.view===v));
+}
+document.querySelectorAll('.rtab').forEach(t=>t.onclick=()=>setRightView(t.dataset.v));
+
+// --- mobile: una sezione alla volta (Prenotazioni / Timeline / Mappa) ---
+function setMobileView(m){
+  document.querySelectorAll('.mtab').forEach(x=>x.classList.toggle('on',x.dataset.m===m));
+  const list=document.getElementById('pane-list'), right=document.getElementById('pane-right');
+  if(m==='list'){ list.style.display=''; right.style.display='none'; }
+  else { list.style.display='none'; right.style.display=''; setRightView(m); }
+}
+document.querySelectorAll('.mtab').forEach(t=>t.onclick=()=>setMobileView(t.dataset.m));
+
+// device toggle (solo wireframe)
+document.querySelectorAll('.dev button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.dev button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  const f=document.getElementById('frame');f.className='frame '+b.dataset.dev;
+  const list=document.getElementById('pane-list'), right=document.getElementById('pane-right');
+  if(b.dataset.dev==='mobile'){ setMobileView('list'); }            // mobile: default Prenotazioni
+  else { list.style.display=''; right.style.display=''; setRightView('tl'); } // desktop: lista + Timeline affiancate
+});
+</script>
+</body>
+</html>

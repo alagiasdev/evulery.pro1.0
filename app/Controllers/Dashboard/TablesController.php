@@ -6,6 +6,7 @@ use App\Core\Auth;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\TenantResolver;
+use App\Models\MealCategory;
 use App\Models\Reservation;
 use App\Models\Table;
 use App\Models\Tenant;
@@ -182,8 +183,18 @@ class TablesController
 
         $tables = $areas = $floorState = $reassignOptions = $currentMap = [];
         $dayReservations = $assignments = [];
+        // Dati "servizio" per la vista operativa (barra slot configurati + fasce).
+        // Inizializzati qui così la view non incappa in variabili indefinite
+        // nemmeno in modalità setup o quando il servizio è gatato.
+        $meals = $serviceSlots = $tableTurns = $daySlots = [];
+        $currentMeal = 'all';
+        $roomCapacity = $roomTables = 0;
         $opDate = (string)$request->query('date', date('Y-m-d'));
-        $opTime = (string)$request->query('time', $this->defaultOpTime());
+        // L'utente ha cliccato uno slot preciso (?time=)? Se no, il default-ora
+        // verrà posizionato sul "best slot" della fascia (vedi modalità operativa).
+        $rawTime = $request->query('time');
+        $hasExplicitTime = is_string($rawTime) && preg_match('/^\d{2}:\d{2}$/', $rawTime);
+        $opTime = $hasExplicitTime ? $rawTime : $this->defaultOpTime();
 
         // Fase C — heartbeat solo per modalita' operativa (setup e' editing
         // di posizione/disponibilita', non ha senso pollare in real-time).
@@ -196,13 +207,11 @@ class TablesController
 
             if ($mode === 'operativa') {
                 if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $opDate)) $opDate = date('Y-m-d');
-                if (!preg_match('/^\d{2}:\d{2}$/', $opTime)) $opTime = '20:00';
                 $assigner = new TableAssigner();
-                $floorState = $assigner->floorState((int)$tenant['id'], $opDate, $opTime);
-                $reassignOptions = $assigner->allTableOptions((int)$tenant['id']);
 
-                // Fase 3a — elenco prenotazioni del giorno (escluse le annullate)
-                // + mappa dei tavoli assegnati a ciascuna.
+                // Prenotazioni del giorno (escluse annullate) + assegnazioni tavoli.
+                // Calcolate PRIMA dei dati servizio: buildServiceData le usa per i
+                // coperti per slot e per i turni per tavolo (badge mappa).
                 $dayReservations = array_values(array_filter(
                     (new Reservation())->findByTenantAndDate((int)$tenant['id'], $opDate),
                     fn($r) => ($r['status'] ?? '') !== 'cancelled'
@@ -213,6 +222,46 @@ class TablesController
                     sort($ids);
                     $currentMap[(int)$rid] = implode(',', $ids);
                 }
+
+                // Fascia "ricordata": se l'utente sceglie un servizio (?meal=…) lo
+                // salvo in sessione, così tornando in Sala dopo un giro su altre
+                // pagine ritrova l'ultima fascia consultata invece del default a
+                // ora corrente. Se la fascia salvata non è valida per il giorno
+                // mostrato, buildServiceData ricade comunque sul default.
+                $reqMeal = (string)$request->query('meal', '');
+                if ($reqMeal !== '') {
+                    \App\Core\Session::set('sala_meal', $reqMeal);
+                } else {
+                    $reqMeal = (string)\App\Core\Session::get('sala_meal', '');
+                }
+
+                // Dati servizio: slot configurati per fascia + coperti/tavoli per
+                // slot + turni per tavolo + best slot per il default-ora.
+                $svc = $this->buildServiceData(
+                    $tenant, $opDate, $opTime,
+                    $reqMeal !== '' ? $reqMeal : null,
+                    $dayReservations, $assignments, $tables
+                );
+                $meals        = $svc['meals'];
+                $currentMeal  = $svc['currentMeal'];
+                $serviceSlots = $svc['serviceSlots'];
+                $tableTurns   = $svc['tableTurns'];
+                $roomCapacity = $svc['roomCapacity'];
+                $roomTables   = $svc['roomTables'];
+                $daySlots     = $svc['daySlots'];
+
+                // Default-ora intelligente: se l'utente non ha cliccato uno slot
+                // preciso, posiziono l'ora sul "best slot" della fascia corrente
+                // (ora corrente se in servizio, altrimenti primo slot con
+                // prenotazioni) — così non si apre su una sala vuota se c'è gente.
+                if (!$hasExplicitTime && !empty($svc['currentBest'])) {
+                    $opTime = $svc['currentBest'];
+                }
+                if (!preg_match('/^\d{2}:\d{2}$/', $opTime)) $opTime = '20:00';
+
+                // Stato sala all'ora definitiva (ora che $opTime è stabilito)
+                $floorState = $assigner->floorState((int)$tenant['id'], $opDate, $opTime);
+                $reassignOptions = $assigner->allTableOptions((int)$tenant['id']);
 
                 $hb = \App\Services\HeartbeatService::forFloor((int)$tenant['id'], $opDate);
                 $heartbeat = [
@@ -239,7 +288,198 @@ class TablesController
             'dayReservations' => $dayReservations,
             'assignments'     => $assignments,
             'heartbeat'       => $heartbeat,
+            'meals'           => $meals,
+            'currentMeal'     => $currentMeal,
+            'serviceSlots'    => $serviceSlots,
+            'tableTurns'      => $tableTurns,
+            'roomCapacity'    => $roomCapacity,
+            'roomTables'      => $roomTables,
+            'daySlots'        => $daySlots,
         ], 'dashboard');
+    }
+
+    /**
+     * Costruisce i dati "servizio" per la mappa operativa:
+     *  - slot REALMENTE configurati per il giorno (TimeSlot, non più fissi 12–23:30)
+     *  - fasce servizio = categorie pasto attive che hanno almeno uno slot quel
+     *    giorno, con i coperti prenotati per fascia
+     *  - fascia di default in base all'ora corrente
+     *  - slot della fascia corrente con coperti + tavoli occupati (barra stile TheFork)
+     *  - turni per tavolo (per i badge "prossima prenotazione" sulla mappa)
+     *  - capienza totale sala
+     *
+     * Riusa MealCategory + TimeSlot già esistenti: nessuna query nuova oltre a
+     * queste due letture. Durata occupazione = snapshot reservations.duration_minutes
+     * (per-fascia, già calcolato in fase di prenotazione) con fallback tenant.table_duration.
+     *
+     * @return array{meals:array,currentMeal:string,serviceSlots:array,tableTurns:array,roomCapacity:int,roomTables:int,daySlots:array}
+     */
+    private function buildServiceData(
+        array $tenant,
+        string $opDate,
+        string $opTime,
+        ?string $reqMeal,
+        array $dayReservations,
+        array $assignments,
+        array $tables
+    ): array {
+        $tenantId   = (int)$tenant['id'];
+        $defaultDur = max(15, (int)($tenant['table_duration'] ?? 90));
+        $toMin = fn(string $hhmm): int => (int)substr($hhmm, 0, 2) * 60 + (int)substr($hhmm, 3, 2);
+
+        // 1) Slot configurati per il giorno (0=Lun … 6=Dom)
+        $dow      = (int)date('N', strtotime($opDate)) - 1;
+        $rawSlots = (new TimeSlot())->findByTenantAndDay($tenantId, $dow);
+        $daySlots = array_map(fn($s) => substr((string)$s['slot_time'], 0, 5), $rawSlots);
+
+        // 2) Categorie pasto attive
+        $cats = (new MealCategory())->findActiveByTenant($tenantId);
+
+        // 3) Prenotazioni attive (per i coperti)
+        $active = array_values(array_filter(
+            $dayReservations,
+            fn($r) => in_array((string)$r['status'], ['confirmed', 'pending', 'arrived'], true)
+        ));
+
+        // Coperti + tavoli occupati a un dato minuto
+        $coversAt = function (int $slotMin) use ($active, $assignments, $defaultDur, $toMin): array {
+            $covers = 0; $tbls = [];
+            foreach ($active as $r) {
+                $st  = $toMin(substr((string)$r['reservation_time'], 0, 5));
+                $dur = (int)($r['duration_minutes'] ?? 0) ?: $defaultDur;
+                if ($slotMin >= $st && $slotMin < $st + $dur) {
+                    $covers += (int)$r['party_size'];
+                    foreach ($assignments[(int)$r['id']] ?? [] as $t) {
+                        $tbls[(int)$t['id']] = true;
+                    }
+                }
+            }
+            return ['covers' => $covers, 'tables' => count($tbls)];
+        };
+
+        // 4) Fasce: solo categorie con almeno uno slot configurato nel loro range
+        $meals = [];
+        foreach ($cats as $c) {
+            $cs = $toMin(substr((string)$c['start_time'], 0, 5));
+            $ce = $toMin(substr((string)$c['end_time'], 0, 5));
+            $catSlots = array_values(array_filter($daySlots, fn($hhmm) => $toMin($hhmm) >= $cs && $toMin($hhmm) < $ce));
+            if (empty($catSlots)) continue; // non offerta in questo giorno
+
+            $mealCovers = 0;
+            foreach ($active as $r) {
+                $st = $toMin(substr((string)$r['reservation_time'], 0, 5));
+                if ($st >= $cs && $st < $ce) $mealCovers += (int)$r['party_size'];
+            }
+            $meals[] = [
+                'name'   => (string)$c['name'],
+                'label'  => (string)$c['display_name'],
+                'start'  => substr((string)$c['start_time'], 0, 5),
+                'end'    => substr((string)$c['end_time'], 0, 5),
+                'slots'  => $catSlots,
+                'covers' => $mealCovers,
+                'best'   => $this->bestSlot($catSlots, $coversAt, $toMin),
+            ];
+        }
+
+        // 5) Fascia di default
+        $opMin = $toMin($opTime);
+        $currentMeal = null;
+        if ($reqMeal === 'all') {
+            $currentMeal = 'all';
+        } elseif ($reqMeal !== null && $reqMeal !== '') {
+            foreach ($meals as $m) if ($m['name'] === $reqMeal) { $currentMeal = $reqMeal; break; }
+        }
+        if ($currentMeal === null) {
+            foreach ($meals as $m) if ($opMin >= $toMin($m['start']) && $opMin < $toMin($m['end'])) { $currentMeal = $m['name']; break; }
+        }
+        if ($currentMeal === null) {
+            foreach ($meals as $m) if ($m['covers'] > 0) { $currentMeal = $m['name']; break; }
+        }
+        if ($currentMeal === null) {
+            $currentMeal = $meals[0]['name'] ?? 'all';
+        }
+
+        // 6) Slot della fascia corrente con coperti + tavoli
+        $curSlots = $daySlots;
+        if ($currentMeal !== 'all') {
+            foreach ($meals as $m) if ($m['name'] === $currentMeal) { $curSlots = $m['slots']; break; }
+        }
+        $serviceSlots = [];
+        foreach ($curSlots as $hhmm) {
+            $c = $coversAt($toMin($hhmm));
+            $serviceSlots[] = ['time' => $hhmm, 'covers' => $c['covers'], 'tables' => $c['tables']];
+        }
+
+        // 7) Turni per tavolo (badge "prossima prenotazione")
+        $tableTurns = [];
+        foreach ($active as $r) {
+            foreach ($assignments[(int)$r['id']] ?? [] as $t) {
+                $tableTurns[(int)$t['id']][] = [
+                    'time'    => substr((string)$r['reservation_time'], 0, 5),
+                    'surname' => (string)$r['last_name'],
+                    'party'   => (int)$r['party_size'],
+                    'rid'     => (int)$r['id'],
+                ];
+            }
+        }
+        foreach ($tableTurns as &$turns) {
+            usort($turns, fn($a, $b) => strcmp($a['time'], $b['time']));
+        }
+        unset($turns);
+
+        // 8) Capienza sala (tavoli attivi)
+        $roomCapacity = $roomTables = 0;
+        foreach ($tables as $t) {
+            if ((int)($t['is_active'] ?? 1) === 0) continue;
+            $roomTables++;
+            $roomCapacity += (int)$t['capacity'];
+        }
+
+        // 9) Best slot della fascia corrente (default-ora alla apertura pagina)
+        $currentBest = null;
+        if ($currentMeal === 'all') {
+            $currentBest = $this->bestSlot($daySlots, $coversAt, $toMin);
+        } else {
+            foreach ($meals as $m) if ($m['name'] === $currentMeal) { $currentBest = $m['best']; break; }
+        }
+
+        return [
+            'meals'        => $meals,
+            'currentMeal'  => $currentMeal,
+            'currentBest'  => $currentBest,
+            'serviceSlots' => $serviceSlots,
+            'tableTurns'   => $tableTurns,
+            'roomCapacity' => $roomCapacity,
+            'roomTables'   => $roomTables,
+            'daySlots'     => $daySlots,
+        ];
+    }
+
+    /**
+     * "Best slot" di una fascia per il default-ora:
+     *  - se l'ora corrente cade dentro la fascia → lo slot configurato più vicino
+     *    (≤ ora corrente), così durante il servizio si apre sull'adesso;
+     *  - altrimenti il primo slot con prenotazioni (non apri su sala vuota se c'è
+     *    gente prenotata);
+     *  - altrimenti il primo slot configurato.
+     */
+    private function bestSlot(array $slots, callable $coversAt, callable $toMin): ?string
+    {
+        if (empty($slots)) return null;
+        $nowMin = (int)date('G') * 60 + (int)date('i');
+        $first  = $toMin($slots[0]);
+        $last   = $toMin($slots[count($slots) - 1]);
+        if ($nowMin >= $first && $nowMin <= $last) {
+            $best = $slots[0];
+            foreach ($slots as $s) {
+                if ($toMin($s) <= $nowMin) $best = $s; else break;
+            }
+            return $best;
+        }
+        foreach ($slots as $s) {
+            if ($coversAt($toMin($s))['covers'] > 0) return $s;
+        }
+        return $slots[0];
     }
 
     /**

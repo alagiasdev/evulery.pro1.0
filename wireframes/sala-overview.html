@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sala · Panoramica giornata — Wireframe (A+B / A / B / C)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{
+    --brand:#00844A; --brand-d:#006b3c;
+    --free-bg:#E6F4ED; --free-bd:#b3dec7;
+    --conf:#00844A; --conf-bg:#00844A;
+    --arr-bg:#cfe2ff; --arr-bd:#0EA5E9;
+    --next-bg:#fff4e0; --next-bd:#f0a500;
+    --danger:#dc3545;
+    --ink:#1a1d23; --muted:#6c757d; --line:#eceff2;
+  }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:14px}
+  .wrap{max-width:1120px;margin:0 auto;padding:24px 18px 80px}
+  h1{font-size:1.3rem;margin:0 0 4px}
+  .lead{color:var(--muted);margin:0 0 20px;font-size:.9rem}
+
+  /* tabs varianti */
+  .vtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .vtab{border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:9px 16px;font-weight:700;cursor:pointer;color:var(--muted);font-size:.86rem}
+  .vtab.on{border-color:var(--brand);background:var(--brand);color:#fff}
+  .vtab small{display:block;font-weight:500;font-size:.7rem;opacity:.8}
+
+  .panel{display:none}
+  .panel.on{display:block;animation:fade .2s}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:0;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.03);margin-bottom:18px}
+  .card-h{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--line)}
+  .card-h .ttl{font-weight:800;font-size:1rem}
+  .badge-date{background:#e8f5ee;color:var(--brand-d);font-weight:700;font-size:.78rem;padding:4px 10px;border-radius:20px}
+  .spacer{flex:1}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{border:1.5px solid #d4dade;background:#fff;border-radius:8px;padding:6px 11px;font-weight:600;font-size:.78rem;color:var(--ink);cursor:pointer}
+  .chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+  .chip small{color:#9aa3aa;font-weight:500;margin-left:3px}
+  .chip.on small{color:#cdebd9}
+
+  /* KPI summary row */
+  .kpis{display:flex;gap:18px;flex-wrap:wrap;padding:12px 16px;background:#fbfdfc;border-bottom:1px solid var(--line);font-size:.84rem}
+  .kpi{display:flex;align-items:center;gap:7px}
+  .kpi b{font-size:1rem}
+  .kpi .dot{width:9px;height:9px;border-radius:50%}
+  .kpi.warn{color:#a8400a}
+
+  /* ===== B: barra occupazione per fascia ===== */
+  .occ{display:flex;gap:2px;padding:16px;align-items:flex-end}
+  .occ-col{flex:1;text-align:center;cursor:pointer;border-radius:8px;padding:6px 2px 4px;transition:background .12s}
+  .occ-col:hover{background:#f0f4f2}
+  .occ-col.on{background:#e8f5ee}
+  .occ-bar-wrap{height:84px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:6px}
+  .occ-bar{width:60%;max-width:34px;border-radius:5px 5px 0 0;background:linear-gradient(180deg,var(--brand),#3aa873);min-height:4px}
+  .occ-bar.peak{background:linear-gradient(180deg,#006b3c,var(--brand))}
+  .occ-time{font-weight:700;font-size:.74rem}
+  .occ-people{font-size:.72rem;color:var(--brand-d);font-weight:700}
+  .occ-tables{font-size:.66rem;color:var(--muted)}
+  .occ-hint{padding:0 16px 14px;font-size:.76rem;color:var(--muted)}
+
+  /* ===== A: timeline gantt ===== */
+  .tl-scroll{overflow-x:auto}
+  .tl{min-width:760px}
+  .tl-row{display:grid;grid-template-columns:120px 1fr;border-bottom:1px solid #f4f6f8;min-height:46px}
+  .tl-row.head{position:sticky;top:0;background:#fff;z-index:2;border-bottom:1.5px solid var(--line)}
+  .tl-row.danger{background:#fff7f6}
+  .tl-lbl{display:flex;flex-direction:column;justify-content:center;padding:6px 12px;border-right:1px solid var(--line);background:#fbfdfc}
+  .tl-lbl .tn{font-weight:800;font-size:.85rem}
+  .tl-lbl .tc{font-size:.7rem;color:var(--muted)}
+  .tl-lbl.danger .tn{color:var(--danger)}
+  .tl-track{position:relative}
+  /* grid lines + hour labels */
+  .tl-grid{position:absolute;inset:0;display:flex}
+  .tl-gcell{flex:1;border-right:1px dashed #eef1f3}
+  .tl-hours{display:flex;height:30px;align-items:center}
+  .tl-hcell{flex:1;font-size:.7rem;color:var(--muted);font-weight:600;padding-left:5px;border-right:1px dashed #eef1f3}
+  .tl-bar{position:absolute;top:7px;height:32px;border-radius:7px;display:flex;align-items:center;gap:5px;padding:0 8px;font-size:.74rem;font-weight:700;color:#fff;cursor:pointer;overflow:hidden;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .tl-bar.arr{background:var(--arr-bd)}
+  .tl-bar.conf{background:var(--conf)}
+  .tl-bar.next{background:#fff;color:#a8650a;border:1.5px dashed var(--next-bd);box-shadow:none}
+  .tl-bar.unassigned{background:repeating-linear-gradient(45deg,#f3b0a8,#f3b0a8 6px,#e98c82 6px,#e98c82 12px);color:#7a1d14}
+  .tl-bar small{font-weight:500;opacity:.85}
+  .tl-now{position:absolute;top:0;bottom:0;width:2px;background:#ff5722;z-index:3}
+  .tl-now::before{content:"ora";position:absolute;top:-2px;left:3px;font-size:.6rem;color:#ff5722;font-weight:700;background:#fff;padding:0 3px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;padding:12px 16px;font-size:.76rem;color:var(--muted);border-top:1px solid var(--line)}
+  .legend i{width:18px;height:11px;border-radius:3px;display:inline-block;vertical-align:middle;margin-right:4px}
+
+  /* ===== map (B/C) ===== */
+  .map{position:relative;padding:18px;display:flex;flex-wrap:wrap;gap:14px}
+  .mt{width:104px;height:80px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;position:relative;cursor:pointer;border:2px solid transparent;font-size:.72rem}
+  .mt .mt-n{font-weight:800;font-size:.82rem}
+  .mt .mt-c{font-size:.66rem;opacity:.85}
+  .mt.free{background:var(--free-bg);border-color:var(--free-bd);color:#2f6f4f}
+  .mt.conf{background:var(--conf);color:#fff}
+  .mt.arr{background:var(--arr-bg);border-color:var(--arr-bd);color:#0b4a73}
+  .mt .who{font-weight:800;font-size:.74rem}
+  /* C: next turn pill under the table */
+  .mt-next{margin-top:5px;background:var(--next-bg);border:1.5px solid var(--next-bd);color:#a8650a;border-radius:7px;padding:2px 7px;font-size:.66rem;font-weight:700;line-height:1.3;text-align:center;width:104px}
+  .mt-turns{position:absolute;bottom:-4px;left:0;right:0;display:flex;gap:2px;justify-content:center}
+  .mt-turns span{width:7px;height:7px;border-radius:50%}
+  .cell{display:flex;flex-direction:column;align-items:center}
+
+  .note{background:#fffbe8;border:1px solid #f3e2a8;border-radius:10px;padding:12px 14px;font-size:.82rem;color:#7a5b00;margin-bottom:16px}
+  .note b{color:#5c4400}
+  .verdict{background:#eef7f1;border:1px solid #cfe8d9;border-radius:10px;padding:12px 14px;font-size:.84rem;margin-top:6px}
+  .verdict b{color:var(--brand-d)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><i class="bi bi-grid-3x3" style="color:var(--brand)"></i> Sala — Panoramica della giornata</h1>
+  <p class="lead">Wireframe comparativo · servizio cena di esempio (gli stessi nomi del tuo screenshot). Clicca i tab per confrontare le varianti.</p>
+
+  <div class="vtabs">
+    <div class="vtab on" data-p="ab">A+B <small>Timeline + barra</small></div>
+    <div class="vtab" data-p="a">A <small>Solo timeline</small></div>
+    <div class="vtab" data-p="b">B <small>Solo barra</small></div>
+    <div class="vtab" data-p="c">C <small>Mappa arricchita</small></div>
+    <div class="vtab" data-p="bc">B+C <small>Barra + mappa turni</small></div>
+  </div>
+
+  <!-- ============ A+B ============ -->
+  <div class="panel on" data-panel="ab">
+    <div class="card">
+      <div class="card-h">
+        <span class="ttl"><i class="bi bi-grid-3x3" style="color:var(--brand)"></i> Stato sala</span>
+        <span class="badge-date">Sab 13 Giugno 2026</span>
+        <span class="spacer"></span>
+        <div class="chips">
+          <span class="chip on">Oggi <small>sab 13/6</small></span>
+          <span class="chip">Domani <small>dom 14/6</small></span>
+          <span class="chip">Dopodomani <small>lun 15/6</small></span>
+          <span class="chip"><i class="bi bi-calendar3"></i> Altra data</span>
+        </div>
+      </div>
+      <div class="kpis">
+        <span class="kpi"><span class="dot" style="background:var(--brand)"></span> <b>36</b> coperti prenotati</span>
+        <span class="kpi"><span class="dot" style="background:var(--arr-bd)"></span> <b>13</b> prenotazioni</span>
+        <span class="kpi"><i class="bi bi-grid-3x3-gap" style="color:var(--muted)"></i> <b>13</b>/23 tavoli usati</span>
+        <span class="kpi warn"><i class="bi bi-exclamation-triangle-fill"></i> <b>1</b> da assegnare</span>
+      </div>
+      <!-- B: occupancy bar -->
+      <div class="occ" id="occ-ab"></div>
+      <div class="occ-hint"><i class="bi bi-info-circle"></i> Altezza barra = coperti seduti in quella fascia. Clicca una fascia per evidenziarla sulla timeline.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span class="ttl"><i class="bi bi-bar-chart-steps" style="color:var(--brand)"></i> Timeline servizio</span>
+        <span class="spacer"></span><span style="font-size:.76rem;color:var(--muted)">scorri ⇄ per le altre ore</span>
+      </div>
+      <div class="tl-scroll"><div class="tl" id="tl-ab"></div></div>
+      <div class="legend">
+        <span><i style="background:var(--arr-bd)"></i> Arrivato / seduto</span>
+        <span><i style="background:var(--conf)"></i> Confermato</span>
+        <span><i style="background:#fff;border:1.5px dashed var(--next-bd)"></i> Turno successivo</span>
+        <span><i style="background:repeating-linear-gradient(45deg,#f3b0a8,#f3b0a8 4px,#e98c82 4px,#e98c82 8px)"></i> Da assegnare</span>
+      </div>
+    </div>
+    <div class="verdict"><b>A+B (raccomandata).</b> La barra dà il polso del servizio in un colpo d'occhio (quando si riempie, dov'è il picco); la timeline mostra ogni tavolo e ogni turno senza cliccare. È l'esperienza completa stile TheFork.</div>
+  </div>
+
+  <!-- ============ A ============ -->
+  <div class="panel" data-panel="a">
+    <div class="card">
+      <div class="card-h">
+        <span class="ttl"><i class="bi bi-bar-chart-steps" style="color:var(--brand)"></i> Timeline servizio</span>
+        <span class="badge-date">Sab 13 Giugno 2026</span>
+        <span class="spacer"></span>
+        <div class="chips"><span class="chip on">Oggi</span><span class="chip">Domani</span><span class="chip"><i class="bi bi-calendar3"></i> Altra data</span></div>
+      </div>
+      <div class="kpis">
+        <span class="kpi"><b>36</b> coperti</span>
+        <span class="kpi"><b>13</b>/23 tavoli</span>
+        <span class="kpi warn"><i class="bi bi-exclamation-triangle-fill"></i> <b>1</b> da assegnare</span>
+      </div>
+      <div class="tl-scroll"><div class="tl" id="tl-a"></div></div>
+      <div class="legend">
+        <span><i style="background:var(--arr-bd)"></i> Arrivato</span>
+        <span><i style="background:var(--conf)"></i> Confermato</span>
+        <span><i style="background:#fff;border:1.5px dashed var(--next-bd)"></i> Turno successivo</span>
+        <span><i style="background:repeating-linear-gradient(45deg,#f3b0a8,#f3b0a8 4px,#e98c82 4px,#e98c82 8px)"></i> Da assegnare</span>
+      </div>
+    </div>
+    <div class="verdict"><b>A (solo timeline).</b> Il cuore della soluzione: panoramica completa per-tavolo dell'intera giornata. Manca solo la sintesi "quanti coperti per fascia" della barra B.</div>
+  </div>
+
+  <!-- ============ B ============ -->
+  <div class="panel" data-panel="b">
+    <div class="card">
+      <div class="card-h">
+        <span class="ttl"><i class="bi bi-grid-3x3" style="color:var(--brand)"></i> Stato sala</span>
+        <span class="badge-date">Sab 13 Giugno 2026</span>
+        <span class="spacer"></span>
+        <div class="chips"><span class="chip on">Oggi</span><span class="chip">Domani</span><span class="chip"><i class="bi bi-calendar3"></i> Altra data</span></div>
+      </div>
+      <div class="occ" id="occ-b"></div>
+      <div class="occ-hint"><i class="bi bi-info-circle"></i> Clicca una fascia per vedere la mappa a quell'ora (sotto). È l'attuale scorri-orari, ma con i numeri.</div>
+    </div>
+    <div class="card">
+      <div class="card-h"><span class="ttl">Mappa · ore <b style="color:var(--brand)">21:00</b></span></div>
+      <div class="map" id="map-b"></div>
+    </div>
+    <div class="verdict"><b>B (solo barra).</b> Intervento leggero a basso rischio: aggiunge la sintesi numerica sopra la mappa esistente. Ma resti senza la vista per-tavolo della giornata: per i turni devi comunque cliccare fascia per fascia.</div>
+  </div>
+
+  <!-- ============ C ============ -->
+  <div class="panel" data-panel="c">
+    <div class="card">
+      <div class="card-h">
+        <span class="ttl"><i class="bi bi-grid-3x3" style="color:var(--brand)"></i> Mappa con turni</span>
+        <span class="badge-date">Sab 13 Giugno 2026</span>
+      </div>
+      <div class="map" id="map-c"></div>
+    </div>
+    <div class="note"><b>Nota:</b> ogni tavolo mostra lo stato attuale + la prossima prenotazione (pill ambra) + pallini = numero turni del giorno. Mantiene il layout fisico della sala ma affolla i riquadri, e su mobile diventa pesante.</div>
+    <div class="verdict"><b>C (mappa arricchita).</b> Buona per chi ragiona "spazialmente", ma la stessa info la timeline la dà più pulita e leggibile. La sconsiglio come priorità.</div>
+  </div>
+
+  <!-- ============ B+C ============ -->
+  <div class="panel" data-panel="bc">
+    <div class="card">
+      <div class="card-h">
+        <span class="ttl"><i class="bi bi-grid-3x3" style="color:var(--brand)"></i> Stato sala</span>
+        <span class="badge-date">Sab 13 Giugno 2026</span>
+        <span class="spacer"></span>
+        <div class="chips">
+          <span class="chip on">Oggi <small>sab 13/6</small></span>
+          <span class="chip">Domani <small>dom 14/6</small></span>
+          <span class="chip">Dopodomani <small>lun 15/6</small></span>
+          <span class="chip"><i class="bi bi-calendar3"></i> Altra data</span>
+        </div>
+      </div>
+      <div class="kpis">
+        <span class="kpi"><span class="dot" style="background:var(--brand)"></span> <b>36</b> coperti prenotati</span>
+        <span class="kpi"><span class="dot" style="background:var(--arr-bd)"></span> <b>13</b> prenotazioni</span>
+        <span class="kpi"><i class="bi bi-grid-3x3-gap" style="color:var(--muted)"></i> <b>13</b>/23 tavoli usati</span>
+        <span class="kpi warn"><i class="bi bi-exclamation-triangle-fill"></i> <b>1</b> da assegnare</span>
+      </div>
+      <!-- B: occupancy bar -->
+      <div class="occ" id="occ-bc"></div>
+      <div class="occ-hint"><i class="bi bi-info-circle"></i> Altezza barra = coperti seduti in quella fascia. Clicca una fascia per portare la mappa a quell'ora.</div>
+    </div>
+    <div class="card">
+      <div class="card-h"><span class="ttl">Mappa con turni · ore <b style="color:var(--brand)">21:00</b></span>
+        <span class="spacer"></span>
+        <span class="legend" style="padding:0;border:0">
+          <span><i style="background:var(--arr-bd)"></i> Arrivato</span>
+          <span><i style="background:var(--conf)"></i> Confermato</span>
+          <span><i style="background:var(--free-bg);border:1px solid var(--free-bd)"></i> Libero</span>
+        </span>
+      </div>
+      <div class="map" id="map-bc"></div>
+    </div>
+    <div class="verdict"><b>B+C (barra + mappa turni).</b> Tieni il layout fisico della sala come oggi, ma con due aggiunte: sopra la barra che ti dà subito il polso del servizio, e su ogni tavolo la prossima prenotazione (pill ambra) + i pallini-turno. Buon compromesso se vuoi restare sulla mappa senza introdurre la timeline. Limite: i riquadri si affollano (tavoli con 2 turni diventano densi) e su mobile la mappa resta pesante da leggere — la panoramica "tutta la sera in verticale" della timeline qui non c'è.</div>
+  </div>
+</div>
+
+<script>
+// ---- dati servizio cena di esempio ----
+// finestra timeline 19:00 -> 23:30 (270 min), durata pasto 90 min
+const T0 = 19*60, T1 = 23*60+30, SPAN = T1 - T0;
+const DUR = 90;
+const toMin = s => +s.slice(0,2)*60 + +s.slice(3,5);
+const pct = m => ((m - T0)/SPAN*100);
+
+// tavoli (ordine di riga)
+const TABLES = [
+  {n:'T4', cap:'2-4p'}, {n:'T7', cap:'2p'}, {n:'T12', cap:'4p'},
+  {n:'T5', cap:'4p'}, {n:'T6', cap:'2p'}, {n:'T8', cap:'4p'},
+  {n:'T11',cap:'2p'}, {n:'T9', cap:'5p'}, {n:'T10',cap:'3p'}, {n:'T13',cap:'2p'},
+];
+// prenotazioni: tavolo -> lista turni
+const RES = {
+  'T4':  [{who:'TRULSSON', p:2, t:'19:30', st:'arr'}],
+  'T7':  [{who:'BISCARO',  p:2, t:'19:30', st:'arr', note:'🎂'}],
+  'T12': [{who:'GRANATI',  p:4, t:'19:30', st:'arr'}, {who:'SELESTINO', p:3, t:'22:00', st:'next'}],
+  'T5':  [{who:'WATSON',   p:4, t:'20:45', st:'conf'}],
+  'T6':  [{who:'WORDSWORTH',p:2,t:'20:45', st:'conf'}],
+  'T8':  [{who:'NIKOLOVSKI',p:4,t:'20:45', st:'conf'}, {who:'TABENI', p:2, t:'22:15', st:'next'}],
+  'T11': [{who:'BOOGAARD', p:2, t:'20:45', st:'conf'}],
+  'T9':  [], 'T10': [], 'T13': [],
+};
+const UNASSIGNED = [{who:'ROSSI', p:4, t:'21:00'}];
+
+// ---- timeline render ----
+function renderTimeline(el){
+  let h = '';
+  // header hours
+  const hours = ['19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30','23:00','23:30'];
+  h += '<div class="tl-row head"><div class="tl-lbl"><span class="tn">Tavolo</span></div><div class="tl-track"><div class="tl-hours">';
+  hours.slice(0,-1).forEach(hr => h += '<div class="tl-hcell">'+hr+'</div>');
+  h += '</div></div></div>';
+
+  // unassigned row first
+  h += rowHtml({n:'⚠', cap:'da ass.'}, UNASSIGNED.map(r=>({...r,st:'unassigned'})), true);
+  // tables
+  TABLES.forEach(tb => h += rowHtml(tb, RES[tb.n]||[], false));
+  el.innerHTML = h;
+}
+function rowHtml(tb, list, danger){
+  let bars = '<div class="tl-grid">';
+  for(let i=0;i<9;i++) bars += '<div class="tl-gcell"></div>';
+  bars += '</div>';
+  // now line ~ 21:00
+  bars += '<div class="tl-now" style="left:'+pct(21*60)+'%"></div>';
+  list.forEach(r=>{
+    const start = toMin(r.t);
+    const left = pct(start), width = (DUR/SPAN*100);
+    const cls = r.st;
+    bars += '<div class="tl-bar '+cls+'" style="left:'+left+'%;width:'+width+'%" title="'+r.who+' '+r.p+'p · '+r.t+'">'
+          + (r.note?r.note+' ':'') + r.who + ' <small>'+r.p+'p</small></div>';
+  });
+  const lblCls = danger ? 'tl-lbl danger' : 'tl-lbl';
+  return '<div class="tl-row'+(danger?' danger':'')+'">'
+    + '<div class="'+lblCls+'"><span class="tn">'+tb.n+'</span><span class="tc">'+tb.cap+'</span></div>'
+    + '<div class="tl-track">'+bars+'</div></div>';
+}
+
+// ---- occupancy bar render ----
+function occData(){
+  const slots = ['19:30','20:00','20:30','21:00','21:30','22:00','22:30','23:00'];
+  return slots.map(s=>{
+    const m = toMin(s); let people=0, tables=0;
+    Object.values(RES).flat().forEach(r=>{
+      const st = toMin(r.t);
+      if(m>=st && m<st+DUR && r.st!=='next'){ people+=r.p; tables++; }
+      if(m>=st && m<st+DUR && r.st==='next'){ people+=r.p; tables++; }
+    });
+    return {s, people, tables};
+  });
+}
+function renderOcc(el){
+  const data = occData();
+  const max = Math.max(...data.map(d=>d.people),1);
+  let h='';
+  data.forEach((d,i)=>{
+    const hgt = Math.round(d.people/max*84);
+    const peak = d.people===max?' peak':'';
+    const on = d.s==='21:00'?' on':'';
+    h += '<div class="occ-col'+on+'"><div class="occ-bar-wrap"><div class="occ-bar'+peak+'" style="height:'+Math.max(hgt,4)+'px"></div></div>'
+       + '<div class="occ-time">'+d.s+'</div><div class="occ-people">'+d.people+'p</div><div class="occ-tables">'+d.tables+'/23</div></div>';
+  });
+  el.innerHTML=h;
+  el.querySelectorAll('.occ-col').forEach(c=>c.onclick=()=>{el.querySelectorAll('.occ-col').forEach(x=>x.classList.remove('on'));c.classList.add('on');});
+}
+
+// ---- map render ----
+function statusOf(tb, hour){ // hour in min, 21:00
+  const list = RES[tb.n]||[];
+  const cur = list.find(r=>{const st=toMin(r.t);return hour>=st && hour<st+DUR && r.st!=='next';});
+  if(!cur) return null;
+  return cur;
+}
+function renderMap(el, withTurns){
+  const hour = 21*60;
+  let h='';
+  TABLES.forEach(tb=>{
+    const cur = statusOf(tb, hour);
+    const list = RES[tb.n]||[];
+    let cls='free', inner='';
+    if(cur){
+      cls = cur.st==='arr'?'arr':'conf';
+      inner = '<span class="mt-n">'+tb.n+'</span><span class="who">'+cur.who+'</span><span class="mt-c">'+cur.p+'p · '+cur.t+'</span>';
+    } else {
+      inner = '<span class="mt-n">'+tb.n+'</span><span class="mt-c">'+tb.cap+'</span>';
+    }
+    // C: next-turn pill + turn dots
+    let extra='';
+    if(withTurns){
+      const next = list.find(r=>r.st==='next') || list.find(r=>toMin(r.t)>hour);
+      if(next) extra = '<div class="mt-next">poi '+next.t+' '+next.who+' '+next.p+'p</div>';
+      if(list.length){
+        let dots='<div class="mt-turns">';
+        list.forEach(r=>dots+='<span style="background:'+(r.st==='arr'?'var(--arr-bd)':r.st==='next'?'var(--next-bd)':'var(--conf)')+'"></span>');
+        dots+='</div>'; inner+=dots;
+      }
+    }
+    h += '<div class="cell"><div class="mt '+cls+'">'+inner+'</div>'+extra+'</div>';
+  });
+  el.innerHTML=h;
+}
+
+// ---- init ----
+renderTimeline(document.getElementById('tl-ab'));
+renderTimeline(document.getElementById('tl-a'));
+renderOcc(document.getElementById('occ-ab'));
+renderOcc(document.getElementById('occ-b'));
+renderOcc(document.getElementById('occ-bc'));
+renderMap(document.getElementById('map-b'), false);
+renderMap(document.getElementById('map-c'), true);
+renderMap(document.getElementById('map-bc'), true);
+
+// tab switch
+document.querySelectorAll('.vtab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.vtab').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on');
+  document.querySelector('.panel[data-panel="'+t.dataset.p+'"]').classList.add('on');
+});
+</script>
+</body>
+</html>

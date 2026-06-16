@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selettore servizio — varianti (wireframe)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{ --brand:#00844A; --brand-d:#006b3c; --ink:#1a1d23; --muted:#6c757d; --line:#eceff2; }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:14px}
+  .wrap{max-width:1080px;margin:0 auto;padding:24px 18px 80px}
+  h1{font-size:1.25rem;margin:0 0 4px}
+  .lead{color:var(--muted);margin:0 0 18px;font-size:.9rem}
+  .dev{display:flex;gap:8px;margin-bottom:20px}
+  .dev button{border:1.5px solid #d4dade;background:#fff;border-radius:8px;padding:6px 14px;font-weight:700;font-size:.8rem;cursor:pointer;color:var(--muted)}
+  .dev button.on{border-color:var(--brand);background:var(--brand);color:#fff}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:20px;transition:max-width .2s}
+  .card-h{padding:11px 16px;border-bottom:1px solid var(--line);font-weight:800;font-size:.9rem;display:flex;align-items:center;gap:8px}
+  .card-h .tag{font-size:.68rem;font-weight:700;border-radius:20px;padding:2px 9px}
+  .tag.best{background:#eef6f1;color:var(--brand-d)}
+  .tag.warn{background:#fff3e0;color:#a8650a}
+  .card-note{font-size:.78rem;color:var(--muted);padding:0 16px 14px;line-height:1.55}
+  .mobile-mode .card{max-width:390px}
+
+  /* dropdown servizio (comune) */
+  .svc-btn{display:inline-flex;align-items:center;gap:8px;border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:7px 13px;font-weight:800;font-size:.84rem;color:var(--ink);cursor:pointer}
+  .svc-btn .rng{color:var(--muted);font-weight:500}
+  .svc-btn .cnt{background:#eef3f0;color:var(--brand-d);border-radius:20px;padding:1px 9px;font-size:.74rem;font-weight:700}
+  .svc-btn .car{color:#9aa3aa}
+  .svc-btn .lead-ic{color:var(--brand)}
+
+  .micro{font-size:.66rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#9aa3aa}
+
+  /* barra compatta (come la reale) */
+  .bar-area{padding:10px 14px 12px}
+  .occ{display:flex;gap:2px;align-items:flex-end;overflow-x:auto}
+  .occ-col{flex:1;min-width:54px;text-align:center;border-radius:9px;padding:5px 2px 4px;border:1.5px solid transparent}
+  .occ-col.on{background:#e8f5ee;border-color:var(--brand)}
+  .occ-wrap{height:30px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:4px}
+  .occ-bar{width:60%;max-width:24px;border-radius:5px 5px 0 0;background:linear-gradient(180deg,var(--brand),#5cbf8c);min-height:4px}
+  .occ-bar.zero{background:#e2e8e5}
+  .occ-time{display:block;font-weight:700;font-size:.72rem}
+  .occ-cov{display:block;font-size:.68rem;color:var(--brand-d);font-weight:700}
+  .occ-tbl{display:block;font-size:.62rem;color:var(--muted)}
+  .occ-cov .bi,.occ-tbl .bi{font-size:.58rem;opacity:.7}
+
+  /* ===== A: micro-label sopra ===== */
+  .vA .head-row{padding:11px 16px 0;display:flex;flex-direction:column;gap:5px}
+
+  /* ===== B: affiancato (label discreto + dropdown a sx, barra a dx) ===== */
+  .vB .row{display:flex;align-items:center;gap:16px;padding:11px 16px}
+  .vB .left{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+  .vB .occ{flex:1}
+  .mobile-mode .vB .row{flex-direction:column;align-items:stretch;gap:10px}
+
+  /* ===== C: label inline nel bottone ===== */
+  .vC .head-row{padding:11px 16px 0}
+  .vC .svc-btn .pre{color:var(--muted);font-weight:600}
+
+  /* ===== D: solo dropdown, nessun label ===== */
+  .vD .head-row{padding:11px 16px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><i class="bi bi-clock-history" style="color:var(--brand)"></i> Selettore servizio — varianti</h1>
+  <p class="lead">Stesso contenuto (Cena 19:00–22:30 + barra), quattro modi di etichettare/posizionare il selettore. Usa il toggle per vedere desktop vs mobile.</p>
+  <div class="dev">
+    <button class="on" data-dev="desktop"><i class="bi bi-display"></i> Desktop</button>
+    <button data-dev="mobile"><i class="bi bi-phone"></i> Mobile</button>
+  </div>
+  <div id="stage">
+
+    <!-- A -->
+    <div class="card vA">
+      <div class="card-h">A · Mini-label sopra <span class="tag best">consigliata</span></div>
+      <div class="head-row">
+        <span class="micro">Servizio</span>
+        <div><button class="svc-btn"><i class="bi bi-clock-history lead-ic"></i> Cena <span class="rng">19:00–22:30</span> <span class="cnt">4</span> <i class="bi bi-chevron-down car"></i></button></div>
+      </div>
+      <div class="bar-area"><div class="occ" data-bar></div></div>
+      <div class="card-note">Etichetta discreta da campo-form sopra il dropdown. Dropdown e barra restano a tutta larghezza. Chiaro per l'utente, zero spazio rubato alla barra, regge bene su mobile.</div>
+    </div>
+
+    <!-- B -->
+    <div class="card vB">
+      <div class="card-h">B · Affiancato (label + dropdown a sx, barra a dx) <span class="tag warn">attento mobile</span></div>
+      <div class="row">
+        <div class="left">
+          <span class="micro">Servizio</span>
+          <button class="svc-btn"><i class="bi bi-clock-history lead-ic"></i> Cena <span class="rng">19:00–22:30</span> <span class="cnt">4</span> <i class="bi bi-chevron-down car"></i></button>
+        </div>
+        <div class="occ" data-bar></div>
+      </div>
+      <div class="card-note">Selettore e barra sulla stessa riga (compatto in verticale). Su mobile va a blocchi automaticamente. Contro: su desktop il selettore ruba ~180px alla barra (vedi meno slot).</div>
+    </div>
+
+    <!-- C -->
+    <div class="card vC">
+      <div class="card-h">C · Etichetta dentro il bottone</div>
+      <div class="head-row">
+        <button class="svc-btn"><i class="bi bi-clock-history lead-ic"></i> <span class="pre">Servizio:</span> Cena <span class="rng">19:00–22:30</span> <span class="cnt">4</span> <i class="bi bi-chevron-down car"></i></button>
+      </div>
+      <div class="bar-area"><div class="occ" data-bar></div></div>
+      <div class="card-note">Nessuna etichetta esterna: il prefisso "Servizio:" è dentro il bottone. Massima compattezza, ma l'etichetta è meno evidente come "azione da fare".</div>
+    </div>
+
+    <!-- D -->
+    <div class="card vD">
+      <div class="card-h">D · Solo dropdown (attuale, nessuna etichetta)</div>
+      <div class="head-row">
+        <button class="svc-btn"><i class="bi bi-clock-history lead-ic"></i> Cena <span class="rng">19:00–22:30</span> <span class="cnt">4</span> <i class="bi bi-chevron-down car"></i></button>
+      </div>
+      <div class="bar-area"><div class="occ" data-bar></div></div>
+      <div class="card-note">Com'è adesso. Il più pulito, ma un utente poco esperto potrebbe non capire subito che quel pulsante cambia il servizio.</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const CAP=22, TBLS=7;
+const DATA=[['19:00',4],['19:15',6],['19:30',6],['19:45',8],['20:00',12],['20:15',12],['20:30',8],['20:45',6],['21:00',6],['21:15',4],['21:30',0],['21:45',0],['22:00',0],['22:15',0]];
+const ACTIVE='20:00';
+const maxC=Math.max(...DATA.map(d=>d[1]),1);
+const tbl=c=>c===0?0:Math.max(1,Math.round(c/3));
+function renderBar(el){
+  el.innerHTML=DATA.map(([t,c])=>{
+    const h=c===0?3:Math.max(5,Math.round(c/maxC*28));
+    return `<div class="occ-col ${t===ACTIVE?'on':''}"><span class="occ-wrap"><span class="occ-bar ${c===0?'zero':''}" style="height:${h}px"></span></span><span class="occ-time">${t}</span><span class="occ-cov"><i class="bi bi-people-fill"></i> ${c}/${CAP}</span><span class="occ-tbl"><i class="bi bi-grid-fill"></i> ${tbl(c)}/${TBLS}</span></div>`;
+  }).join('');
+}
+document.querySelectorAll('[data-bar]').forEach(renderBar);
+document.querySelectorAll('.dev button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.dev button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  document.getElementById('stage').classList.toggle('mobile-mode',b.dataset.dev==='mobile');
+});
+</script>
+</body>
+</html>

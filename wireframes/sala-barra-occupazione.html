@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barra occupazione — migliorie (wireframe)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{
+    --brand:#00844A; --brand-d:#006b3c;
+    --ink:#1a1d23; --muted:#6c757d; --line:#eceff2;
+    --amber:#e8a200; --amber-d:#b97e00;
+    --red:#dc3545; --red-d:#b3261e;
+  }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:14px}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px 18px 80px}
+  h1{font-size:1.25rem;margin:0 0 4px}
+  .lead{color:var(--muted);margin:0 0 18px;font-size:.9rem}
+
+  .toggles{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .tg{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.84rem;cursor:pointer;border:1.5px solid #d4dade;border-radius:9px;padding:8px 12px;user-select:none}
+  .tg input{display:none}
+  .tg .box{width:18px;height:18px;border-radius:5px;border:2px solid #c4ccd2;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.7rem}
+  .tg.on{border-color:var(--brand);background:#eef6f1;color:var(--brand-d)}
+  .tg.on .box{background:var(--brand);border-color:var(--brand)}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:22px}
+  .card-h{padding:12px 16px;border-bottom:1px solid var(--line);font-weight:800;font-size:.92rem;display:flex;align-items:center;gap:8px}
+  .card-h .tag{font-size:.7rem;font-weight:700;background:#eef3f0;color:var(--brand-d);border-radius:20px;padding:2px 9px}
+  .card-h .tag.old{background:#f1f3f5;color:#6c757d}
+
+  /* selettore servizio (statico, solo contesto) */
+  .svc{display:flex;align-items:center;gap:10px;padding:12px 16px 0}
+  .svc-btn{display:inline-flex;align-items:center;gap:8px;border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:7px 13px;font-weight:800;font-size:.84rem}
+  .svc-btn .rng{color:var(--muted);font-weight:500}
+  .svc-btn .cnt{background:#eef3f0;color:var(--brand-d);border-radius:20px;padding:1px 9px;font-size:.74rem;font-weight:700}
+
+  /* barra occupazione */
+  .occ{position:relative;display:flex;gap:2px;padding:22px 12px 14px;align-items:flex-end}
+  .occ-col{position:relative;flex:1;min-width:50px;text-align:center;border-radius:9px;padding:6px 2px 5px;border:1.5px solid transparent;cursor:pointer}
+  .occ-col:hover{background:#eef4f1}
+  .occ-col.on{background:#e8f5ee;border-color:var(--brand)}
+  .occ-wrap{height:60px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:6px}
+  .occ-bar{width:60%;max-width:26px;border-radius:5px 5px 0 0;min-height:4px;transition:background .2s}
+  /* default: tutto verde (com'è ora) */
+  .occ-bar{background:linear-gradient(180deg,var(--brand),#5cbf8c)}
+  .occ-bar.zero{background:#e2e8e5}
+  .occ-time{display:block;font-weight:700;font-size:.74rem;color:#1a1d23}
+  .occ-cov{display:block;font-size:.7rem;color:var(--brand-d);font-weight:700}
+  .occ-tbl{display:block;font-size:.64rem;color:var(--muted)}
+  .occ-cov .bi,.occ-tbl .bi{font-size:.6rem;opacity:.7}
+
+  /* (1) colore riempimento */
+  .fill .occ-bar.lv-low  {background:linear-gradient(180deg,var(--brand),#5cbf8c)}
+  .fill .occ-bar.lv-mid  {background:linear-gradient(180deg,var(--amber-d),#f3c14e)}
+  .fill .occ-bar.lv-high {background:linear-gradient(180deg,var(--red-d),#f1746a)}
+  .fill .occ-col.lv-mid .occ-cov{color:var(--amber-d)}
+  .fill .occ-col.lv-high .occ-cov{color:var(--red-d)}
+
+  /* (2) indicatore ora corrente */
+  .now-line{display:none;position:absolute;top:6px;bottom:6px;width:2px;background:#ff5722;z-index:5}
+  .now .now-line{display:block}
+  .now-line::before{content:"ora";position:absolute;top:-3px;left:3px;font-size:.58rem;font-weight:800;color:#ff5722;background:#fff;padding:0 4px;border-radius:4px;white-space:nowrap}
+
+  /* (3) leggibilità :00 / :30 */
+  .legib .occ-col.quarter .occ-time{color:#aeb6bd;font-weight:600}
+  .legib .occ-col.quarter .occ-wrap{opacity:.82}
+  .legib .occ-col.half .occ-time{color:#1a1d23;font-weight:800}
+  .legib .occ-col.half::after{content:"";position:absolute;left:6px;right:6px;bottom:2px;height:2px;background:#dfe5e9;border-radius:2px}
+
+  /* (4) tooltip */
+  .occ-tip{display:none;position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:#1a1d23;color:#fff;font-size:.64rem;font-weight:700;white-space:nowrap;padding:3px 7px;border-radius:6px;z-index:20;box-shadow:0 3px 10px rgba(0,0,0,.22)}
+  .occ-tip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:#1a1d23}
+  .tip .occ-col:hover .occ-tip{display:block}
+
+  .legend{display:flex;gap:16px;flex-wrap:wrap;padding:0 16px 14px;font-size:.74rem;color:var(--muted)}
+  .legend i{width:16px;height:11px;border-radius:3px;display:inline-block;vertical-align:middle;margin-right:5px}
+  .note{font-size:.8rem;color:var(--muted);padding:0 16px 16px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><i class="bi bi-bar-chart-fill" style="color:var(--brand)"></i> Barra occupazione — migliorie</h1>
+  <p class="lead">Servizio cena di esempio (capienza 22 coperti / 7 tavoli). Attiva/disattiva le migliorie per confrontarle. La prima card è una versione completa, sotto trovi l'attuale per confronto.</p>
+
+  <div class="toggles">
+    <label class="tg on" data-cls="fill"><span class="box"><i class="bi bi-check-lg"></i></span> 1 · Colore riempimento</label>
+    <label class="tg on" data-cls="now"><span class="box"><i class="bi bi-check-lg"></i></span> 2 · Indicatore ora</label>
+    <label class="tg" data-cls="legib"><span class="box"><i class="bi bi-check-lg"></i></span> 3 · Leggibilità :00/:30</label>
+    <label class="tg on" data-cls="tip"><span class="box"><i class="bi bi-check-lg"></i></span> 4 · Tooltip dettaglio</label>
+  </div>
+
+  <!-- versione migliorata (toggle live) -->
+  <div class="card">
+    <div class="card-h"><i class="bi bi-stars" style="color:var(--brand)"></i> Versione migliorata <span class="tag">live · usa i toggle</span></div>
+    <div class="svc">
+      <div class="svc-btn"><i class="bi bi-clock-history" style="color:var(--brand)"></i> Cena <span class="rng">19:00–22:30</span> <span class="cnt" id="svc-tot">0</span></div>
+    </div>
+    <div class="occ fill now tip" id="occ-new"></div>
+    <div class="legend" id="legend-new">
+      <span><i style="background:linear-gradient(180deg,var(--brand),#5cbf8c)"></i> Tranquillo (&lt;60%)</span>
+      <span><i style="background:linear-gradient(180deg,var(--amber-d),#f3c14e)"></i> Si riempie (60–85%)</span>
+      <span><i style="background:linear-gradient(180deg,var(--red-d),#f1746a)"></i> Quasi pieno / pieno (&gt;85%)</span>
+      <span style="margin-left:auto"><i style="background:#ff5722;width:3px"></i> ora attuale</span>
+    </div>
+    <div class="note" id="note-new"></div>
+  </div>
+
+  <!-- versione attuale -->
+  <div class="card">
+    <div class="card-h"><i class="bi bi-clock-history" style="color:#6c757d"></i> Versione attuale <span class="tag old">com'è ora</span></div>
+    <div class="svc">
+      <div class="svc-btn"><i class="bi bi-clock-history" style="color:var(--brand)"></i> Cena <span class="rng">19:00–22:30</span> <span class="cnt">4</span></div>
+    </div>
+    <div class="occ" id="occ-old"></div>
+    <div class="note">Tutto verde: a colpo d'occhio non distingui uno slot tranquillo da uno pieno (cambia solo l'altezza). Slot a 15 min tutti uguali graficamente.</div>
+  </div>
+</div>
+
+<script>
+const CAP = 22, TBLS = 7;
+// slot 15 min con coperti d'esempio (servizio che si riempie verso le 20:30–21:00)
+const DATA = [
+  ['19:00',4],['19:15',6],['19:30',8],['19:45',12],
+  ['20:00',16],['20:15',18],['20:30',20],['20:45',22],
+  ['21:00',21],['21:15',16],['21:30',10],['21:45',6],
+  ['22:00',2],['22:15',0],['22:30',0],
+];
+const NOW = '20:15';          // ora corrente d'esempio
+const ACTIVE = '20:15';       // slot selezionato
+const maxCov = Math.max(...DATA.map(d=>d[1]),1);
+
+function level(cov){
+  const pct = cov / CAP;
+  if (pct >= 0.85) return 'lv-high';
+  if (pct >= 0.60) return 'lv-mid';
+  return 'lv-low';
+}
+function tablesFor(cov){ return cov === 0 ? 0 : Math.max(1, Math.round(cov/3)); }
+
+function render(el, withFeatures){
+  let html = '';
+  DATA.forEach(([t,cov])=>{
+    const h = cov === 0 ? 3 : Math.max(6, Math.round(cov/maxCov*60));
+    const lv = level(cov);
+    const isHalf = t.endsWith(':00') || t.endsWith(':30');
+    const tbl = tablesFor(cov);
+    const colCls = [
+      'occ-col',
+      t===ACTIVE ? 'on' : '',
+      withFeatures ? lv : '',
+      withFeatures ? (isHalf ? 'half' : 'quarter') : '',
+    ].join(' ');
+    const barCls = ['occ-bar', cov===0?'zero':'', withFeatures?lv:''].join(' ');
+    const tip = withFeatures
+      ? `<span class="occ-tip">${cov} cop · ${tbl} tav</span>` : '';
+    html += `<div class="${colCls}" data-t="${t}">
+      ${tip}
+      <span class="occ-wrap"><span class="${barCls}" style="height:${h}px"></span></span>
+      <span class="occ-time">${t}</span>
+      <span class="occ-cov"><i class="bi bi-people-fill"></i> ${cov}/${CAP}</span>
+      <span class="occ-tbl"><i class="bi bi-grid-fill"></i> ${tbl}/${TBLS}</span>
+    </div>`;
+  });
+  if (withFeatures) {
+    // linea "ora" posizionata sopra lo slot NOW
+    const idx = DATA.findIndex(d=>d[0]===NOW);
+    const leftPct = ((idx + 0.5) / DATA.length) * 100;
+    html += `<span class="now-line" style="left:${leftPct}%"></span>`;
+  }
+  el.innerHTML = html;
+}
+
+render(document.getElementById('occ-new'), true);
+render(document.getElementById('occ-old'), false);
+document.getElementById('svc-tot').textContent = DATA.reduce((s,d)=>s+d[1],0) > 0 ? '4' : '0';
+
+// note dinamica
+document.getElementById('note-new').innerHTML =
+  'Esempio: alle <b>20:45</b> sei a <b>22/22 (pieno)</b> → barra rossa, lo vedi subito. ' +
+  'Tra le 20:00 e le 20:30 ti stai riempiendo → ambra. La linea arancione segna l\'<b>ora attuale</b>. ' +
+  'Gli orari tondi (:00/:30) sono in grassetto per orientarsi; passa il mouse su uno slot per il dettaglio.';
+
+// toggles
+document.querySelectorAll('.tg').forEach(tg=>{
+  tg.addEventListener('click', ()=>{
+    tg.classList.toggle('on');
+    const cls = tg.dataset.cls;
+    const occ = document.getElementById('occ-new');
+    occ.classList.toggle(cls, tg.classList.contains('on'));
+    // re-render per applicare/rimuovere le classi sulle colonne
+    const anyOn = ['fill','now','legib','tip'].some(c=>occ.classList.contains(c));
+    render(occ, true);
+    ['fill','now','legib','tip'].forEach(c=>{
+      occ.classList.toggle(c, document.querySelector('.tg[data-cls="'+c+'"]').classList.contains('on'));
+    });
+  });
+});
+</script>
+</body>
+</html>

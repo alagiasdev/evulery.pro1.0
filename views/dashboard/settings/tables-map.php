@@ -46,11 +46,9 @@ $multiArea = count($areas) > 1;
 $primaryArea = $firstArea;
 $areaHasDot = fn(string $a): bool => $multiArea && $a !== '' && $a !== $primaryArea;
 
-// Slot orari dello scorri-orari (operativa)
-$slots = [];
-for ($m = 12 * 60; $m <= 23 * 60 + 30; $m += 30) {
-    $slots[] = sprintf('%02d:%02d', intdiv($m, 60), $m % 60);
-}
+// Gli slot del servizio (barra occupazione) arrivano dal controller in
+// $serviceSlots / $meals / $currentMeal — solo orari REALMENTE configurati per
+// il giorno, raggruppati per fascia (categoria pasto). Niente più ciclo fisso.
 $setupUrl = url('dashboard/settings/tables/map');   // mappa setup (Impostazioni)
 $opUrl    = url('dashboard/sala');                   // mappa operativa (sidebar "Sala")
 $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($opTime);
@@ -131,12 +129,40 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
     foreach ($assignments as $rid => $ts) {
         $resTableLabel[(int)$rid] = implode(' + ', array_map(fn($x) => $x['name'], $ts));
     }
-    // Raggruppa: "Da assegnare" (attive senza tavolo) + per ora di prenotazione
+    // Range orario della fascia corrente: la lista a sinistra mostra solo le
+    // prenotazioni di QUESTA fascia (come TheFork). 'all' o nessuna fascia = tutte.
+    $mealStart = $mealEnd = null;
+    $curMealLabel = 'Tutti i servizi';
+    $curMealRange = '';
+    foreach ($meals as $m) {
+        if ($m['name'] === $currentMeal) {
+            $mealStart = (int)substr($m['start'], 0, 2) * 60 + (int)substr($m['start'], 3, 2);
+            $mealEnd   = (int)substr($m['end'], 0, 2) * 60 + (int)substr($m['end'], 3, 2);
+            $curMealLabel = $m['label'];
+            $curMealRange = $m['start'] . '–' . $m['end'];
+            break;
+        }
+    }
+    $inCurrentMeal = function ($r) use ($mealStart, $mealEnd) {
+        if ($mealStart === null) return true; // "Tutti i servizi" o nessuna fascia
+        $st = (int)substr((string)$r['reservation_time'], 0, 2) * 60 + (int)substr((string)$r['reservation_time'], 3, 2);
+        return $st >= $mealStart && $st < $mealEnd;
+    };
+
+    // Raggruppa: "Da assegnare" (attive senza tavolo) + per ora di prenotazione.
+    // Le prenotazioni fuori dalla fascia corrente sono escluse dalla lista; i
+    // "da assegnare" in altre fasce vengono contati a parte per non perderli.
     $unassigned = [];
     $byHour = [];
+    $unassignedOther = 0;
     foreach ($dayReservations as $r) {
         $rid = (int)$r['id'];
-        if (!isset($assignments[$rid]) && in_array((string)$r['status'], ['confirmed', 'pending', 'arrived'], true)) {
+        $isUnassigned = !isset($assignments[$rid]) && in_array((string)$r['status'], ['confirmed', 'pending', 'arrived'], true);
+        if (!$inCurrentMeal($r)) {
+            if ($isUnassigned) $unassignedOther++;
+            continue;
+        }
+        if ($isUnassigned) {
             $unassigned[] = $r;
         } else {
             $byHour[substr((string)$r['reservation_time'], 0, 2)][] = $r;
@@ -186,21 +212,6 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
             }
         }
         $busyByReservation[$rid] = array_keys($busy);
-    }
-
-    // Slot della fascia oraria con almeno una prenotazione attiva: una
-    // prenotazione "occupa" lo slot da inizio a inizio+durata tavolo.
-    $slotDuration = max(15, (int)($tenant['table_duration'] ?? 90));
-    $slotHasRes = [];
-    foreach ($dayReservations as $r) {
-        if (!in_array((string)$r['status'], ['confirmed', 'pending', 'arrived'], true)) continue;
-        $st = (int)substr((string)$r['reservation_time'], 0, 2) * 60 + (int)substr((string)$r['reservation_time'], 3, 2);
-        foreach ($slots as $s) {
-            $sm = (int)substr($s, 0, 2) * 60 + (int)substr($s, 3, 2);
-            if ($sm >= $st && $sm < $st + $slotDuration) {
-                $slotHasRes[$s] = true;
-            }
-        }
     }
 
     // Render di una riga prenotazione (riusata in entrambi i gruppi)
@@ -287,6 +298,72 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         </span>
     </div>
 
+    <?php
+        // Selettore fascia servizio + barra occupazione (slot configurati).
+        // Sostituisce lo "scorri-orari" fisso: mostra solo gli orari reali della
+        // fascia, con coperti e tavoli per slot (come TheFork).
+        $mealCoversNow = 0;
+        foreach ($meals as $m) if ($m['name'] === $currentMeal) { $mealCoversNow = (int)$m['covers']; break; }
+        $allCovers = array_sum(array_column($meals, 'covers'));
+        $maxCovers = 1;
+        foreach ($serviceSlots as $ss) if ((int)$ss['covers'] > $maxCovers) $maxCovers = (int)$ss['covers'];
+    ?>
+    <div class="tm-svc-bar">
+        <div class="tm-svc-row">
+            <div class="tm-svc-left">
+                <?php if (!empty($meals)): ?>
+                <span class="tm-svc-microlabel">Servizio</span>
+                <div class="tm-svc">
+                    <button type="button" class="tm-svc-btn" id="tm-svc-btn" aria-haspopup="true" aria-expanded="false">
+                        <i class="bi bi-clock-history"></i>
+                        <span class="tm-svc-name"><?= e($curMealLabel) ?></span>
+                        <?php if ($curMealRange !== ''): ?><span class="tm-svc-rng"><?= e($curMealRange) ?></span><?php endif; ?>
+                        <span class="tm-svc-cnt"><?= (int)$mealCoversNow ?></span>
+                        <i class="bi bi-chevron-down tm-svc-car"></i>
+                    </button>
+                    <div class="tm-svc-menu" id="tm-svc-menu">
+                        <a href="<?= $opUrl ?>?date=<?= e($opDate) ?>&meal=all" class="tm-svc-item <?= $currentMeal === 'all' ? 'sel' : '' ?>">
+                            <span class="tm-svc-lbl">Tutti i servizi</span>
+                            <span class="tm-svc-r"><span class="tm-svc-cnt2"><?= (int)$allCovers ?></span><span class="tm-svc-radio"></span></span>
+                        </a>
+                        <div class="tm-svc-div"></div>
+                        <?php foreach ($meals as $m): ?>
+                        <a href="<?= $opUrl ?>?date=<?= e($opDate) ?>&meal=<?= e($m['name']) ?>" class="tm-svc-item <?= $currentMeal === $m['name'] ? 'sel' : '' ?>">
+                            <span class="tm-svc-lbl"><?= e($m['label']) ?><small><?= e($m['start'] . '–' . $m['end']) ?></small></span>
+                            <span class="tm-svc-r"><span class="tm-svc-cnt2"><?= (int)$m['covers'] ?></span><span class="tm-svc-radio"></span></span>
+                        </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+                <?php if ($nUnassigned > 0 || $unassignedOther > 0): ?>
+                <span class="tm-svc-warn">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <?php if ($nUnassigned > 0): ?><?= $nUnassigned ?> da assegnare<?php endif; ?>
+                    <?php if ($unassignedOther > 0): ?><span class="tm-svc-warn-other">+<?= $unassignedOther ?> in altri servizi</span><?php endif; ?>
+                </span>
+                <?php endif; ?>
+            </div>
+            <?php if (!empty($serviceSlots)): ?>
+            <div class="tm-occ">
+                <span class="tm-occ-now" id="tm-occ-now"></span>
+            <?php foreach ($serviceSlots as $ss): $h = (int)$ss['covers'] === 0 ? 3 : max(5, (int)round((int)$ss['covers'] / $maxCovers * 28)); ?>
+            <a href="<?= $opUrl ?>?date=<?= e($opDate) ?>&time=<?= e($ss['time']) ?>&meal=<?= e($currentMeal) ?>"
+               data-time="<?= e($ss['time']) ?>"
+               class="tm-occ-col <?= $ss['time'] === $opTime ? 'on' : '' ?>">
+                <span class="tm-occ-wrap"><span class="tm-occ-bar<?= (int)$ss['covers'] === 0 ? ' zero' : '' ?>" style="height:<?= $h ?>px"></span></span>
+                <span class="tm-occ-time"><?= e($ss['time']) ?></span>
+                <span class="tm-occ-cov"><i class="bi bi-people-fill"></i> <?= (int)$ss['covers'] ?><?php if ($roomCapacity > 0): ?>/<?= (int)$roomCapacity ?><?php endif; ?></span>
+                <span class="tm-occ-tbl"><i class="bi bi-grid-fill"></i> <?= (int)$ss['tables'] ?>/<?= (int)$roomTables ?></span>
+            </a>
+            <?php endforeach; ?>
+        </div>
+            <?php else: ?>
+            <div class="tm-occ-empty"><i class="bi bi-info-circle me-1"></i> Nessun orario configurato per questo giorno. Imposta gli orari in <a href="<?= url('dashboard/settings/slots') ?>">Orari e coperti</a>.</div>
+            <?php endif; ?>
+        </div><!-- /tm-svc-row -->
+    </div>
+
     <!-- Tab (solo mobile): commuta lista / mappa. Default mobile = lista
          ospiti (piu' utile della mappa su schermo piccolo). Su desktop i
          due pannelli sono affiancati e show-map/show-list e' irrilevante. -->
@@ -298,8 +375,25 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
     <div class="tm-twopane show-list" id="tm-twopane">
         <!-- Pannello sinistro: prenotazioni del giorno -->
         <div class="tm-pane-list">
-            <?php if (empty($dayReservations)): ?>
-            <div class="tm-list-empty"><i class="bi bi-calendar-x me-1"></i> Nessuna prenotazione per questa data.</div>
+            <?php
+                // Righe effettivamente mostrate per la fascia corrente. Se 0,
+                // distinguo "giorno vuoto" da "fascia vuota ma giorno con prenotazioni".
+                $shownCount = $nUnassigned;
+                foreach ($byHour as $rows) $shownCount += count($rows);
+            ?>
+            <?php if ($shownCount === 0): ?>
+                <?php if (empty($dayReservations)): ?>
+                <div class="tm-list-empty">
+                    <i class="bi bi-calendar-x"></i>
+                    <span>Nessuna prenotazione per questa data.</span>
+                </div>
+                <?php else: ?>
+                <div class="tm-list-empty">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Nessuna prenotazione per <strong><?= e($curMealLabel) ?></strong>.</span>
+                    <small>Ci sono prenotazioni in altri servizi: cambia fascia dal menu in alto<?php if ($currentMeal !== 'all'): ?> o scegli <a href="<?= $opUrl ?>?date=<?= e($opDate) ?>&meal=all">Tutti i servizi</a><?php endif; ?>.</small>
+                </div>
+                <?php endif; ?>
             <?php else: ?>
                 <?php if ($nUnassigned > 0): ?>
                 <div class="tm-list-group danger"><i class="bi bi-exclamation-triangle-fill"></i> Da assegnare &middot; <?= $nUnassigned ?></div>
@@ -314,12 +408,6 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
 
         <!-- Pannello destro: mappa -->
         <div class="tm-pane-map">
-            <div class="tm-scrub">
-                <?php foreach ($slots as $s): ?>
-                <a href="<?= $opUrl ?>?date=<?= e($opDate) ?>&time=<?= $s ?>"
-                   class="tm-scrub-slot <?= $s === $opTime ? 'active' : '' ?>"><?= $s ?><span class="tm-scrub-dot<?= isset($slotHasRes[$s]) ? '' : ' empty' ?>"></span></a>
-                <?php endforeach; ?>
-            </div>
             <div class="tm-map-canvas" id="tm-map">
                 <div class="tm-map-spacer" aria-hidden="true" style="width:<?= (int)$canvasContentW ?>px; height:<?= (int)$canvasContentH ?>px;"></div>
                 <?php foreach ($tables as $t): ?>
@@ -354,6 +442,17 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                     $extraClasses = '';
                     if ($tManualOnly) $extraClasses .= ' tm-only-manual';
                     if ($inCombo)    $extraClasses .= ' in-combo';
+
+                    // Prossimo turno su questo tavolo DOPO l'ora selezionata: alimenta
+                    // il badge "prossima prenotazione" (cognome troncato + posti, +N).
+                    $opMinNow = (int)substr($opTime, 0, 2) * 60 + (int)substr($opTime, 3, 2);
+                    $tFuture = [];
+                    foreach ($tableTurns[(int)$t['id']] ?? [] as $turn) {
+                        $tmm = (int)substr($turn['time'], 0, 2) * 60 + (int)substr($turn['time'], 3, 2);
+                        if ($tmm > $opMinNow) $tFuture[] = $turn;
+                    }
+                    $nextTurn   = $tFuture[0] ?? null;
+                    $extraTurns = max(0, count($tFuture) - 1);
                 ?>
                 <div class="tm-map-table <?= $t['shape'] === 'round' ? 'round' : 'square' ?> <?= $statusClass ?><?= $extraClasses ?>"
                      data-id="<?= (int)$t['id'] ?>" data-area="<?= e($tArea) ?>"
@@ -370,6 +469,15 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                     <?php else: ?>
                     <span class="tm-map-name"><?= e($t['name']) ?></span>
                     <span class="tm-map-cap"><?= format_capacity((int)($t['min_capacity'] ?? 1), (int)$t['capacity']) ?></span>
+                    <?php endif; ?>
+                    <?php if ($nextTurn && !$tBlocked):
+                        $nsur      = mb_strtoupper(trim((string)$nextTurn['surname']));
+                        $nsurShort = mb_strlen($nsur) > 8 ? mb_substr($nsur, 0, 8) . '…' : $nsur;
+                    ?>
+                    <span class="tm-next-badge" data-pop="tm-pop-res-<?= (int)$nextTurn['rid'] ?>"
+                          title="<?= e(implode(' · ', array_map(fn($x) => substr((string)$x['time'], 0, 5) . ' ' . mb_strtoupper((string)$x['surname']) . ' ' . (int)$x['party'] . 'p', $tFuture))) ?>">
+                        <?= e($nsurShort) ?> <?= (int)$nextTurn['party'] ?>p<?php if ($extraTurns > 0): ?> <span class="tm-next-extra">+<?= $extraTurns ?></span><?php endif; ?>
+                    </span>
                     <?php endif; ?>
                 </div>
                 <?php endforeach; ?>
@@ -773,14 +881,59 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                 if (!isMobile && !e.target.closest('#tm-cal-dropdown') && !e.target.closest('#tm-cal-toggle')) closeCal();
             });
         })();
-        // Centra lo scorri-orari sullo slot attivo: niente swipe manuale
-        var scrub = document.querySelector('.tm-scrub');
-        var activeSlot = scrub && scrub.querySelector('.tm-scrub-slot.active');
-        if (scrub && activeSlot) {
-            var sRect = scrub.getBoundingClientRect();
+        // Centra la barra occupazione sullo slot attivo (mobile: niente swipe manuale)
+        var occ = document.querySelector('.tm-occ');
+        var activeSlot = occ && occ.querySelector('.tm-occ-col.on');
+        if (occ && activeSlot) {
+            var sRect = occ.getBoundingClientRect();
             var aRect = activeSlot.getBoundingClientRect();
-            scrub.scrollLeft += (aRect.left - sRect.left) - (sRect.width - aRect.width) / 2;
+            occ.scrollLeft += (aRect.left - sRect.left) - (sRect.width - aRect.width) / 2;
         }
+        // Indicatore "ora corrente": posiziona la linea sul punto del servizio
+        // corrispondente all'adesso (interpolando tra gli slot). Se l'ora è fuori
+        // dalla fascia mostrata, la linea resta nascosta.
+        (function () {
+            var line = document.getElementById('tm-occ-now');
+            if (!occ || !line) return;
+            var cols = Array.prototype.slice.call(occ.querySelectorAll('.tm-occ-col'));
+            if (!cols.length) return;
+            var toMin = function (s) { return parseInt(s.slice(0, 2), 10) * 60 + parseInt(s.slice(3, 5), 10); };
+            var now = new Date();
+            var nowMin = now.getHours() * 60 + now.getMinutes();
+            var times = cols.map(function (c) { return toMin(c.getAttribute('data-time')); });
+            var step = times.length > 1 ? (times[1] - times[0]) : 30;
+            if (nowMin < times[0] || nowMin > times[times.length - 1] + step) return; // fuori fascia
+            var center = function (c) { return c.offsetLeft + c.offsetWidth / 2; };
+            var prevIdx = -1;
+            for (var i = 0; i < times.length; i++) { if (times[i] <= nowMin) prevIdx = i; else break; }
+            var pos;
+            if (prevIdx < 0) {
+                pos = center(cols[0]);
+            } else if (prevIdx >= times.length - 1) {
+                var c = cols[prevIdx];
+                pos = center(c) + Math.min(1, (nowMin - times[prevIdx]) / step) * (c.offsetWidth / 2);
+            } else {
+                var cp = cols[prevIdx], cn = cols[prevIdx + 1];
+                var frac = (nowMin - times[prevIdx]) / (times[prevIdx + 1] - times[prevIdx]);
+                pos = center(cp) + (center(cn) - center(cp)) * frac;
+            }
+            line.style.left = pos + 'px';
+            line.style.display = 'block';
+        })();
+        // Dropdown selettore fascia servizio
+        (function () {
+            var btn = document.getElementById('tm-svc-btn');
+            var menu = document.getElementById('tm-svc-menu');
+            if (!btn || !menu) return;
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                var open = menu.classList.toggle('on');
+                btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('.tm-svc')) { menu.classList.remove('on'); btn.setAttribute('aria-expanded', 'false'); }
+            });
+        })();
         function openPop(id) {
             var ov = id && document.getElementById(id);
             if (ov) ov.style.display = 'flex';
@@ -795,6 +948,16 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
             el.addEventListener('click', function () {
                 highlight([el.getAttribute('data-id')]);
                 openPop(el.getAttribute('data-pop'));
+            });
+        });
+        // clic sul badge "prossima prenotazione" → popup di QUELLA prenotazione
+        // (stopPropagation: non apre il popup dell'occupante corrente del tavolo)
+        canvas.querySelectorAll('.tm-next-badge[data-pop]').forEach(function (b) {
+            b.addEventListener('click', function (e) {
+                e.stopPropagation();
+                var tbl = b.closest('.tm-map-table');
+                if (tbl) highlight([tbl.getAttribute('data-id')]);
+                openPop(b.getAttribute('data-pop'));
             });
         });
         // clic su riga prenotazione → popup + evidenzia il suo tavolo sulla mappa

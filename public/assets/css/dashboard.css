@@ -4580,13 +4580,52 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-op-legend { margin-left: auto; display: flex; gap: 14px; font-size: .68rem; color: #6c757d; }
 .tm-op-legend span { display: inline-flex; align-items: center; gap: 5px; }
 .tm-dot { width: 11px; height: 11px; border-radius: 4px; display: inline-block; }
-.tm-scrub { display: flex; gap: 0; overflow-x: auto; border-bottom: 1px solid var(--border, #e9ecef); background: #fafbfc; }
-.tm-scrub-slot { flex: 0 0 auto; padding: 8px 13px; font-size: .68rem; font-weight: 600; color: #6c757d; text-decoration: none; border-right: 1px solid #f0f1f3; text-align: center; }
-.tm-scrub-dot { display: block; width: 6px; height: 6px; border-radius: 50%; background: #0d6efd; margin: 4px auto 0; }
-.tm-scrub-dot.empty { background: transparent; }
-.tm-scrub-slot.active .tm-scrub-dot { background: #fff; }
-.tm-scrub-slot:hover { background: #f0f1f3; color: var(--brand, #00844A); }
-.tm-scrub-slot.active { background: var(--brand, #00844A); color: #fff; }
+/* ===== Barra servizio (selettore fascia) + occupazione per slot =====
+   Sostituisce lo "scorri-orari" fisso: mostra solo gli orari realmente
+   configurati per la fascia, con coperti e tavoli per slot (stile TheFork). */
+.tm-svc-bar { border-bottom: 1px solid var(--border, #e9ecef); background: #fbfdfc; }
+/* Layout affiancato (variante B): label+dropdown a sx, barra occupazione a dx */
+.tm-svc-row { display: flex; align-items: center; gap: 16px; padding: 10px 14px 12px; }
+.tm-svc-left { display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; }
+.tm-svc-microlabel { font-size: .64rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #9aa3aa; }
+.tm-svc-row .tm-occ { flex: 1; min-width: 0; padding: 0; }
+.tm-svc { position: relative; }
+.tm-svc-btn { display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid var(--border, #d4dade); background: #fff; border-radius: 9px; padding: 7px 13px; font-weight: 800; font-size: .84rem; cursor: pointer; color: #1a1d23; }
+.tm-svc-btn > .bi:first-child { color: var(--brand, #00844A); }
+.tm-svc-rng { color: #6c757d; font-weight: 500; }
+.tm-svc-cnt { background: #eef3f0; color: #006b3c; border-radius: 20px; padding: 1px 9px; font-size: .74rem; font-weight: 700; }
+.tm-svc-car { color: #9aa3aa; font-size: .8rem; }
+.tm-svc-menu { position: absolute; top: calc(100% + 5px); left: 0; z-index: 30; background: #fff; border: 1px solid var(--border, #e9ecef); border-radius: 13px; box-shadow: 0 10px 30px rgba(0,0,0,.14); min-width: 290px; padding: 7px; display: none; }
+.tm-svc-menu.on { display: block; }
+.tm-svc-item { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 11px 12px; border-radius: 9px; cursor: pointer; font-size: .88rem; text-decoration: none; color: #1a1d23; }
+.tm-svc-item:hover { background: #f4f7f5; }
+.tm-svc-item.sel { font-weight: 800; }
+.tm-svc-lbl { display: flex; flex-direction: column; }
+.tm-svc-lbl small { color: #6c757d; font-size: .74rem; font-weight: 500; }
+.tm-svc-r { display: flex; align-items: center; gap: 12px; }
+.tm-svc-cnt2 { color: #6c757d; font-weight: 700; font-size: .82rem; }
+.tm-svc-radio { width: 17px; height: 17px; border-radius: 50%; border: 2px solid #c4ccd2; flex-shrink: 0; }
+.tm-svc-item.sel .tm-svc-radio { border-color: var(--brand, #00844A); background: radial-gradient(circle, var(--brand, #00844A) 0 4px, #fff 5px); }
+.tm-svc-div { height: 1px; background: var(--border, #e9ecef); margin: 4px 8px; }
+.tm-svc-warn { margin-left: auto; color: #a8400a; font-weight: 600; font-size: .78rem; display: inline-flex; align-items: center; gap: 6px; }
+.tm-svc-warn-other { color: #b06a00; font-weight: 500; background: #fff3e0; border-radius: 6px; padding: 1px 7px; }
+
+.tm-occ { position: relative; display: flex; gap: 2px; padding: 8px 12px 12px; align-items: flex-end; overflow-x: auto; }
+/* Indicatore "ora corrente": linea verticale posizionata via JS sul punto del
+   servizio corrispondente all'adesso. Nascosta se l'ora è fuori dalla fascia. */
+.tm-occ-now { display: none; position: absolute; top: 6px; bottom: 8px; width: 2px; background: #ff5722; z-index: 4; pointer-events: none; }
+.tm-occ-now::before { content: "ora"; position: absolute; top: -2px; left: 3px; font-size: .56rem; font-weight: 800; color: #ff5722; background: #fff; padding: 0 3px; border-radius: 4px; white-space: nowrap; }
+.tm-occ-col { flex: 1; min-width: 60px; text-align: center; border-radius: 9px; padding: 6px 2px 5px; border: 1.5px solid transparent; text-decoration: none; }
+.tm-occ-col:hover { background: #eef4f1; }
+.tm-occ-col.on { background: #e8f5ee; border-color: var(--brand, #00844A); }
+.tm-occ-wrap { height: 30px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 4px; }
+.tm-occ-bar { width: 60%; max-width: 24px; border-radius: 5px 5px 0 0; background: linear-gradient(180deg, var(--brand, #00844A), #5cbf8c); min-height: 4px; }
+.tm-occ-bar.zero { background: #e2e8e5; }
+.tm-occ-time { display: block; font-weight: 800; font-size: .74rem; color: #1a1d23; }
+.tm-occ-cov { display: block; font-size: .68rem; color: #006b3c; font-weight: 700; }
+.tm-occ-tbl { display: block; font-size: .64rem; color: #6c757d; }
+.tm-occ-cov .bi, .tm-occ-tbl .bi { font-size: .6rem; opacity: .7; }
+.tm-occ-empty { padding: 14px 16px; font-size: .8rem; color: #6c757d; }
 /* Stati tavolo nella mappa sala — coerenti con pulsanti backend.
    - libero        = brand-light (neutralita' brand Evulery)
    - confermato    = brand pieno (= pulsante "Conferma tavolo")
@@ -4643,7 +4682,11 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-twopane { display: flex; }
 .tm-pane-list { width: 322px; flex-shrink: 0; border-right: 1px solid var(--border, #e9ecef); height: 540px; overflow-y: auto; }
 .tm-pane-map { flex: 1; min-width: 0; }
-.tm-list-empty { padding: 26px 16px; font-size: .78rem; color: #9aa1a9; text-align: center; }
+.tm-list-empty { padding: 32px 18px; font-size: .82rem; color: #6c757d; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 7px; }
+.tm-list-empty .bi { font-size: 1.7rem; opacity: .55; }
+.tm-list-empty strong { color: #495057; }
+.tm-list-empty small { font-size: .72rem; color: #9aa1a9; line-height: 1.55; max-width: 250px; }
+.tm-list-empty a { color: var(--brand, #00844A); font-weight: 600; }
 .tm-list-group { font-size: .64rem; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; color: #6c757d; padding: 9px 14px 5px; background: #fafbfc; position: sticky; top: 0; display: flex; align-items: center; gap: 6px; }
 .tm-list-group.danger { color: #b3261e; background: #fdecea; }
 .tm-res-row { display: flex; align-items: center; gap: 9px; padding: 10px 14px; border-bottom: 1px solid #f5f6f8; cursor: pointer; }
@@ -4664,6 +4707,11 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-res-table.set { border: 1px solid var(--brand, #00844A); color: var(--brand, #00844A); background: var(--brand-light, #e6f4ed); }
 .tm-res-table.none { border: 1px dashed #e0a39d; color: #b3261e; background: #fdecea; }
 .tm-map-table.hl { box-shadow: 0 0 0 3px #ffc107, 0 0 0 6px rgba(255,193,7,.4); z-index: 9; }
+/* Badge "prossima prenotazione" agganciato sotto il tavolo: cognome (max 8) +
+   posti, +N se ci sono altri turni dopo. Cliccabile → popup della prenotazione. */
+.tm-next-badge { position: absolute; top: calc(100% + 3px); left: 50%; transform: translateX(-50%); white-space: nowrap; background: #fff; border: 1.5px solid #e8857c; color: #b3382b; border-radius: 7px; padding: 2px 7px; font-size: .6rem; font-weight: 800; line-height: 1.25; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,.14); z-index: 6; }
+.tm-next-badge:hover { background: #fff5f4; border-color: #d9534f; }
+.tm-next-extra { color: #9a9a9a; }
 /* Fase 3c — avviso coerenza coperti / posti tavoli */
 .tm-cap-warn { display: flex; gap: 11px; margin-top: 16px; padding: 12px 14px; background: #fff8e6; border: 1px solid #ffe082; border-radius: 10px; }
 .tm-cap-warn > i { color: #b8860b; font-size: 1.05rem; margin-top: 1px; flex-shrink: 0; }
@@ -4727,6 +4775,9 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     .tm-twopane.show-list .tm-pane-map { display: none; }
     /* Canvas più compatta su mobile per lasciare aria al resto della pagina */
     .tm-map-canvas { height: min(540px, 62vh); }
+    /* Selettore servizio: a blocchi (label+dropdown sopra, barra sotto a tutta larghezza) */
+    .tm-svc-row { flex-direction: column; align-items: stretch; gap: 8px; }
+    .tm-svc-row .tm-occ { width: 100%; }
 }
 
 /* Impostazioni — hub a griglia (pagina /dashboard/settings) */

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sala — versione DEFINITIVA (B+C, slot configurati)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{
+    --brand:#00844A; --brand-d:#006b3c;
+    --free-bg:#E6F4ED; --free-bd:#b3dec7;
+    --conf:#00844A; --arr-bg:#cfe2ff; --arr-bd:#0EA5E9;
+    --next-bg:#fff4e0; --next-bd:#f0a500; --danger:#dc3545;
+    --ink:#1a1d23; --muted:#6c757d; --line:#eceff2;
+  }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:14px}
+  .wrap{max-width:1100px;margin:0 auto;padding:20px 16px 90px}
+  .topnote{font-size:.82rem;color:var(--muted);margin:0 0 14px;line-height:1.6}
+  .topnote b{color:var(--ink)}
+  .dev{display:flex;gap:8px;margin-bottom:16px}
+  .dev button{border:1.5px solid #d4dade;background:#fff;border-radius:8px;padding:6px 14px;font-weight:700;font-size:.8rem;cursor:pointer;color:var(--muted)}
+  .dev button.on{border-color:var(--brand);background:var(--brand);color:#fff}
+  .frame{margin:0 auto;transition:max-width .2s}
+  .frame.desktop{max-width:1060px}
+  .frame.mobile{max-width:390px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+
+  .head{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--line)}
+  .head .ttl{font-weight:800;font-size:1.05rem}.head .ttl i{color:var(--brand)}
+  .badge-date{background:#e8f5ee;color:var(--brand-d);font-weight:700;font-size:.78rem;padding:4px 10px;border-radius:20px}
+  .spacer{flex:1}
+  .mode-toggle{display:inline-flex;border:1.5px solid #e0e4e7;border-radius:9px;overflow:hidden}
+  .mode-toggle a{padding:6px 12px;font-size:.78rem;font-weight:700;color:var(--muted);text-decoration:none}
+  .mode-toggle a.on{background:var(--brand);color:#fff}
+
+  .datebar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line)}
+  .arrow{width:34px;height:34px;border:1.5px solid #d4dade;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer}
+  .chip{border:1.5px solid #d4dade;background:#fff;border-radius:8px;padding:6px 12px;font-weight:600;font-size:.78rem;color:var(--ink);cursor:pointer}
+  .chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+  .chip small{color:#9aa3aa;font-weight:500;margin-left:3px}.chip.on small{color:#cdebd9}
+  .chip.cal{margin-left:auto}
+
+  /* ===== barra orari = slot CONFIGURATI + numeri (sostituisce lo scorri-orari) ===== */
+  .occwrap{border-bottom:1px solid var(--line);background:#fbfdfc}
+  .occ-meal{padding:9px 16px 0;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;display:flex;align-items:center;gap:6px}
+  .occ{display:flex;gap:2px;padding:8px 12px 12px;align-items:flex-end;overflow-x:auto}
+  .occ-col{flex:1;min-width:64px;text-align:center;cursor:pointer;border-radius:9px;padding:6px 2px 5px;border:1.5px solid transparent}
+  .occ-col:hover{background:#eef4f1}
+  .occ-col.on{background:#e8f5ee;border-color:var(--brand)}
+  .occ-bar-wrap{height:54px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:6px}
+  .occ-bar{width:60%;max-width:26px;border-radius:5px 5px 0 0;background:linear-gradient(180deg,var(--brand),#5cbf8c);min-height:4px}
+  .occ-bar.peak{background:linear-gradient(180deg,#006b3c,var(--brand))}
+  .occ-bar.zero{background:#e2e8e5;min-height:3px}
+  .occ-time{font-weight:800;font-size:.76rem}
+  .occ-people{font-size:.7rem;color:var(--brand-d);font-weight:700}
+  .occ-people i,.occ-tables i{font-size:.62rem;opacity:.7}
+  .occ-tables{font-size:.66rem;color:var(--muted)}
+
+  /* two-pane */
+  .twopane{display:grid;grid-template-columns:330px 1fr}
+  .pane-list{border-right:1px solid var(--line);min-height:360px}
+  .pane-list-h{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--line);font-weight:800;font-size:.86rem}
+  .pane-list-h i{color:var(--brand)}
+  .pane-list-h .b{background:var(--danger);color:#fff;border-radius:10px;font-size:.66rem;padding:1px 7px}
+  .pane-map-h{padding:11px 16px;border-bottom:1px solid var(--line);font-size:.84rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .pane-map-h .legend{display:flex;gap:12px;margin-left:auto;font-size:.72rem;color:var(--muted)}
+  .pane-map-h .legend i{width:14px;height:10px;border-radius:3px;display:inline-block;vertical-align:middle;margin-right:3px}
+
+  /* list */
+  .grp{display:flex;align-items:center;gap:6px;padding:9px 16px;font-size:.75rem;font-weight:700;color:var(--muted);background:#fbfdfc;text-transform:uppercase}
+  .grp.danger{color:var(--danger);background:#fff7f6}
+  .row{display:flex;align-items:center;gap:11px;padding:11px 16px;border-bottom:1px solid #f4f6f8;cursor:pointer}
+  .row:hover{background:#fafcfb}
+  .r-time{font-weight:800;font-size:.86rem;width:46px}
+  .r-info{flex:1;min-width:0}.r-name{font-size:.9rem}.r-name b{font-weight:800}
+  .r-sub{display:flex;gap:8px;flex-wrap:wrap;font-size:.74rem;color:var(--muted);margin-top:2px;align-items:center}
+  .r-stat{font-weight:700;padding:1px 7px;border-radius:5px;font-size:.68rem}
+  .r-stat.arr{background:var(--arr-bg);color:#0b4a73}.r-stat.conf{background:#e8f5ee;color:var(--brand-d)}.r-stat.wait{background:#fff4e0;color:#a8650a}
+  .r-chip{background:#f0f2f4;border-radius:5px;padding:1px 6px}
+  .r-table{font-weight:800;font-size:.76rem;border-radius:7px;padding:5px 10px;white-space:nowrap}
+  .r-table.set{background:#eef3f7;color:#37536b}
+  .r-table.none{background:#fdecea;color:var(--danger);border:1px dashed #f1a9a2}
+
+  /* map (C minimal) */
+  .map{display:flex;flex-wrap:wrap;gap:14px;padding:18px}
+  .cell{display:flex;flex-direction:column;align-items:center;width:104px}
+  .mt{width:104px;height:78px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;border:2px solid transparent;font-size:.71rem;position:relative}
+  .mt .mt-n{font-weight:800;font-size:.8rem}.mt .mt-c{font-size:.65rem;opacity:.85}
+  .mt .who{font-weight:800;font-size:.73rem}
+  .mt.free{background:var(--free-bg);border-color:var(--free-bd);color:#2f6f4f}
+  .mt.conf{background:var(--conf);color:#fff}
+  .mt.arr{background:var(--arr-bg);border-color:var(--arr-bd);color:#0b4a73}
+  .mt.wait{background:#fbe3c8;border-color:var(--next-bd);color:#8a5200}
+  /* badge minimal "turno successivo" — cognome (max 8) + posti, stile TheFork */
+  .mt-next{margin-top:5px;background:#fff;border:1.5px solid #e8857c;color:#b3382b;border-radius:7px;padding:3px 0;font-size:.66rem;font-weight:800;width:104px;text-align:center;letter-spacing:.01em}
+
+  /* selettore fascia servizio (= categoria pasto) — stile TheFork */
+  .svc{position:relative}
+  .svc-btn{display:inline-flex;align-items:center;gap:8px;border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:7px 13px;font-weight:800;font-size:.84rem;cursor:pointer;color:var(--ink)}
+  .svc-btn .rng{color:var(--muted);font-weight:500}
+  .svc-btn .cnt{background:#eef3f0;color:var(--brand-d);border-radius:20px;padding:1px 9px;font-size:.74rem;font-weight:700}
+  .svc-btn .car{color:var(--muted)}
+  .svc-menu{position:absolute;top:calc(100% + 5px);left:0;z-index:20;background:#fff;border:1px solid var(--line);border-radius:13px;box-shadow:0 10px 30px rgba(0,0,0,.14);min-width:300px;padding:7px;display:none}
+  .svc-menu.on{display:block}
+  .svc-item{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 12px;border-radius:9px;cursor:pointer;font-size:.88rem}
+  .svc-item:hover{background:#f4f7f5}
+  .svc-item .lbl{display:flex;flex-direction:column}
+  .svc-item .lbl small{color:var(--muted);font-size:.74rem;font-weight:500}
+  .svc-item .right{display:flex;align-items:center;gap:12px}
+  .svc-item .cnt{color:var(--muted);font-weight:700;font-size:.82rem}
+  .svc-item.sel{font-weight:800}
+  .svc-radio{width:17px;height:17px;border-radius:50%;border:2px solid #c4ccd2;flex-shrink:0}
+  .svc-item.sel .svc-radio{border-color:var(--brand);background:radial-gradient(circle,var(--brand) 0 4px,#fff 5px)}
+  .svc-div{height:1px;background:var(--line);margin:4px 8px}
+  .map-hint{padding:0 18px 16px;font-size:.76rem;color:var(--muted)}
+
+  .mtabs{display:none}
+  .frame.mobile .mtabs{display:flex;gap:4px;padding:10px 14px 0}
+  .frame.mobile .mtab{border:none;background:#f1f4f6;border-radius:9px 9px 0 0;padding:8px 14px;font-weight:700;font-size:.82rem;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px}
+  .frame.mobile .mtab.on{background:#fff;color:var(--brand-d);box-shadow:0 -2px 0 var(--brand) inset}
+  .frame.mobile .mtab .b{background:var(--danger);color:#fff;border-radius:10px;font-size:.62rem;padding:1px 6px}
+  .frame.mobile .twopane{grid-template-columns:1fr}
+  .frame.mobile .pane-list{border-right:none}
+
+  /* popup */
+  .ov{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+  .ov.on{display:flex}
+  .pop{background:#fff;border-radius:14px;width:340px;max-width:100%;overflow:hidden}
+  .pop-h{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:1px solid var(--line);font-weight:800}
+  .pop-h button{border:none;background:none;font-size:1.3rem;cursor:pointer;color:var(--muted)}
+  .pop-b{padding:15px}
+  .pop-meta{color:var(--muted);font-size:.82rem;margin-bottom:8px}
+  .pop-turns{background:#fff8ec;border:1px solid #f0d9a8;border-radius:9px;padding:8px 11px;font-size:.78rem;color:#7a5b00;margin-bottom:10px}
+  .pop-turns b{color:#5c4400}
+  .pop-lbl{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin:10px 0 5px}
+  .pop-sp{display:flex;gap:6px;flex-wrap:wrap}
+  .pop-sp button{border:1.5px solid #d4dade;background:#fff;border-radius:8px;padding:7px 11px;font-size:.78rem;font-weight:700;cursor:pointer}
+  .pop-sp .arr{border-color:var(--arr-bd);color:#0b4a73}.pop-sp .conf{border-color:var(--brand);color:var(--brand-d)}.pop-sp .no{border-color:#f1a9a2;color:var(--danger)}
+  .pop select{width:100%;padding:8px;border:1.5px solid #d4dade;border-radius:8px;font-size:.85rem}
+  .pop-foot{display:flex;justify-content:space-between;align-items:center;margin-top:13px}
+  .pop-foot a{color:var(--brand-d);font-size:.8rem;font-weight:600;text-decoration:none}
+  .pop-foot button{background:var(--brand);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-weight:700;font-size:.82rem;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="topnote"><b>Pagina Sala — versione definitiva (B+C).</b> Niente timeline.
+  <b>Barra in alto</b> = solo gli slot <u>realmente configurati</u> per quel giorno (qui: cena 19:30–22:30) con coperti e tavoli per fascia — sostituisce lo scorri-orari di oggi e si riempie cliccando.
+  <b>Lista prenotazioni</b> a sinistra come ora. <b>Mappa</b> a destra con stato all'ora selezionata + badge minimal del turno successivo (dettaglio nel popup). Clicca le fasce della barra per spostare l'ora della mappa.</p>
+  <div class="dev">
+    <button class="on" data-dev="desktop"><i class="bi bi-display"></i> Desktop</button>
+    <button data-dev="mobile"><i class="bi bi-phone"></i> Mobile</button>
+  </div>
+
+  <div class="frame desktop" id="frame">
+    <div class="card">
+      <div class="head">
+        <span class="ttl"><i class="bi bi-grid-3x3"></i> Sala</span>
+        <span class="badge-date">Sab 13 Giugno 2026</span>
+        <span class="spacer"></span>
+        <span class="mode-toggle"><a href="#" class="on"><i class="bi bi-eye"></i> Operativa</a><a href="#"><i class="bi bi-pencil"></i> Setup</a></span>
+      </div>
+      <div class="datebar">
+        <span class="arrow"><i class="bi bi-chevron-left"></i></span>
+        <span class="chip on">Oggi <small>sab 13/6</small></span>
+        <span class="chip">Domani <small>dom 14/6</small></span>
+        <span class="chip">Dopodomani <small>lun 15/6</small></span>
+        <span class="arrow"><i class="bi bi-chevron-right"></i></span>
+        <span class="chip cal"><i class="bi bi-calendar3"></i> Altra data</span>
+      </div>
+
+      <!-- ===== selettore servizio + barra slot configurati ===== -->
+      <div class="occwrap">
+        <div class="occ-meal">
+          <div class="svc">
+            <button class="svc-btn" id="svc-btn">
+              <i class="bi bi-clock-history" style="color:var(--brand)"></i>
+              <span id="svc-label">Cena</span>
+              <span class="rng" id="svc-range">20:45–22:30</span>
+              <span class="cnt" id="svc-cnt">0</span>
+              <i class="bi bi-chevron-down car"></i>
+            </button>
+            <div class="svc-menu" id="svc-menu"></div>
+          </div>
+          <span style="margin-left:auto;color:#a8400a;font-weight:600"><i class="bi bi-exclamation-triangle-fill"></i> 1 da assegnare</span>
+        </div>
+        <div class="occ" id="occ"></div>
+      </div>
+
+      <!-- mobile tabs -->
+      <div class="mtabs">
+        <button class="mtab on" data-m="list"><i class="bi bi-list-ul"></i> Prenotazioni <span class="b">1</span></button>
+        <button class="mtab" data-m="map"><i class="bi bi-grid-3x3"></i> Mappa</button>
+      </div>
+
+      <div class="twopane" id="twopane">
+        <div class="pane-list" id="pane-list">
+          <div class="pane-list-h"><span><i class="bi bi-list-ul"></i> Prenotazioni</span><span class="b">1 da assegnare</span></div>
+          <div id="list"></div>
+        </div>
+        <div class="pane-right" id="pane-right">
+          <div class="pane-map-h">
+            <span>Mappa · ore <b id="map-hour" style="color:var(--brand)">21:00</b></span>
+            <span class="legend">
+              <i style="background:var(--free-bg);border:1px solid var(--free-bd)"></i>Libero
+              <i style="background:var(--conf)"></i>Confermato
+              <i style="background:var(--arr-bd)"></i>Arrivato
+              <i style="background:#fbe3c8;border:1px solid var(--next-bd)"></i>Da riconfermare
+            </span>
+          </div>
+          <div class="map" id="map"></div>
+          <div class="map-hint"><i class="bi bi-info-circle"></i> <b>↻ poi …</b> = il tavolo ha un altro turno più tardi. Clicca il tavolo per vedere chi e fare il cambio.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="ov">
+  <div class="pop">
+    <div class="pop-h"><span id="pop-name"><i class="bi bi-person"></i> —</span><button onclick="closePop()">&times;</button></div>
+    <div class="pop-b">
+      <div class="pop-meta" id="pop-meta"></div>
+      <div id="pop-turns"></div>
+      <div class="pop-lbl">Cambia stato</div>
+      <div class="pop-sp"><button class="conf"><i class="bi bi-check-circle"></i> Confermata</button><button class="arr"><i class="bi bi-box-arrow-in-right"></i> Arrivato</button><button class="no"><i class="bi bi-x-circle"></i> No-show</button></div>
+      <div class="pop-lbl">Tavolo assegnato</div>
+      <select><option>— Nessun tavolo —</option><option selected id="pop-table">T4</option><option>↔ Combina tavoli…</option></select>
+      <div class="pop-foot"><a href="#">Apri scheda completa</a><button><i class="bi bi-check"></i> Salva</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DUR=90;
+const toMin=s=>+s.slice(0,2)*60+ +s.slice(3,5);
+const trunc=s=>s.length>8?s.slice(0,8)+'…':s;
+
+// Fasce servizio = categorie pasto attive per il giorno (da MealCategory).
+// Ogni fascia ha i suoi slot configurati (step 30). "all" = tutte insieme.
+const ALL_SLOTS={
+  pranzo:['12:00','12:30','13:00','13:30','14:00','14:30'],
+  cena:  ['19:30','20:00','20:30','21:00','21:30','22:00','22:30'],
+};
+const MEALS=[
+  {key:'all',    label:'Tutti i servizi', range:''},
+  {key:'pranzo', label:'Pranzo', range:'12:00–14:30'},
+  {key:'cena',   label:'Cena',   range:'19:30–22:30'},
+];
+let curMeal='cena';
+function mealSlots(){ return curMeal==='all' ? [...ALL_SLOTS.pranzo,...ALL_SLOTS.cena] : ALL_SLOTS[curMeal]; }
+
+const TABLES=[{n:'T1',cap:'3-5p'},{n:'T2',cap:'1-1p'},{n:'T3',cap:'2-3p'},
+  {n:'T4',cap:'2-4p'},{n:'T5',cap:'4p'},{n:'T6',cap:'2p'},{n:'T7',cap:'2p'},{n:'T8',cap:'4p'},{n:'T9',cap:'5p'},
+  {n:'T10',cap:'2-3p'},{n:'T11',cap:'2p'},{n:'T12',cap:'4p'},{n:'T13',cap:'2p'}];
+const RES={
+  // T1: tavolo a rotazione veloce con 3 turni nella stessa cena (caso limite)
+  'T1':[{who:'ALAGIA',p:4,t:'19:30',st:'arr'},{who:'BIANCHIROSSI',p:3,t:'21:00',st:'conf'},{who:'VERDI',p:5,t:'22:30',st:'conf'}],
+  'T4':[{who:'TRULSSON',p:2,t:'19:30',st:'arr'}],
+  'T7':[{who:'BISCARO',p:2,t:'19:30',st:'arr',note:'Anniversario'}],
+  'T12':[{who:'GRANATI',p:4,t:'19:30',st:'arr'},{who:'SELESTINO',p:3,t:'22:00',st:'conf'}],
+  'T5':[{who:'WATSON',p:4,t:'20:45',st:'conf'}],
+  'T6':[{who:'WORDSWORTH',p:2,t:'20:45',st:'conf'}],
+  'T8':[{who:'NIKOLOVSKI',p:4,t:'20:45',st:'conf'},{who:'TABENI',p:2,t:'22:15',st:'conf'}],
+  'T11':[{who:'BOOGAARD',p:2,t:'20:45',st:'wait'}],
+};
+const UNASSIGNED=[{who:'ROSSI',p:4,t:'21:00',st:'wait'}];
+let curHour=21*60;
+
+// coperti per fascia servizio (somma prenotazioni che iniziano nella fascia)
+function mealCovers(key){
+  const all=Object.values(RES).flat().concat(UNASSIGNED);
+  const slots = key==='all' ? [...ALL_SLOTS.pranzo,...ALL_SLOTS.cena] : ALL_SLOTS[key];
+  const lo=toMin(slots[0]), hi=toMin(slots[slots.length-1])+30;
+  let p=0; all.forEach(r=>{const st=toMin(r.t); if(st>=lo&&st<hi) p+=r.p;}); return p;
+}
+// selettore servizio (dropdown)
+function renderMealPicker(){
+  const menu=document.getElementById('svc-menu');
+  menu.innerHTML=MEALS.map((m,i)=>{
+    const c=mealCovers(m.key);
+    const sel=m.key===curMeal?' sel':'';
+    const div=(i===0)?'<div class="svc-div"></div>':'';
+    return '<div class="svc-item'+sel+'" data-meal="'+m.key+'"><div class="lbl">'+m.label+(m.range?'<small>'+m.range+'</small>':'')+'</div>'
+      +'<div class="right"><span class="cnt">'+c+'</span><span class="svc-radio"></span></div></div>'+div;
+  }).join('');
+  menu.querySelectorAll('.svc-item').forEach(it=>it.onclick=()=>{ selectMeal(it.dataset.meal); menu.classList.remove('on'); });
+  // aggiorna bottone
+  const m=MEALS.find(x=>x.key===curMeal);
+  document.getElementById('svc-label').textContent=m.label;
+  document.getElementById('svc-range').textContent=m.range;
+  document.getElementById('svc-cnt').textContent=mealCovers(curMeal);
+}
+function selectMeal(key){
+  curMeal=key;
+  const slots=mealSlots();
+  // posiziona l'ora sul primo slot della fascia se quella attuale è fuori
+  if(!slots.includes(min2hhmm(curHour))) curHour=toMin(slots[0]);
+  renderMealPicker();
+  renderOcc(document.getElementById('occ'));
+  renderMap(document.getElementById('map'));
+  document.getElementById('map-hour').textContent=min2hhmm(curHour);
+}
+function min2hhmm(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
+
+// barra
+function renderOcc(el){
+  const all=Object.values(RES).flat().concat(UNASSIGNED);
+  const data=mealSlots().map(s=>{const m=toMin(s);let p=0,t=0;all.forEach(r=>{const st=toMin(r.t);if(m>=st&&m<st+DUR){p+=r.p;t++;}});return{s,p,t};});
+  const max=Math.max(...data.map(d=>d.p),1);
+  el.innerHTML=data.map(d=>{
+    const hgt=d.p===0?3:Math.max(Math.round(d.p/max*54),6);
+    const cls=d.p===0?'zero':(d.p===max?'peak':'');
+    const on=toMin(d.s)===curHour?' on':'';
+    return '<div class="occ-col'+on+'" data-t="'+d.s+'"><div class="occ-bar-wrap"><div class="occ-bar '+cls+'" style="height:'+hgt+'px"></div></div>'
+      +'<div class="occ-time">'+d.s+'</div><div class="occ-people"><i class="bi bi-people-fill"></i> '+d.p+'</div><div class="occ-tables"><i class="bi bi-grid-fill"></i> '+d.t+'/13</div></div>';
+  }).join('');
+  el.querySelectorAll('.occ-col').forEach(c=>c.onclick=()=>{curHour=toMin(c.dataset.t);renderOcc(el);renderMap(document.getElementById('map'));document.getElementById('map-hour').textContent=c.dataset.t;});
+}
+// mappa minimal
+function renderMap(el){
+  el.innerHTML=TABLES.map(tb=>{
+    const list=RES[tb.n]||[];
+    const cur=list.find(r=>{const st=toMin(r.t);return curHour>=st&&curHour<st+DUR;});
+    let cls='free',inner='',meta='';
+    if(cur){cls=cur.st==='arr'?'arr':cur.st==='wait'?'wait':'conf';
+      inner='<span class="mt-n">'+tb.n+'</span><span class="who">'+cur.who+'</span><span class="mt-c">'+cur.p+'p · '+cur.t+'</span>';
+      meta=cur.who;}
+    else{inner='<span class="mt-n">'+tb.n+'</span><span class="mt-c">'+tb.cap+'</span>';}
+    // badge minimal turno successivo: cognome (max 8) + posti, stile TheFork.
+    // Se ci sono PIÙ turni dopo, mostro solo il prossimo + "+N" (no muri di badge).
+    const future=list.filter(r=>toMin(r.t)>curHour);
+    const next=future[0];
+    const extra=future.length-1;
+    const badge=next
+      ?'<div class="mt-next" title="'+future.map(r=>r.t+' '+r.who+' '+r.p+'p').join(' · ')+'">'+trunc(next.who)+' '+next.p+'p'+(extra>0?' <span style="color:#9a9a9a">+'+extra+'</span>':'')+'</div>'
+      :'';
+    const data=cur?('data-who="'+cur.who+'" data-meta="'+cur.p+'p · '+cur.t+'" data-tbl="'+tb.n+'" data-turns="'+list.map(r=>r.t+' '+r.who+' '+r.p+'p').join(' | ')+'"'):'';
+    return '<div class="cell"><div class="mt '+cls+'" '+data+'>'+inner+'</div>'+badge+'</div>';
+  }).join('');
+  el.querySelectorAll('.mt[data-who]').forEach(m=>m.onclick=()=>openPop(m.dataset.who,m.dataset.meta,m.dataset.tbl,m.dataset.turns));
+}
+// lista
+function renderList(el){
+  let res=[];Object.entries(RES).forEach(([tn,l])=>l.forEach(r=>res.push({...r,tbl:tn})));
+  res=res.concat(UNASSIGNED.map(r=>({...r,tbl:null})));
+  let h='';const un=res.filter(r=>!r.tbl);
+  if(un.length){h+='<div class="grp danger"><i class="bi bi-exclamation-triangle-fill"></i> Da assegnare · '+un.length+'</div>';un.forEach(r=>h+=rowList(r));}
+  const byH={};res.filter(r=>r.tbl).forEach(r=>{const hr=r.t.slice(0,2);(byH[hr]=byH[hr]||[]).push(r);});
+  Object.keys(byH).sort().forEach(hr=>{h+='<div class="grp"><i class="bi bi-clock"></i> Ore '+hr+':00</div>';byH[hr].forEach(r=>h+=rowList(r));});
+  el.innerHTML=h;
+  el.querySelectorAll('.row').forEach(rw=>rw.onclick=()=>openPop(rw.dataset.who,rw.dataset.meta,rw.dataset.tbl||'—',rw.dataset.turns||''));
+}
+function rowList(r){
+  const stCls=r.st==='arr'?'arr':r.st==='wait'?'wait':'conf';
+  const stLbl=r.st==='arr'?'Arrivato':r.st==='wait'?'Da riconfermare':'Confermata';
+  const tbl=r.tbl?'<span class="r-table set">'+r.tbl+'</span>':'<span class="r-table none">Assegna</span>';
+  const turns=r.tbl&&RES[r.tbl]?RES[r.tbl].map(x=>x.t+' '+x.who+' '+x.p+'p').join(' | '):'';
+  return '<div class="row" data-who="'+r.who+'" data-meta="'+r.p+'p · '+r.t+'" data-tbl="'+(r.tbl||'')+'" data-turns="'+turns+'">'
+    +'<span class="r-time">'+r.t+'</span><div class="r-info"><div class="r-name"><b>'+r.who+'</b></div>'
+    +'<div class="r-sub"><span>'+r.p+' persone</span><span class="r-stat '+stCls+'">'+stLbl+'</span>'
+    +(r.note?'<span class="r-chip"><i class="bi bi-gift"></i> '+r.note+'</span>':'')+'</div></div>'+tbl+'</div>';
+}
+function openPop(who,meta,tbl,turns){
+  document.getElementById('pop-name').innerHTML='<i class="bi bi-person"></i> '+who;
+  document.getElementById('pop-meta').textContent=meta;
+  document.getElementById('pop-table').textContent=tbl;
+  const tEl=document.getElementById('pop-turns');
+  const list=(turns||'').split(' | ').filter(Boolean);
+  tEl.innerHTML=list.length>1?'<i class="bi bi-arrow-repeat"></i> <b>'+tbl+' · '+list.length+' turni:</b><br>'+list.join('&nbsp; → &nbsp;'):'';
+  document.getElementById('ov').classList.add('on');
+}
+function closePop(){document.getElementById('ov').classList.remove('on');}
+document.getElementById('ov').onclick=e=>{if(e.target.id==='ov')closePop();};
+
+renderMealPicker();
+renderOcc(document.getElementById('occ'));
+renderMap(document.getElementById('map'));
+renderList(document.getElementById('list'));
+
+// dropdown servizio open/close
+const svcBtn=document.getElementById('svc-btn'), svcMenu=document.getElementById('svc-menu');
+svcBtn.onclick=e=>{e.stopPropagation();svcMenu.classList.toggle('on');};
+document.addEventListener('click',e=>{if(!e.target.closest('.svc'))svcMenu.classList.remove('on');});
+
+// mobile tabs
+function setMobileView(m){
+  document.querySelectorAll('.mtab').forEach(x=>x.classList.toggle('on',x.dataset.m===m));
+  document.getElementById('pane-list').style.display=(m==='list')?'':'none';
+  document.getElementById('pane-right').style.display=(m==='map')?'':'none';
+}
+document.querySelectorAll('.mtab').forEach(t=>t.onclick=()=>setMobileView(t.dataset.m));
+document.querySelectorAll('.dev button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.dev button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  document.getElementById('frame').className='frame '+b.dataset.dev;
+  if(b.dataset.dev==='mobile')setMobileView('list');
+  else{document.getElementById('pane-list').style.display='';document.getElementById('pane-right').style.display='';}
+});
+</script>
+</body>
+</html>
