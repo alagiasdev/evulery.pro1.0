@@ -188,7 +188,7 @@ class TablesController
         // nemmeno in modalità setup o quando il servizio è gatato.
         $meals = $serviceSlots = $tableTurns = $daySlots = [];
         $currentMeal = 'all';
-        $roomCapacity = $roomTables = 0;
+        $roomCapacity = $roomTables = $allCovers = 0;
         $opDate = (string)$request->query('date', date('Y-m-d'));
         // L'utente ha cliccato uno slot preciso (?time=)? Se no, il default-ora
         // verrà posizionato sul "best slot" della fascia (vedi modalità operativa).
@@ -249,6 +249,7 @@ class TablesController
                 $roomCapacity = $svc['roomCapacity'];
                 $roomTables   = $svc['roomTables'];
                 $daySlots     = $svc['daySlots'];
+                $allCovers    = $svc['allCovers'];
 
                 // Default-ora intelligente: se l'utente non ha cliccato uno slot
                 // preciso, posiziono l'ora sul "best slot" della fascia corrente
@@ -295,6 +296,7 @@ class TablesController
             'roomCapacity'    => $roomCapacity,
             'roomTables'      => $roomTables,
             'daySlots'        => $daySlots,
+            'allCovers'       => $allCovers,
         ], 'dashboard');
     }
 
@@ -452,6 +454,10 @@ class TablesController
             'roomCapacity' => $roomCapacity,
             'roomTables'   => $roomTables,
             'daySlots'     => $daySlots,
+            // Totale coperti del giorno = somma di TUTTE le prenotazioni attive
+            // (non la somma per-fascia): include anche eventuali prenotazioni con
+            // orario fuori da ogni fascia, così "Tutti i servizi" è sempre coerente.
+            'allCovers'    => array_sum(array_map(fn($r) => (int)$r['party_size'], $active)),
         ];
     }
 

@@ -304,7 +304,8 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         // fascia, con coperti e tavoli per slot (come TheFork).
         $mealCoversNow = 0;
         foreach ($meals as $m) if ($m['name'] === $currentMeal) { $mealCoversNow = (int)$m['covers']; break; }
-        $allCovers = array_sum(array_column($meals, 'covers'));
+        // $allCovers arriva dal controller = totale coperti attivi del giorno
+        // (include anche prenotazioni con orario fuori da ogni fascia).
         $maxCovers = 1;
         foreach ($serviceSlots as $ss) if ((int)$ss['covers'] > $maxCovers) $maxCovers = (int)$ss['covers'];
     ?>
