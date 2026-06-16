@@ -4,7 +4,9 @@ namespace App\Core;
 
 class Session
 {
-    private const IDLE_TIMEOUT = 1800;      // 30 minuti — protezione PC condivisi
+    private const IDLE_TIMEOUT = 28800;     // 8 ore — copre l'intera giornata di servizio
+                                            // senza re-login forzato; resta una protezione
+                                            // se la postazione viene lasciata incustodita.
     private const ABSOLUTE_TIMEOUT = 43200; // 12 ore — copre il turno di lavoro tipico
                                             // del ristoratore (es. 10:00-22:00) evitando
                                             // un re-login obbligato a meta' giornata.
@@ -12,6 +14,12 @@ class Session
     public static function start(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
+            // Il GC di PHP (session.gc_maxlifetime, di default spesso ~24 min) può
+            // cancellare il FILE di sessione lato server PRIMA dei timeout applicativi
+            // qui sotto, facendo "saltare" il login a sorpresa. Allineiamo il GC al
+            // limite assoluto così la sessione vive finché è davvero valida.
+            ini_set('session.gc_maxlifetime', (string)self::ABSOLUTE_TIMEOUT);
+
             $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
                 || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
             session_set_cookie_params([
