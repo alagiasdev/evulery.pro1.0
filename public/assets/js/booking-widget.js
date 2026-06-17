@@ -261,8 +261,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 hint.textContent = 'Nessun posto disponibile in questa data';
                 hint.style.display = '';
             } else {
-                hint.textContent = 'Capienza disponibile: fino a ' + max + (max === 1 ? ' persona' : ' persone');
-                hint.style.display = '';
+                // Non esponiamo la capienza numerica al cliente: i bottoni oltre
+                // il massimo restano comunque disabilitati (vedi sopra), ma senza
+                // rivelare quanti posti sono liberi.
+                hint.textContent = '';
+                hint.style.display = 'none';
             }
         }
     }
