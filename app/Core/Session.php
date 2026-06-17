@@ -14,10 +14,30 @@ class Session
     public static function start(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
-            // Il GC di PHP (session.gc_maxlifetime, di default spesso ~24 min) può
-            // cancellare il FILE di sessione lato server PRIMA dei timeout applicativi
-            // qui sotto, facendo "saltare" il login a sorpresa. Allineiamo il GC al
-            // limite assoluto così la sessione vive finché è davvero valida.
+            // Sessione "saltava" dopo ~30 min nonostante i timeout applicativi:
+            // su hosting Linux la pulizia dei file di sessione e' tipicamente
+            // gestita da un CRON DI SISTEMA a durata fissa (~24-30 min) sulla
+            // save_path condivisa, che IGNORA il gc_maxlifetime impostato qui.
+            // Soluzione: usare una save_path DEDICATA all'app — quei file non
+            // vengono toccati dal cron di sistema e la durata e' governata solo
+            // dai nostri timeout. Fallback sicuro: se la dir non e' scrivibile,
+            // non cambiamo nulla (meglio il vecchio comportamento che sessioni rotte).
+            if (defined('BASE_PATH')) {
+                $sessionPath = BASE_PATH . '/storage/sessions';
+                if (!is_dir($sessionPath)) {
+                    @mkdir($sessionPath, 0700, true);
+                }
+                if (is_dir($sessionPath) && is_writable($sessionPath)) {
+                    session_save_path($sessionPath);
+                    // Su questa dir non gira il cron di sistema: garantiamo un
+                    // minimo di GC interno di PHP cosi' i file vecchi non si
+                    // accumulano all'infinito.
+                    ini_set('session.gc_probability', '1');
+                    ini_set('session.gc_divisor', '100');
+                }
+            }
+            // Allinea comunque il GC al limite assoluto (utile dove il save_path
+            // di default e' privato, es. XAMPP locale).
             ini_set('session.gc_maxlifetime', (string)self::ABSOLUTE_TIMEOUT);
 
             $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')

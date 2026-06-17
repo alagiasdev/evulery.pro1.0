@@ -2,6 +2,7 @@
 .env.backup
 /storage/logs/*.log
 /storage/cache/*
+/storage/sessions/*
 /public/uploads/tenants/*
 /public/uploads/hubs/*
 !.gitkeep
