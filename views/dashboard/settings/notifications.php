@@ -238,7 +238,7 @@ $defaults = [
                 <?php
                     $info = $deviceInfo($d['user_agent'] ?? '');
                     $ts = !empty($d['created_at']) ? strtotime((string)$d['created_at']) : 0;
-                    $dataLbl = $ts ? (date('j', $ts) . ' ' . $MESI_IT[(int)date('n', $ts)] . ' ' . date('Y', $ts)) : '';
+                    $dataLbl = $ts ? (date('j', $ts) . ' ' . $MESI_IT[(int)date('n', $ts)] . ' ' . date('Y', $ts) . ' alle ' . date('H:i', $ts)) : '';
                 ?>
                 <div class="push-device" data-endpoint="<?= e($d['endpoint']) ?>">
                     <div class="push-device-ic"><i class="bi <?= e($info['icon']) ?>"></i></div>
