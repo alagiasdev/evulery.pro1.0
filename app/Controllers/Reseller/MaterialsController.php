@@ -50,6 +50,13 @@ class MaterialsController
             'icon'        => 'journal-text',
             'file'        => 'sales/playbook-primo-incontro.html',
         ],
+        'traccia-primo-appuntamento' => [
+            'category'    => 'tools',
+            'title'       => 'Traccia primo appuntamento',
+            'description' => 'Versione rapida del primo incontro: le 3 leve per spiegare Evulery, come far parlare il cliente e agganciare la demo.',
+            'icon'        => 'signpost-2',
+            'file'        => 'sales/traccia-primo-appuntamento.html',
+        ],
         'demo-script' => [
             'category'    => 'tools',
             'title'       => 'Demo script',
