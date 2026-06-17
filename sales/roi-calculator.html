@@ -403,7 +403,7 @@ body {
 
                 <label style="display: flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--ink-soft); margin-top: 12px; cursor: pointer;">
                     <input type="checkbox" id="annual" checked style="width: 18px; height: 18px; cursor: pointer;">
-                    <span>Pagamento annuale (−12%, incluso nel calcolo)</span>
+                    <span>Pagamento annuale (−17%, incluso nel calcolo)</span>
                 </label>
             </div>
 
@@ -472,7 +472,7 @@ body {
     var $ = function(id) { return document.getElementById(id); };
     var planPrices  = { starter: 49, professional: 79, enterprise: 129 };
     var planLabels  = { starter: 'Starter', professional: 'Professional', enterprise: 'Enterprise' };
-    var ANNUAL_DISCOUNT = 0.12;
+    var ANNUAL_DISCOUNT = 0.1667; // sconto annuale reale ~16,7% (prezzi €490/€790/€1.290), comunicato come −17%
     var SETUP_FEE = 249;
     // Riduzione no-show realistica per piano (Starter = solo reminder, no caparra)
     var RECOVERY_RANGE = {
@@ -532,7 +532,7 @@ body {
             $('out-savings').textContent = fmt(Math.round(savingsMonth));
             $('formula-savings').innerHTML =
                 '= €<strong>' + fmt(currentCost) + '</strong> oggi − €<strong>' + fmt(evuleryMonth, 2) + '</strong> con Evulery ' +
-                planLabels[selectedPlan] + (annual ? ' annuale (−12%)' : ' mensile');
+                planLabels[selectedPlan] + (annual ? ' annuale (−17%)' : ' mensile');
             show($('card-savings'));
         } else {
             hide($('card-savings'));
@@ -603,7 +603,7 @@ body {
         if (currentCost !== null) lines.push('• Costo piattaforme oggi: €' + fmt(currentCost) + '/mese');
         if (noshow !== null && noshow > 0) lines.push('• Tasso no-show: ' + fmt(noshow, noshow % 1 === 0 ? 0 : 1) + '%');
         lines.push('');
-        lines.push('Con Evulery ' + planLabels[selectedPlan] + (annual ? ' annuale (−12%)' : ' mensile') + ' (€' + fmt(evuleryMonth, 2) + '/mese):');
+        lines.push('Con Evulery ' + planLabels[selectedPlan] + (annual ? ' annuale (−17%)' : ' mensile') + ' (€' + fmt(evuleryMonth, 2) + '/mese):');
         if (savingsMonth > 0) lines.push('• Risparmio sui costi: +€' + fmt(Math.round(savingsMonth)) + '/mese');
         if (recoveryCovers > 0) {
             var caparraNote = (selectedPlan === 'starter') ? ' (Starter: solo reminder)' : ' (caparra Stripe attiva)';

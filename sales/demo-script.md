@@ -158,7 +158,7 @@ Queste info ti servono per **personalizzare** la demo (slide 8 case study lo tra
 
 **"È tanto, €79 al mese."**
 > "Il caso medio recupera 5-7.000€/mese di tavoli persi. Anche prendendo solo il 10% di quel valore, l'investimento si ripaga in 2 settimane. Vuoi che facciamo un calcolo veloce sul tuo locale?"
-> *(leva chiusura)* "Tra l'altro, se paghi annuale anticipato hai il 12% di sconto: il Professional ti costa €69,52/mese invece che €79. Ti faccio vedere il conto?"
+> *(leva chiusura)* "Tra l'altro, se paghi annuale anticipato hai circa il 17% di sconto: il Professional ti costa €65,83/mese invece che €79. Ti faccio vedere il conto?"
 
 **"C'è un setup o costo di attivazione?"**
 > "Sì, l'attivazione è €249 una-tantum. Include il primo mese di servizio + l'onboarding dedicato (call di setup, training del tuo staff, migrazione dati da TheFork/Quandoo se ce l'hai). In pratica paghi €249 e parti con tutto già configurato e funzionante. Niente sorprese dopo."
@@ -226,7 +226,7 @@ VEDIAMO COSA TI HA INTERESSATO:
 NUMERI SUL TUO CASO (60 coperti, scontrino €35):
 - Stima recupero coperti: +180/mese
 - Equivalente: ~€6.300/mese
-- Costo Evulery Professional: €79/mese (€69,52 con pagamento annuale)
+- Costo Evulery Professional: €79/mese (€65,83 con pagamento annuale)
 - Attivazione una-tantum: €249 (include primo mese + onboarding)
 
 ALLEGATI:
