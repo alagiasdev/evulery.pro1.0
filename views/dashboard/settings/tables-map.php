@@ -348,11 +348,23 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
             <?php if (!empty($serviceSlots)): ?>
             <div class="tm-occ">
                 <span class="tm-occ-now" id="tm-occ-now"></span>
-            <?php foreach ($serviceSlots as $ss): $h = (int)$ss['covers'] === 0 ? 3 : max(5, (int)round((int)$ss['covers'] / $maxCovers * 28)); ?>
+            <?php
+                foreach ($serviceSlots as $ss):
+                    $cov = (int)$ss['covers'];
+                    // Altezza barra: relativa al picco del giorno (leggibilità).
+                    $h = $cov === 0 ? 3 : max(5, (int)round($cov / $maxCovers * 28));
+                    // Colore: livello di riempimento assoluto vs capienza sala.
+                    // verde <60% · ambra 60-85% · rosso >=85% (o oltre capienza).
+                    $lv = '';
+                    if ($roomCapacity > 0 && $cov > 0) {
+                        $pct = $cov / $roomCapacity;
+                        $lv = $pct >= 0.85 ? 'lv-high' : ($pct >= 0.60 ? 'lv-mid' : 'lv-low');
+                    }
+            ?>
             <a href="<?= $opUrl ?>?date=<?= e($opDate) ?>&time=<?= e($ss['time']) ?>&meal=<?= e($currentMeal) ?>"
                data-time="<?= e($ss['time']) ?>"
-               class="tm-occ-col <?= $ss['time'] === $opTime ? 'on' : '' ?>">
-                <span class="tm-occ-wrap"><span class="tm-occ-bar<?= (int)$ss['covers'] === 0 ? ' zero' : '' ?>" style="height:<?= $h ?>px"></span></span>
+               class="tm-occ-col <?= $ss['time'] === $opTime ? 'on' : '' ?> <?= $lv ?>">
+                <span class="tm-occ-wrap"><span class="tm-occ-bar<?= $cov === 0 ? ' zero' : '' ?> <?= $lv ?>" style="height:<?= $h ?>px"></span></span>
                 <span class="tm-occ-time"><?= e($ss['time']) ?></span>
                 <span class="tm-occ-cov"><i class="bi bi-people-fill"></i> <?= (int)$ss['covers'] ?><?php if ($roomCapacity > 0): ?>/<?= (int)$roomCapacity ?><?php endif; ?></span>
                 <span class="tm-occ-tbl"><i class="bi bi-grid-fill"></i> <?= (int)$ss['tables'] ?>/<?= (int)$roomTables ?></span>

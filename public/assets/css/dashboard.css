@@ -4621,6 +4621,11 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-occ-wrap { height: 30px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 4px; }
 .tm-occ-bar { width: 60%; max-width: 24px; border-radius: 5px 5px 0 0; background: linear-gradient(180deg, var(--brand, #00844A), #5cbf8c); min-height: 4px; }
 .tm-occ-bar.zero { background: #e2e8e5; }
+/* Livello di riempimento: verde (<60%) → ambra (60-85%) → rosso (≥85%) */
+.tm-occ-bar.lv-mid  { background: linear-gradient(180deg, #b97e00, #f3c14e); }
+.tm-occ-bar.lv-high { background: linear-gradient(180deg, #b3261e, #f1746a); }
+.tm-occ-col.lv-mid  .tm-occ-cov { color: #b97e00; }
+.tm-occ-col.lv-high .tm-occ-cov { color: #b3261e; }
 .tm-occ-time { display: block; font-weight: 800; font-size: .74rem; color: #1a1d23; }
 .tm-occ-cov { display: block; font-size: .68rem; color: #006b3c; font-weight: 700; }
 .tm-occ-tbl { display: block; font-size: .64rem; color: #6c757d; }
