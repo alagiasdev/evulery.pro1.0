@@ -78,6 +78,13 @@ class MaterialsController
             'icon'        => 'shield-shaded',
             'file'        => 'sales/battlecard-piattaforme.html',
         ],
+        'onboarding-checklist' => [
+            'category'    => 'tools',
+            'title'       => 'Checklist onboarding',
+            'description' => 'La sequenza per attivare un nuovo cliente: dal primo accesso al widget online. Spunta le voci durante l\'affiancamento — le spunte si salvano.',
+            'icon'        => 'clipboard-check',
+            'file'        => 'sales/onboarding-checklist.html',
+        ],
 
         // 3. Opzionali — per outbound a freddo
         'email-outbound' => [
