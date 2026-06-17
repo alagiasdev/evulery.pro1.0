@@ -314,9 +314,9 @@ document.addEventListener('DOMContentLoaded', function() {
             visibleSlots.forEach(function(slot) {
                 var active = (state.selectedTime === slot.time) ? ' bw-slot-active' : '';
                 var disabled = !slot.is_available ? ' bw-slot-disabled' : '';
-                var title = slot.is_available
-                    ? slot.available_covers + ' posti disponibili'
-                    : 'Non disponibile';
+                // Niente disponibilità numerica al cliente: il ristoratore non
+                // vuole esporre i posti liberi. Nessun tooltip sugli slot prenotabili.
+                var title = slot.is_available ? '' : 'Non disponibile';
                 var promoBadge = (slot.discount_percent && slot.discount_percent > 0)
                     ? '<span class="bw-promo-badge">-' + slot.discount_percent + '%</span>'
                     : '';
