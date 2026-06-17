@@ -413,7 +413,7 @@ class Reservation
              AND reservation_date = :date
              AND reservation_time <= CAST(:slot_time AS TIME)
              AND ADDTIME(reservation_time, SEC_TO_TIME(COALESCE(duration_minutes, :duration) * 60)) > CAST(:slot_time2 AS TIME)
-             AND status IN ("confirmed", "pending")'
+             AND status IN ("confirmed", "pending", "arrived")'
         );
         $stmt->execute([
             'tenant_id' => $tenantId,
