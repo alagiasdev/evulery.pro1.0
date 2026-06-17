@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo guidata · 5 schermate — Evulery</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{ --brand:#00844A; --brand-d:#006b3c; --ink:#1a1d23; --muted:#6c757d; --line:#eceff2; --amber:#a8650a; }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:15px;line-height:1.55}
+  .wrap{max-width:900px;margin:0 auto;padding:24px 20px 90px}
+  .brandbar{height:5px;background:linear-gradient(90deg,var(--brand),#5cbf8c);border-radius:6px;margin-bottom:18px}
+  h1{font-size:1.45rem;margin:0 0 4px}
+  .sub{color:var(--muted);margin:0 0 6px}
+
+  /* cronometro + regola sticky */
+  .bar{position:sticky;top:0;z-index:20;background:#f4f6f8;padding:12px 0;border-bottom:1px solid var(--line);margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .timer{font-variant-numeric:tabular-nums;font-weight:800;font-size:1.5rem;color:var(--brand-d);min-width:84px}
+  .timer.over{color:#b3261e}
+  .tbtn{border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:7px 13px;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--ink)}
+  .tbtn.go{background:var(--brand);border-color:var(--brand);color:#fff}
+  .bar-note{font-size:.8rem;color:var(--muted);margin-left:auto}
+  .bar-note b{color:var(--ink)}
+
+  .rule{display:flex;gap:9px;background:#eef6f1;border:1px solid #cfe8d9;border-radius:10px;padding:11px 14px;font-size:.86rem;color:#1f3d30;margin-bottom:20px}
+  .rule i{color:var(--brand-d);margin-top:1px}
+
+  .scr{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .scr-h{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line);background:#fbfdfc;cursor:pointer}
+  .scr-n{width:34px;height:34px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0}
+  .scr-t{font-weight:800;font-size:1.05rem;flex:1}
+  .scr-t small{display:block;font-weight:500;font-size:.78rem;color:var(--muted)}
+  .scr-time{font-size:.72rem;font-weight:800;background:#eef3f0;color:var(--brand-d);border-radius:20px;padding:3px 10px;flex-shrink:0}
+  .scr-chk{width:22px;height:22px;border-radius:6px;border:2px solid #c4ccd2;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.75rem}
+  .scr.done .scr-chk{background:var(--brand);border-color:var(--brand)}
+  .scr.done .scr-n{background:#9bbfaa}
+  .scr.done .scr-t{color:#9aa1a9}
+  .scr-b{padding:14px 18px}
+
+  .lbl{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 6px;display:flex;align-items:center;gap:6px}
+  .open{background:#f3f6f8;border:1px solid #e3e9ed;border-radius:9px;padding:9px 12px;font-size:.88rem;margin-bottom:14px}
+  .open code{background:#e6edf2;border-radius:5px;padding:2px 7px;font-size:.85em;color:#2c4a63}
+  ol.show,ul.show{margin:4px 0 14px;padding-left:20px}
+  ol.show li,ul.show li{font-size:.92rem;margin-bottom:5px}
+  .say{display:flex;gap:9px;background:#eef6f1;border-left:3px solid var(--brand);border-radius:8px;padding:11px 13px;font-size:.92rem;color:#1f3d30}
+  .say i{color:var(--brand-d);margin-top:2px}
+  .tip{display:flex;gap:9px;background:#fff8ec;border:1px solid #f0d9a8;border-radius:9px;padding:10px 13px;margin-top:10px;font-size:.84rem;color:#6b5210}
+  .tip i{color:var(--amber);margin-top:1px}
+  .warn{display:flex;gap:9px;background:#fdecea;border:1px solid #f3b8b0;border-radius:9px;padding:10px 13px;margin-top:10px;font-size:.84rem;color:#8a2f24}
+  .warn i{color:#b3261e;margin-top:1px}
+
+  .foot{margin-top:24px;font-size:.78rem;color:var(--muted);text-align:center;line-height:1.7}
+  .foot a{color:var(--brand-d);text-decoration:none;font-weight:600}
+
+  /* approfondimenti on-demand */
+  .extra-head{margin:30px 0 14px}
+  .extra-head h2{font-size:1.15rem;margin:0 0 4px;display:flex;align-items:center;gap:8px;color:var(--amber)}
+  .extra-head p{margin:0;font-size:.86rem;color:var(--muted)}
+  .ex{background:#fff;border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:12px;padding:13px 15px;margin-bottom:11px}
+  .ex-t{font-weight:800;font-size:.98rem;display:flex;align-items:center;gap:8px}
+  .ex-t .bi{color:var(--amber)}
+  .ex-trig{font-size:.74rem;font-weight:700;color:#8a6510;background:#fff4e0;border-radius:20px;padding:2px 10px;margin-left:auto}
+  .ex-row{font-size:.88rem;margin-top:8px;display:flex;gap:8px}
+  .ex-row .k{font-weight:700;color:var(--muted);flex-shrink:0;width:54px;font-size:.76rem;text-transform:uppercase;letter-spacing:.03em;padding-top:1px}
+  .ex-row code{background:#eef1f3;border-radius:5px;padding:1px 6px;font-size:.85em}
+  .ex-note{display:flex;gap:8px;background:#eef6f1;border:1px solid #cfe8d9;border-radius:9px;padding:10px 13px;margin-top:14px;font-size:.84rem;color:#1f3d30}
+  .ex-note i{color:var(--brand-d);margin-top:1px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar"></div>
+  <h1><i class="bi bi-display" style="color:var(--brand)"></i> Demo guidata · 5 schermate</h1>
+  <p class="sub">La parte centrale della demo (15 minuti). Estratto operativo dal Demo Script. Spunta ogni schermata mentre la mostri; usa il cronometro per tenere il ritmo.</p>
+
+  <div class="bar">
+    <span class="timer" id="timer">00:00</span>
+    <button class="tbtn go" id="startBtn"><i class="bi bi-play-fill"></i> Avvia</button>
+    <button class="tbtn" id="resetBtn"><i class="bi bi-arrow-counterclockwise"></i> Azzera</button>
+    <span class="bar-note">Target: <b>15 min</b> · diventa rosso oltre i 15′</span>
+  </div>
+
+  <div class="rule">
+    <i class="bi bi-info-circle-fill"></i>
+    <div><b>Regola d’oro:</b> mostra <b>5 schermate, mai più</b>. Una cosa alla volta, <b>pausa ogni 90 secondi</b> per un check ("ti torna?", "questo ti servirebbe?"). Personalizza sempre sul <b>loro</b> locale.</div>
+  </div>
+
+  <div id="screens"></div>
+
+  <div class="extra-head">
+    <h2><i class="bi bi-plus-circle"></i> Approfondimenti on-demand</h2>
+    <p>Queste <b>non</b> vanno in ogni demo. Mostrale <b>solo se il prospect è interessato</b> a quella specifica esigenza — altrimenti lo sovraccarichi. Sono anche il tuo ripasso di tutta la piattaforma.</p>
+  </div>
+  <div id="extra"></div>
+
+  <p class="foot">
+    Materiale collegato: <a href="demo-script.html">Demo Script completo</a> (apertura, discovery, obiezioni, chiusura, account demo).<br>
+    © 2026 Evulery · by alagias. - Soluzioni per il web
+  </p>
+</div>
+
+<script>
+const SCREENS = [
+  {
+    n: 1, t: 'Dashboard', time: '3 min',
+    open: 'Dashboard demo — <b>Trattoria Da Mario</b>, vista di <b>oggi</b>.',
+    show: [
+      '<b>KPI giornata</b> — "Vedi qui i tuoi coperti del giorno: confermati, arrivati, no-show. Aggiornato in tempo reale."',
+      '<b>Lista prenotazioni</b> — "Ordinate per orario. Ogni riga è una prenotazione; cliccando vedi tutti i dettagli."',
+      '<b>Campanella</b> (in alto a destra) — "Quando arriva una nuova prenotazione suona qui, senza tenere la dashboard aperta."',
+    ],
+    say: '"Tutto questo è in tempo reale, anche da tablet o smartphone. Dopo il servizio sai esattamente quanti tavoli hai gestito e con che stato."',
+  },
+  {
+    n: 2, t: 'Widget cliente', time: '3 min',
+    open: 'Tab pulita: <code>dash.evulery.it/trattoria-da-mario</code> — <b>fai una prenotazione finta dal vivo</b>.',
+    show: [
+      'Scegli data, orario, numero persone.',
+      'Fai notare che il sistema <b>propone solo gli orari realmente disponibili</b>.',
+      'Mostra il modulo dati (nome, email, telefono).',
+      'Conferma → arriva l’email di conferma (simulazione).',
+    ],
+    say: '"Il cliente prenota in 30 secondi. Niente account, niente registrazione. E il widget lo metti dove vuoi: sul tuo sito, nel link in bio Instagram, o come QR sul tavolo."',
+  },
+  {
+    n: 3, t: 'Caparra', time: '2 min',
+    open: 'Dashboard → <b>Impostazioni → Caparra</b>.',
+    show: [
+      'Mostra le <b>3 modalità</b>: Informativa (gratis, senza Stripe) · Link di pagamento (Satispay, PayPal…) · Stripe automatico.',
+    ],
+    say: '"La caparra è lo strumento numero uno contro i no-show: mediamente li riduce del 70-80%. Per un locale da 60 coperti significa migliaia di euro al mese di tavoli recuperati che prima andavano persi."',
+    tip: 'Se in discovery ha citato <b>no-show alti</b> → enfatizza qui. Altrimenti glissa veloce.',
+  },
+  {
+    n: 4, t: 'Vetrina Digitale', time: '3 min',
+    open: '<code>dash.evulery.it/trattoria-da-mario/hub</code> — mostra la pagina pubblica e <b>punta il QR code</b>.',
+    show: [
+      'Mostra che da un’unica pagina il cliente può: <b>prenotare</b>, vedere il <b>menu</b>, <b>ordinare</b> a casa, lasciare una <b>recensione</b>, contattare su <b>WhatsApp</b>.',
+    ],
+    say: '"Questo è il \'link in bio\' del tuo ristorante. Lo metti su Instagram, lo stampi sul tavolo e sui biglietti. Una sola scansione, tutto. La stampi una volta: le modifiche a menu e promozioni si vedono subito, senza ristampare."',
+  },
+  {
+    n: 5, t: 'Reputazione (Legge 34/2026)', time: '4 min',
+    open: 'Dashboard → <b>Reputazione → Panoramica</b>. Mostra il flusso automatico.',
+    show: [
+      'Cliente segnato come <b>"arrivato"</b> → fa scattare la richiesta.',
+      'Email automatica chiede una valutazione <b>1-5 stelle</b>.',
+      'Stelle <b>alte (4-5)</b> → indirizzato a <b>Google</b>.',
+      'Stelle <b>basse (1-3)</b> → <b>feedback privato</b>, non pubblico.',
+    ],
+    say: '"Dal 7 aprile 2026 le recensioni online devono essere conformi alla Legge 34/2026: solo da clienti reali, entro 30 giorni, senza incentivi. Evulery rispetta tutti e tre i requisiti nativamente. Chi regala uno spritz per una recensione oggi è fuori legge — con noi ti adegui senza pensarci."',
+    warn: 'Questa è la <b>chiusura emotiva forte</b> della demo. Non sottovalutarla: rallenta e lasciala respirare.',
+  },
+];
+
+const KEY = 'evulery_demo_guidata_done';
+var done = {};
+try { done = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ done = {}; }
+
+function render(){
+  document.getElementById('screens').innerHTML = SCREENS.map(function(s){
+    var d = done[s.n] ? ' done' : '';
+    var showList = '<ol class="show">' + s.show.map(function(x){ return '<li>'+x+'</li>'; }).join('') + '</ol>';
+    var tip = s.tip ? '<div class="tip"><i class="bi bi-lightbulb"></i><div>'+s.tip+'</div></div>' : '';
+    var warn = s.warn ? '<div class="warn"><i class="bi bi-exclamation-triangle"></i><div>'+s.warn+'</div></div>' : '';
+    return '<div class="scr'+d+'" data-n="'+s.n+'">'
+      + '<div class="scr-h" data-toggle><div class="scr-n">'+s.n+'</div>'
+      + '<div class="scr-t">'+s.t+'<small>Schermata '+s.n+' · '+s.time+'</small></div>'
+      + '<span class="scr-time">'+s.time+'</span>'
+      + '<span class="scr-chk"><i class="bi bi-check-lg"></i></span></div>'
+      + '<div class="scr-b">'
+      + '<p class="lbl"><i class="bi bi-box-arrow-up-right"></i> Apri</p><div class="open">'+s.open+'</div>'
+      + '<p class="lbl"><i class="bi bi-list-ol"></i> Mostra</p>'+showList
+      + '<p class="lbl"><i class="bi bi-chat-quote"></i> Da dire</p><div class="say"><i class="bi bi-quote"></i><div>'+s.say+'</div></div>'
+      + tip + warn
+      + '</div></div>';
+  }).join('');
+  document.querySelectorAll('.scr-chk').forEach(function(chk){
+    chk.addEventListener('click', function(e){
+      e.stopPropagation();
+      var card = chk.closest('.scr'); var n = card.getAttribute('data-n');
+      done[n] = !done[n]; card.classList.toggle('done', !!done[n]);
+      try { localStorage.setItem(KEY, JSON.stringify(done)); } catch(e){}
+    });
+  });
+}
+render();
+
+// Approfondimenti on-demand
+const EXTRA = [
+  { ic:'bi-grid-3x3', t:'Sala & Tavoli', trig:'Locale strutturato, tanti tavoli',
+    open:'Dashboard → <b>Sala</b> (operativa)',
+    say:'"Vedi la sala in tempo reale: chi è seduto, chi sta per arrivare, i turni dei tavoli. Il sistema assegna i tavoli da solo e tu sai sempre cosa è libero." (servizio dei piani avanzati)' },
+  { ic:'bi-people', t:'Clienti / CRM', trig:'Vuole fidelizzare, conoscere i clienti',
+    open:'Dashboard → <b>Clienti</b>',
+    say:'"Ogni cliente ha una scheda con storico e segmento — nuovo, abituale, VIP. Importi i tuoi contatti e li riconosci quando tornano."' },
+  { ic:'bi-card-list', t:'Menu digitale', trig:'Non ha menu online o solo PDF',
+    open:'Dashboard → <b>Menu</b> (e pagina pubblica del menu)',
+    say:'"Menu sempre aggiornato, con allergeni, raggiungibile via QR. Cambi un prezzo e si vede subito, senza ristampare nulla."' },
+  { ic:'bi-bag', t:'Ordini online', trig:'Fa asporto o consegna a domicilio',
+    open:'Dashboard → <b>Ordini</b> + store pubblico <code>/{slug}/order</code>',
+    say:'"Takeaway e delivery con i tuoi orari e zone di consegna, gestiti in una board ordinata. Senza le commissioni dei portali del food."' },
+  { ic:'bi-envelope-paper', t:'Comunicazioni / Email marketing', trig:'Vuole riempire le serate vuote',
+    open:'Dashboard → <b>Comunicazioni</b>',
+    say:'"Mandi email ai tuoi clienti per segmento — es. \'auguri agli aprilini\' o \'martedì -20%\' — con il pulsante Prenota. A crediti e in regola col GDPR."' },
+  { ic:'bi-megaphone', t:'Promozioni', trig:'Ha giorni/fasce da spingere',
+    open:'Dashboard → Impostazioni → <b>Promozioni</b>',
+    say:'"Imposti sconti ricorrenti (es. martedì -20%) o su date e fasce specifiche: compaiono in automatico nel widget di prenotazione."' },
+  { ic:'bi-gear', t:'Impostazioni (panoramica)', trig:'Vuole capire quanto è configurabile',
+    open:'Dashboard → <b>Impostazioni</b>',
+    say:'"Orari, coperti, fasce di servizio, chiusure, caparra, notifiche, vetrina: tutto regolabile da te. E lo configuriamo insieme durante l’attivazione, non ti lascio solo."' },
+];
+function renderExtra(){
+  document.getElementById('extra').innerHTML = EXTRA.map(function(e){
+    return '<div class="ex"><div class="ex-t"><i class="bi '+e.ic+'"></i> '+e.t+'<span class="ex-trig">se: '+e.trig+'</span></div>'
+      + '<div class="ex-row"><span class="k">Apri</span><span>'+e.open+'</span></div>'
+      + '<div class="ex-row"><span class="k">Da dire</span><span>'+e.say+'</span></div></div>';
+  }).join('')
+  + '<div class="ex-note"><i class="bi bi-lock"></i><div>Le voci con il <b>lucchetto</b> in Impostazioni non sono nel piano del cliente: non sono un problema, sono la tua <b>occasione di upsell</b>. La mappa piano→servizi è in Admin → Piani.</div></div>';
+}
+renderExtra();
+
+// Cronometro
+var sec = 0, tick = null;
+function fmt(s){ var m = Math.floor(s/60), r = s%60; return (m<10?'0':'')+m+':'+(r<10?'0':'')+r; }
+function paint(){ var el = document.getElementById('timer'); el.textContent = fmt(sec); el.classList.toggle('over', sec > 900); }
+var startBtn = document.getElementById('startBtn');
+startBtn.addEventListener('click', function(){
+  if (tick){ clearInterval(tick); tick = null; startBtn.innerHTML = '<i class="bi bi-play-fill"></i> Riprendi'; startBtn.classList.remove('go'); }
+  else { tick = setInterval(function(){ sec++; paint(); }, 1000); startBtn.innerHTML = '<i class="bi bi-pause-fill"></i> Pausa'; startBtn.classList.add('go'); }
+});
+document.getElementById('resetBtn').addEventListener('click', function(){
+  if (tick){ clearInterval(tick); tick = null; }
+  sec = 0; paint(); startBtn.innerHTML = '<i class="bi bi-play-fill"></i> Avvia'; startBtn.classList.add('go');
+});
+paint();
+</script>
+</body>
+</html>

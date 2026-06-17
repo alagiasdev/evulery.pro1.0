@@ -42,13 +42,27 @@ class MaterialsController
             'file'        => 'sales/faq-ristoratore.html',
         ],
 
-        // 2. Strumenti operativi per la demo
+        // 2. Strumenti operativi (colloquio e demo)
+        'playbook-primo-incontro' => [
+            'category'    => 'tools',
+            'title'       => 'Playbook primo incontro',
+            'description' => 'Come condurre il primo colloquio: cosa preparare, simulazione completa passo-passo, le obiezioni, gli errori da evitare e il follow-up. Studialo per arrivare pronto.',
+            'icon'        => 'journal-text',
+            'file'        => 'sales/playbook-primo-incontro.html',
+        ],
         'demo-script' => [
             'category'    => 'tools',
             'title'       => 'Demo script',
             'description' => 'Copilota interattivo per la demo: 9 fasi, cronometro, checklist persistenti. Tienilo aperto durante la chiamata.',
             'icon'        => 'mic',
             'file'        => 'sales/demo-script.html',
+        ],
+        'demo-guidata' => [
+            'category'    => 'tools',
+            'title'       => 'Demo guidata (5 schermate)',
+            'description' => 'Versione operativa del Demo script: solo le 5 schermate da mostrare + gli approfondimenti on-demand, con cronometro. Tienila aperta mentre condividi lo schermo.',
+            'icon'        => 'display',
+            'file'        => 'sales/demo-guidata.html',
         ],
         'roi-calculator' => [
             'category'    => 'tools',

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist Onboarding Ristoratore — Evulery</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{ --brand:#00844A; --brand-d:#006b3c; --ink:#1a1d23; --muted:#6c757d; --line:#eceff2; --amber:#a8650a; }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:15px;line-height:1.5}
+  .wrap{max-width:880px;margin:0 auto;padding:28px 20px 90px}
+  h1{font-size:1.5rem;margin:0 0 4px}
+  .sub{color:var(--muted);margin:0 0 20px}
+  .brandbar{height:5px;background:linear-gradient(90deg,var(--brand),#5cbf8c);border-radius:6px;margin-bottom:22px}
+
+  /* progress */
+  .prog{position:sticky;top:0;background:#f4f6f8;padding:12px 0 10px;z-index:10;border-bottom:1px solid var(--line);margin-bottom:18px}
+  .prog-bar{height:10px;background:#e3e9e6;border-radius:20px;overflow:hidden}
+  .prog-fill{height:100%;width:0;background:linear-gradient(90deg,var(--brand),#5cbf8c);transition:width .3s}
+  .prog-txt{font-size:.8rem;color:var(--muted);font-weight:700;margin-top:5px;display:flex;justify-content:space-between}
+  .prog-txt a{color:var(--brand-d);cursor:pointer;text-decoration:none;font-weight:600}
+
+  .roles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+  .role{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 14px}
+  .role h3{font-size:.82rem;margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:6px}
+  .role.r1 h3{color:#7b1fa2} .role.r2 h3{color:var(--brand-d)} .role.r3 h3{color:#0d6efd}
+  .role p{font-size:.8rem;color:var(--muted);margin:0}
+
+  .phase{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .phase-h{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);background:#fbfdfc}
+  .phase-n{width:30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0}
+  .phase-t{font-weight:800;font-size:1.02rem}
+  .phase-t small{display:block;font-weight:500;font-size:.76rem;color:var(--muted)}
+  .phase-actor{margin-left:auto;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;border-radius:20px;padding:3px 10px}
+  .a-admin{background:#f3e5f5;color:#7b1fa2} .a-rist{background:#e8f5ee;color:var(--brand-d)} .a-res{background:#e3f2fd;color:#0d6efd}
+  .phase-b{padding:8px 16px 14px}
+
+  .item{display:flex;gap:11px;padding:9px 4px;border-bottom:1px solid #f5f6f8;cursor:pointer;align-items:flex-start}
+  .item:last-child{border-bottom:none}
+  .item input{display:none}
+  .item .box{width:20px;height:20px;border-radius:6px;border:2px solid #c4ccd2;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.7rem;transition:.12s}
+  .item.done .box{background:var(--brand);border-color:var(--brand)}
+  .item.done .txt{color:#9aa1a9;text-decoration:line-through}
+  .txt{font-size:.9rem}
+  .txt b{font-weight:700}
+  .txt .star{color:#e8a200}
+
+  .tip{display:flex;gap:9px;background:#fff8ec;border:1px solid #f0d9a8;border-radius:10px;padding:10px 13px;margin:8px 4px 2px;font-size:.82rem;color:#6b5210}
+  .tip i{color:var(--amber);margin-top:1px}
+  .tip b{color:#5c4400}
+  .say{display:flex;gap:9px;background:#eef4ff;border:1px solid #cfe0fb;border-radius:10px;padding:10px 13px;margin:8px 4px 2px;font-size:.82rem;color:#26456e}
+  .say i{color:#0d6efd;margin-top:1px}
+
+  .pitfalls{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-top:8px}
+  .pitfalls h2{font-size:1.05rem;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+  .pitfalls li{font-size:.86rem;margin-bottom:7px;color:#444}
+  .pitfalls b{color:var(--ink)}
+
+  .foot{margin-top:24px;font-size:.78rem;color:var(--muted);text-align:center;line-height:1.7}
+  code{background:#eef1f3;border-radius:5px;padding:1px 6px;font-size:.82em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar"></div>
+  <h1><i class="bi bi-clipboard-check" style="color:var(--brand)"></i> Checklist Onboarding Ristoratore</h1>
+  <p class="sub">Guida passo-passo per portare un nuovo cliente da "contratto firmato" a "widget di prenotazione attivo". Pensata per la simulazione in affiancamento col reseller. Le spunte si salvano sul tuo browser.</p>
+
+  <div class="prog">
+    <div class="prog-bar"><div class="prog-fill" id="fill"></div></div>
+    <div class="prog-txt"><span id="ptxt">0 / 0 completati</span><a id="reset">↺ Azzera</a></div>
+  </div>
+
+  <!-- chi fa cosa -->
+  <div class="roles">
+    <div class="role r1"><h3><i class="bi bi-shield-lock"></i> Admin (tu)</h3><p>Converte il lead in account, sceglie il piano, consegna le credenziali. <b>Solo l'admin crea l'account.</b></p></div>
+    <div class="role r3"><h3><i class="bi bi-person-badge"></i> Reseller</h3><p>Porta/registra il lead, affianca il cliente nella configurazione, fa formazione e follow-up.</p></div>
+    <div class="role r2"><h3><i class="bi bi-shop"></i> Ristoratore</h3><p>Accede con le sue credenziali e completa il setup (orari, coperti, servizi) guidato dal reseller.</p></div>
+  </div>
+
+  <div id="phases"></div>
+
+  <div class="pitfalls">
+    <h2><i class="bi bi-exclamation-triangle" style="color:#e8a200"></i> Errori comuni da evitare</h2>
+    <ul>
+      <li><b>Orari non allineati allo step.</b> Se lo "step di prenotazione" è 30 min ma gli orari in "Orari e Coperti" sono a :15/:45, il widget mostra pochi o nessuno slot. Lo step e gli orari devono combaciare.</li>
+      <li><b>Categorie pasto disattivate.</b> Se la fascia (es. Cena) è disattivata, gli slot in quell'orario non compaiono nel widget anche se hai messo i coperti. Attiva le fasce che usi.</li>
+      <li><b>Coperti a zero.</b> Uno slot con 0 coperti non è prenotabile. Usa "Compila tutti" per partire veloce.</li>
+      <li><b>Promettere servizi non nel piano.</b> Se in Impostazioni una voce ha il <i class="bi bi-lock-fill"></i> lucchetto, quel servizio non è incluso nel piano del cliente: è un'occasione di upsell, non una cosa da configurare.</li>
+      <li><b>Saltare il test del widget.</b> Fai sempre una prenotazione di prova reale prima di consegnare: è la dimostrazione che "tutto funziona".</li>
+    </ul>
+  </div>
+
+  <p class="foot">
+    Il ristoratore ha sempre la <b>Guida in-app</b> nella sidebar (voce "Guida"): 19 sezioni con primi passi, configurazione e operatività — usala come riferimento, non serve ripetere tutto a voce.<br>
+    © <span id="yr"></span> Evulery · by alagias. - Soluzioni per il web
+  </p>
+</div>
+
+<script>
+// Dati checklist. actor: admin | reseller | rist
+const PHASES = [
+  {
+    n: 0, t: 'Prima dell’incontro', s: 'Preparazione (reseller)', actor: 'res',
+    items: [
+      'Lead già <b>acquisito e assegnato</b> a te (form sito o aggiunto da <code>/reseller/leads</code>).',
+      'Individuato il <b>piano consigliato</b> in base alle esigenze del locale (solo prenotazioni → base; caparra/reminder → intermedio; tavoli/ordini/recensioni → completo).',
+      'Materiali pronti: <b>demo script</b>, <b>ROI calculator</b>, <b>FAQ ristoratore</b>.',
+      'Deciso con il cliente: usiamo un <b>account demo di prova</b> o creiamo subito quello reale?',
+    ],
+    notes: [{type:'say', txt:'<b>Da dire al cliente:</b> "Ti seguo io passo passo: in mezz’ora sei online e prendi prenotazioni h24, anche mentre sei in cucina."'}]
+  },
+  {
+    n: 1, t: 'Creazione account', s: 'Conversione lead → cliente', actor: 'admin',
+    items: [
+      'Admin apre <code>/admin/leads</code> e trova il lead.',
+      'Clic su <b>"Converti"</b> → si apre il form creazione con i dati già precompilati.',
+      'Compila: <b>nome ristorante</b>, email, telefono, indirizzo.',
+      'Seleziona il <b>piano</b> concordato.',
+      'Imposta <b>email + password del titolare</b> (sono le credenziali che consegnerai al cliente).',
+      'Clic <b>Crea</b>: il sistema genera slug, abbonamento, categorie pasto di default e l’utente titolare.',
+    ],
+    notes: [{type:'tip', txt:'<b>Solo l’admin</b> converte/crea l’account. Il reseller osserva: è importante che capisca che lui porta il lead, l’attivazione la fa l’admin.'}]
+  },
+  {
+    n: 2, t: 'Setup essenziale', s: 'I 4 passi senza cui il widget non funziona', actor: 'rist',
+    items: [
+      'Il ristoratore <b>accede</b> alla dashboard con email + password del titolare.',
+      '<b>Impostazioni → Generali</b>: nome, contatti, <b>logo</b>, e soprattutto lo <b>step di prenotazione</b> (ogni quanti minuti uno slot). <span class="star">★</span>',
+      '<b>Impostazioni → Orari e Coperti</b> <span class="star">★</span>: compila la griglia giorni × orari con i <b>coperti massimi</b> per slot (usa "Compila tutti" per partire veloce).',
+      '<b>Impostazioni → Categorie Pasto</b>: attiva le fasce che usa (Pranzo, Cena…) e controlla gli orari.',
+      '<b>Impostazioni → Chiusure</b>: inserisci giorni di chiusura settimanale e ferie.',
+    ],
+    notes: [{type:'tip', txt:'<b>Lo step e gli orari devono combaciare.</b> Step 30 min + orari a :00/:30. Se non torna, il widget mostra pochi slot — è l’errore più frequente.'}]
+  },
+  {
+    n: 3, t: 'Servizi del piano', s: 'Configura ciò che è incluso', actor: 'rist',
+    items: [
+      'In <b>Impostazioni</b>, le voci con il <i class="bi bi-lock-fill"></i> lucchetto <b>non sono nel piano</b>: salta (eventuale upsell).',
+      '<b>Caparra</b> (se inclusa): tipo, importo, da quante persone, giorni/fasce.',
+      '<b>Menu digitale</b>: crea o importa categorie e piatti (con allergeni).',
+      '<b>Promozioni</b> (se incluse): sconti ricorrenti o su date/fasce.',
+      '<b>Notifiche</b>: attiva email + (sul dispositivo) le push del browser.',
+      'Servizi avanzati del piano completo: <b>Tavoli</b> (sala/mappa), <b>Ordini online</b>, <b>Gestione reputazione</b>.',
+    ],
+    notes: [{type:'say', txt:'<b>Upsell naturale:</b> "Le voci col lucchetto sono funzioni del piano superiore — quando vorrai caparra o gestione tavoli, le attiviamo in un attimo."'}]
+  },
+  {
+    n: 4, t: 'Widget online', s: 'Mettere il locale "in vetrina"', actor: 'rist',
+    items: [
+      'Copia il <b>link pubblico</b> di prenotazione: <code>dominio/nome-ristorante/booking</code>.',
+      'Per il sito: usa il <b>codice embed</b> (iframe) — vedi <b>Guida → Widget online</b>.',
+      'Genera il <b>QR code</b> da <b>Impostazioni → Vetrina Digitale</b> e stampalo (tavoli, vetrina, menu).',
+      'Pubblica il link su: <b>sito</b>, scheda <b>Google</b>, <b>Instagram/Facebook</b>, stato <b>WhatsApp</b>.',
+      '<b>TEST insieme</b> <span class="star">★</span>: aprite il link, fate una <b>prenotazione di prova</b> e verificate che arrivi in dashboard.',
+    ],
+    notes: [{type:'tip', txt:'Il test dal vivo è il momento "wow" dell’onboarding: il cliente vede la prenotazione comparire in tempo reale. Non saltarlo.'}]
+  },
+  {
+    n: 5, t: 'Formazione operativa', s: 'Come si usa ogni giorno', actor: 'rist',
+    items: [
+      '<b>Dashboard</b>: la panoramica del giorno (coperti attesi, stati).',
+      '<b>Prenotazioni</b>: stati (in attesa → confermata → arrivato / no-show) e azioni rapide.',
+      '<b>Sala</b> (piano completo): mappa, fasce di servizio, assegnazione tavoli.',
+      'Attiva le <b>notifiche push</b> sul dispositivo che userà in servizio (telefono/tablet di sala).',
+      'Mostra la <b>Guida in-app</b> (voce "Guida" nella sidebar): il cliente è autonomo per i dubbi.',
+    ],
+  },
+  {
+    n: 6, t: 'Chiusura & follow-up', s: 'Consegna e continuità (reseller)', actor: 'res',
+    items: [
+      'Consegna al cliente: <b>credenziali</b>, <b>link widget</b>, <b>QR</b>.',
+      'Fissa un <b>follow-up</b> (es. dopo 7 giorni) per dubbi e ottimizzazioni.',
+      'Annota il cliente tra i tuoi <b>clienti acquisiti</b> (<code>/reseller/clients</code>).',
+      'Ricorda: ogni cliente attivo conta per la tua <b>attivazione</b> e per le <b>commissioni</b>.',
+    ],
+  },
+];
+
+const KEY = 'evulery_onboarding_checklist';
+var state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ state = {}; }
+
+const ACTOR = { admin:['Admin','a-admin'], rist:['Ristoratore','a-rist'], res:['Reseller','a-res'] };
+
+function render(){
+  var host = document.getElementById('phases');
+  host.innerHTML = PHASES.map(function(p){
+    var rows = p.items.map(function(txt, i){
+      var id = p.n + '-' + i;
+      var done = state[id] ? ' done' : '';
+      return '<label class="item'+done+'" data-id="'+id+'"><input type="checkbox"'+(state[id]?' checked':'')+'>'
+           + '<span class="box"><i class="bi bi-check-lg"></i></span><span class="txt">'+txt+'</span></label>';
+    }).join('');
+    var notes = (p.notes||[]).map(function(nt){
+      var ic = nt.type==='tip' ? 'bi-lightbulb' : 'bi-chat-quote';
+      return '<div class="'+nt.type+'"><i class="bi '+ic+'"></i><div>'+nt.txt+'</div></div>';
+    }).join('');
+    var act = ACTOR[p.actor];
+    return '<div class="phase"><div class="phase-h"><div class="phase-n">'+p.n+'</div>'
+      + '<div class="phase-t">'+p.t+'<small>'+p.s+'</small></div>'
+      + '<span class="phase-actor '+act[1]+'">'+act[0]+'</span></div>'
+      + '<div class="phase-b">'+rows+notes+'</div></div>';
+  }).join('');
+  bind();
+  updateProgress();
+}
+function bind(){
+  document.querySelectorAll('.item').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault();
+      var id = el.getAttribute('data-id');
+      state[id] = !state[id];
+      el.classList.toggle('done', !!state[id]);
+      el.querySelector('input').checked = !!state[id];
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){}
+      updateProgress();
+    });
+  });
+}
+function updateProgress(){
+  var total = 0, done = 0;
+  PHASES.forEach(function(p){ p.items.forEach(function(_,i){ total++; if(state[p.n+'-'+i]) done++; }); });
+  document.getElementById('fill').style.width = total ? (done/total*100)+'%' : '0';
+  document.getElementById('ptxt').textContent = done + ' / ' + total + ' completati';
+}
+document.getElementById('reset').addEventListener('click', function(){
+  if(!confirm('Azzerare tutte le spunte?')) return;
+  state = {}; try { localStorage.removeItem(KEY); } catch(e){}
+  render();
+});
+document.getElementById('yr').textContent = '2026';
+render();
+</script>
+</body>
+</html>
