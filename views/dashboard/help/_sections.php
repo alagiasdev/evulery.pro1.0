@@ -256,8 +256,8 @@ HTML
         'color'       => '#0c8599',
         'category'    => 'avanzati',
         'count_label' => '1 articolo',
-        'keywords'    => 'tavoli sala mappa auto-assegnazione assegnazione combinazioni aree posti turni operativa setup riassegnazione capacita elastica min max posti minimi massimi jolly solo manuale bloccato motivo lucchetto archiviato disattivato stato confermato arrivato palette colori',
-        'read_time'   => 6,
+        'keywords'    => 'tavoli sala mappa auto-assegnazione assegnazione combinazioni aree posti turni operativa setup riassegnazione capacita elastica min max posti minimi massimi jolly solo manuale bloccato motivo lucchetto archiviato disattivato stato confermato arrivato palette colori barra servizio selettore fascia categoria pasto coperti colore riempimento indicatore ora prossima prenotazione badge durata turni avanzati permanenza',
+        'read_time'   => 7,
         'body' => <<<'HTML'
 <p>La <strong>Gestione Tavoli</strong> (piano Enterprise) ti d&agrave; una sala virtuale: definisci i tuoi tavoli, il sistema assegna in automatico chi prenota e tu vedi lo stato della sala in tempo reale.</p>
 
@@ -299,7 +299,24 @@ HTML
     <li><span style="display:inline-block;width:14px;height:14px;background:#f1f3f5;border:3px dashed #F59E0B;box-sizing:border-box;border-radius:3px;vertical-align:middle;margin-right:4px;"></span> <strong>Bordo ambra tratteggiato</strong> &mdash; tavolo <strong>jolly</strong> (solo manuale, non assegnato dal widget).</li>
     <li><span style="display:inline-block;width:14px;height:14px;background:#9ca3af;border-radius:3px;vertical-align:middle;margin-right:4px;color:#dc3545;text-align:center;line-height:14px;font-size:10px;">&#128274;</span> <strong>Grigio con lucchetto rosso</strong> &mdash; tavolo <strong>bloccato</strong>.</li>
 </ul>
-<p>La <strong>fascia oraria</strong> in alto fa scorrere la giornata: un pallino sotto un orario indica che a quell&rsquo;ora ci sono prenotazioni. Cliccando un tavolo occupato o una prenotazione nella lista si apre il <strong>popup di dettaglio</strong>, da cui vedi i contatti del cliente, cambi lo stato (Confermata, Arrivato, No-show) e sposti la prenotazione su un altro tavolo. Due tavoli uniti per lo stesso gruppo sono collegati da una barra con l&rsquo;icona catena.</p>
+<p>Cliccando un tavolo occupato o una prenotazione nella lista si apre il <strong>popup di dettaglio</strong>, da cui vedi i contatti del cliente, cambi lo stato (Confermata, Arrivato, No-show) e sposti la prenotazione su un altro tavolo. Due tavoli uniti per lo stesso gruppo sono collegati da una barra con l&rsquo;icona catena.</p>
+
+<h4>Barra del servizio: orari, coperti e riempimento</h4>
+<p>In alto nella vista operativa trovi la <strong>barra del servizio</strong>:</p>
+<ul>
+    <li><strong>Selettore servizio</strong> &mdash; scegli la fascia (Pranzo, Cena, Aperitivo&hellip;) e la barra mostra <strong>solo gli orari realmente configurati</strong> per quella fascia, con il totale dei coperti. La fascia scelta resta memorizzata anche se cambi pagina e torni in Sala.</li>
+    <li><strong>Coperti e tavoli per slot</strong> &mdash; ogni orario indica quanti coperti e quanti tavoli sono occupati in quel momento; l&rsquo;altezza della colonna &egrave; proporzionale ai coperti.</li>
+    <li><strong>Colore di riempimento</strong> &mdash; la colonna &egrave; <strong>verde</strong> quando sei tranquillo, <strong>ambra</strong> quando ti riempi (oltre il 60% della capienza) e <strong>rossa</strong> quando sei quasi pieno o pieno: capisci a colpo d&rsquo;occhio dove sei al limite.</li>
+    <li><strong>Indicatore &ldquo;ora&rdquo;</strong> &mdash; una linea arancione segna l&rsquo;orario attuale, cos&igrave; sai sempre a che punto del servizio sei.</li>
+    <li>Cliccando un orario, la mappa mostra lo stato dei tavoli a quell&rsquo;ora.</li>
+</ul>
+<p>All&rsquo;apertura la Sala si posiziona da sola sull&rsquo;orario giusto: l&rsquo;ora corrente se sei in servizio, altrimenti il primo orario con prenotazioni.</p>
+
+<h4>Prossima prenotazione sul tavolo</h4>
+<p>Su un tavolo che ha un turno successivo compare un <strong>badge</strong> con cognome e numero di persone della prossima prenotazione (es. &ldquo;ROSSI 4p&rdquo;), pi&ugrave; un &ldquo;+N&rdquo; se ci sono altri turni dopo. Cos&igrave; vedi i turni della serata senza cambiare orario; cliccando il badge apri direttamente quella prenotazione.</p>
+
+<h4>Durata e turni per fascia</h4>
+<p>Con i <strong>turni avanzati</strong> (piani Professional ed Enterprise) imposti <strong>quanto a lungo resta occupato un tavolo per ogni fascia</strong> &mdash; per esempio 75 minuti all&rsquo;aperitivo e 120 alla cena, con la possibilit&agrave; di accorciare o allungare in giorni specifici (es. weekend). Si configura in <em>Impostazioni &rarr; Categorie Pasto</em>. La durata determina ogni quanto un tavolo torna libero per il turno successivo ed &egrave; mostrata anche al cliente al momento della prenotazione.</p>
 
 <div class="hg-tip"><strong><i class="bi bi-lightbulb me-1"></i>Consiglio:</strong> nella scheda di ogni prenotazione puoi sempre cambiare il tavolo a mano, anche con l&rsquo;auto-assegnazione attiva. E se in <em>Impostazioni &rarr; Tavoli</em> compare l&rsquo;avviso giallo, significa che in certi orari accetti pi&ugrave; coperti di quanti posti hanno i tuoi tavoli: allinea i coperti o aggiungi tavoli.</div>
 HTML
@@ -485,7 +502,7 @@ HTML
         'color'       => '#D81B60',
         'category'    => 'avanzati',
         'count_label' => '1 articolo',
-        'keywords'    => 'notifiche email campanella push browser chrome firefox edge',
+        'keywords'    => 'notifiche email campanella push browser chrome firefox edge dispositivi collegati telefono tablet rimuovi attiva',
         'read_time'   => 2,
         'body' => <<<'HTML'
 <p>Evulery ti avvisa su 3 canali:</p>
@@ -494,7 +511,15 @@ HTML
     <li><strong>Campanella in dashboard</strong>: notifica visiva in tempo reale quando la dashboard &egrave; aperta</li>
     <li><strong>Push browser</strong>: notifica del sistema operativo anche con dashboard chiusa (Chrome, Firefox, Edge)</li>
 </ul>
-<p>Per attivare le push, vai in <em>Notifiche</em> e clicca su <strong>Attiva push</strong>.</p>
+<p>Per attivare le push, vai in <em>Impostazioni &rarr; Notifiche</em> e clicca su <strong>Attiva</strong>. Le push vanno attivate <strong>su ogni dispositivo</strong> da cui vuoi ricevere gli avvisi (es. il telefono in cucina e il tablet di sala): apri la pagina da quel dispositivo e premi Attiva.</p>
+
+<h4>Dispositivi collegati</h4>
+<p>Sempre in <em>Impostazioni &rarr; Notifiche</em> trovi l&rsquo;elenco <strong>Dispositivi collegati</strong>: per ognuno vedi il browser, il sistema operativo e quando &egrave; stato collegato. Quello che stai usando ora &egrave; segnato con &ldquo;Questo dispositivo&rdquo;.</p>
+<ul>
+    <li>Per smettere di ricevere le notifiche su un dispositivo, usa il pulsante <strong>&times; Rimuovi</strong> accanto ad esso.</li>
+    <li>Se rimuovi un dispositivo ancora in uso, alla riapertura della dashboard potrebbe ricollegarsi da solo: per spegnerle in modo definitivo, usa &ldquo;Rimuovi&rdquo; <strong>da quel dispositivo</strong>.</li>
+</ul>
+<div class="hg-info"><strong><i class="bi bi-info-circle me-1"></i>Su iPhone:</strong> le push del browser funzionano solo aggiungendo Evulery alla schermata Home (PWA) con iOS 16.4 o superiore.</div>
 HTML
     ],
 
