@@ -159,7 +159,7 @@ class Tenant
             'plan', 'plan_id', 'plan_price', 'deposit_enabled', 'deposit_amount', 'deposit_mode', 'deposit_min_party_size',
             'deposit_days',
             'table_auto_assign', 'table_turnover_buffer',
-            'cancellation_policy', 'booking_instructions', 'confirmation_mode',
+            'cancellation_policy', 'booking_instructions', 'confirmation_mode', 'manual_approval_min_party_size',
             'table_duration', 'time_step',
             'booking_advance_min', 'booking_advance_max',
             'segment_occasionale', 'segment_abituale', 'segment_vip',

@@ -177,8 +177,18 @@ class ReservationApiController
             $depositAmount = null;
         }
 
-        // Determine initial status: pending if deposit required OR manual confirmation mode
+        // Approvazione manuale obbligatoria per gruppi numerosi: anche con
+        // accettazione automatica attiva, da N coperti in su la prenotazione
+        // resta 'pending' finché il ristoratore non la conferma. Soglia NULL/0
+        // = disattivata. (Stesso pattern di deposit_min_party_size.)
+        $approvalThreshold = (int)($tenant['manual_approval_min_party_size'] ?? 0);
+        $manualApprovalRequired = $approvalThreshold > 0 && (int)$data['party_size'] >= $approvalThreshold;
+
+        // Determine initial status: pending se caparra OR soglia approvazione OR
+        // modalità conferma manuale del locale.
         if ($depositRequired) {
+            $status = 'pending';
+        } elseif ($manualApprovalRequired) {
             $status = 'pending';
         } elseif (($tenant['confirmation_mode'] ?? 'auto') === 'manual') {
             $status = 'pending';
@@ -250,6 +260,13 @@ class ReservationApiController
             $full = (new Reservation())->findWithCustomer($reservationId);
             if ($full) {
                 MailService::sendReservationPending($full, $tenant);
+            }
+        } else {
+            // Pending per approvazione manuale (soglia gruppi) o modalità conferma
+            // manuale del locale → email "richiesta ricevuta, in attesa di conferma".
+            $full = (new Reservation())->findWithCustomer($reservationId);
+            if ($full) {
+                MailService::sendReservationAwaitingApproval($full, $tenant);
             }
         }
 

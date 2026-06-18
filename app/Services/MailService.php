@@ -492,6 +492,72 @@ class MailService
     }
 
     /**
+     * Email al cliente quando la prenotazione resta in attesa di APPROVAZIONE
+     * manuale del ristoratore (gruppi numerosi sopra la soglia configurata, o
+     * modalità conferma manuale del locale). Nessun pagamento richiesto:
+     * comunica che la richiesta è stata ricevuta e sarà confermata a breve.
+     */
+    public static function sendReservationAwaitingApproval(array $reservation, array $tenant): bool
+    {
+        $customerEmail = $reservation['email'] ?? '';
+        if (!$customerEmail) {
+            return false;
+        }
+
+        $firstName      = e($reservation['first_name'] ?? '');
+        $partySize      = (int)($reservation['party_size'] ?? 0);
+        $personeLabel   = $partySize === 1 ? 'persona' : 'persone';
+        $date           = $reservation['reservation_date'] ?? '';
+        $time           = substr($reservation['reservation_time'] ?? '', 0, 5);
+        $dateFormatted  = self::formatDateItalian($date);
+        $restaurantName = e($tenant['name'] ?? '');
+        $bookingNumber  = (int)($reservation['booking_number'] ?? 0);
+        $year           = date('Y');
+        $subjectLine    = "Richiesta ricevuta - {$restaurantName}";
+
+        $html = <<<HTML
+        <!DOCTYPE html>
+        <html lang="it">
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+        <body style="margin:0;padding:0;background:#f4f6f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+        <div style="max-width:560px;margin:0 auto;padding:24px 16px;">
+            <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+                <div style="background:#00844A;padding:26px 28px;text-align:center;">
+                    <div style="font-size:34px;line-height:1;">&#9203;</div>
+                    <div style="color:#fff;font-size:19px;font-weight:800;margin-top:8px;">Richiesta ricevuta</div>
+                    <div style="color:#d6efe0;font-size:13.5px;margin-top:4px;">Ciao {$firstName}, la confermiamo a breve</div>
+                </div>
+                <div style="padding:24px 28px;">
+                    <p style="font-size:14.5px;color:#1a1d23;line-height:1.6;margin:0 0 16px;">
+                        Abbiamo ricevuto la tua richiesta di prenotazione presso <strong>{$restaurantName}</strong>.
+                        Per i gruppi numerosi la conferma &egrave; <strong>manuale</strong>: riceverai a breve
+                        un'email di conferma definitiva. Per ora la prenotazione &egrave; <strong>in attesa</strong>.
+                    </p>
+                    <div style="background:#f8fafb;border:1px solid #eceff2;border-radius:10px;padding:14px 16px;">
+                        <table style="width:100%;font-size:14px;color:#1a1d23;border-collapse:collapse;">
+                            <tr><td style="padding:5px 0;color:#6c757d;">Data</td><td style="padding:5px 0;text-align:right;font-weight:700;">{$dateFormatted}</td></tr>
+                            <tr><td style="padding:5px 0;color:#6c757d;">Ora</td><td style="padding:5px 0;text-align:right;font-weight:700;">{$time}</td></tr>
+                            <tr><td style="padding:5px 0;color:#6c757d;">Persone</td><td style="padding:5px 0;text-align:right;font-weight:700;">{$partySize} {$personeLabel}</td></tr>
+                            <tr><td style="padding:5px 0;color:#6c757d;">N. prenotazione</td><td style="padding:5px 0;text-align:right;font-weight:700;">#{$bookingNumber}</td></tr>
+                        </table>
+                    </div>
+                    <p style="font-size:12.5px;color:#8893a1;line-height:1.6;margin:16px 0 0;">
+                        Se hai necessit&agrave; particolari, rispondi pure a questa email: arriver&agrave; direttamente al ristorante.
+                    </p>
+                </div>
+            </div>
+            <div style="text-align:center;color:#9aa3aa;font-size:11.5px;margin-top:16px;">&copy; {$year} {$restaurantName} &middot; powered by Evulery</div>
+        </div>
+        </body>
+        </html>
+        HTML;
+
+        $service = new self();
+        $replyTo = $tenant['email'] ?? null;
+        return $service->send($customerEmail, $subjectLine, $html, $tenant['name'] ?? null, $replyTo);
+    }
+
+    /**
      * Send reservation reminder email.
      * @param string $type '24h' or '2h'
      */

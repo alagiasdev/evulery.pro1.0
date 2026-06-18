@@ -121,6 +121,20 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                                 <strong>Manuale</strong>: restano "in attesa" finché non le approvi dalla dashboard.
                             </div>
                         </div>
+                        <div class="col-12 field-row">
+                            <label class="field-label">Approvazione manuale per gruppi numerosi</label>
+                            <div style="margin-top:.35rem;">
+                                <select name="manual_approval_min_party_size" class="form-select form-select-sm" style="max-width:220px;">
+                                    <option value="" <?= empty($tenant['manual_approval_min_party_size']) ? 'selected' : '' ?>>Nessuna (segui modalità sopra)</option>
+                                    <?php for ($i = 2; $i <= 20; $i++): ?>
+                                    <option value="<?= $i ?>" <?= ((int)($tenant['manual_approval_min_party_size'] ?? 0)) === $i ? 'selected' : '' ?>>Da <?= $i ?> persone in su</option>
+                                    <?php endfor; ?>
+                                </select>
+                            </div>
+                            <div class="field-hint">
+                                Anche con conferma automatica, le prenotazioni dal widget con coperti pari o superiori alla soglia restano <strong>in attesa di approvazione</strong>. Utile per i gruppi numerosi. Il cliente riceve un'email che avvisa che la conferma arriverà a breve.
+                            </div>
+                        </div>
                         <div class="col-md-6 field-row">
                             <label class="field-label">Durata tavolo</label>
                             <div class="input-suffix">

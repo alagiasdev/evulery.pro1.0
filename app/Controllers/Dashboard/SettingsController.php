@@ -96,6 +96,11 @@ class SettingsController
         // Validate confirmation_mode
         $confirmationMode = ($data['confirmation_mode'] ?? 'auto') === 'manual' ? 'manual' : 'auto';
 
+        // Soglia approvazione manuale per gruppi numerosi (NULL = disattivata).
+        // Stesso range della caparra (2-20). Validazione difensiva.
+        $approvalMin = !empty($data['manual_approval_min_party_size']) ? (int)$data['manual_approval_min_party_size'] : null;
+        if ($approvalMin !== null && ($approvalMin < 2 || $approvalMin > 20)) $approvalMin = null;
+
         // Validate website_url: opzionale. Se valorizzato deve essere un URL
         // valido; se manca lo schema lo aggiungiamo (https://) per default,
         // cosi' il ristoratore puo' digitare "miosito.it" senza pensieri.
@@ -121,6 +126,7 @@ class SettingsController
             'cancellation_policy'  => $data['cancellation_policy'] ?? null,
             'booking_instructions' => $data['booking_instructions'] ?? null,
             'confirmation_mode'    => $confirmationMode,
+            'manual_approval_min_party_size' => $approvalMin,
             'table_duration'       => (int)($data['table_duration'] ?? 90),
             'time_step'            => (int)($data['time_step'] ?? 30),
             'segment_occasionale'  => $segOcc,
