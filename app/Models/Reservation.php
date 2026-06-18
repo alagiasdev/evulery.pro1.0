@@ -296,6 +296,31 @@ class Reservation
         return $stmt->execute(['id' => $id]);
     }
 
+    /**
+     * Attiva la caparra A POSTERIORI su una prenotazione (richiesta manuale del
+     * ristoratore in fase di accettazione, sotto la soglia automatica). Setta
+     * importo + flag manuale e lascia la prenotazione "pending" finché il cliente
+     * non paga. Per il tipo 'guarantee' usa guarantee_status invece di deposit_required.
+     */
+    public function activateManualDeposit(int $id, float $amount, bool $isGuarantee): bool
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE reservations
+             SET deposit_required = :req,
+                 deposit_amount = :amt,
+                 deposit_manual_request = 1,
+                 guarantee_status = :gstatus,
+                 status = "pending"
+             WHERE id = :id'
+        );
+        return $stmt->execute([
+            'req'     => $isGuarantee ? 0 : 1,
+            'amt'     => $amount,
+            'gstatus' => $isGuarantee ? 'pending' : 'none',
+            'id'      => $id,
+        ]);
+    }
+
     public function updateNotes(int $id, string $notes): bool
     {
         $stmt = $this->db->prepare('UPDATE reservations SET internal_notes = :notes WHERE id = :id');

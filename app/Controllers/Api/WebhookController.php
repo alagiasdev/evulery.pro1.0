@@ -103,7 +103,11 @@ class WebhookController
 
                 if ($reservationId) {
                     $reservation = $reservationModel->findById((int)$reservationId);
-                    if ($reservation && $reservation['status'] === 'pending' && !$reservation['deposit_paid']) {
+                    // Le caparre richieste MANUALMENTE dal ristoratore (su prenotazioni
+                    // gia' accettate) non si auto-cancellano se il cliente tarda a pagare:
+                    // la decisione resta al ristoratore.
+                    if ($reservation && $reservation['status'] === 'pending' && !$reservation['deposit_paid']
+                        && empty($reservation['deposit_manual_request'])) {
                         $isGuarantee = ($reservation['guarantee_status'] ?? 'none') === 'pending';
                         $reservationModel->updateStatus((int)$reservationId, 'cancelled', 'system');
                         $logModel->create(

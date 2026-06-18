@@ -484,6 +484,70 @@ class ReservationsController
     }
 
     /**
+     * Accetta una prenotazione "in attesa" RICHIEDENDO la caparra, anche se i
+     * coperti non la attiverebbero in automatico (gruppo medio sotto la soglia).
+     * Attiva la caparra sulla prenotazione (importo modificabile) e invia al
+     * cliente l'email col link per completare (paga / registra carta / bonifico),
+     * riusando lo stesso flusso del widget (booking/complete). La prenotazione
+     * resta "in attesa" finché il cliente non completa.
+     */
+    public function requestDeposit(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $reservationModel = new Reservation();
+        $reservation = $reservationModel->findById($id);
+
+        if (!$reservation || (int)$reservation['tenant_id'] !== (int)Auth::tenantId()) {
+            flash('danger', 'Prenotazione non trovata.');
+            Response::redirect(url('dashboard/reservations'));
+            return;
+        }
+
+        $tenant = TenantResolver::current();
+
+        // Servizio caparra attivo nel piano + configurazione presente
+        if (!tenant_can('deposit') || empty($tenant['deposit_type'])) {
+            flash('danger', 'La caparra non è disponibile o non è configurata.');
+            Response::redirect(url("dashboard/reservations/{$id}"));
+            return;
+        }
+
+        // Solo su prenotazioni "in attesa" che non hanno già una caparra/garanzia
+        if ($reservation['status'] !== 'pending' || $reservation['deposit_required'] || ($reservation['guarantee_status'] ?? 'none') !== 'none') {
+            flash('info', 'La caparra può essere richiesta solo su una prenotazione in attesa che non ne ha già una.');
+            Response::redirect(url("dashboard/reservations/{$id}"));
+            return;
+        }
+
+        // Importo: quello inserito dal ristoratore (modificabile) o il default da config
+        $base    = (float)($tenant['deposit_amount'] ?? 0);
+        $mode    = $tenant['deposit_mode'] ?? 'per_table';
+        $default = $mode === 'per_person' ? $base * (int)$reservation['party_size'] : $base;
+        $amount  = (float)str_replace(',', '.', (string)$request->input('deposit_amount', ''));
+        if ($amount <= 0) $amount = $default;
+        if ($amount <= 0) {
+            flash('danger', 'Imposta un importo caparra valido (nel campo o nelle impostazioni).');
+            Response::redirect(url("dashboard/reservations/{$id}"));
+            return;
+        }
+
+        $isGuarantee = ($tenant['deposit_type'] === 'guarantee');
+        $reservationModel->activateManualDeposit($id, $amount, $isGuarantee);
+
+        // Email al cliente col link per completare (stesso flusso del widget)
+        $full = $reservationModel->findWithCustomer($id);
+        if ($full) {
+            MailService::sendReservationPending($full, $tenant);
+        }
+
+        (new ReservationLog())->create($id, $reservation['status'], 'pending', Auth::id(), 'Caparra richiesta manualmente (€' . number_format($amount, 2, ',', '.') . ')');
+        AuditLog::log(AuditLog::RESERVATION_UPDATED, "Caparra richiesta manualmente (#{$id})", Auth::id(), (int)$reservation['tenant_id']);
+
+        flash('success', 'Caparra richiesta: al cliente è stata inviata l\'email per completare.');
+        Response::redirect(url("dashboard/reservations/{$id}"));
+    }
+
+    /**
      * Addebita la penale no-show sulla carta a garanzia salvata dal cliente.
      * Crea un PaymentIntent off-session con il payment method memorizzato.
      */
