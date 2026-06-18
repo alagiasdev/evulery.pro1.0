@@ -267,30 +267,6 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
             <input type="hidden" name="status" value="confirmed">
             <button type="submit" class="btn-action btn-act-confirm"><i class="bi bi-check-circle"></i> Conferma</button>
         </form>
-        <?php
-            // Accetta richiedendo la caparra (anche se i coperti non la attiverebbero):
-            // disponibile solo se il piano ha la caparra, è configurata e non è già attiva.
-            $canReqDeposit = tenant_can('deposit') && !empty($tenant['deposit_type'])
-                && !$reservation['deposit_required'] && ($reservation['guarantee_status'] ?? 'none') === 'none';
-            if ($canReqDeposit):
-                $depBase    = (float)($tenant['deposit_amount'] ?? 0);
-                $depMode    = $tenant['deposit_mode'] ?? 'per_table';
-                $depDefault = $depMode === 'per_person' ? $depBase * (int)$reservation['party_size'] : $depBase;
-                $depIsGuar  = ($tenant['deposit_type'] === 'guarantee');
-                $depLabel   = $depIsGuar ? 'Accetta e richiedi carta a garanzia' : 'Accetta e richiedi caparra';
-                $depConfirm = $depIsGuar
-                    ? 'Richiedere la carta a garanzia? Il cliente riceverà un\'email per registrarla; la prenotazione resta in attesa.'
-                    : 'Richiedere la caparra al cliente? Riceverà un\'email per pagarla; la prenotazione resta in attesa finché non completa.';
-        ?>
-        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/request-deposit") ?>" class="d-inline" data-confirm="<?= e($depConfirm) ?>" style="display:inline-flex;align-items:center;gap:.3rem;">
-            <?= csrf_field() ?>
-            <span style="display:inline-flex;align-items:center;border:1px solid #C8E6C9;border-radius:6px;overflow:hidden;height:34px;">
-                <span style="background:#E8F5E9;color:#2E7D32;padding:0 .5rem;font-size:.85rem;line-height:34px;">€</span>
-                <input type="number" step="0.01" min="1" name="deposit_amount" value="<?= $depDefault > 0 ? number_format($depDefault, 2, '.', '') : '' ?>" placeholder="importo" style="width:78px;border:none;outline:none;padding:0 .4rem;font-size:.85rem;height:32px;">
-            </span>
-            <button type="submit" class="btn-action" style="background:#E8F5E9;color:#2E7D32;border:1px solid #C8E6C9;"><i class="bi bi-cash-coin"></i> <?= e($depLabel) ?></button>
-        </form>
-        <?php endif; ?>
         <?php endif; ?>
 
         <?php if ($reservation['deposit_required'] && !$reservation['deposit_paid']): ?>
@@ -334,6 +310,37 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
         </form>
         <?php endif; ?>
     </div>
+
+    <?php
+        // Azione "Accetta e richiedi caparra" in riga propria sotto la barra:
+        // ha un campo importo, starebbe stretta tra i bottoni di stato. Solo su
+        // prenotazione in attesa, con caparra nel piano + configurata + non già attiva.
+        $canReqDeposit = $reservation['status'] === 'pending' && tenant_can('deposit')
+            && !empty($tenant['deposit_type'])
+            && !$reservation['deposit_required'] && ($reservation['guarantee_status'] ?? 'none') === 'none';
+        if ($canReqDeposit):
+            $depBase    = (float)($tenant['deposit_amount'] ?? 0);
+            $depMode    = $tenant['deposit_mode'] ?? 'per_table';
+            $depDefault = $depMode === 'per_person' ? $depBase * (int)$reservation['party_size'] : $depBase;
+            $depIsGuar  = ($tenant['deposit_type'] === 'guarantee');
+            $depLabel   = $depIsGuar ? 'Accetta e richiedi carta' : 'Accetta e richiedi caparra';
+            $depIntro   = $depIsGuar ? 'Richiedi la carta a garanzia prima di confermare' : 'Richiedi una caparra prima di confermare';
+            $depConfirm = $depIsGuar
+                ? 'Richiedere la carta a garanzia? Il cliente riceverà un\'email per registrarla; la prenotazione resta in attesa.'
+                : 'Richiedere la caparra al cliente? Riceverà un\'email per pagarla; la prenotazione resta in attesa finché non completa.';
+    ?>
+    <div style="margin-top:.75rem;padding:.7rem .9rem;background:#F1F8F4;border:1px solid #D7EBDD;border-radius:10px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;">
+        <span style="font-size:.85rem;color:#2E7D32;font-weight:600;"><i class="bi bi-cash-coin me-1"></i><?= $depIntro ?></span>
+        <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/request-deposit") ?>" data-confirm="<?= e($depConfirm) ?>" style="display:inline-flex;align-items:center;gap:.4rem;margin-left:auto;flex-wrap:wrap;">
+            <?= csrf_field() ?>
+            <span style="display:inline-flex;align-items:center;border:1px solid #C8E6C9;border-radius:6px;overflow:hidden;height:36px;background:#fff;">
+                <span style="background:#E8F5E9;color:#2E7D32;padding:0 .55rem;font-size:.85rem;line-height:36px;">€</span>
+                <input type="number" step="0.01" min="1" name="deposit_amount" value="<?= $depDefault > 0 ? number_format($depDefault, 2, '.', '') : '' ?>" placeholder="importo" style="width:84px;border:none;outline:none;padding:0 .4rem;font-size:.9rem;height:34px;">
+            </span>
+            <button type="submit" class="btn-action" style="background:#2E7D32;color:#fff;border:1px solid #2E7D32;"><?= e($depLabel) ?></button>
+        </form>
+    </div>
+    <?php endif; ?>
     <?php endif; ?>
 
     <?php if ($reservation['status'] === 'cancelled' && $reservation['deposit_required'] && $reservation['deposit_paid']): ?>
