@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caparra gruppi — finestra scadenza + email (wireframe)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{ --brand:#00844A; --brand-d:#006b3c; --ink:#1a1d23; --muted:#6c757d; --line:#eceff2; --amber:#E65100; }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:15px;line-height:1.55}
+  .wrap{max-width:1040px;margin:0 auto;padding:26px 20px 90px}
+  .brandbar{height:5px;background:linear-gradient(90deg,var(--brand),#5cbf8c);border-radius:6px;margin-bottom:18px}
+  h1{font-size:1.3rem;margin:0 0 4px}
+  .sub{color:var(--muted);margin:0 0 22px;font-size:.9rem}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .panel-h{padding:12px 16px;border-bottom:1px solid var(--line);font-weight:800;font-size:.92rem;display:flex;align-items:center;gap:8px;background:#fbfdfc}
+  .panel-h .tag{font-size:.68rem;font-weight:700;background:#eef3f0;color:var(--brand-d);border-radius:20px;padding:2px 9px;margin-left:auto}
+  .panel-b{padding:18px}
+
+  /* ===== Impostazione (mock sezione caparra) ===== */
+  .field-label{font-size:.82rem;font-weight:700;color:#374151;display:block;margin-bottom:.35rem}
+  .form-select{width:100%;max-width:280px;padding:.5rem .7rem;border:1.5px solid #d4dade;border-radius:8px;font-size:.9rem;background:#fff;color:var(--ink)}
+  .field-hint{font-size:.78rem;color:var(--muted);margin-top:.5rem;line-height:1.5}
+  .ctx{background:#f8fafb;border:1px solid #eceff2;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:.82rem;color:#5b6470}
+  .ctx b{color:var(--ink)}
+  .note-box{display:flex;gap:9px;background:#fff8ec;border:1px solid #f0d9a8;border-radius:9px;padding:10px 13px;margin-top:14px;font-size:.82rem;color:#6b5210}
+  .note-box i{color:var(--amber);margin-top:1px}
+  .note-box b{color:#5c4400}
+
+  /* ===== Email preview ===== */
+  .mail-frame{background:#eef0f2;padding:16px;border-radius:10px}
+  .mail{max-width:420px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+  .mail-subject{font-size:.78rem;color:var(--muted);padding:0 0 10px;text-align:center}
+  .mail-subject b{color:var(--ink)}
+  .mail-head{background:#6b7280;padding:24px 26px;text-align:center}
+  .mail-head .ic{font-size:32px;line-height:1;color:#fff}
+  .mail-head .t{color:#fff;font-size:18px;font-weight:800;margin-top:8px}
+  .mail-head .s{color:#e5e7eb;font-size:13px;margin-top:4px}
+  .mail-body{padding:22px 26px}
+  .mail-body p{font-size:14px;color:#1a1d23;line-height:1.6;margin:0 0 14px}
+  .mail-det{background:#f8fafb;border:1px solid #eceff2;border-radius:10px;padding:12px 14px;margin-bottom:16px}
+  .mail-det table{width:100%;font-size:13.5px;border-collapse:collapse}
+  .mail-det td{padding:4px 0}
+  .mail-det td.k{color:var(--muted)}
+  .mail-det td.v{text-align:right;font-weight:700;text-decoration:line-through;color:#9aa3aa}
+  .mail-cta{text-align:center;margin:6px 0 4px}
+  .mail-cta a{display:inline-block;background:var(--brand);color:#fff;padding:12px 28px;border-radius:9px;font-size:14px;font-weight:700;text-decoration:none}
+  .mail-foot{text-align:center;color:#9aa3aa;font-size:11px;padding:14px}
+
+  .opt-list{font-size:.82rem;color:var(--muted);margin:10px 0 0;padding-left:18px}
+  .opt-list li{margin-bottom:3px}
+  .foot{margin-top:24px;font-size:.78rem;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar"></div>
+  <h1><i class="bi bi-cash-coin" style="color:var(--brand)"></i> Caparra gruppi — scadenza configurabile</h1>
+  <p class="sub">Vale <b>solo</b> per la caparra richiesta manualmente sui gruppi (Stripe / carta a garanzia). Il widget pubblico resta a 30 min fissi; bonifico e link non scadono.</p>
+
+  <div class="grid">
+
+    <!-- IMPOSTAZIONE -->
+    <div class="panel">
+      <div class="panel-h"><i class="bi bi-sliders" style="color:var(--brand)"></i> Impostazioni → Caparra <span class="tag">nuovo campo</span></div>
+      <div class="panel-b">
+        <div class="ctx">Questo campo compare nella sezione <b>Caparra</b>, sotto le opzioni già esistenti (tipo caparra, importo, soglia coperti…).</div>
+
+        <label class="field-label">Tempo per completare il pagamento (gruppi)</label>
+        <select class="form-select">
+          <option>Nessuna scadenza (gestione manuale)</option>
+          <option>1 ora</option>
+          <option selected>2 ore</option>
+          <option>3 ore</option>
+          <option>6 ore</option>
+          <option>12 ore</option>
+          <option>24 ore</option>
+        </select>
+        <div class="field-hint">
+          Quando accetti un gruppo richiedendo la caparra, il cliente ha questo tempo per pagare (Stripe) o registrare la carta. Scaduto il tempo, la prenotazione si annulla e il tavolo si libera.
+        </div>
+
+        <ul class="opt-list">
+          <li><b>Nessuna scadenza</b> → la prenotazione resta in attesa finché non la gestisci tu.</li>
+          <li>Le altre opzioni → annullamento automatico allo scadere.</li>
+        </ul>
+
+        <div class="note-box">
+          <i class="bi bi-info-circle"></i>
+          <div><b>Bonifico e link</b> non scadono mai: la conferma del pagamento la fai tu, quindi nessun rischio di annullare un cliente che ha già pagato. La scadenza vale solo per <b>Stripe</b> e <b>carta a garanzia</b> (conferma automatica).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMAIL SCADENZA -->
+    <div class="panel">
+      <div class="panel-h"><i class="bi bi-envelope" style="color:var(--brand)"></i> Email al cliente alla scadenza <span class="tag">nuova email</span></div>
+      <div class="panel-b">
+        <div class="mail-frame">
+          <div class="mail-subject">Oggetto: <b>Prenotazione annullata — Trattoria Da Mario</b></div>
+          <div class="mail">
+            <div class="mail-head">
+              <div class="ic">&#9203;</div>
+              <div class="t">Tempo scaduto</div>
+              <div class="s">Ciao Stefano, la prenotazione è stata annullata</div>
+            </div>
+            <div class="mail-body">
+              <p>Non abbiamo ricevuto la caparra entro il tempo previsto, quindi la richiesta di prenotazione presso <b>Trattoria Da Mario</b> è stata <b>annullata</b> e il tavolo è di nuovo disponibile per altri clienti.</p>
+              <div class="mail-det">
+                <table>
+                  <tr><td class="k">Data</td><td class="v">Sab 21 Giugno 2026</td></tr>
+                  <tr><td class="k">Ora</td><td class="v">20:30</td></tr>
+                  <tr><td class="k">Persone</td><td class="v">6 persone</td></tr>
+                  <tr><td class="k">N. prenotazione</td><td class="v">#1284</td></tr>
+                </table>
+              </div>
+              <p style="margin-bottom:16px;">Vuoi ancora venire da noi? Puoi <b>prenotare di nuovo</b> in pochi secondi:</p>
+              <div class="mail-cta"><a href="#">Prenota di nuovo</a></div>
+            </div>
+            <div class="mail-foot">&copy; 2026 Trattoria Da Mario &middot; powered by Evulery</div>
+          </div>
+        </div>
+        <div class="field-hint" style="margin-top:14px;">
+          Tono cortese e non colpevolizzante: comunica l'annullamento e invita a riprenotare. La trovi comunque tra le prenotazioni <b>annullate</b> in dashboard.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="foot">Wireframe — caparra gruppi: finestra di scadenza + email cliente · Evulery</p>
+</div>
+</body>
+</html>

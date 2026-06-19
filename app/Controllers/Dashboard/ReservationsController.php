@@ -43,11 +43,15 @@ class ReservationsController
             $searchResults = (new Reservation())->searchGlobal($tenantId, $searchQuery);
         }
 
+        // I contatori KPI si calcolano sul TOTALE del giorno (tutte le
+        // prenotazioni), così restano cliccabili anche con un filtro stato
+        // attivo. Il filtro $status è applicato alla LISTA lato view, non alla
+        // query: passa solo $source/date alla query.
         $resModel = new Reservation();
         if ($upcoming) {
-            $reservations = $resModel->findUpcoming($tenantId, 15, $status, $source);
+            $reservations = $resModel->findUpcoming($tenantId, 15, null, $source);
         } else {
-            $reservations = $resModel->findByTenantAndDate($tenantId, $date, $status, $dateTo, $source);
+            $reservations = $resModel->findByTenantAndDate($tenantId, $date, null, $dateTo, $source);
         }
 
         $isRange = !$upcoming && $dateTo && $dateTo !== $date;

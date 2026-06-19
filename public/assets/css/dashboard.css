@@ -378,6 +378,31 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 .stat-pill .sp-num { font-size: .9rem; font-weight: 700; }
 .stat-pill .sp-label { font-size: .7rem; color: #6c757d; }
 
+/* Prenotazioni: contatori cliccabili come filtro stato (colori della pagina).
+   I pill-link sono bianchi; quando il filtro è attivo si riempiono del colore
+   dello stato. "Coperti attesi" è una metrica → sfondo tenue, non cliccabile. */
+a.stat-pill { text-decoration: none; color: inherit; border: 1.5px solid #eef0f2; transition: background .12s, border-color .12s; cursor: pointer; }
+a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
+.stat-pill.kpi-total     .sp-dot { background: #0dcaf0; } .stat-pill.kpi-total     .sp-num { color: #0dcaf0; }
+.stat-pill.kpi-confirmed .sp-dot { background: #198754; } .stat-pill.kpi-confirmed .sp-num { color: #198754; }
+.stat-pill.kpi-pending   .sp-dot { background: #ffc107; } .stat-pill.kpi-pending   .sp-num { color: #b8860b; }
+.stat-pill.kpi-arrived   .sp-dot { background: #0EA5E9; } .stat-pill.kpi-arrived   .sp-num { color: #0EA5E9; }
+.stat-pill.kpi-cancelled .sp-dot { background: #dc3545; } .stat-pill.kpi-cancelled .sp-num { color: #dc3545; }
+/* filtro attivo: sfondo pieno del colore dello stato */
+.stat-pill.is-active { color: #fff; }
+.stat-pill.is-active .sp-num, .stat-pill.is-active .sp-label { color: #fff; }
+.stat-pill.is-active .sp-dot { background: #fff !important; }
+.stat-pill.kpi-total.is-active     { background: #0dcaf0; border-color: #0dcaf0; }
+.stat-pill.kpi-confirmed.is-active { background: #198754; border-color: #198754; }
+.stat-pill.kpi-pending.is-active   { background: #E6A100; border-color: #E6A100; }
+.stat-pill.kpi-arrived.is-active   { background: #0EA5E9; border-color: #0EA5E9; }
+.stat-pill.kpi-cancelled.is-active { background: #dc3545; border-color: #dc3545; }
+/* Coperti attesi: metrica con sfondo pieno tenue (non cliccabile) */
+.stat-pill.kpi-metric { background: #eef4ff; border: 1.5px solid #cfe0fb; box-shadow: none; }
+.stat-pill.kpi-metric .sp-dot { background: #0d6efd; }
+.stat-pill.kpi-metric .sp-num { color: #0d6efd; }
+.stat-pill.kpi-metric .sp-label { color: #3a6ea5; }
+
 /* Dettaglio comunicazione: messaggio + statistiche affiancati (desktop),
    impilati su mobile (riga 2 statistiche a piena larghezza). */
 .comm-detail-grid { display: grid; grid-template-columns: 1fr 300px; gap: 1.25rem; align-items: start; }

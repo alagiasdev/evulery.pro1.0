@@ -36,20 +36,29 @@ function getSegmentBadge(int $bookings): string {
     return '';
 }
 
-// Compute stats from reservations
+// Stats SUL TOTALE del giorno (tutte le prenotazioni): così i contatori
+// restano veri e cliccabili anche con un filtro stato attivo. La lista
+// (pranzo/cena) invece viene filtrata per lo stato selezionato ($statusFilter).
+$statusFilter = (string)($status ?? '');
 $totalCount = count($reservations);
 $confirmedCount = 0;
 $pendingCount = 0;
+$arrivedCount = 0;
 $cancelledCount = 0;
 $totalCovers = 0;
 $pranzo = [];
 $cena = [];
 
 foreach ($reservations as $r) {
+    // contatori: sempre su tutte
     if (!in_array($r['status'], ['cancelled', 'noshow'])) $totalCovers += (int)$r['party_size'];
     if ($r['status'] === 'confirmed') $confirmedCount++;
-    if ($r['status'] === 'pending') $pendingCount++;
-    if ($r['status'] === 'cancelled') $cancelledCount++;
+    elseif ($r['status'] === 'pending') $pendingCount++;
+    elseif ($r['status'] === 'arrived') $arrivedCount++;
+    elseif ($r['status'] === 'cancelled') $cancelledCount++;
+
+    // lista: salta le righe che non corrispondono al filtro stato attivo
+    if ($statusFilter !== '' && $r['status'] !== $statusFilter) continue;
 
     $hour = (int)substr($r['reservation_time'], 0, 2);
     if ($hour < 16) {
@@ -97,6 +106,21 @@ $nextDate = date('Y-m-d', strtotime($date . ' +1 day'));
 $navQs = function (string $d) use ($status, $source): string {
     $parts = ['date=' . urlencode($d)];
     if ($status) $parts[] = 'status=' . urlencode($status);
+    if ($source) $parts[] = 'source=' . urlencode($source);
+    return url('dashboard/reservations') . '?' . implode('&', $parts);
+};
+
+// URL per i contatori cliccabili (filtro stato): preserva data/range/source/
+// upcoming, cambia solo lo stato. Stringa vuota = "Totale" (azzera il filtro).
+$kpiUrl = function (string $st) use ($isUpcoming, $date, $dateTo, $source): string {
+    $parts = [];
+    if ($isUpcoming) {
+        $parts[] = 'upcoming=1';
+    } else {
+        $parts[] = 'date=' . urlencode($date);
+        if ($dateTo) $parts[] = 'date_to=' . urlencode($dateTo);
+    }
+    if ($st !== '') $parts[] = 'status=' . urlencode($st);
     if ($source) $parts[] = 'source=' . urlencode($source);
     return url('dashboard/reservations') . '?' . implode('&', $parts);
 };
@@ -351,43 +375,55 @@ $navQs = function (string $d) use ($status, $source): string {
     </div>
 </div>
 
-<!-- Mini stats -->
+<!-- Mini stats — contatori cliccabili come filtro stato (Coperti = metrica) -->
 <div class="stats-mini">
-    <div class="stat-pill">
-        <div class="sp-dot" style="background:#0dcaf0;"></div>
-        <span class="sp-num" style="color:#0dcaf0;"><?= $totalCount ?></span>
+    <a href="<?= e($kpiUrl('')) ?>" class="stat-pill kpi-total<?= $statusFilter === '' ? ' is-active' : '' ?>">
+        <div class="sp-dot"></div>
+        <span class="sp-num"><?= $totalCount ?></span>
         <span class="sp-label">Totale</span>
-    </div>
-    <div class="stat-pill">
-        <div class="sp-dot" style="background:#198754;"></div>
-        <span class="sp-num" style="color:#198754;"><?= $confirmedCount ?></span>
+    </a>
+    <a href="<?= e($kpiUrl('confirmed')) ?>" class="stat-pill kpi-confirmed<?= $statusFilter === 'confirmed' ? ' is-active' : '' ?>">
+        <div class="sp-dot"></div>
+        <span class="sp-num"><?= $confirmedCount ?></span>
         <span class="sp-label">Confermate</span>
-    </div>
-    <div class="stat-pill">
-        <div class="sp-dot" style="background:#ffc107;"></div>
-        <span class="sp-num" style="color:#ffc107;"><?= $pendingCount ?></span>
+    </a>
+    <a href="<?= e($kpiUrl('pending')) ?>" class="stat-pill kpi-pending<?= $statusFilter === 'pending' ? ' is-active' : '' ?>">
+        <div class="sp-dot"></div>
+        <span class="sp-num"><?= $pendingCount ?></span>
         <span class="sp-label">In Attesa</span>
-    </div>
+    </a>
+    <a href="<?= e($kpiUrl('arrived')) ?>" class="stat-pill kpi-arrived<?= $statusFilter === 'arrived' ? ' is-active' : '' ?>">
+        <div class="sp-dot"></div>
+        <span class="sp-num"><?= $arrivedCount ?></span>
+        <span class="sp-label">Arrivati</span>
+    </a>
     <?php if (!$isUpcoming): ?>
-    <div class="stat-pill">
-        <div class="sp-dot" style="background:#dc3545;"></div>
-        <span class="sp-num" style="color:#dc3545;"><?= $cancelledCount ?></span>
+    <a href="<?= e($kpiUrl('cancelled')) ?>" class="stat-pill kpi-cancelled<?= $statusFilter === 'cancelled' ? ' is-active' : '' ?>">
+        <div class="sp-dot"></div>
+        <span class="sp-num"><?= $cancelledCount ?></span>
         <span class="sp-label">Annullate</span>
-    </div>
+    </a>
     <?php endif; ?>
-    <div class="stat-pill">
-        <div class="sp-dot" style="background:#0d6efd;"></div>
-        <span class="sp-num" style="color:#0d6efd;"><?= $totalCovers ?></span>
+    <div class="stat-pill kpi-metric" title="Coperti attesi (esclude annullate e no-show)">
+        <div class="sp-dot"></div>
+        <span class="sp-num"><?= $totalCovers ?></span>
         <span class="sp-label">Coperti attesi</span>
     </div>
 </div>
 
 <!-- Reservation list -->
 <div class="card">
-    <?php if (empty($reservations)): ?>
+    <?php if (empty($pranzo) && empty($cena)): ?>
+    <?php
+    $statusLabels = ['confirmed' => 'confermate', 'pending' => 'in attesa', 'arrived' => 'arrivate', 'cancelled' => 'annullate'];
+    $statusWord = $statusLabels[$statusFilter] ?? '';
+    ?>
     <div class="empty-state">
         <i class="bi bi-calendar-x"></i>
-        <?php if ($isUpcoming): ?>
+        <?php if ($statusWord !== '' && !empty($reservations)): ?>
+        <p>Nessuna prenotazione <b><?= $statusWord ?></b><?= $isUpcoming ? '' : ' per ' . format_date($date, 'd/m/Y') ?>.</p>
+        <p class="mt-1"><a href="<?= e($kpiUrl('')) ?>" class="text-success fw-semibold text-decoration-none">Mostra tutte</a></p>
+        <?php elseif ($isUpcoming): ?>
         <p>Nessuna prenotazione in programma<?= ($status || $source) ? ' con i filtri correnti' : '' ?>.</p>
         <?php else: ?>
         <p>Nessuna prenotazione per <?= format_date($date, 'd/m/Y') ?></p>
