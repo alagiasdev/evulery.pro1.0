@@ -558,6 +558,71 @@ class MailService
     }
 
     /**
+     * Email al cliente quando la caparra richiesta manualmente (gruppo) NON è
+     * stata completata entro la finestra: la prenotazione è stata annullata e
+     * il tavolo liberato. Tono cortese + invito a riprenotare.
+     */
+    public static function sendReservationDepositExpired(array $reservation, array $tenant): bool
+    {
+        $customerEmail = $reservation['email'] ?? '';
+        if (!$customerEmail) {
+            return false;
+        }
+
+        $firstName      = e($reservation['first_name'] ?? '');
+        $partySize      = (int)($reservation['party_size'] ?? 0);
+        $personeLabel   = $partySize === 1 ? 'persona' : 'persone';
+        $time           = substr($reservation['reservation_time'] ?? '', 0, 5);
+        $dateFormatted  = self::formatDateItalian($reservation['reservation_date'] ?? '');
+        $restaurantName = e($tenant['name'] ?? '');
+        $bookingNumber  = (int)($reservation['booking_number'] ?? 0);
+        $bookUrl        = url(($tenant['slug'] ?? '') . '/booking');
+        $year           = date('Y');
+        $subjectLine    = "Prenotazione annullata - {$restaurantName}";
+
+        $html = <<<HTML
+        <!DOCTYPE html>
+        <html lang="it">
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+        <body style="margin:0;padding:0;background:#f4f6f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+        <div style="max-width:560px;margin:0 auto;padding:24px 16px;">
+            <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+                <div style="background:#6b7280;padding:26px 28px;text-align:center;">
+                    <div style="font-size:34px;line-height:1;">&#9203;</div>
+                    <div style="color:#fff;font-size:19px;font-weight:800;margin-top:8px;">Tempo scaduto</div>
+                    <div style="color:#e5e7eb;font-size:13.5px;margin-top:4px;">Ciao {$firstName}, la prenotazione è stata annullata</div>
+                </div>
+                <div style="padding:24px 28px;">
+                    <p style="font-size:14.5px;color:#1a1d23;line-height:1.6;margin:0 0 16px;">
+                        Non abbiamo ricevuto la caparra entro il tempo previsto, quindi la richiesta di prenotazione
+                        presso <strong>{$restaurantName}</strong> è stata <strong>annullata</strong> e il tavolo è di nuovo
+                        disponibile.
+                    </p>
+                    <div style="background:#f8fafb;border:1px solid #eceff2;border-radius:10px;padding:14px 16px;">
+                        <table style="width:100%;font-size:14px;color:#9aa3aa;border-collapse:collapse;">
+                            <tr><td style="padding:5px 0;">Data</td><td style="padding:5px 0;text-align:right;font-weight:700;text-decoration:line-through;">{$dateFormatted}</td></tr>
+                            <tr><td style="padding:5px 0;">Ora</td><td style="padding:5px 0;text-align:right;font-weight:700;text-decoration:line-through;">{$time}</td></tr>
+                            <tr><td style="padding:5px 0;">Persone</td><td style="padding:5px 0;text-align:right;font-weight:700;text-decoration:line-through;">{$partySize} {$personeLabel}</td></tr>
+                            <tr><td style="padding:5px 0;">N. prenotazione</td><td style="padding:5px 0;text-align:right;font-weight:700;text-decoration:line-through;">#{$bookingNumber}</td></tr>
+                        </table>
+                    </div>
+                    <p style="font-size:14px;color:#1a1d23;line-height:1.6;margin:16px 0;">Vuoi ancora venire da noi? Puoi prenotare di nuovo in pochi secondi:</p>
+                    <div style="text-align:center;padding-bottom:4px;">
+                        <a href="{$bookUrl}" style="display:inline-block;background:#00844A;color:#fff;padding:13px 32px;border-radius:9px;font-size:14px;font-weight:700;text-decoration:none;">Prenota di nuovo</a>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align:center;color:#9aa3aa;font-size:11.5px;margin-top:16px;">&copy; {$year} {$restaurantName} &middot; powered by Evulery</div>
+        </div>
+        </body>
+        </html>
+        HTML;
+
+        $service = new self();
+        return $service->send($customerEmail, $subjectLine, $html, $tenant['name'] ?? null, $tenant['email'] ?? null);
+    }
+
+    /**
      * Send reservation reminder email.
      * @param string $type '24h' or '2h'
      */

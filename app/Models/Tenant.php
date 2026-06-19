@@ -157,7 +157,7 @@ class Tenant
             'slug', 'name', 'email', 'phone', 'address', 'website_url', 'logo_url',
             'custom_domain', 'domain_status', 'cname_target',
             'plan', 'plan_id', 'plan_price', 'deposit_enabled', 'deposit_amount', 'deposit_mode', 'deposit_min_party_size',
-            'deposit_days',
+            'deposit_days', 'deposit_manual_window_minutes',
             'table_auto_assign', 'table_turnover_buffer',
             'cancellation_policy', 'booking_instructions', 'confirmation_mode', 'manual_approval_min_party_size',
             'table_duration', 'time_step',

@@ -309,6 +309,7 @@ class Reservation
              SET deposit_required = :req,
                  deposit_amount = :amt,
                  deposit_manual_request = 1,
+                 deposit_requested_at = NOW(),
                  guarantee_status = :gstatus,
                  status = "pending"
              WHERE id = :id'

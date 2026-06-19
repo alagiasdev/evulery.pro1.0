@@ -355,6 +355,12 @@ class SettingsController
         $minParty = !empty($data['deposit_min_party_size']) ? (int)$data['deposit_min_party_size'] : null;
         if ($minParty !== null && ($minParty < 2 || $minParty > 20)) $minParty = null;
 
+        // Finestra di scadenza per la caparra richiesta manualmente sui gruppi
+        // (Stripe/garanzia). Vuoto = nessuna scadenza. Valori ammessi in minuti.
+        $allowedWindows = [60, 120, 180, 360, 720, 1440];
+        $manualWindow = !empty($data['deposit_manual_window_minutes']) ? (int)$data['deposit_manual_window_minutes'] : null;
+        if ($manualWindow !== null && !in_array($manualWindow, $allowedWindows, true)) $manualWindow = 120;
+
         // Giorni in cui la caparra è attiva (ISO 1=lun..7=dom). Vuoto → tutti (fallback sicuro).
         $validDays = [];
         foreach ((array)($data['deposit_days'] ?? []) as $d) {
@@ -369,6 +375,7 @@ class SettingsController
             'deposit_amount'  => !empty($data['deposit_amount']) ? (float)$data['deposit_amount'] : null,
             'deposit_mode'    => $depositMode,
             'deposit_min_party_size' => $minParty,
+            'deposit_manual_window_minutes' => $manualWindow,
             'deposit_days'    => implode(',', $validDays),
             'deposit_type'    => $depositType,
             'deposit_bank_info'    => trim($data['deposit_bank_info'] ?? ''),

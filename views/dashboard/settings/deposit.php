@@ -97,6 +97,24 @@ $mealCategories = $mealCategories ?? [];
                         <div class="field-hint">La caparra viene richiesta solo quando il numero di coperti raggiunge la soglia</div>
                     </div>
 
+                    <!-- Finestra scadenza per la caparra richiesta manualmente (gruppi) -->
+                    <div style="margin-top:1.25rem;">
+                        <label class="field-label">Tempo per completare il pagamento (gruppi)</label>
+                        <div style="margin-top:.35rem;">
+                            <?php $mw = (int)($tenant['deposit_manual_window_minutes'] ?? 0); ?>
+                            <select name="deposit_manual_window_minutes" class="form-select form-select-sm" style="max-width:280px;">
+                                <option value="" <?= empty($tenant['deposit_manual_window_minutes']) ? 'selected' : '' ?>>Nessuna scadenza (gestione manuale)</option>
+                                <?php foreach ([60 => '1 ora', 120 => '2 ore', 180 => '3 ore', 360 => '6 ore', 720 => '12 ore', 1440 => '24 ore'] as $min => $lbl): ?>
+                                <option value="<?= $min ?>" <?= $mw === $min ? 'selected' : '' ?>><?= $lbl ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="field-hint">
+                            Quando <strong>accetti un gruppo richiedendo la caparra</strong>, il cliente ha questo tempo per pagare (Stripe) o registrare la carta; scaduto, la prenotazione si annulla e libera il tavolo.
+                            <strong>Non si applica</strong> al widget pubblico (30 min fissi) né a bonifico/link (li confermi tu).
+                        </div>
+                    </div>
+
                     <div class="amount-preview" id="amount-preview">
                         <div>
                             <div class="ap-amount" id="ap-value">&euro; <?= $depositAmount ?></div>
