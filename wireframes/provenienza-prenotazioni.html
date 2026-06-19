@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Provenienza prenotazioni — Hub fulcro (wireframe)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{ --brand:#00844A; --brand-d:#006b3c; --ink:#1a1d23; --muted:#6c757d; --line:#eceff2;
+    --meta:#0866ff; --google:#ea4335; --hub:#8b5cf6; --ig:#e1306c; --tiktok:#111; --direct:#6b7280; --organic:#16a34a; --generic:#f59e0b; }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:15px}
+  .wrap{max-width:920px;margin:0 auto;padding:22px 18px 90px}
+  .brandbar{height:5px;background:linear-gradient(90deg,var(--brand),#5cbf8c);border-radius:6px;margin-bottom:14px}
+  h1{font-size:1.25rem;margin:0 0 4px}
+  .lead{color:var(--muted);font-size:.88rem;margin:0 0 16px}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+  .tab{border:1.5px solid #d4dade;background:#fff;border-radius:20px;padding:7px 15px;font-weight:600;font-size:.8rem;color:var(--muted);cursor:pointer}
+  .tab.on{background:var(--brand);border-color:var(--brand);color:#fff}
+  .screen{display:none}.screen.on{display:block;animation:fade .18s}
+  @keyframes fade{from{opacity:.3;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:16px}
+  .card h2{font-size:1rem;margin:0 0 4px;display:flex;align-items:center;gap:.45rem}
+  .card .hint{color:var(--muted);font-size:.8rem;margin:0 0 14px}
+
+  /* fulcro diagram */
+  .flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin:6px 0 4px}
+  .chip{border:1.5px solid #d4dade;border-radius:10px;padding:8px 12px;font-size:.78rem;font-weight:600;background:#fff;text-align:center}
+  .chip small{display:block;color:var(--muted);font-weight:500;font-size:.68rem}
+  .hubnode{border:2px solid var(--hub);background:#f5f3ff;color:#5b21b6}
+  .arrow{color:#c9d2d9;font-size:1.2rem}
+  .chans-in{display:flex;flex-direction:column;gap:6px}
+  .acts-out{display:flex;flex-direction:column;gap:6px}
+  .miniact{border:1.5px solid #e4e8eb;border-radius:8px;padding:5px 10px;font-size:.74rem;font-weight:600;background:#fff}
+
+  /* report */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .pill{border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:7px 13px;font-weight:600;font-size:.8rem;cursor:pointer}
+  .pill.on{background:#e8f5ee;border-color:var(--brand);color:var(--brand-d)}
+  .kpis{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+  .kpi{flex:1;min-width:120px;border:1px solid var(--line);border-radius:11px;padding:12px 14px;background:#fff}
+  .kpi .n{font-size:1.4rem;font-weight:800;line-height:1}
+  .kpi .l{font-size:.72rem;color:var(--muted);margin-top:3px}
+  table{width:100%;border-collapse:collapse;font-size:.86rem}
+  th{text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.3px;color:var(--muted);padding:8px 10px;border-bottom:2px solid var(--line)}
+  td{padding:10px;border-bottom:1px solid #f4f6f8;vertical-align:middle}
+  tr.click{cursor:pointer}tr.click:hover{background:#fbfdfc}
+  .chdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:middle}
+  .bar{height:8px;border-radius:5px;background:#eef0f2;overflow:hidden;min-width:70px}
+  .bar > i{display:block;height:100%;border-radius:5px}
+  .num{font-weight:700}
+  .sub-row{background:#fafbfc;font-size:.82rem}.sub-row td{padding-left:32px;color:#555}
+  .roi{font-size:.76rem;color:var(--muted)}
+
+  /* generator */
+  label.fl{display:block;font-weight:700;font-size:.8rem;margin:14px 0 5px}
+  select,input[type=text]{width:100%;border:1.5px solid #d4dade;border-radius:9px;padding:9px 11px;font-size:.88rem;font-family:inherit}
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .segbtn{border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:8px 13px;font-weight:600;font-size:.82rem;cursor:pointer}
+  .segbtn.on{background:#e8f5ee;border-color:var(--brand);color:var(--brand-d)}
+  .segbtn .rec{font-size:.62rem;background:#d6f0e2;color:var(--brand-d);border-radius:4px;padding:1px 5px;margin-left:4px}
+  .chan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;margin-top:6px}
+  .chan{border:2px solid var(--line);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;font-size:.78rem;font-weight:600}
+  .chan.on{border-color:var(--brand);background:#f6fbf8}
+  .chan i{display:block;font-size:1.3rem;margin-bottom:4px}
+  .out{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px;align-items:flex-start}
+  .out-url{flex:1;min-width:240px}
+  .urlbox{display:flex;gap:8px;align-items:center;background:#f8fafb;border:1px solid #e4e8eb;border-radius:9px;padding:10px 12px;font-family:ui-monospace,Menlo,monospace;font-size:.78rem;word-break:break-all}
+  .copy{flex-shrink:0;border:none;background:var(--brand);color:#fff;border-radius:7px;padding:7px 11px;font-size:.75rem;font-weight:700;cursor:pointer}
+  .qr{width:120px;height:120px;border:1px solid #e4e8eb;border-radius:10px;display:grid;place-items:center;background:repeating-conic-gradient(#1a1d23 0% 25%, #fff 0% 50%) 50%/14px 14px;}
+  .qr span{background:#fff;padding:3px 6px;border-radius:5px;font-size:.65rem;color:#666;font-weight:700}
+  .note{font-size:.78rem;color:var(--muted);margin-top:6px}
+  .callout{border-radius:10px;padding:12px 14px;font-size:.83rem;display:flex;gap:10px;margin-top:14px}
+  .co-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+  .co-purple{background:#f5f3ff;border:1px solid #ddd6fe;color:#5b21b6}
+  .badge-prov{display:inline-flex;align-items:center;gap:6px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;border-radius:7px;padding:4px 10px;font-size:.8rem;font-weight:600}
+  .foot{margin-top:24px;font-size:.78rem;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar"></div>
+  <h1>Provenienza prenotazioni — <span style="color:var(--hub)">Hub come fulcro</span> <span style="font-size:.8rem;font-weight:500;color:var(--muted)">(wireframe v2)</span></h1>
+  <p class="lead">Le campagne puntano tutte alla <b>vetrina/Hub</b>; da lì l'UTM si propaga ad ogni azione. Così misuri ogni canale e dirotti il budget. Naviga le 4 viste.</p>
+
+  <div class="tabs">
+    <span class="tab on" data-s="1"><i class="bi bi-diagram-3"></i> Hub = fulcro</span>
+    <span class="tab" data-s="2"><i class="bi bi-link-45deg"></i> Generatore link</span>
+    <span class="tab" data-s="3"><i class="bi bi-bar-chart-line"></i> Report Provenienza</span>
+    <span class="tab" data-s="4"><i class="bi bi-card-checklist"></i> Sulla prenotazione</span>
+  </div>
+
+  <!-- ===== 1. FULCRO ===== -->
+  <section class="screen on" data-screen="1">
+    <div class="card">
+      <h2><i class="bi bi-diagram-3" style="color:var(--hub)"></i> Un solo link per tutte le campagne</h2>
+      <p class="hint">Metti il link dell'Hub (taggato) in ogni annuncio e bio. L'UTM entra nell'Hub e viaggia fino all'azione del cliente.</p>
+
+      <div class="flow">
+        <div class="chans-in">
+          <div class="chip"><span class="chdot" style="background:var(--meta)"></span>Meta / Facebook</div>
+          <div class="chip"><span class="chdot" style="background:var(--ig)"></span>Instagram bio</div>
+          <div class="chip"><span class="chdot" style="background:var(--tiktok)"></span>TikTok</div>
+          <div class="chip"><span class="chdot" style="background:var(--google)"></span>Google Ads</div>
+          <div class="chip"><span class="chdot" style="background:var(--generic)"></span>Generico / volantino</div>
+        </div>
+        <span class="arrow">→</span>
+        <div class="chip hubnode"><i class="bi bi-shop"></i> HUB / Vetrina<small>?utm_source=…&amp;utm_campaign=…</small></div>
+        <span class="arrow">→</span>
+        <div class="acts-out">
+          <div class="miniact">🍽️ Prenota <small style="color:var(--muted)">→ prenotazione taggata</small></div>
+          <div class="miniact">📋 Menù</div>
+          <div class="miniact">🛍️ Ordina <small style="color:var(--muted)">→ ordine taggato</small></div>
+          <div class="miniact">⭐ Recensioni</div>
+        </div>
+      </div>
+
+      <div class="callout co-purple">
+        <i class="bi bi-stars"></i>
+        <div><b>La vetrina digitale prende finalmente senso pieno:</b> da pagina-QR diventa il <b>centro del marketing</b> + punto di misurazione. Un link da gestire, tutti i bottoni modificabili senza rifare le campagne, attribuzione su <b>ogni</b> azione (non solo le prenotazioni).</div>
+      </div>
+      <div class="callout co-info">
+        <i class="bi bi-graph-up-arrow"></i>
+        <div><b>Sblocca il funnel completo</b> (fase successiva): <i>visite Hub per campagna → clic su Prenota → prenotazioni reali</i>. Sono le "analytics scansioni" della vetrina che avevamo rimandato: ora hanno uno scopo.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 2. GENERATOR ===== -->
+  <section class="screen" data-screen="2">
+    <div class="card">
+      <h2><i class="bi bi-link-45deg" style="color:var(--brand)"></i> Genera il link taggato</h2>
+      <p class="hint">Destinazione + canale + nome campagna → link pronto da incollare. Niente UTM scritti a mano.</p>
+
+      <label class="fl" style="margin-top:0">Destinazione</label>
+      <div class="seg" id="dest">
+        <span class="segbtn on" data-path="hub">Hub / Vetrina <span class="rec">CONSIGLIATA</span></span>
+        <span class="segbtn" data-path="">Prenota</span>
+        <span class="segbtn" data-path="menu">Menù</span>
+        <span class="segbtn" data-path="order">Ordina</span>
+      </div>
+
+      <label class="fl">Canale</label>
+      <div class="chan-grid" id="chans">
+        <div class="chan on" data-src="meta"      data-med="cpc"     data-qr="0"><i class="bi bi-meta"></i>Meta/Facebook</div>
+        <div class="chan" data-src="instagram"    data-med="bio"     data-qr="0"><i class="bi bi-instagram"></i>Instagram bio</div>
+        <div class="chan" data-src="google"       data-med="cpc"     data-qr="0"><i class="bi bi-google"></i>Google Ads</div>
+        <div class="chan" data-src="tiktok"       data-med="social"  data-qr="0"><i class="bi bi-tiktok"></i>TikTok</div>
+        <div class="chan" data-src="flyer"        data-med="qr"      data-qr="1"><i class="bi bi-qr-code"></i>Volantino QR</div>
+        <div class="chan" data-src="gbp"          data-med="organic" data-qr="1"><i class="bi bi-shop"></i>Google Business</div>
+        <div class="chan" data-src="newsletter"   data-med="email"   data-qr="0"><i class="bi bi-envelope"></i>Newsletter</div>
+        <div class="chan" data-src="__generic"    data-med="referral" data-qr="0"><i class="bi bi-three-dots"></i>Generico / Altro</div>
+      </div>
+
+      <div id="generic-wrap" style="display:none;">
+        <label class="fl">Nome sorgente <span style="font-weight:500;color:var(--muted)">(es. tripadvisor, influencer-mario, qr-tavolo)</span></label>
+        <input type="text" id="gsrc" placeholder="tripadvisor">
+      </div>
+
+      <label class="fl">Nome campagna <span style="font-weight:500;color:var(--muted)">(facoltativo)</span></label>
+      <input type="text" id="camp" placeholder="estate-aperitivo">
+
+      <div class="out">
+        <div class="out-url">
+          <label class="fl" style="margin-top:0">Link da usare</label>
+          <div class="urlbox"><span id="url"></span><button class="copy">Copia</button></div>
+          <div class="note">Lo stesso link genera l'attribuzione su qualunque azione il cliente compia dall'Hub.</div>
+        </div>
+        <div id="qr-wrap" style="display:none;">
+          <label class="fl" style="margin-top:0">QR <span style="font-weight:500;color:var(--muted)">(stampa)</span></label>
+          <div class="qr"><span>QR</span></div>
+        </div>
+      </div>
+
+      <div class="callout co-purple">
+        <i class="bi bi-magic"></i>
+        <div><b>Il pezzo che fa funzionare tutto:</b> il ristoratore non sa cos'è un UTM. Gli diamo il link giusto e le prenotazioni si auto-attribuiscono. Il <b>Generico</b> copre la coda lunga (un influencer, TripAdvisor, un QR specifico) senza dover aggiungere un preset ogni volta. Il QR appare solo per i canali fisici.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 3. REPORT ===== -->
+  <section class="screen" data-screen="3">
+    <div class="card">
+      <h2><i class="bi bi-bar-chart-line" style="color:var(--brand)"></i> Da dove arrivano le prenotazioni</h2>
+      <p class="hint">Ultimi 30 giorni. Clicca un canale per vedere le campagne.</p>
+
+      <div class="filters">
+        <span class="pill">7 giorni</span><span class="pill on">30 giorni</span><span class="pill">90 giorni</span>
+        <span class="pill"><i class="bi bi-calendar3"></i> Personalizzato</span>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="n">51</div><div class="l">Prenotazioni</div></div>
+        <div class="kpi"><div class="n">139</div><div class="l">Coperti</div></div>
+        <div class="kpi"><div class="n">6</div><div class="l">Canali attivi</div></div>
+        <div class="kpi"><div class="n">68%</div><div class="l">Tracciate</div></div>
+      </div>
+
+      <table>
+        <thead><tr><th>Canale</th><th>Pren.</th><th>Coperti</th><th style="width:150px;">Quota</th></tr></thead>
+        <tbody>
+          <tr class="click" data-exp="meta"><td><span class="chdot" style="background:var(--meta)"></span>Meta / Facebook <i class="bi bi-chevron-down" style="font-size:.6rem;color:#bbb"></i></td><td class="num">12</td><td class="num">38</td><td><div class="bar"><i style="width:27%;background:var(--meta)"></i></div></td></tr>
+          <tr class="sub-row" data-sub="meta" style="display:none"><td>↳ <b>estate-aperitivo</b></td><td>8</td><td>24</td><td class="roi">utm_campaign=estate-aperitivo</td></tr>
+          <tr class="sub-row" data-sub="meta" style="display:none"><td>↳ <b>weekend-pesce</b></td><td>4</td><td>14</td><td class="roi">utm_campaign=weekend-pesce</td></tr>
+          <tr class="click" data-exp="google"><td><span class="chdot" style="background:var(--google)"></span>Google Ads <i class="bi bi-chevron-down" style="font-size:.6rem;color:#bbb"></i></td><td class="num">8</td><td class="num">22</td><td><div class="bar"><i style="width:16%;background:var(--google)"></i></div></td></tr>
+          <tr class="sub-row" data-sub="google" style="display:none"><td>↳ <b>ricerca-brand</b></td><td>8</td><td>22</td><td class="roi">utm_campaign=ricerca-brand</td></tr>
+          <tr><td><span class="chdot" style="background:var(--ig)"></span>Instagram (bio)</td><td class="num">6</td><td class="num">15</td><td><div class="bar"><i style="width:11%;background:var(--ig)"></i></div></td></tr>
+          <tr><td><span class="chdot" style="background:var(--tiktok)"></span>TikTok</td><td class="num">3</td><td class="num">9</td><td><div class="bar"><i style="width:6%;background:var(--tiktok)"></i></div></td></tr>
+          <tr><td><span class="chdot" style="background:var(--generic)"></span>Generico (tripadvisor)</td><td class="num">3</td><td class="num">8</td><td><div class="bar"><i style="width:6%;background:var(--generic)"></i></div></td></tr>
+          <tr><td><span class="chdot" style="background:var(--organic)"></span>Google organico</td><td class="num">4</td><td class="num">11</td><td><div class="bar"><i style="width:8%;background:var(--organic)"></i></div></td></tr>
+          <tr><td><span class="chdot" style="background:var(--direct)"></span>Diretto / sconosciuto</td><td class="num">12</td><td class="num">36</td><td><div class="bar"><i style="width:26%;background:var(--direct)"></i></div></td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout co-info">
+        <i class="bi bi-lightbulb-fill"></i>
+        <div><b>Lettura:</b> Meta porta più coperti di Google (38 vs 22). "Diretto/sconosciuto" cala man mano che usi i link taggati dell'Hub. La quota <b>Tracciate 68%</b> dice quanto sei coperto.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4. ON RESERVATION ===== -->
+  <section class="screen" data-screen="4">
+    <div class="card">
+      <h2><i class="bi bi-card-checklist" style="color:var(--brand)"></i> Sulla singola prenotazione</h2>
+      <p class="hint"><b>Origine</b> = come ha prenotato. <b>Provenienza</b> = da quale canale è arrivato. Due dimensioni distinte.</p>
+
+      <div style="border:1px solid var(--line);border-radius:12px;padding:16px;max-width:520px;">
+        <div style="font-weight:800;font-size:1.05rem;">Rossi Mario <span style="color:#bbb;font-weight:500;font-size:.8rem">#1042</span></div>
+        <div style="color:var(--muted);font-size:.85rem;margin:2px 0 12px;">Gio 19/06 · 20:30 · 2 persone</div>
+        <table style="font-size:.85rem;">
+          <tr><td style="color:var(--muted);padding:4px 0;width:120px;">Origine</td><td style="padding:4px 0;"><span style="background:#e8f5ee;color:var(--brand-d);border-radius:6px;padding:2px 9px;font-size:.78rem;font-weight:600;">Widget online</span></td></tr>
+          <tr><td style="color:var(--muted);padding:4px 0;">Provenienza</td><td style="padding:4px 0;"><span class="badge-prov"><span class="chdot" style="background:var(--meta);margin:0"></span> Meta/Facebook · estate-aperitivo <span style="color:#94a3b8;font-weight:500;">· via Hub</span></span></td></tr>
+        </table>
+      </div>
+      <div class="callout co-info">
+        <i class="bi bi-info-circle-fill"></i>
+        <div>"via Hub" indica che è passato dalla vetrina prima di prenotare: utile per capire quanto l'Hub fa da regista.</div>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">Wireframe v2 — Provenienza con Hub come fulcro + generatore link/QR · Evulery</p>
+</div>
+
+<script>
+function go(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',+s.dataset.screen===n));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',+t.dataset.s===n));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>go(+t.dataset.s));
+
+document.querySelectorAll('tr.click').forEach(function(tr){
+  tr.onclick=function(){ document.querySelectorAll('tr[data-sub="'+tr.dataset.exp+'"]').forEach(function(s){ s.style.display = s.style.display==='none'?'table-row':'none'; }); };
+});
+
+// generator
+var base='https://dash.evulery.it/trattoria-da-mario';
+function rebuild(){
+  var dest=document.querySelector('#dest .segbtn.on').dataset.path;
+  var c=document.querySelector('.chan.on');
+  var src=c.dataset.src, med=c.dataset.med, isQr=c.dataset.qr==='1', isGen=src==='__generic';
+  if(isGen){ src=(document.getElementById('gsrc').value.trim().toLowerCase().replace(/\s+/g,'-'))||'altro'; }
+  var camp=document.getElementById('camp').value.trim().toLowerCase().replace(/\s+/g,'-');
+  var path = base + (dest ? '/'+dest : '');
+  var u = path + '?utm_source=' + src + '&utm_medium=' + med;
+  if(camp) u += '&utm_campaign=' + encodeURIComponent(camp);
+  document.getElementById('url').textContent=u;
+  document.getElementById('generic-wrap').style.display = isGen ? '' : 'none';
+  document.getElementById('qr-wrap').style.display = isQr ? '' : 'none';
+}
+document.querySelectorAll('#dest .segbtn').forEach(function(b){ b.onclick=function(){ document.querySelectorAll('#dest .segbtn').forEach(x=>x.classList.remove('on')); b.classList.add('on'); rebuild(); }; });
+document.querySelectorAll('.chan').forEach(function(c){ c.onclick=function(){ document.querySelectorAll('.chan').forEach(x=>x.classList.remove('on')); c.classList.add('on'); rebuild(); }; });
+document.getElementById('camp').addEventListener('input',rebuild);
+document.getElementById('gsrc').addEventListener('input',rebuild);
+document.querySelector('.copy').onclick=function(){ var b=this; b.textContent='Copiato!'; setTimeout(function(){b.textContent='Copia';},1200); };
+rebuild();
+</script>
+</body>
+</html>

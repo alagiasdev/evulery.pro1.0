@@ -93,6 +93,30 @@ class Reservation
         return $stmt->fetchAll();
     }
 
+    /**
+     * Report provenienza: prenotazioni "reali" (escluse annullate/no-show)
+     * raggruppate per canale + campagna nel periodo. Le righe senza canale
+     * (offline/telefono/walk-in/non taggate) confluiscono in 'direct'.
+     */
+    public function attributionReport(int $tenantId, string $from, string $to): array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT COALESCE(NULLIF(channel, ''), 'direct') AS channel,
+                    COALESCE(utm_campaign, '') AS campaign,
+                    COUNT(*) AS n,
+                    COALESCE(SUM(party_size), 0) AS covers,
+                    SUM(via_hub) AS via_hub
+             FROM reservations
+             WHERE tenant_id = :t
+               AND reservation_date BETWEEN :from AND :to
+               AND status NOT IN ('cancelled', 'noshow')
+             GROUP BY channel, campaign
+             ORDER BY covers DESC"
+        );
+        $stmt->execute(['t' => $tenantId, 'from' => $from, 'to' => $to]);
+        return $stmt->fetchAll();
+    }
+
     public function findUpcoming(int $tenantId, int $limit = 15, ?string $status = null, ?string $source = null): array
     {
         $sql = 'SELECT r.*, c.first_name, c.last_name, c.email, c.phone, c.total_bookings

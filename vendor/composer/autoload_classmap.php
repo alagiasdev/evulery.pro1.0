@@ -34,6 +34,7 @@ return array(
     'App\\Controllers\\Dashboard\\HomeController' => $baseDir . '/app/Controllers/Dashboard/HomeController.php',
     'App\\Controllers\\Dashboard\\HubController' => $baseDir . '/app/Controllers/Dashboard/HubController.php',
     'App\\Controllers\\Dashboard\\ImpersonationController' => $baseDir . '/app/Controllers/Dashboard/ImpersonationController.php',
+    'App\\Controllers\\Dashboard\\MarketingController' => $baseDir . '/app/Controllers/Dashboard/MarketingController.php',
     'App\\Controllers\\Dashboard\\MealCategoriesController' => $baseDir . '/app/Controllers/Dashboard/MealCategoriesController.php',
     'App\\Controllers\\Dashboard\\MenuController' => $baseDir . '/app/Controllers/Dashboard/MenuController.php',
     'App\\Controllers\\Dashboard\\NotificationController' => $baseDir . '/app/Controllers/Dashboard/NotificationController.php',

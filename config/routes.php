@@ -29,6 +29,7 @@ use App\Controllers\Dashboard\MealCategoriesController;
 use App\Controllers\Dashboard\TablesController;
 use App\Controllers\Dashboard\ClosuresController;
 use App\Controllers\Dashboard\EmergencyClosureController;
+use App\Controllers\Dashboard\MarketingController;
 use App\Controllers\Dashboard\PromotionsController;
 use App\Controllers\Dashboard\MenuController;
 use App\Controllers\Dashboard\SuspendedController;
@@ -102,6 +103,9 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/emergency-closure/apply', [EmergencyClosureController::class, 'apply']);
     $r->post('/emergency-closure/reopen', [EmergencyClosureController::class, 'reopen']);
     $r->post('/emergency-closure/close', [EmergencyClosureController::class, 'close']);
+    // Marketing & Provenienza (gated 'marketing')
+    $r->get('/marketing', [MarketingController::class, 'index']);
+    $r->get('/marketing/links', [MarketingController::class, 'links']);
     $r->get('/customers', [CustomersController::class, 'index']);
     $r->get('/customers/stats', [CustomersController::class, 'stats']);
     $r->get('/customers/search/json', [CustomersController::class, 'searchJson']);

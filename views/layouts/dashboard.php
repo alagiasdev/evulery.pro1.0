@@ -122,6 +122,17 @@
                 </li>
                 <?php endif; ?>
                 <li class="nav-item">
+                    <?php if (tenant_can('marketing')): ?>
+                    <a class="nav-link <?= ($activeMenu ?? '') === 'marketing' ? 'active' : '' ?>" href="<?= url('dashboard/marketing') ?>">
+                        <i class="bi bi-megaphone me-2"></i> Marketing
+                    </a>
+                    <?php else: ?>
+                    <a class="nav-link" href="<?= url('dashboard/marketing') ?>" style="opacity:.5;">
+                        <i class="bi bi-megaphone me-2"></i> Marketing <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
+                    </a>
+                    <?php endif; ?>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link <?= ($activeMenu ?? '') === 'notifications' ? 'active' : '' ?>" href="<?= url('dashboard/notifications') ?>">
                         <i class="bi bi-bell me-2"></i> Notifiche
                     </a>

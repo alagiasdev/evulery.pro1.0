@@ -147,6 +147,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Controllers\\Dashboard\\HomeController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/HomeController.php',
         'App\\Controllers\\Dashboard\\HubController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/HubController.php',
         'App\\Controllers\\Dashboard\\ImpersonationController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/ImpersonationController.php',
+        'App\\Controllers\\Dashboard\\MarketingController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/MarketingController.php',
         'App\\Controllers\\Dashboard\\MealCategoriesController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/MealCategoriesController.php',
         'App\\Controllers\\Dashboard\\MenuController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/MenuController.php',
         'App\\Controllers\\Dashboard\\NotificationController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/NotificationController.php',
