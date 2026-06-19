@@ -337,10 +337,10 @@ class TablesController
         // 2) Categorie pasto attive
         $cats = (new MealCategory())->findActiveByTenant($tenantId);
 
-        // 3) Prenotazioni attive (per i coperti)
+        // 3) Prenotazioni attive (per i coperti) — incl. sospese (occupano)
         $active = array_values(array_filter(
             $dayReservations,
-            fn($r) => in_array((string)$r['status'], ['confirmed', 'pending', 'arrived'], true)
+            fn($r) => in_array((string)$r['status'], ['confirmed', 'pending', 'arrived', 'suspended'], true)
         ));
 
         // Coperti + tavoli occupati a un dato minuto

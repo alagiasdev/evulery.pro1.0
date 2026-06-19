@@ -8,6 +8,7 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Core\TenantResolver;
 use App\Models\Customer;
+use App\Models\EmergencyClosure;
 use App\Models\Reservation;
 use App\Services\HeartbeatService;
 
@@ -113,6 +114,7 @@ class HomeController
             'userName'      => $userName,
             'tenantName'    => $tenant['name'] ?? '',
             'heartbeat'     => $heartbeat,
+            'emergencyClosure' => (new EmergencyClosure())->findActiveByTenant($tenantId),
         ], 'dashboard');
     }
 
@@ -270,7 +272,7 @@ class HomeController
             'SELECT reservation_time, party_size
              FROM reservations
              WHERE tenant_id = :t AND reservation_date = :d
-             AND status IN ("confirmed", "pending", "arrived")'
+             AND status IN ("confirmed", "pending", "arrived", "suspended")'
         );
         $stmt->execute(['t' => $tenantId, 'd' => $date]);
         $bookings = [];

@@ -28,6 +28,7 @@ use App\Controllers\Hub\PromotionsPublicController;
 use App\Controllers\Dashboard\MealCategoriesController;
 use App\Controllers\Dashboard\TablesController;
 use App\Controllers\Dashboard\ClosuresController;
+use App\Controllers\Dashboard\EmergencyClosureController;
 use App\Controllers\Dashboard\PromotionsController;
 use App\Controllers\Dashboard\MenuController;
 use App\Controllers\Dashboard\SuspendedController;
@@ -95,6 +96,12 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/reservations/{id}/table', [ReservationsController::class, 'assignTable']);
     $r->post('/reservations/{id}/notes', [ReservationsController::class, 'updateNotes']);
     $r->post('/reservations/{id}/delete', [ReservationsController::class, 'destroy']);
+    // Chiusura straordinaria (emergenze)
+    $r->get('/emergency-closure', [EmergencyClosureController::class, 'index']);
+    $r->post('/emergency-closure/preview', [EmergencyClosureController::class, 'preview']);
+    $r->post('/emergency-closure/apply', [EmergencyClosureController::class, 'apply']);
+    $r->post('/emergency-closure/reopen', [EmergencyClosureController::class, 'reopen']);
+    $r->post('/emergency-closure/close', [EmergencyClosureController::class, 'close']);
     $r->get('/customers', [CustomersController::class, 'index']);
     $r->get('/customers/stats', [CustomersController::class, 'stats']);
     $r->get('/customers/search/json', [CustomersController::class, 'searchJson']);

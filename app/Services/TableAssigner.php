@@ -31,8 +31,8 @@ use PDO;
 class TableAssigner
 {
     private PDO $db;
-    /** Stati prenotazione che occupano fisicamente un tavolo. */
-    private const BUSY_STATUSES = ['confirmed', 'pending', 'arrived'];
+    /** Stati prenotazione che occupano fisicamente un tavolo (incl. sospese per chiusura straordinaria). */
+    private const BUSY_STATUSES = ['confirmed', 'pending', 'arrived', 'suspended'];
 
     public function __construct()
     {

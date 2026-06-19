@@ -184,6 +184,7 @@ a.sidebar-user:hover { color: #adb5bd; }
 .status-dot.pending { background: #ffc107; }
 .status-dot.cancelled { background: #dc3545; }
 .status-dot.noshow { background: #dc3545; }
+.status-dot.suspended { background: #8b5cf6; }
 
 /* ===== Side panel ===== */
 .side-panel { display: flex; flex-direction: column; gap: 1.25rem; }
@@ -312,6 +313,8 @@ select.filter-input { cursor: pointer; padding-right: 1.5rem; }
 .res-status-label.arrived { background: #e0f7fa; color: #00838f; }
 .res-status-label.noshow { background: #fde8e8; color: #dc3545; }
 .res-status-label.cancelled { background: #f5f5f5; color: #6c757d; }
+.res-status-label.suspended { background: #f5f3ff; color: #7c3aed; }
+.badge.bg-purple { background: #8b5cf6 !important; color: #fff; }
 
 /* ===== Export panel ===== */
 .export-panel { margin-bottom: 1rem; }
@@ -402,6 +405,20 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
 .stat-pill.kpi-metric .sp-dot { background: #0d6efd; }
 .stat-pill.kpi-metric .sp-num { color: #0d6efd; }
 .stat-pill.kpi-metric .sp-label { color: #3a6ea5; }
+
+/* Chiusura straordinaria — banner stato attivo + pulsante header */
+.ec-banner { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; border-radius: 12px; padding: 12px 16px; margin-bottom: 1.25rem; }
+.ec-banner-susp { background: #f5f3ff; border: 1.5px solid #ddd6fe; color: #5b21b6; }
+.ec-banner-closed { background: #fdecea; border: 1.5px solid #f5c2c0; color: #b3261e; }
+.ec-banner-ic { font-size: 1.4rem; }
+.ec-banner-text { flex: 1; min-width: 180px; }
+.ec-banner-text b { display: block; font-size: .92rem; }
+.ec-banner-text small { font-size: .78rem; opacity: .85; }
+.ec-banner-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+.ec-banner-actions form { margin: 0; }
+/* pulsante d'ingresso in alto nelle prenotazioni */
+.btn-emergency { background: #fdecea; color: #b3261e; border: 1.5px solid #f5c2c0; font-weight: 600; }
+.btn-emergency:hover { background: #fbd9d6; color: #8f1d1a; border-color: #f0a8a4; }
 
 /* Dettaglio comunicazione: messaggio + statistiche affiancati (desktop),
    impilati su mobile (riga 2 statistiche a piena larghezza). */

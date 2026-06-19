@@ -210,6 +210,7 @@ function status_label(string $status): string
         'arrived'    => 'Arrivato',
         'noshow'     => 'No-show',
         'cancelled'  => 'Annullata',
+        'suspended'  => 'In sospeso',
         default      => $status,
     };
 }
@@ -322,6 +323,7 @@ function status_badge(string $status): string
         'arrived'    => 'bg-primary',
         'noshow'     => 'bg-danger',
         'cancelled'  => 'bg-secondary',
+        'suspended'  => 'bg-purple',
         default      => 'bg-light text-dark',
     };
 }

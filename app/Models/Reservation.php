@@ -66,6 +66,33 @@ class Reservation
         return $stmt->fetchAll();
     }
 
+    /**
+     * Prenotazioni "vive" (confirmed/pending) dentro una finestra chiusura
+     * straordinaria: periodo date_from..date_to e, se indicata, fascia oraria
+     * [time_from, time_to). Usata per anteprima e applicazione della chiusura.
+     */
+    public function findInClosureWindow(int $tenantId, string $dateFrom, string $dateTo, ?string $timeFrom, ?string $timeTo): array
+    {
+        $sql = 'SELECT r.*, c.first_name, c.last_name, c.email, c.phone
+                FROM reservations r
+                JOIN customers c ON r.customer_id = c.id
+                WHERE r.tenant_id = :t
+                  AND r.reservation_date BETWEEN :df AND :dt
+                  AND r.status IN ("confirmed", "pending")';
+        $params = ['t' => $tenantId, 'df' => $dateFrom, 'dt' => $dateTo];
+
+        if ($timeFrom !== null && $timeTo !== null) {
+            $sql .= ' AND r.reservation_time >= :tf AND r.reservation_time < :tt';
+            $params['tf'] = $timeFrom;
+            $params['tt'] = $timeTo;
+        }
+
+        $sql .= ' ORDER BY r.reservation_date ASC, r.reservation_time ASC';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
     public function findUpcoming(int $tenantId, int $limit = 15, ?string $status = null, ?string $source = null): array
     {
         $sql = 'SELECT r.*, c.first_name, c.last_name, c.email, c.phone, c.total_bookings
@@ -439,7 +466,7 @@ class Reservation
              AND reservation_date = :date
              AND reservation_time <= CAST(:slot_time AS TIME)
              AND ADDTIME(reservation_time, SEC_TO_TIME(COALESCE(duration_minutes, :duration) * 60)) > CAST(:slot_time2 AS TIME)
-             AND status IN ("confirmed", "pending", "arrived")'
+             AND status IN ("confirmed", "pending", "arrived", "suspended")'
         );
         $stmt->execute([
             'tenant_id' => $tenantId,

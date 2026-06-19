@@ -623,6 +623,202 @@ class MailService
     }
 
     /**
+     * Chiusura straordinaria — email al cliente: prenotazione ANNULLATA.
+     * $ctx['message'] = messaggio facoltativo del ristoratore. Invito a
+     * riprenotare sempre presente.
+     */
+    public static function sendEmergencyCancelled(array $reservation, array $tenant, array $ctx = []): bool
+    {
+        $customerEmail = $reservation['email'] ?? '';
+        if (!$customerEmail) {
+            return false;
+        }
+
+        $firstName      = e($reservation['first_name'] ?? '');
+        $partySize      = (int)($reservation['party_size'] ?? 0);
+        $personeLabel   = $partySize === 1 ? 'persona' : 'persone';
+        $time           = substr($reservation['reservation_time'] ?? '', 0, 5);
+        $dateFormatted  = self::formatDateItalian($reservation['reservation_date'] ?? '');
+        $restaurantName = e($tenant['name'] ?? '');
+        $bookUrl        = url(($tenant['slug'] ?? '') . '/booking');
+        $year           = date('Y');
+        $subjectLine    = "Prenotazione annullata - {$restaurantName}";
+
+        $msgBlock = '';
+        if (!empty($ctx['message'])) {
+            $msg = nl2br(e($ctx['message']));
+            $msgBlock = <<<MSG
+                    <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:13px 15px;margin:16px 0;font-size:14px;color:#9a3412;line-height:1.5;font-style:italic;">{$msg}</div>
+            MSG;
+        }
+
+        $html = <<<HTML
+        <!DOCTYPE html>
+        <html lang="it">
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+        <body style="margin:0;padding:0;background:#f4f6f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+        <div style="max-width:560px;margin:0 auto;padding:24px 16px;">
+            <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+                <div style="background:#dc3545;padding:26px 28px;text-align:center;">
+                    <div style="font-size:34px;line-height:1;">&#9888;&#65039;</div>
+                    <div style="color:#fff;font-size:19px;font-weight:800;margin-top:8px;">Siamo spiacenti</div>
+                    <div style="color:#fde2e1;font-size:13.5px;margin-top:4px;">Ciao {$firstName}, dobbiamo annullare la tua prenotazione</div>
+                </div>
+                <div style="padding:24px 28px;">
+                    <p style="font-size:14.5px;color:#1a1d23;line-height:1.6;margin:0 0 8px;">
+                        Per un <strong>imprevisto</strong> siamo costretti a chiudere e ad annullare la tua prenotazione
+                        presso <strong>{$restaurantName}</strong>. Ci dispiace molto per il disagio.
+                    </p>
+                    {$msgBlock}
+                    <div style="background:#f8fafb;border:1px solid #eceff2;border-radius:10px;padding:14px 16px;">
+                        <table style="width:100%;font-size:14px;color:#9aa3aa;border-collapse:collapse;">
+                            <tr><td style="padding:5px 0;">Data</td><td style="padding:5px 0;text-align:right;font-weight:700;text-decoration:line-through;">{$dateFormatted}</td></tr>
+                            <tr><td style="padding:5px 0;">Ora</td><td style="padding:5px 0;text-align:right;font-weight:700;text-decoration:line-through;">{$time}</td></tr>
+                            <tr><td style="padding:5px 0;">Persone</td><td style="padding:5px 0;text-align:right;font-weight:700;text-decoration:line-through;">{$partySize} {$personeLabel}</td></tr>
+                        </table>
+                    </div>
+                    <p style="font-size:14px;color:#1a1d23;line-height:1.6;margin:16px 0;">Appena risolto saremo felici di riaverti da noi. Puoi prenotare un'altra data quando vuoi:</p>
+                    <div style="text-align:center;padding-bottom:4px;">
+                        <a href="{$bookUrl}" style="display:inline-block;background:#00844A;color:#fff;padding:13px 32px;border-radius:9px;font-size:14px;font-weight:700;text-decoration:none;">Prenota un'altra data</a>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align:center;color:#9aa3aa;font-size:11.5px;margin-top:16px;">&copy; {$year} {$restaurantName} &middot; powered by Evulery</div>
+        </div>
+        </body>
+        </html>
+        HTML;
+
+        $service = new self();
+        return $service->send($customerEmail, $subjectLine, $html, $tenant['name'] ?? null, $tenant['email'] ?? null);
+    }
+
+    /**
+     * Chiusura straordinaria — email al cliente: prenotazione SOSPESA (non
+     * cancellata). La conferma/aggiornamento arrivera' a breve. Niente CTA di
+     * riprenotazione: vogliamo che il cliente attenda.
+     */
+    public static function sendEmergencySuspended(array $reservation, array $tenant, array $ctx = []): bool
+    {
+        $customerEmail = $reservation['email'] ?? '';
+        if (!$customerEmail) {
+            return false;
+        }
+
+        $firstName      = e($reservation['first_name'] ?? '');
+        $partySize      = (int)($reservation['party_size'] ?? 0);
+        $personeLabel   = $partySize === 1 ? 'persona' : 'persone';
+        $time           = substr($reservation['reservation_time'] ?? '', 0, 5);
+        $dateFormatted  = self::formatDateItalian($reservation['reservation_date'] ?? '');
+        $restaurantName = e($tenant['name'] ?? '');
+        $year           = date('Y');
+        $subjectLine    = "La tua prenotazione - {$restaurantName}";
+
+        $msgBlock = '';
+        if (!empty($ctx['message'])) {
+            $msg = nl2br(e($ctx['message']));
+            $msgBlock = <<<MSG
+                    <div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:10px;padding:13px 15px;margin:16px 0;font-size:14px;color:#5b21b6;line-height:1.5;font-style:italic;">{$msg}</div>
+            MSG;
+        }
+
+        $html = <<<HTML
+        <!DOCTYPE html>
+        <html lang="it">
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+        <body style="margin:0;padding:0;background:#f4f6f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+        <div style="max-width:560px;margin:0 auto;padding:24px 16px;">
+            <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+                <div style="background:#8b5cf6;padding:26px 28px;text-align:center;">
+                    <div style="font-size:34px;line-height:1;">&#9203;</div>
+                    <div style="color:#fff;font-size:19px;font-weight:800;margin-top:8px;">Prenotazione in sospeso</div>
+                    <div style="color:#ede9fe;font-size:13.5px;margin-top:4px;">Ciao {$firstName}, stiamo gestendo un imprevisto</div>
+                </div>
+                <div style="padding:24px 28px;">
+                    <p style="font-size:14.5px;color:#1a1d23;line-height:1.6;margin:0 0 8px;">
+                        Per un <strong>imprevisto tecnico</strong> dobbiamo momentaneamente sospendere il servizio presso
+                        <strong>{$restaurantName}</strong>. La tua prenotazione <strong>non è annullata</strong>: stiamo
+                        lavorando per risolvere e <strong>ti aggiorniamo al più presto</strong>.
+                    </p>
+                    {$msgBlock}
+                    <div style="background:#f8fafb;border:1px solid #eceff2;border-radius:10px;padding:14px 16px;">
+                        <table style="width:100%;font-size:14px;color:#6c757d;border-collapse:collapse;">
+                            <tr><td style="padding:5px 0;">Data</td><td style="padding:5px 0;text-align:right;font-weight:700;">{$dateFormatted}</td></tr>
+                            <tr><td style="padding:5px 0;">Ora</td><td style="padding:5px 0;text-align:right;font-weight:700;">{$time}</td></tr>
+                            <tr><td style="padding:5px 0;">Persone</td><td style="padding:5px 0;text-align:right;font-weight:700;">{$partySize} {$personeLabel}</td></tr>
+                        </table>
+                    </div>
+                    <p style="font-size:13.5px;color:#6c757d;line-height:1.6;margin:16px 0 0;">Ti ricontattiamo a brevissimo per confermarti se possiamo accoglierti. Grazie per la pazienza.</p>
+                </div>
+            </div>
+            <div style="text-align:center;color:#9aa3aa;font-size:11.5px;margin-top:16px;">&copy; {$year} {$restaurantName} &middot; powered by Evulery</div>
+        </div>
+        </body>
+        </html>
+        HTML;
+
+        $service = new self();
+        return $service->send($customerEmail, $subjectLine, $html, $tenant['name'] ?? null, $tenant['email'] ?? null);
+    }
+
+    /**
+     * Chiusura straordinaria — email al cliente: servizio RIPRISTINATO, la
+     * prenotazione (futura) e' di nuovo confermata. "Tutto risolto".
+     */
+    public static function sendEmergencyRecovered(array $reservation, array $tenant): bool
+    {
+        $customerEmail = $reservation['email'] ?? '';
+        if (!$customerEmail) {
+            return false;
+        }
+
+        $firstName      = e($reservation['first_name'] ?? '');
+        $partySize      = (int)($reservation['party_size'] ?? 0);
+        $personeLabel   = $partySize === 1 ? 'persona' : 'persone';
+        $time           = substr($reservation['reservation_time'] ?? '', 0, 5);
+        $dateFormatted  = self::formatDateItalian($reservation['reservation_date'] ?? '');
+        $restaurantName = e($tenant['name'] ?? '');
+        $year           = date('Y');
+        $subjectLine    = "Buone notizie, ti aspettiamo! - {$restaurantName}";
+
+        $html = <<<HTML
+        <!DOCTYPE html>
+        <html lang="it">
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+        <body style="margin:0;padding:0;background:#f4f6f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+        <div style="max-width:560px;margin:0 auto;padding:24px 16px;">
+            <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+                <div style="background:#00844A;padding:26px 28px;text-align:center;">
+                    <div style="font-size:34px;line-height:1;">&#9989;</div>
+                    <div style="color:#fff;font-size:19px;font-weight:800;margin-top:8px;">Tutto risolto!</div>
+                    <div style="color:#d6f0e2;font-size:13.5px;margin-top:4px;">Ciao {$firstName}, la tua prenotazione è confermata</div>
+                </div>
+                <div style="padding:24px 28px;">
+                    <p style="font-size:14.5px;color:#1a1d23;line-height:1.6;margin:0 0 16px;">
+                        Buone notizie: il servizio presso <strong>{$restaurantName}</strong> è di nuovo operativo e la tua
+                        prenotazione è <strong>confermata</strong>. Ti aspettiamo!
+                    </p>
+                    <div style="background:#f0faf5;border:1px solid #cdebd9;border-radius:10px;padding:14px 16px;">
+                        <table style="width:100%;font-size:14px;color:#1a1d23;border-collapse:collapse;">
+                            <tr><td style="padding:5px 0;color:#6c757d;">Data</td><td style="padding:5px 0;text-align:right;font-weight:700;">{$dateFormatted}</td></tr>
+                            <tr><td style="padding:5px 0;color:#6c757d;">Ora</td><td style="padding:5px 0;text-align:right;font-weight:700;">{$time}</td></tr>
+                            <tr><td style="padding:5px 0;color:#6c757d;">Persone</td><td style="padding:5px 0;text-align:right;font-weight:700;">{$partySize} {$personeLabel}</td></tr>
+                        </table>
+                    </div>
+                    <p style="font-size:13.5px;color:#6c757d;line-height:1.6;margin:16px 0 0;">Grazie per la pazienza. A presto!</p>
+                </div>
+            </div>
+            <div style="text-align:center;color:#9aa3aa;font-size:11.5px;margin-top:16px;">&copy; {$year} {$restaurantName} &middot; powered by Evulery</div>
+        </div>
+        </body>
+        </html>
+        HTML;
+
+        $service = new self();
+        return $service->send($customerEmail, $subjectLine, $html, $tenant['name'] ?? null, $tenant['email'] ?? null);
+    }
+
+    /**
      * Send reservation reminder email.
      * @param string $type '24h' or '2h'
      */

@@ -25,6 +25,18 @@ foreach (array_merge($upcoming, $past) as $c) {
     </div>
 </div>
 
+<!-- Emergenza: ingresso alla chiusura straordinaria -->
+<div class="card d-flex flex-row align-items-center gap-3 mb-3" style="padding:1rem 1.25rem;border-left:4px solid #dc3545;">
+    <i class="bi bi-exclamation-octagon-fill" style="font-size:1.6rem;color:#b3261e;"></i>
+    <div class="flex-grow-1" style="font-size:.86rem;">
+        <strong>Imprevisto improvviso?</strong> (guasto, allagamento, emergenza) — chiudi subito il servizio,
+        avvisa i clienti già prenotati e, se rientra, riapri recuperando le prenotazioni.
+    </div>
+    <a href="<?= url('dashboard/emergency-closure') ?>" class="btn btn-sm btn-emergency flex-shrink-0">
+        <i class="bi bi-exclamation-octagon-fill"></i> Chiusura straordinaria
+    </a>
+</div>
+
 <div class="row g-4">
     <!-- Left: Add closure form -->
     <div class="col-lg-5">

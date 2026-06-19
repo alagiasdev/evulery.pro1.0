@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chiusura straordinaria — wireframe</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{
+    --brand:#00844A; --brand-d:#006b3c; --ink:#1a1d23; --muted:#6c757d; --line:#eceff2;
+    --conf:#198754; --pend:#E6A100; --arr:#0EA5E9; --canc:#dc3545; --susp:#8b5cf6;
+    --warn-bg:#fff7ed; --warn-bd:#fed7aa; --warn-ink:#9a3412;
+  }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:15px}
+  .wrap{max-width:860px;margin:0 auto;padding:22px 18px 90px}
+  .brandbar{height:5px;background:linear-gradient(90deg,var(--brand),#5cbf8c);border-radius:6px;margin-bottom:14px}
+  h1{font-size:1.25rem;margin:0 0 4px}
+  .lead{color:var(--muted);font-size:.88rem;margin:0 0 16px}
+
+  /* step nav */
+  .steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+  .stepbtn{border:1.5px solid #d4dade;background:#fff;border-radius:20px;padding:6px 13px;font-weight:600;font-size:.76rem;color:var(--muted);cursor:pointer}
+  .stepbtn.on{background:var(--brand);border-color:var(--brand);color:#fff}
+  .stepbtn b{font-weight:800}
+
+  .screen{display:none}
+  .screen.on{display:block;animation:fade .18s ease}
+  @keyframes fade{from{opacity:.3;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:16px}
+  .card h2{font-size:1rem;margin:0 0 4px;display:flex;align-items:center;gap:.45rem}
+  .card .hint{color:var(--muted);font-size:.8rem;margin:0 0 14px}
+
+  /* dashboard mock */
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+  .topbar .t{font-weight:800;font-size:1.05rem}
+  .btn{border:none;border-radius:9px;padding:9px 15px;font-weight:700;font-size:.85rem;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none}
+  .btn-emg{background:#fdecea;color:#b3261e;border:1.5px solid #f5c2c0}
+  .btn-emg:hover{background:#fbd9d6}
+  .btn-success{background:var(--brand);color:#fff}
+  .btn-ghost{background:#fff;color:var(--ink);border:1.5px solid #d4dade}
+  .btn-danger{background:var(--canc);color:#fff}
+  .btn-purple{background:var(--susp);color:#fff}
+  .btn-lg{padding:12px 20px;font-size:.92rem}
+  .btn[disabled]{opacity:.5;cursor:not-allowed}
+
+  .reslist{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .resrow{display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid #f4f6f8;font-size:.85rem}
+  .resrow:last-child{border-bottom:none}
+  .resrow .tm{font-weight:800;width:46px}
+  .resrow .nm{flex:1}
+  .resrow .px{color:var(--muted);font-weight:600}
+  .sb{font-size:.66rem;font-weight:800;border-radius:5px;padding:2px 7px}
+  .sb-confirmed{background:#d1e7dd;color:#0a5c36}.sb-pending{background:#fff3cd;color:#664d03}
+  .sb-susp{background:#ede9fe;color:#5b21b6}.sb-canc{background:#fdecea;color:#b3261e}
+
+  label.fl{display:block;font-weight:700;font-size:.8rem;margin:14px 0 5px}
+  .row2{display:flex;gap:12px;flex-wrap:wrap}
+  .row2>div{flex:1;min-width:160px}
+  input[type=date],input[type=time],textarea,select{width:100%;border:1.5px solid #d4dade;border-radius:9px;padding:9px 11px;font-size:.88rem;font-family:inherit}
+  textarea{resize:vertical;min-height:64px}
+  .segs{display:flex;gap:8px;flex-wrap:wrap}
+  .seg{border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:8px 14px;font-weight:600;font-size:.82rem;cursor:pointer}
+  .seg.on{background:#e8f5ee;border-color:var(--brand);color:var(--brand-d)}
+
+  /* mode cards */
+  .modes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+  @media(max-width:640px){.modes{grid-template-columns:1fr}.modal{margin:0 8px}}
+  .mode{border:2px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;position:relative}
+  .mode.on{border-color:var(--brand);background:#f6fbf8}
+  .mode .mt{font-weight:800;font-size:.92rem;display:flex;align-items:center;gap:.4rem;margin-bottom:4px}
+  .mode .md{font-size:.78rem;color:var(--muted);line-height:1.4}
+  .mode .pick{position:absolute;top:12px;right:12px;width:18px;height:18px;border-radius:50%;border:2px solid #c9d2d9}
+  .mode.on .pick{border-color:var(--brand);background:var(--brand);box-shadow:inset 0 0 0 3px #fff}
+  .rec-badge{display:inline-block;background:#e8f5ee;color:var(--brand-d);font-size:.64rem;font-weight:800;border-radius:5px;padding:2px 7px;margin-left:6px}
+
+  .callout{border-radius:10px;padding:12px 14px;font-size:.83rem;display:flex;gap:10px;align-items:flex-start;margin-top:14px}
+  .callout i{font-size:1.05rem;margin-top:1px}
+  .co-warn{background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn-ink)}
+  .co-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+  .co-purple{background:#f5f3ff;border:1px solid #ddd6fe;color:#5b21b6}
+
+  /* email preview */
+  .mail{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:10px}
+  .mail-h{background:#f8fafc;border-bottom:1px solid var(--line);padding:9px 13px;font-size:.74rem;color:var(--muted)}
+  .mail-h b{color:var(--ink)}
+  .mail-b{padding:14px;font-size:.84rem;line-height:1.5}
+  .mail-b .em-top{height:4px;border-radius:3px;margin-bottom:12px}
+
+  /* active banner */
+  .gbanner{border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .gb-susp{background:#f5f3ff;border:1.5px solid #ddd6fe;color:#5b21b6}
+  .gb-closed{background:#fdecea;border:1.5px solid #f5c2c0;color:#b3261e}
+  .gbanner .gi{font-size:1.4rem}
+  .gbanner .gt{flex:1;min-width:160px}
+  .gbanner .gt b{display:block;font-size:.95rem}
+  .gbanner .gt small{font-size:.78rem;opacity:.85}
+
+  .modal{background:#fff;border-radius:14px;border:1px solid var(--line);box-shadow:0 10px 40px rgba(0,0,0,.12);padding:20px;max-width:560px;margin:0 auto}
+
+  .arrow{text-align:center;color:#c9d2d9;font-size:1.3rem;margin:2px 0}
+  .foot{margin-top:24px;font-size:.78rem;color:var(--muted);text-align:center}
+  .navbtns{display:flex;justify-content:space-between;gap:10px;margin-top:8px}
+  ul.tight{margin:6px 0 0;padding-left:18px;font-size:.83rem}
+  ul.tight li{margin-bottom:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar"></div>
+  <h1>Chiusura straordinaria <span style="font-size:.8rem;font-weight:500;color:var(--muted)">— flusso completo (wireframe)</span></h1>
+  <p class="lead">Caso reale: bagno allagato di mattina, l'idraulico potrebbe risolvere in giornata. Il ristoratore non sa ancora se riaprirà. Clicca gli step per vedere il flusso.</p>
+
+  <div class="steps">
+    <span class="stepbtn on" data-s="1"><b>1.</b> Punto d'ingresso</span>
+    <span class="stepbtn" data-s="2"><b>2.</b> Form chiusura</span>
+    <span class="stepbtn" data-s="3"><b>3.</b> Le 2 modalità</span>
+    <span class="stepbtn" data-s="4"><b>4.</b> Email cliente</span>
+    <span class="stepbtn" data-s="5"><b>5.</b> Servizio sospeso</span>
+    <span class="stepbtn" data-s="6"><b>6.</b> Riapri / Recupero</span>
+  </div>
+
+  <!-- STEP 1 -->
+  <section class="screen on" data-screen="1">
+    <div class="topbar">
+      <span class="t"><i class="bi bi-calendar-check" style="color:var(--brand)"></i> Prenotazioni — Gio 19 Giugno</span>
+      <button class="btn btn-emg"><i class="bi bi-exclamation-octagon-fill"></i> Chiusura straordinaria</button>
+    </div>
+    <div class="card">
+      <h2><i class="bi bi-lightning-charge-fill" style="color:#b3261e"></i> Accesso immediato</h2>
+      <p class="hint">È un'emergenza: il pulsante sta in alto nella dashboard e nelle prenotazioni, NON sepolto in Impostazioni. Due click e parte tutto.</p>
+      <div class="callout co-info">
+        <i class="bi bi-info-circle-fill"></i>
+        <div>Diverso da <b>Impostazioni → Chiusure e Ferie</b> (che esiste già): quella blocca solo le <i>nuove</i> prenotazioni per le ferie programmate. Questa gestisce anche <b>le prenotazioni già prese</b> e <b>avvisa i clienti</b>.</div>
+      </div>
+    </div>
+    <div class="navbtns"><span></span><button class="btn btn-success" onclick="go(2)">Apri il pannello →</button></div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="screen" data-screen="2">
+    <div class="modal">
+      <h2 style="margin-top:0;color:#b3261e"><i class="bi bi-exclamation-octagon-fill"></i> Chiusura straordinaria</h2>
+      <p class="hint">Indica quando e cosa chiudi. Le prenotazioni interessate vengono mostrate prima di confermare.</p>
+
+      <div class="row2">
+        <div><label class="fl">Dal</label><input type="date" value="2026-06-19"></div>
+        <div><label class="fl">Al (lascia uguale per un solo giorno)</label><input type="date" value="2026-06-21"></div>
+      </div>
+
+      <label class="fl">Cosa chiudi</label>
+      <div class="segs">
+        <span class="seg">Giorno intero</span>
+        <span class="seg on">Solo cena</span>
+        <span class="seg">Solo pranzo</span>
+        <span class="seg">Fascia oraria…</span>
+      </div>
+
+      <label class="fl">Messaggio ai clienti <span style="font-weight:500;color:var(--muted)">(opzionale, allegato all'email)</span></label>
+      <textarea>Per un imprevisto tecnico siamo costretti a sospendere il servizio. Ci scusiamo per il disagio.</textarea>
+
+      <div class="callout co-warn">
+        <i class="bi bi-people-fill"></i>
+        <div><b>12 prenotazioni</b> nel periodo (43 coperti) saranno interessate. Scegli come gestirle nello step successivo.</div>
+      </div>
+
+      <div class="navbtns">
+        <button class="btn btn-ghost" onclick="go(1)">← Annulla</button>
+        <button class="btn btn-success" onclick="go(3)">Avanti: come gestire →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="screen" data-screen="3">
+    <div class="card">
+      <h2><i class="bi bi-signpost-split-fill" style="color:var(--brand)"></i> Come gestire le prenotazioni esistenti</h2>
+      <p class="hint">È la decisione chiave. Determina se potrai "recuperare" i clienti o no.</p>
+
+      <div class="modes">
+        <div class="mode on" onclick="pickMode(this,'susp')">
+          <span class="pick"></span>
+          <div class="mt"><i class="bi bi-pause-circle-fill" style="color:var(--susp)"></i> Sospendi <span class="rec-badge">CONSIGLIATA</span></div>
+          <div class="md">Per imprevisti <b>incerti</b> (idraulico in arrivo). Le prenotazioni NON vengono cancellate: passano "in sospeso". Il cliente riceve <i>"ti confermiamo entro le HH:MM"</i>. Se riapri in tempo → <b>recuperi tutto</b>.</div>
+        </div>
+        <div class="mode" onclick="pickMode(this,'canc')">
+          <span class="pick"></span>
+          <div class="mt"><i class="bi bi-x-circle-fill" style="color:var(--canc)"></i> Annulla subito</div>
+          <div class="md">Per chiusure <b>certe</b> ("stasera non si lavora, punto"). Le prenotazioni vengono cancellate e i clienti ricevono subito le scuse. <b>Nessun recupero</b> possibile dopo.</div>
+        </div>
+      </div>
+
+      <div id="mode-susp" class="callout co-purple">
+        <i class="bi bi-lightbulb-fill"></i>
+        <div><b>Perché conviene per il tuo caso:</b> avevi chiuso 3 giorni ma l'idraulico ha finito il giorno dopo. Con "Sospendi" i giorni 2 e 3 NON vengono buttati via — ti basta premere "Riapri" e tornano confermati con una mail "tutto risolto". Cancellandoli subito, invece, li perderesti.</div>
+      </div>
+      <div id="mode-canc" class="callout co-warn" style="display:none">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>Una volta inviate le scuse, i clienti si organizzano altrove. Anche se riapri, <b>non si possono "richiamare"</b>: ri-mandare "siamo tornati" crea no-show e confusione. Usa questa modalità solo se sei sicuro di non riaprire in tempo.</div>
+      </div>
+
+      <h2 style="margin-top:20px;font-size:.92rem"><i class="bi bi-list-check"></i> Prenotazioni interessate (cena 19/06)</h2>
+      <div class="reslist" style="margin-top:8px">
+        <div class="resrow"><span class="tm">20:00</span><span class="nm">Rossi Mario</span><span class="px">2 pers.</span><span class="sb sb-confirmed">Confermata</span></div>
+        <div class="resrow"><span class="tm">20:30</span><span class="nm">Bianchi Anna</span><span class="px">4 pers.</span><span class="sb sb-confirmed">Confermata</span></div>
+        <div class="resrow"><span class="tm">21:00</span><span class="nm">Verdi Luca</span><span class="px">6 pers.</span><span class="sb sb-pending">In attesa</span></div>
+        <div class="resrow" style="color:var(--muted);justify-content:center;font-size:.78rem">+ altre 9 (19/06 cena, 20/06, 21/06)</div>
+      </div>
+
+      <div class="navbtns">
+        <button class="btn btn-ghost" onclick="go(2)">← Indietro</button>
+        <button class="btn btn-success" onclick="go(4)" id="confirmBtn">Sospendi e avvisa i clienti →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="screen" data-screen="4">
+    <div class="card">
+      <h2><i class="bi bi-envelope-paper-fill" style="color:var(--brand)"></i> Email automatica al cliente</h2>
+      <p class="hint">Inviata subito a tutti gli interessati. Cambia in base alla modalità scelta.</p>
+
+      <div class="mail" id="mail-susp">
+        <div class="mail-h">Da: <b>Trattoria da Mario</b> · A: rossi.mario@email.it · Oggetto: <b>La tua prenotazione di giovedì sera</b></div>
+        <div class="mail-b">
+          <div class="em-top" style="background:var(--susp)"></div>
+          Ciao Mario,<br><br>
+          per un <b>imprevisto tecnico</b> dobbiamo momentaneamente sospendere il servizio della <b>cena di giovedì 19/06</b>.
+          La tua prenotazione (2 persone, 20:00) è <b>in sospeso</b>: stiamo lavorando per risolvere e <b>ti confermiamo entro le 17:00</b> di oggi.<br><br>
+          <i>"Per un imprevisto tecnico siamo costretti a sospendere il servizio. Ci scusiamo per il disagio."</i><br><br>
+          Ti ricontattiamo a brevissimo. Grazie per la pazienza,<br>Lo staff di Trattoria da Mario
+        </div>
+      </div>
+
+      <div class="mail" id="mail-canc" style="display:none">
+        <div class="mail-h">Da: <b>Trattoria da Mario</b> · A: rossi.mario@email.it · Oggetto: <b>Prenotazione annullata — ci scusiamo</b></div>
+        <div class="mail-b">
+          <div class="em-top" style="background:var(--canc)"></div>
+          Ciao Mario,<br><br>
+          purtroppo per un <b>imprevisto tecnico</b> siamo costretti a <b>chiudere</b> e ad annullare la tua prenotazione della <b>cena di giovedì 19/06</b> (2 persone, 20:00).<br><br>
+          <i>"Per un imprevisto tecnico siamo costretti a sospendere il servizio. Ci scusiamo per il disagio."</i><br><br>
+          Ci dispiace molto per il disagio. Appena possibile saremo felici di riaverti da noi — <a href="#" style="color:var(--brand-d)">prenota un'altra data</a>.<br><br>
+          Lo staff di Trattoria da Mario
+        </div>
+      </div>
+
+      <div class="callout co-info" style="margin-top:14px">
+        <i class="bi bi-shield-check"></i>
+        <div>Se la prenotazione aveva una <b>caparra</b>, viene segnalata per il rimborso (non si butta via il pagamento del cliente). Le nuove prenotazioni nel periodo sono già bloccate.</div>
+      </div>
+
+      <div class="navbtns">
+        <button class="btn btn-ghost" onclick="go(3)">← Indietro</button>
+        <button class="btn btn-success" onclick="go(5)">Vedi cosa succede dopo →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="screen" data-screen="5">
+    <div class="gbanner gb-susp">
+      <i class="bi bi-pause-circle-fill gi"></i>
+      <div class="gt"><b>Servizio sospeso — Cena 19/06 → 21/06</b><small>12 prenotazioni in sospeso · clienti avvisati alle 09:14 · nuove prenotazioni bloccate</small></div>
+      <button class="btn btn-purple" onclick="go(6)"><i class="bi bi-arrow-clockwise"></i> Riapri / Tutto risolto</button>
+      <button class="btn btn-danger" onclick="go(6)"><i class="bi bi-x-octagon"></i> Chiudi definitivo</button>
+    </div>
+
+    <div class="card">
+      <h2><i class="bi bi-hourglass-split" style="color:var(--susp)"></i> Stato durante la sospensione</h2>
+      <p class="hint">Il banner resta visibile in dashboard finché non decidi. Le prenotazioni mostrano lo stato "in sospeso".</p>
+      <div class="reslist">
+        <div class="resrow"><span class="tm">20:00</span><span class="nm">Rossi Mario</span><span class="px">2 pers.</span><span class="sb sb-susp">In sospeso</span></div>
+        <div class="resrow"><span class="tm">20:30</span><span class="nm">Bianchi Anna</span><span class="px">4 pers.</span><span class="sb sb-susp">In sospeso</span></div>
+        <div class="resrow"><span class="tm">21:00</span><span class="nm">Verdi Luca</span><span class="px">6 pers.</span><span class="sb sb-susp">In sospeso</span></div>
+      </div>
+      <div class="callout co-purple">
+        <i class="bi bi-clock-history"></i>
+        <div>L'idraulico ha finito alle 16:00. Il ristoratore preme <b>"Riapri / Tutto risolto"</b> → step successivo.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 6 -->
+  <section class="screen" data-screen="6">
+    <div class="card">
+      <h2><i class="bi bi-arrow-clockwise" style="color:var(--brand)"></i> Riapertura — recupero intelligente</h2>
+      <p class="hint">Funziona <b>solo</b> perché in modalità "Sospendi" non avevamo mai cancellato. Si recuperano solo i servizi non ancora passati.</p>
+
+      <div class="callout co-info">
+        <i class="bi bi-magic"></i>
+        <div>Il sistema distingue automaticamente <b>cosa si può recuperare</b> (servizi futuri) da <b>cosa è ormai passato</b>.</div>
+      </div>
+
+      <h2 style="font-size:.9rem;margin-top:18px;color:var(--brand-d)"><i class="bi bi-check-circle-fill"></i> Recuperate → tornano confermate + email "Tutto risolto"</h2>
+      <div class="reslist" style="margin-top:8px">
+        <div class="resrow"><span class="tm" style="width:auto">20/06</span><span class="nm">Neri Sara · 21:00</span><span class="px">5 pers.</span><span class="sb sb-confirmed">Confermata</span></div>
+        <div class="resrow"><span class="tm" style="width:auto">21/06</span><span class="nm">Blu Marco · 20:30</span><span class="px">3 pers.</span><span class="sb sb-confirmed">Confermata</span></div>
+        <div class="resrow" style="color:var(--muted);justify-content:center;font-size:.78rem">+ 8 prenotazioni future ripristinate</div>
+      </div>
+
+      <h2 style="font-size:.9rem;margin-top:18px;color:#b3261e"><i class="bi bi-x-circle-fill"></i> Non recuperabili → restano annullate (servizio già passato)</h2>
+      <div class="reslist" style="margin-top:8px">
+        <div class="resrow"><span class="tm" style="width:auto">19/06</span><span class="nm">Rossi Mario · 20:00 (cena di stasera già compromessa)</span><span class="px">2 pers.</span><span class="sb sb-canc">Annullata</span></div>
+      </div>
+
+      <div class="mail" style="margin-top:16px">
+        <div class="mail-h">Email di recupero · Oggetto: <b>Buone notizie — ti aspettiamo!</b></div>
+        <div class="mail-b">
+          <div class="em-top" style="background:var(--brand)"></div>
+          Ciao Sara,<br><br>
+          <b>tutto risolto!</b> Il servizio è di nuovo operativo e la tua prenotazione di <b>sabato 20/06 alle 21:00</b> (5 persone) è <b>confermata</b>. Ti aspettiamo!<br><br>
+          Grazie per la pazienza,<br>Lo staff di Trattoria da Mario
+        </div>
+      </div>
+
+      <div class="callout co-warn">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div><b>Scelta di design da validare:</b> per la sera del 19/06 (già passata/persa) <u>non</u> si manda nulla — sarebbe assurdo dire "ti aspettiamo" per un servizio finito. Si potrebbe però offrire un link "prenota un'altra data". Da decidere insieme.</div>
+      </div>
+
+      <div class="navbtns"><button class="btn btn-ghost" onclick="go(1)">↻ Rivedi dall'inizio</button><span></span></div>
+    </div>
+  </section>
+
+  <p class="foot">Wireframe — Chiusura straordinaria (sospendi/annulla + recupero) · Evulery</p>
+</div>
+
+<script>
+function go(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', +s.dataset.screen===n));
+  document.querySelectorAll('.stepbtn').forEach(b=>b.classList.toggle('on', +b.dataset.s===n));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.stepbtn').forEach(b=>b.onclick=()=>go(+b.dataset.s));
+
+// segments (cosa chiudi)
+document.querySelectorAll('.segs .seg').forEach(s=>s.onclick=function(){
+  this.parentNode.querySelectorAll('.seg').forEach(x=>x.classList.remove('on'));
+  this.classList.add('on');
+});
+
+// mode switch
+function pickMode(el,mode){
+  document.querySelectorAll('.mode').forEach(m=>m.classList.remove('on'));
+  el.classList.add('on');
+  var susp = mode==='susp';
+  document.getElementById('mode-susp').style.display = susp?'flex':'none';
+  document.getElementById('mode-canc').style.display = susp?'none':'flex';
+  document.getElementById('mail-susp').style.display = susp?'block':'none';
+  document.getElementById('mail-canc').style.display = susp?'none':'block';
+  var b=document.getElementById('confirmBtn');
+  b.textContent = (susp?'Sospendi e avvisa i clienti →':'Annulla e invia le scuse →');
+  b.className = 'btn ' + (susp?'btn-success':'btn-danger');
+}
+</script>
+</body>
+</html>

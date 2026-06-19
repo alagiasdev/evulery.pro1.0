@@ -130,7 +130,14 @@ $kpiUrl = function (string $st) use ($isUpcoming, $date, $dateTo, $source): stri
 <div class="res-page-header">
     <h1>Prenotazioni</h1>
     <span class="dh-date-badge"><?= e($headerBadge) ?></span>
+    <a href="<?= url('dashboard/emergency-closure') ?>" class="btn btn-sm btn-emergency" style="margin-left:auto; align-self:center;">
+        <i class="bi bi-exclamation-octagon-fill"></i> Chiusura straordinaria
+    </a>
 </div>
+
+<?php if (!empty($emergencyClosure)): ?>
+    <?php $ec = $emergencyClosure; include __DIR__ . '/../../partials/emergency-banner.php'; ?>
+<?php endif; ?>
 
 <?php if (!empty($heartbeat)): ?>
 <!--

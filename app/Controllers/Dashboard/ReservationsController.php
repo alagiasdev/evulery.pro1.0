@@ -8,6 +8,7 @@ use App\Core\Response;
 use App\Core\TenantResolver;
 use App\Core\Validator;
 use App\Models\Customer;
+use App\Models\EmergencyClosure;
 use App\Models\Reservation;
 use App\Models\Promotion;
 use App\Models\ReservationLog;
@@ -96,6 +97,7 @@ class ReservationsController
             'tableMgmt'        => $tableMgmt,
             'tableAssignments' => $tableAssignments,
             'heartbeat'        => $heartbeat,
+            'emergencyClosure' => (new EmergencyClosure())->findActiveByTenant($tenantId),
         ], 'dashboard');
     }
 
@@ -202,7 +204,7 @@ class ReservationsController
         $otherIds = [];
         foreach ($others as $o) {
             if ((int)$o['id'] === (int)$reservation['id']) continue;
-            if (!in_array((string)$o['status'], ['confirmed', 'pending', 'arrived'], true)) continue;
+            if (!in_array((string)$o['status'], ['confirmed', 'pending', 'arrived', 'suspended'], true)) continue;
             $oStart = strtotime($o['reservation_time']);
             $oEnd   = $oStart + $tableWindow * 60;
             if (max($rStart, $oStart) < min($rEnd, $oEnd)) {
