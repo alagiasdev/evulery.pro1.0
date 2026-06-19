@@ -16,6 +16,7 @@
     <a href="<?= url('dashboard/marketing') ?>?days=<?= $days ?>" class="mk-pill <?= $rangeKey === (string)$days ? 'on' : '' ?>"><?= e($label) ?></a>
     <?php endforeach; ?>
     <span class="mk-pill <?= $rangeKey === 'custom' ? 'on' : '' ?>" id="mk-custom-toggle"><i class="bi bi-calendar3"></i> Personalizzato</span>
+    <span class="text-muted" style="font-size:.74rem;width:100%;margin-top:-2px;">Periodo = quando è stata effettuata la prenotazione (non la data del tavolo).</span>
     <form method="GET" action="<?= url('dashboard/marketing') ?>" class="mk-custom-form" id="mk-custom-form" style="<?= $rangeKey === 'custom' ? '' : 'display:none;' ?>">
         <input type="date" name="from" value="<?= e($from) ?>" class="form-control form-control-sm" style="width:auto;">
         <input type="date" name="to" value="<?= e($to) ?>" class="form-control form-control-sm" style="width:auto;">

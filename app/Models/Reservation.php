@@ -97,6 +97,10 @@ class Reservation
      * Report provenienza: prenotazioni "reali" (escluse annullate/no-show)
      * raggruppate per canale + campagna nel periodo. Le righe senza canale
      * (offline/telefono/walk-in/non taggate) confluiscono in 'direct'.
+     *
+     * Il periodo filtra su created_at (QUANDO e' stata effettuata la
+     * prenotazione): l'attribuzione marketing misura le conversioni del
+     * periodo, a prescindere dalla data del tavolo (spesso futura).
      */
     public function attributionReport(int $tenantId, string $from, string $to): array
     {
@@ -108,7 +112,7 @@ class Reservation
                     SUM(via_hub) AS via_hub
              FROM reservations
              WHERE tenant_id = :t
-               AND reservation_date BETWEEN :from AND :to
+               AND DATE(created_at) BETWEEN :from AND :to
                AND status NOT IN ('cancelled', 'noshow')
              GROUP BY channel, campaign
              ORDER BY covers DESC"
