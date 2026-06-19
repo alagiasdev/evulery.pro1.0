@@ -40,7 +40,7 @@ foreach ($saved as $s) {
         <div class="mk-chan" data-src="google"       data-med="cpc"      data-qr="0"><i class="bi bi-google"></i>Google Ads</div>
         <div class="mk-chan" data-src="tiktok"        data-med="social"   data-qr="0"><i class="bi bi-tiktok"></i>TikTok</div>
         <div class="mk-chan" data-src="flyer"         data-med="qr"       data-qr="1"><i class="bi bi-qr-code"></i>Volantino QR</div>
-        <div class="mk-chan" data-src="gbp"           data-med="organic"  data-qr="1"><i class="bi bi-shop"></i>Google Business</div>
+        <div class="mk-chan" data-src="gbp"           data-med="organic"  data-qr="0"><i class="bi bi-shop"></i>Google Business</div>
         <div class="mk-chan" data-src="newsletter"    data-med="email"    data-qr="0"><i class="bi bi-envelope"></i>Newsletter</div>
         <div class="mk-chan" data-src="__generic"     data-med="referral" data-qr="0"><i class="bi bi-three-dots"></i>Generico / Altro</div>
     </div>
@@ -110,7 +110,9 @@ foreach ($saved as $s) {
         <div class="mk-perf"><div class="pn"><?= (int)$s['bookings'] ?></div><div class="pl">pren.</div></div>
         <div class="mk-sact">
             <button type="button" class="mk-iconbtn mk-rowcopy" data-url="<?= e($s['url']) ?>" title="Copia link"><i class="bi bi-clipboard"></i></button>
+            <?php if ($s['channel'] === 'flyer'): ?>
             <button type="button" class="mk-iconbtn mk-rowqr" data-url="<?= e($s['url']) ?>" title="Mostra QR"><i class="bi bi-qr-code"></i></button>
+            <?php endif; ?>
             <form method="POST" action="<?= url('dashboard/marketing/links/' . (int)$s['id'] . '/delete') ?>" data-confirm="Eliminare questa campagna salvata? (le prenotazioni già attribuite restano nel report)" style="display:inline;">
                 <?= csrf_field() ?>
                 <button type="submit" class="mk-iconbtn del" title="Elimina"><i class="bi bi-trash3"></i></button>
@@ -181,6 +183,16 @@ foreach ($saved as $s) {
     function renderQr(box, text, size){
         loadQrLib(function(){ box.innerHTML=''; new QRCode(box, { text:text, width:size, height:size, colorDark:'#212529', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M }); });
     }
+    // QR ad alta risoluzione per la STAMPA (1024px, correzione errori H), reso off-screen
+    function genHiResQr(text, cb){
+        loadQrLib(function(){
+            var h = document.createElement('div'); h.style.cssText = 'position:absolute;left:-99999px;top:-99999px;';
+            document.body.appendChild(h);
+            new QRCode(h, { text:text, width:1024, height:1024, colorDark:'#000000', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.H });
+            setTimeout(function(){ var n = h.querySelector('canvas, img'); var d = n ? (n.tagName==='CANVAS' ? n.toDataURL('image/png') : n.src) : ''; h.remove(); cb(d); }, 60);
+        });
+    }
+    function downloadDataUrl(d, name){ if(!d) return; var a=document.createElement('a'); a.href=d; a.download=name||'qr-evulery.png'; a.click(); }
 
     function build(){
         var d = document.querySelector('#mk-dest .mk-segbtn.on').dataset.dest;
@@ -213,14 +225,21 @@ foreach ($saved as $s) {
     document.getElementById('mk-gsrc').addEventListener('input', build);
 
     document.getElementById('mk-copy').addEventListener('click', function(){ var b=this; navigator.clipboard.writeText(lastUrl).then(function(){ b.textContent='Copiato!'; setTimeout(function(){ b.textContent='Copia'; },1200); }); });
-    document.getElementById('mk-qr-dl').addEventListener('click', function(){ var n=qrBox.querySelector('canvas,img'); if(!n) return; var data=n.tagName==='CANVAS'?n.toDataURL('image/png'):n.src; var a=document.createElement('a'); a.href=data; a.download='qr-evulery.png'; a.click(); });
+    document.getElementById('mk-qr-dl').addEventListener('click', function(){
+        var b=this, orig=b.innerHTML; b.disabled=true; b.innerHTML='<i class="bi bi-hourglass-split"></i> Generazione...';
+        genHiResQr(lastUrl, function(d){ b.disabled=false; b.innerHTML=orig; downloadDataUrl(d, 'qr-evulery.png'); });
+    });
 
     // azioni lista salvate
     document.querySelectorAll('.mk-rowcopy').forEach(function(b){ b.addEventListener('click', function(){ navigator.clipboard.writeText(b.dataset.url).then(function(){ var i=b.querySelector('i'); i.className='bi bi-check2'; setTimeout(function(){ i.className='bi bi-clipboard'; },1200); }); }); });
     document.querySelectorAll('.mk-rowqr').forEach(function(b){ b.addEventListener('click', function(){
         var box = b.closest('.mk-srow').querySelector('.mk-row-qr');
         if (box.classList.contains('show')) { box.classList.remove('show'); box.innerHTML=''; return; }
-        box.classList.add('show'); renderQr(box, b.dataset.url, 140);
+        box.classList.add('show');
+        var prev = document.createElement('div'); box.appendChild(prev); renderQr(prev, b.dataset.url, 140);
+        var dl = document.createElement('button'); dl.type='button'; dl.className='btn btn-sm btn-outline-success mt-2'; dl.innerHTML='<i class="bi bi-download"></i> Scarica PNG (stampa)';
+        dl.addEventListener('click', function(){ var o=dl.innerHTML; dl.disabled=true; dl.innerHTML='<i class="bi bi-hourglass-split"></i> ...'; genHiResQr(b.dataset.url, function(d){ dl.disabled=false; dl.innerHTML=o; downloadDataUrl(d,'qr-evulery.png'); }); });
+        box.appendChild(dl);
     }); });
 
     build();
