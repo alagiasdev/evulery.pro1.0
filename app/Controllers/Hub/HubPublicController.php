@@ -7,6 +7,7 @@ use App\Core\Response;
 use App\Models\HubAction;
 use App\Models\HubSettings;
 use App\Models\Tenant;
+use App\Services\AttributionService;
 use App\Services\HubService;
 
 /**
@@ -57,6 +58,20 @@ class HubPublicController
         }
         $colors = (new HubSettings())->resolveColors($settings);
 
+        // Propagazione UTM: le campagne puntano all'Hub; gli UTM in arrivo
+        // viaggiano fino ai bottoni interni (prenota/menu/ordina/recensioni),
+        // cosi' l'attribuzione arriva fino alla prenotazione/ordine. Se non
+        // arrivano UTM (es. QR sul tavolo), l'Hub stesso e' la sorgente (=hub).
+        $utm  = $this->incomingUtm($request);
+        $base = rtrim(url(''), '/');
+        if (!empty($rendered['hero'])) {
+            $rendered['hero']['url'] = $this->withUtm($rendered['hero']['url'] ?? '', $utm, $base);
+        }
+        foreach ($rendered['items'] as &$it) {
+            $it['url'] = $this->withUtm($it['url'] ?? '', $utm, $base);
+        }
+        unset($it);
+
         // Standalone view (2-arg view = no layout)
         view('hub/public', [
             'tenant'   => $tenant,
@@ -66,6 +81,34 @@ class HubPublicController
             'items'    => $rendered['items'],
             'fontFamily' => $this->resolveFontFamily($settings['custom_font'] ?? null),
         ]);
+    }
+
+    /**
+     * UTM in arrivo sull'Hub. Se manca utm_source, l'Hub e' la sorgente
+     * (es. QR fisico) → utm_source=hub.
+     */
+    private function incomingUtm(Request $request): array
+    {
+        $src  = AttributionService::sanitize($request->query('utm_source'), 100);
+        $med  = AttributionService::sanitize($request->query('utm_medium'), 60);
+        $camp = AttributionService::sanitize($request->query('utm_campaign'), 120);
+        if ($src === null) {
+            $src = 'hub';
+            $med = $med ?? 'referral';
+        }
+        $u = ['utm_source' => $src];
+        if ($med)  $u['utm_medium'] = $med;
+        if ($camp) $u['utm_campaign'] = $camp;
+        return $u;
+    }
+
+    /** Appende gli UTM solo agli URL interni (stesso dominio app). */
+    private function withUtm(string $url, array $utm, string $base): string
+    {
+        if ($url === '' || $url[0] === '#') return $url;
+        if (strpos($url, $base) !== 0) return $url; // esterno (wa.me, tel:, maps) → invariato
+        $sep = strpos($url, '?') === false ? '?' : '&';
+        return $url . $sep . http_build_query($utm);
     }
 
     private function resolveFontFamily(?string $key): string

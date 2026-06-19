@@ -111,6 +111,7 @@ return array(
     'App\\Models\\Tenant' => $baseDir . '/app/Models/Tenant.php',
     'App\\Models\\TimeSlot' => $baseDir . '/app/Models/TimeSlot.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
+    'App\\Services\\AttributionService' => $baseDir . '/app/Services/AttributionService.php',
     'App\\Services\\AuditLog' => $baseDir . '/app/Services/AuditLog.php',
     'App\\Services\\AvailabilityService' => $baseDir . '/app/Services/AvailabilityService.php',
     'App\\Services\\BroadcastService' => $baseDir . '/app/Services/BroadcastService.php',

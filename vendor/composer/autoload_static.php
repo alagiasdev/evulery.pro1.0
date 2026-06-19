@@ -224,6 +224,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Models\\Tenant' => __DIR__ . '/../..' . '/app/Models/Tenant.php',
         'App\\Models\\TimeSlot' => __DIR__ . '/../..' . '/app/Models/TimeSlot.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
+        'App\\Services\\AttributionService' => __DIR__ . '/../..' . '/app/Services/AttributionService.php',
         'App\\Services\\AuditLog' => __DIR__ . '/../..' . '/app/Services/AuditLog.php',
         'App\\Services\\AvailabilityService' => __DIR__ . '/../..' . '/app/Services/AvailabilityService.php',
         'App\\Services\\BroadcastService' => __DIR__ . '/../..' . '/app/Services/BroadcastService.php',

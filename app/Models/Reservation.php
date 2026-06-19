@@ -183,8 +183,8 @@ class Reservation
             );
 
         $stmt = $this->db->prepare(
-            'INSERT INTO reservations (tenant_id, customer_id, reservation_date, reservation_time, party_size, duration_minutes, status, deposit_required, deposit_amount, guarantee_status, source, discount_percent, promotion_id, manage_token, customer_notes, booking_number)
-             VALUES (:tenant_id, :customer_id, :reservation_date, :reservation_time, :party_size, :duration_minutes, :status, :deposit_required, :deposit_amount, :guarantee_status, :source, :discount_percent, :promotion_id, :manage_token, :customer_notes, :booking_number)'
+            'INSERT INTO reservations (tenant_id, customer_id, reservation_date, reservation_time, party_size, duration_minutes, status, deposit_required, deposit_amount, guarantee_status, source, utm_source, utm_medium, utm_campaign, channel, via_hub, discount_percent, promotion_id, manage_token, customer_notes, booking_number)
+             VALUES (:tenant_id, :customer_id, :reservation_date, :reservation_time, :party_size, :duration_minutes, :status, :deposit_required, :deposit_amount, :guarantee_status, :source, :utm_source, :utm_medium, :utm_campaign, :channel, :via_hub, :discount_percent, :promotion_id, :manage_token, :customer_notes, :booking_number)'
         );
         $stmt->execute([
             'tenant_id'        => $tenantId,
@@ -198,6 +198,11 @@ class Reservation
             'deposit_amount'   => $data['deposit_amount'] ?? null,
             'guarantee_status' => $data['guarantee_status'] ?? 'none',
             'source'           => $data['source'] ?? 'widget',
+            'utm_source'       => $data['utm_source'] ?? null,
+            'utm_medium'       => $data['utm_medium'] ?? null,
+            'utm_campaign'     => $data['utm_campaign'] ?? null,
+            'channel'          => $data['channel'] ?? null,
+            'via_hub'          => !empty($data['via_hub']) ? 1 : 0,
             'discount_percent' => $data['discount_percent'] ?? null,
             'promotion_id'     => $data['promotion_id'] ?? null,
             'manage_token'     => $token,

@@ -698,6 +698,16 @@ document.addEventListener('DOMContentLoaded', function() {
             body.marketing_consent = marketingConsent;
         }
 
+        // Attribuzione marketing (provenienza): UTM dalla URL della pagina di
+        // prenotazione + referrer. Il backend deriva il canale (last-click).
+        try {
+            var qs = new URLSearchParams(window.location.search);
+            var us = qs.get('utm_source'); if (us) { body.utm_source = us; }
+            var um = qs.get('utm_medium'); if (um) { body.utm_medium = um; }
+            var uc = qs.get('utm_campaign'); if (uc) { body.utm_campaign = uc; }
+            if (document.referrer) { body.referrer = document.referrer; }
+        } catch (e) { /* attribuzione best-effort, non blocca la prenotazione */ }
+
         if (forceDuplicate) {
             body.force_duplicate = true;
         }

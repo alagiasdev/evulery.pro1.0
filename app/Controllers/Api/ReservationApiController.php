@@ -10,6 +10,7 @@ use App\Models\Reservation;
 use App\Models\ReservationLog;
 use App\Models\Tenant;
 use App\Models\Promotion;
+use App\Services\AttributionService;
 use App\Services\AuditLog;
 use App\Services\AvailabilityService;
 use App\Services\MailService;
@@ -214,6 +215,19 @@ class ReservationApiController
             'guarantee_status' => ($depositRequired && $isGuarantee) ? 'pending' : 'none',
             'source'           => 'widget',
         ];
+
+        // Attribuzione marketing (provenienza): UTM dalla URL della pagina di
+        // prenotazione + referrer, inviati dal widget. La cattura e' sempre
+        // attiva (innocua); il report e' gated 'marketing'. Last-click.
+        $utmSource = AttributionService::sanitize($data['utm_source'] ?? null, 100);
+        $utmMedium = AttributionService::sanitize($data['utm_medium'] ?? null, 60);
+        $utmCamp   = AttributionService::sanitize($data['utm_campaign'] ?? null, 120);
+        $referrer  = isset($data['referrer']) ? (string)$data['referrer'] : '';
+        $reservationData['utm_source']   = $utmSource;
+        $reservationData['utm_medium']   = $utmMedium;
+        $reservationData['utm_campaign'] = $utmCamp;
+        $reservationData['channel']      = AttributionService::deriveChannel($utmSource, $utmMedium, $referrer);
+        $reservationData['via_hub']      = AttributionService::isHubReferrer($referrer, (string)$slug) ? 1 : 0;
 
         if ($promo) {
             $reservationData['discount_percent'] = (int)$promo['discount_percent'];
