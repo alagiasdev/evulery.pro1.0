@@ -576,7 +576,7 @@ class MailService
         $dateFormatted  = self::formatDateItalian($reservation['reservation_date'] ?? '');
         $restaurantName = e($tenant['name'] ?? '');
         $bookingNumber  = (int)($reservation['booking_number'] ?? 0);
-        $bookUrl        = url(($tenant['slug'] ?? '') . '/booking');
+        $bookUrl        = url($tenant['slug'] ?? '');
         $year           = date('Y');
         $subjectLine    = "Prenotazione annullata - {$restaurantName}";
 
@@ -640,7 +640,7 @@ class MailService
         $time           = substr($reservation['reservation_time'] ?? '', 0, 5);
         $dateFormatted  = self::formatDateItalian($reservation['reservation_date'] ?? '');
         $restaurantName = e($tenant['name'] ?? '');
-        $bookUrl        = url(($tenant['slug'] ?? '') . '/booking');
+        $bookUrl        = url($tenant['slug'] ?? '');
         $year           = date('Y');
         $subjectLine    = "Prenotazione annullata - {$restaurantName}";
 
