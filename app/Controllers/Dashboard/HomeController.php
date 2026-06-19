@@ -97,6 +97,15 @@ class HomeController
             'url'   => url('dashboard/heartbeat/reservations') . '?date=' . urlencode($date),
         ];
 
+        // Banner chiusura straordinaria — opzionale, NON deve bloccare la home
+        // se la migration non e' ancora applicata (tabella mancante).
+        $emergencyClosure = null;
+        try {
+            $emergencyClosure = (new EmergencyClosure())->findActiveByTenant($tenantId);
+        } catch (\Throwable $e) {
+            app_log('Banner chiusura straordinaria non disponibile: ' . $e->getMessage(), 'warning');
+        }
+
         view('dashboard/home', [
             'title'         => 'Dashboard',
             'activeMenu'    => 'home',
@@ -114,7 +123,7 @@ class HomeController
             'userName'      => $userName,
             'tenantName'    => $tenant['name'] ?? '',
             'heartbeat'     => $heartbeat,
-            'emergencyClosure' => (new EmergencyClosure())->findActiveByTenant($tenantId),
+            'emergencyClosure' => $emergencyClosure,
         ], 'dashboard');
     }
 

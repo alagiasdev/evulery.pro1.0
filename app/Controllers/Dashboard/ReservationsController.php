@@ -82,6 +82,15 @@ class ReservationsController
             ];
         }
 
+        // Banner chiusura straordinaria — feature opzionale, NON deve bloccare
+        // la pagina se la migration non e' ancora applicata (tabella mancante).
+        $emergencyClosure = null;
+        try {
+            $emergencyClosure = (new EmergencyClosure())->findActiveByTenant($tenantId);
+        } catch (\Throwable $e) {
+            app_log('Banner chiusura straordinaria non disponibile: ' . $e->getMessage(), 'warning');
+        }
+
         view('dashboard/reservations/index', [
             'title'        => 'Prenotazioni',
             'activeMenu'   => 'reservations',
@@ -97,7 +106,7 @@ class ReservationsController
             'tableMgmt'        => $tableMgmt,
             'tableAssignments' => $tableAssignments,
             'heartbeat'        => $heartbeat,
-            'emergencyClosure' => (new EmergencyClosure())->findActiveByTenant($tenantId),
+            'emergencyClosure' => $emergencyClosure,
         ], 'dashboard');
     }
 
