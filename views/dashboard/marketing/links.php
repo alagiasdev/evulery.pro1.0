@@ -1,6 +1,15 @@
 <?php
 /** @var bool $canUse @var array $tenant @var string $tab
- *  @var string $hubUrl @var string $bookingUrl @var string $menuUrl @var string $orderUrl */
+ *  @var string $hubUrl @var string $bookingUrl @var string $menuUrl @var string $orderUrl
+ *  @var array $saved @var array $destLabels */
+
+use App\Services\AttributionService;
+
+// chiavi gia' salvate (per avviso anti-duplicato lato client)
+$savedKeys = [];
+foreach ($saved as $s) {
+    $savedKeys[] = $s['destination'] . '|' . $s['utm_source'] . '|' . ($s['utm_medium'] ?? '') . '|' . ($s['utm_campaign'] ?? '');
+}
 ?>
 <?php include __DIR__ . '/_tabs.php'; ?>
 
@@ -47,15 +56,71 @@
     <label class="form-label fw-semibold mt-4">Link da usare</label>
     <div class="mk-urlbox">
         <span id="mk-url"></span>
-        <button type="button" class="btn btn-sm btn-success" id="mk-copy">Copia</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="mk-copy">Copia</button>
     </div>
-    <div class="form-text">Se mandi tutto all'Hub, l'attribuzione vale per qualunque azione il cliente faccia (prenota, menù, ordina).</div>
+
+    <!-- Avviso anti-duplicato (soft, client) -->
+    <div id="mk-dup" class="alert alert-warning py-2 px-3 mt-2" style="display:none;font-size:.82rem;">
+        <i class="bi bi-exclamation-triangle-fill"></i> Hai già salvato una campagna identica: la trovi nella lista qui sotto.
+    </div>
+
+    <!-- Form salvataggio: i campi nascosti sono popolati dal generatore -->
+    <form method="POST" action="<?= url('dashboard/marketing/links/save') ?>" class="mt-3">
+        <?= csrf_field() ?>
+        <input type="hidden" name="destination" id="mk-f-dest">
+        <input type="hidden" name="utm_source" id="mk-f-src">
+        <input type="hidden" name="utm_medium" id="mk-f-med">
+        <input type="hidden" name="utm_campaign" id="mk-f-camp">
+        <button type="submit" class="btn btn-success" id="mk-save"><i class="bi bi-bookmark-plus"></i> Salva campagna</button>
+        <span class="text-muted" style="font-size:.78rem;margin-left:.5rem;">La salvi una volta, poi la ritrovi qui sotto pronta da copiare.</span>
+    </form>
 
     <div id="mk-qr-wrap" style="display:none;margin-top:1rem;">
         <label class="form-label fw-semibold">QR <span class="text-muted fw-normal">(per la stampa)</span></label>
         <div id="mk-qr" class="mk-qr"></div>
         <div><button type="button" class="btn btn-sm btn-outline-success mt-2" id="mk-qr-dl"><i class="bi bi-download"></i> Scarica QR</button></div>
     </div>
+</div>
+
+<!-- LISTA CAMPAGNE SALVATE -->
+<div class="card" style="max-width:760px;padding:1.5rem;">
+    <h2 style="font-size:1rem;margin:0 0 .8rem;display:flex;align-items:center;gap:.45rem;">
+        <i class="bi bi-collection" style="color:var(--brand);"></i> Le tue campagne
+        <span class="text-muted fw-normal" style="font-size:.82rem;">(<?= count($saved) ?>)</span>
+    </h2>
+
+    <?php if (empty($saved)): ?>
+    <div style="padding:1.4rem;text-align:center;color:#9aa1a9;font-size:.86rem;">
+        Nessuna campagna salvata. Crea un link qui sopra e premi <b>Salva campagna</b>.
+    </div>
+    <?php else: ?>
+    <?php foreach ($saved as $s): ?>
+    <?php
+        $color = AttributionService::color($s['channel']);
+        $chLabel = AttributionService::label($s['channel']);
+        $name = $chLabel . ($s['utm_campaign'] ? ' · ' . $s['utm_campaign'] : '');
+        $destLabel = $destLabels[$s['destination']] ?? $s['destination'];
+    ?>
+    <div class="mk-srow">
+        <span class="mk-sdot" style="background:<?= e($color) ?>;"></span>
+        <div class="mk-sinfo">
+            <div class="mk-sname"><?= e($name) ?> <span class="mk-dest-badge"><?= e(strtoupper($destLabel)) ?></span></div>
+            <div class="mk-smeta"><?= e($s['url']) ?></div>
+        </div>
+        <div class="mk-perf"><div class="pn"><?= (int)$s['bookings'] ?></div><div class="pl">pren.</div></div>
+        <div class="mk-sact">
+            <button type="button" class="mk-iconbtn mk-rowcopy" data-url="<?= e($s['url']) ?>" title="Copia link"><i class="bi bi-clipboard"></i></button>
+            <button type="button" class="mk-iconbtn mk-rowqr" data-url="<?= e($s['url']) ?>" title="Mostra QR"><i class="bi bi-qr-code"></i></button>
+            <form method="POST" action="<?= url('dashboard/marketing/links/' . (int)$s['id'] . '/delete') ?>" data-confirm="Eliminare questa campagna salvata? (le prenotazioni già attribuite restano nel report)" style="display:inline;">
+                <?= csrf_field() ?>
+                <button type="submit" class="mk-iconbtn del" title="Elimina"><i class="bi bi-trash3"></i></button>
+            </form>
+        </div>
+        <div class="mk-row-qr" style="display:none;"></div>
+    </div>
+    <?php endforeach; ?>
+    <p class="text-muted" style="font-size:.78rem;margin:.7rem 0 0;">Il numero di prenotazioni è lo stesso della scheda Provenienza (escluse annullate e no-show).</p>
+    <?php endif; ?>
 </div>
 
 <style>
@@ -71,18 +136,51 @@
 .mk-urlbox span{flex:1;font-family:ui-monospace,Menlo,monospace;font-size:.78rem;word-break:break-all;}
 .mk-qr{width:170px;height:170px;border:1px solid #e4e8eb;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#fff;}
 .mk-qr img,.mk-qr canvas{width:150px;height:150px;}
+/* lista salvate */
+.mk-srow{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid #eceff2;border-radius:11px;margin-bottom:8px;flex-wrap:wrap;}
+.mk-sdot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.mk-sinfo{flex:1;min-width:0;}
+.mk-sname{font-weight:700;font-size:.9rem;}
+.mk-smeta{font-size:.73rem;color:#9aa3aa;font-family:ui-monospace,Menlo,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mk-perf{flex-shrink:0;text-align:center;min-width:60px;}
+.mk-perf .pn{font-size:1.05rem;font-weight:800;line-height:1;color:var(--brand-d,#006b3c);}
+.mk-perf .pl{font-size:.66rem;color:#9aa3aa;}
+.mk-sact{display:flex;gap:6px;flex-shrink:0;}
+.mk-sact form{margin:0;}
+.mk-iconbtn{border:1.5px solid #e4e8eb;background:#fff;border-radius:7px;width:30px;height:30px;display:grid;place-items:center;cursor:pointer;color:#555;font-size:.85rem;}
+.mk-iconbtn:hover{background:#f6fbf8;border-color:var(--brand,#00844A);color:var(--brand-d,#006b3c);}
+.mk-iconbtn.del:hover{background:#fdecea;border-color:#f5c2c0;color:#b3261e;}
+.mk-dest-badge{font-size:.62rem;background:#eef2ff;color:#3730a3;border-radius:5px;padding:1px 6px;font-weight:700;margin-left:6px;}
+.mk-row-qr{width:100%;}
+.mk-row-qr.show{display:block !important;padding-top:8px;}
+.mk-row-qr canvas,.mk-row-qr img{width:140px;height:140px;border:1px solid #e4e8eb;border-radius:8px;}
 </style>
 
 <script nonce="<?= csp_nonce() ?>">
 (function(){
     var dest = document.getElementById('mk-dest');
     var bases = { hub: dest.dataset.hub, book: dest.dataset.book, menu: dest.dataset.menu, order: dest.dataset.order };
+    var destApi = { hub: 'hub', book: 'booking', menu: 'menu', order: 'order' };
     var urlEl = document.getElementById('mk-url');
     var qrWrap = document.getElementById('mk-qr-wrap');
     var qrBox = document.getElementById('mk-qr');
+    var dupBox = document.getElementById('mk-dup');
+    var savedKeys = <?= json_encode($savedKeys) ?>;
     var lastUrl = '';
 
     function slug(v){ return (v||'').toLowerCase().trim().replace(/\s+/g,'-').replace(/[^a-z0-9._-]/g,''); }
+
+    function loadQrLib(cb){
+        if (window.QRCode) { cb(); return; }
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js';
+        s.onload = cb;
+        s.onerror = function(){ if (qrBox) qrBox.innerHTML = '<span style="font-size:.75rem;color:#999;">QR non disponibile offline</span>'; };
+        document.head.appendChild(s);
+    }
+    function renderQr(box, text, size){
+        loadQrLib(function(){ box.innerHTML=''; new QRCode(box, { text:text, width:size, height:size, colorDark:'#212529', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M }); });
+    }
 
     function build(){
         var d = document.querySelector('#mk-dest .mk-segbtn.on').dataset.dest;
@@ -93,25 +191,20 @@
         var camp = slug(document.getElementById('mk-camp').value);
         var u = bases[d] + '?utm_source=' + encodeURIComponent(src) + '&utm_medium=' + encodeURIComponent(med);
         if (camp) { u += '&utm_campaign=' + encodeURIComponent(camp); }
-        urlEl.textContent = u;
-        lastUrl = u;
-        qrWrap.style.display = isQr ? '' : 'none';
-        if (isQr) { renderQr(u); }
-    }
+        urlEl.textContent = u; lastUrl = u;
 
-    function loadQrLib(cb){
-        if (window.QRCode) { cb(); return; }
-        var s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js';
-        s.onload = cb;
-        s.onerror = function(){ qrBox.innerHTML = '<span style="font-size:.75rem;color:#999;">QR non disponibile offline</span>'; };
-        document.head.appendChild(s);
-    }
-    function renderQr(text){
-        loadQrLib(function(){
-            qrBox.innerHTML = '';
-            new QRCode(qrBox, { text: text, width: 150, height: 150, colorDark: '#212529', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
-        });
+        // popola i campi del form di salvataggio
+        document.getElementById('mk-f-dest').value = destApi[d];
+        document.getElementById('mk-f-src').value = src;
+        document.getElementById('mk-f-med').value = med;
+        document.getElementById('mk-f-camp').value = camp;
+
+        // avviso duplicato (chiave: dest|src|med|camp)
+        var key = destApi[d] + '|' + src + '|' + med + '|' + camp;
+        dupBox.style.display = savedKeys.indexOf(key) !== -1 ? 'block' : 'none';
+
+        qrWrap.style.display = isQr ? '' : 'none';
+        if (isQr) { renderQr(qrBox, u, 150); }
     }
 
     document.querySelectorAll('#mk-dest .mk-segbtn').forEach(function(b){ b.addEventListener('click', function(){ document.querySelectorAll('#mk-dest .mk-segbtn').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); build(); }); });
@@ -119,16 +212,16 @@
     document.getElementById('mk-camp').addEventListener('input', build);
     document.getElementById('mk-gsrc').addEventListener('input', build);
 
-    document.getElementById('mk-copy').addEventListener('click', function(){
-        var b = this;
-        navigator.clipboard.writeText(lastUrl).then(function(){ b.textContent = 'Copiato!'; setTimeout(function(){ b.textContent = 'Copia'; }, 1200); });
-    });
-    document.getElementById('mk-qr-dl').addEventListener('click', function(){
-        var node = qrBox.querySelector('canvas, img');
-        if (!node) return;
-        var data = node.tagName === 'CANVAS' ? node.toDataURL('image/png') : node.src;
-        var a = document.createElement('a'); a.href = data; a.download = 'qr-evulery.png'; a.click();
-    });
+    document.getElementById('mk-copy').addEventListener('click', function(){ var b=this; navigator.clipboard.writeText(lastUrl).then(function(){ b.textContent='Copiato!'; setTimeout(function(){ b.textContent='Copia'; },1200); }); });
+    document.getElementById('mk-qr-dl').addEventListener('click', function(){ var n=qrBox.querySelector('canvas,img'); if(!n) return; var data=n.tagName==='CANVAS'?n.toDataURL('image/png'):n.src; var a=document.createElement('a'); a.href=data; a.download='qr-evulery.png'; a.click(); });
+
+    // azioni lista salvate
+    document.querySelectorAll('.mk-rowcopy').forEach(function(b){ b.addEventListener('click', function(){ navigator.clipboard.writeText(b.dataset.url).then(function(){ var i=b.querySelector('i'); i.className='bi bi-check2'; setTimeout(function(){ i.className='bi bi-clipboard'; },1200); }); }); });
+    document.querySelectorAll('.mk-rowqr').forEach(function(b){ b.addEventListener('click', function(){
+        var box = b.closest('.mk-srow').querySelector('.mk-row-qr');
+        if (box.classList.contains('show')) { box.classList.remove('show'); box.innerHTML=''; return; }
+        box.classList.add('show'); renderQr(box, b.dataset.url, 140);
+    }); });
 
     build();
 })();

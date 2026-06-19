@@ -205,6 +205,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Models\\EmergencyClosure' => __DIR__ . '/../..' . '/app/Models/EmergencyClosure.php',
         'App\\Models\\HubAction' => __DIR__ . '/../..' . '/app/Models/HubAction.php',
         'App\\Models\\HubSettings' => __DIR__ . '/../..' . '/app/Models/HubSettings.php',
+        'App\\Models\\MarketingLink' => __DIR__ . '/../..' . '/app/Models/MarketingLink.php',
         'App\\Models\\MealCategory' => __DIR__ . '/../..' . '/app/Models/MealCategory.php',
         'App\\Models\\MenuCategory' => __DIR__ . '/../..' . '/app/Models/MenuCategory.php',
         'App\\Models\\MenuItem' => __DIR__ . '/../..' . '/app/Models/MenuItem.php',

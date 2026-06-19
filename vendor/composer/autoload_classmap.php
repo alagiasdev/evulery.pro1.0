@@ -92,6 +92,7 @@ return array(
     'App\\Models\\EmergencyClosure' => $baseDir . '/app/Models/EmergencyClosure.php',
     'App\\Models\\HubAction' => $baseDir . '/app/Models/HubAction.php',
     'App\\Models\\HubSettings' => $baseDir . '/app/Models/HubSettings.php',
+    'App\\Models\\MarketingLink' => $baseDir . '/app/Models/MarketingLink.php',
     'App\\Models\\MealCategory' => $baseDir . '/app/Models/MealCategory.php',
     'App\\Models\\MenuCategory' => $baseDir . '/app/Models/MenuCategory.php',
     'App\\Models\\MenuItem' => $baseDir . '/app/Models/MenuItem.php',

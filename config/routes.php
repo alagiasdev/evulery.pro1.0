@@ -106,6 +106,8 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     // Marketing & Provenienza (gated 'marketing')
     $r->get('/marketing', [MarketingController::class, 'index']);
     $r->get('/marketing/links', [MarketingController::class, 'links']);
+    $r->post('/marketing/links/save', [MarketingController::class, 'saveLink']);
+    $r->post('/marketing/links/{id}/delete', [MarketingController::class, 'deleteLink']);
     $r->get('/customers', [CustomersController::class, 'index']);
     $r->get('/customers/stats', [CustomersController::class, 'stats']);
     $r->get('/customers/search/json', [CustomersController::class, 'searchJson']);

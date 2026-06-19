@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketing — campagne salvate (wireframe)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{ --brand:#00844A; --brand-d:#006b3c; --ink:#1a1d23; --muted:#6c757d; --line:#eceff2;
+    --meta:#0866ff; --google:#ea4335; --hub:#8b5cf6; --ig:#e1306c; --tiktok:#111; --generic:#f59e0b; }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:15px}
+  .wrap{max-width:860px;margin:0 auto;padding:22px 18px 80px}
+  .brandbar{height:5px;background:linear-gradient(90deg,var(--brand),#5cbf8c);border-radius:6px;margin-bottom:14px}
+  h1{font-size:1.25rem;margin:0 0 4px}
+  .lead{color:var(--muted);font-size:.88rem;margin:0 0 16px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:16px}
+  h2{font-size:1rem;margin:0 0 10px;display:flex;align-items:center;gap:.45rem}
+  label.fl{display:block;font-weight:700;font-size:.8rem;margin:12px 0 5px}
+  input[type=text]{width:100%;border:1.5px solid #d4dade;border-radius:9px;padding:9px 11px;font-size:.88rem;font-family:inherit}
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .segbtn{border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:7px 12px;font-weight:600;font-size:.8rem;cursor:pointer}
+  .segbtn.on{background:#e8f5ee;border-color:var(--brand);color:var(--brand-d)}
+  .rec{font-size:.62rem;background:#d6f0e2;color:var(--brand-d);border-radius:4px;padding:1px 5px;margin-left:4px}
+  .chans{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+  .chan{border:2px solid var(--line);border-radius:10px;padding:9px 6px;text-align:center;cursor:pointer;font-size:.76rem;font-weight:600}
+  .chan.on{border-color:var(--brand);background:#f6fbf8}
+  .chan i{display:block;font-size:1.2rem;margin-bottom:3px;color:var(--brand)}
+  .urlbox{display:flex;gap:8px;align-items:center;background:#f8fafb;border:1px solid #e4e8eb;border-radius:9px;padding:9px 11px;margin-top:6px}
+  .urlbox span{flex:1;font-family:ui-monospace,Menlo,monospace;font-size:.76rem;word-break:break-all}
+  .btn{border:none;border-radius:8px;padding:8px 13px;font-weight:700;font-size:.8rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:.35rem}
+  .btn-g{background:var(--brand);color:#fff}
+  .btn-o{background:#fff;border:1.5px solid #d4dade;color:var(--ink)}
+  .btn-sm{padding:5px 9px;font-size:.74rem}
+  .actions{display:flex;gap:8px;margin-top:14px;align-items:center;flex-wrap:wrap}
+
+  .dup{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:9px;padding:9px 12px;font-size:.8rem;margin-top:10px;display:none;gap:8px;align-items:flex-start}
+  .dup.show{display:flex}
+
+  /* saved list */
+  .saved{margin-top:6px}
+  .srow{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;background:#fff}
+  .sdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .sinfo{flex:1;min-width:0}
+  .sname{font-weight:700;font-size:.9rem}
+  .smeta{font-size:.74rem;color:var(--muted);font-family:ui-monospace,Menlo,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .perf{flex-shrink:0;text-align:center;min-width:74px}
+  .perf .pn{font-size:1.05rem;font-weight:800;line-height:1}
+  .perf .pl{font-size:.66rem;color:var(--muted)}
+  .sact{display:flex;gap:6px;flex-shrink:0}
+  .iconbtn{border:1.5px solid #e4e8eb;background:#fff;border-radius:7px;width:30px;height:30px;display:grid;place-items:center;cursor:pointer;color:#555;font-size:.85rem}
+  .iconbtn:hover{background:#f6fbf8;border-color:var(--brand);color:var(--brand-d)}
+  .iconbtn.del:hover{background:#fdecea;border-color:#f5c2c0;color:#b3261e}
+  .empty{padding:22px;text-align:center;color:#9aa1a9;font-size:.85rem}
+  .foot{margin-top:22px;font-size:.78rem;color:var(--muted);text-align:center}
+  .note{font-size:.78rem;color:var(--muted);margin-top:8px}
+  .badge-dest{font-size:.66rem;background:#eef2ff;color:#3730a3;border-radius:5px;padding:1px 6px;font-weight:700;margin-left:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar"></div>
+  <h1><i class="bi bi-megaphone" style="color:var(--brand)"></i> Marketing — Genera link <span style="font-size:.8rem;font-weight:500;color:var(--muted)">(wireframe: salva campagne)</span></h1>
+  <p class="lead">Salvi le campagne create: niente duplicati, nomi standardizzati, e vedi subito quante prenotazioni ha portato ognuna.</p>
+
+  <!-- GENERATORE (condensato) -->
+  <div class="card">
+    <h2><i class="bi bi-link-45deg" style="color:var(--brand)"></i> Genera link</h2>
+
+    <label class="fl" style="margin-top:0">Destinazione</label>
+    <div class="seg">
+      <span class="segbtn on">Vetrina / Hub <span class="rec">consigliata</span></span>
+      <span class="segbtn">Prenota</span><span class="segbtn">Menù</span><span class="segbtn">Ordina</span>
+    </div>
+
+    <label class="fl">Canale</label>
+    <div class="chans">
+      <div class="chan on"><i class="bi bi-meta"></i>Meta/Facebook</div>
+      <div class="chan"><i class="bi bi-instagram"></i>Instagram</div>
+      <div class="chan"><i class="bi bi-google"></i>Google Ads</div>
+      <div class="chan"><i class="bi bi-tiktok"></i>TikTok</div>
+      <div class="chan"><i class="bi bi-qr-code"></i>Volantino QR</div>
+      <div class="chan"><i class="bi bi-three-dots"></i>Generico</div>
+    </div>
+
+    <label class="fl">Nome campagna <span style="font-weight:500;color:var(--muted)">(facoltativo)</span></label>
+    <input type="text" id="camp" value="terrazza" placeholder="estate-aperitivo">
+
+    <label class="fl">Link da usare</label>
+    <div class="urlbox"><span id="url">http://.../trattoria-da-mario/hub?utm_source=meta&utm_medium=cpc&utm_campaign=terrazza</span><button class="btn btn-o btn-sm">Copia</button></div>
+
+    <div class="dup" id="dup"><i class="bi bi-exclamation-triangle-fill"></i><div>Hai già una campagna <b>Meta/Facebook · terrazza</b> verso l'Hub. Vuoi <a href="#" id="goto" style="color:#9a3412;font-weight:700;">vederla</a> invece di duplicarla?</div></div>
+
+    <div class="actions">
+      <button class="btn btn-g" id="save"><i class="bi bi-bookmark-plus"></i> Salva campagna</button>
+      <span class="note" style="margin:0">La salvi una volta, poi la ritrovi qui sotto pronta da copiare.</span>
+    </div>
+  </div>
+
+  <!-- LISTA SALVATE -->
+  <div class="card">
+    <h2><i class="bi bi-collection" style="color:var(--brand)"></i> Le tue campagne <span style="font-weight:500;color:var(--muted);font-size:.82rem">(4)</span></h2>
+    <div class="saved" id="saved">
+      <div class="srow">
+        <span class="sdot" style="background:var(--meta)"></span>
+        <div class="sinfo"><div class="sname">Meta/Facebook · terrazza <span class="badge-dest">HUB</span></div>
+          <div class="smeta">.../hub?utm_source=meta&utm_medium=cpc&utm_campaign=terrazza</div></div>
+        <div class="perf"><div class="pn">12</div><div class="pl">prenotazioni</div></div>
+        <div class="sact"><span class="iconbtn" title="Copia link"><i class="bi bi-clipboard"></i></span><span class="iconbtn" title="QR"><i class="bi bi-qr-code"></i></span><span class="iconbtn del" title="Elimina"><i class="bi bi-trash3"></i></span></div>
+      </div>
+      <div class="srow">
+        <span class="sdot" style="background:var(--google)"></span>
+        <div class="sinfo"><div class="sname">Google Ads · ricerca-brand <span class="badge-dest">PRENOTA</span></div>
+          <div class="smeta">...?utm_source=google&utm_medium=cpc&utm_campaign=ricerca-brand</div></div>
+        <div class="perf"><div class="pn">8</div><div class="pl">prenotazioni</div></div>
+        <div class="sact"><span class="iconbtn" title="Copia link"><i class="bi bi-clipboard"></i></span><span class="iconbtn" title="QR"><i class="bi bi-qr-code"></i></span><span class="iconbtn del" title="Elimina"><i class="bi bi-trash3"></i></span></div>
+      </div>
+      <div class="srow">
+        <span class="sdot" style="background:var(--generic)"></span>
+        <div class="sinfo"><div class="sname">Volantino QR · sagra-paese <span class="badge-dest">HUB</span></div>
+          <div class="smeta">.../hub?utm_source=flyer&utm_medium=qr&utm_campaign=sagra-paese</div></div>
+        <div class="perf"><div class="pn">3</div><div class="pl">prenotazioni</div></div>
+        <div class="sact"><span class="iconbtn" title="Copia link"><i class="bi bi-clipboard"></i></span><span class="iconbtn" title="QR"><i class="bi bi-qr-code"></i></span><span class="iconbtn del" title="Elimina"><i class="bi bi-trash3"></i></span></div>
+      </div>
+      <div class="srow">
+        <span class="sdot" style="background:var(--ig)"></span>
+        <div class="sinfo"><div class="sname">Instagram bio <span class="badge-dest">HUB</span></div>
+          <div class="smeta">.../hub?utm_source=instagram&utm_medium=bio</div></div>
+        <div class="perf"><div class="pn">0</div><div class="pl">prenotazioni</div></div>
+        <div class="sact"><span class="iconbtn" title="Copia link"><i class="bi bi-clipboard"></i></span><span class="iconbtn" title="QR"><i class="bi bi-qr-code"></i></span><span class="iconbtn del" title="Elimina"><i class="bi bi-trash3"></i></span></div>
+      </div>
+    </div>
+    <p class="note">Il numero di prenotazioni si aggiorna in automatico (stesso dato della scheda Provenienza). Una campagna senza nome è identificata dal solo canale (es. "Instagram bio").</p>
+  </div>
+
+  <p class="foot">Wireframe — Marketing: salvataggio campagne + performance per campagna · Evulery</p>
+</div>
+
+<script>
+// demo: toggle avviso duplicato quando il nome campagna = "terrazza" (gia' salvata)
+var camp = document.getElementById('camp'), dup = document.getElementById('dup');
+function checkDup(){ dup.classList.toggle('show', camp.value.trim().toLowerCase() === 'terrazza'); }
+camp.addEventListener('input', checkDup); checkDup();
+document.getElementById('save').addEventListener('click', function(){
+  if (camp.value.trim().toLowerCase() === 'terrazza') { dup.classList.add('show'); return; }
+  alert('(demo) Campagna salvata e aggiunta alla lista');
+});
+</script>
+</body>
+</html>

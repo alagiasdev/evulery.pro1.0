@@ -4,7 +4,9 @@ namespace App\Controllers\Dashboard;
 
 use App\Core\Auth;
 use App\Core\Request;
+use App\Core\Response;
 use App\Core\TenantResolver;
+use App\Models\MarketingLink;
 use App\Models\Reservation;
 use App\Services\AttributionService;
 
@@ -57,6 +59,9 @@ class MarketingController
         $canUse = tenant_can('marketing');
         $slug = (string)($tenant['slug'] ?? '');
 
+        $saved = $canUse ? (new MarketingLink())->findByTenantWithStats((int)$tenant['id']) : [];
+        $destLabels = ['hub' => 'Hub', 'booking' => 'Prenota', 'menu' => 'Menù', 'order' => 'Ordina'];
+
         view('dashboard/marketing/links', [
             'title'       => 'Marketing',
             'activeMenu'  => 'marketing',
@@ -68,7 +73,98 @@ class MarketingController
             'bookingUrl'  => url($slug),
             'menuUrl'     => url($slug . '/menu'),
             'orderUrl'    => url($slug . '/order'),
+            'saved'       => $saved,
+            'destLabels'  => $destLabels,
         ], 'dashboard');
+    }
+
+    public function saveLink(Request $request): void
+    {
+        $tenant = TenantResolver::current();
+        if (!tenant_can('marketing')) {
+            Response::redirect(url('dashboard/marketing/links'));
+            return;
+        }
+
+        $dest = (string)$request->input('destination', 'hub');
+        if (!in_array($dest, ['hub', 'booking', 'menu', 'order'], true)) $dest = 'hub';
+
+        $source   = $this->slug((string)$request->input('utm_source', ''), 100);
+        $medium   = $this->slug((string)$request->input('utm_medium', ''), 60) ?: 'referral';
+        $campaign = $this->slug((string)$request->input('utm_campaign', ''), 120) ?: null;
+
+        if ($source === '') {
+            flash('danger', 'Seleziona un canale prima di salvare la campagna.');
+            Response::redirect(url('dashboard/marketing/links'));
+            return;
+        }
+
+        $model = new MarketingLink();
+        if ($model->existsDuplicate((int)$tenant['id'], $dest, $source, $medium, $campaign)) {
+            flash('warning', 'Hai già salvato questa campagna (stesso canale, destinazione e nome). La trovi nella lista qui sotto.');
+            Response::redirect(url('dashboard/marketing/links'));
+            return;
+        }
+
+        $slug    = (string)($tenant['slug'] ?? '');
+        $channel = AttributionService::deriveChannel($source, $medium, null);
+        $url     = $this->buildUrl($slug, $dest, $source, $medium, $campaign);
+
+        $model->create([
+            'tenant_id'    => (int)$tenant['id'],
+            'destination'  => $dest,
+            'utm_source'   => $source,
+            'utm_medium'   => $medium,
+            'utm_campaign' => $campaign,
+            'channel'      => $channel,
+            'url'          => $url,
+        ]);
+
+        flash('success', 'Campagna salvata. La ritrovi qui sotto pronta da copiare.');
+        Response::redirect(url('dashboard/marketing/links'));
+    }
+
+    public function deleteLink(Request $request): void
+    {
+        $tenant = TenantResolver::current();
+        $id = (int)$request->param('id');
+        if (tenant_can('marketing')) {
+            (new MarketingLink())->delete($id, (int)$tenant['id']);
+            flash('success', 'Campagna eliminata.');
+        }
+        Response::redirect(url('dashboard/marketing/links'));
+    }
+
+    /** Path pubblico per destinazione. */
+    private function destPath(string $destination, string $slug): string
+    {
+        return match ($destination) {
+            'booking' => $slug,
+            'menu'    => $slug . '/menu',
+            'order'   => $slug . '/order',
+            default   => $slug . '/hub',
+        };
+    }
+
+    /** Costruisce l'URL tracciato (stessa logica del generatore client). */
+    private function buildUrl(string $slug, string $destination, string $source, ?string $medium, ?string $campaign): string
+    {
+        $u = url($this->destPath($destination, $slug))
+           . '?utm_source=' . urlencode($source)
+           . '&utm_medium=' . urlencode($medium ?: 'referral');
+        if ($campaign) {
+            $u .= '&utm_campaign=' . urlencode($campaign);
+        }
+        return $u;
+    }
+
+    /** Slugify identico al generatore JS: lowercase, spazi→-, solo [a-z0-9._-]. */
+    private function slug(string $v, int $max): string
+    {
+        $v = strtolower(trim($v));
+        $v = preg_replace('/\s+/', '-', $v);
+        $v = preg_replace('/[^a-z0-9._-]/', '', $v);
+        return mb_substr($v, 0, $max);
     }
 
     /**
