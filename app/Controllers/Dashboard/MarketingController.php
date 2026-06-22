@@ -63,6 +63,13 @@ class MarketingController
         $saved = $canUse ? (new MarketingLink())->findByTenantWithStats((int)$tenant['id']) : [];
         $destLabels = ['hub' => 'Hub', 'booking' => 'Prenota', 'menu' => 'Menù', 'order' => 'Ordina'];
 
+        // La Vetrina e' "attiva" solo se il servizio e' incluso E l'ha abilitata
+        // (stessa logica di HubPublicController). Altrimenti i link verso l'Hub
+        // porterebbero alla pagina "Vetrina non disponibile": il generatore lo
+        // segnala e disabilita la destinazione Hub.
+        $hubSettings = (new \App\Models\HubSettings())->findByTenant((int)$tenant['id']);
+        $hubActive = tenant_can('vetrina_digitale') && $hubSettings && !empty($hubSettings['enabled']);
+
         view('dashboard/marketing/links', [
             'title'       => 'Marketing',
             'activeMenu'  => 'marketing',
@@ -76,6 +83,8 @@ class MarketingController
             'orderUrl'    => url($slug . '/order'),
             'saved'       => $saved,
             'destLabels'  => $destLabels,
+            'hubActive'   => $hubActive,
+            'hubConfigUrl' => url('dashboard/settings/hub'),
         ], 'dashboard');
     }
 
@@ -115,6 +124,17 @@ class MarketingController
 
         $dest = (string)$request->input('destination', 'hub');
         if (!in_array($dest, ['hub', 'booking', 'menu', 'order'], true)) $dest = 'hub';
+
+        // Guardia: non salvare link verso la Vetrina se non e' attiva (porterebbe
+        // alla pagina "non disponibile"). Difesa server-side oltre alla UI.
+        if ($dest === 'hub') {
+            $hs = (new \App\Models\HubSettings())->findByTenant((int)$tenant['id']);
+            if (!tenant_can('vetrina_digitale') || !$hs || empty($hs['enabled'])) {
+                flash('warning', 'La Vetrina Digitale non è attiva: attivala prima di creare link che puntano alla Vetrina.');
+                Response::redirect(url('dashboard/marketing/links'));
+                return;
+            }
+        }
 
         $source   = $this->slug((string)$request->input('utm_source', ''), 100);
         $medium   = $this->slug((string)$request->input('utm_medium', ''), 60) ?: 'referral';

@@ -17,6 +17,17 @@ foreach ($saved as $s) {
     <?php $lockedTitle = 'Generatore link tracciati'; $lockedDesc = 'Disponibile con i piani Professional ed Enterprise.'; include BASE_PATH . '/views/partials/service-locked.php'; ?>
 <?php else: ?>
 
+<?php if (!$hubActive): ?>
+<div class="alert alert-warning d-flex align-items-center gap-2" style="max-width:760px;font-size:.86rem;">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <div class="flex-grow-1">
+        La <strong>Vetrina Digitale</strong> non è ancora attiva: i link verso la Vetrina mostrerebbero una pagina "non disponibile".
+        Per ora usa <strong>Prenota</strong> come destinazione, oppure
+        <a href="<?= e($hubConfigUrl) ?>" class="alert-link">attiva la Vetrina</a>.
+    </div>
+</div>
+<?php endif; ?>
+
 <div class="card" style="max-width:760px;padding:1.5rem;">
     <p style="font-size:.86rem;color:#6c757d;margin:0 0 1rem;">
         Scegli dove mandare il cliente, il canale e (facoltativo) il nome della campagna:
@@ -27,8 +38,8 @@ foreach ($saved as $s) {
     <label class="form-label fw-semibold">Destinazione</label>
     <div class="mk-seg" id="mk-dest"
          data-hub="<?= e($hubUrl) ?>" data-book="<?= e($bookingUrl) ?>" data-menu="<?= e($menuUrl) ?>" data-order="<?= e($orderUrl) ?>">
-        <span class="mk-segbtn on" data-dest="hub">Vetrina / Hub <span class="mk-rec">consigliata</span></span>
-        <span class="mk-segbtn" data-dest="book">Prenota</span>
+        <span class="mk-segbtn<?= $hubActive ? ' on' : ' disabled' ?>" data-dest="hub"<?= $hubActive ? '' : ' title="Attiva prima la Vetrina"' ?>>Vetrina / Hub <?php if ($hubActive): ?><span class="mk-rec">consigliata</span><?php else: ?><i class="bi bi-lock-fill" style="font-size:.6rem;"></i><?php endif; ?></span>
+        <span class="mk-segbtn<?= $hubActive ? '' : ' on' ?>" data-dest="book">Prenota</span>
         <span class="mk-segbtn" data-dest="menu">Menù</span>
         <span class="mk-segbtn" data-dest="order">Ordina</span>
     </div>
@@ -129,6 +140,7 @@ foreach ($saved as $s) {
 .mk-seg{display:flex;gap:8px;flex-wrap:wrap;}
 .mk-segbtn{border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:8px 13px;font-weight:600;font-size:.82rem;cursor:pointer;}
 .mk-segbtn.on{background:#e8f5ee;border-color:var(--brand,#00844A);color:var(--brand-d,#006b3c);}
+.mk-segbtn.disabled{opacity:.55;cursor:not-allowed;background:#f5f5f5;color:#9aa3aa;}
 .mk-rec{font-size:.62rem;background:#d6f0e2;color:var(--brand-d,#006b3c);border-radius:4px;padding:1px 5px;margin-left:4px;}
 .mk-chans{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;}
 .mk-chan{border:2px solid #eceff2;border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;font-size:.78rem;font-weight:600;}
@@ -219,7 +231,7 @@ foreach ($saved as $s) {
         if (isQr) { renderQr(qrBox, u, 150); }
     }
 
-    document.querySelectorAll('#mk-dest .mk-segbtn').forEach(function(b){ b.addEventListener('click', function(){ document.querySelectorAll('#mk-dest .mk-segbtn').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); build(); }); });
+    document.querySelectorAll('#mk-dest .mk-segbtn').forEach(function(b){ b.addEventListener('click', function(){ if (b.classList.contains('disabled')) return; document.querySelectorAll('#mk-dest .mk-segbtn').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); build(); }); });
     document.querySelectorAll('.mk-chan').forEach(function(c){ c.addEventListener('click', function(){ document.querySelectorAll('.mk-chan').forEach(function(x){x.classList.remove('on');}); c.classList.add('on'); build(); }); });
     document.getElementById('mk-camp').addEventListener('input', build);
     document.getElementById('mk-gsrc').addEventListener('input', build);
