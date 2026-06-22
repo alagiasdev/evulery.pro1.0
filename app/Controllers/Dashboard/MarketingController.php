@@ -296,7 +296,7 @@ class MarketingController
                 $remN = $c['n'] - array_sum(array_column($c['campaigns'], 'n'));
                 $remCov = $c['covers'] - array_sum(array_column($c['campaigns'], 'covers'));
                 if ($remN > 0) {
-                    $c['campaigns'][] = ['name' => '(senza campagna)', 'n' => $remN, 'covers' => $remCov, 'untagged' => true];
+                    $c['campaigns'][] = ['name' => 'Campagna non specificata', 'n' => $remN, 'covers' => $remCov, 'untagged' => true];
                 }
             }
         }

@@ -70,7 +70,7 @@
                 <td>↳ <?php if (!empty($camp['untagged'])): ?><span style="color:#9aa1a9;font-style:italic;"><?= e($camp['name']) ?></span><?php else: ?><b><?= e($camp['name']) ?></b><?php endif; ?></td>
                 <td class="num"><?= (int)$camp['n'] ?></td>
                 <td class="num"><?= (int)$camp['covers'] ?></td>
-                <td class="mk-roi"><?= !empty($camp['untagged']) ? 'nessun tag campagna' : 'utm_campaign=' . e($camp['name']) ?></td>
+                <td class="mk-roi"><?= !empty($camp['untagged']) ? 'utm_campaign non impostato' : 'utm_campaign=' . e($camp['name']) ?></td>
             </tr>
             <?php endforeach; ?>
             <?php

@@ -85,8 +85,8 @@ class HubAnalyticsService
             $eV = (int)($vMap[$ch][''] ?? 0); $eC = (int)($cMap[$ch][''] ?? 0); $eB = (int)($bMap[$ch][''] ?? 0);
             if (!empty($camps) && ($eV > 0 || $eC > 0 || $eB > 0)) {
                 $sid = $ch . ':__none';
-                $scopes[$sid] = $this->scope($label . ' · senza campagna', 'senza campagna', $color, $eV, $eC, $eB, $btnMap[$ch][''] ?? []);
-                $children[] = ['id' => $sid, 'label' => '(senza campagna)', 'untagged' => true,
+                $scopes[$sid] = $this->scope($label . ' · campagna non specificata', 'campagna non specificata', $color, $eV, $eC, $eB, $btnMap[$ch][''] ?? []);
+                $children[] = ['id' => $sid, 'label' => 'Campagna non specificata', 'untagged' => true,
                                'visits' => $eV, 'clicks' => $eC, 'bookings' => $eB];
             }
 
