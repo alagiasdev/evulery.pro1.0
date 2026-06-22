@@ -473,6 +473,8 @@ class Reservation
     public function searchGlobal(int $tenantId, string $query, int $limit = 50): array
     {
         $like = '%' . $query . '%';
+        // Per il numero prenotazione: togli un eventuale "#" iniziale (es. "#102").
+        $likeNum = '%' . ltrim($query, '# ') . '%';
         $stmt = $this->db->prepare(
             'SELECT r.id, r.booking_number, r.reservation_date, r.reservation_time, r.party_size, r.status, r.source,
                     c.first_name, c.last_name, c.email, c.phone, c.total_bookings
@@ -483,7 +485,8 @@ class Reservation
                   OR c.last_name LIKE :q2
                   OR c.phone LIKE :q3
                   OR c.email LIKE :q4
-                  OR CONCAT(c.first_name, " ", c.last_name) LIKE :q5)
+                  OR CONCAT(c.first_name, " ", c.last_name) LIKE :q5
+                  OR CAST(r.booking_number AS CHAR) LIKE :qnum)
              ORDER BY r.reservation_date DESC, r.reservation_time DESC
              LIMIT :lim'
         );
@@ -493,6 +496,7 @@ class Reservation
         $stmt->bindValue('q3', $like);
         $stmt->bindValue('q4', $like);
         $stmt->bindValue('q5', $like);
+        $stmt->bindValue('qnum', $likeNum);
         $stmt->bindValue('lim', $limit, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll();

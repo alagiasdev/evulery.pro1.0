@@ -167,7 +167,7 @@ $kpiUrl = function (string $st) use ($isUpcoming, $date, $dateTo, $source): stri
 <form method="GET" action="<?= url('dashboard/reservations') ?>" class="gs-form" id="global-search-form">
     <div class="gs-bar">
         <i class="bi bi-search gs-icon"></i>
-        <input type="text" name="q" class="gs-input" placeholder="Cerca per nome, telefono o email..." value="<?= e($searchQuery) ?>" autocomplete="off">
+        <input type="text" name="q" class="gs-input" placeholder="Cerca per nome, telefono, email o n° prenotazione..." value="<?= e($searchQuery) ?>" autocomplete="off">
         <?php if ($searchQuery !== ''): ?>
             <a href="<?= url('dashboard/reservations') ?>" class="gs-clear" title="Cancella ricerca"><i class="bi bi-x-lg"></i></a>
         <?php endif; ?>
