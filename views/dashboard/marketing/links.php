@@ -40,8 +40,8 @@ foreach ($saved as $s) {
          data-hub="<?= e($hubUrl) ?>" data-book="<?= e($bookingUrl) ?>" data-menu="<?= e($menuUrl) ?>" data-order="<?= e($orderUrl) ?>">
         <span class="mk-segbtn<?= $hubActive ? ' on' : ' disabled' ?>" data-dest="hub"<?= $hubActive ? '' : ' title="Attiva prima la Vetrina"' ?>>Vetrina / Hub <?php if ($hubActive): ?><span class="mk-rec">consigliata</span><?php else: ?><i class="bi bi-lock-fill" style="font-size:.6rem;"></i><?php endif; ?></span>
         <span class="mk-segbtn<?= $hubActive ? '' : ' on' ?>" data-dest="book">Prenota</span>
-        <span class="mk-segbtn" data-dest="menu">Menù</span>
-        <span class="mk-segbtn" data-dest="order">Ordina</span>
+        <span class="mk-segbtn<?= $menuActive ? '' : ' disabled' ?>" data-dest="menu"<?= $menuActive ? '' : ' title="Attiva prima il Menù"' ?>>Menù <?php if (!$menuActive): ?><i class="bi bi-lock-fill" style="font-size:.6rem;"></i><?php endif; ?></span>
+        <span class="mk-segbtn<?= $orderActive ? '' : ' disabled' ?>" data-dest="order"<?= $orderActive ? '' : ' title="Attiva prima gli Ordini"' ?>>Ordina <?php if (!$orderActive): ?><i class="bi bi-lock-fill" style="font-size:.6rem;"></i><?php endif; ?></span>
     </div>
 
     <label class="form-label fw-semibold mt-3">Canale</label>

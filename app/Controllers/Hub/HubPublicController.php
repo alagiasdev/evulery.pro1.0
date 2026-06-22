@@ -76,14 +76,16 @@ class HubPublicController
         // Vetrina. Il canale e' lo stesso usato per la propagazione (utm in
         // arrivo, oppure 'hub' per accesso diretto/QR).
         try {
-            $vchannel = AttributionService::deriveChannel($utm['utm_source'] ?? null, $utm['utm_medium'] ?? null, null);
-            (new \App\Models\HubVisit())->record(
-                (int)$tenant['id'],
-                $vchannel,
-                $utm['utm_source'] ?? null,
-                $utm['utm_medium'] ?? null,
-                $utm['utm_campaign'] ?? null
-            );
+            if (!$this->isBotUserAgent($_SERVER['HTTP_USER_AGENT'] ?? '')) {
+                $vchannel = AttributionService::deriveChannel($utm['utm_source'] ?? null, $utm['utm_medium'] ?? null, null);
+                (new \App\Models\HubVisit())->record(
+                    (int)$tenant['id'],
+                    $vchannel,
+                    $utm['utm_source'] ?? null,
+                    $utm['utm_medium'] ?? null,
+                    $utm['utm_campaign'] ?? null
+                );
+            }
         } catch (\Throwable $e) {
             // analytics non deve mai rompere la vetrina pubblica
         }
@@ -116,6 +118,22 @@ class HubPublicController
         if ($med)  $u['utm_medium'] = $med;
         if ($camp) $u['utm_campaign'] = $camp;
         return $u;
+    }
+
+    /**
+     * Riconosce i bot/crawler dal loro user-agent, per non gonfiare le visite
+     * della Vetrina (Googlebot, anteprime social, ecc.). I click NON servono
+     * di questo filtro: i bot non eseguono JS, quindi non inviano il beacon.
+     */
+    private function isBotUserAgent(string $ua): bool
+    {
+        if ($ua === '') {
+            return true; // niente UA = quasi sempre bot/script
+        }
+        return (bool)preg_match(
+            '/bot|crawl|spider|slurp|bing|google|yandex|baidu|duckduck|facebookexternalhit|whatsapp|telegrambot|twitterbot|linkedinbot|pinterest|embedly|preview|fetch|monitor|headless|lighthouse|curl|wget|python-requests|axios|go-http/i',
+            $ua
+        );
     }
 
     /** Appende gli UTM solo agli URL interni (stesso dominio app). */

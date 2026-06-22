@@ -45,8 +45,8 @@ $metricLine = function (int $v, int $c, int $b): string {
     <div class="card mkv-nav">
         <h2 class="mkv-h">Canali e campagne</h2>
         <div id="mkv-tree">
-            <?php foreach ($analytics['tree'] as $node): $hasKids = !empty($node['children']); ?>
-            <div class="mkv-seg<?= $node['id'] === 'all' ? ' sel' : '' ?>" data-id="<?= e($node['id']) ?>">
+            <?php foreach ($analytics['tree'] as $gi => $node): $hasKids = !empty($node['children']); ?>
+            <div class="mkv-seg<?= $node['id'] === 'all' ? ' sel' : '' ?>" data-id="<?= e($node['id']) ?>" data-grp="<?= (int)$gi ?>" data-haskids="<?= $hasKids ? 1 : 0 ?>">
                 <span class="mkv-caret"><?= $hasKids ? '<i class="bi bi-chevron-right"></i>' : '' ?></span>
                 <span class="mkv-dot" style="background:<?= e($node['color']) ?>;"></span>
                 <span class="mkv-body">
@@ -55,7 +55,7 @@ $metricLine = function (int $v, int $c, int $b): string {
                 </span>
             </div>
             <?php foreach ($node['children'] as $ch): ?>
-            <div class="mkv-seg child hidden" data-parent="<?= e($node['id']) ?>" data-id="<?= e($ch['id']) ?>">
+            <div class="mkv-seg child hidden" data-pgrp="<?= (int)$gi ?>" data-id="<?= e($ch['id']) ?>">
                 <span class="mkv-caret"></span>
                 <span class="mkv-dot" style="background:<?= e($node['color']) ?>;opacity:.55;"></span>
                 <span class="mkv-body">
@@ -162,9 +162,12 @@ $metricLine = function (int $v, int $c, int $b): string {
         var d = SCOPES[id]; if(!d) return;
         document.getElementById('d-dot').style.background = d.color;
         setText('d-title', d.title); setText('d-sub', d.sub + ' · periodo selezionato');
-        var cpv = (typeof d.cpv === 'number' ? d.cpv : 0).toFixed(1).replace('.', ',');
-        setText('f-visits', d.visits); setText('f-clicks', d.clicks); setText('f-cpv', cpv + ' /visita');
-        setText('f-book', d.book); setText('f-conv', d.conv + '% conv.');
+        // Rapporti non calcolabili senza visite (es. prenotazioni storiche
+        // pre-tracking): mostra "—" invece di 0% / 0,0, che sembrerebbe un errore.
+        var cpvTxt = d.visits > 0 ? ((typeof d.cpv === 'number' ? d.cpv : 0).toFixed(1).replace('.', ',') + ' /visita') : '—';
+        var convTxt = d.visits > 0 ? (d.conv + '% conv.') : '—';
+        setText('f-visits', d.visits); setText('f-clicks', d.clicks); setText('f-cpv', cpvTxt);
+        setText('f-book', d.book); setText('f-conv', convTxt);
         var counts = d.buttons || {};
         var max = 1;
         BUTTONS.forEach(function(b){ var n = counts[b.ref]||0; if(n>max) max=n; });
@@ -186,17 +189,18 @@ $metricLine = function (int $v, int $c, int $b): string {
     var tree = document.getElementById('mkv-tree');
     tree.querySelectorAll('.mkv-seg').forEach(function(row){
         row.addEventListener('click', function(e){
-            var id = row.dataset.id;
-            var hasKids = !!tree.querySelector('.mkv-seg[data-parent="'+id+'"]');
-            if (hasKids && e.target.closest('.mkv-caret')) {
+            // Espansione campagne: per GRUPPO numerico (mai col nome campagna,
+            // che potrebbe contenere caratteri che romperebbero il selettore).
+            if (row.dataset.haskids === '1' && e.target.closest('.mkv-caret')) {
                 row.classList.toggle('open');
-                tree.querySelectorAll('.mkv-seg[data-parent="'+id+'"]').forEach(function(c){ c.classList.toggle('hidden'); });
+                var grp = row.dataset.grp;
+                tree.querySelectorAll('.mkv-seg[data-pgrp="' + grp + '"]').forEach(function(c){ c.classList.toggle('hidden'); });
                 return;
             }
-            sel = id;
+            sel = row.dataset.id;
             tree.querySelectorAll('.mkv-seg').forEach(function(s){ s.classList.remove('sel'); });
             row.classList.add('sel');
-            renderDetail(id);
+            renderDetail(row.dataset.id); // id usato solo come chiave oggetto: sicuro
         });
     });
     renderDetail('all');
