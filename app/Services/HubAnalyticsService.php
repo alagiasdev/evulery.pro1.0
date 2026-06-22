@@ -54,7 +54,8 @@ class HubAnalyticsService
             $this->sumAll($vMap), $this->sumAll($cMap), $this->sumAll($bMap), $this->sumBtnAll($btnMap));
 
         $tree = [['id' => 'all', 'label' => 'Tutto il traffico', 'color' => '#6b7280',
-                  'visits' => $scopes['all']['visits'], 'bookings' => $scopes['all']['book'], 'children' => []]];
+                  'visits' => $scopes['all']['visits'], 'clicks' => $scopes['all']['clicks'],
+                  'bookings' => $scopes['all']['book'], 'children' => []]];
 
         // ordina canali per visite desc
         $chOrder = array_keys($channels);
@@ -75,11 +76,13 @@ class HubAnalyticsService
                     (int)($vMap[$ch][$camp] ?? 0), (int)($cMap[$ch][$camp] ?? 0), (int)($bMap[$ch][$camp] ?? 0),
                     $btnMap[$ch][$camp] ?? []);
                 $children[] = ['id' => $sid, 'label' => $camp,
-                               'visits' => $scopes[$sid]['visits'], 'bookings' => $scopes[$sid]['book']];
+                               'visits' => $scopes[$sid]['visits'], 'clicks' => $scopes[$sid]['clicks'],
+                               'bookings' => $scopes[$sid]['book']];
             }
 
             $tree[] = ['id' => $ch, 'label' => $label, 'color' => $color,
-                       'visits' => $scopes[$ch]['visits'], 'bookings' => $scopes[$ch]['book'], 'children' => $children];
+                       'visits' => $scopes[$ch]['visits'], 'clicks' => $scopes[$ch]['clicks'],
+                       'bookings' => $scopes[$ch]['book'], 'children' => $children];
         }
 
         $kpis = [

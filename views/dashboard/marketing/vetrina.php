@@ -1,6 +1,12 @@
 <?php
 /** @var bool $canUse @var array $analytics @var string $from @var string $to
  *  @var string $rangeKey @var array $ranges @var string $tab @var string $hubConfigUrl */
+
+// Riga metriche per l'albero (parole intere, plurale corretto, click abbreviato come "click").
+$metricLine = function (int $v, int $c, int $b): string {
+    $vt = $v . ' ' . ($v === 1 ? 'visita' : 'visite');
+    return $vt . ' · ' . $c . ' click · ' . $b . ' pren.';
+};
 ?>
 <?php include __DIR__ . '/_tabs.php'; ?>
 
@@ -43,15 +49,19 @@
             <div class="mkv-seg<?= $node['id'] === 'all' ? ' sel' : '' ?>" data-id="<?= e($node['id']) ?>">
                 <span class="mkv-caret"><?= $hasKids ? '<i class="bi bi-chevron-right"></i>' : '' ?></span>
                 <span class="mkv-dot" style="background:<?= e($node['color']) ?>;"></span>
-                <span class="mkv-nm"><?= e($node['label']) ?></span>
-                <span class="mkv-mini"><?= (int)$node['visits'] ?> v · <b><?= (int)$node['bookings'] ?></b> p</span>
+                <span class="mkv-body">
+                    <span class="mkv-nm"><?= e($node['label']) ?></span>
+                    <span class="mkv-metrics"><?= e($metricLine((int)$node['visits'], (int)$node['clicks'], (int)$node['bookings'])) ?></span>
+                </span>
             </div>
             <?php foreach ($node['children'] as $ch): ?>
             <div class="mkv-seg child hidden" data-parent="<?= e($node['id']) ?>" data-id="<?= e($ch['id']) ?>">
                 <span class="mkv-caret"></span>
                 <span class="mkv-dot" style="background:<?= e($node['color']) ?>;opacity:.55;"></span>
-                <span class="mkv-nm"><?= e($ch['label']) ?> <span class="mkv-badge">CAMPAGNA</span></span>
-                <span class="mkv-mini"><?= (int)$ch['visits'] ?> v · <b><?= (int)$ch['bookings'] ?></b> p</span>
+                <span class="mkv-body">
+                    <span class="mkv-nm"><?= e($ch['label']) ?> <span class="mkv-badge">CAMPAGNA</span></span>
+                    <span class="mkv-metrics"><?= e($metricLine((int)$ch['visits'], (int)$ch['clicks'], (int)$ch['bookings'])) ?></span>
+                </span>
             </div>
             <?php endforeach; ?>
             <?php endforeach; ?>
@@ -106,8 +116,9 @@
 .mkv-seg.open .mkv-caret{transform:rotate(90deg)}
 .mkv-caret{width:14px;color:#c0c7cd;font-size:.7rem;flex-shrink:0;transition:transform .15s}
 .mkv-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.mkv-nm{flex:1;font-weight:600;font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mkv-mini{font-size:.72rem;color:#6c757d;white-space:nowrap}
+.mkv-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.mkv-nm{font-weight:600;font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mkv-metrics{font-size:.72rem;color:#9aa1a9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mkv-seg.child{padding-left:36px;background:#fcfdfe}
 .mkv-seg.child .mkv-nm{font-weight:500;font-size:.82rem}
 .mkv-seg.hidden{display:none}
