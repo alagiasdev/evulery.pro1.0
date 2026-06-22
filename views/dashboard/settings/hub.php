@@ -367,10 +367,11 @@ $enabled = !empty($settings['enabled']);
                         <div class="hub-preview-screen">
                             <div class="hub-preview-notch"></div>
                             <div class="ppm-cover" id="ppm-cover"></div>
-                            <div class="ppm-logo">N</div>
+                            <?php $hubName = tenant()['name'] ?? ''; $hubSub = $settings['subtitle'] ?? ''; ?>
+                            <div class="ppm-logo"><?= e(mb_strtoupper(mb_substr($hubName, 0, 1))) ?></div>
                             <div class="ppm-body">
-                                <div class="ppm-name">Nuok</div>
-                                <div class="ppm-tag">Trattoria moderna · Roma</div>
+                                <div class="ppm-name"><?= e($hubName) ?></div>
+                                <div class="ppm-tag" id="ppm-tag"><?= e($hubSub) ?></div>
                                 <div class="ppm-cta" id="ppm-cta">
                                     <i class="bi bi-calendar-check"></i>
                                     <div class="ppm-cta-label">PRENOTA UN TAVOLO</div>

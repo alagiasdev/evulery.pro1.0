@@ -375,6 +375,15 @@
         });
     });
 
+    // Sync live del sottotitolo nell'anteprima (il nome viene dal tenant, fisso)
+    var subInput = document.querySelector('input[name="subtitle"]');
+    var ppmTag = document.getElementById('ppm-tag');
+    if (subInput && ppmTag) {
+        subInput.addEventListener('input', function() {
+            ppmTag.textContent = subInput.value || '';
+        });
+    }
+
     // Init preview on page load
     updateLivePreview();
 })();
