@@ -237,24 +237,41 @@ class MarketingController
      * Aggrega le righe (channel,campaign) in canali con drill-down campagne
      * + totali e quota "tracciata" (canale != direct).
      */
+    /** Fonti che NON sono canali marketing (offline + online non tracciato). */
+    private const OTHER_CHANNELS = ['phone', 'walkin', 'dashboard', 'direct'];
+
     private function aggregate(array $rows): array
     {
         $byChannel = [];
         $totN = 0; $totCovers = 0; $tracked = 0; $viaHub = 0;
 
         foreach ($rows as $r) {
+            // Il bucket "direct" si spezza per source: telefono/walk-in/dashboard
+            // diventano fonti proprie; il resto (widget senza UTM) resta "direct"
+            // = "Sito / Diretto (non tracciato)".
             $ch = $r['channel'];
+            if ($ch === 'direct') {
+                $ch = match ($r['source'] ?? '') {
+                    'phone'     => 'phone',
+                    'walkin'    => 'walkin',
+                    'dashboard' => 'dashboard',
+                    default     => 'direct',
+                };
+            }
+            $isOther = in_array($ch, self::OTHER_CHANNELS, true);
+
             $n = (int)$r['n'];
             $covers = (int)$r['covers'];
             $totN += $n; $totCovers += $covers;
             $viaHub += (int)$r['via_hub'];
-            if ($ch !== 'direct') $tracked += $n;
+            if (!$isOther) $tracked += $n; // "tracciate" = canali marketing veri
 
             if (!isset($byChannel[$ch])) {
                 $byChannel[$ch] = [
                     'key'       => $ch,
                     'label'     => AttributionService::label($ch),
                     'color'     => AttributionService::color($ch),
+                    'group'     => $isOther ? 'other' : 'marketing',
                     'n'         => 0,
                     'covers'    => 0,
                     'campaigns' => [],
@@ -271,7 +288,7 @@ class MarketingController
             }
         }
 
-        // ordina canali per coperti desc
+        // ordina per coperti desc
         usort($byChannel, fn($a, $b) => $b['covers'] <=> $a['covers']);
 
         $totals = [
@@ -279,7 +296,7 @@ class MarketingController
             'covers'      => $totCovers,
             'tracked'     => $tracked,
             'tracked_pct' => $totN > 0 ? (int)round($tracked / $totN * 100) : 0,
-            'channels'    => count(array_filter($byChannel, fn($c) => $c['key'] !== 'direct')),
+            'channels'    => count(array_filter($byChannel, fn($c) => $c['group'] === 'marketing')),
             'via_hub'     => $viaHub,
         ];
 

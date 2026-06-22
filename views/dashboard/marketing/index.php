@@ -44,10 +44,18 @@
         <thead>
             <tr><th>Canale</th><th class="num">Pren.</th><th class="num">Coperti</th><th style="width:170px;">Quota coperti</th></tr>
         </thead>
-        <tbody>
-            <?php foreach ($channels as $i => $c): ?>
-            <?php $hasCampaigns = !empty($c['campaigns']); $pct = $maxCovers > 0 ? round($c['covers'] / $maxCovers * 100) : 0; ?>
-            <tr class="<?= $hasCampaigns ? 'mk-exp' : '' ?>" <?= $hasCampaigns ? 'data-exp="ch' . $i . '"' : '' ?>>
+        <?php
+        // Due gruppi: canali marketing (con drill-down campagne) e altre fonti
+        // (offline + online non tracciato). Chiave d'espansione = $c['key']
+        // (slug sicuro: niente caratteri che rompono il selettore JS).
+        $mk = array_values(array_filter($channels, fn($c) => ($c['group'] ?? 'marketing') === 'marketing'));
+        $ot = array_values(array_filter($channels, fn($c) => ($c['group'] ?? 'marketing') === 'other'));
+        $renderRow = function (array $c) use ($maxCovers) {
+            $hasCampaigns = !empty($c['campaigns']);
+            $pct = $maxCovers > 0 ? round($c['covers'] / $maxCovers * 100) : 0;
+            $key = $c['key'];
+            ?>
+            <tr class="<?= $hasCampaigns ? 'mk-exp' : '' ?>" <?= $hasCampaigns ? 'data-exp="' . e($key) . '"' : '' ?>>
                 <td>
                     <span class="mk-dot" style="background:<?= e($c['color']) ?>;"></span>
                     <?= e($c['label']) ?>
@@ -58,19 +66,27 @@
                 <td><div class="mk-bar"><i style="width:<?= $pct ?>%;background:<?= e($c['color']) ?>;"></i></div></td>
             </tr>
             <?php foreach ($c['campaigns'] as $camp): ?>
-            <tr class="mk-sub" data-sub="ch<?= $i ?>" style="display:none;">
+            <tr class="mk-sub" data-sub="<?= e($key) ?>" style="display:none;">
                 <td>↳ <b><?= e($camp['name']) ?></b></td>
                 <td class="num"><?= (int)$camp['n'] ?></td>
                 <td class="num"><?= (int)$camp['covers'] ?></td>
                 <td class="mk-roi">utm_campaign=<?= e($camp['name']) ?></td>
             </tr>
             <?php endforeach; ?>
-            <?php endforeach; ?>
+            <?php
+        };
+        ?>
+        <tbody>
+            <?php foreach ($mk as $c) { $renderRow($c); } ?>
+            <?php if (!empty($ot)): ?>
+            <tr class="mk-grp"><td colspan="4">Altre fonti <span class="mk-grp-sub">· offline + online non tracciato</span></td></tr>
+            <?php foreach ($ot as $c) { $renderRow($c); } ?>
+            <?php endif; ?>
         </tbody>
     </table>
 </div>
 <p style="font-size:.78rem;color:#9aa1a9;margin:.6rem 2px 0;">
-    "Diretto / sconosciuto" include telefono, walk-in e link non taggati. Tagga i link con <a href="<?= url('dashboard/marketing/links') ?>" class="text-success text-decoration-none">Genera link</a> per ridurlo.
+    <b>Telefono / Walk-in / Inserita a mano</b> sono prenotazioni offline (normale). <b>Sito / Diretto (non tracciato)</b> sono visite web senza tag: riducile taggando i link con <a href="<?= url('dashboard/marketing/links') ?>" class="text-success text-decoration-none">Genera link</a>.
     <?php if ((int)$totals['via_hub'] > 0): ?> · <?= (int)$totals['via_hub'] ?> passate dalla Vetrina/Hub.<?php endif; ?>
 </p>
 <?php endif; ?>
@@ -96,6 +112,8 @@
 .mk-bar{height:8px;border-radius:5px;background:#eef0f2;overflow:hidden;}
 .mk-bar>i{display:block;height:100%;border-radius:5px;}
 .mk-sub{background:#fafbfc;font-size:.82rem;}.mk-sub td{padding-left:30px;color:#555;}
+.mk-grp td{background:#f6f8fa;font-size:.68rem;text-transform:uppercase;letter-spacing:.4px;color:#9aa1a9;font-weight:800;padding:8px 14px;}
+.mk-grp-sub{font-weight:500;text-transform:none;letter-spacing:0;}
 .mk-roi{font-family:ui-monospace,Menlo,monospace;font-size:.74rem;color:#9aa3aa;}
 </style>
 

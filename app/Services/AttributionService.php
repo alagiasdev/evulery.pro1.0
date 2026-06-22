@@ -52,7 +52,11 @@ class AttributionService
             'gbp'            => ['label' => 'Google Business',  'color' => '#4285f4'],
             'facebook'       => ['label' => 'Facebook',        'color' => '#0866ff'],
             'twitter'        => ['label' => 'X / Twitter',     'color' => '#1d9bf0'],
-            'direct'         => ['label' => 'Diretto / sconosciuto', 'color' => '#6b7280'],
+            // Altre fonti (non canali marketing)
+            'direct'         => ['label' => 'Sito / Diretto (non tracciato)', 'color' => '#6b7280'],
+            'phone'          => ['label' => 'Telefono',        'color' => '#0d6efd'],
+            'walkin'         => ['label' => 'Walk-in',         'color' => '#fd7e14'],
+            'dashboard'      => ['label' => 'Inserita a mano', 'color' => '#9333ea'],
         ];
     }
 

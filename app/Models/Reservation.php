@@ -107,6 +107,7 @@ class Reservation
         $stmt = $this->db->prepare(
             "SELECT COALESCE(NULLIF(channel, ''), 'direct') AS channel,
                     COALESCE(utm_campaign, '') AS campaign,
+                    source,
                     COUNT(*) AS n,
                     COALESCE(SUM(party_size), 0) AS covers,
                     SUM(via_hub) AS via_hub
@@ -114,7 +115,7 @@ class Reservation
              WHERE tenant_id = :t
                AND DATE(created_at) BETWEEN :from AND :to
                AND status NOT IN ('cancelled', 'noshow')
-             GROUP BY channel, campaign
+             GROUP BY channel, campaign, source
              ORDER BY covers DESC"
         );
         $stmt->execute(['t' => $tenantId, 'from' => $from, 'to' => $to]);
