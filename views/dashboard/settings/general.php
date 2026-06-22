@@ -277,11 +277,36 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                         <button type="button" class="link-copy" data-copy-target="hosted-url"><i class="bi bi-clipboard me-1"></i>Copia</button>
                     </div>
 
+                    <?php
+                    // Snippet embed. Pro+Ent (servizio 'marketing'): versione "intelligente"
+                    // che inoltra gli UTM della pagina del cliente all'iframe → attribuzione
+                    // campagne anche sul sito del cliente. Starter: iframe semplice.
+                    $simpleSnippet = '<iframe src="' . $embedUrl . '" width="100%" height="600" frameborder="0"></iframe>';
+                    $smartSnippet  = '<iframe id="evry-bk" src="' . $embedUrl . '" width="100%" height="600" frameborder="0"></iframe>' . "\n"
+                        . '<script>(function(){var u=new URLSearchParams(location.search),e="";["utm_source","utm_medium","utm_campaign"].forEach(function(k){if(u.get(k))e+="&"+k+"="+encodeURIComponent(u.get(k))});if(e)document.getElementById("evry-bk").src="' . $embedUrl . '"+e;})();</script>';
+                    ?>
+                    <?php if (tenant_can('marketing')): ?>
+                    <div class="link-label" style="margin-top:1rem;">Codice Embed <span style="font-weight:500;color:#6c757d;">— con tracciamento campagne</span></div>
+                    <p style="font-size:.8rem;color:#6c757d;margin:.1rem 0 .5rem;">Traccia da quale campagna arrivano le prenotazioni fatte dal tuo sito (le vedi in <a href="<?= url('dashboard/marketing') ?>" style="color:var(--brand);">Marketing → Provenienza</a>).</p>
+                    <div class="embed-code" style="white-space:pre-wrap;">
+                        <button type="button" class="embed-copy" data-copy-text="<?= e($smartSnippet) ?>"><i class="bi bi-clipboard me-1"></i>Copia</button>
+<?= e($smartSnippet) ?>
+                    </div>
+                    <details style="margin-top:.6rem;">
+                        <summary style="font-size:.8rem;color:var(--brand-d,#006b3c);cursor:pointer;font-weight:600;">Mostra versione semplice (solo iframe)</summary>
+                        <p style="font-size:.78rem;color:#6c757d;margin:.4rem 0 .4rem;">Se il tuo sito non permette gli script, usa questa (senza tracciamento campagne):</p>
+                        <div class="embed-code">
+                            <button type="button" class="embed-copy" data-copy-text="<?= e($simpleSnippet) ?>"><i class="bi bi-clipboard me-1"></i>Copia</button>
+                            <?= e($simpleSnippet) ?>
+                        </div>
+                    </details>
+                    <?php else: ?>
                     <div class="link-label" style="margin-top:1rem;">Codice Embed (iframe)</div>
                     <div class="embed-code">
-                        <button type="button" class="embed-copy" data-copy-text="&lt;iframe src=&quot;<?= e($embedUrl) ?>&quot; width=&quot;100%&quot; height=&quot;600&quot; frameborder=&quot;0&quot;&gt;&lt;/iframe&gt;"><i class="bi bi-clipboard me-1"></i>Copia</button>
-                        &lt;iframe src="<?= e($embedUrl) ?>" width="100%" height="600" frameborder="0"&gt;&lt;/iframe&gt;
+                        <button type="button" class="embed-copy" data-copy-text="<?= e($simpleSnippet) ?>"><i class="bi bi-clipboard me-1"></i>Copia</button>
+                        <?= e($simpleSnippet) ?>
                     </div>
+                    <?php endif; ?>
                 </div>
             </div>
 

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codice Embed — normale vs con tracciamento (wireframe)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{ --brand:#00844A; --brand-d:#006b3c; --ink:#1a1d23; --muted:#6c757d; --line:#eceff2; }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:15px}
+  .wrap{max-width:720px;margin:0 auto;padding:24px 18px 80px}
+  .brandbar{height:5px;background:linear-gradient(90deg,var(--brand),#5cbf8c);border-radius:6px;margin-bottom:14px}
+  h1{font-size:1.2rem;margin:0 0 4px}
+  .lead{color:var(--muted);font-size:.86rem;margin:0 0 16px}
+
+  .planswitch{display:flex;gap:8px;margin-bottom:18px}
+  .planbtn{border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:8px 14px;font-weight:600;font-size:.82rem;cursor:pointer}
+  .planbtn.on{background:var(--brand);border-color:var(--brand);color:#fff}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .link-label{font-weight:700;font-size:.85rem;margin-bottom:6px;display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
+  .badge-track{font-size:.62rem;font-weight:800;background:#e8f5ee;color:var(--brand-d);border-radius:5px;padding:2px 7px}
+  .hint{font-size:.8rem;color:var(--muted);margin:0 0 10px}
+  .codebox{position:relative;background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 14px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.76rem;line-height:1.5;white-space:pre-wrap;word-break:break-all}
+  .codebox .tok{color:#7dd3fc}.codebox .str{color:#86efac}.codebox .cm{color:#94a3b8}
+  .copy{position:absolute;top:10px;right:10px;background:#1e293b;color:#cbd5e1;border:1px solid #334155;border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:700;cursor:pointer}
+  .copy:hover{background:#334155}
+  .simplelink{display:inline-block;margin-top:10px;font-size:.8rem;color:var(--brand-d);cursor:pointer;text-decoration:none;font-weight:600}
+  .simplebox{display:none;margin-top:10px}
+  .simplebox.show{display:block}
+  .note{font-size:.78rem;color:var(--muted);margin-top:10px;display:flex;gap:8px;align-items:flex-start}
+  .lock{font-size:.62rem;font-weight:800;background:#eef2ff;color:#3730a3;border-radius:5px;padding:2px 7px}
+  .foot{margin-top:24px;font-size:.78rem;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar"></div>
+  <h1>Impostazioni › Codice Embed <span style="font-size:.8rem;font-weight:500;color:var(--muted)">(wireframe)</span></h1>
+  <p class="lead">Il box "Codice Embed" si adatta al piano. Confronta i due stati:</p>
+
+  <div class="planswitch">
+    <span class="planbtn on" data-plan="starter">Vedi come Starter</span>
+    <span class="planbtn" data-plan="pro">Vedi come Professional / Enterprise</span>
+  </div>
+
+  <!-- STARTER -->
+  <div class="card" id="box-starter">
+    <div class="link-label"><i class="bi bi-code-slash" style="color:var(--brand)"></i> Codice Embed (iframe)</div>
+    <p class="hint">Incolla questo codice nel tuo sito per mostrare il widget di prenotazione.</p>
+    <div class="codebox"><button class="copy">Copia</button><span class="tok">&lt;iframe</span> src=<span class="str">"https://dash.evulery.it/trattoria-da-mario?embed=1"</span> width=<span class="str">"100%"</span> height=<span class="str">"600"</span> frameborder=<span class="str">"0"</span><span class="tok">&gt;&lt;/iframe&gt;</span></div>
+    <div class="note"><i class="bi bi-info-circle"></i> <div>Semplice e leggero. Per tracciare le campagne pubblicitarie serve il piano Professional. <span class="lock">PRO</span></div></div>
+  </div>
+
+  <!-- PRO / ENTERPRISE -->
+  <div class="card" id="box-pro" style="display:none">
+    <div class="link-label"><i class="bi bi-graph-up-arrow" style="color:var(--brand)"></i> Codice Embed — con tracciamento campagne <span class="badge-track">MARKETING</span></div>
+    <p class="hint">Questo codice <b>traccia da quale campagna</b> arrivano le prenotazioni fatte dal tuo sito (Meta, Google, ecc.). Le vedrai in <b>Marketing › Provenienza</b>.</p>
+    <div class="codebox"><button class="copy">Copia</button><span class="cm">&lt;!-- Widget prenotazioni Evulery (con tracciamento) --&gt;</span>
+<span class="tok">&lt;iframe</span> id=<span class="str">"evry-bk"</span> src=<span class="str">"https://dash.evulery.it/trattoria-da-mario?embed=1"</span> width=<span class="str">"100%"</span> height=<span class="str">"600"</span> frameborder=<span class="str">"0"</span><span class="tok">&gt;&lt;/iframe&gt;</span>
+<span class="tok">&lt;script&gt;</span>(function(){var u=<span class="tok">new</span> URLSearchParams(location.search),e=<span class="str">""</span>;
+[<span class="str">"utm_source"</span>,<span class="str">"utm_medium"</span>,<span class="str">"utm_campaign"</span>].forEach(function(k){if(u.get(k))e+=<span class="str">"&amp;"</span>+k+<span class="str">"="</span>+encodeURIComponent(u.get(k))});
+if(e)document.getElementById(<span class="str">"evry-bk"</span>).src=<span class="str">"https://dash.evulery.it/trattoria-da-mario?embed=1"</span>+e;})();<span class="tok">&lt;/script&gt;</span></div>
+
+    <a class="simplelink" id="toggle-simple"><i class="bi bi-chevron-down"></i> Mostra versione semplice (solo iframe)</a>
+    <div class="simplebox" id="simplebox">
+      <p class="hint" style="margin-top:8px;">Se il tuo sito non permette gli script, usa questa (senza tracciamento campagne):</p>
+      <div class="codebox"><button class="copy">Copia</button><span class="tok">&lt;iframe</span> src=<span class="str">"https://dash.evulery.it/trattoria-da-mario?embed=1"</span> width=<span class="str">"100%"</span> height=<span class="str">"600"</span> frameborder=<span class="str">"0"</span><span class="tok">&gt;&lt;/iframe&gt;</span></div>
+    </div>
+
+    <div class="note"><i class="bi bi-shield-check" style="color:var(--brand)"></i> <div>Per i visitatori normali pesa <b>esattamente come l'iframe semplice</b>: lo script si attiva solo quando arriva qualcuno da una campagna. Se il sito blocca lo script, il widget carica comunque (prenotazioni mai a rischio).</div></div>
+  </div>
+
+  <p class="foot">Wireframe — Codice Embed normale (Starter) vs con tracciamento (Pro/Enterprise) · Evulery</p>
+</div>
+
+<script>
+document.querySelectorAll('.planbtn').forEach(function(b){
+  b.onclick=function(){
+    document.querySelectorAll('.planbtn').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    var pro = b.dataset.plan==='pro';
+    document.getElementById('box-pro').style.display = pro?'block':'none';
+    document.getElementById('box-starter').style.display = pro?'none':'block';
+  };
+});
+document.getElementById('toggle-simple').onclick=function(){
+  document.getElementById('simplebox').classList.toggle('show');
+};
+document.querySelectorAll('.copy').forEach(function(b){
+  b.onclick=function(){var o=b.textContent;b.textContent='Copiato!';setTimeout(function(){b.textContent=o;},1200);};
+});
+</script>
+</body>
+</html>

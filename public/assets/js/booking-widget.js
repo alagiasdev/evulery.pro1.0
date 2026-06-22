@@ -705,7 +705,11 @@ document.addEventListener('DOMContentLoaded', function() {
             var us = qs.get('utm_source'); if (us) { body.utm_source = us; }
             var um = qs.get('utm_medium'); if (um) { body.utm_medium = um; }
             var uc = qs.get('utm_campaign'); if (uc) { body.utm_campaign = uc; }
-            if (document.referrer) { body.referrer = document.referrer; }
+            // In modalita' embed il referrer e' il sito del cliente (non una vera
+            // provenienza marketing): lo ignoriamo, cosi' senza UTM = "Diretto".
+            // Lo snippet embed "con tracciamento" inoltra comunque gli UTM qui sopra.
+            var isEmbed = qs.get('embed') === '1';
+            if (!isEmbed && document.referrer) { body.referrer = document.referrer; }
         } catch (e) { /* attribuzione best-effort, non blocca la prenotazione */ }
 
         if (forceDuplicate) {
