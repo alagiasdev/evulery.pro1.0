@@ -59,7 +59,7 @@ $metricLine = function (int $v, int $c, int $b): string {
                 <span class="mkv-caret"></span>
                 <span class="mkv-dot" style="background:<?= e($node['color']) ?>;opacity:.55;"></span>
                 <span class="mkv-body">
-                    <span class="mkv-nm"><?= e($ch['label']) ?> <span class="mkv-badge">CAMPAGNA</span></span>
+                    <span class="mkv-nm"><?php if (!empty($ch['untagged'])): ?><span style="font-style:italic;color:#9aa1a9;"><?= e($ch['label']) ?></span><?php else: ?><?= e($ch['label']) ?> <span class="mkv-badge">CAMPAGNA</span><?php endif; ?></span>
                     <span class="mkv-metrics"><?= e($metricLine((int)$ch['visits'], (int)$ch['clicks'], (int)$ch['bookings'])) ?></span>
                 </span>
             </div>

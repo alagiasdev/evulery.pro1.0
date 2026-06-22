@@ -67,10 +67,10 @@
             </tr>
             <?php foreach ($c['campaigns'] as $camp): ?>
             <tr class="mk-sub" data-sub="<?= e($key) ?>" style="display:none;">
-                <td>↳ <b><?= e($camp['name']) ?></b></td>
+                <td>↳ <?php if (!empty($camp['untagged'])): ?><span style="color:#9aa1a9;font-style:italic;"><?= e($camp['name']) ?></span><?php else: ?><b><?= e($camp['name']) ?></b><?php endif; ?></td>
                 <td class="num"><?= (int)$camp['n'] ?></td>
                 <td class="num"><?= (int)$camp['covers'] ?></td>
-                <td class="mk-roi">utm_campaign=<?= e($camp['name']) ?></td>
+                <td class="mk-roi"><?= !empty($camp['untagged']) ? 'nessun tag campagna' : 'utm_campaign=' . e($camp['name']) ?></td>
             </tr>
             <?php endforeach; ?>
             <?php

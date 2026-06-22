@@ -288,6 +288,20 @@ class MarketingController
             }
         }
 
+        // Per i canali con campagne nominate, aggiungi la riga "(senza campagna)"
+        // col residuo, cosi' le campagne sommano al totale del canale (es. visite
+        // del canale senza utm_campaign che altrimenti "sparirebbero").
+        foreach ($byChannel as &$c) {
+            if (!empty($c['campaigns'])) {
+                $remN = $c['n'] - array_sum(array_column($c['campaigns'], 'n'));
+                $remCov = $c['covers'] - array_sum(array_column($c['campaigns'], 'covers'));
+                if ($remN > 0) {
+                    $c['campaigns'][] = ['name' => '(senza campagna)', 'n' => $remN, 'covers' => $remCov, 'untagged' => true];
+                }
+            }
+        }
+        unset($c);
+
         // ordina per coperti desc
         usort($byChannel, fn($a, $b) => $b['covers'] <=> $a['covers']);
 

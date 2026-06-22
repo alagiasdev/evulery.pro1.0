@@ -80,6 +80,16 @@ class HubAnalyticsService
                                'bookings' => $scopes[$sid]['book']];
             }
 
+            // Riga "(senza campagna)" col residuo, solo se il canale ha campagne
+            // nominate: cosi' i figli sommano al totale del canale.
+            $eV = (int)($vMap[$ch][''] ?? 0); $eC = (int)($cMap[$ch][''] ?? 0); $eB = (int)($bMap[$ch][''] ?? 0);
+            if (!empty($camps) && ($eV > 0 || $eC > 0 || $eB > 0)) {
+                $sid = $ch . ':__none';
+                $scopes[$sid] = $this->scope($label . ' · senza campagna', 'senza campagna', $color, $eV, $eC, $eB, $btnMap[$ch][''] ?? []);
+                $children[] = ['id' => $sid, 'label' => '(senza campagna)', 'untagged' => true,
+                               'visits' => $eV, 'clicks' => $eC, 'bookings' => $eB];
+            }
+
             $tree[] = ['id' => $ch, 'label' => $label, 'color' => $color,
                        'visits' => $scopes[$ch]['visits'], 'clicks' => $scopes[$ch]['clicks'],
                        'bookings' => $scopes[$ch]['book'], 'children' => $children];
