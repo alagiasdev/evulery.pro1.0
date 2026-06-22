@@ -24,8 +24,12 @@ class HubTrackController
             return;
         }
 
-        $ref  = AttributionService::sanitize($request->input('ref'), 60);
-        $type = (string)$request->input('type', 'preset');
+        // Il beacon invia un body JSON (application/json): va letto via json(),
+        // non input() (che vede solo $_POST/$_GET). Stesso pattern dello store.
+        $data = $request->isJson() ? $request->json() : $request->all();
+
+        $ref  = AttributionService::sanitize($data['ref'] ?? null, 60);
+        $type = (string)($data['type'] ?? 'preset');
         if (!in_array($type, ['hero', 'preset', 'custom', 'social'], true)) {
             $type = 'preset';
         }
@@ -34,10 +38,10 @@ class HubTrackController
             return;
         }
 
-        $label = AttributionService::sanitize($request->input('label'), 120);
-        $src   = AttributionService::sanitize($request->input('utm_source'), 100);
-        $med   = AttributionService::sanitize($request->input('utm_medium'), 60);
-        $camp  = AttributionService::sanitize($request->input('utm_campaign'), 120);
+        $label = AttributionService::sanitize($data['label'] ?? null, 120);
+        $src   = AttributionService::sanitize($data['utm_source'] ?? null, 100);
+        $med   = AttributionService::sanitize($data['utm_medium'] ?? null, 60);
+        $camp  = AttributionService::sanitize($data['utm_campaign'] ?? null, 120);
         // canale: UTM se presente, altrimenti accesso diretto alla Vetrina -> 'hub'
         $channel = $src ? AttributionService::deriveChannel($src, $med, null) : 'hub';
 

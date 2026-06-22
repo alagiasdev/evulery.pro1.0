@@ -94,9 +94,14 @@ class MarketingController
         $canUse = tenant_can('marketing');
         [$from, $to, $rangeKey] = $this->resolveRange($request);
 
-        $analytics = ['kpis' => ['visits' => 0, 'clicks' => 0, 'ctr' => 0, 'bookings' => 0, 'channels' => 0], 'tree' => [], 'scopes' => [], 'buttons' => []];
+        $analytics = ['kpis' => ['visits' => 0, 'clicks' => 0, 'cpv' => 0, 'bookings' => 0, 'channels' => 0], 'tree' => [], 'scopes' => [], 'buttons' => []];
         if ($canUse) {
-            $analytics = (new HubAnalyticsService())->build($tenant, $from, $to);
+            try {
+                $analytics = (new HubAnalyticsService())->build($tenant, $from, $to);
+            } catch (\Throwable $e) {
+                // es. migration 072 non ancora applicata: mostra stato vuoto invece di crashare
+                app_log('Statistiche Vetrina non disponibili: ' . $e->getMessage(), 'warning');
+            }
         }
 
         view('dashboard/marketing/vetrina', [
