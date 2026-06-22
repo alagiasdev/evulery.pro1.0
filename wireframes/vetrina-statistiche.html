@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vetrina — statistiche pulsanti (wireframe)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{ --brand:#00844A; --brand-d:#006b3c; --ink:#1a1d23; --muted:#6c757d; --line:#eceff2; --hub:#8b5cf6; }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:15px}
+  .wrap{max-width:880px;margin:0 auto;padding:22px 18px 90px}
+  .brandbar{height:5px;background:linear-gradient(90deg,var(--brand),#5cbf8c);border-radius:6px;margin-bottom:14px}
+  h1{font-size:1.25rem;margin:0 0 4px;display:flex;align-items:center;gap:.45rem}
+  .lead{color:var(--muted);font-size:.88rem;margin:0 0 14px}
+
+  /* tabs come la sezione Marketing */
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;border-bottom:1px solid var(--line);padding-bottom:.1rem}
+  .tab{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem .9rem;font-size:.85rem;font-weight:600;color:var(--muted);text-decoration:none;border-radius:8px 8px 0 0;border-bottom:2px solid transparent;cursor:pointer}
+  .tab.on{color:var(--brand);border-bottom-color:var(--brand);background:#f6fbf8}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:16px}
+  .row-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .filters{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:6px 12px;font-weight:600;font-size:.8rem;cursor:pointer}
+  .pill.on{background:#e8f5ee;border-color:var(--brand);color:var(--brand-d)}
+  .ch{border:1.5px solid #d4dade;background:#fff;border-radius:20px;padding:5px 12px;font-weight:600;font-size:.78rem;cursor:pointer}
+  .ch.on{background:#ede9fe;border-color:var(--hub);color:#5b21b6}
+  .btn-cfg{border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:6px 12px;font-size:.8rem;font-weight:600;text-decoration:none;color:var(--ink)}
+
+  /* funnel */
+  .funnel{display:flex;gap:10px;flex-wrap:wrap}
+  .fstep{flex:1;min-width:150px;border:1px solid var(--line);border-radius:12px;padding:14px;position:relative}
+  .fstep .n{font-size:1.6rem;font-weight:800;line-height:1}
+  .fstep .l{font-size:.78rem;color:var(--muted);margin-top:3px}
+  .fstep .rate{font-size:.72rem;font-weight:700;color:var(--brand-d);background:#e8f5ee;border-radius:5px;padding:2px 7px;display:inline-block;margin-top:8px}
+  .fstep.hub{border-color:#ddd6fe;background:#f8f7ff}
+  .fstep.hub .n{color:var(--hub)}
+  .farrow{align-self:center;color:#c9d2d9;font-size:1.2rem}
+
+  table{width:100%;border-collapse:collapse;font-size:.88rem}
+  th{text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.3px;color:var(--muted);padding:9px 12px;border-bottom:2px solid var(--line)}
+  th.num,td.num{text-align:right;font-weight:700}
+  td{padding:11px 12px;border-bottom:1px solid #f4f6f8;vertical-align:middle}
+  .bicon{width:30px;height:30px;border-radius:8px;background:#f0faf5;color:var(--brand-d);display:inline-grid;place-items:center;margin-right:9px;font-size:.95rem;vertical-align:middle}
+  .blabel{font-weight:600}
+  .badge-t{font-size:.62rem;font-weight:800;border-radius:5px;padding:1px 6px;margin-left:6px}
+  .bt-preset{background:#eef2ff;color:#3730a3}
+  .bt-custom{background:#fef3c7;color:#92400e}
+  .bt-hero{background:#dcfce7;color:#166534}
+  .bar{height:8px;border-radius:5px;background:#eef0f2;overflow:hidden;min-width:80px}
+  .bar>i{display:block;height:100%;border-radius:5px;background:var(--brand)}
+  .conv{font-size:.78rem;color:var(--muted)}
+  .conv b{color:var(--brand-d)}
+  .note{font-size:.78rem;color:var(--muted);margin-top:10px}
+  .foot{margin-top:22px;font-size:.78rem;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar"></div>
+  <h1><i class="bi bi-megaphone" style="color:var(--brand)"></i> Marketing</h1>
+  <p class="lead">Statistiche sui pulsanti della Vetrina Digitale: cosa cliccano davvero le persone che la aprono.</p>
+
+  <div class="tabs">
+    <span class="tab">📊 Provenienza</span>
+    <span class="tab">🔗 Genera link</span>
+    <span class="tab on">🏪 Vetrina</span>
+  </div>
+
+  <!-- filtro + configura -->
+  <div class="card">
+    <div class="row-top">
+      <div class="filters">
+        <span class="pill">7 giorni</span><span class="pill on">30 giorni</span><span class="pill">90 giorni</span>
+        <span class="pill"><i class="bi bi-calendar3"></i> Personalizzato</span>
+      </div>
+      <a href="#" class="btn-cfg"><i class="bi bi-gear"></i> Configura Vetrina</a>
+    </div>
+
+    <!-- INCROCIO col tool Genera link: filtro per CANALE (lista corta e fissa).
+         Il dettaglio per singola campagna sta nelle "Campagne salvate". -->
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <span style="font-size:.82rem;font-weight:700;margin-right:2px;"><i class="bi bi-funnel"></i> Canale</span>
+      <span class="ch on" data-k="all">Tutti</span>
+      <span class="ch" data-k="meta">Meta / Facebook</span>
+      <span class="ch" data-k="google">Google</span>
+      <span class="ch" data-k="hub">Hub diretto / QR</span>
+    </div>
+    <p id="campnote" style="font-size:.76rem;color:var(--muted);margin:0 0 12px;"></p>
+
+    <!-- FUNNEL -->
+    <div class="funnel">
+      <div class="fstep hub">
+        <div class="n" id="f-visits">320</div><div class="l">Visite Vetrina</div>
+      </div>
+      <span class="farrow">→</span>
+      <div class="fstep">
+        <div class="n" id="f-clicks">198</div><div class="l">Click sui pulsanti</div>
+        <span class="rate" id="f-ctr">62% CTR</span>
+      </div>
+      <span class="farrow">→</span>
+      <div class="fstep">
+        <div class="n" id="f-book">24</div><div class="l">Prenotazioni</div>
+        <span class="rate" id="f-conv">12% delle visite</span>
+      </div>
+    </div>
+    <p class="note"><i class="bi bi-info-circle"></i> Filtro per <b>canale</b> (lista corta e fissa). Il dettaglio per <b>singola campagna</b> (es. "Meta · terrazza") è nelle <b>Campagne salvate</b> del tab "Genera link", dove ogni campagna ha il suo mini-funnel. Periodo per data del click/visita.</p>
+  </div>
+
+  <!-- CLICK PER PULSANTE -->
+  <div class="card">
+    <h2 style="font-size:1rem;margin:0 0 10px;"><i class="bi bi-hand-index-thumb" style="color:var(--brand)"></i> Click per pulsante</h2>
+    <table>
+      <thead><tr><th>Pulsante</th><th class="num">Click</th><th style="width:160px;">Quota</th><th class="num">Conversioni</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="bicon"><i class="bi bi-calendar-check"></i></span><span class="blabel">Prenota un tavolo</span><span class="badge-t bt-hero">PRINCIPALE</span></td>
+          <td class="num" id="c-prenota">92</td>
+          <td><div class="bar"><i id="b-prenota" style="width:100%"></i></div></td>
+          <td class="num"><span class="conv"><b id="v-prenota">24</b> pren.</span></td>
+        </tr>
+        <tr>
+          <td><span class="bicon"><i class="bi bi-book"></i></span><span class="blabel">Menù</span><span class="badge-t bt-preset">PRESET</span></td>
+          <td class="num" id="c-menu">54</td><td><div class="bar"><i id="b-menu" style="width:59%"></i></div></td><td class="num"><span class="conv">—</span></td>
+        </tr>
+        <tr>
+          <td><span class="bicon"><i class="bi bi-whatsapp"></i></span><span class="blabel">WhatsApp</span><span class="badge-t bt-preset">PRESET</span></td>
+          <td class="num" id="c-wa">28</td><td><div class="bar"><i id="b-wa" style="width:30%"></i></div></td><td class="num"><span class="conv">—</span></td>
+        </tr>
+        <tr>
+          <td><span class="bicon"><i class="bi bi-bag"></i></span><span class="blabel">Ordina online</span><span class="badge-t bt-preset">PRESET</span></td>
+          <td class="num" id="c-ordina">14</td><td><div class="bar"><i id="b-ordina" style="width:15%"></i></div></td><td class="num"><span class="conv"><b id="v-ordina">3</b> ordini</span></td>
+        </tr>
+        <tr>
+          <td><span class="bicon" style="background:#fef3c7;color:#92400e;"><i class="bi bi-stars"></i></span><span class="blabel">Eventi privati & catering</span><span class="badge-t bt-custom">CUSTOM</span></td>
+          <td class="num" id="c-custom">10</td><td><div class="bar"><i id="b-custom" style="width:11%;background:#f59e0b"></i></div></td><td class="num"><span class="conv">—</span></td>
+        </tr>
+        <tr>
+          <td><span class="bicon"><i class="bi bi-geo-alt"></i></span><span class="blabel">Mappa / Indicazioni</span><span class="badge-t bt-preset">PRESET</span></td>
+          <td class="num" id="c-mappa">6</td><td><div class="bar"><i id="b-mappa" style="width:7%"></i></div></td><td class="num"><span class="conv">—</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="note">I pulsanti <b>custom</b> (Enterprise) e i preset sono distinti dal badge. Le conversioni si mostrano solo dove misurabili (prenotazioni, ordini).</p>
+  </div>
+
+  <p class="foot">Wireframe — Vetrina: statistiche pulsanti + funnel visite/click/prenotazioni · Evulery</p>
+</div>
+
+<script>
+document.querySelectorAll('.pill').forEach(function(p){ p.onclick=function(){ document.querySelectorAll('.pill').forEach(function(x){x.classList.remove('on');}); p.classList.add('on'); }; });
+
+// Incrocio col tool Genera link: filtra le statistiche Vetrina per campagna/canale
+var DATA = {
+  all:    { visits:320, clicks:198, ctr:62, book:24, conv:'12% delle visite', note:'Tutto il traffico verso la Vetrina.',
+            btn:{prenota:92, menu:54, wa:28, ordina:14, custom:10, mappa:6}, vp:24, vo:3 },
+  meta:   { visits:80,  clicks:58,  ctr:73, book:12, conv:'15% delle visite', note:'Solo chi è arrivato dalla campagna Meta "terrazza".',
+            btn:{prenota:40, menu:10, wa:4, ordina:2, custom:1, mappa:1}, vp:12, vo:1 },
+  google: { visits:45,  clicks:30,  ctr:67, book:8,  conv:'18% delle visite', note:'Solo traffico da Google Ads "ricerca-brand".',
+            btn:{prenota:22, menu:5, wa:1, ordina:1, custom:0, mappa:1}, vp:8, vo:0 },
+  hub:    { visits:60,  clicks:40,  ctr:67, book:3,  conv:'5% delle visite',  note:'QR sul tavolo / accessi diretti alla Vetrina (senza campagna).',
+            btn:{prenota:12, menu:18, wa:6, ordina:2, custom:2, mappa:0}, vp:3, vo:0 }
+};
+function setText(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+function apply(k){
+  var d=DATA[k];
+  setText('f-visits', d.visits); setText('f-clicks', d.clicks); setText('f-ctr', d.ctr+'% CTR');
+  setText('f-book', d.book); setText('f-conv', d.conv);
+  var max=Math.max.apply(null, Object.values(d.btn))||1;
+  ['prenota','menu','wa','ordina','custom','mappa'].forEach(function(b){
+    setText('c-'+b, d.btn[b]);
+    var bar=document.getElementById('b-'+b); if(bar) bar.style.width=Math.round(d.btn[b]/max*100)+'%';
+  });
+  setText('v-prenota', d.vp); setText('v-ordina', d.vo);
+  document.getElementById('campnote').textContent = d.note;
+}
+document.querySelectorAll('.ch').forEach(function(c){ c.onclick=function(){ document.querySelectorAll('.ch').forEach(function(x){x.classList.remove('on');}); c.classList.add('on'); apply(c.dataset.k); }; });
+apply('all');
+</script>
+</body>
+</html>

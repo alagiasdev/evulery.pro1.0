@@ -106,6 +106,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     // Marketing & Provenienza (gated 'marketing')
     $r->get('/marketing', [MarketingController::class, 'index']);
     $r->get('/marketing/links', [MarketingController::class, 'links']);
+    $r->get('/marketing/vetrina', [MarketingController::class, 'vetrina']);
     $r->post('/marketing/links/save', [MarketingController::class, 'saveLink']);
     $r->post('/marketing/links/{id}/delete', [MarketingController::class, 'deleteLink']);
     $r->get('/customers', [CustomersController::class, 'index']);
@@ -328,6 +329,7 @@ $router->group('/api/v1', ['ratelimit'], function ($r) {
     $r->post('/tenants/{slug}/reservations', [ReservationApiController::class, 'store']);
     $r->get('/tenants/{slug}/reservations/{id}', [ReservationApiController::class, 'show']);
     $r->post('/tenants/{slug}/reservations/{id}/cancel', [ReservationApiController::class, 'cancel']);
+    $r->post('/tenants/{slug}/hub-click', [\App\Controllers\Api\HubTrackController::class, 'click']);
     $r->get('/tenants/{slug}/menu', [MenuApiController::class, 'index']);
     $r->get('/tenants/{slug}/order-menu', [OrderApiController::class, 'menu']);
     $r->post('/tenants/{slug}/orders', [OrderApiController::class, 'store']);

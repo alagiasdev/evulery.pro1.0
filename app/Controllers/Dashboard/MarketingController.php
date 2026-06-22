@@ -9,6 +9,7 @@ use App\Core\TenantResolver;
 use App\Models\MarketingLink;
 use App\Models\Reservation;
 use App\Services\AttributionService;
+use App\Services\HubAnalyticsService;
 
 /**
  * Sezione Marketing (gated 'marketing', Pro+Ent):
@@ -75,6 +76,32 @@ class MarketingController
             'orderUrl'    => url($slug . '/order'),
             'saved'       => $saved,
             'destLabels'  => $destLabels,
+        ], 'dashboard');
+    }
+
+    public function vetrina(Request $request): void
+    {
+        $tenant = TenantResolver::current();
+        $canUse = tenant_can('marketing');
+        [$from, $to, $rangeKey] = $this->resolveRange($request);
+
+        $analytics = ['kpis' => ['visits' => 0, 'clicks' => 0, 'ctr' => 0, 'bookings' => 0, 'channels' => 0], 'tree' => [], 'scopes' => [], 'buttons' => []];
+        if ($canUse) {
+            $analytics = (new HubAnalyticsService())->build($tenant, $from, $to);
+        }
+
+        view('dashboard/marketing/vetrina', [
+            'title'        => 'Marketing',
+            'activeMenu'   => 'marketing',
+            'tenant'       => $tenant,
+            'canUse'       => $canUse,
+            'tab'          => 'vetrina',
+            'analytics'    => $analytics,
+            'from'         => $from,
+            'to'           => $to,
+            'rangeKey'     => $rangeKey,
+            'ranges'       => self::RANGES,
+            'hubConfigUrl' => url('dashboard/settings/hub'),
         ], 'dashboard');
     }
 

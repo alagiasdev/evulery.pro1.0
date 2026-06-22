@@ -65,6 +65,7 @@ class HubService
             // Enterprise custom links: trust what's in DB
             return [
                 'type'    => 'custom',
+                'ref'     => 'custom:' . (int)$row['id'],
                 'label'   => $row['custom_label'],
                 'sub'     => $row['custom_sub'] ?? null,
                 'icon'    => $row['custom_icon'] ?: 'bi-link-45deg',
@@ -86,6 +87,7 @@ class HubService
         return [
             'type'    => 'preset',
             'key'     => $key,
+            'ref'     => $key,
             'label'   => $def['label'],
             'sub'     => $this->resolvePresetSub($key, $def, $tenant, $settings),
             'icon'    => $def['icon'],

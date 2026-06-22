@@ -13,6 +13,13 @@ class Response
         exit;
     }
 
+    /** 204 senza corpo: per beacon / fire-and-forget. */
+    public static function noContent(): void
+    {
+        http_response_code(204);
+        exit;
+    }
+
     public static function success(mixed $data = null, string $message = '', int $status = 200): void
     {
         $response = ['success' => true];

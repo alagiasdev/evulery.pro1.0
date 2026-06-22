@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vetrina — statistiche v2 (wireframe)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{ --brand:#00844A; --brand-d:#006b3c; --ink:#1a1d23; --muted:#6c757d; --line:#eceff2; --hub:#8b5cf6;
+    --meta:#0866ff; --google:#ea4335; --ig:#e1306c; }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:15px}
+  .wrap{max-width:1080px;margin:0 auto;padding:22px 18px 90px}
+  .brandbar{height:5px;background:linear-gradient(90deg,var(--brand),#5cbf8c);border-radius:6px;margin-bottom:14px}
+  h1{font-size:1.25rem;margin:0 0 4px;display:flex;align-items:center;gap:.45rem}
+  .lead{color:var(--muted);font-size:.86rem;margin:0 0 14px}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;border-bottom:1px solid var(--line);padding-bottom:.1rem}
+  .tab{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem .9rem;font-size:.85rem;font-weight:600;color:var(--muted);text-decoration:none;border-radius:8px 8px 0 0;border-bottom:2px solid transparent;cursor:pointer}
+  .tab.on{color:var(--brand);border-bottom-color:var(--brand);background:#f6fbf8}
+
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .pills{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:6px 12px;font-weight:600;font-size:.8rem;cursor:pointer}
+  .pill.on{background:#e8f5ee;border-color:var(--brand);color:var(--brand-d)}
+  .btn-cfg{border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:6px 12px;font-size:.8rem;font-weight:600;text-decoration:none;color:var(--ink)}
+
+  /* KPI row */
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+  @media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .kpi .n{font-size:1.45rem;font-weight:800;line-height:1}
+  .kpi .l{font-size:.72rem;color:var(--muted);margin-top:3px}
+  .kpi .t{font-size:.68rem;font-weight:700;color:var(--brand-d);margin-top:5px}
+
+  /* master-detail */
+  /* navigazione canali a sinistra (340px), dettaglio/funnel a destra (1fr) */
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}
+  @media(max-width:860px){.grid{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .card h2{font-size:.82rem;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin:0;padding:14px 16px;border-bottom:1px solid var(--line)}
+
+  /* segments tree (left) */
+  .seg{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #f4f6f8;cursor:pointer}
+  .seg:hover{background:#fbfdfc}
+  .seg.sel{background:#f0faf5;box-shadow:inset 3px 0 0 var(--brand)}
+  .seg .caret{width:14px;color:#c0c7cd;font-size:.7rem;flex-shrink:0;transition:transform .15s}
+  .seg.open .caret{transform:rotate(90deg)}
+  .seg .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .seg .nm{flex:1;font-weight:600;font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .seg .mini{font-size:.72rem;color:var(--muted);text-align:right;white-space:nowrap}
+  .seg.child{padding-left:38px;background:#fcfdfe}
+  .seg.child .nm{font-weight:500;font-size:.82rem}
+  .seg.child.sel{background:#f0faf5}
+  .seg.hidden{display:none}
+  .badge-camp{font-size:.6rem;font-weight:800;background:#eef2ff;color:#3730a3;border-radius:4px;padding:1px 5px;margin-left:6px}
+
+  /* detail (right) */
+  .dwrap{padding:16px}
+  .dhead{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .dhead .dt{font-size:1.05rem;font-weight:800}
+  .dhead .dsub{font-size:.76rem;color:var(--muted)}
+  .funnel{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .fstep{flex:1;min-width:120px;border:1px solid var(--line);border-radius:11px;padding:12px}
+  .fstep .n{font-size:1.4rem;font-weight:800;line-height:1}
+  .fstep .l{font-size:.74rem;color:var(--muted);margin-top:2px}
+  .fstep .rate{font-size:.68rem;font-weight:700;color:var(--brand-d);background:#e8f5ee;border-radius:5px;padding:1px 6px;display:inline-block;margin-top:6px}
+  .fstep.hub{border-color:#ddd6fe;background:#f8f7ff}.fstep.hub .n{color:var(--hub)}
+  .farrow{align-self:center;color:#c9d2d9}
+  table{width:100%;border-collapse:collapse;font-size:.86rem}
+  th{text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.3px;color:var(--muted);padding:8px 10px;border-bottom:2px solid var(--line)}
+  th.num,td.num{text-align:right;font-weight:700}
+  td{padding:9px 10px;border-bottom:1px solid #f4f6f8;vertical-align:middle}
+  .bicon{width:28px;height:28px;border-radius:7px;background:#f0faf5;color:var(--brand-d);display:inline-grid;place-items:center;margin-right:8px;font-size:.9rem;vertical-align:middle}
+  .badge-t{font-size:.58rem;font-weight:800;border-radius:4px;padding:1px 5px;margin-left:5px}
+  .bt-preset{background:#eef2ff;color:#3730a3}.bt-custom{background:#fef3c7;color:#92400e}.bt-hero{background:#dcfce7;color:#166534}
+  .bar{height:7px;border-radius:5px;background:#eef0f2;overflow:hidden}
+  .bar>i{display:block;height:100%;border-radius:5px;background:var(--brand)}
+  .conv{font-size:.76rem;color:var(--muted)}.conv b{color:var(--brand-d)}
+  .foot{margin-top:22px;font-size:.78rem;color:var(--muted);text-align:center}
+  .hint{font-size:.74rem;color:var(--muted);padding:0 16px 14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar"></div>
+  <h1><i class="bi bi-megaphone" style="color:var(--brand)"></i> Marketing — Vetrina <span style="font-size:.78rem;font-weight:500;color:var(--muted)">(wireframe v2)</span></h1>
+  <p class="lead">Performance della Vetrina con dettaglio fino alla singola campagna, senza liste infinite: i canali si espandono nelle loro campagne.</p>
+
+  <div class="tabs">
+    <span class="tab">📊 Provenienza</span><span class="tab">🔗 Genera link</span><span class="tab on">🏪 Vetrina</span>
+  </div>
+
+  <div class="toolbar">
+    <div class="pills">
+      <span class="pill">7 giorni</span><span class="pill on">30 giorni</span><span class="pill">90 giorni</span>
+      <span class="pill"><i class="bi bi-calendar3"></i> Personalizzato</span>
+    </div>
+    <a href="#" class="btn-cfg"><i class="bi bi-gear"></i> Configura Vetrina</a>
+  </div>
+
+  <!-- KPI globali -->
+  <div class="kpis">
+    <div class="kpi"><div class="n">260</div><div class="l">Visite Vetrina</div><div class="t">↑ +18%</div></div>
+    <div class="kpi"><div class="n">174</div><div class="l">Click pulsanti</div><div class="t">67% CTR</div></div>
+    <div class="kpi"><div class="n">28</div><div class="l">Prenotazioni</div><div class="t">11% conv.</div></div>
+    <div class="kpi"><div class="n">5</div><div class="l">Ordini</div><div class="t">&nbsp;</div></div>
+    <div class="kpi"><div class="n">4</div><div class="l">Canali attivi</div><div class="t">&nbsp;</div></div>
+  </div>
+
+  <div class="grid">
+    <!-- navigazione segmenti (canali → campagne) -->
+    <div class="card nav">
+      <h2>Canali e campagne</h2>
+      <div id="tree"></div>
+      <p class="hint"><i class="bi bi-info-circle"></i> Clicca un canale per i dati aggregati, oppure espandilo (›) per la singola campagna.</p>
+    </div>
+
+    <!-- dettaglio dello scope selezionato (funnel + click per pulsante) -->
+    <div class="card detail">
+      <div class="dwrap">
+        <div class="dhead">
+          <span class="dot" id="d-dot" style="width:12px;height:12px;border-radius:50%;background:#6b7280;"></span>
+          <div><div class="dt" id="d-title">Tutto il traffico</div><div class="dsub" id="d-sub">Tutte le provenienze · ultimi 30 giorni</div></div>
+        </div>
+
+        <div class="funnel">
+          <div class="fstep hub"><div class="n" id="f-visits">260</div><div class="l">Visite</div></div>
+          <span class="farrow">→</span>
+          <div class="fstep"><div class="n" id="f-clicks">174</div><div class="l">Click</div><span class="rate" id="f-ctr">67% CTR</span></div>
+          <span class="farrow">→</span>
+          <div class="fstep"><div class="n" id="f-book">28</div><div class="l">Prenotazioni</div><span class="rate" id="f-conv">11% conv.</span></div>
+        </div>
+
+        <table>
+          <thead><tr><th>Pulsante</th><th class="num">Click</th><th style="width:120px;">Quota</th><th class="num">Conversioni</th></tr></thead>
+          <tbody id="btnbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <p class="foot">Wireframe v2 — Vetrina: master-detail canali→campagne + funnel + click per pulsante · Evulery</p>
+</div>
+
+<script>
+var BTN_META = [
+  {k:'prenota', label:'Prenota un tavolo', icon:'bi-calendar-check', type:'hero', conv:'pren.'},
+  {k:'menu',    label:'Menù',              icon:'bi-book',           type:'preset'},
+  {k:'wa',      label:'WhatsApp',          icon:'bi-whatsapp',       type:'preset'},
+  {k:'ordina',  label:'Ordina online',     icon:'bi-bag',            type:'preset', conv:'ordini'},
+  {k:'custom',  label:'Eventi privati',    icon:'bi-stars',          type:'custom'},
+  {k:'mappa',   label:'Mappa',             icon:'bi-geo-alt',        type:'preset'}
+];
+// segmenti: canali (con campagne annidate) + scope "all"
+var SEG = {
+  all:        {title:'Tutto il traffico', sub:'Tutte le provenienze', color:'#6b7280', visits:260, clicks:174, ctr:67, book:28, conv:11, btn:{prenota:80,menu:48,wa:24,ordina:12,custom:8,mappa:2}, vp:28, vo:5},
+  meta:       {title:'Meta / Facebook', sub:'aggregato canale', color:'#0866ff', visits:120, clicks:84, ctr:70, book:16, conv:13, btn:{prenota:50,menu:18,wa:8,ordina:4,custom:3,mappa:1}, vp:16, vo:2},
+  'meta:terrazza':{title:'Meta · terrazza', sub:'campagna', color:'#0866ff', visits:80, clicks:58, ctr:73, book:12, conv:15, btn:{prenota:38,menu:10,wa:5,ordina:3,custom:1,mappa:1}, vp:12, vo:2},
+  'meta:weekend':{title:'Meta · weekend-pesce', sub:'campagna', color:'#0866ff', visits:40, clicks:26, ctr:65, book:4, conv:10, btn:{prenota:12,menu:8,wa:3,ordina:1,custom:2,mappa:0}, vp:4, vo:0},
+  google:     {title:'Google Ads', sub:'aggregato canale', color:'#ea4335', visits:45, clicks:30, ctr:67, book:8, conv:18, btn:{prenota:22,menu:5,wa:1,ordina:1,custom:0,mappa:1}, vp:8, vo:1},
+  'google:brand':{title:'Google · ricerca-brand', sub:'campagna', color:'#ea4335', visits:45, clicks:30, ctr:67, book:8, conv:18, btn:{prenota:22,menu:5,wa:1,ordina:1,custom:0,mappa:1}, vp:8, vo:1},
+  instagram:  {title:'Instagram (bio)', sub:'aggregato canale', color:'#e1306c', visits:35, clicks:20, ctr:57, book:1, conv:3, btn:{prenota:6,menu:9,wa:3,ordina:1,custom:1,mappa:0}, vp:1, vo:0},
+  hub:        {title:'Hub diretto / QR', sub:'senza campagna', color:'#8b5cf6', visits:60, clicks:40, ctr:67, book:3, conv:5, btn:{prenota:12,menu:18,wa:6,ordina:2,custom:2,mappa:0}, vp:3, vo:0}
+};
+// struttura albero
+var TREE = [
+  {id:'all', label:'Tutto il traffico', children:[]},
+  {id:'meta', label:'Meta / Facebook', children:[{id:'meta:terrazza',label:'terrazza'},{id:'meta:weekend',label:'weekend-pesce'}]},
+  {id:'google', label:'Google Ads', children:[{id:'google:brand',label:'ricerca-brand'}]},
+  {id:'instagram', label:'Instagram (bio)', children:[]},
+  {id:'hub', label:'Hub diretto / QR', children:[]}
+];
+
+function setText(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+function renderDetail(id){
+  var d=SEG[id];
+  document.getElementById('d-dot').style.background=d.color;
+  setText('d-title', d.title); setText('d-sub', d.sub+' · ultimi 30 giorni');
+  setText('f-visits', d.visits); setText('f-clicks', d.clicks); setText('f-ctr', d.ctr+'% CTR');
+  setText('f-book', d.book); setText('f-conv', d.conv+'% conv.');
+  var max=Math.max.apply(null,Object.values(d.btn))||1;
+  var html='';
+  BTN_META.forEach(function(b){
+    var n=d.btn[b.k]||0;
+    var badge = b.type==='hero'?'<span class="badge-t bt-hero">PRINCIPALE</span>':(b.type==='custom'?'<span class="badge-t bt-custom">CUSTOM</span>':'<span class="badge-t bt-preset">PRESET</span>');
+    var convCell='—';
+    if(b.k==='prenota') convCell='<span class="conv"><b>'+d.vp+'</b> pren.</span>';
+    if(b.k==='ordina') convCell= d.vo>0 ? '<span class="conv"><b>'+d.vo+'</b> ordini</span>' : '—';
+    var iconBg = b.type==='custom' ? 'style="background:#fef3c7;color:#92400e"' : '';
+    html+='<tr><td><span class="bicon" '+iconBg+'><i class="bi '+b.icon+'"></i></span>'+b.label+badge+'</td>'
+        + '<td class="num">'+n+'</td>'
+        + '<td><div class="bar"><i style="width:'+Math.round(n/max*100)+'%;'+(b.type==='custom'?'background:#f59e0b':'')+'"></i></div></td>'
+        + '<td class="num">'+convCell+'</td></tr>';
+  });
+  document.getElementById('btnbody').innerHTML=html;
+}
+
+var selected='all';
+function renderTree(){
+  var host=document.getElementById('tree'); host.innerHTML='';
+  TREE.forEach(function(node){
+    var d=SEG[node.id];
+    var hasKids=node.children.length>0;
+    var row=document.createElement('div');
+    row.className='seg'+(selected===node.id?' sel':'');
+    row.dataset.id=node.id;
+    row.innerHTML='<span class="caret">'+(hasKids?'<i class="bi bi-chevron-right"></i>':'')+'</span>'
+      + '<span class="dot" style="background:'+d.color+'"></span>'
+      + '<span class="nm">'+node.label+'</span>'
+      + '<span class="mini">'+d.visits+' v · <b>'+d.book+'</b> p</span>';
+    host.appendChild(row);
+    // click: seleziona (mostra dettaglio). Sul caret: espandi/chiudi.
+    row.addEventListener('click', function(e){
+      if(hasKids && e.target.closest('.caret')){ row.classList.toggle('open'); host.querySelectorAll('[data-parent="'+node.id+'"]').forEach(function(c){c.classList.toggle('hidden');}); return; }
+      selected=node.id; renderTree(); renderDetail(node.id);
+    });
+    node.children.forEach(function(ch){
+      var cd=SEG[ch.id];
+      var crow=document.createElement('div');
+      crow.className='seg child hidden'+(selected===ch.id?' sel':'');
+      crow.dataset.parent=node.id; crow.dataset.id=ch.id;
+      crow.innerHTML='<span class="caret"></span><span class="dot" style="background:'+cd.color+';opacity:.6"></span>'
+        + '<span class="nm">'+ch.label+'<span class="badge-camp">CAMPAGNA</span></span>'
+        + '<span class="mini">'+cd.visits+' v · <b>'+cd.book+'</b> p</span>';
+      host.appendChild(crow);
+      crow.addEventListener('click', function(){ selected=ch.id; renderTree(); renderDetail(ch.id);
+        // mantieni il genitore aperto
+        var p=host.querySelector('.seg[data-id="'+node.id+'"]'); if(p){p.classList.add('open');}
+        host.querySelectorAll('[data-parent="'+node.id+'"]').forEach(function(c){c.classList.remove('hidden');});
+      });
+    });
+  });
+}
+document.querySelectorAll('.pill').forEach(function(p){p.onclick=function(){document.querySelectorAll('.pill').forEach(function(x){x.classList.remove('on');});p.classList.add('on');};});
+renderTree(); renderDetail('all');
+</script>
+</body>
+</html>

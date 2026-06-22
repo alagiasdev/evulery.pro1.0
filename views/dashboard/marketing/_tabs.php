@@ -13,8 +13,8 @@
     <a href="<?= url('dashboard/marketing/links') ?>" class="mk-tab <?= ($tab ?? '') === 'links' ? 'active' : '' ?>">
         <i class="bi bi-link-45deg"></i> Genera link
     </a>
-    <a href="<?= url('dashboard/settings/hub') ?>" class="mk-tab">
-        <i class="bi bi-shop"></i> Vetrina Digitale <i class="bi bi-box-arrow-up-right" style="font-size:.65rem;"></i>
+    <a href="<?= url('dashboard/marketing/vetrina') ?>" class="mk-tab <?= ($tab ?? '') === 'vetrina' ? 'active' : '' ?>">
+        <i class="bi bi-shop"></i> Vetrina
     </a>
 </div>
 

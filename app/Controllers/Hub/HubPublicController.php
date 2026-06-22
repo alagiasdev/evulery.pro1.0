@@ -72,6 +72,22 @@ class HubPublicController
         }
         unset($it);
 
+        // Registra la VISITA (non bloccante): primo step del funnel statistiche
+        // Vetrina. Il canale e' lo stesso usato per la propagazione (utm in
+        // arrivo, oppure 'hub' per accesso diretto/QR).
+        try {
+            $vchannel = AttributionService::deriveChannel($utm['utm_source'] ?? null, $utm['utm_medium'] ?? null, null);
+            (new \App\Models\HubVisit())->record(
+                (int)$tenant['id'],
+                $vchannel,
+                $utm['utm_source'] ?? null,
+                $utm['utm_medium'] ?? null,
+                $utm['utm_campaign'] ?? null
+            );
+        } catch (\Throwable $e) {
+            // analytics non deve mai rompere la vetrina pubblica
+        }
+
         // Standalone view (2-arg view = no layout)
         view('hub/public', [
             'tenant'   => $tenant,

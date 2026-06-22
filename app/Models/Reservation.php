@@ -121,6 +121,28 @@ class Reservation
         return $stmt->fetchAll();
     }
 
+    /**
+     * Prenotazioni passate dalla Vetrina/Hub (via_hub=1) per canale + campagna,
+     * nel periodo (per created_at). Usata nel funnel delle statistiche Vetrina.
+     * Esclude annullate/no-show.
+     */
+    public function hubBookings(int $tenantId, string $from, string $to): array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT COALESCE(NULLIF(channel, ''), 'hub') AS channel,
+                    COALESCE(utm_campaign, '') AS campaign,
+                    COUNT(*) AS n
+             FROM reservations
+             WHERE tenant_id = :t
+               AND via_hub = 1
+               AND DATE(created_at) BETWEEN :from AND :to
+               AND status NOT IN ('cancelled', 'noshow')
+             GROUP BY channel, campaign"
+        );
+        $stmt->execute(['t' => $tenantId, 'from' => $from, 'to' => $to]);
+        return $stmt->fetchAll();
+    }
+
     public function findUpcoming(int $tenantId, int $limit = 15, ?string $status = null, ?string $source = null): array
     {
         $sql = 'SELECT r.*, c.first_name, c.last_name, c.email, c.phone, c.total_bookings

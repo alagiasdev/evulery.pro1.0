@@ -86,7 +86,8 @@ $wa = $settings['whatsapp_number'] ?? '';
         <?php endif; ?>
 
         <?php if (!empty($hero)): ?>
-        <a href="<?= e($hero['url']) ?>" class="hub-public-cta">
+        <a href="<?= e($hero['url']) ?>" class="hub-public-cta"
+           data-ev-ref="<?= e($hero['ref'] ?? $hero['key'] ?? 'hero') ?>" data-ev-type="hero" data-ev-label="<?= e($hero['label']) ?>">
             <i class="bi <?= e($hero['icon']) ?>"></i>
             <div class="hub-public-cta-label"><?= e(mb_strtoupper($hero['label'])) ?></div>
             <?php if (!empty($hero['sub'])): ?>
@@ -107,7 +108,8 @@ $wa = $settings['whatsapp_number'] ?? '';
                     $isInternal = $isHttp && str_starts_with($item['url'], $appBase);
                     $isExternal = $isHttp && !$isInternal;
             ?>
-            <a href="<?= e($item['url']) ?>" class="hub-public-row" <?= $isExternal ? 'target="_blank" rel="noopener"' : '' ?>>
+            <a href="<?= e($item['url']) ?>" class="hub-public-row" <?= $isExternal ? 'target="_blank" rel="noopener"' : '' ?>
+               data-ev-ref="<?= e($item['ref'] ?? $item['type']) ?>" data-ev-type="<?= e($item['type']) ?>" data-ev-label="<?= e($item['label']) ?>">
                 <span class="hub-public-row-icon"><i class="bi <?= e($item['icon']) ?>"></i></span>
                 <div class="hub-public-row-text">
                     <div class="hub-public-row-label"><?= e($item['label']) ?></div>
@@ -129,12 +131,14 @@ $wa = $settings['whatsapp_number'] ?? '';
         ?>
         <div class="hub-public-social">
             <?php foreach ($socials as $s): if (empty($s['url'])) continue; ?>
-            <a href="<?= e($s['url']) ?>" target="_blank" rel="noopener" aria-label="<?= e($s['label']) ?>">
+            <a href="<?= e($s['url']) ?>" target="_blank" rel="noopener" aria-label="<?= e($s['label']) ?>"
+               data-ev-ref="social:<?= e(preg_replace('/^bi-/', '', $s['icon'])) ?>" data-ev-type="social" data-ev-label="<?= e($s['label']) ?>">
                 <i class="bi <?= e($s['icon']) ?>"></i>
             </a>
             <?php endforeach; ?>
             <?php if ($wa): ?>
-            <a href="https://wa.me/<?= e(preg_replace('/[^0-9+]/', '', $wa)) ?>" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <a href="https://wa.me/<?= e(preg_replace('/[^0-9+]/', '', $wa)) ?>" target="_blank" rel="noopener" aria-label="WhatsApp"
+               data-ev-ref="social:whatsapp" data-ev-type="social" data-ev-label="WhatsApp">
                 <i class="bi bi-whatsapp"></i>
             </a>
             <?php endif; ?>
@@ -150,5 +154,25 @@ $wa = $settings['whatsapp_number'] ?? '';
         <?php endif; ?>
     </footer>
 
+    <!-- Tracking click pulsanti (beacon, non bloccante) per le statistiche Vetrina -->
+    <script nonce="<?= csp_nonce() ?>">
+    (function(){
+        var EVURL = '<?= e(url('api/v1/tenants/' . ($tenant['slug'] ?? '') . '/hub-click')) ?>';
+        var qs = new URLSearchParams(window.location.search);
+        var utm = { utm_source: qs.get('utm_source') || '', utm_medium: qs.get('utm_medium') || '', utm_campaign: qs.get('utm_campaign') || '' };
+        function track(el){
+            try {
+                var payload = { ref: el.getAttribute('data-ev-ref'), type: el.getAttribute('data-ev-type') || 'preset', label: el.getAttribute('data-ev-label') || '' };
+                payload.utm_source = utm.utm_source; payload.utm_medium = utm.utm_medium; payload.utm_campaign = utm.utm_campaign;
+                var blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+                navigator.sendBeacon(EVURL, blob);
+            } catch (e) { /* tracking best-effort */ }
+        }
+        document.querySelectorAll('[data-ev-ref]').forEach(function(el){
+            el.addEventListener('click', function(){ track(el); });
+            el.addEventListener('auxclick', function(e){ if (e.button === 1) track(el); });
+        });
+    })();
+    </script>
 </body>
 </html>
