@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sala — filtro Arrivati / Non arrivati (wireframe)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{ --brand:#00844A; --brand-d:#006b3c; --ink:#1a1d23; --muted:#6c757d; --line:#eceff2;
+    --conf:#198754; --arr:#0d6efd; --free:#cdd6cf; }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:15px}
+  .wrap{max-width:1000px;margin:0 auto;padding:22px 18px 80px}
+  .brandbar{height:5px;background:linear-gradient(90deg,var(--brand),#5cbf8c);border-radius:6px;margin-bottom:14px}
+  h1{font-size:1.2rem;margin:0 0 4px;display:flex;align-items:center;gap:.45rem}
+  .lead{color:var(--muted);font-size:.86rem;margin:0 0 16px}
+
+  .toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .svc{border:1.5px solid #d4dade;border-radius:9px;padding:7px 12px;font-size:.82rem;font-weight:600;display:inline-flex;gap:.5rem;align-items:center}
+  .legend{display:flex;gap:14px;font-size:.74rem;color:var(--muted);align-items:center}
+  .legend i{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle}
+
+  /* TOGGLE nuovo */
+  .arrtabs{display:inline-flex;border:1.5px solid #d4dade;border-radius:10px;overflow:hidden}
+  .arrtab{padding:8px 16px;font-weight:700;font-size:.82rem;cursor:pointer;background:#fff;border-right:1.5px solid #d4dade;display:flex;align-items:center;gap:6px}
+  .arrtab:last-child{border-right:none}
+  .arrtab.on{background:var(--brand);color:#fff}
+  .arrtab .cnt{font-size:.72rem;font-weight:800;background:rgba(0,0,0,.08);border-radius:20px;padding:1px 7px}
+  .arrtab.on .cnt{background:rgba(255,255,255,.25)}
+
+  .grid{display:grid;grid-template-columns:330px 1fr;gap:16px;align-items:start}
+  @media(max-width:820px){.grid{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .card h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin:0;padding:13px 16px;border-bottom:1px solid var(--line)}
+
+  /* lista sinistra */
+  .rrow{display:flex;align-items:center;gap:11px;padding:12px 15px;border-bottom:1px solid #f4f6f8}
+  .rrow:last-child{border-bottom:none}
+  .rtime{font-weight:800;font-size:.9rem;width:46px}
+  .rdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .rinfo{flex:1;min-width:0}
+  .rname{font-size:.9rem;font-weight:600}
+  .rsub{font-size:.74rem;color:var(--muted)}
+  .rtav{font-size:.72rem;font-weight:700;border:1px solid #d4dade;border-radius:6px;padding:2px 7px;color:#444}
+  .rbadge{font-size:.66rem;font-weight:800;border-radius:5px;padding:2px 8px}
+  .b-conf{background:#e6f4ea;color:#198754}.b-arr{background:#e7f0ff;color:#0d6efd}
+  .rrow.hide{display:none}
+  .empty{padding:22px;text-align:center;color:#9aa1a9;font-size:.85rem}
+
+  /* mappa destra */
+  .map{padding:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .tav{border:2px solid var(--free);background:#f7faf8;border-radius:12px;padding:14px 10px;text-align:center;min-height:84px;display:flex;flex-direction:column;justify-content:center;transition:opacity .15s,filter .15s}
+  .tav .tn{font-weight:800;font-size:.85rem}
+  .tav .tg{font-size:.72rem;color:#555;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tav.conf{border-color:var(--conf);background:#eaf6ee}
+  .tav.arr{border-color:var(--arr);background:#e9f1ff}
+  .tav.dim{opacity:.28;filter:grayscale(.5)}
+  .tav .st{font-size:.62rem;font-weight:800;margin-top:5px}
+  .tav.conf .st{color:#198754}.tav.arr .st{color:#0d6efd}
+  .note{font-size:.78rem;color:var(--muted);padding:0 16px 14px;margin:0}
+  .foot{margin-top:22px;font-size:.78rem;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar"></div>
+  <h1><i class="bi bi-grid-3x3" style="color:var(--brand)"></i> Sala <span style="font-size:.8rem;font-weight:500;color:var(--muted)">— filtro arrivi (wireframe)</span></h1>
+  <p class="lead">Toggle rapido per vedere chi è <b>arrivato</b>, chi <b>manca</b> (non arrivato) o <b>tutti</b>. Provalo: filtra la lista e smorza i tavoli sulla mappa.</p>
+
+  <div class="toolbar">
+    <span class="svc"><i class="bi bi-clock" style="color:var(--brand)"></i> Cena · 19:30–22:30</span>
+    <div class="arrtabs" id="arrtabs">
+      <span class="arrtab on" data-f="all">Tutti <span class="cnt">5</span></span>
+      <span class="arrtab" data-f="arr">Arrivati <span class="cnt">2</span></span>
+      <span class="arrtab" data-f="noarr">Non arrivati <span class="cnt">3</span></span>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--free)"></i>Libero</span>
+      <span><i style="background:var(--conf)"></i>Confermato</span>
+      <span><i style="background:var(--arr)"></i>Arrivato</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- lista -->
+    <div class="card">
+      <h2>Prenotazioni in sala</h2>
+      <div id="rlist">
+        <div class="rrow" data-st="arr">
+          <span class="rtime">20:00</span><span class="rdot" style="background:var(--arr)"></span>
+          <div class="rinfo"><div class="rname">Rossi Mario</div><div class="rsub">2 persone</div></div>
+          <span class="rtav">Tav 3</span><span class="rbadge b-arr">Arrivato</span>
+        </div>
+        <div class="rrow" data-st="noarr">
+          <span class="rtime">20:00</span><span class="rdot" style="background:var(--conf)"></span>
+          <div class="rinfo"><div class="rname">Bianchi Anna</div><div class="rsub">4 persone</div></div>
+          <span class="rtav">Tav 5</span><span class="rbadge b-conf">Confermato</span>
+        </div>
+        <div class="rrow" data-st="arr">
+          <span class="rtime">20:30</span><span class="rdot" style="background:var(--arr)"></span>
+          <div class="rinfo"><div class="rname">Verdi Luca</div><div class="rsub">3 persone</div></div>
+          <span class="rtav">Tav 2</span><span class="rbadge b-arr">Arrivato</span>
+        </div>
+        <div class="rrow" data-st="noarr">
+          <span class="rtime">20:30</span><span class="rdot" style="background:var(--conf)"></span>
+          <div class="rinfo"><div class="rname">Neri Sara</div><div class="rsub">5 persone</div></div>
+          <span class="rtav">Tav 7</span><span class="rbadge b-conf">Confermato</span>
+        </div>
+        <div class="rrow" data-st="noarr">
+          <span class="rtime">21:00</span><span class="rdot" style="background:var(--conf)"></span>
+          <div class="rinfo"><div class="rname">Blu Marco</div><div class="rsub">2 persone</div></div>
+          <span class="rtav">Tav 1</span><span class="rbadge b-conf">Confermato</span>
+        </div>
+      </div>
+      <div class="empty" id="rempty" style="display:none;">Nessuna prenotazione in questo stato.</div>
+    </div>
+
+    <!-- mappa -->
+    <div class="card">
+      <h2>Mappa sala</h2>
+      <div class="map" id="map">
+        <div class="tav conf" data-st="noarr"><div class="tn">Tav 1</div><div class="tg">Blu Marco · 21:00</div><div class="st">Confermato</div></div>
+        <div class="tav arr" data-st="arr"><div class="tn">Tav 2</div><div class="tg">Verdi Luca · 20:30</div><div class="st">Arrivato</div></div>
+        <div class="tav arr" data-st="arr"><div class="tn">Tav 3</div><div class="tg">Rossi Mario · 20:00</div><div class="st">Arrivato</div></div>
+        <div class="tav" data-st="free"><div class="tn">Tav 4</div><div class="tg">&mdash;</div></div>
+        <div class="tav conf" data-st="noarr"><div class="tn">Tav 5</div><div class="tg">Bianchi Anna · 20:00</div><div class="st">Confermato</div></div>
+        <div class="tav" data-st="free"><div class="tn">Tav 6</div><div class="tg">&mdash;</div></div>
+        <div class="tav conf" data-st="noarr"><div class="tn">Tav 7</div><div class="tg">Neri Sara · 20:30</div><div class="st">Confermato</div></div>
+        <div class="tav" data-st="free"><div class="tn">Tav 8</div><div class="tg">&mdash;</div></div>
+      </div>
+      <p class="note"><i class="bi bi-info-circle"></i> Con un filtro attivo, i tavoli che non rientrano vengono <b>smorzati</b> (non nascosti), così la mappa resta leggibile.</p>
+    </div>
+  </div>
+
+  <p class="foot">Wireframe — Sala: filtro Tutti / Arrivati / Non arrivati · Evulery</p>
+</div>
+
+<script>
+var tabs = document.getElementById('arrtabs');
+function apply(f){
+  // lista
+  var visible = 0;
+  document.querySelectorAll('#rlist .rrow').forEach(function(r){
+    var show = (f === 'all') || (r.dataset.st === f);
+    r.classList.toggle('hide', !show);
+    if (show) visible++;
+  });
+  document.getElementById('rempty').style.display = visible ? 'none' : 'block';
+  // mappa: smorza i tavoli che non rientrano (i liberi si smorzano sempre quando filtri)
+  document.querySelectorAll('#map .tav').forEach(function(t){
+    var match = (f === 'all') || (t.dataset.st === f);
+    t.classList.toggle('dim', !match);
+  });
+}
+tabs.querySelectorAll('.arrtab').forEach(function(b){
+  b.onclick=function(){ tabs.querySelectorAll('.arrtab').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); apply(b.dataset.f); };
+});
+apply('all');
+</script>
+</body>
+</html>
