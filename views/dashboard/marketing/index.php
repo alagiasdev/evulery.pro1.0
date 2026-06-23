@@ -29,7 +29,7 @@
     <div class="mk-kpi"><div class="n"><?= (int)$totals['n'] ?></div><div class="l">Prenotazioni</div></div>
     <div class="mk-kpi"><div class="n"><?= (int)$totals['covers'] ?></div><div class="l">Coperti</div></div>
     <div class="mk-kpi"><div class="n"><?= (int)$totals['channels'] ?></div><div class="l">Canali attivi</div></div>
-    <div class="mk-kpi"><div class="n"><?= (int)$totals['tracked_pct'] ?>%</div><div class="l">Tracciate</div></div>
+    <div class="mk-kpi" title="Percentuale del traffico ONLINE con canale noto (telefono e walk-in sono esclusi: non si possono taggare)."><div class="n"><?= (int)$totals['tracked_pct'] ?>%</div><div class="l">Online tracciate</div></div>
 </div>
 
 <?php if (empty($channels) || $totals['n'] === 0): ?>

@@ -257,10 +257,13 @@ class MarketingController
     /** Fonti che NON sono canali marketing (offline + online non tracciato). */
     private const OTHER_CHANNELS = ['phone', 'walkin', 'dashboard', 'direct'];
 
+    /** Fonti OFFLINE: non taggabili, vanno escluse dal denominatore di "Tracciate". */
+    private const OFFLINE_CHANNELS = ['phone', 'walkin', 'dashboard'];
+
     private function aggregate(array $rows): array
     {
         $byChannel = [];
-        $totN = 0; $totCovers = 0; $tracked = 0; $viaHub = 0;
+        $totN = 0; $totCovers = 0; $tracked = 0; $viaHub = 0; $offline = 0;
 
         foreach ($rows as $r) {
             // Il bucket "direct" si spezza per source: telefono/walk-in/dashboard
@@ -282,6 +285,7 @@ class MarketingController
             $totN += $n; $totCovers += $covers;
             $viaHub += (int)$r['via_hub'];
             if (!$isOther) $tracked += $n; // "tracciate" = canali marketing veri
+            if (in_array($ch, self::OFFLINE_CHANNELS, true)) $offline += $n; // offline (non taggabile)
 
             if (!isset($byChannel[$ch])) {
                 $byChannel[$ch] = [
@@ -322,11 +326,14 @@ class MarketingController
         // ordina per coperti desc
         usort($byChannel, fn($a, $b) => $b['covers'] <=> $a['covers']);
 
+        // "Tracciate" = % del traffico ONLINE con canale noto (offline escluso dal
+        // denominatore: telefono/walk-in non sono taggabili, gonfierebbero il "non tracciato").
+        $online = $totN - $offline;
         $totals = [
             'n'           => $totN,
             'covers'      => $totCovers,
             'tracked'     => $tracked,
-            'tracked_pct' => $totN > 0 ? (int)round($tracked / $totN * 100) : 0,
+            'tracked_pct' => $online > 0 ? (int)round($tracked / $online * 100) : 0,
             'channels'    => count(array_filter($byChannel, fn($c) => $c['group'] === 'marketing')),
             'via_hub'     => $viaHub,
         ];
