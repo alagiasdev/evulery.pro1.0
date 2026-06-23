@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backend menù — Carta dei vini + etichetta in evidenza (wireframe)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{ --brand:#0f6b43; --ink:#1f2733; --muted:#6c757d; --line:#e4e7ec; --bg:#f4f6f8; --wine:#7b2d3a; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.5}
+  .wrap{max-width:880px;margin:0 auto;padding:24px 18px 60px}
+  h1{font-size:1.3rem;margin:0 0 4px}
+  .lead{color:var(--muted);font-size:.85rem;margin:0 0 26px}
+  .step{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);margin:30px 0 8px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .card + .card{margin-top:14px}
+  .lab{font-weight:600;font-size:.8rem;display:block;margin-bottom:5px}
+  .inp{width:100%;border:1px solid #cfd4dc;border-radius:8px;padding:8px 11px;font-size:.85rem;background:#fff}
+  .hint{font-size:.72rem;color:var(--muted);margin-top:4px}
+  .row{display:flex;gap:12px}.row>*{flex:1}
+  .mb{margin-bottom:14px}
+  .badge-wine{display:inline-flex;align-items:center;gap:5px;background:#f5e9ec;color:var(--wine);border:1px solid #e6cdd4;border-radius:999px;padding:2px 9px;font-size:.7rem;font-weight:700}
+  .badge-food{display:inline-flex;align-items:center;gap:5px;background:#e7f4ee;color:var(--brand);border:1px solid #c9e6d8;border-radius:999px;padding:2px 9px;font-size:.7rem;font-weight:700}
+  .seg{display:inline-flex;border:1px solid #cfd4dc;border-radius:9px;overflow:hidden}
+  .seg label{padding:7px 16px;font-size:.82rem;cursor:pointer;background:#fff;display:flex;align-items:center;gap:6px}
+  .seg label.on{background:var(--brand);color:#fff;font-weight:600}
+  .seg label.on.wineon{background:var(--wine)}
+  .btn{background:var(--brand);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:.85rem;font-weight:600;cursor:pointer}
+  .catrow{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .catrow + .catrow{margin-top:8px}
+  .catrow .ic{width:30px;height:30px;border-radius:8px;background:#eef1f4;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+  .catrow .nm{font-weight:600}
+  .note{background:#fff8e6;border:1px solid #f5e3a8;border-radius:9px;padding:10px 13px;font-size:.78rem;color:#7a5b00;margin-top:10px}
+  .note i{color:#b8860b}
+  .ghost{opacity:.4}
+  .col-head{display:flex;gap:14px;margin-bottom:8px}
+  .col-head>div{flex:1;font-weight:700;font-size:.78rem;text-align:center;padding:6px;border-radius:8px}
+  .col-food{background:#e7f4ee;color:var(--brand)}
+  .col-wine{background:#f5e9ec;color:var(--wine)}
+  .two{display:flex;gap:14px;align-items:flex-start}
+  .two>.card{flex:1;margin:0}
+  @media(max-width:760px){ .two{flex-direction:column} .col-head{display:none} }
+  .x{color:#b0b0b0;text-decoration:line-through}
+  .tag-new{background:var(--brand);color:#fff;font-size:.62rem;font-weight:700;border-radius:5px;padding:1px 6px;letter-spacing:.04em;vertical-align:middle;margin-left:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Backend menù — cosa cambia</h1>
+  <p class="lead">Wireframe delle 3 modifiche lato dashboard. Tutto additivo: piatti normali invariati.</p>
+
+  <!-- ============ 1. CATEGORIA: tipo Piatti / Vini ============ -->
+  <div class="step">1 · Categoria — nuovo tipo "Vini"</div>
+  <div class="card">
+    <div class="mb">
+      <span class="lab">Tipo categoria <span class="tag-new">NUOVO</span></span>
+      <div class="seg">
+        <label class="on"><i class="bi bi-egg-fried"></i> Piatti</label>
+        <label class="wineon"><i class="bi bi-cup-straw"></i> Vini</label>
+      </div>
+      <div class="hint">Una categoria "Vini" mostra le righe-vino (doppio prezzo, niente foto né allergeni). Si decide una volta sola.</div>
+    </div>
+    <div class="row mb">
+      <div><span class="lab">Nome *</span><input class="inp" value="Vini"></div>
+      <div><span class="lab">Icona</span><input class="inp" value="🍷 bi-cup-straw"></div>
+    </div>
+    <button class="btn"><i class="bi bi-plus"></i> Crea categoria</button>
+
+    <div style="margin-top:16px">
+      <span class="lab">Come appaiono nella lista categorie</span>
+      <div class="catrow"><div class="ic"><i class="bi bi-egg-fried"></i></div><div class="nm">Antipasti</div><span class="badge-food"><i class="bi bi-egg-fried"></i> Piatti</span><div style="flex:1"></div><span style="color:var(--muted);font-size:.78rem">4 piatti</span></div>
+      <div class="catrow"><div class="ic"><i class="bi bi-cup-straw"></i></div><div class="nm">Vini</div><span class="badge-wine"><i class="bi bi-cup-straw"></i> Vini</span><div style="flex:1"></div><span style="color:var(--muted);font-size:.78rem">6 etichette · Bollicine / Bianchi / Rossi</span></div>
+    </div>
+  </div>
+
+  <!-- ============ 2. SCHEDA: piatto vs vino ============ -->
+  <div class="step">2 · La scheda si adatta al tipo di categoria</div>
+  <div class="col-head"><div class="col-food">Categoria "Piatti" → scheda invariata</div><div class="col-wine">Categoria "Vini" → scheda vino</div></div>
+  <div class="two">
+
+    <!-- PIATTO normale -->
+    <div class="card">
+      <div class="mb"><span class="lab">Categoria *</span><input class="inp" value="Antipasti"></div>
+      <div class="mb"><span class="lab">Nome piatto *</span><input class="inp" value="Fantasie di mare"></div>
+      <div class="mb"><span class="lab">Descrizione</span><input class="inp" value="Crudo del giorno con agrumi…"></div>
+      <div class="mb" style="max-width:160px"><span class="lab">Prezzo (€) *</span><input class="inp" value="15,00"></div>
+      <div class="mb"><span class="lab">Foto</span><input class="inp" value="📷 carica…"></div>
+      <div class="mb"><span class="lab">Allergeni</span><div class="hint">Glutine · Crostacei · Latte (checkbox)</div></div>
+      <div class="hint">Disponibile · Piatto del giorno · Ordinabile online</div>
+    </div>
+
+    <!-- VINO -->
+    <div class="card" style="border-color:#e6cdd4">
+      <div class="mb"><span class="lab">Categoria *</span><input class="inp" value="Vini › Rossi" style="border-color:#e6cdd4"></div>
+      <div class="mb"><span class="lab">Nome vino *</span><input class="inp" value="Chianti Classico DOCG"></div>
+      <div class="mb">
+        <span class="lab">Produttore · Regione · Annata</span>
+        <input class="inp" value="Castello di Ama · Toscana · 2020">
+        <div class="hint">Riusa il campo "descrizione" — solo cambia l'etichetta.</div>
+      </div>
+      <div class="row mb">
+        <div><span class="lab">Calice (€) <span class="tag-new">NUOVO</span></span><input class="inp" value="7,00" style="border-color:#e6cdd4"></div>
+        <div><span class="lab">Bottiglia (€) <span class="tag-new">NUOVO</span></span><input class="inp" value="34,00" style="border-color:#e6cdd4"></div>
+      </div>
+      <div class="mb ghost"><span class="lab">Foto</span><div class="hint x">Nascosta per i vini</div></div>
+      <div class="mb ghost"><span class="lab">Allergeni</span><div class="hint x">Nascosti (vini = nota solfiti automatica)</div></div>
+      <div class="hint">Disponibile · In evidenza</div>
+    </div>
+  </div>
+  <div class="note"><i class="bi bi-info-circle"></i> <b>Regola prezzi:</b> per un vino basta compilare <b>almeno uno</b> tra calice e bottiglia (es. il Barolo solo bottiglia). Per i piatti il prezzo resta obbligatorio come oggi.</div>
+
+  <!-- ============ 3. ETICHETTA in evidenza ============ -->
+  <div class="step">3 · Tab "Aspetto" — etichetta sezione in evidenza editabile</div>
+  <div class="card">
+    <div class="mb">
+      <span class="lab">Titolo sezione "in evidenza" <span class="tag-new">NUOVO</span></span>
+      <input class="inp" value="Selezionati dallo chef" style="max-width:360px">
+      <div class="hint">È il titolo del blocco che raccoglie i piatti marcati come "in evidenza" (oggi "Piatto del giorno"). Vuoto = usa "Piatti del giorno".</div>
+    </div>
+    <span class="lab">Esempi che il ristoratore può scrivere</span>
+    <div class="hint">"Piatti del giorno" · "Piatto del mese" · "Selezionati dallo chef" · "Scelti per voi" · "Le nostre specialità"</div>
+    <button class="btn" style="margin-top:12px"><i class="bi bi-check-lg"></i> Salva impostazioni</button>
+  </div>
+
+  <div class="step">Riepilogo dati (tutto additivo, retrocompatibile)</div>
+  <div class="card" style="font-size:.82rem">
+    <code>menu_categories.is_wine</code> &nbsp;TINYINT default 0<br>
+    <code>menu_items.price_bottle</code> &nbsp;DECIMAL(8,2) NULL &nbsp;(= bottiglia; <code>price</code> = calice)<br>
+    <code>menu_items.price</code> &nbsp;→ reso NULL-abile (un vino può avere solo la bottiglia)<br>
+    <code>tenants.menu_featured_label</code> &nbsp;VARCHAR(40) NULL
+  </div>
+</div>
+</body>
+</html>

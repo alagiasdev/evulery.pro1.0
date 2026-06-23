@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menù + Carta dei vini integrata (wireframe)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{ --bg:#fff;--soft:#f5f5f3;--ink:#16161a;--muted:#73727a;--line:#eceae6;--accent:#0f6b43;--allerg:#9a96a0; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:700px;margin:0 auto}
+
+  .hero{position:relative;height:240px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;text-align:center;color:#fff;padding-bottom:28px;
+    background:linear-gradient(rgba(0,0,0,.1),rgba(0,0,0,.62)),url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&q=70') center/cover}
+  .hero .name{font-family:'Fraunces',serif;font-weight:600;font-size:2.3rem;margin:0}
+  .hero .sub{font-size:.9rem;opacity:.9;margin-top:6px}
+
+  .nav{position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:10;display:flex;gap:4px;overflow-x:auto;padding:6px 16px;scrollbar-width:none}
+  .nav::-webkit-scrollbar{display:none}
+  .pill{flex:0 0 auto;font-size:.82rem;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;padding:12px 12px;text-decoration:none}
+  .pill.on{color:var(--ink);border-bottom-color:var(--accent)}
+
+  .sec{margin:34px 22px 14px;display:flex;align-items:flex-end;gap:12px}
+  .sec .num{font-family:'Fraunces',serif;font-size:1rem;color:var(--accent);font-weight:600}
+  .sec h2{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;margin:0;line-height:1}
+  .sec .ln{flex:1;height:1px;background:var(--line);margin-bottom:6px}
+  .subgroup{margin:20px 22px 2px;font-size:.66rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+
+  /* PIATTO (con foto, come V2.1) */
+  .dish{padding:15px 22px;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+  .dish-thumb{order:-1;width:90px;height:90px;border-radius:14px;object-fit:cover;flex-shrink:0;background:#eee}
+  .dish-body{flex:1;min-width:0}
+  .dish-head{display:flex;justify-content:space-between;align-items:baseline;gap:14px}
+  .dish-name{font-size:1.02rem;font-weight:600}
+  .dish-price{font-weight:800;font-size:1rem;white-space:nowrap}
+  .dish-desc{color:var(--muted);font-size:.86rem;margin-top:3px}
+  .allerg{margin-top:7px;font-size:.71rem;color:var(--allerg)}
+  .allerg .lab{font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:#c7c4cc;margin-right:6px}
+
+  /* RIGA VINO (niente foto, doppio prezzo) */
+  .wine{padding:14px 22px;border-bottom:1px solid var(--line)}
+  .wine-head{display:flex;justify-content:space-between;align-items:baseline;gap:14px}
+  .wine-name{font-size:1.02rem;font-weight:600}
+  .wine-prices{white-space:nowrap;text-align:right;font-size:.82rem}
+  .wine-prices .wp{color:var(--muted)}
+  .wine-prices .wp b{color:var(--ink);font-weight:700;font-size:.92rem}
+  .wine-prices .sepd{color:var(--line);margin:0 6px}
+  .wine-sub{color:var(--muted);font-size:.82rem;margin-top:3px}
+  .wine-note{margin:8px 22px 0;font-size:.72rem;color:var(--allerg);font-style:italic}
+
+  .cta{margin-top:14px;padding:48px 22px;text-align:center;background:var(--ink);color:#fff}
+  .cta h3{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:600;margin:0 0 .2rem}
+  .cta p{opacity:.7;font-size:.9rem;margin:0 0 1.1rem}
+  .cta a{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;padding:13px 32px;border-radius:12px;font-size:.9rem;font-weight:600}
+  .foot{text-align:center;font-size:.72rem;color:var(--muted);padding:20px}
+
+  @media(max-width:600px){
+    .dish{padding:14px 16px;gap:12px}.dish-thumb{width:74px;height:74px}
+    .sec{margin:30px 16px 12px}.subgroup{margin-left:16px;margin-right:16px}
+    .wine{padding:13px 16px}.wine-note{margin-left:16px;margin-right:16px}
+    .sec h2{font-size:1.3rem}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1 class="name">Trattoria da Mario</h1>
+    <div class="sub">Cucina italiana dal 1980</div>
+  </div>
+
+  <div class="nav">
+    <a class="pill" href="#">Antipasti</a><a class="pill" href="#">Primi</a><a class="pill" href="#">Secondi</a><a class="pill" href="#">Dolci</a><a class="pill on" href="#">Vini</a>
+  </div>
+
+  <!-- esempio sezione piatti (con foto) per mostrare l'integrazione -->
+  <div class="sec"><span class="num">02</span><h2>Antipasti</h2><span class="ln"></span></div>
+  <div class="dish">
+    <div class="dish-body">
+      <div class="dish-head"><span class="dish-name">Fantasie di mare</span><span class="dish-price">15,00 €</span></div>
+      <div class="dish-desc">Crudo del giorno: gambero rosso, ricciola e capesante con agrumi e olio EVO.</div>
+      <div class="allerg"><span class="lab">Allergeni</span>Glutine · Crostacei · Latte</div>
+    </div>
+    <img class="dish-thumb" src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=160&q=60" alt="">
+  </div>
+
+  <!-- ====== CARTA DEI VINI, integrata nella stessa pagina ====== -->
+  <div class="sec"><span class="num">05</span><h2>Vini</h2><span class="ln"></span></div>
+
+  <div class="subgroup">Bollicine</div>
+  <div class="wine">
+    <div class="wine-head">
+      <span class="wine-name">Franciacorta Brut DOCG</span>
+      <span class="wine-prices"><span class="wp">Calice <b>8&nbsp;€</b></span><span class="sepd">·</span><span class="wp">Bottiglia <b>42&nbsp;€</b></span></span>
+    </div>
+    <div class="wine-sub">Ca' del Bosco · Lombardia · s.a.</div>
+  </div>
+  <div class="wine">
+    <div class="wine-head">
+      <span class="wine-name">Valdobbiadene Prosecco Superiore DOCG</span>
+      <span class="wine-prices"><span class="wp">Calice <b>6&nbsp;€</b></span><span class="sepd">·</span><span class="wp">Bottiglia <b>28&nbsp;€</b></span></span>
+    </div>
+    <div class="wine-sub">Nino Franco · Veneto</div>
+  </div>
+
+  <div class="subgroup">Bianchi</div>
+  <div class="wine">
+    <div class="wine-head">
+      <span class="wine-name">Vermentino di Sardegna DOC</span>
+      <span class="wine-prices"><span class="wp">Calice <b>6&nbsp;€</b></span><span class="sepd">·</span><span class="wp">Bottiglia <b>26&nbsp;€</b></span></span>
+    </div>
+    <div class="wine-sub">Argiolas · Sardegna · 2022</div>
+  </div>
+  <div class="wine">
+    <div class="wine-head">
+      <span class="wine-name">Greco di Tufo DOCG</span>
+      <span class="wine-prices"><span class="wp">Calice <b>7&nbsp;€</b></span><span class="sepd">·</span><span class="wp">Bottiglia <b>32&nbsp;€</b></span></span>
+    </div>
+    <div class="wine-sub">Mastroberardino · Campania · 2021</div>
+  </div>
+
+  <div class="subgroup">Rossi</div>
+  <div class="wine">
+    <div class="wine-head">
+      <span class="wine-name">Chianti Classico DOCG</span>
+      <span class="wine-prices"><span class="wp">Calice <b>7&nbsp;€</b></span><span class="sepd">·</span><span class="wp">Bottiglia <b>34&nbsp;€</b></span></span>
+    </div>
+    <div class="wine-sub">Castello di Ama · Toscana · 2020</div>
+  </div>
+  <div class="wine">
+    <div class="wine-head">
+      <span class="wine-name">Barolo DOCG</span>
+      <span class="wine-prices"><span class="wp">Bottiglia <b>65&nbsp;€</b></span></span>
+    </div>
+    <div class="wine-sub">Pio Cesare · Piemonte · 2018 · solo bottiglia</div>
+  </div>
+
+  <div class="wine-note">Tutti i vini contengono solfiti. Carta soggetta a variazioni di annata e disponibilità.</div>
+
+  <div class="cta">
+    <h3>Ti aspettiamo a tavola</h3>
+    <p>Prenota per la prossima cena o il prossimo pranzo</p>
+    <a href="#"><i class="bi bi-calendar-check"></i> Prenota un tavolo</a>
+  </div>
+  <div class="foot">© 2026 Evulery · by alagias. — Soluzioni per il web</div>
+</div>
+</body>
+</html>

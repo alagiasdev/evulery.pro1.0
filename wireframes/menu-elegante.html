@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menù digitale — stile Elegante (wireframe)</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{
+    --bg:#faf8f4;        /* crema caldo */
+    --ink:#2b2a26;       /* grafite */
+    --muted:#8c867b;     /* testo secondario */
+    --line:#e7e2d8;      /* separatori sottili */
+    --accent:#46603f;    /* unico accento: verde sobrio desaturato */
+    --price:#2b2a26;     /* prezzo grafite, NON verde */
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;font-size:15px;line-height:1.5}
+  .serif{font-family:'Cormorant Garamond',Georgia,serif}
+  .wrap{max-width:680px;margin:0 auto;background:var(--bg)}
+
+  /* hero */
+  .hero{position:relative;height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;
+    background:linear-gradient(rgba(20,18,15,.55),rgba(20,18,15,.62)),url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=60') center/cover}
+  .hero .name{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:2.6rem;letter-spacing:.3px;margin:0}
+  .hero .sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.2rem;opacity:.9;margin:.2rem 0 .6rem}
+  .hero .meta{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;opacity:.8}
+  .hero .scroll{margin-top:1rem;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;opacity:.75;border-top:1px solid rgba(255,255,255,.35);padding-top:.6rem}
+
+  .pad{padding:0 26px}
+
+  /* nav categorie: minimale, niente icone colorate */
+  .cats{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 22px;padding:26px 26px 10px}
+  .cat{font-family:'Cormorant Garamond',serif;font-size:1.18rem;color:var(--ink);text-decoration:none;border-bottom:1px solid transparent;padding-bottom:2px}
+  .cat:hover{border-bottom-color:var(--accent)}
+  .cat .c{font-family:'Inter',sans-serif;font-size:.62rem;color:var(--muted);vertical-align:super;margin-left:3px}
+
+  .search{margin:14px 26px 6px;display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:2px;padding:10px 14px;color:var(--muted);font-size:.85rem}
+
+  /* intestazione sezione: etichetta sobria con filetti */
+  .sec{display:flex;align-items:center;gap:14px;margin:34px 26px 16px}
+  .sec::before,.sec::after{content:"";flex:1;height:1px;background:var(--line)}
+  .sec h2{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.6rem;margin:0;white-space:nowrap}
+  .subgroup{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:18px 26px 6px}
+
+  /* piatto: nome serif + leader puntinato + prezzo grafite */
+  .dish{padding:13px 26px;border-bottom:1px solid var(--line)}
+  .dish-head{display:flex;align-items:baseline;gap:8px}
+  .dish-name{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.28rem;line-height:1.15}
+  .leader{flex:1;border-bottom:1px dotted #cfc8ba;transform:translateY(-4px)}
+  .dish-price{font-weight:600;font-size:1.05rem;color:var(--price);white-space:nowrap}
+  .dish-desc{color:var(--muted);font-size:.86rem;margin-top:3px;font-style:italic}
+  /* ALLERGENI: testo grigio piccolo, niente pillole arcobaleno */
+  .allerg{margin-top:6px;font-size:.7rem;letter-spacing:.04em;color:#a8a194}
+  .allerg .lab{text-transform:uppercase;font-size:.6rem;letter-spacing:.14em;color:#bdb6a8;margin-right:4px}
+
+  .daily{margin:6px 26px 0;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+
+  /* allergeni box: legenda discreta */
+  .alg-box{margin:34px 26px;border:1px solid var(--line);border-radius:2px;padding:16px 18px;background:#fff}
+  .alg-box .t{font-family:'Cormorant Garamond',serif;font-size:1.15rem;display:flex;align-items:center;gap:.4rem}
+  .alg-box .leg{display:grid;grid-template-columns:repeat(4,1fr);gap:7px 10px;margin-top:10px;font-size:.72rem;color:var(--muted)}
+  .alg-box .leg i{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;background:#cfc8ba;vertical-align:middle}
+  .alg-box .note{font-size:.72rem;color:var(--muted);font-style:italic;margin-top:4px}
+
+  /* CTA */
+  .cta{margin:0;padding:46px 26px;text-align:center;color:#fff;
+    background:linear-gradient(rgba(20,18,15,.6),rgba(20,18,15,.66)),url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=60') center/cover}
+  .cta h3{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.7rem;margin:0 0 .2rem}
+  .cta p{opacity:.85;font-size:.9rem;margin:0 0 1.1rem}
+  .cta a{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;padding:12px 30px;border-radius:2px;font-size:.82rem;letter-spacing:.12em;text-transform:uppercase}
+  .foot{text-align:center;font-size:.7rem;color:var(--muted);padding:18px}
+  .tag{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);border-radius:2px;padding:2px 8px;display:inline-block;margin:4px 26px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1 class="name">Trattoria da Mario</h1>
+    <div class="sub">Cucina italiana dal 1980</div>
+    <div class="meta">&#9742;&nbsp; 0000000</div>
+    <div class="scroll">Sfoglia il menù</div>
+  </div>
+
+  <div class="cats">
+    <a class="cat" href="#">Del Giorno<span class="c">4</span></a>
+    <a class="cat" href="#">Antipasti<span class="c">4</span></a>
+    <a class="cat" href="#">Primi<span class="c">3</span></a>
+    <a class="cat" href="#">Secondi<span class="c">1</span></a>
+    <a class="cat" href="#">Dolci<span class="c">2</span></a>
+  </div>
+
+  <div class="search"><i class="bi bi-search"></i> Cerca nel menù…</div>
+
+  <div class="sec"><h2 class="serif">Piatti del giorno</h2></div>
+  <div class="dish">
+    <div class="daily">Speciale del giorno</div>
+    <div class="dish-head"><span class="dish-name">Della casa</span><span class="leader"></span><span class="dish-price">15,00</span></div>
+    <div class="allerg"><span class="lab">Allergeni</span> Glutine · Crostacei</div>
+  </div>
+  <div class="dish">
+    <div class="daily">Speciale del giorno</div>
+    <div class="dish-head"><span class="dish-name">Torta della nonna</span><span class="leader"></span><span class="dish-price">8,00</span></div>
+    <div class="dish-desc">per 4 persone</div>
+    <div class="allerg"><span class="lab">Allergeni</span> Glutine · Soia · Latte · Anidride solforosa</div>
+  </div>
+
+  <div class="sec"><h2 class="serif">Antipasti</h2></div>
+  <div class="dish">
+    <div class="dish-head"><span class="dish-name">Della casa</span><span class="leader"></span><span class="dish-price">15,00</span></div>
+    <div class="allerg"><span class="lab">Allergeni</span> Glutine · Crostacei</div>
+  </div>
+  <div class="subgroup">Mare</div>
+  <div class="dish">
+    <div class="dish-head"><span class="dish-name">Fantasie di mare</span><span class="leader"></span><span class="dish-price">15,00</span></div>
+    <div class="allerg"><span class="lab">Allergeni</span> Glutine · Crostacei · Latte</div>
+  </div>
+
+  <div class="sec"><h2 class="serif">Primi</h2></div>
+  <div class="subgroup">Pesce</div>
+  <div class="dish">
+    <div class="dish-head"><span class="dish-name">Orata</span><span class="leader"></span><span class="dish-price">20,00</span></div>
+    <div class="dish-desc">con datterini e olive taggiasche</div>
+    <div class="allerg"><span class="lab">Allergeni</span> Latte · Frutta a guscio · Sesamo</div>
+  </div>
+
+  <div class="sec"><h2 class="serif">Dolci</h2></div>
+  <div class="dish">
+    <div class="dish-head"><span class="dish-name">Torta della nonna</span><span class="leader"></span><span class="dish-price">8,00</span></div>
+    <div class="dish-desc">per 4 persone</div>
+    <div class="allerg"><span class="lab">Allergeni</span> Glutine · Soia · Latte</div>
+  </div>
+
+  <div class="alg-box">
+    <div class="t serif"><i class="bi bi-info-circle" style="font-size:.9rem;color:var(--accent)"></i> Informazioni sugli allergeni</div>
+    <div class="note">Ai sensi del Reg. UE 1169/2011. Per ulteriori informazioni rivolgersi al personale di sala.</div>
+    <div class="leg">
+      <span><i></i>Glutine</span><span><i></i>Crostacei</span><span><i></i>Uova</span><span><i></i>Pesce</span>
+      <span><i></i>Arachidi</span><span><i></i>Soia</span><span><i></i>Latte</span><span><i></i>Frutta a guscio</span>
+      <span><i></i>Sedano</span><span><i></i>Senape</span><span><i></i>Sesamo</span><span><i></i>Anidride solforosa</span>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h3 class="serif">Ti aspettiamo a tavola</h3>
+    <p>Prenota per la prossima cena o il prossimo pranzo</p>
+    <a href="#">Prenota un tavolo</a>
+  </div>
+  <div class="foot">© 2026 Evulery · by alagias. — Soluzioni per il web</div>
+</div>
+</body>
+</html>

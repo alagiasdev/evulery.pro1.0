@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menù — Moderno minimale (wireframe)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff; --soft:#f6f6f7; --ink:#1c1c1e; --muted:#6e6e73; --line:#ececef;
+    --accent:#13794a;          /* verde profondo, usato con parsimonia */
+    --allerg:#9a96a0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:680px;margin:0 auto}
+
+  .hero{position:relative;height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;
+    background:linear-gradient(rgba(0,0,0,.32),rgba(0,0,0,.5)),url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=60') center/cover}
+  .hero .name{font-size:2rem;font-weight:700;letter-spacing:-.02em;margin:0}
+  .hero .sub{font-size:.95rem;font-weight:400;opacity:.9;margin-top:4px}
+  .hero .meta{font-size:.78rem;opacity:.85;margin-top:8px}
+
+  /* nav categorie: barra a pill, sticky, moderna */
+  .nav{position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:5;
+    display:flex;gap:8px;overflow-x:auto;padding:12px 20px;scrollbar-width:none}
+  .nav::-webkit-scrollbar{display:none}
+  .pill{flex:0 0 auto;font-size:.82rem;font-weight:600;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:7px 14px;text-decoration:none}
+  .pill.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  .search{margin:18px 20px 4px;display:flex;align-items:center;gap:9px;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:12px 15px;color:var(--muted);font-size:.88rem}
+
+  .sec{margin:30px 20px 12px;display:flex;align-items:center;gap:10px}
+  .sec h2{font-size:1.32rem;font-weight:700;letter-spacing:-.01em;margin:0}
+  .sec .n{font-size:.74rem;color:var(--muted);font-weight:500}
+  .sec .ln{flex:1;height:1px;background:var(--line)}
+  .subgroup{margin:18px 20px 4px;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+  .dish{padding:14px 20px;border-bottom:1px solid var(--line)}
+  .dish-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .dish-name{font-size:1.02rem;font-weight:600}
+  .dish-price{font-weight:700;font-size:1rem;white-space:nowrap}      /* prezzo neutro */
+  .dish-desc{color:var(--muted);font-size:.86rem;margin-top:2px}
+  .allerg{margin-top:7px;font-size:.72rem;color:var(--allerg)}
+  .allerg .lab{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:#c2bec8;margin-right:5px}
+  .daily{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
+
+  .alg-box{margin:30px 20px;border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--soft)}
+  .alg-box .t{font-size:.95rem;font-weight:600;display:flex;align-items:center;gap:.4rem}
+  .alg-box .leg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 10px;margin-top:12px;font-size:.74rem;color:var(--muted)}
+  .alg-box .leg i{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:6px;background:#c6c2cc;vertical-align:middle}
+  .alg-box .note{font-size:.74rem;color:var(--muted);margin-top:3px}
+
+  .cta{margin-top:8px;padding:44px 20px;text-align:center;background:var(--ink);color:#fff}
+  .cta h3{font-size:1.45rem;font-weight:700;margin:0 0 .2rem}
+  .cta p{opacity:.7;font-size:.9rem;margin:0 0 1.1rem}
+  .cta a{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;padding:13px 30px;border-radius:12px;font-size:.9rem;font-weight:600}
+  .foot{text-align:center;font-size:.72rem;color:var(--muted);padding:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1 class="name">Trattoria da Mario</h1>
+    <div class="sub">Cucina italiana dal 1980</div>
+    <div class="meta"><i class="bi bi-telephone"></i> 0000000</div>
+  </div>
+
+  <div class="nav">
+    <a class="pill on" href="#">Del Giorno</a>
+    <a class="pill" href="#">Antipasti</a>
+    <a class="pill" href="#">Primi</a>
+    <a class="pill" href="#">Secondi</a>
+    <a class="pill" href="#">Dolci</a>
+  </div>
+
+  <div class="search"><i class="bi bi-search"></i> Cerca nel menù…</div>
+
+  <div class="sec"><h2>Piatti del giorno</h2><span class="ln"></span></div>
+  <div class="dish">
+    <div class="daily">Speciale del giorno</div>
+    <div class="dish-head"><span class="dish-name">Della casa</span><span class="dish-price">15,00 €</span></div>
+    <div class="allerg"><span class="lab">Allergeni</span>Glutine · Crostacei</div>
+  </div>
+  <div class="dish">
+    <div class="daily">Speciale del giorno</div>
+    <div class="dish-head"><span class="dish-name">Torta della nonna</span><span class="dish-price">8,00 €</span></div>
+    <div class="dish-desc">per 4 persone</div>
+    <div class="allerg"><span class="lab">Allergeni</span>Glutine · Soia · Latte · Anidride solforosa</div>
+  </div>
+
+  <div class="sec"><h2>Antipasti</h2><span class="n">4 piatti</span><span class="ln"></span></div>
+  <div class="dish">
+    <div class="dish-head"><span class="dish-name">Della casa</span><span class="dish-price">15,00 €</span></div>
+    <div class="allerg"><span class="lab">Allergeni</span>Glutine · Crostacei</div>
+  </div>
+  <div class="subgroup">Mare</div>
+  <div class="dish">
+    <div class="dish-head"><span class="dish-name">Fantasie di mare</span><span class="dish-price">15,00 €</span></div>
+    <div class="allerg"><span class="lab">Allergeni</span>Glutine · Crostacei · Latte</div>
+  </div>
+
+  <div class="sec"><h2>Primi</h2><span class="n">3 piatti</span><span class="ln"></span></div>
+  <div class="subgroup">Pesce</div>
+  <div class="dish">
+    <div class="dish-head"><span class="dish-name">Orata</span><span class="dish-price">20,00 €</span></div>
+    <div class="dish-desc">con datterini e olive taggiasche</div>
+    <div class="allerg"><span class="lab">Allergeni</span>Latte · Frutta a guscio · Sesamo</div>
+  </div>
+
+  <div class="sec"><h2>Dolci</h2><span class="n">2 piatti</span><span class="ln"></span></div>
+  <div class="dish">
+    <div class="dish-head"><span class="dish-name">Torta della nonna</span><span class="dish-price">8,00 €</span></div>
+    <div class="dish-desc">per 4 persone</div>
+    <div class="allerg"><span class="lab">Allergeni</span>Glutine · Soia · Latte</div>
+  </div>
+
+  <div class="alg-box">
+    <div class="t"><i class="bi bi-info-circle" style="color:var(--accent)"></i> Informazioni sugli allergeni</div>
+    <div class="note">Ai sensi del Reg. UE 1169/2011. Per ulteriori informazioni rivolgersi al personale di sala.</div>
+    <div class="leg">
+      <span><i></i>Glutine</span><span><i></i>Crostacei</span><span><i></i>Uova</span><span><i></i>Pesce</span>
+      <span><i></i>Arachidi</span><span><i></i>Soia</span><span><i></i>Latte</span><span><i></i>Frutta a guscio</span>
+      <span><i></i>Sedano</span><span><i></i>Senape</span><span><i></i>Sesamo</span><span><i></i>Anidride solforosa</span>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h3>Ti aspettiamo a tavola</h3>
+    <p>Prenota per la prossima cena o il prossimo pranzo</p>
+    <a href="#"><i class="bi bi-calendar-check"></i> Prenota un tavolo</a>
+  </div>
+  <div class="foot">© 2026 Evulery · by alagias. — Soluzioni per il web</div>
+</div>
+</body>
+</html>

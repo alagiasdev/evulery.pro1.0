@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menù — Scuro V2 nocturne (wireframe)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{
+    --bg:#121116; --card:#1b1a21; --ink:#ede8e0; --muted:#9a948a; --line:#2b2933;
+    --gold:#cda25c; --gold-soft:#e8cf9f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:700px;margin:0 auto;background:var(--bg)}
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  /* HERO con glow */
+  .hero{position:relative;height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;overflow:hidden;
+    background:linear-gradient(rgba(10,9,8,.45),rgba(12,11,14,.82)),url('https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1400&q=70') center/cover}
+  .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 62%,rgba(205,162,92,.22),transparent 70%)}
+  .hero .in2{position:relative;z-index:1}
+  .hero .mono{width:54px;height:54px;border:1px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-family:'Fraunces',serif;font-size:1.4rem;color:var(--gold)}
+  .hero .name{font-size:1.5rem;font-weight:600;letter-spacing:.42em;text-transform:uppercase;margin:0;padding-left:.42em}
+  .hero .rule{width:42px;height:1px;background:var(--gold);margin:16px auto}
+  .hero .sub{font-family:'Fraunces',serif;font-style:italic;font-size:1.15rem;opacity:.92}
+  .hero .meta{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-soft);margin-top:12px;opacity:.85}
+
+  .nav{position:sticky;top:0;background:rgba(18,17,22,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:10;display:flex;gap:6px;overflow-x:auto;padding:10px 18px;scrollbar-width:none}
+  .nav::-webkit-scrollbar{display:none}
+  .pill{flex:0 0 auto;font-size:.78rem;font-weight:600;letter-spacing:.04em;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:999px;padding:7px 15px;text-decoration:none}
+  .pill.on{color:#1a1510;background:var(--gold);border-color:var(--gold)}
+
+  .search{margin:20px 22px 0;display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 16px;color:var(--muted);font-size:.88rem}
+
+  /* SIGNATURE dish */
+  .feature{margin:22px 22px 0;border:1px solid var(--line);border-radius:18px;overflow:hidden;position:relative}
+  .feature .ph{height:170px;background:linear-gradient(rgba(10,9,8,.15),rgba(12,11,14,.6)),url('https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&q=70') center/cover}
+  .feature .bd{padding:16px 20px}
+  .feature .tag{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:700}
+  .feature .nm{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:600;margin:4px 0}
+  .feature .ds{font-size:.86rem;color:var(--muted);font-style:italic}
+  .feature .pr{color:var(--gold);font-weight:700;margin-top:8px;font-size:1.05rem}
+
+  /* SEZIONE con ornamento */
+  .sec{display:flex;align-items:center;gap:14px;margin:38px 22px 16px;text-align:center}
+  .sec .ln{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line))}
+  .sec .ln.r{background:linear-gradient(90deg,var(--line),transparent)}
+  .sec h2{font-family:'Fraunces',serif;font-weight:600;font-size:1.55rem;margin:0;white-space:nowrap}
+  .sec .dia{color:var(--gold);font-size:.5rem}
+  .subgroup{margin:18px 22px 4px;font-size:.64rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+
+  .dish{padding:15px 22px;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+  .dish-body{flex:1;min-width:0}
+  .dish-thumb{order:-1;width:104px;height:104px;border-radius:14px;object-fit:cover;flex-shrink:0;background:#26242c;border:1px solid var(--line)}
+  .dish-head{display:flex;align-items:baseline;gap:10px}
+  .dish-name{font-size:1.06rem;font-weight:600}
+  .dot-leader{flex:1;border-bottom:1px dotted #4a4752;transform:translateY(-4px)}
+  .dish-price{font-weight:700;font-size:1rem;color:var(--gold);white-space:nowrap}
+  .dish-desc{color:var(--muted);font-size:.85rem;margin-top:3px;font-style:italic}
+  .allerg{margin-top:8px;font-size:.71rem;color:#6f6a62}
+  .allerg .lab{font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:#56524b;margin-right:6px}
+  .daily{font-size:.6rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+
+  .alg-box{margin:34px 22px;border:1px solid var(--line);border-radius:16px;padding:18px 20px;background:var(--card)}
+  .alg-box .t{font-weight:600;display:flex;align-items:center;gap:.45rem}
+  .alg-box .leg{display:grid;grid-template-columns:repeat(4,1fr);gap:9px 10px;margin-top:13px;font-size:.74rem;color:var(--muted)}
+  .alg-box .leg i{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:6px;background:var(--gold);opacity:.55;vertical-align:middle}
+  .alg-box .note{font-size:.73rem;color:var(--muted);margin-top:3px;font-style:italic}
+
+  .cta{margin-top:10px;padding:56px 22px;text-align:center;color:#fff;position:relative;overflow:hidden;
+    background:linear-gradient(rgba(10,9,8,.5),rgba(12,11,14,.82)),url('https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1400&q=70') center/cover}
+  .cta::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 50%,rgba(205,162,92,.18),transparent 70%)}
+  .cta .in2{position:relative;z-index:1}
+  .cta h3{font-family:'Fraunces',serif;font-size:1.7rem;font-weight:600;margin:0 0 .2rem}
+  .cta p{opacity:.82;font-size:.9rem;margin:0 0 1.2rem}
+  .cta a{display:inline-block;background:var(--gold);color:#1a1510;text-decoration:none;padding:14px 34px;border-radius:10px;font-size:.84rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+  .foot{text-align:center;font-size:.72rem;color:var(--muted);padding:20px}
+
+  /* ---- MOBILE ---- */
+  @media (max-width:600px){
+    body{font-size:14.5px}
+    .hero{height:330px}
+    .hero .mono{width:46px;height:46px;font-size:1.2rem;margin-bottom:14px}
+    /* nome: piu' piccolo e meno spaziato, cosi' non va a capo male */
+    .hero .name{font-size:1.05rem;letter-spacing:.2em;padding-left:.2em;line-height:1.3}
+    .hero .sub{font-size:1.02rem}
+    .hero .rule{margin:13px auto}
+    .nav{padding:9px 12px}
+    .pill{padding:7px 12px;font-size:.76rem}
+    .search{margin:16px 16px 0;padding:12px 14px}
+    .feature{margin:16px 16px 0;border-radius:14px}
+    .feature .ph{height:150px}
+    .feature .nm{font-size:1.3rem}
+    .sec{margin:30px 16px 14px}
+    .sec h2{font-size:1.3rem}
+    .subgroup{margin-left:16px;margin-right:16px}
+    .dish{padding:14px 16px;gap:12px}
+    .dish-name{font-size:1.02rem}
+    .dish-thumb{width:84px;height:84px;border-radius:12px}
+    .alg-box{margin:28px 16px;padding:16px}
+    .alg-box .leg{grid-template-columns:repeat(2,1fr);gap:9px 12px}
+    .cta{padding:48px 18px}
+    .cta h3{font-size:1.5rem}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="in2">
+      <div class="mono">M</div>
+      <h1 class="name">Trattoria da Mario</h1>
+      <div class="rule"></div>
+      <div class="sub">Cucina italiana dal 1980</div>
+      <div class="meta">Roma · 0000000</div>
+    </div>
+  </div>
+
+  <div class="nav" id="nav">
+    <a class="pill on" href="#">Del Giorno</a><a class="pill" href="#">Antipasti</a><a class="pill" href="#">Primi</a><a class="pill" href="#">Secondi</a><a class="pill" href="#">Dolci</a>
+  </div>
+
+  <div class="search"><i class="bi bi-search"></i> Cerca nel menù…</div>
+
+  <div class="feature reveal">
+    <div class="ph"></div>
+    <div class="bd">
+      <div class="tag">Signature</div>
+      <div class="nm">Fantasie di mare</div>
+      <div class="ds">Crudo del giorno, agrumi e olio nuovo.</div>
+      <div class="pr">15,00 €</div>
+    </div>
+  </div>
+
+  <div class="sec reveal"><span class="ln"></span><span class="dia">&#9670;</span><h2>Piatti del giorno</h2><span class="dia">&#9670;</span><span class="ln r"></span></div>
+  <div class="dish reveal">
+    <div class="dish-body">
+      <div class="daily">Speciale del giorno</div>
+      <div class="dish-head"><span class="dish-name">Della casa</span><span class="dot-leader"></span><span class="dish-price">15,00 €</span></div>
+      <div class="dish-desc">Salumi e formaggi del territorio, giardiniera fatta in casa e focaccia calda.</div>
+      <div class="allerg"><span class="lab">Allergeni</span>Glutine · Crostacei</div>
+    </div>
+    <img class="dish-thumb" src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=160&q=60" alt="">
+  </div>
+  <div class="dish reveal">
+    <div class="dish-body">
+      <div class="daily">Speciale del giorno</div>
+      <div class="dish-head"><span class="dish-name">Torta della nonna</span><span class="dot-leader"></span><span class="dish-price">8,00 €</span></div>
+      <div class="dish-desc">Pasta frolla, crema pasticcera e pinoli tostati · per 4 persone.</div>
+      <div class="allerg"><span class="lab">Allergeni</span>Glutine · Soia · Latte · Anidride solforosa</div>
+    </div>
+    <img class="dish-thumb" src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=160&q=60" alt="">
+  </div>
+
+  <div class="sec reveal"><span class="ln"></span><span class="dia">&#9670;</span><h2>Antipasti</h2><span class="dia">&#9670;</span><span class="ln r"></span></div>
+  <div class="dish reveal">
+    <div class="dish-body">
+      <div class="dish-head"><span class="dish-name">Della casa</span><span class="dot-leader"></span><span class="dish-price">15,00 €</span></div>
+      <div class="dish-desc">Salumi e formaggi del territorio, giardiniera fatta in casa e focaccia calda.</div>
+      <div class="allerg"><span class="lab">Allergeni</span>Glutine · Crostacei</div>
+    </div>
+    <img class="dish-thumb" src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=160&q=60" alt="">
+  </div>
+  <div class="subgroup">Mare</div>
+  <div class="dish reveal">
+    <div class="dish-body">
+      <div class="dish-head"><span class="dish-name">Fantasie di mare</span><span class="dot-leader"></span><span class="dish-price">15,00 €</span></div>
+      <div class="dish-desc">Crudo del giorno: gambero rosso, ricciola e capesante con agrumi e olio EVO.</div>
+      <div class="allerg"><span class="lab">Allergeni</span>Glutine · Crostacei · Latte</div>
+    </div>
+    <img class="dish-thumb" src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=160&q=60" alt="">
+  </div>
+
+  <div class="sec reveal"><span class="ln"></span><span class="dia">&#9670;</span><h2>Primi</h2><span class="dia">&#9670;</span><span class="ln r"></span></div>
+  <div class="subgroup">Pesce</div>
+  <div class="dish reveal">
+    <div class="dish-body">
+      <div class="dish-head"><span class="dish-name">Orata</span><span class="dot-leader"></span><span class="dish-price">20,00 €</span></div>
+      <div class="dish-desc">Filetto di orata all'acqua pazza, datterini confit e olive taggiasche.</div>
+      <div class="allerg"><span class="lab">Allergeni</span>Latte · Frutta a guscio · Sesamo</div>
+    </div>
+    <img class="dish-thumb" src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=160&q=60" alt="">
+  </div>
+
+  <div class="sec reveal"><span class="ln"></span><span class="dia">&#9670;</span><h2>Dolci</h2><span class="dia">&#9670;</span><span class="ln r"></span></div>
+  <div class="dish reveal">
+    <div class="dish-body">
+      <div class="dish-head"><span class="dish-name">Torta della nonna</span><span class="dot-leader"></span><span class="dish-price">8,00 €</span></div>
+      <div class="dish-desc">Pasta frolla, crema pasticcera e pinoli tostati · per 4 persone.</div>
+      <div class="allerg"><span class="lab">Allergeni</span>Glutine · Soia · Latte</div>
+    </div>
+    <img class="dish-thumb" src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=160&q=60" alt="">
+  </div>
+
+  <div class="alg-box reveal">
+    <div class="t"><i class="bi bi-info-circle" style="color:var(--gold)"></i> Informazioni sugli allergeni</div>
+    <div class="note">Ai sensi del Reg. UE 1169/2011. Per ulteriori informazioni rivolgersi al personale di sala.</div>
+    <div class="leg">
+      <span><i></i>Glutine</span><span><i></i>Crostacei</span><span><i></i>Uova</span><span><i></i>Pesce</span>
+      <span><i></i>Arachidi</span><span><i></i>Soia</span><span><i></i>Latte</span><span><i></i>Frutta a guscio</span>
+      <span><i></i>Sedano</span><span><i></i>Senape</span><span><i></i>Sesamo</span><span><i></i>Anidride solforosa</span>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div class="in2">
+      <h3>Ti aspettiamo a tavola</h3>
+      <p>Prenota per la prossima cena o il prossimo pranzo</p>
+      <a href="#">Prenota un tavolo</a>
+    </div>
+  </div>
+  <div class="foot">© 2026 Evulery · by alagias. — Soluzioni per il web</div>
+</div>
+<script>
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+</script>
+</body>
+</html>
