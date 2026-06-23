@@ -146,8 +146,8 @@ class MenuCategory
     public function create(int $tenantId, array $data): int
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO menu_categories (tenant_id, parent_id, name, description, icon, sort_order, is_active)
-             VALUES (:tenant_id, :parent_id, :name, :description, :icon, :sort_order, :is_active)'
+            'INSERT INTO menu_categories (tenant_id, parent_id, name, description, icon, is_wine, sort_order, is_active)
+             VALUES (:tenant_id, :parent_id, :name, :description, :icon, :is_wine, :sort_order, :is_active)'
         );
         $stmt->execute([
             'tenant_id'   => $tenantId,
@@ -155,6 +155,7 @@ class MenuCategory
             'name'        => $data['name'],
             'description' => $data['description'] ?? null,
             'icon'        => $data['icon'] ?? 'bi-list',
+            'is_wine'     => !empty($data['is_wine']) ? 1 : 0,
             'sort_order'  => $data['sort_order'] ?? 0,
             'is_active'   => $data['is_active'] ?? 1,
         ]);
@@ -164,7 +165,7 @@ class MenuCategory
     public function update(int $id, int $tenantId, array $data): bool
     {
         $stmt = $this->db->prepare(
-            'UPDATE menu_categories SET name = :name, description = :description, icon = :icon, sort_order = :sort_order, is_active = :is_active
+            'UPDATE menu_categories SET name = :name, description = :description, icon = :icon, is_wine = :is_wine, sort_order = :sort_order, is_active = :is_active
              WHERE id = :id AND tenant_id = :tenant_id'
         );
         return $stmt->execute([
@@ -173,9 +174,22 @@ class MenuCategory
             'name'        => $data['name'],
             'description' => $data['description'] ?? null,
             'icon'        => $data['icon'] ?? 'bi-list',
+            'is_wine'     => !empty($data['is_wine']) ? 1 : 0,
             'sort_order'  => $data['sort_order'] ?? 0,
             'is_active'   => $data['is_active'] ?? 1,
         ]);
+    }
+
+    /**
+     * Propaga il flag is_wine a tutte le sottocategorie di un parent.
+     * Le sottocategorie ereditano sempre il tipo (Piatti/Vini) dal genitore.
+     */
+    public function setChildrenWine(int $parentId, int $tenantId, int $isWine): void
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE menu_categories SET is_wine = :is_wine WHERE parent_id = :parent_id AND tenant_id = :tenant_id'
+        );
+        $stmt->execute(['is_wine' => $isWine ? 1 : 0, 'parent_id' => $parentId, 'tenant_id' => $tenantId]);
     }
 
     public function delete(int $id, int $tenantId): bool

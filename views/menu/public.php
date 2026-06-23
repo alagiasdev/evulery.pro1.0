@@ -13,6 +13,7 @@
 <?php
     $hasHero = !empty($heroImage);
     $heroClass = $hasHero ? 'dm-hero--photo' : 'dm-hero--plain';
+    $featuredLabel = (isset($featuredLabel) && trim((string)$featuredLabel) !== '') ? $featuredLabel : 'Piatti del giorno';
 ?>
 
 <!-- ===== HERO ===== -->
@@ -51,7 +52,7 @@
         <?php if (!empty($specials)): ?>
         <a class="dm-landing-card dm-landing-card--special" data-target="specials">
             <div class="dm-landing-icon"><i class="bi bi-star-fill"></i></div>
-            <span class="dm-landing-label">Del Giorno</span>
+            <span class="dm-landing-label"><?= e($featuredLabel) ?></span>
             <span class="dm-landing-count"><?= count($specials) ?> piatt<?= count($specials) === 1 ? 'o' : 'i' ?></span>
         </a>
         <?php endif; ?>
@@ -75,7 +76,7 @@
 <nav class="dm-cat-nav" id="cat-nav">
     <div class="dm-cat-nav-inner">
         <?php if (!empty($specials)): ?>
-        <a href="#specials" class="dm-cat-nav-item"><i class="bi bi-star-fill" style="font-size:.68rem;margin-right:.15rem;color:#F59E0B;"></i> Del giorno</a>
+        <a href="#specials" class="dm-cat-nav-item"><i class="bi bi-star-fill" style="font-size:.68rem;margin-right:.15rem;color:#F59E0B;"></i> <?= e($featuredLabel) ?></a>
         <?php endif; ?>
         <?php foreach ($categories as $cat): ?>
         <a href="#cat-<?= (int)$cat['id'] ?>" class="dm-cat-nav-item"><?= e($cat['name']) ?></a>
@@ -102,7 +103,7 @@
     <!-- ===== DAILY SPECIALS ===== -->
     <?php if (!empty($specials)): ?>
     <div class="dm-specials dm-section-anchor" id="specials">
-        <div class="dm-specials-badge"><i class="bi bi-star-fill"></i> Piatti del giorno</div>
+        <div class="dm-specials-badge"><i class="bi bi-star-fill"></i> <?= e($featuredLabel) ?></div>
 
         <?php foreach ($specials as $special): ?>
         <div class="dm-special-card dm-searchable" data-name="<?= e(mb_strtolower($special['name'])) ?>">
@@ -111,7 +112,7 @@
                 <img src="<?= e($special['image_url']) ?>" alt="" class="dm-special-img" loading="lazy">
                 <?php endif; ?>
                 <div class="dm-special-body">
-                    <div class="dm-special-label"><i class="bi bi-star-fill"></i> Speciale del giorno</div>
+                    <div class="dm-special-label"><i class="bi bi-star-fill"></i> <?= e($featuredLabel) ?></div>
                     <div class="dm-special-name"><?= e($special['name']) ?></div>
                     <?php if ($special['description']): ?>
                     <div class="dm-special-desc"><?= e($special['description']) ?></div>
@@ -141,12 +142,13 @@
             $allCatItems = array_merge($allCatItems, $sub['items']);
         }
         $totalCount = count($allCatItems);
+        $isWine = !empty($cat['is_wine']);
     ?>
-    <div class="dm-section dm-section-anchor" id="cat-<?= (int)$cat['id'] ?>">
+    <div class="dm-section dm-section-anchor<?= $isWine ? ' dm-section--wine' : '' ?>" id="cat-<?= (int)$cat['id'] ?>">
         <div class="dm-section-header">
             <div class="dm-section-icon"><i class="bi <?= e($cat['icon'] ?? 'bi-list') ?>"></i></div>
             <h2 class="dm-section-title"><?= e($cat['name']) ?></h2>
-            <span class="dm-section-count"><?= $totalCount ?> piatt<?= $totalCount === 1 ? 'o' : 'i' ?></span>
+            <span class="dm-section-count"><?= $totalCount ?> <?= $isWine ? ('etichett' . ($totalCount === 1 ? 'a' : 'e')) : ('piatt' . ($totalCount === 1 ? 'o' : 'i')) ?></span>
         </div>
         <?php if (!empty($cat['description'])): ?>
         <p class="dm-section-desc"><?= e($cat['description']) ?></p>
@@ -154,6 +156,13 @@
 
         <?php // Items directly in parent category ?>
         <?php if (!empty($cat['items'])): ?>
+        <?php if ($isWine): ?>
+        <div class="dm-wine-list">
+            <?php foreach ($cat['items'] as $item): ?>
+            <?php include __DIR__ . '/_wine_row.php'; ?>
+            <?php endforeach; ?>
+        </div>
+        <?php else: ?>
         <div class="dm-items-grid">
             <?php foreach ($cat['items'] as $item): ?>
             <div class="dm-item <?= $item['image_url'] ? '' : 'dm-item--text-only' ?> dm-searchable" data-name="<?= e(mb_strtolower($item['name'])) ?>">
@@ -184,6 +193,7 @@
             <?php endforeach; ?>
         </div>
         <?php endif; ?>
+        <?php endif; ?>
 
         <?php // Subcategory sections ?>
         <?php foreach ($cat['subcategories'] ?? [] as $sub): ?>
@@ -192,6 +202,13 @@
                 <i class="bi <?= e($sub['icon'] ?? 'bi-list') ?>"></i>
                 <span><?= e($sub['name']) ?></span>
             </div>
+            <?php if ($isWine): ?>
+            <div class="dm-wine-list">
+                <?php foreach ($sub['items'] as $item): ?>
+                <?php include __DIR__ . '/_wine_row.php'; ?>
+                <?php endforeach; ?>
+            </div>
+            <?php else: ?>
             <div class="dm-items-grid">
                 <?php foreach ($sub['items'] as $item): ?>
                 <div class="dm-item <?= $item['image_url'] ? '' : 'dm-item--text-only' ?> dm-searchable" data-name="<?= e(mb_strtolower($item['name'])) ?>">
@@ -221,8 +238,12 @@
                 </div>
                 <?php endforeach; ?>
             </div>
+            <?php endif; ?>
         </div>
         <?php endforeach; ?>
+        <?php if ($isWine): ?>
+        <div class="dm-wine-note">Tutti i vini contengono solfiti. Carta soggetta a variazioni di annata e disponibilità.</div>
+        <?php endif; ?>
     </div>
     <?php endforeach; ?>
 

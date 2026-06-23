@@ -36,7 +36,8 @@ class MenuApiController
                 'id'               => (int)$item['id'],
                 'name'             => $item['name'],
                 'description'      => $item['description'],
-                'price'            => (float)$item['price'],
+                'price'            => $item['price'] !== null && $item['price'] !== '' ? (float)$item['price'] : null,
+                'price_bottle'     => isset($item['price_bottle']) && $item['price_bottle'] !== null && $item['price_bottle'] !== '' ? (float)$item['price_bottle'] : null,
                 'image_url'        => $item['image_url'],
                 'allergens'        => $item['allergens'],
                 'is_daily_special' => (bool)$item['is_daily_special'],
@@ -49,6 +50,7 @@ class MenuApiController
                 'id'            => $cat['id'],
                 'name'          => $cat['name'],
                 'description'   => $cat['description'],
+                'is_wine'       => (bool)($cat['is_wine'] ?? false),
                 'items'         => array_map($cleanItem, $cat['items']),
                 'subcategories' => [],
             ];

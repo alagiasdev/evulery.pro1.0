@@ -104,7 +104,7 @@ class MenuItem
         $stmt = $this->db->prepare(
             'SELECT mi.*,
                     mc.name as category_name, mc.id as cat_id, mc.description as category_description,
-                    mc.icon as category_icon, mc.parent_id as cat_parent_id,
+                    mc.icon as category_icon, mc.is_wine as category_is_wine, mc.parent_id as cat_parent_id,
                     COALESCE(parent.sort_order, mc.sort_order) as parent_sort,
                     CASE WHEN mc.parent_id IS NULL THEN 0 ELSE mc.sort_order END as sub_sort
              FROM menu_items mi
@@ -133,6 +133,7 @@ class MenuItem
                         'name'          => $row['category_name'],
                         'description'   => $row['category_description'],
                         'icon'          => $row['category_icon'] ?? 'bi-list',
+                        'is_wine'       => (int)($row['category_is_wine'] ?? 0),
                         'items'         => [],
                         'subcategories' => [],
                     ];
@@ -148,6 +149,7 @@ class MenuItem
                         'name'          => $parentCat['name'] ?? '',
                         'description'   => $parentCat['description'] ?? '',
                         'icon'          => $parentCat['icon'] ?? 'bi-list',
+                        'is_wine'       => (int)($parentCat['is_wine'] ?? 0),
                         'items'         => [],
                         'subcategories' => [],
                     ];
@@ -180,7 +182,7 @@ class MenuItem
         $stmt = $this->db->prepare(
             'SELECT mi.*,
                     mc.name as category_name, mc.id as cat_id, mc.description as category_description,
-                    mc.icon as category_icon, mc.parent_id as cat_parent_id,
+                    mc.icon as category_icon, mc.is_wine as category_is_wine, mc.parent_id as cat_parent_id,
                     COALESCE(parent.sort_order, mc.sort_order) as parent_sort,
                     CASE WHEN mc.parent_id IS NULL THEN 0 ELSE mc.sort_order END as sub_sort
              FROM menu_items mi
@@ -206,6 +208,7 @@ class MenuItem
                         'name'          => $row['category_name'],
                         'description'   => $row['category_description'],
                         'icon'          => $row['category_icon'] ?? 'bi-list',
+                        'is_wine'       => (int)($row['category_is_wine'] ?? 0),
                         'items'         => [],
                         'subcategories' => [],
                     ];
@@ -219,6 +222,7 @@ class MenuItem
                         'name'          => $parentCat['name'] ?? '',
                         'description'   => $parentCat['description'] ?? '',
                         'icon'          => $parentCat['icon'] ?? 'bi-list',
+                        'is_wine'       => (int)($parentCat['is_wine'] ?? 0),
                         'items'         => [],
                         'subcategories' => [],
                     ];
@@ -275,9 +279,9 @@ class MenuItem
     public function create(int $tenantId, array $data): int
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO menu_items (tenant_id, category_id, name, description, price, image_url, allergens,
+            'INSERT INTO menu_items (tenant_id, category_id, name, description, price, price_bottle, image_url, allergens,
                                      is_available, is_daily_special, is_orderable, prep_minutes, max_daily_qty, sort_order)
-             VALUES (:tenant_id, :category_id, :name, :description, :price, :image_url, :allergens,
+             VALUES (:tenant_id, :category_id, :name, :description, :price, :price_bottle, :image_url, :allergens,
                      :is_available, :is_daily_special, :is_orderable, :prep_minutes, :max_daily_qty, :sort_order)'
         );
         $stmt->execute([
@@ -285,7 +289,8 @@ class MenuItem
             'category_id'      => (int)$data['category_id'],
             'name'             => $data['name'],
             'description'      => $data['description'] ?? null,
-            'price'            => (float)$data['price'],
+            'price'            => isset($data['price']) && $data['price'] !== null && $data['price'] !== '' ? (float)$data['price'] : null,
+            'price_bottle'     => isset($data['price_bottle']) && $data['price_bottle'] !== null && $data['price_bottle'] !== '' ? (float)$data['price_bottle'] : null,
             'image_url'        => $data['image_url'] ?? null,
             'allergens'        => $this->encodeAllergens($data['allergens'] ?? []),
             'is_available'     => $data['is_available'] ?? 1,
@@ -302,7 +307,7 @@ class MenuItem
     {
         $stmt = $this->db->prepare(
             'UPDATE menu_items SET category_id = :category_id, name = :name, description = :description,
-                    price = :price, image_url = :image_url, allergens = :allergens,
+                    price = :price, price_bottle = :price_bottle, image_url = :image_url, allergens = :allergens,
                     is_available = :is_available, is_daily_special = :is_daily_special,
                     is_orderable = :is_orderable, prep_minutes = :prep_minutes, max_daily_qty = :max_daily_qty,
                     sort_order = :sort_order
@@ -314,7 +319,8 @@ class MenuItem
             'category_id'      => (int)$data['category_id'],
             'name'             => $data['name'],
             'description'      => $data['description'] ?? null,
-            'price'            => (float)$data['price'],
+            'price'            => isset($data['price']) && $data['price'] !== null && $data['price'] !== '' ? (float)$data['price'] : null,
+            'price_bottle'     => isset($data['price_bottle']) && $data['price_bottle'] !== null && $data['price_bottle'] !== '' ? (float)$data['price_bottle'] : null,
             'image_url'        => $data['image_url'] ?? null,
             'allergens'        => $this->encodeAllergens($data['allergens'] ?? []),
             'is_available'     => $data['is_available'] ?? 1,

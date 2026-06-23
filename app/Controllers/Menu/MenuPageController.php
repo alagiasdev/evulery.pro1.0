@@ -72,6 +72,7 @@ class MenuPageController
             'allergenIcons'  => MenuItem::ALLERGEN_ICONS,
             'allergenColors' => MenuItem::ALLERGEN_COLORS,
             'heroImage'      => $tenant['menu_hero_image'] ?? null,
+            'featuredLabel'  => trim((string)($tenant['menu_featured_label'] ?? '')) !== '' ? $tenant['menu_featured_label'] : 'Piatti del giorno',
             'tagline'        => $tenant['menu_tagline'] ?? null,
             'openingHours'   => $tenant['opening_hours'] ?? null,
             'phone'          => $tenant['phone'] ?? null,

@@ -47,12 +47,18 @@ $menuTabs = [
             <div class="dm-cat-header" data-toggle-cat>
                 <div class="dm-cat-expand"><i class="bi bi-chevron-right"></i></div>
                 <div class="dm-cat-icon"><i class="bi <?= e($parent['icon'] ?? 'bi-list') ?>"></i></div>
-                <div class="dm-cat-name"><?= e($parent['name']) ?></div>
-                <div class="dm-cat-badge"><?= $totalItems ?> piatt<?= $totalItems === 1 ? 'o' : 'i' ?></div>
+                <div class="dm-cat-name">
+                    <?= e($parent['name']) ?>
+                    <?php if (!empty($parent['is_wine'])): ?>
+                    <span class="badge" style="background:#f5e9ec; color:#7b2d3a; font-size:.62rem; font-weight:700; vertical-align:middle;"><i class="bi bi-cup-straw"></i> Vini</span>
+                    <?php endif; ?>
+                </div>
+                <div class="dm-cat-badge"><?= $totalItems ?> <?= !empty($parent['is_wine']) ? ('etichett' . ($totalItems === 1 ? 'a' : 'e')) : ('piatt' . ($totalItems === 1 ? 'o' : 'i')) ?></div>
                 <div class="dm-cat-actions">
                     <button type="button" class="dm-cat-action-btn" data-edit-cat="<?= (int)$parent['id'] ?>"
                             data-cat-name="<?= e($parent['name']) ?>" data-cat-desc="<?= e($parent['description'] ?? '') ?>"
-                            data-cat-icon="<?= e($parent['icon'] ?? 'bi-list') ?>" title="Modifica">
+                            data-cat-icon="<?= e($parent['icon'] ?? 'bi-list') ?>" data-cat-iswine="<?= !empty($parent['is_wine']) ? '1' : '0' ?>"
+                            data-cat-isparent="1" title="Modifica">
                         <i class="bi bi-pencil"></i>
                     </button>
                     <form method="POST" action="<?= url("dashboard/menu/categories/{$parent['id']}/delete") ?>" class="d-inline">
@@ -76,7 +82,8 @@ $menuTabs = [
                         <div class="dm-subcat-actions">
                             <button type="button" class="dm-cat-action-btn" data-edit-cat="<?= (int)$child['id'] ?>"
                                     data-cat-name="<?= e($child['name']) ?>" data-cat-desc="<?= e($child['description'] ?? '') ?>"
-                                    data-cat-icon="<?= e($child['icon'] ?? 'bi-list') ?>" title="Modifica">
+                                    data-cat-icon="<?= e($child['icon'] ?? 'bi-list') ?>" data-cat-iswine="<?= !empty($child['is_wine']) ? '1' : '0' ?>"
+                                    data-cat-isparent="0" title="Modifica">
                                 <i class="bi bi-pencil"></i>
                             </button>
                             <form method="POST" action="<?= url("dashboard/menu/categories/{$child['id']}/delete") ?>" class="d-inline">
@@ -147,6 +154,16 @@ $menuTabs = [
                     <?php endforeach; ?>
                 </div>
             </div>
+            <div style="margin-bottom:.6rem;">
+                <label class="form-label fw-semibold" style="font-size:.75rem; margin-bottom:.2rem;">Tipo categoria</label>
+                <div class="btn-group btn-group-sm d-flex" role="group" style="max-width:280px;">
+                    <input type="radio" class="btn-check" name="is_wine" id="ct-food" value="0" checked>
+                    <label class="btn btn-outline-success" for="ct-food"><i class="bi bi-egg-fried me-1"></i> Piatti</label>
+                    <input type="radio" class="btn-check" name="is_wine" id="ct-wine" value="1">
+                    <label class="btn btn-outline-secondary" for="ct-wine"><i class="bi bi-cup-straw me-1"></i> Vini</label>
+                </div>
+                <div style="font-size:.7rem; color:#6c757d; margin-top:.25rem;">Le categorie "Vini" mostrano righe-vino: doppio prezzo (calice/bottiglia), niente foto né allergeni. Le sottocategorie ereditano il tipo.</div>
+            </div>
             <div style="display:flex; gap:.5rem; justify-content:flex-end;">
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="newCatCancel">Annulla</button>
                 <button type="submit" class="btn btn-sm btn-save">
@@ -179,6 +196,16 @@ $menuTabs = [
                     <div class="mb-2">
                         <label class="form-label fw-semibold" style="font-size:.82rem;">Descrizione</label>
                         <input type="text" name="description" id="editCatDesc" class="form-control form-control-sm" maxlength="500">
+                    </div>
+                    <div class="mb-2" id="editCatTypeWrap">
+                        <label class="form-label fw-semibold" style="font-size:.82rem;">Tipo categoria</label>
+                        <div class="btn-group btn-group-sm d-flex" role="group">
+                            <input type="radio" class="btn-check" name="is_wine" id="ct-edit-food" value="0">
+                            <label class="btn btn-outline-success" for="ct-edit-food"><i class="bi bi-egg-fried me-1"></i> Piatti</label>
+                            <input type="radio" class="btn-check" name="is_wine" id="ct-edit-wine" value="1">
+                            <label class="btn btn-outline-secondary" for="ct-edit-wine"><i class="bi bi-cup-straw me-1"></i> Vini</label>
+                        </div>
+                        <div style="font-size:.7rem; color:#6c757d; margin-top:.25rem;">Cambiando il tipo, anche le sottocategorie vengono aggiornate.</div>
                     </div>
                     <div class="mb-2">
                         <label class="form-label fw-semibold" style="font-size:.82rem;">Icona</label>
@@ -229,6 +256,12 @@ $menuTabs = [
             document.getElementById('editCatDesc').value = this.dataset.catDesc;
             var radios = document.querySelectorAll('#editCatIconGrid input[type="radio"]');
             radios.forEach(function(r) { r.checked = (r.value === icon); });
+            // Tipo categoria: il toggle si modifica solo a livello di parent (i figli ereditano).
+            var isWine = this.dataset.catIswine === '1';
+            var isParent = this.dataset.catIsparent === '1';
+            document.getElementById('ct-edit-food').checked = !isWine;
+            document.getElementById('ct-edit-wine').checked = isWine;
+            document.getElementById('editCatTypeWrap').style.display = isParent ? '' : 'none';
             new bootstrap.Modal(document.getElementById('editCatModal')).show();
         });
     });

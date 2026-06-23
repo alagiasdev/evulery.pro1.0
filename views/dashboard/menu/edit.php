@@ -21,16 +21,16 @@ if (is_string($existingAllergens)) {
 
                 <div class="mb-3">
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Categoria *</label>
-                    <select name="category_id" class="form-select form-select-sm" required>
+                    <select name="category_id" id="categorySelect" class="form-select form-select-sm" required>
                         <option value="">Seleziona...</option>
                         <?php foreach ($hierarchy as $parent): ?>
                             <?php if (empty($parent['children'])): ?>
-                            <option value="<?= (int)$parent['id'] ?>" <?= ($old['category_id'] ?? '') == $parent['id'] ? 'selected' : '' ?>><?= e($parent['name']) ?></option>
+                            <option value="<?= (int)$parent['id'] ?>" data-wine="<?= !empty($parent['is_wine']) ? '1' : '0' ?>" <?= ($old['category_id'] ?? '') == $parent['id'] ? 'selected' : '' ?>><?= e($parent['name']) ?></option>
                             <?php else: ?>
                             <optgroup label="<?= e($parent['name']) ?>">
-                                <option value="<?= (int)$parent['id'] ?>" <?= ($old['category_id'] ?? '') == $parent['id'] ? 'selected' : '' ?>><?= e($parent['name']) ?> (generale)</option>
+                                <option value="<?= (int)$parent['id'] ?>" data-wine="<?= !empty($parent['is_wine']) ? '1' : '0' ?>" <?= ($old['category_id'] ?? '') == $parent['id'] ? 'selected' : '' ?>><?= e($parent['name']) ?> (generale)</option>
                                 <?php foreach ($parent['children'] as $child): ?>
-                                <option value="<?= (int)$child['id'] ?>" <?= ($old['category_id'] ?? '') == $child['id'] ? 'selected' : '' ?>><?= e($child['name']) ?></option>
+                                <option value="<?= (int)$child['id'] ?>" data-wine="<?= !empty($child['is_wine']) ? '1' : '0' ?>" <?= ($old['category_id'] ?? '') == $child['id'] ? 'selected' : '' ?>><?= e($child['name']) ?></option>
                                 <?php endforeach; ?>
                             </optgroup>
                             <?php endif; ?>
@@ -39,23 +39,34 @@ if (is_string($existingAllergens)) {
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-semibold" style="font-size:.82rem;">Nome piatto *</label>
+                    <label class="form-label fw-semibold" style="font-size:.82rem;"><span id="nameLabel">Nome piatto</span> *</label>
                     <input type="text" name="name" class="form-control form-control-sm" required maxlength="150"
                            value="<?= e($old['name'] ?? '') ?>">
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-semibold" style="font-size:.82rem;">Descrizione</label>
+                    <label class="form-label fw-semibold" style="font-size:.82rem;" id="descLabel">Descrizione</label>
                     <textarea name="description" class="form-control form-control-sm" rows="2" maxlength="2000"><?= e($old['description'] ?? '') ?></textarea>
+                    <div id="descHint" style="font-size:.72rem; color:#6c757d; margin-top:.2rem; display:none;">Per i vini: produttore, regione, annata. Es. "Castello di Ama &middot; Toscana &middot; 2020"</div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-semibold" style="font-size:.82rem;">Prezzo (&euro;) *</label>
-                    <input type="number" name="price" class="form-control form-control-sm" required step="0.01" min="0.01"
-                           value="<?= e($old['price'] ?? '') ?>" style="max-width:150px;">
+                    <div class="row g-2" style="max-width:340px;">
+                        <div class="col">
+                            <label class="form-label fw-semibold" style="font-size:.82rem;"><span id="priceLabel">Prezzo</span> (&euro;) <span id="priceReq">*</span></label>
+                            <input type="number" name="price" id="priceInput" class="form-control form-control-sm" step="0.01" min="0.01"
+                                   value="<?= e($old['price'] ?? '') ?>">
+                        </div>
+                        <div class="col" id="priceBottleWrap" style="display:none;">
+                            <label class="form-label fw-semibold" style="font-size:.82rem;">Bottiglia (&euro;)</label>
+                            <input type="number" name="price_bottle" id="priceBottleInput" class="form-control form-control-sm" step="0.01" min="0.01"
+                                   value="<?= e($old['price_bottle'] ?? '') ?>">
+                        </div>
+                    </div>
+                    <div id="priceHint" style="font-size:.72rem; color:#6c757d; margin-top:.2rem; display:none;">Per i vini compila almeno uno tra calice e bottiglia (es. solo bottiglia per i grandi rossi).</div>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3" id="fotoBlock">
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Foto</label>
                     <?php if (!empty($item['image_url'])): ?>
                     <div style="margin-bottom:.5rem;">
@@ -69,7 +80,7 @@ if (is_string($existingAllergens)) {
                     <div style="font-size:.72rem; color:#6c757d; margin-top:.25rem;">JPG, PNG o WebP. Max 2MB.</div>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3" id="allergeniBlock">
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Allergeni</label>
                     <div class="dm-allergen-grid">
                         <?php foreach ($allergens as $key => $label): ?>
@@ -90,12 +101,12 @@ if (is_string($existingAllergens)) {
                     </label>
                     <label class="d-flex align-items-center gap-2" style="font-size:.82rem; cursor:pointer;">
                         <input type="checkbox" name="is_daily_special" value="1" <?= ($old['is_daily_special'] ?? 0) ? 'checked' : '' ?>>
-                        <span class="fw-semibold">Piatto del giorno</span>
+                        <span class="fw-semibold">In evidenza</span>
                     </label>
                 </div>
 
                 <?php if (tenant_can('online_ordering')): ?>
-                <div class="card mb-3" style="background:#f8f9fa; border:1px solid #dee2e6; padding:.75rem;">
+                <div class="card mb-3" id="orderingBlock" style="background:#f8f9fa; border:1px solid #dee2e6; padding:.75rem;">
                     <label class="form-label fw-semibold" style="font-size:.82rem;"><i class="bi bi-bag-check me-1"></i> Ordini online</label>
                     <div class="mb-2">
                         <label class="d-flex align-items-center gap-2" style="font-size:.82rem; cursor:pointer;">
@@ -128,3 +139,27 @@ if (is_string($existingAllergens)) {
         </div>
     </div>
 </div>
+
+<script nonce="<?= csp_nonce() ?>">
+(function(){
+    var sel = document.getElementById('categorySelect');
+    if (!sel) return;
+    function $(id){ return document.getElementById(id); }
+    function apply(){
+        var opt = sel.options[sel.selectedIndex];
+        var wine = !!(opt && opt.dataset.wine === '1');
+        $('nameLabel').textContent  = wine ? 'Nome vino' : 'Nome piatto';
+        $('descLabel').textContent  = wine ? 'Produttore · Regione · Annata' : 'Descrizione';
+        $('descHint').style.display = wine ? '' : 'none';
+        $('priceLabel').textContent = wine ? 'Calice' : 'Prezzo';
+        $('priceReq').style.display = wine ? 'none' : '';
+        $('priceBottleWrap').style.display = wine ? '' : 'none';
+        $('priceHint').style.display = wine ? '' : 'none';
+        var foto = $('fotoBlock'); if (foto) foto.style.display = wine ? 'none' : '';
+        var alg  = $('allergeniBlock'); if (alg) alg.style.display = wine ? 'none' : '';
+        var ord  = $('orderingBlock'); if (ord) ord.style.display = wine ? 'none' : '';
+    }
+    sel.addEventListener('change', apply);
+    apply();
+})();
+</script>

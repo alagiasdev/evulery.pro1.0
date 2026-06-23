@@ -555,4 +555,23 @@ body {
     .dm-hero-info { gap: .4rem 1rem; }
     .dm-section-desc { padding-left: 0; }
     .dm-allergen-tag { font-size: .6rem; padding: .18rem .45rem; }
+    .dm-wine-head { flex-direction: column; align-items: flex-start; gap: .1rem; }
+    .dm-wine-prices { text-align: left; font-size: .8rem; }
 }
+
+/* ============================================================
+   WINE ROWS (categorie "Vini": doppio prezzo, no foto/allergeni)
+   ============================================================ */
+.dm-wine-list { display: flex; flex-direction: column; }
+.dm-wine {
+    padding: .8rem 1rem;
+    border-bottom: 1px solid var(--dm-border-light);
+}
+.dm-wine:last-child { border-bottom: none; }
+.dm-wine-head { display: flex; justify-content: space-between; align-items: baseline; gap: .85rem; }
+.dm-wine-name { font-weight: 700; font-size: .92rem; color: var(--dm-text-dark); line-height: 1.3; }
+.dm-wine-prices { white-space: nowrap; text-align: right; font-size: .82rem; color: var(--dm-text-muted); flex-shrink: 0; }
+.dm-wine-prices b { color: var(--dm-text-dark); font-weight: 700; }
+.dm-wine-prices .dm-wp-sep { margin: 0 .35rem; color: var(--dm-border); }
+.dm-wine-sub { font-size: .78rem; color: var(--dm-text-muted); margin-top: .2rem; }
+.dm-wine-note { font-size: .72rem; color: var(--dm-text-light); font-style: italic; margin: .85rem 0 0; padding: 0 1rem; }

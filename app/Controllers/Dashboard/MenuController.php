@@ -148,11 +148,16 @@ class MenuController
         if (!array_key_exists($icon, MenuCategory::ICONS)) {
             $icon = 'bi-list';
         }
+        // is_wine: le sottocategorie ereditano il tipo dal genitore; i parent dal form.
+        $isWine = $parentId !== null
+            ? (int)($parent['is_wine'] ?? 0)
+            : (!empty($data['is_wine']) ? 1 : 0);
         $catModel->create($tenantId, [
             'parent_id'   => $parentId,
             'name'        => trim($data['name']),
             'description' => trim($data['description'] ?? ''),
             'icon'        => $icon,
+            'is_wine'     => $isWine,
             'sort_order'  => $catModel->getNextSortOrder($tenantId, $parentId),
         ]);
 
@@ -194,13 +199,23 @@ class MenuController
         if (!array_key_exists($icon, MenuCategory::ICONS)) {
             $icon = $existing['icon'];
         }
+        // is_wine: solo i parent lo cambiano dal form; le sottocategorie lo ereditano
+        // e lo conservano (la modifica avviene a livello di parent, che propaga ai figli).
+        $isParent = $existing['parent_id'] === null;
+        $isWine = $isParent ? (isset($data['is_wine']) ? 1 : 0) : (int)$existing['is_wine'];
+
         $catModel->update($id, $tenantId, [
             'name'        => trim($data['name']),
             'description' => trim($data['description'] ?? ''),
             'icon'        => $icon,
+            'is_wine'     => $isWine,
             'sort_order'  => $existing['sort_order'],
             'is_active'   => isset($data['is_active']) ? 1 : (int)$existing['is_active'],
         ]);
+
+        if ($isParent) {
+            $catModel->setChildrenWine($id, $tenantId, $isWine);
+        }
 
         AuditLog::log(AuditLog::MENU_CATEGORY_UPDATED, "Categoria ID: {$id}", Auth::id(), $tenantId);
 
@@ -426,8 +441,9 @@ class MenuController
         $data = $request->all();
 
         $update = [
-            'menu_tagline'   => trim($data['menu_tagline'] ?? ''),
-            'opening_hours'  => trim($data['opening_hours'] ?? ''),
+            'menu_tagline'        => trim($data['menu_tagline'] ?? ''),
+            'opening_hours'       => trim($data['opening_hours'] ?? ''),
+            'menu_featured_label' => mb_substr(trim($data['menu_featured_label'] ?? ''), 0, 40),
         ];
 
         // Hero image upload
@@ -486,7 +502,6 @@ class MenuController
         $v = Validator::make($data)
             ->required('name', 'Nome piatto')
             ->maxLength('name', 150, 'Nome piatto')
-            ->required('price', 'Prezzo')
             ->required('category_id', 'Categoria');
 
         if ($v->fails()) {
@@ -495,36 +510,57 @@ class MenuController
             Response::redirect($redirectUrl);
         }
 
-        $price = (float)$data['price'];
-        if ($price <= 0) {
-            flash('danger', 'Il prezzo deve essere maggiore di 0.');
-            Session::flash('old_input', $data);
-            Response::redirect($redirectUrl);
-        }
-
         $catModel = new MenuCategory();
-        if (!$catModel->findById((int)$data['category_id'], $tenantId)) {
+        $category = $catModel->findById((int)$data['category_id'], $tenantId);
+        if (!$category) {
             flash('danger', 'Categoria non valida.');
             Session::flash('old_input', $data);
             Response::redirect($redirectUrl);
         }
+        $isWine = !empty($category['is_wine']);
 
-        // Validate allergens
-        $allergens = $data['allergens'] ?? [];
-        $validAllergens = array_intersect($allergens, array_keys(MenuItem::ALLERGENS));
+        // Prezzi: piatto = prezzo unico obbligatorio; vino = calice e/o bottiglia (almeno uno).
+        $price       = ($data['price'] ?? '') !== '' ? (float)$data['price'] : null;
+        $priceBottle = ($data['price_bottle'] ?? '') !== '' ? (float)$data['price_bottle'] : null;
+
+        if ($isWine) {
+            if (($price === null || $price <= 0) && ($priceBottle === null || $priceBottle <= 0)) {
+                flash('danger', 'Inserisci almeno un prezzo (calice o bottiglia).');
+                Session::flash('old_input', $data);
+                Response::redirect($redirectUrl);
+            }
+            // Normalizza: un prezzo <= 0 vale come assente.
+            if ($price !== null && $price <= 0)       { $price = null; }
+            if ($priceBottle !== null && $priceBottle <= 0) { $priceBottle = null; }
+        } else {
+            if ($price === null || $price <= 0) {
+                flash('danger', 'Il prezzo deve essere maggiore di 0.');
+                Session::flash('old_input', $data);
+                Response::redirect($redirectUrl);
+            }
+            $priceBottle = null; // i piatti non hanno prezzo bottiglia
+        }
+
+        // Allergeni: solo per i piatti (i vini non li usano).
+        $validAllergens = [];
+        if (!$isWine) {
+            $allergens = $data['allergens'] ?? [];
+            $validAllergens = array_intersect($allergens, array_keys(MenuItem::ALLERGENS));
+        }
 
         $result = [
             'category_id'      => (int)$data['category_id'],
             'name'             => trim($data['name']),
             'description'      => trim($data['description'] ?? ''),
             'price'            => $price,
+            'price_bottle'     => $priceBottle,
             'allergens'        => $validAllergens,
             'is_available'     => isset($data['is_available']) ? 1 : 0,
             'is_daily_special' => isset($data['is_daily_special']) ? 1 : 0,
         ];
 
-        // Ordering fields (only if service available)
-        if (tenant_can('online_ordering')) {
+        // Ordering fields (only if service available + non vino)
+        if (!$isWine && tenant_can('online_ordering')) {
             $result['is_orderable']  = isset($data['is_orderable']) ? 1 : 0;
             $result['prep_minutes']  = !empty($data['prep_minutes']) ? (int)$data['prep_minutes'] : null;
             $result['max_daily_qty'] = !empty($data['max_daily_qty']) ? (int)$data['max_daily_qty'] : null;

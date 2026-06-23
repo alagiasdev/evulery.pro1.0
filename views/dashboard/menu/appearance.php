@@ -75,6 +75,12 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                     <div style="font-size:.72rem; color:#6c757d; margin-top:.2rem;">Appare sotto il nome del ristorante nell'header</div>
                 </div>
                 <div class="mb-3">
+                    <label class="form-label fw-semibold" style="font-size:.82rem;">Titolo sezione "in evidenza"</label>
+                    <input type="text" name="menu_featured_label" class="form-control form-control-sm" maxlength="40"
+                           value="<?= e($tenant['menu_featured_label'] ?? '') ?>" placeholder="Piatti del giorno">
+                    <div style="font-size:.72rem; color:#6c757d; margin-top:.2rem;">Titolo del blocco che raccoglie i piatti marcati "in evidenza". Es. "Selezionati dallo chef", "Piatto del mese", "Scelti per voi". Vuoto = "Piatti del giorno".</div>
+                </div>
+                <div class="mb-3">
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Orari di apertura</label>
                     <input type="text" name="opening_hours" class="form-control form-control-sm" maxlength="500"
                            value="<?= e($tenant['opening_hours'] ?? '') ?>" placeholder="es. 12:00 – 15:00 / 19:00 – 23:00">
