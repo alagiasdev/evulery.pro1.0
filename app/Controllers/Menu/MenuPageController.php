@@ -160,6 +160,7 @@ class MenuPageController
     {
         $strings = [
             'it' => [
+                'menu_eyebrow' => 'Menù', 'cta_eyebrow' => 'Prenotazioni',
                 'browse' => 'Sfoglia il menu', 'search' => 'Cerca nel menu...',
                 'dish_1' => 'piatto', 'dish_n' => 'piatti', 'wine_1' => 'etichetta', 'wine_n' => 'etichette',
                 'glass' => 'Calice', 'bottle' => 'Bottiglia',
@@ -170,6 +171,7 @@ class MenuPageController
                 'cta_btn' => 'Prenota un tavolo', 'empty' => 'Il menu non è ancora disponibile.',
             ],
             'en' => [
+                'menu_eyebrow' => 'Menu', 'cta_eyebrow' => 'Reservations',
                 'browse' => 'Browse the menu', 'search' => 'Search the menu...',
                 'dish_1' => 'dish', 'dish_n' => 'dishes', 'wine_1' => 'wine', 'wine_n' => 'wines',
                 'glass' => 'Glass', 'bottle' => 'Bottle',

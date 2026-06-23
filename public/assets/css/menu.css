@@ -676,3 +676,52 @@ body {
 
 /* Etichetta allergeni inline tradotta via attributo lang */
 html[lang="en"] .dm-item-meta .dm-allergen-tags::before { content: 'Allergens'; }
+
+/* ============================================================
+   ALLINEAMENTO WIREFRAME — eyebrow, griglia compatta, proposta chef, legenda grigia
+   ============================================================ */
+
+/* Eyebrow (occhiello) hero + CTA */
+.dm-hero-over {
+    font-size: .64rem; letter-spacing: .38em; text-transform: uppercase;
+    opacity: .85; margin-bottom: .55rem; font-weight: 600;
+}
+.dm-cta-over {
+    font-size: .64rem; letter-spacing: .3em; text-transform: uppercase;
+    color: rgba(255,255,255,.5); margin-bottom: .5rem; font-weight: 600;
+}
+
+/* Griglia categorie compatta/discreta */
+.dm-landing { margin-top: -.9rem; }
+.dm-landing-title { font-size: .64rem; margin-bottom: .6rem; }
+.dm-landing-grid { gap: .5rem; }
+.dm-landing-card { padding: .65rem .5rem; gap: .25rem; box-shadow: none; border-radius: 11px; }
+.dm-landing-icon { width: 30px; height: 30px; font-size: .9rem; border-radius: 9px; }
+.dm-landing-label { font-size: .72rem; }
+.dm-landing-count { font-size: .58rem; }
+
+/* Card "Proposta dello chef" (piatto in evidenza) */
+.dm-feature {
+    margin: 1.4rem 0 .5rem;
+    border: 1px solid var(--dm-border);
+    border-radius: var(--dm-radius);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 42% 1fr;
+    background: var(--dm-bg-card);
+}
+.dm-feature.dm-feature--nophoto { grid-template-columns: 1fr; }
+.dm-feature-ph { background: center/cover no-repeat; min-height: 190px; }
+.dm-feature-bd { padding: 1.15rem 1.3rem; display: flex; flex-direction: column; justify-content: center; }
+.dm-feature-tag { font-size: .6rem; letter-spacing: .16em; text-transform: uppercase; color: var(--dm-brand); font-weight: 700; }
+.dm-feature-name { font-family: 'Fraunces', Georgia, serif; font-size: 1.5rem; font-weight: 600; margin: .3rem 0; line-height: 1.1; }
+.dm-feature-desc { font-size: .85rem; color: var(--dm-text-muted); line-height: 1.45; }
+.dm-feature-price { font-weight: 800; font-size: 1.05rem; margin-top: .65rem; color: var(--dm-text-dark); }
+@media (max-width: 480px) {
+    .dm-feature { grid-template-columns: 1fr; }
+    .dm-feature-ph { min-height: 150px; }
+}
+
+/* Legenda allergeni neutra (grigia, niente arcobaleno) */
+.dm-legend-tag { background: transparent !important; color: var(--dm-text-muted) !important; padding: 0 !important; border-radius: 0 !important; }
+.dm-legend-tag .dm-allergen-tag-dot { background: #cfcdd4 !important; }

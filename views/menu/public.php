@@ -21,6 +21,7 @@
     $menuLanguages = $menuLanguages ?? ['it'];
     $langMeta = $langMeta ?? [];
     $ui = $ui ?? [
+        'menu_eyebrow' => 'Menù', 'cta_eyebrow' => 'Prenotazioni',
         'browse' => 'Sfoglia il menu', 'search' => 'Cerca nel menu...',
         'dish_1' => 'piatto', 'dish_n' => 'piatti', 'wine_1' => 'etichetta', 'wine_n' => 'etichette',
         'glass' => 'Calice', 'bottle' => 'Bottiglia',
@@ -51,6 +52,7 @@
     </div>
     <?php endif; ?>
     <div class="dm-hero-content">
+        <div class="dm-hero-over"><?= e($ui['menu_eyebrow'] ?? 'Menù') ?></div>
         <?php if ($tenantLogo): ?>
         <img src="<?= e($tenantLogo) ?>" alt="<?= e($tenantName) ?>" class="dm-hero-logo dm-hero-logo--solo">
         <?php endif; ?>
@@ -128,38 +130,43 @@
     </div>
     <?php else: ?>
 
-    <!-- ===== DAILY SPECIALS ===== -->
+    <!-- ===== IN EVIDENZA: proposta dello chef + sezione numerata ===== -->
     <?php if (!empty($specials)): ?>
-    <div class="dm-specials dm-section-anchor" id="specials">
-        <div class="dm-specials-badge"><i class="bi bi-star-fill"></i> <?= e($featuredLabel) ?></div>
-
-        <?php foreach ($specials as $special): ?>
-        <div class="dm-special-card dm-searchable" data-name="<?= e(mb_strtolower($special['name'])) ?>">
-            <div class="dm-special-inner">
-                <?php if ($special['image_url']): ?>
-                <img src="<?= e($special['image_url']) ?>" alt="" class="dm-special-img" loading="lazy">
-                <?php endif; ?>
-                <div class="dm-special-body">
-                    <div class="dm-special-label"><i class="bi bi-star-fill"></i> <?= e($featuredLabel) ?></div>
-                    <div class="dm-special-name"><?= e($special['name']) ?></div>
-                    <?php if ($special['description']): ?>
-                    <div class="dm-special-desc"><?= e($special['description']) ?></div>
-                    <?php endif; ?>
-                    <div class="dm-special-footer">
-                        <span class="dm-special-price"><?= number_format((float)$special['price'], 2, ',', '.') ?> &euro;</span>
-                        <?php if (!empty($special['allergens'])): ?>
-                        <span class="dm-special-allergens">
-                            <?php foreach ($special['allergens'] as $aKey): ?>
-                            <span class="dm-allergen-tag dm-at-<?= e($aKey) ?>"><span class="dm-allergen-tag-dot"></span><?= e($allergens[$aKey] ?? $aKey) ?></span>
-                            <?php endforeach; ?>
-                        </span>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
+    <?php $feat = $specials[0]; $restSpecials = array_slice($specials, 1); ?>
+    <div class="dm-feature dm-section-anchor<?= $feat['image_url'] ? '' : ' dm-feature--nophoto' ?> dm-searchable" id="specials" data-name="<?= e(mb_strtolower($feat['name'])) ?>">
+        <?php if ($feat['image_url']): ?>
+        <div class="dm-feature-ph" style="background-image:url('<?= e($feat['image_url']) ?>')"></div>
+        <?php endif; ?>
+        <div class="dm-feature-bd">
+            <div class="dm-feature-tag"><?= e($featuredLabel) ?></div>
+            <div class="dm-feature-name"><?= e($feat['name']) ?></div>
+            <?php if ($feat['description']): ?>
+            <div class="dm-feature-desc"><?= e($feat['description']) ?></div>
+            <?php endif; ?>
+            <div class="dm-feature-price"><?= number_format((float)$feat['price'], 2, ',', '.') ?> &euro;</div>
+            <?php if (!empty($feat['allergens'])): ?>
+            <div class="dm-item-meta"><div class="dm-allergen-tags">
+                <?php foreach ($feat['allergens'] as $aKey): ?>
+                <span class="dm-allergen-tag dm-at-<?= e($aKey) ?>"><span class="dm-allergen-tag-dot"></span><?= e($allergens[$aKey] ?? $aKey) ?></span>
+                <?php endforeach; ?>
+            </div></div>
+            <?php endif; ?>
         </div>
-        <?php endforeach; ?>
     </div>
+
+    <?php if (!empty($restSpecials)): ?>
+    <div class="dm-section dm-section-anchor" id="specials-list">
+        <div class="dm-section-header">
+            <h2 class="dm-section-title"><?= e($featuredLabel) ?></h2>
+            <span class="dm-section-count"><?= e($countLabel(count($restSpecials))) ?></span>
+        </div>
+        <div class="dm-items-grid">
+            <?php foreach ($restSpecials as $item): ?>
+            <?php include __DIR__ . '/_dish_row.php'; ?>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php endif; ?>
     <?php endif; ?>
 
     <!-- ===== CATEGORY SECTIONS ===== -->
@@ -193,31 +200,7 @@
         <?php else: ?>
         <div class="dm-items-grid">
             <?php foreach ($cat['items'] as $item): ?>
-            <div class="dm-item <?= $item['image_url'] ? '' : 'dm-item--text-only' ?> dm-searchable" data-name="<?= e(mb_strtolower($item['name'])) ?>">
-                <?php if ($item['image_url']): ?>
-                <div class="dm-item-img-wrap">
-                    <img src="<?= e($item['image_url']) ?>" alt="" class="dm-item-img" loading="lazy">
-                </div>
-                <?php endif; ?>
-                <div class="dm-item-content">
-                    <div class="dm-item-top">
-                        <span class="dm-item-name"><?= e($item['name']) ?></span>
-                        <span class="dm-item-price"><?= number_format((float)$item['price'], 2, ',', '.') ?> &euro;</span>
-                    </div>
-                    <?php if ($item['description']): ?>
-                    <div class="dm-item-desc"><?= e($item['description']) ?></div>
-                    <?php endif; ?>
-                    <?php if (!empty($item['allergens'])): ?>
-                    <div class="dm-item-meta">
-                        <div class="dm-allergen-tags">
-                            <?php foreach ($item['allergens'] as $aKey): ?>
-                            <span class="dm-allergen-tag dm-at-<?= e($aKey) ?>"><span class="dm-allergen-tag-dot"></span><?= e($allergens[$aKey] ?? $aKey) ?></span>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                </div>
-            </div>
+            <?php include __DIR__ . '/_dish_row.php'; ?>
             <?php endforeach; ?>
         </div>
         <?php endif; ?>
@@ -239,31 +222,7 @@
             <?php else: ?>
             <div class="dm-items-grid">
                 <?php foreach ($sub['items'] as $item): ?>
-                <div class="dm-item <?= $item['image_url'] ? '' : 'dm-item--text-only' ?> dm-searchable" data-name="<?= e(mb_strtolower($item['name'])) ?>">
-                    <?php if ($item['image_url']): ?>
-                    <div class="dm-item-img-wrap">
-                        <img src="<?= e($item['image_url']) ?>" alt="" class="dm-item-img" loading="lazy">
-                    </div>
-                    <?php endif; ?>
-                    <div class="dm-item-content">
-                        <div class="dm-item-top">
-                            <span class="dm-item-name"><?= e($item['name']) ?></span>
-                            <span class="dm-item-price"><?= number_format((float)$item['price'], 2, ',', '.') ?> &euro;</span>
-                        </div>
-                        <?php if ($item['description']): ?>
-                        <div class="dm-item-desc"><?= e($item['description']) ?></div>
-                        <?php endif; ?>
-                        <?php if (!empty($item['allergens'])): ?>
-                        <div class="dm-item-meta">
-                            <div class="dm-allergen-tags">
-                                <?php foreach ($item['allergens'] as $aKey): ?>
-                                <span class="dm-allergen-tag dm-at-<?= e($aKey) ?>"><span class="dm-allergen-tag-dot"></span><?= e($allergens[$aKey] ?? $aKey) ?></span>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
+                <?php include __DIR__ . '/_dish_row.php'; ?>
                 <?php endforeach; ?>
             </div>
             <?php endif; ?>
@@ -305,6 +264,7 @@
         <?php endif; ?>
         <div class="dm-cta-inner">
             <div class="dm-cta-icon"><i class="bi bi-calendar-check"></i></div>
+            <div class="dm-cta-over"><?= e($ui['cta_eyebrow'] ?? 'Prenotazioni') ?></div>
             <h3 class="dm-cta-title"><?= e($ui['cta_title']) ?></h3>
             <p class="dm-cta-sub"><?= e($ui['cta_sub']) ?></p>
             <a href="<?= url($slug) ?>" class="dm-cta-btn"><i class="bi bi-calendar-check me-1"></i> <?= e($ui['cta_btn']) ?></a>
