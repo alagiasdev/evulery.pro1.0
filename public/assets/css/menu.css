@@ -693,12 +693,12 @@ html[lang="en"] .dm-item-meta .dm-allergen-tags::before { content: 'Allergens'; 
 
 /* Griglia categorie compatta/discreta */
 .dm-landing { margin-top: -.9rem; }
-.dm-landing-title { font-size: .64rem; margin-bottom: .6rem; }
-.dm-landing-grid { gap: .5rem; }
-.dm-landing-card { padding: .65rem .5rem; gap: .25rem; box-shadow: none; border-radius: 11px; }
-.dm-landing-icon { width: 30px; height: 30px; font-size: .9rem; border-radius: 9px; }
-.dm-landing-label { font-size: .72rem; }
-.dm-landing-count { font-size: .58rem; }
+.dm-landing-title { font-size: .62rem; margin-bottom: .55rem; }
+.dm-landing-grid { grid-template-columns: repeat(3, 1fr); gap: .4rem; }
+.dm-landing-card { padding: .55rem .35rem; gap: .2rem; box-shadow: none; border-radius: 10px; }
+.dm-landing-icon { width: 26px; height: 26px; font-size: .8rem; border-radius: 8px; }
+.dm-landing-label { font-size: .66rem; line-height: 1.15; }
+.dm-landing-count { font-size: .54rem; }
 
 /* Card "Proposta dello chef" (piatto in evidenza) */
 .dm-feature {
@@ -755,14 +755,16 @@ body { background: #fff; }
 /* Categorie: hover neutro (ink), non più verde — coerente col look editoriale.
    Il verde resta accento solo su numeri sezione e bottone CTA. */
 .dm-landing-card:hover {
-    border-color: var(--dm-text-dark);
-    box-shadow: 0 4px 14px rgba(22,22,26,.08);
+    border-color: #d4d1c9;
+    box-shadow: none;
+    transform: none;
+    background: #fbfbfa;
 }
 .dm-landing-card:not(.dm-landing-card--special) .dm-landing-icon {
     background: #f3f2ef;
     color: var(--dm-text-body);
 }
 .dm-landing-card:not(.dm-landing-card--special):hover .dm-landing-icon {
-    background: var(--dm-text-dark);
-    color: #fff;
+    background: #e7e4de;
+    color: var(--dm-text-dark);
 }
