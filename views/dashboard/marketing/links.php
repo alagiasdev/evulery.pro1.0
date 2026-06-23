@@ -42,11 +42,18 @@ foreach ($saved as $s) {
 
     <label class="form-label fw-semibold">Destinazione</label>
     <div class="mk-seg" id="mk-dest"
-         data-hub="<?= e($hubUrl) ?>" data-book="<?= e($bookingUrl) ?>" data-menu="<?= e($menuUrl) ?>" data-order="<?= e($orderUrl) ?>">
+         data-hub="<?= e($hubUrl) ?>" data-book="<?= e($bookingUrl) ?>" data-menu="<?= e($menuUrl) ?>" data-order="<?= e($orderUrl) ?>" data-site="<?= e($siteUrl) ?>">
         <span class="mk-segbtn<?= $hubActive ? ' on' : ' disabled' ?>" data-dest="hub"<?= $hubActive ? '' : ' title="Attiva prima la Vetrina"' ?>>Vetrina / Hub <?php if ($hubActive): ?><span class="mk-rec">consigliata</span><?php else: ?><i class="bi bi-lock-fill" style="font-size:.6rem;"></i><?php endif; ?></span>
         <span class="mk-segbtn<?= $hubActive ? '' : ' on' ?>" data-dest="book">Prenota</span>
         <span class="mk-segbtn<?= $menuActive ? '' : ' disabled' ?>" data-dest="menu"<?= $menuActive ? '' : ' title="Attiva prima il Menù"' ?>>Menù <?php if (!$menuActive): ?><i class="bi bi-lock-fill" style="font-size:.6rem;"></i><?php endif; ?></span>
         <span class="mk-segbtn<?= $orderActive ? '' : ' disabled' ?>" data-dest="order"<?= $orderActive ? '' : ' title="Attiva prima gli Ordini"' ?>>Ordina <?php if (!$orderActive): ?><i class="bi bi-lock-fill" style="font-size:.6rem;"></i><?php endif; ?></span>
+        <span class="mk-segbtn<?= $siteActive ? '' : ' disabled' ?>" data-dest="site"<?= $siteActive ? '' : ' title="Imposta l&#39;indirizzo del sito in Impostazioni → Generali"' ?>><i class="bi bi-globe2"></i> Il mio sito <?php if (!$siteActive): ?><i class="bi bi-lock-fill" style="font-size:.6rem;"></i><?php endif; ?></span>
+    </div>
+
+    <div id="mk-site-wrap" style="display:none;">
+        <label class="form-label fw-semibold mt-3">Indirizzo della pagina del tuo sito</label>
+        <input type="text" id="mk-site" class="form-control" value="<?= e($siteUrl) ?>" placeholder="https://tuosito.it/prenota" maxlength="300">
+        <div class="form-text">Dev'essere la pagina con il <a href="<?= url('dashboard/settings/general') ?>" class="text-success text-decoration-none">codice embed con tracciamento</a>.</div>
     </div>
 
     <label class="form-label fw-semibold mt-3">Canale</label>
@@ -75,6 +82,11 @@ foreach ($saved as $s) {
         <button type="button" class="btn btn-sm btn-outline-secondary" id="mk-copy">Copia</button>
     </div>
 
+    <!-- Riga-guida per "Il mio sito" -->
+    <div id="mk-site-instr" class="alert alert-info py-2 px-3 mt-2" style="display:none;font-size:.82rem;">
+        <i class="bi bi-megaphone-fill"></i> Incolla questo link come <b>destinazione</b> del tuo annuncio (Meta Ads, Google Ads…).
+    </div>
+
     <!-- Avviso anti-duplicato (soft, client) -->
     <div id="mk-dup" class="alert alert-warning py-2 px-3 mt-2" style="display:none;font-size:.82rem;">
         <i class="bi bi-exclamation-triangle-fill"></i> Hai già salvato una campagna identica: la trovi nella lista qui sotto.
@@ -87,6 +99,7 @@ foreach ($saved as $s) {
         <input type="hidden" name="utm_source" id="mk-f-src">
         <input type="hidden" name="utm_medium" id="mk-f-med">
         <input type="hidden" name="utm_campaign" id="mk-f-camp">
+        <input type="hidden" name="site_url" id="mk-f-site">
         <button type="submit" class="btn btn-success" id="mk-save"><i class="bi bi-bookmark-plus"></i> Salva campagna</button>
         <span class="text-muted" style="font-size:.78rem;margin-left:.5rem;">La salvi una volta, poi la ritrovi qui sotto pronta da copiare.</span>
     </form>
@@ -179,7 +192,10 @@ foreach ($saved as $s) {
 (function(){
     var dest = document.getElementById('mk-dest');
     var bases = { hub: dest.dataset.hub, book: dest.dataset.book, menu: dest.dataset.menu, order: dest.dataset.order };
-    var destApi = { hub: 'hub', book: 'booking', menu: 'menu', order: 'order' };
+    var destApi = { hub: 'hub', book: 'booking', menu: 'menu', order: 'order', site: 'site' };
+    var siteWrap = document.getElementById('mk-site-wrap');
+    var siteInstr = document.getElementById('mk-site-instr');
+    var siteInput = document.getElementById('mk-site');
     var urlEl = document.getElementById('mk-url');
     var qrWrap = document.getElementById('mk-qr-wrap');
     var qrBox = document.getElementById('mk-qr');
@@ -218,7 +234,14 @@ foreach ($saved as $s) {
         document.getElementById('mk-generic-wrap').style.display = isGen ? '' : 'none';
         if (isGen) { src = slug(document.getElementById('mk-gsrc').value) || 'altro'; }
         var camp = slug(document.getElementById('mk-camp').value);
-        var u = bases[d] + '?utm_source=' + encodeURIComponent(src) + '&utm_medium=' + encodeURIComponent(med);
+
+        // "Il mio sito": campo URL + riga guida visibili; base = URL del sito.
+        var isSite = d === 'site';
+        siteWrap.style.display = isSite ? '' : 'none';
+        siteInstr.style.display = isSite ? '' : 'none';
+        var base = isSite ? ((siteInput.value || '').trim() || dest.dataset.site) : bases[d];
+        var sep = base.indexOf('?') === -1 ? '?' : '&';
+        var u = base + sep + 'utm_source=' + encodeURIComponent(src) + '&utm_medium=' + encodeURIComponent(med);
         if (camp) { u += '&utm_campaign=' + encodeURIComponent(camp); }
         urlEl.textContent = u; lastUrl = u;
 
@@ -227,6 +250,7 @@ foreach ($saved as $s) {
         document.getElementById('mk-f-src').value = src;
         document.getElementById('mk-f-med').value = med;
         document.getElementById('mk-f-camp').value = camp;
+        document.getElementById('mk-f-site').value = isSite ? base : '';
 
         // avviso duplicato (chiave: dest|src|med|camp)
         var key = destApi[d] + '|' + src + '|' + med + '|' + camp;
@@ -240,6 +264,7 @@ foreach ($saved as $s) {
     document.querySelectorAll('.mk-chan').forEach(function(c){ c.addEventListener('click', function(){ document.querySelectorAll('.mk-chan').forEach(function(x){x.classList.remove('on');}); c.classList.add('on'); build(); }); });
     document.getElementById('mk-camp').addEventListener('input', build);
     document.getElementById('mk-gsrc').addEventListener('input', build);
+    if (siteInput) siteInput.addEventListener('input', build);
 
     document.getElementById('mk-copy').addEventListener('click', function(){ var b=this; navigator.clipboard.writeText(lastUrl).then(function(){ b.textContent='Copiato!'; setTimeout(function(){ b.textContent='Copia'; },1200); }); });
     document.getElementById('mk-qr-dl').addEventListener('click', function(){

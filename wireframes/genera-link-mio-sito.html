@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genera link — destinazione "Il mio sito" (wireframe)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{ --brand:#00844A; --brand-d:#006b3c; --ink:#1a1d23; --muted:#6c757d; --line:#eceff2; }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:var(--ink);font-size:15px}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 80px}
+  .brandbar{height:5px;background:linear-gradient(90deg,var(--brand),#5cbf8c);border-radius:6px;margin-bottom:14px}
+  h1{font-size:1.2rem;margin:0 0 4px;display:flex;align-items:center;gap:.45rem}
+  .lead{color:var(--muted);font-size:.86rem;margin:0 0 16px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  label.fl{display:block;font-weight:700;font-size:.8rem;margin:14px 0 6px}
+  label.fl:first-of-type{margin-top:0}
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .segbtn{border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:8px 13px;font-weight:600;font-size:.82rem;cursor:pointer}
+  .segbtn.on{background:#e8f5ee;border-color:var(--brand);color:var(--brand-d)}
+  .rec{font-size:.62rem;background:#d6f0e2;color:var(--brand-d);border-radius:4px;padding:1px 5px;margin-left:4px}
+  input[type=text]{width:100%;border:1.5px solid #d4dade;border-radius:9px;padding:9px 11px;font-size:.88rem;font-family:inherit}
+  .chans{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;margin-top:6px}
+  .chan{border:2px solid var(--line);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;font-size:.78rem;font-weight:600}
+  .chan.on{border-color:var(--brand);background:#f6fbf8}
+  .chan i{display:block;font-size:1.3rem;margin-bottom:4px;color:var(--brand)}
+  .urlbox{display:flex;gap:8px;align-items:center;background:#f8fafb;border:1px solid #e4e8eb;border-radius:9px;padding:10px 12px;margin-top:6px}
+  .urlbox span{flex:1;font-family:ui-monospace,Menlo,monospace;font-size:.78rem;word-break:break-all}
+  .copy{flex-shrink:0;border:none;background:var(--brand);color:#fff;border-radius:7px;padding:7px 12px;font-size:.75rem;font-weight:700;cursor:pointer}
+  .site-wrap{display:none;margin-top:8px}
+  .site-wrap.show{display:block}
+  .hint{font-size:.78rem;color:var(--muted);margin:6px 0 0}
+  .instr{display:none;margin-top:10px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;border-radius:9px;padding:10px 13px;font-size:.83rem;gap:8px;align-items:flex-start}
+  .instr.show{display:flex}
+  .foot{margin-top:24px;font-size:.78rem;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar"></div>
+  <h1><i class="bi bi-link-45deg" style="color:var(--brand)"></i> Genera link <span style="font-size:.8rem;font-weight:500;color:var(--muted)">— con destinazione "Il mio sito" (wireframe)</span></h1>
+  <p class="lead">Il ristoratore non scrive mai gli UTM: sceglie e copia. Prova a selezionare <b>Il mio sito</b>.</p>
+
+  <div class="card">
+    <label class="fl">Destinazione</label>
+    <div class="seg" id="dest">
+      <span class="segbtn on" data-d="hub">Vetrina / Hub <span class="rec">consigliata</span></span>
+      <span class="segbtn" data-d="book">Prenota</span>
+      <span class="segbtn" data-d="menu">Menù</span>
+      <span class="segbtn" data-d="order">Ordina</span>
+      <span class="segbtn" data-d="site"><i class="bi bi-globe2"></i> Il mio sito</span>
+    </div>
+
+    <div class="site-wrap" id="siteWrap">
+      <label class="fl">Indirizzo della pagina del tuo sito <span style="font-weight:500;color:var(--muted)">(dove hai messo il widget)</span></label>
+      <input type="text" id="siteUrl" value="https://trattoriadamario.it/prenota">
+      <p class="hint">Pre-compilato dal sito che hai impostato. Deve essere la pagina con il <b>codice embed con tracciamento</b>.</p>
+    </div>
+
+    <label class="fl">Canale</label>
+    <div class="chans" id="chans">
+      <div class="chan on" data-src="meta"><i class="bi bi-meta"></i>Meta/Facebook</div>
+      <div class="chan" data-src="instagram"><i class="bi bi-instagram"></i>Instagram bio</div>
+      <div class="chan" data-src="google"><i class="bi bi-google"></i>Google Ads</div>
+      <div class="chan" data-src="tiktok"><i class="bi bi-tiktok"></i>TikTok</div>
+      <div class="chan" data-src="newsletter"><i class="bi bi-envelope"></i>Newsletter</div>
+      <div class="chan" data-src="__generic"><i class="bi bi-three-dots"></i>Generico</div>
+    </div>
+
+    <label class="fl">Nome campagna <span style="font-weight:500;color:var(--muted)">(facoltativo)</span></label>
+    <input type="text" id="camp" value="estate" placeholder="estate-aperitivo">
+
+    <label class="fl">Link da usare</label>
+    <div class="urlbox"><span id="url"></span><button class="copy" id="copy">Copia</button></div>
+
+    <div class="instr" id="instr">
+      <i class="bi bi-megaphone-fill"></i>
+      <div><b>Incolla questo link come "destinazione" del tuo annuncio</b> (Meta Ads, Google Ads…). Quando qualcuno ci clicca e prenota dal tuo sito, la prenotazione comparirà in <b>Provenienza</b> sotto il canale giusto.</div>
+    </div>
+  </div>
+
+  <p class="foot">Wireframe — Genera link con destinazione "Il mio sito" · Evulery</p>
+</div>
+
+<script>
+var bases = { hub:'https://dash.evulery.it/trattoria-da-mario/hub', book:'https://dash.evulery.it/trattoria-da-mario', menu:'https://dash.evulery.it/trattoria-da-mario/menu', order:'https://dash.evulery.it/trattoria-da-mario/order' };
+var meds = { meta:'cpc', instagram:'bio', google:'cpc', tiktok:'social', newsletter:'email', __generic:'referral' };
+function slug(v){ return (v||'').toLowerCase().trim().replace(/\s+/g,'-').replace(/[^a-z0-9._-]/g,''); }
+function build(){
+  var d = document.querySelector('#dest .segbtn.on').dataset.d;
+  var isSite = d === 'site';
+  document.getElementById('siteWrap').classList.toggle('show', isSite);
+  document.getElementById('instr').classList.toggle('show', isSite);
+  var base = isSite ? (document.getElementById('siteUrl').value.trim() || 'https://tuosito.it') : bases[d];
+  var src = document.querySelector('#chans .chan.on').dataset.src;
+  if (src === '__generic') src = 'altro';
+  var med = meds[document.querySelector('#chans .chan.on').dataset.src];
+  var camp = slug(document.getElementById('camp').value);
+  var sep = base.indexOf('?') === -1 ? '?' : '&';
+  var u = base + sep + 'utm_source=' + encodeURIComponent(src) + '&utm_medium=' + encodeURIComponent(med);
+  if (camp) u += '&utm_campaign=' + encodeURIComponent(camp);
+  document.getElementById('url').textContent = u;
+}
+document.querySelectorAll('#dest .segbtn').forEach(function(b){ b.onclick=function(){ document.querySelectorAll('#dest .segbtn').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); build(); }; });
+document.querySelectorAll('#chans .chan').forEach(function(c){ c.onclick=function(){ document.querySelectorAll('#chans .chan').forEach(function(x){x.classList.remove('on');}); c.classList.add('on'); build(); }; });
+document.getElementById('camp').addEventListener('input', build);
+document.getElementById('siteUrl').addEventListener('input', build);
+document.getElementById('copy').onclick=function(){ var b=this; b.textContent='Copiato!'; setTimeout(function(){b.textContent='Copia';},1200); };
+build();
+</script>
+</body>
+</html>

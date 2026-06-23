@@ -61,7 +61,7 @@ class MarketingController
         $slug = (string)($tenant['slug'] ?? '');
 
         $saved = $canUse ? (new MarketingLink())->findByTenantWithStats((int)$tenant['id']) : [];
-        $destLabels = ['hub' => 'Hub', 'booking' => 'Prenota', 'menu' => 'Menù', 'order' => 'Ordina'];
+        $destLabels = ['hub' => 'Hub', 'booking' => 'Prenota', 'menu' => 'Menù', 'order' => 'Ordina', 'site' => 'Il mio sito'];
 
         // Una destinazione e' selezionabile solo se il relativo servizio/pagina
         // e' attivo, altrimenti il link porterebbe a una pagina "non disponibile".
@@ -83,6 +83,8 @@ class MarketingController
             'hubActive'   => $active['hub'],
             'menuActive'  => $active['menu'],
             'orderActive' => $active['order'],
+            'siteActive'  => $active['site'],
+            'siteUrl'     => (string)($tenant['website_url'] ?? ''),
             'hubConfigUrl' => url('dashboard/settings/hub'),
         ], 'dashboard');
     }
@@ -127,16 +129,28 @@ class MarketingController
         }
 
         $dest = (string)$request->input('destination', 'hub');
-        if (!in_array($dest, ['hub', 'booking', 'menu', 'order'], true)) $dest = 'hub';
+        if (!in_array($dest, ['hub', 'booking', 'menu', 'order', 'site'], true)) $dest = 'hub';
 
         // Guardia: non salvare link verso una destinazione non attiva (porterebbe
         // a una pagina "non disponibile"). Difesa server-side oltre alla UI.
         $active = $this->destActive($tenant);
         if (!($active[$dest] ?? false)) {
-            $labels = ['hub' => 'la Vetrina Digitale', 'menu' => 'il Menù', 'order' => 'gli Ordini online'];
-            flash('warning', 'Non puoi creare un link verso ' . ($labels[$dest] ?? 'questa destinazione') . ': il servizio non è attivo.');
+            $labels = ['hub' => 'la Vetrina Digitale', 'menu' => 'il Menù', 'order' => 'gli Ordini online', 'site' => 'il tuo sito'];
+            flash('warning', 'Non puoi creare un link verso ' . ($labels[$dest] ?? 'questa destinazione') . ': non è configurato.');
             Response::redirect(url('dashboard/marketing/links'));
             return;
+        }
+
+        // Per "Il mio sito": base = URL del sito (dal form, fallback al website_url).
+        $siteUrl = null;
+        if ($dest === 'site') {
+            $candidate = trim((string)$request->input('site_url', '')) ?: (string)($tenant['website_url'] ?? '');
+            if (!preg_match('#^https?://#i', $candidate) || !filter_var($candidate, FILTER_VALIDATE_URL)) {
+                flash('danger', 'Indirizzo del sito non valido (deve iniziare con http:// o https://).');
+                Response::redirect(url('dashboard/marketing/links'));
+                return;
+            }
+            $siteUrl = $candidate;
         }
 
         $source   = $this->slug((string)$request->input('utm_source', ''), 100);
@@ -158,7 +172,7 @@ class MarketingController
 
         $slug    = (string)($tenant['slug'] ?? '');
         $channel = AttributionService::deriveChannel($source, $medium, null);
-        $url     = $this->buildUrl($slug, $dest, $source, $medium, $campaign);
+        $url     = $this->buildUrl($slug, $dest, $source, $medium, $campaign, $siteUrl);
 
         $model->create([
             'tenant_id'    => (int)$tenant['id'],
@@ -198,6 +212,8 @@ class MarketingController
             'hub'     => tenant_can('vetrina_digitale') && $hubSettings && !empty($hubSettings['enabled']),
             'menu'    => tenant_can('digital_menu') && !empty($tenant['menu_enabled']),
             'order'   => tenant_can('online_ordering') && !empty($tenant['ordering_enabled']),
+            // "Il mio sito": attiva solo se il ristorante ha impostato l'URL del sito.
+            'site'    => !empty($tenant['website_url']),
         ];
     }
 
@@ -213,11 +229,12 @@ class MarketingController
     }
 
     /** Costruisce l'URL tracciato (stessa logica del generatore client). */
-    private function buildUrl(string $slug, string $destination, string $source, ?string $medium, ?string $campaign): string
+    private function buildUrl(string $slug, string $destination, string $source, ?string $medium, ?string $campaign, ?string $siteUrl = null): string
     {
-        $u = url($this->destPath($destination, $slug))
-           . '?utm_source=' . urlencode($source)
-           . '&utm_medium=' . urlencode($medium ?: 'referral');
+        // "site" usa l'URL del sito del cliente; le altre i path pubblici Evulery.
+        $base = $destination === 'site' ? (string)$siteUrl : url($this->destPath($destination, $slug));
+        $sep = str_contains($base, '?') ? '&' : '?';
+        $u = $base . $sep . 'utm_source=' . urlencode($source) . '&utm_medium=' . urlencode($medium ?: 'referral');
         if ($campaign) {
             $u .= '&utm_campaign=' . urlencode($campaign);
         }
