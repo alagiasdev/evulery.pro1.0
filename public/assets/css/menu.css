@@ -725,3 +725,29 @@ html[lang="en"] .dm-item-meta .dm-allergen-tags::before { content: 'Allergens'; 
 /* Legenda allergeni neutra (grigia, niente arcobaleno) */
 .dm-legend-tag { background: transparent !important; color: var(--dm-text-muted) !important; padding: 0 !important; border-radius: 0 !important; }
 .dm-legend-tag .dm-allergen-tag-dot { background: #cfcdd4 !important; }
+
+/* ============================================================
+   UNIFORMITA' RIGHE — sfondo bianco, piatti E vini come righe editoriali
+   (no card/ombra), hover sobrio identico al wireframe (.dish:hover #fbfbfa)
+   ============================================================ */
+body { background: #fff; }
+
+/* Search riempita grigio tenue come wireframe */
+.dm-search { background: var(--dm-soft, #f5f5f3); border-color: transparent; }
+
+/* Piatti e vini: stessa riga full-width con sola hairline inferiore */
+.dm-items-grid, .dm-wine-list { gap: 0; }
+.dm-item,
+.dm-wine {
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--dm-border);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 1rem 0;
+    transition: background .15s;
+}
+.dm-item.dm-item--text-only { padding: 1rem 0; }
+.dm-item:hover,
+.dm-wine:hover { background: #fbfbfa; border-color: var(--dm-border); box-shadow: none; }
+.dm-item-img-wrap { width: 104px; height: 104px; }
