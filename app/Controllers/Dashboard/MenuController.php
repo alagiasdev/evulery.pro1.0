@@ -10,6 +10,7 @@ use App\Core\TenantResolver;
 use App\Core\Validator;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
+use App\Models\MenuTranslation;
 use App\Models\Tenant;
 use App\Services\AuditLog;
 
@@ -88,6 +89,18 @@ class MenuController
         $parents = $catModel->findParentsByTenant($tenantId);
         $counts = $catModel->getItemCounts($tenantId);
 
+        // Traduzioni categorie per il modale modifica: [catId => [lang => [field => value]]]
+        $menuLangs = $this->formLangs();
+        $catTr = [];
+        if (!empty($menuLangs)) {
+            $tr = new MenuTranslation();
+            foreach ($menuLangs as $lc) {
+                foreach ($tr->bulk($tenantId, 'category', $lc) as $cid => $fields) {
+                    $catTr[(int)$cid][$lc] = $fields;
+                }
+            }
+        }
+
         view('dashboard/menu/categories', [
             'title'          => 'Menù - Categorie',
             'activeMenu'     => 'menu',
@@ -96,6 +109,9 @@ class MenuController
             'parents'        => $parents,
             'counts'         => $counts,
             'categoryIcons'  => MenuCategory::ICONS,
+            'menuLangs'      => $menuLangs,
+            'langMeta'       => MenuTranslation::LANGUAGES,
+            'catTr'          => $catTr,
         ], 'dashboard');
     }
 
@@ -107,9 +123,12 @@ class MenuController
         $tenant = TenantResolver::current();
 
         view('dashboard/menu/appearance', [
-            'title'      => 'Menù - Aspetto',
-            'activeMenu' => 'menu',
-            'tenant'     => $tenant,
+            'title'        => 'Menù - Aspetto',
+            'activeMenu'   => 'menu',
+            'tenant'       => $tenant,
+            'canMultilang' => tenant_can('menu_multilang'),
+            'allLanguages' => MenuTranslation::LANGUAGES,
+            'tenantLangs'  => MenuTranslation::parseLanguages($tenant['menu_languages'] ?? 'it'),
         ], 'dashboard');
     }
 
@@ -152,7 +171,7 @@ class MenuController
         $isWine = $parentId !== null
             ? (int)($parent['is_wine'] ?? 0)
             : (!empty($data['is_wine']) ? 1 : 0);
-        $catModel->create($tenantId, [
+        $newCatId = $catModel->create($tenantId, [
             'parent_id'   => $parentId,
             'name'        => trim($data['name']),
             'description' => trim($data['description'] ?? ''),
@@ -160,6 +179,7 @@ class MenuController
             'is_wine'     => $isWine,
             'sort_order'  => $catModel->getNextSortOrder($tenantId, $parentId),
         ]);
+        $this->saveEntityTranslations($tenantId, 'category', $newCatId, $data);
 
         AuditLog::log(AuditLog::MENU_CATEGORY_CREATED, "Categoria: {$data['name']}", Auth::id(), $tenantId);
 
@@ -216,6 +236,7 @@ class MenuController
         if ($isParent) {
             $catModel->setChildrenWine($id, $tenantId, $isWine);
         }
+        $this->saveEntityTranslations($tenantId, 'category', $id, $data);
 
         AuditLog::log(AuditLog::MENU_CATEGORY_UPDATED, "Categoria ID: {$id}", Auth::id(), $tenantId);
 
@@ -246,7 +267,11 @@ class MenuController
                 Response::redirect(url('dashboard/menu/categories'));
                 return;
             }
+            $children = $catModel->findChildrenOf($id, $tenantId);
             $catModel->deleteWithChildren($id, $tenantId);
+            $tr = new MenuTranslation();
+            $tr->deleteForEntity($tenantId, 'category', $id);
+            foreach ($children as $ch) { $tr->deleteForEntity($tenantId, 'category', (int)$ch['id']); }
             AuditLog::log(AuditLog::MENU_CATEGORY_DELETED, "Categoria ID: {$id}", Auth::id(), $tenantId);
             flash('success', 'Categoria e sottocategorie eliminate.');
         } else {
@@ -257,6 +282,7 @@ class MenuController
                 return;
             }
             $catModel->delete($id, $tenantId);
+            (new MenuTranslation())->deleteForEntity($tenantId, 'category', $id);
             AuditLog::log(AuditLog::MENU_CATEGORY_DELETED, "Categoria ID: {$id}", Auth::id(), $tenantId);
             flash('success', 'Sottocategoria eliminata.');
         }
@@ -288,6 +314,9 @@ class MenuController
             'allergenColors' => MenuItem::ALLERGEN_COLORS,
             'old'            => $old,
             'tenant'         => TenantResolver::current(),
+            'menuLangs'      => $this->formLangs(),
+            'langMeta'       => MenuTranslation::LANGUAGES,
+            'itemTr'         => [],
         ], 'dashboard');
     }
 
@@ -308,7 +337,8 @@ class MenuController
         $itemModel = new MenuItem();
         $itemData['sort_order'] = $itemModel->getNextSortOrder((int)$itemData['category_id'], $tenantId);
 
-        $itemModel->create($tenantId, $itemData);
+        $newId = $itemModel->create($tenantId, $itemData);
+        $this->saveEntityTranslations($tenantId, 'item', $newId, $data);
 
         AuditLog::log(AuditLog::MENU_ITEM_CREATED, "Piatto: {$itemData['name']}", Auth::id(), $tenantId);
 
@@ -341,6 +371,9 @@ class MenuController
             'allergenColors' => MenuItem::ALLERGEN_COLORS,
             'old'            => $old,
             'tenant'         => TenantResolver::current(),
+            'menuLangs'      => $this->formLangs(),
+            'langMeta'       => MenuTranslation::LANGUAGES,
+            'itemTr'         => $this->loadEntityTranslations($tenantId, 'item', $id),
         ], 'dashboard');
     }
 
@@ -377,6 +410,7 @@ class MenuController
 
         $itemData['sort_order'] = $existing['sort_order'];
         $itemModel->update($id, $tenantId, $itemData);
+        $this->saveEntityTranslations($tenantId, 'item', $id, $data);
 
         AuditLog::log(AuditLog::MENU_ITEM_UPDATED, "Piatto ID: {$id}", Auth::id(), $tenantId);
 
@@ -395,6 +429,7 @@ class MenuController
         if ($item) {
             $this->deleteItemImage($item['image_url']);
             $itemModel->delete($id, $tenantId);
+            (new MenuTranslation())->deleteForEntity($tenantId, 'item', $id);
             AuditLog::log(AuditLog::MENU_ITEM_DELETED, "Piatto ID: {$id}", Auth::id(), $tenantId);
             flash('success', 'Piatto eliminato.');
         } else {
@@ -446,6 +481,14 @@ class MenuController
             'menu_featured_label' => mb_substr(trim($data['menu_featured_label'] ?? ''), 0, 40),
         ];
 
+        // Lingue del menu (gated): 'it' sempre base + lingue extra selezionate
+        if (tenant_can('menu_multilang')) {
+            $posted = (array)($data['languages'] ?? []);
+            $valid = array_intersect($posted, array_keys(MenuTranslation::LANGUAGES));
+            $valid = array_values(array_unique(array_merge(['it'], $valid)));
+            $update['menu_languages'] = implode(',', $valid);
+        }
+
         // Hero image upload
         if (!empty($data['remove_hero_image'])) {
             $this->deleteItemImage($tenant['menu_hero_image']);
@@ -496,6 +539,43 @@ class MenuController
     }
 
     // --- Private helpers ---
+
+    /** Lingue extra (escluso 'it') disponibili per i form, [] se servizio non attivo. */
+    private function formLangs(): array
+    {
+        if (!tenant_can('menu_multilang')) {
+            return [];
+        }
+        $tenant = TenantResolver::current();
+        return MenuTranslation::extraLanguages($tenant['menu_languages'] ?? 'it');
+    }
+
+    /** Traduzioni esistenti di un'entita' per ciascuna lingua extra: [lang => [field => value]]. */
+    private function loadEntityTranslations(int $tenantId, string $entityType, int $entityId): array
+    {
+        $tr = new MenuTranslation();
+        $out = [];
+        foreach ($this->formLangs() as $lc) {
+            $out[$lc] = $tr->forEntity($tenantId, $entityType, $entityId, $lc);
+        }
+        return $out;
+    }
+
+    /** Salva i campi tradotti (name/description) postati come tr[lang][field]. */
+    private function saveEntityTranslations(int $tenantId, string $entityType, int $entityId, array $data): void
+    {
+        $langs = $this->formLangs();
+        if (empty($langs)) {
+            return;
+        }
+        $tr = new MenuTranslation();
+        $posted = $data['tr'] ?? [];
+        foreach ($langs as $lc) {
+            foreach (['name', 'description'] as $field) {
+                $tr->put($tenantId, $entityType, $entityId, $lc, $field, $posted[$lc][$field] ?? '');
+            }
+        }
+    }
 
     private function validateItemData(array $data, int $tenantId, string $redirectUrl): array
     {

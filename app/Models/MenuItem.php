@@ -30,6 +30,34 @@ class MenuItem
     ];
 
     /**
+     * EU 14 allergens — English labels (per menu multilingua).
+     */
+    public const ALLERGENS_EN = [
+        'gluten'      => 'Gluten',
+        'crustaceans' => 'Crustaceans',
+        'eggs'        => 'Eggs',
+        'fish'        => 'Fish',
+        'peanuts'     => 'Peanuts',
+        'soy'         => 'Soybeans',
+        'milk'        => 'Milk',
+        'nuts'        => 'Tree nuts',
+        'celery'      => 'Celery',
+        'mustard'     => 'Mustard',
+        'sesame'      => 'Sesame',
+        'sulphites'   => 'Sulphites',
+        'lupin'       => 'Lupin',
+        'molluscs'    => 'Molluscs',
+    ];
+
+    /**
+     * Etichette allergeni nella lingua richiesta (fallback IT).
+     */
+    public static function allergenLabels(string $lang): array
+    {
+        return $lang === 'en' ? self::ALLERGENS_EN : self::ALLERGENS;
+    }
+
+    /**
      * Short labels for allergen badge icons (1-2 chars).
      */
     public const ALLERGEN_ICONS = [

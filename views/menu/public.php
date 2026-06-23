@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="<?= e($lang ?? 'it') ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +17,24 @@
     $hasHero = !empty($heroImage);
     $heroClass = $hasHero ? 'dm-hero--photo' : 'dm-hero--plain';
     $featuredLabel = (isset($featuredLabel) && trim((string)$featuredLabel) !== '') ? $featuredLabel : 'Piatti del giorno';
+    $lang = $lang ?? 'it';
+    $menuLanguages = $menuLanguages ?? ['it'];
+    $langMeta = $langMeta ?? [];
+    $ui = $ui ?? [
+        'browse' => 'Sfoglia il menu', 'search' => 'Cerca nel menu...',
+        'dish_1' => 'piatto', 'dish_n' => 'piatti', 'wine_1' => 'etichetta', 'wine_n' => 'etichette',
+        'glass' => 'Calice', 'bottle' => 'Bottiglia',
+        'wine_note' => 'Tutti i vini contengono solfiti. Carta soggetta a variazioni di annata e disponibilità.',
+        'allergen_title' => 'Informazioni sugli Allergeni',
+        'allergen_legal' => 'Ai sensi del Reg. UE 1169/2011. Per ulteriori informazioni rivolgiti al personale di sala.',
+        'cta_title' => 'Ti abbiamo fatto venire fame?', 'cta_sub' => 'Prenota per la prossima cena o il prossimo pranzo',
+        'cta_btn' => 'Prenota un tavolo', 'empty' => 'Il menu non è ancora disponibile.',
+    ];
+    // Conteggio localizzato (piatti vs etichette/vini)
+    $countLabel = function (int $n, bool $isWine = false) use ($ui) {
+        $w = $isWine ? ($n === 1 ? $ui['wine_1'] : $ui['wine_n']) : ($n === 1 ? $ui['dish_1'] : $ui['dish_n']);
+        return $n . ' ' . $w;
+    };
 ?>
 
 <!-- ===== HERO ===== -->
@@ -24,6 +42,13 @@
     <?php if ($hasHero): ?>
     <div class="dm-hero-bg" style="background-image:url('<?= e($heroImage) ?>');"></div>
     <div class="dm-hero-gradient"></div>
+    <?php endif; ?>
+    <?php if (count($menuLanguages) > 1): ?>
+    <div class="dm-lang-switch">
+        <?php foreach ($menuLanguages as $lc): ?>
+        <a href="?lang=<?= e($lc) ?>" class="dm-lang-opt<?= $lc === $lang ? ' active' : '' ?>" hreflang="<?= e($lc) ?>"><?= e($langMeta[$lc]['short'] ?? strtoupper($lc)) ?></a>
+        <?php endforeach; ?>
+    </div>
     <?php endif; ?>
     <div class="dm-hero-content">
         <?php if ($tenantLogo): ?>
@@ -50,13 +75,13 @@
 <!-- ===== CATEGORY LANDING ===== -->
 <?php if (!empty($categories) || !empty($specials)): ?>
 <div class="dm-landing">
-    <div class="dm-landing-title">Sfoglia il menu</div>
+    <div class="dm-landing-title"><?= e($ui['browse']) ?></div>
     <div class="dm-landing-grid">
         <?php if (!empty($specials)): ?>
         <a class="dm-landing-card dm-landing-card--special" data-target="specials">
             <div class="dm-landing-icon"><i class="bi bi-star-fill"></i></div>
             <span class="dm-landing-label"><?= e($featuredLabel) ?></span>
-            <span class="dm-landing-count"><?= count($specials) ?> piatt<?= count($specials) === 1 ? 'o' : 'i' ?></span>
+            <span class="dm-landing-count"><?= e($countLabel(count($specials))) ?></span>
         </a>
         <?php endif; ?>
         <?php foreach ($categories as $cat): ?>
@@ -67,7 +92,7 @@
         <a class="dm-landing-card" data-target="cat-<?= (int)$cat['id'] ?>">
             <div class="dm-landing-icon"><i class="bi <?= e($cat['icon'] ?? 'bi-list') ?>"></i></div>
             <span class="dm-landing-label"><?= e($cat['name']) ?></span>
-            <span class="dm-landing-count"><?= $landingCount ?> piatt<?= $landingCount === 1 ? 'o' : 'i' ?></span>
+            <span class="dm-landing-count"><?= e($countLabel($landingCount, !empty($cat['is_wine']))) ?></span>
         </a>
         <?php endforeach; ?>
     </div>
@@ -92,14 +117,14 @@
 
     <!-- SEARCH -->
     <div class="dm-search-wrap">
-        <input type="text" class="dm-search" placeholder="Cerca nel menu..." id="dm-search-input">
+        <input type="text" class="dm-search" placeholder="<?= e($ui['search']) ?>" id="dm-search-input">
     </div>
 
     <?php if (empty($categories) && empty($specials)): ?>
     <!-- EMPTY STATE -->
     <div class="dm-empty">
         <i class="bi bi-book" style="font-size:2.5rem; color:#dee2e6;"></i>
-        <p>Il menu non &egrave; ancora disponibile.</p>
+        <p><?= e($ui['empty']) ?></p>
     </div>
     <?php else: ?>
 
@@ -151,7 +176,7 @@
         <div class="dm-section-header">
             <div class="dm-section-icon"><i class="bi <?= e($cat['icon'] ?? 'bi-list') ?>"></i></div>
             <h2 class="dm-section-title"><?= e($cat['name']) ?></h2>
-            <span class="dm-section-count"><?= $totalCount ?> <?= $isWine ? ('etichett' . ($totalCount === 1 ? 'a' : 'e')) : ('piatt' . ($totalCount === 1 ? 'o' : 'i')) ?></span>
+            <span class="dm-section-count"><?= e($countLabel($totalCount, $isWine)) ?></span>
         </div>
         <?php if (!empty($cat['description'])): ?>
         <p class="dm-section-desc"><?= e($cat['description']) ?></p>
@@ -245,7 +270,7 @@
         </div>
         <?php endforeach; ?>
         <?php if ($isWine): ?>
-        <div class="dm-wine-note">Tutti i vini contengono solfiti. Carta soggetta a variazioni di annata e disponibilità.</div>
+        <div class="dm-wine-note"><?= e($ui['wine_note']) ?></div>
         <?php endif; ?>
     </div>
     <?php endforeach; ?>
@@ -255,12 +280,12 @@
         <button class="dm-legend-toggle" aria-expanded="true" id="legend-toggle" type="button">
             <span class="dm-legend-toggle-left">
                 <i class="bi bi-info-circle-fill"></i>
-                <span class="dm-legend-toggle-title">Informazioni sugli Allergeni</span>
+                <span class="dm-legend-toggle-title"><?= e($ui['allergen_title']) ?></span>
             </span>
             <i class="bi bi-chevron-down dm-legend-toggle-arrow"></i>
         </button>
         <div class="dm-legend-body" id="legend-body">
-            <p class="dm-legend-note">Ai sensi del Reg. UE 1169/2011. Per ulteriori informazioni rivolgiti al personale di sala.</p>
+            <p class="dm-legend-note"><?= e($ui['allergen_legal']) ?></p>
             <div class="dm-legend-grid">
                 <?php foreach ($allergens as $key => $label): ?>
                 <div class="dm-legend-item">
@@ -280,9 +305,9 @@
         <?php endif; ?>
         <div class="dm-cta-inner">
             <div class="dm-cta-icon"><i class="bi bi-calendar-check"></i></div>
-            <h3 class="dm-cta-title">Ti abbiamo fatto venire fame?</h3>
-            <p class="dm-cta-sub">Prenota per la prossima cena o il prossimo pranzo</p>
-            <a href="<?= url($slug) ?>" class="dm-cta-btn"><i class="bi bi-calendar-check me-1"></i> Prenota un tavolo</a>
+            <h3 class="dm-cta-title"><?= e($ui['cta_title']) ?></h3>
+            <p class="dm-cta-sub"><?= e($ui['cta_sub']) ?></p>
+            <a href="<?= url($slug) ?>" class="dm-cta-btn"><i class="bi bi-calendar-check me-1"></i> <?= e($ui['cta_btn']) ?></a>
         </div>
     </div>
 

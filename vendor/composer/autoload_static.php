@@ -212,6 +212,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Models\\MealCategory' => __DIR__ . '/../..' . '/app/Models/MealCategory.php',
         'App\\Models\\MenuCategory' => __DIR__ . '/../..' . '/app/Models/MenuCategory.php',
         'App\\Models\\MenuItem' => __DIR__ . '/../..' . '/app/Models/MenuItem.php',
+        'App\\Models\\MenuTranslation' => __DIR__ . '/../..' . '/app/Models/MenuTranslation.php',
         'App\\Models\\Notification' => __DIR__ . '/../..' . '/app/Models/Notification.php',
         'App\\Models\\Order' => __DIR__ . '/../..' . '/app/Models/Order.php',
         'App\\Models\\OrderItem' => __DIR__ . '/../..' . '/app/Models/OrderItem.php',

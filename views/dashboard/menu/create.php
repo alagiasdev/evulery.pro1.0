@@ -45,6 +45,26 @@
                     <div id="descHint" style="font-size:.72rem; color:#6c757d; margin-top:.2rem; display:none;">Per i vini: produttore, regione, annata. Es. "Castello di Ama &middot; Toscana &middot; 2020"</div>
                 </div>
 
+                <?php if (!empty($menuLangs)): ?>
+                <?php foreach ($menuLangs as $lc): ?>
+                <div class="card mb-3" style="background:#f3faf6; border:1px solid #c9e6d8; padding:.75rem;">
+                    <div style="font-size:.75rem; font-weight:700; color:var(--brand); margin-bottom:.5rem;">
+                        <i class="bi bi-translate me-1"></i> Traduzione <?= e($langMeta[$lc]['label'] ?? strtoupper($lc)) ?>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label" style="font-size:.78rem;">Nome (<?= e(strtoupper($lc)) ?>)</label>
+                        <input type="text" name="tr[<?= e($lc) ?>][name]" class="form-control form-control-sm" maxlength="150"
+                               value="<?= e($itemTr[$lc]['name'] ?? '') ?>" placeholder="Vuoto = usa l'italiano">
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-size:.78rem;">Descrizione (<?= e(strtoupper($lc)) ?>)</label>
+                        <textarea name="tr[<?= e($lc) ?>][description]" class="form-control form-control-sm" rows="2" maxlength="2000"
+                                  placeholder="Vuoto = usa l'italiano"><?= e($itemTr[$lc]['description'] ?? '') ?></textarea>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+                <?php endif; ?>
+
                 <div class="mb-3">
                     <div class="row g-2" style="max-width:340px;">
                         <div class="col">

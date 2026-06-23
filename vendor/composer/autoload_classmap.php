@@ -99,6 +99,7 @@ return array(
     'App\\Models\\MealCategory' => $baseDir . '/app/Models/MealCategory.php',
     'App\\Models\\MenuCategory' => $baseDir . '/app/Models/MenuCategory.php',
     'App\\Models\\MenuItem' => $baseDir . '/app/Models/MenuItem.php',
+    'App\\Models\\MenuTranslation' => $baseDir . '/app/Models/MenuTranslation.php',
     'App\\Models\\Notification' => $baseDir . '/app/Models/Notification.php',
     'App\\Models\\Order' => $baseDir . '/app/Models/Order.php',
     'App\\Models\\OrderItem' => $baseDir . '/app/Models/OrderItem.php',

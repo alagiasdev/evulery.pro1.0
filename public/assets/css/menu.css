@@ -656,3 +656,23 @@ body {
 
 /* CTA: titolo display coerente */
 .dm-cta-title { font-family: 'Fraunces', Georgia, serif; font-weight: 600; }
+
+/* Switcher lingua (menu multilingua) */
+.dm-lang-switch {
+    position: absolute; top: .85rem; right: .85rem; z-index: 20;
+    display: flex; gap: .2rem;
+    background: rgba(0,0,0,.32);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,.22); border-radius: 999px; padding: .2rem;
+}
+.dm-lang-opt {
+    font-size: .68rem; font-weight: 700; letter-spacing: .03em;
+    color: rgba(255,255,255,.75); text-decoration: none;
+    padding: .25rem .55rem; border-radius: 999px; line-height: 1;
+    transition: background .15s, color .15s;
+}
+.dm-lang-opt:hover { color: #fff; }
+.dm-lang-opt.active { background: #fff; color: var(--dm-text-dark); }
+
+/* Etichetta allergeni inline tradotta via attributo lang */
+html[lang="en"] .dm-item-meta .dm-allergen-tags::before { content: 'Allergens'; }

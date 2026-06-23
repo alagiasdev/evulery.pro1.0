@@ -164,6 +164,15 @@ $menuTabs = [
                 </div>
                 <div style="font-size:.7rem; color:#6c757d; margin-top:.25rem;">Le categorie "Vini" mostrano righe-vino: doppio prezzo (calice/bottiglia), niente foto né allergeni. Le sottocategorie ereditano il tipo.</div>
             </div>
+            <?php if (!empty($menuLangs)): ?>
+            <?php foreach ($menuLangs as $lc): ?>
+            <div style="border:1px solid #c9e6d8; background:#f3faf6; border-radius:8px; padding:.5rem .6rem; margin-bottom:.5rem;">
+                <div style="font-size:.7rem; font-weight:700; color:var(--brand); margin-bottom:.35rem;"><i class="bi bi-translate me-1"></i> <?= e($langMeta[$lc]['label'] ?? strtoupper($lc)) ?></div>
+                <input type="text" name="tr[<?= e($lc) ?>][name]" class="form-control form-control-sm mb-1" placeholder="Nome (<?= e(strtoupper($lc)) ?>) — vuoto = italiano" maxlength="100">
+                <input type="text" name="tr[<?= e($lc) ?>][description]" class="form-control form-control-sm" placeholder="Descrizione (<?= e(strtoupper($lc)) ?>)" maxlength="500">
+            </div>
+            <?php endforeach; ?>
+            <?php endif; ?>
             <div style="display:flex; gap:.5rem; justify-content:flex-end;">
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="newCatCancel">Annulla</button>
                 <button type="submit" class="btn btn-sm btn-save">
@@ -197,6 +206,15 @@ $menuTabs = [
                         <label class="form-label fw-semibold" style="font-size:.82rem;">Descrizione</label>
                         <input type="text" name="description" id="editCatDesc" class="form-control form-control-sm" maxlength="500">
                     </div>
+                    <?php if (!empty($menuLangs)): ?>
+                    <?php foreach ($menuLangs as $lc): ?>
+                    <div class="mb-2" style="border:1px solid #c9e6d8; background:#f3faf6; border-radius:8px; padding:.5rem .6rem;">
+                        <div style="font-size:.7rem; font-weight:700; color:var(--brand); margin-bottom:.35rem;"><i class="bi bi-translate me-1"></i> <?= e($langMeta[$lc]['label'] ?? strtoupper($lc)) ?></div>
+                        <input type="text" name="tr[<?= e($lc) ?>][name]" id="editCatTr_<?= e($lc) ?>_name" class="form-control form-control-sm mb-1" placeholder="Nome (<?= e(strtoupper($lc)) ?>) — vuoto = italiano" maxlength="100">
+                        <input type="text" name="tr[<?= e($lc) ?>][description]" id="editCatTr_<?= e($lc) ?>_description" class="form-control form-control-sm" placeholder="Descrizione (<?= e(strtoupper($lc)) ?>)" maxlength="500">
+                    </div>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
                     <div class="mb-2" id="editCatTypeWrap">
                         <label class="form-label fw-semibold" style="font-size:.82rem;">Tipo categoria</label>
                         <div class="btn-group btn-group-sm d-flex" role="group">
@@ -229,6 +247,7 @@ $menuTabs = [
 
 <script nonce="<?= csp_nonce() ?>">
 (function() {
+    var CAT_TR = <?= json_encode($catTr ?? [], JSON_UNESCAPED_UNICODE) ?>;
     // Confirm delete
     document.querySelectorAll('[data-confirm]').forEach(function(btn) {
         btn.addEventListener('click', function(e) {
@@ -262,6 +281,17 @@ $menuTabs = [
             document.getElementById('ct-edit-food').checked = !isWine;
             document.getElementById('ct-edit-wine').checked = isWine;
             document.getElementById('editCatTypeWrap').style.display = isParent ? '' : 'none';
+            // Popola i campi traduzione (se presenti) dalla mappa CAT_TR
+            var trData = (CAT_TR[id] || {});
+            <?php foreach (($menuLangs ?? []) as $lc): ?>
+            (function(){
+                var d = (trData['<?= e($lc) ?>'] || {});
+                var nEl = document.getElementById('editCatTr_<?= e($lc) ?>_name');
+                var dEl = document.getElementById('editCatTr_<?= e($lc) ?>_description');
+                if (nEl) nEl.value = d.name || '';
+                if (dEl) dEl.value = d.description || '';
+            })();
+            <?php endforeach; ?>
             new bootstrap.Modal(document.getElementById('editCatModal')).show();
         });
     });

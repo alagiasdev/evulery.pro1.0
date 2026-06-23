@@ -101,6 +101,25 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                     <input type="file" name="menu_hero_image" class="form-control form-control-sm" accept="image/jpeg,image/png,image/webp">
                     <div style="font-size:.72rem; color:#6c757d; margin-top:.2rem;">JPG, PNG o WebP. Max 5MB. Consigliata: 1200x400px. Senza immagine viene usato uno sfondo scuro.</div>
                 </div>
+                <div class="mb-3" style="border-top:1px solid #eee; padding-top:1rem;">
+                    <label class="form-label fw-semibold" style="font-size:.82rem;"><i class="bi bi-translate me-1" style="color:var(--brand);"></i> Lingue del menu</label>
+                    <?php if (!empty($canMultilang)): ?>
+                    <div style="display:flex; flex-wrap:wrap; gap:.5rem; align-items:center;">
+                        <span class="badge" style="background:#e7f4ee; color:#0f6b43; font-weight:700;">Italiano (base)</span>
+                        <?php foreach (($allLanguages ?? []) as $code => $meta): ?>
+                        <?php if ($code === 'it') continue; ?>
+                        <label class="d-flex align-items-center gap-1" style="font-size:.82rem; cursor:pointer; border:1px solid #dee2e6; border-radius:8px; padding:.3rem .6rem;">
+                            <input type="checkbox" name="languages[]" value="<?= e($code) ?>" <?= in_array($code, $tenantLangs ?? [], true) ? 'checked' : '' ?>>
+                            <?= e($meta['label']) ?>
+                        </label>
+                        <?php endforeach; ?>
+                    </div>
+                    <div style="font-size:.72rem; color:#6c757d; margin-top:.35rem;">Attivando una lingua compare uno switcher nel menu pubblico e i campi di traduzione nelle schede piatto/categoria. L'italiano resta sempre il testo base (fallback automatico).</div>
+                    <?php else: ?>
+                    <div style="font-size:.78rem; color:#6c757d;">Disponibile sui piani <strong>Professional</strong> ed <strong>Enterprise</strong>: offri il menu in inglese (e altre lingue) con switcher automatico per i clienti stranieri.</div>
+                    <?php endif; ?>
+                </div>
+
                 <button type="submit" class="btn btn-sm btn-save"><i class="bi bi-check-lg me-1"></i> Salva impostazioni</button>
             </form>
         </div>
