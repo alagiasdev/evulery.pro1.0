@@ -377,8 +377,8 @@ body {
 }
 .dm-item:hover { border-color: #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
 .dm-item-img-wrap {
-    width: 80px; height: 80px;
-    border-radius: var(--dm-radius-sm);
+    width: 96px; height: 96px;
+    border-radius: var(--dm-radius);
     overflow: hidden; flex-shrink: 0;
 }
 .dm-item-img { width: 100%; height: 100%; object-fit: cover; }
@@ -575,3 +575,84 @@ body {
 .dm-wine-prices .dm-wp-sep { margin: 0 .35rem; color: var(--dm-border); }
 .dm-wine-sub { font-size: .78rem; color: var(--dm-text-muted); margin-top: .2rem; }
 .dm-wine-note { font-size: .72rem; color: var(--dm-text-light); font-style: italic; margin: .85rem 0 0; padding: 0 1rem; }
+
+/* ============================================================
+   RESTYLE "MODERNO V2.1" — layer di override (look chic/editoriale)
+   Tipografia Fraunces, sezioni numerate, allergeni discreti, prezzi neutri.
+   ============================================================ */
+
+/* Tipografia display per nome ristorante + titoli sezione */
+.dm-hero-name {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    letter-spacing: 0;
+    font-size: 1.95rem;
+}
+.dm-hero-tagline { font-style: normal; letter-spacing: .02em; }
+
+/* Sezioni numerate editoriali (01, 02, ...) — niente icona colorata */
+.dm-main { counter-reset: dm-sec; }
+.dm-section { counter-increment: dm-sec; }
+.dm-section-icon { display: none; }
+.dm-section-header {
+    gap: 0;
+    align-items: baseline;
+    border-bottom: 1px solid var(--dm-border);
+    padding-bottom: .6rem;
+    margin-bottom: .9rem;
+}
+.dm-section-title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    font-size: 1.45rem;
+    letter-spacing: -.01em;
+}
+.dm-section-title::before {
+    content: counter(dm-sec, decimal-leading-zero);
+    font-family: 'Fraunces', Georgia, serif;
+    color: var(--dm-brand);
+    font-size: .9rem;
+    font-weight: 600;
+    margin-right: .65rem;
+}
+.dm-section-desc { padding-left: 0; }
+
+/* Prezzi neutri (non verde acceso) per un look meno "low ticket" */
+.dm-item-price { color: var(--dm-text-dark); font-weight: 700; }
+.dm-special-price { color: var(--dm-text-dark); }
+.dm-item-name { font-size: .95rem; }
+
+/* Allergeni inline → testo grigio discreto con etichetta (no pillole colorate) */
+.dm-item-meta .dm-allergen-tags,
+.dm-special-allergens { gap: 0; align-items: baseline; }
+.dm-item-meta .dm-allergen-tags::before {
+    content: 'Allergeni';
+    display: inline-block;
+    font-size: .56rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #c7c4cc;
+    margin-right: .4rem;
+}
+.dm-item-meta .dm-allergen-tag,
+.dm-special-allergens .dm-allergen-tag {
+    background: transparent !important;
+    color: var(--dm-text-light) !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    font-weight: 500;
+    font-size: .7rem;
+}
+.dm-item-meta .dm-allergen-tag:hover,
+.dm-special-allergens .dm-allergen-tag:hover { transform: none; }
+.dm-item-meta .dm-allergen-tag-dot,
+.dm-special-allergens .dm-allergen-tag-dot { display: none !important; }
+.dm-item-meta .dm-allergen-tag:not(:last-child)::after,
+.dm-special-allergens .dm-allergen-tag:not(:last-child)::after {
+    content: '·';
+    margin: 0 .35rem;
+    color: var(--dm-border);
+}
+
+/* CTA: titolo display coerente */
+.dm-cta-title { font-family: 'Fraunces', Georgia, serif; font-weight: 600; }
