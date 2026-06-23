@@ -751,3 +751,18 @@ body { background: #fff; }
 .dm-item:hover,
 .dm-wine:hover { background: #fbfbfa; border-color: var(--dm-border); box-shadow: none; }
 .dm-item-img-wrap { width: 104px; height: 104px; }
+
+/* Categorie: hover neutro (ink), non più verde — coerente col look editoriale.
+   Il verde resta accento solo su numeri sezione e bottone CTA. */
+.dm-landing-card:hover {
+    border-color: var(--dm-text-dark);
+    box-shadow: 0 4px 14px rgba(22,22,26,.08);
+}
+.dm-landing-card:not(.dm-landing-card--special) .dm-landing-icon {
+    background: #f3f2ef;
+    color: var(--dm-text-body);
+}
+.dm-landing-card:not(.dm-landing-card--special):hover .dm-landing-icon {
+    background: var(--dm-text-dark);
+    color: #fff;
+}
