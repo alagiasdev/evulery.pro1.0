@@ -6,8 +6,8 @@ if (is_string($existingAllergens)) {
 }
 ?>
 
-<h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Modifica Piatto</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Modifica i dettagli del piatto</p>
+<h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Modifica voce</h2>
+<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Modifica i dettagli della voce</p>
 
 <div class="page-back" style="margin-bottom:1rem;">
     <a href="<?= url('dashboard/menu') ?>"><i class="bi bi-arrow-left"></i> Torna al menu</a>

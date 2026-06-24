@@ -1,6 +1,6 @@
 <?php
 $menuTabs = [
-    ['url' => url('dashboard/menu'),             'icon' => 'bi-egg-fried', 'label' => 'Piatti',     'key' => 'piatti'],
+    ['url' => url('dashboard/menu'),             'icon' => 'bi-egg-fried', 'label' => 'Voci',       'key' => 'piatti'],
     ['url' => url('dashboard/menu/categories'),   'icon' => 'bi-folder',    'label' => 'Categorie',  'key' => 'categorie'],
     ['url' => url('dashboard/menu/appearance'),   'icon' => 'bi-palette',   'label' => 'Aspetto',    'key' => 'aspetto'],
 ];
@@ -81,7 +81,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Titolo sezione "in evidenza"</label>
                     <input type="text" name="menu_featured_label" class="form-control form-control-sm" maxlength="40"
                            value="<?= e($tenant['menu_featured_label'] ?? '') ?>" placeholder="Piatti del giorno">
-                    <div style="font-size:.72rem; color:#6c757d; margin-top:.2rem;">Titolo del blocco che raccoglie i piatti marcati "in evidenza". Es. "Selezionati dallo chef", "Piatto del mese", "Scelti per voi". Vuoto = "Piatti del giorno".</div>
+                    <div style="font-size:.72rem; color:#6c757d; margin-top:.2rem;">Titolo del blocco che raccoglie le voci marcate "in evidenza". Es. "Selezionati dallo chef", "Piatto del mese", "Scelti per voi". Vuoto = "Piatti del giorno".</div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Orari di apertura</label>
@@ -117,7 +117,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                         </label>
                         <?php endforeach; ?>
                     </div>
-                    <div style="font-size:.72rem; color:#6c757d; margin-top:.35rem;">Attivando una lingua compare uno switcher nel menu pubblico e i campi di traduzione nelle schede piatto/categoria. <strong>Le voci non tradotte non compaiono</strong> nel menù in quella lingua (niente menù misto).</div>
+                    <div style="font-size:.72rem; color:#6c757d; margin-top:.35rem;">Attivando una lingua compare uno switcher nel menu pubblico e i campi di traduzione nelle schede voce/categoria. <strong>Le voci non tradotte non compaiono</strong> nel menù in quella lingua (niente menù misto).</div>
 
                     <?php foreach (($coverage ?? []) as $lc => $cov): ?>
                     <?php
@@ -127,9 +127,9 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                         $langLabel = $allLanguages[$lc]['label'] ?? strtoupper($lc);
                     ?>
                     <div style="margin-top:.5rem; font-size:.76rem; padding:.55rem .7rem; border-radius:8px; background:<?= $complete ? '#e7f4ee' : '#fff8e6' ?>; border:1px solid <?= $complete ? '#c9e6d8' : '#f5e3a8' ?>;">
-                        <strong><?= e($langLabel) ?></strong> — piatti <?= (int)$cov['items_done'] ?>/<?= (int)$cov['items_total'] ?> · categorie <?= (int)$cov['cats_done'] ?>/<?= (int)$cov['cats_total'] ?>
+                        <strong><?= e($langLabel) ?></strong> — voci <?= (int)$cov['items_done'] ?>/<?= (int)$cov['items_total'] ?> · categorie <?= (int)$cov['cats_done'] ?>/<?= (int)$cov['cats_total'] ?>
                         <?php if ($itemsMissing > 0): ?>
-                        <div style="color:#7a5b00; margin-top:.2rem;"><i class="bi bi-exclamation-triangle-fill"></i> <?= $itemsMissing ?> piatti senza nome <?= e($langLabel) ?> <strong>non compaiono</strong> nel menù tradotto.</div>
+                        <div style="color:#7a5b00; margin-top:.2rem;"><i class="bi bi-exclamation-triangle-fill"></i> <?= $itemsMissing ?> voci senza nome <?= e($langLabel) ?> <strong>non compaiono</strong> nel menù tradotto.</div>
                         <?php endif; ?>
                         <?php if ($catsMissing > 0): ?>
                         <div style="color:#7a5b00; margin-top:.2rem;"><i class="bi bi-info-circle-fill"></i> <?= $catsMissing ?> categorie senza nome <?= e($langLabel) ?>: l'intestazione resta in italiano.</div>

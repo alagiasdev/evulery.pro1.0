@@ -1,7 +1,7 @@
 <?php $old = $old ?? []; ?>
 
-<h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Nuovo Piatto</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Aggiungi un piatto al menu</p>
+<h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Nuova voce</h2>
+<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Aggiungi una voce al menu (piatto o vino)</p>
 
 <div class="page-back" style="margin-bottom:1rem;">
     <a href="<?= url('dashboard/menu') ?>"><i class="bi bi-arrow-left"></i> Torna al menu</a>
@@ -137,7 +137,7 @@
                 <?php endif; ?>
 
                 <button type="submit" class="btn-save" style="width:100%;">
-                    <i class="bi bi-plus-circle me-1"></i> Aggiungi Piatto
+                    <i class="bi bi-plus-circle me-1"></i> Aggiungi voce
                 </button>
             </form>
         </div>

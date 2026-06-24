@@ -1,6 +1,6 @@
 <?php
 $menuTabs = [
-    ['url' => url('dashboard/menu'),             'icon' => 'bi-egg-fried', 'label' => 'Piatti',     'key' => 'piatti'],
+    ['url' => url('dashboard/menu'),             'icon' => 'bi-egg-fried', 'label' => 'Voci',       'key' => 'piatti'],
     ['url' => url('dashboard/menu/categories'),   'icon' => 'bi-folder',    'label' => 'Categorie',  'key' => 'categorie'],
     ['url' => url('dashboard/menu/appearance'),   'icon' => 'bi-palette',   'label' => 'Aspetto',    'key' => 'aspetto'],
 ];
@@ -36,7 +36,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
         <div class="dh-stat-icon green"><i class="bi bi-egg-fried"></i></div>
         <div>
             <div class="dh-stat-value"><?= (int)($stats['total'] ?? 0) ?></div>
-            <div class="dh-stat-label">Piatti totali</div>
+            <div class="dh-stat-label">Voci totali</div>
         </div>
     </div>
     <div class="dh-stat-card">
@@ -50,7 +50,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
         <div class="dh-stat-icon orange"><i class="bi bi-star-fill"></i></div>
         <div>
             <div class="dh-stat-value"><?= (int)($stats['specials'] ?? 0) ?></div>
-            <div class="dh-stat-label">Piatti del giorno</div>
+            <div class="dh-stat-label">In evidenza</div>
         </div>
     </div>
     <div class="dh-stat-card">
@@ -68,11 +68,11 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
         <!-- Action bar -->
         <div class="d-flex align-items-center justify-content-between" style="margin-bottom:.75rem;">
             <div style="font-weight:600; font-size:.95rem;">
-                <i class="bi bi-list-ul me-1" style="color:var(--brand);"></i> Tutti i piatti
+                <i class="bi bi-list-ul me-1" style="color:var(--brand);"></i> Tutte le voci
             </div>
             <?php if (!empty($categories)): ?>
             <a href="<?= url('dashboard/menu/items/create') ?>" class="btn btn-sm btn-save">
-                <i class="bi bi-plus-circle me-1"></i> Nuovo piatto
+                <i class="bi bi-plus-circle me-1"></i> Nuova voce
             </a>
             <?php endif; ?>
         </div>
@@ -108,7 +108,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                     <?php if ($totalParentItems > 0): ?>
                     <div class="dm-admin-cat-group-header">
                         <?= menu_icon($parent['icon'] ?? 'bi-list') ?> <?= e($parent['name']) ?>
-                        <span class="dm-admin-cat-group-count"><?= $totalParentItems ?> piatt<?= $totalParentItems === 1 ? 'o' : 'i' ?></span>
+                        <span class="dm-admin-cat-group-count"><?= $totalParentItems ?> <?= !empty($parent['is_wine']) ? ('etichett' . ($totalParentItems === 1 ? 'a' : 'e')) : ('piatt' . ($totalParentItems === 1 ? 'o' : 'i')) ?></span>
                     </div>
 
                     <?php // Items directly in parent (no subcategory) ?>
@@ -135,9 +135,9 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
             <?php if (!$hasItems): ?>
             <div class="card" style="padding:2.5rem; text-align:center;">
                 <i class="bi bi-egg-fried" style="font-size:2.5rem; color:#dee2e6;"></i>
-                <p style="color:#6c757d; margin-top:.75rem; font-size:.88rem; margin-bottom:.75rem;">Nessun piatto nel menu.</p>
+                <p style="color:#6c757d; margin-top:.75rem; font-size:.88rem; margin-bottom:.75rem;">Nessuna voce nel menu.</p>
                 <a href="<?= url('dashboard/menu/items/create') ?>" class="btn btn-sm btn-save" style="display:inline-block; width:auto; margin:0 auto;">
-                    <i class="bi bi-plus-circle me-1"></i> Aggiungi il primo piatto
+                    <i class="bi bi-plus-circle me-1"></i> Aggiungi la prima voce
                 </a>
             </div>
             <?php endif; ?>

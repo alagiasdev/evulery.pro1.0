@@ -56,7 +56,7 @@
         </form>
         <form method="POST" action="<?= url("dashboard/menu/items/{$item['id']}/toggle-special") ?>" class="d-inline">
             <?= csrf_field() ?>
-            <button type="submit" class="btn btn-sm <?= $item['is_daily_special'] ? 'btn-warning' : 'btn-outline-secondary' ?>" title="Piatto del giorno" style="font-size:.7rem;">
+            <button type="submit" class="btn btn-sm <?= $item['is_daily_special'] ? 'btn-warning' : 'btn-outline-secondary' ?>" title="In evidenza" style="font-size:.7rem;">
                 <i class="bi bi-star<?= $item['is_daily_special'] ? '-fill' : '' ?>"></i>
             </button>
         </form>

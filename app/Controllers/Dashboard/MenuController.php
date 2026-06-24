@@ -326,7 +326,7 @@ class MenuController
         $old = $_SESSION['_flash']['old_input'] ?? [];
 
         view('dashboard/menu/create', [
-            'title'          => 'Nuovo Piatto',
+            'title'          => 'Nuova voce',
             'activeMenu'     => 'menu',
             'hierarchy'      => $hierarchy,
             'allergens'      => MenuItem::ALLERGENS,
@@ -360,9 +360,9 @@ class MenuController
         $newId = $itemModel->create($tenantId, $itemData);
         $this->saveEntityTranslations($tenantId, 'item', $newId, $data);
 
-        AuditLog::log(AuditLog::MENU_ITEM_CREATED, "Piatto: {$itemData['name']}", Auth::id(), $tenantId);
+        AuditLog::log(AuditLog::MENU_ITEM_CREATED, "Voce: {$itemData['name']}", Auth::id(), $tenantId);
 
-        flash('success', "Piatto \"{$itemData['name']}\" aggiunto al menù.");
+        flash('success', "Voce \"{$itemData['name']}\" aggiunta al menù.");
         Response::redirect(url('dashboard/menu'));
     }
 
@@ -374,7 +374,7 @@ class MenuController
 
         $item = (new MenuItem())->findById($id, $tenantId);
         if (!$item) {
-            flash('danger', 'Piatto non trovato.');
+            flash('danger', 'Voce non trovata.');
             Response::redirect(url('dashboard/menu'));
         }
 
@@ -382,7 +382,7 @@ class MenuController
         $old = $_SESSION['_flash']['old_input'] ?? $item;
 
         view('dashboard/menu/edit', [
-            'title'          => 'Modifica Piatto',
+            'title'          => 'Modifica voce',
             'activeMenu'     => 'menu',
             'item'           => $item,
             'hierarchy'      => $hierarchy,
@@ -406,7 +406,7 @@ class MenuController
         $itemModel = new MenuItem();
         $existing = $itemModel->findById($id, $tenantId);
         if (!$existing) {
-            flash('danger', 'Piatto non trovato.');
+            flash('danger', 'Voce non trovata.');
             Response::redirect(url('dashboard/menu'));
         }
 
@@ -432,9 +432,9 @@ class MenuController
         $itemModel->update($id, $tenantId, $itemData);
         $this->saveEntityTranslations($tenantId, 'item', $id, $data);
 
-        AuditLog::log(AuditLog::MENU_ITEM_UPDATED, "Piatto ID: {$id}", Auth::id(), $tenantId);
+        AuditLog::log(AuditLog::MENU_ITEM_UPDATED, "Voce ID: {$id}", Auth::id(), $tenantId);
 
-        flash('success', "Piatto \"{$itemData['name']}\" aggiornato.");
+        flash('success', "Voce \"{$itemData['name']}\" aggiornata.");
         Response::redirect(url('dashboard/menu'));
     }
 
@@ -450,10 +450,10 @@ class MenuController
             $this->deleteItemImage($item['image_url']);
             $itemModel->delete($id, $tenantId);
             (new MenuTranslation())->deleteForEntity($tenantId, 'item', $id);
-            AuditLog::log(AuditLog::MENU_ITEM_DELETED, "Piatto ID: {$id}", Auth::id(), $tenantId);
-            flash('success', 'Piatto eliminato.');
+            AuditLog::log(AuditLog::MENU_ITEM_DELETED, "Voce ID: {$id}", Auth::id(), $tenantId);
+            flash('success', 'Voce eliminata.');
         } else {
-            flash('danger', 'Piatto non trovato.');
+            flash('danger', 'Voce non trovata.');
         }
         Response::redirect(url('dashboard/menu'));
     }
@@ -474,7 +474,7 @@ class MenuController
         $id = (int)$request->param('id');
         $tenantId = Auth::tenantId();
         (new MenuItem())->toggleDailySpecial($id, $tenantId);
-        flash('success', 'Piatto del giorno aggiornato.');
+        flash('success', 'Evidenza aggiornata.');
         Response::redirect(url('dashboard/menu'));
     }
 
@@ -600,8 +600,8 @@ class MenuController
     private function validateItemData(array $data, int $tenantId, string $redirectUrl): array
     {
         $v = Validator::make($data)
-            ->required('name', 'Nome piatto')
-            ->maxLength('name', 150, 'Nome piatto')
+            ->required('name', 'Nome')
+            ->maxLength('name', 150, 'Nome')
             ->required('category_id', 'Categoria');
 
         if ($v->fails()) {

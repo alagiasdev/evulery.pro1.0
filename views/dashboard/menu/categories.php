@@ -1,6 +1,6 @@
 <?php
 $menuTabs = [
-    ['url' => url('dashboard/menu'),             'icon' => 'bi-egg-fried', 'label' => 'Piatti',     'key' => 'piatti'],
+    ['url' => url('dashboard/menu'),             'icon' => 'bi-egg-fried', 'label' => 'Voci',       'key' => 'piatti'],
     ['url' => url('dashboard/menu/categories'),   'icon' => 'bi-folder',    'label' => 'Categorie',  'key' => 'categorie'],
     ['url' => url('dashboard/menu/appearance'),   'icon' => 'bi-palette',   'label' => 'Aspetto',    'key' => 'aspetto'],
 ];
@@ -29,7 +29,7 @@ $menuTabs = [
     <?php if (empty($hierarchy)): ?>
     <div class="card" style="padding:2.5rem; text-align:center;">
         <i class="bi bi-folder" style="font-size:2.5rem; color:#dee2e6;"></i>
-        <p style="color:#6c757d; margin-top:.75rem; font-size:.88rem;">Nessuna categoria. Creane una per iniziare ad aggiungere piatti.</p>
+        <p style="color:#6c757d; margin-top:.75rem; font-size:.88rem;">Nessuna categoria. Creane una per iniziare ad aggiungere voci.</p>
     </div>
     <?php else: ?>
 
@@ -78,7 +78,8 @@ $menuTabs = [
                         <div class="dm-subcat-dot"></div>
                         <div class="dm-subcat-icon"><?= menu_icon($child['icon'] ?? 'bi-list') ?></div>
                         <div class="dm-subcat-name"><?= e($child['name']) ?></div>
-                        <div class="dm-subcat-count"><?= $counts[(int)$child['id']] ?? 0 ?> piatt<?= ($counts[(int)$child['id']] ?? 0) === 1 ? 'o' : 'i' ?></div>
+                        <?php $childCount = $counts[(int)$child['id']] ?? 0; ?>
+                        <div class="dm-subcat-count"><?= $childCount ?> <?= !empty($child['is_wine']) ? ('etichett' . ($childCount === 1 ? 'a' : 'e')) : ('piatt' . ($childCount === 1 ? 'o' : 'i')) ?></div>
                         <div class="dm-subcat-actions">
                             <button type="button" class="dm-cat-action-btn" data-edit-cat="<?= (int)$child['id'] ?>"
                                     data-cat-name="<?= e($child['name']) ?>" data-cat-desc="<?= e($child['description'] ?? '') ?>"
@@ -183,7 +184,7 @@ $menuTabs = [
     </div>
 
     <div style="color:#6c757d; font-size:.75rem; margin-top:.75rem; font-style:italic;">
-        <i class="bi bi-info-circle me-1"></i> Le sottocategorie sono opzionali. Le categorie senza piatti non appaiono nel menu pubblico.
+        <i class="bi bi-info-circle me-1"></i> Le sottocategorie sono opzionali. Le categorie senza voci non appaiono nel menu pubblico.
     </div>
 </div>
 
