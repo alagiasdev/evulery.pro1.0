@@ -89,10 +89,11 @@ body {
     margin-bottom: 1.25rem;
 }
 .dm-hero-name {
-    font-size: 1.65rem;
-    font-weight: 800;
-    letter-spacing: -.02em;
-    margin: 0 0 .2rem;
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    letter-spacing: 0;
+    font-size: 2.5rem;
+    margin: 0 0 .65rem;
 }
 /* Visually hidden — accessibile a screen reader, invisibile a vista.
    Usato per il <h1> nome quando il logo lo contiene gia'. */
@@ -148,7 +149,7 @@ body {
 .dm-landing-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: .65rem;
+    gap: .35rem;
 }
 .dm-landing-card {
     background: var(--dm-bg-card);
@@ -574,13 +575,7 @@ body {
    Tipografia Fraunces, sezioni numerate, allergeni discreti, prezzi neutri.
    ============================================================ */
 
-/* Tipografia display per nome ristorante + titoli sezione */
-.dm-hero-name {
-    font-family: 'Fraunces', Georgia, serif;
-    font-weight: 600;
-    letter-spacing: 0;
-    font-size: 2.5rem;
-}
+/* Tagline hero (il nome ristorante è definito in .dm-hero-name più sopra) */
 .dm-hero-tagline { font-style: normal; letter-spacing: .02em; }
 
 /* Sezioni numerate editoriali (01, 02, ...) — niente icona colorata */
@@ -685,7 +680,6 @@ html[lang="en"] .dm-item-meta .dm-allergen-tags::before { content: 'Allergens'; 
 /* Griglia categorie compatta/discreta */
 .dm-landing { margin-top: -.9rem; }
 .dm-landing-title { font-size: .6rem; margin-bottom: .45rem; }
-.dm-landing-grid { grid-template-columns: repeat(3, 1fr); gap: .35rem; }
 .dm-landing-card { padding: .45rem .3rem; gap: .15rem; box-shadow: none; border-radius: 10px; }
 .dm-landing-icon { width: 23px; height: 23px; font-size: .72rem; border-radius: 7px; }
 .dm-landing-label { font-size: 12px; line-height: 1.15; }
@@ -756,7 +750,6 @@ body { background: #fff; }
 }
 .dm-hero-content { padding: 2.75rem 1.5rem 3rem; }
 .dm-hero-over { margin-bottom: .8rem; }
-.dm-hero-name { margin-bottom: .65rem; }
 .dm-hero-tagline { font-size: .98rem; margin: 0 0 1.25rem; opacity: .9; }
 .dm-hero-info { margin-top: 1rem; gap: .8rem 1.75rem; }
 .dm-hero-chip { font-size: .82rem; color: rgba(255,255,255,.72); }
