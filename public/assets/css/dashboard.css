@@ -2442,6 +2442,11 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     gap: 1.25rem;
     align-items: start;
 }
+/* Le card del form stanno in colonna 1; lo spacing lo dà il gap della griglia. */
+.dr-form-grid > .section-card { grid-column: 1; margin-bottom: 0; }
+/* Gli slot orari (step 3) sono la sidebar destra: occupano tutte le righe del
+   form così restano in alto a fianco, anche se nel DOM stanno dopo i Coperti. */
+.dr-form-grid > .dr-slots-card { grid-column: 2; grid-row: 1 / span 99; }
 
 /* --- Summary Bar (dark sticky) --- */
 .dr-summary-bar {
@@ -2637,6 +2642,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     display: flex; align-items: center; gap: .5rem;
 }
 .dr-slots-header h6 { margin: 0; font-size: .85rem; font-weight: 700; }
+.dr-slots-header h6 i { color: var(--brand); font-size: .8rem; margin-right: .15rem; }
 
 /* --- Customer Search --- */
 .dr-customer-search { position: relative; }
@@ -2745,7 +2751,11 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 
 /* --- Responsive --- */
 @media (max-width: 992px) {
+    /* Singola colonna: le card seguono l'ordine del DOM ->
+       Data, Coperti, Orario, Cliente, Sorgente, Note+Salva (in fondo). */
     .dr-form-grid { grid-template-columns: 1fr; }
+    .dr-form-grid > .section-card,
+    .dr-form-grid > .dr-slots-card { grid-column: 1; grid-row: auto; }
     .dr-slots-card { position: static; }
 }
 @media (max-width: 768px) {
@@ -2756,6 +2766,10 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 }
 @media (max-width: 576px) {
     .dr-slot-btn { min-width: 60px; padding: 6px 8px; }
+    /* CTA finale pulita: Salva a tutta larghezza, Annulla sotto. */
+    .dr-submit-actions { display: flex; flex-direction: column; gap: .5rem; }
+    .dr-btn-submit { width: 100%; text-align: center; }
+    .dr-btn-cancel { width: 100%; text-align: center; margin-left: 0; }
 }
 
 /* ===== Customer Stats (cs-*) ===== */
