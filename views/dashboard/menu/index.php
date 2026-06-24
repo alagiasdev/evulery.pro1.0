@@ -5,7 +5,9 @@ $menuTabs = [
     ['url' => url('dashboard/menu/appearance'),   'icon' => 'bi-palette',   'label' => 'Aspetto',    'key' => 'aspetto'],
 ];
 $menuUrl = url($tenant['slug'] . '/menu');
-$qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($menuUrl);
+$qrData  = urlencode($menuUrl);
+$qrUrl   = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . $qrData; // anteprima
+$qrUrlHd = 'https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&margin=16&ecc=M&format=png&data=' . $qrData; // download stampa
 $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
 ?>
 
@@ -168,7 +170,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                     <button type="button" class="btn btn-sm btn-outline-secondary flex-fill" data-copy="<?= e($menuUrl) ?>">
                         <i class="bi bi-clipboard"></i> Copia link
                     </button>
-                    <a href="<?= e($qrUrl) ?>" download="menu-qr-<?= e($tenant['slug']) ?>.png" class="btn btn-sm btn-outline-secondary flex-fill">
+                    <a href="<?= e($qrUrlHd) ?>" download="menu-qr-<?= e($tenant['slug']) ?>.png" class="btn btn-sm btn-outline-secondary flex-fill">
                         <i class="bi bi-qr-code"></i> QR
                     </a>
                 </div>

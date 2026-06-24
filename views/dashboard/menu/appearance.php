@@ -5,7 +5,9 @@ $menuTabs = [
     ['url' => url('dashboard/menu/appearance'),   'icon' => 'bi-palette',   'label' => 'Aspetto',    'key' => 'aspetto'],
 ];
 $menuUrl = url($tenant['slug'] . '/menu');
-$qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' . urlencode($menuUrl);
+$qrData  = urlencode($menuUrl);
+$qrUrl   = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' . $qrData; // anteprima
+$qrUrlHd = 'https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&margin=16&ecc=M&format=png&data=' . $qrData; // download stampa HD
 $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
 ?>
 
@@ -51,7 +53,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
             <button type="button" class="btn btn-sm btn-outline-secondary" data-copy="<?= e($menuUrl) ?>" title="Copia link">
                 <i class="bi bi-clipboard"></i> Copia link
             </button>
-            <a href="<?= e($qrUrl) ?>" download="menu-qr-<?= e($tenant['slug']) ?>.png" class="btn btn-sm btn-outline-secondary" title="Scarica QR Code">
+            <a href="<?= e($qrUrlHd) ?>" download="menu-qr-<?= e($tenant['slug']) ?>.png" class="btn btn-sm btn-outline-secondary" title="Scarica QR Code (alta risoluzione)">
                 <i class="bi bi-qr-code"></i> QR Code
             </a>
         </div>
@@ -156,8 +158,8 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
             <div style="text-align:center; padding:.5rem;">
                 <img src="<?= e($qrUrl) ?>" alt="QR Code Menu" style="width:160px; height:160px; border-radius:8px; margin-bottom:.75rem;">
                 <p style="font-size:.75rem; color:#6c757d; margin-bottom:.75rem;">Stampa o condividi questo QR code per permettere ai clienti di consultare il menu dal tavolo.</p>
-                <a href="<?= e($qrUrl) ?>" download="menu-qr-<?= e($tenant['slug']) ?>.png" class="btn btn-sm btn-outline-secondary">
-                    <i class="bi bi-download me-1"></i> Scarica QR Code
+                <a href="<?= e($qrUrlHd) ?>" download="menu-qr-<?= e($tenant['slug']) ?>.png" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-download me-1"></i> Scarica QR Code HD
                 </a>
             </div>
         </div>
