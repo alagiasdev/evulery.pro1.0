@@ -810,7 +810,9 @@ a.dm-hero-chip:hover { color: #fff; }
 .dm-item-name, .dm-wine-name { font-weight: 600; font-size: 1rem; line-height: 1.35; }
 .dm-item-price { font-weight: 700; font-size: 1rem; }
 .dm-item-desc { font-size: .88rem; }
-/* allergeni: più leggibili (da .70 a .78) e grigio un filo più scuro */
+/* allergeni: ben visibili (15px / 500), etichetta vicina alla lista */
 .dm-item-meta .dm-allergen-tag,
-.dm-special-allergens .dm-allergen-tag { font-size: .78rem !important; color: #8a8790 !important; }
-.dm-item-meta .dm-allergen-tags::before { font-size: .6rem; color: #b0adb5; }
+.dm-special-allergens .dm-allergen-tag { font-size: 15px !important; font-weight: 500 !important; color: #6c757d !important; }
+.dm-item-meta .dm-allergen-tags::before { font-size: .72rem; margin-right: .3rem; color: #9a979f; }
+.dm-item-meta .dm-allergen-tag:not(:last-child)::after,
+.dm-special-allergens .dm-allergen-tag:not(:last-child)::after { margin: 0 .3rem; }
