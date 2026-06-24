@@ -697,8 +697,8 @@ html[lang="en"] .dm-item-meta .dm-allergen-tags::before { content: 'Allergens'; 
 .dm-landing-grid { grid-template-columns: repeat(3, 1fr); gap: .35rem; }
 .dm-landing-card { padding: .45rem .3rem; gap: .15rem; box-shadow: none; border-radius: 10px; }
 .dm-landing-icon { width: 23px; height: 23px; font-size: .72rem; border-radius: 7px; }
-.dm-landing-label { font-size: .64rem; line-height: 1.1; }
-.dm-landing-count { font-size: .52rem; }
+.dm-landing-label { font-size: 12px; line-height: 1.15; }
+.dm-landing-count { font-size: 10px; }
 
 /* Card "Proposta dello chef" (piatto in evidenza) */
 .dm-feature {
@@ -807,6 +807,7 @@ a.dm-hero-chip { text-decoration: none; color: rgba(255,255,255,.72); }
 a.dm-hero-chip:hover { color: #fff; }
 
 /* nome piatto: peso 600 (più sobrio del bold), prezzo bilanciato */
+.dm-item-top { gap: 18px; }
 .dm-item-name, .dm-wine-name { font-weight: 600; font-size: 1rem; line-height: 1.35; }
 .dm-item-price { font-weight: 700; font-size: 1rem; }
 .dm-item-desc { font-size: .88rem; }
