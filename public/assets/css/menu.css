@@ -547,7 +547,6 @@ body {
 @media (max-width: 480px) {
     .dm-hero-logo { width: 52px; height: 52px; }
     .dm-legend-grid { grid-template-columns: 1fr 1fr; gap: .35rem .5rem; }
-    .dm-wine-prices { font-size: .8rem; }
 }
 
 /* ============================================================
@@ -562,7 +561,7 @@ body {
 .dm-wine:hover { background: #fbfbfa; }
 .dm-wine:last-child { border-bottom: none; }
 .dm-wine-name { font-weight: 600; font-size: 1rem; color: var(--dm-text-dark); line-height: 1.35; }
-.dm-wine-prices { display: block; text-align: right; margin-top: .35rem; font-size: .82rem; color: var(--dm-text-muted); }
+.dm-wine-prices { display: block; text-align: right; margin-top: .35rem; font-size: 16px; color: var(--dm-text-muted); }
 .dm-wine-prices b { color: var(--dm-text-dark); font-weight: 700; }
 .dm-wine-prices .dm-wp-sep { margin: 0 .35rem; color: var(--dm-border); }
 .dm-wine-sub { font-size: .78rem; color: var(--dm-text-muted); margin-top: .2rem; }
