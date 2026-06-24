@@ -1006,9 +1006,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ===== SOCIAL PROOF =====
+    // Riprova sociale: mostriamo il conteggio solo quando è abbastanza alto da
+    // fare davvero "urgenza". Sotto soglia il banner è nascosto: meglio nessuna
+    // riprova che una debole (es. "1 prenotazione" suggerisce un locale vuoto).
+    var SOCIAL_PROOF_MIN = 3;
     function showSocialProof(count) {
-        if (count > 0) {
-            socialProofText.textContent = 'Gia ' + count + ' prenotazioni per oggi';
+        if (count >= SOCIAL_PROOF_MIN) {
+            var noun = count === 1 ? 'prenotazione' : 'prenotazioni';
+            socialProofText.textContent = 'Già ' + count + ' ' + noun + ' per oggi';
             socialProof.style.display = 'flex';
         } else {
             socialProof.style.display = 'none';
