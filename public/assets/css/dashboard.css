@@ -2309,6 +2309,9 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     .slots-grid th:first-child, .slots-grid td:first-child { padding-left: .5rem; }
     .edit-grid { grid-template-columns: 1fr 1fr; }
     .cat-time-range { display: none; }
+    /* Mobile: il pill durata va a capo su una sua riga (evita sovrapposizione nome/toggle) */
+    .cat-header { flex-wrap: wrap; }
+    .cat-dur-pill { order: 10; margin: .2rem 0 0 4.2rem; }
     .master-toggle { flex-direction: column; text-align: center; }
     .mt-left { flex-direction: column; }
     .amount-preview { flex-direction: column; text-align: center; }
