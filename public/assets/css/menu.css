@@ -693,12 +693,12 @@ html[lang="en"] .dm-item-meta .dm-allergen-tags::before { content: 'Allergens'; 
 
 /* Griglia categorie compatta/discreta */
 .dm-landing { margin-top: -.9rem; }
-.dm-landing-title { font-size: .62rem; margin-bottom: .55rem; }
-.dm-landing-grid { grid-template-columns: repeat(3, 1fr); gap: .4rem; }
-.dm-landing-card { padding: .55rem .35rem; gap: .2rem; box-shadow: none; border-radius: 10px; }
-.dm-landing-icon { width: 26px; height: 26px; font-size: .8rem; border-radius: 8px; }
-.dm-landing-label { font-size: .66rem; line-height: 1.15; }
-.dm-landing-count { font-size: .54rem; }
+.dm-landing-title { font-size: .6rem; margin-bottom: .45rem; }
+.dm-landing-grid { grid-template-columns: repeat(3, 1fr); gap: .35rem; }
+.dm-landing-card { padding: .45rem .3rem; gap: .15rem; box-shadow: none; border-radius: 10px; }
+.dm-landing-icon { width: 23px; height: 23px; font-size: .72rem; border-radius: 7px; }
+.dm-landing-label { font-size: .64rem; line-height: 1.1; }
+.dm-landing-count { font-size: .52rem; }
 
 /* Card "Proposta dello chef" (piatto in evidenza) */
 .dm-feature {
@@ -815,4 +815,4 @@ a.dm-hero-chip:hover { color: #fff; }
 .dm-special-allergens .dm-allergen-tag { font-size: 15px !important; font-weight: 500 !important; color: #6c757d !important; }
 .dm-item-meta .dm-allergen-tags::before { font-size: .72rem; margin-right: .3rem; color: #9a979f; }
 .dm-item-meta .dm-allergen-tag:not(:last-child)::after,
-.dm-special-allergens .dm-allergen-tag:not(:last-child)::after { margin: 0 .3rem; }
+.dm-special-allergens .dm-allergen-tag:not(:last-child)::after { margin: 0 .18rem; }
