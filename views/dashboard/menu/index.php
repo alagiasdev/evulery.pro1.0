@@ -104,7 +104,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                     ?>
                     <?php if ($totalParentItems > 0): ?>
                     <div class="dm-admin-cat-group-header">
-                        <i class="bi <?= e($parent['icon'] ?? 'bi-list') ?>"></i> <?= e($parent['name']) ?>
+                        <?= menu_icon($parent['icon'] ?? 'bi-list') ?> <?= e($parent['name']) ?>
                         <span class="dm-admin-cat-group-count"><?= $totalParentItems ?> piatt<?= $totalParentItems === 1 ? 'o' : 'i' ?></span>
                     </div>
 

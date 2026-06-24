@@ -92,7 +92,7 @@
             foreach ($cat['subcategories'] ?? [] as $sub) { $landingCount += count($sub['items']); }
         ?>
         <a class="dm-landing-card" data-target="cat-<?= (int)$cat['id'] ?>">
-            <div class="dm-landing-icon"><i class="bi <?= e($cat['icon'] ?? 'bi-list') ?>"></i></div>
+            <div class="dm-landing-icon"><?= menu_icon($cat['icon'] ?? 'bi-list') ?></div>
             <span class="dm-landing-label"><?= e($cat['name']) ?></span>
             <span class="dm-landing-count"><?= e($countLabel($landingCount, !empty($cat['is_wine']))) ?></span>
         </a>
@@ -181,7 +181,7 @@
     ?>
     <div class="dm-section dm-section-anchor<?= $isWine ? ' dm-section--wine' : '' ?>" id="cat-<?= (int)$cat['id'] ?>">
         <div class="dm-section-header">
-            <div class="dm-section-icon"><i class="bi <?= e($cat['icon'] ?? 'bi-list') ?>"></i></div>
+            <div class="dm-section-icon"><?= menu_icon($cat['icon'] ?? 'bi-list') ?></div>
             <h2 class="dm-section-title"><?= e($cat['name']) ?></h2>
             <span class="dm-section-count"><?= e($countLabel($totalCount, $isWine)) ?></span>
         </div>
@@ -210,7 +210,7 @@
         <?php foreach ($cat['subcategories'] ?? [] as $sub): ?>
         <div class="dm-subsection">
             <div class="dm-subsection-header">
-                <i class="bi <?= e($sub['icon'] ?? 'bi-list') ?>"></i>
+                <?= menu_icon($sub['icon'] ?? 'bi-list') ?>
                 <span><?= e($sub['name']) ?></span>
             </div>
             <?php if ($isWine): ?>

@@ -62,6 +62,25 @@ function e(?string $value): string
 }
 
 /**
+ * Render di un'icona categoria menu. Le icone Bootstrap (bi-*) sono rese come <i>;
+ * i token custom (es. 'wine-glass', non presente in Bootstrap Icons) come <svg>
+ * inline che eredita dimensione (1em) e colore (currentColor) come un <i>.
+ */
+function menu_icon(?string $icon, string $extraClass = ''): string
+{
+    $icon = $icon ?: 'bi-list';
+    $cls = trim($extraClass);
+    if ($icon === 'wine-glass') {
+        $svgCls = trim('dm-svg-icon ' . $cls);
+        return '<svg class="' . e($svgCls) . '" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" '
+            . 'fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" style="vertical-align:-.125em">'
+            . '<path d="M3 0h10a.5.5 0 0 1 .5.5C13.5 4 11.6 6.83 8.5 7.43V14H11a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1h2.5V7.43C4.4 6.83 2.5 4 2.5.5A.5.5 0 0 1 3 0Zm.53 1c.18 2.27 1.6 4 3.97 4.43V5.4q0-.02 0 0c2.38-.42 3.8-2.16 3.97-4.4z"/>'
+            . '</svg>';
+    }
+    return '<i class="bi ' . e($icon) . ($cls !== '' ? ' ' . e($cls) : '') . '"></i>';
+}
+
+/**
  * Get old form input value (after validation failure)
  */
 function old(string $key, string $default = ''): string

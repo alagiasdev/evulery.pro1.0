@@ -18,6 +18,7 @@ class MenuCategory
         'bi-fire'         => 'Grill / Carne',
         'bi-water'        => 'Pesce / Mare',
         'bi-cake2'        => 'Dolce',
+        'wine-glass'      => 'Calice / Vino',
         'bi-cup-straw'    => 'Bevanda',
         'bi-cup'          => 'Caffe',
         'bi-droplet'      => 'Acqua',

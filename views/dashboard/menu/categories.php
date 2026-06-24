@@ -46,7 +46,7 @@ $menuTabs = [
         <div class="dm-cat-card" data-cat-id="<?= (int)$parent['id'] ?>">
             <div class="dm-cat-header" data-toggle-cat>
                 <div class="dm-cat-expand"><i class="bi bi-chevron-right"></i></div>
-                <div class="dm-cat-icon"><i class="bi <?= e($parent['icon'] ?? 'bi-list') ?>"></i></div>
+                <div class="dm-cat-icon"><?= menu_icon($parent['icon'] ?? 'bi-list') ?></div>
                 <div class="dm-cat-name">
                     <?= e($parent['name']) ?>
                     <?php if (!empty($parent['is_wine'])): ?>
@@ -76,7 +76,7 @@ $menuTabs = [
                     <?php foreach ($parent['children'] as $child): ?>
                     <div class="dm-subcat-row">
                         <div class="dm-subcat-dot"></div>
-                        <div class="dm-subcat-icon"><i class="bi <?= e($child['icon'] ?? 'bi-list') ?>"></i></div>
+                        <div class="dm-subcat-icon"><?= menu_icon($child['icon'] ?? 'bi-list') ?></div>
                         <div class="dm-subcat-name"><?= e($child['name']) ?></div>
                         <div class="dm-subcat-count"><?= $counts[(int)$child['id']] ?? 0 ?> piatt<?= ($counts[(int)$child['id']] ?? 0) === 1 ? 'o' : 'i' ?></div>
                         <div class="dm-subcat-actions">
@@ -149,7 +149,7 @@ $menuTabs = [
                     <?php foreach ($categoryIcons as $iconClass => $iconLabel): ?>
                     <label class="dm-icon-option" title="<?= e($iconLabel) ?>">
                         <input type="radio" name="icon" value="<?= e($iconClass) ?>" <?= $iconClass === 'bi-list' ? 'checked' : '' ?>>
-                        <span class="dm-icon-box"><i class="bi <?= e($iconClass) ?>"></i></span>
+                        <span class="dm-icon-box"><?= menu_icon($iconClass) ?></span>
                     </label>
                     <?php endforeach; ?>
                 </div>
@@ -231,7 +231,7 @@ $menuTabs = [
                             <?php foreach ($categoryIcons as $iconClass => $iconLabel): ?>
                             <label class="dm-icon-option" title="<?= e($iconLabel) ?>">
                                 <input type="radio" name="icon" value="<?= e($iconClass) ?>">
-                                <span class="dm-icon-box"><i class="bi <?= e($iconClass) ?>"></i></span>
+                                <span class="dm-icon-box"><?= menu_icon($iconClass) ?></span>
                             </label>
                             <?php endforeach; ?>
                         </div>
