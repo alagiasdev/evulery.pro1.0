@@ -109,8 +109,28 @@
                 <div class="bw-birthday-row">
                     <div class="bw-birthday-icon">&#127874;</div>
                     <div class="bw-birthday-content">
-                        <label for="booking-birthday">Data di nascita <span class="bw-opt-tag">(opzionale)</span></label>
-                        <input type="date" id="booking-birthday" autocomplete="bday">
+                        <label id="booking-birthday-label">Data di nascita <span class="bw-opt-tag">(opzionale)</span></label>
+                        <div class="bw-birthday-selects" role="group" aria-labelledby="booking-birthday-label">
+                            <select id="booking-birthday-day" class="bw-bd-select" aria-label="Giorno di nascita">
+                                <option value="">Giorno</option>
+                                <?php for ($bwD = 1; $bwD <= 31; $bwD++): ?>
+                                <option value="<?= sprintf('%02d', $bwD) ?>"><?= $bwD ?></option>
+                                <?php endfor; ?>
+                            </select>
+                            <select id="booking-birthday-month" class="bw-bd-select" aria-label="Mese di nascita">
+                                <option value="">Mese</option>
+                                <?php foreach (['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'] as $bwMi => $bwMn): ?>
+                                <option value="<?= sprintf('%02d', $bwMi + 1) ?>"><?= $bwMn ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <select id="booking-birthday-year" class="bw-bd-select" aria-label="Anno di nascita">
+                                <option value="">Anno</option>
+                                <?php $bwYMax = (int)date('Y') - 13; for ($bwY = $bwYMax; $bwY >= $bwYMax - 87; $bwY--): ?>
+                                <option value="<?= $bwY ?>"><?= $bwY ?></option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+                        <div class="bw-bd-error" id="bw-birthday-error" style="display:none;"></div>
                         <div class="bw-birthday-hint">
                             <i class="bi bi-info-circle"></i>
                             Per inviarti gli auguri il giorno del tuo compleanno

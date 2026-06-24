@@ -536,9 +536,10 @@
     color: var(--bw-text-muted); font-style: italic; font-weight: 500;
     margin-left: 4px; font-size: 0.78rem;
 }
-.bw-birthday-content input[type="date"] {
-    width: 100%;
-    padding: 10px 12px;
+.bw-birthday-selects { display: flex; gap: 8px; }
+.bw-bd-select {
+    min-width: 0;
+    padding: 10px 8px;
     border: 1px solid #d0d7de;
     border-radius: 8px;
     font-size: 0.9rem;
@@ -546,10 +547,14 @@
     background: #fff;
     color: var(--bw-text);
 }
-.bw-birthday-content input[type="date"]:focus {
+.bw-bd-select:nth-child(1) { flex: 0.85; }   /* Giorno */
+.bw-bd-select:nth-child(2) { flex: 1.5; }    /* Mese */
+.bw-bd-select:nth-child(3) { flex: 1.1; }    /* Anno */
+.bw-bd-select:focus {
     outline: none; border-color: var(--bw-primary);
     box-shadow: 0 0 0 3px rgba(0,132,74,.1);
 }
+.bw-bd-error { color: #b3261e; font-size: 0.74rem; margin-top: 6px; }
 .bw-birthday-hint {
     font-size: 0.74rem; color: #B26500;
     margin-top: 6px;

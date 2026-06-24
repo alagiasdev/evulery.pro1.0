@@ -654,6 +654,40 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // ===== BIRTHDAY (3 select: giorno/mese/anno) =====
+    // Ritorna { value: 'YYYY-MM-DD'|'' , error: string|null }.
+    // Campo opzionale: vuoto = nessun errore. Se parziale o data inesistente -> errore.
+    function getBirthdayValue() {
+        var d = getEl('booking-birthday-day');
+        var m = getEl('booking-birthday-month');
+        var y = getEl('booking-birthday-year');
+        if (!d || !m || !y) return { value: '', error: null };
+        var dv = d.value, mv = m.value, yv = y.value;
+        var filled = (dv ? 1 : 0) + (mv ? 1 : 0) + (yv ? 1 : 0);
+        if (filled === 0) return { value: '', error: null };
+        if (filled < 3) return { value: '', error: 'Completa la data di nascita (giorno, mese e anno) oppure lasciala vuota.' };
+        var Y = parseInt(yv, 10), M = parseInt(mv, 10), D = parseInt(dv, 10);
+        var dt = new Date(Y, M - 1, D);
+        if (dt.getFullYear() !== Y || dt.getMonth() + 1 !== M || dt.getDate() !== D) {
+            return { value: '', error: 'La data di nascita non esiste. Controlla giorno e mese.' };
+        }
+        return { value: yv + '-' + mv + '-' + dv, error: null };
+    }
+    function showBirthdayError(msg) {
+        var el = getEl('bw-birthday-error');
+        if (el) { el.textContent = msg; el.style.display = ''; }
+        var d = getEl('booking-birthday-day');
+        if (d) d.focus();
+    }
+    function clearBirthdayError() {
+        var el = getEl('bw-birthday-error');
+        if (el) { el.style.display = 'none'; el.textContent = ''; }
+    }
+    ['booking-birthday-day', 'booking-birthday-month', 'booking-birthday-year'].forEach(function(id) {
+        var el = getEl(id);
+        if (el) el.addEventListener('change', clearBirthdayError);
+    });
+
     // ===== SUBMIT =====
     function submitBooking(forceDuplicate) {
         var firstName = getEl('booking-first-name').value.trim();
@@ -661,8 +695,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var phone = getEl('booking-phone').value.trim();
         var email = getEl('booking-email').value.trim();
         var notes = getEl('booking-notes').value.trim();
-        var birthdayEl = getEl('booking-birthday');
-        var birthday = birthdayEl ? birthdayEl.value.trim() : '';
+        var bd = getBirthdayValue();
         var consentEl = getEl('booking-marketing-consent');
         var consentVisible = document.getElementById('bw-privacy-checkbox-wrap');
         // Stato B (cliente già consenziente, checkbox non visibile): non inviamo il flag
@@ -674,6 +707,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!validateAllFields()) {
             return;
         }
+        if (bd.error) {
+            showBirthdayError(bd.error);
+            return;
+        }
+        clearBirthdayError();
 
         loadingOverlay.style.display = 'flex';
         hideError();
@@ -691,8 +729,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (notes) {
             body.notes = notes;
         }
-        if (birthday) {
-            body.birthday = birthday;
+        if (bd.value) {
+            body.birthday = bd.value;
         }
         if (marketingConsent !== null) {
             body.marketing_consent = marketingConsent;
