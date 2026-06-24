@@ -366,32 +366,31 @@ body {
 /* ============================================================
    ITEM CARD
    ============================================================ */
-.dm-items-grid { display: flex; flex-direction: column; gap: .35rem; }
+/* Righe piatto: stile editoriale (no card), hover sobrio. Valori consolidati. */
+.dm-items-grid { display: flex; flex-direction: column; gap: 0; }
 .dm-item {
-    background: var(--dm-bg-card);
-    border-radius: var(--dm-radius);
-    padding: .85rem 1rem;
     display: flex; gap: .85rem;
-    border: 1px solid var(--dm-border-light);
-    transition: box-shadow .15s, border-color .15s;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--dm-border);
+    transition: background .15s;
 }
-.dm-item:hover { border-color: #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+.dm-item.dm-item--text-only { padding: 1rem 0; }
+.dm-item:hover { background: #fbfbfa; }
 .dm-item-img-wrap {
-    width: 96px; height: 96px;
+    width: 104px; height: 104px;
     border-radius: var(--dm-radius);
     overflow: hidden; flex-shrink: 0;
 }
 .dm-item-img { width: 100%; height: 100%; object-fit: cover; }
 .dm-item-content { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.dm-item-top { display: flex; justify-content: space-between; align-items: flex-start; gap: .5rem; }
-.dm-item-name { font-weight: 700; font-size: .9rem; color: var(--dm-text-dark); line-height: 1.3; }
-.dm-item-price { font-weight: 800; font-size: .95rem; color: var(--dm-brand); white-space: nowrap; flex-shrink: 0; }
+.dm-item-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; }
+.dm-item-name { font-weight: 600; font-size: 1rem; color: var(--dm-text-dark); line-height: 1.35; }
+.dm-item-price { font-weight: 700; font-size: 1rem; color: var(--dm-text-dark); white-space: nowrap; flex-shrink: 0; }
 .dm-item-desc {
-    font-size: .78rem; color: var(--dm-text-muted); line-height: 1.45; margin-top: .2rem;
+    font-size: .88rem; color: var(--dm-text-muted); line-height: 1.45; margin-top: .2rem;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .dm-item-meta { margin-top: auto; padding-top: .35rem; }
-.dm-item.dm-item--text-only { padding: .75rem 1rem; }
 
 /* ============================================================
    ALLERGEN TAGS (per esteso)
@@ -545,16 +544,8 @@ body {
    MOBILE
    ============================================================ */
 @media (max-width: 480px) {
-    .dm-hero-name { font-size: 1.35rem; }
     .dm-hero-logo { width: 52px; height: 52px; }
-    .dm-hero-content { padding: 1.5rem 1rem 1.75rem; }
-    .dm-landing-grid { grid-template-columns: repeat(2, 1fr); }
-    .dm-special-img { width: 90px; min-height: 90px; }
-    .dm-item-img-wrap { width: 68px; height: 68px; }
     .dm-legend-grid { grid-template-columns: 1fr 1fr; gap: .35rem .5rem; }
-    .dm-hero-info { gap: .4rem 1rem; }
-    .dm-section-desc { padding-left: 0; }
-    .dm-allergen-tag { font-size: .6rem; padding: .18rem .45rem; }
     .dm-wine-head { flex-direction: column; align-items: flex-start; gap: .1rem; }
     .dm-wine-prices { text-align: left; font-size: .8rem; }
 }
@@ -562,14 +553,16 @@ body {
 /* ============================================================
    WINE ROWS (categorie "Vini": doppio prezzo, no foto/allergeni)
    ============================================================ */
-.dm-wine-list { display: flex; flex-direction: column; }
+.dm-wine-list { display: flex; flex-direction: column; gap: 0; }
 .dm-wine {
-    padding: .8rem 1rem;
-    border-bottom: 1px solid var(--dm-border-light);
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--dm-border);
+    transition: background .15s;
 }
+.dm-wine:hover { background: #fbfbfa; }
 .dm-wine:last-child { border-bottom: none; }
 .dm-wine-head { display: flex; justify-content: space-between; align-items: baseline; gap: .85rem; }
-.dm-wine-name { font-weight: 700; font-size: .92rem; color: var(--dm-text-dark); line-height: 1.3; }
+.dm-wine-name { font-weight: 600; font-size: 1rem; color: var(--dm-text-dark); line-height: 1.35; }
 .dm-wine-prices { white-space: nowrap; text-align: right; font-size: .82rem; color: var(--dm-text-muted); flex-shrink: 0; }
 .dm-wine-prices b { color: var(--dm-text-dark); font-weight: 700; }
 .dm-wine-prices .dm-wp-sep { margin: 0 .35rem; color: var(--dm-border); }
@@ -617,10 +610,8 @@ body {
 }
 .dm-section-desc { padding-left: 0; }
 
-/* Prezzi neutri (non verde acceso) per un look meno "low ticket" */
-.dm-item-price { color: var(--dm-text-dark); font-weight: 700; }
+/* Prezzo special/feature neutro (non verde) */
 .dm-special-price { color: var(--dm-text-dark); }
-.dm-item-name { font-size: .95rem; }
 
 /* Allergeni inline → testo grigio discreto con etichetta (no pillole colorate) */
 .dm-item-meta .dm-allergen-tags,
@@ -735,23 +726,6 @@ body { background: #fff; }
 /* Search riempita grigio tenue come wireframe */
 .dm-search { background: var(--dm-soft, #f5f5f3); border-color: transparent; }
 
-/* Piatti e vini: stessa riga full-width con sola hairline inferiore */
-.dm-items-grid, .dm-wine-list { gap: 0; }
-.dm-item,
-.dm-wine {
-    background: transparent;
-    border: 0;
-    border-bottom: 1px solid var(--dm-border);
-    border-radius: 0;
-    box-shadow: none;
-    padding: 1rem 0;
-    transition: background .15s;
-}
-.dm-item.dm-item--text-only { padding: 1rem 0; }
-.dm-item:hover,
-.dm-wine:hover { background: #fbfbfa; border-color: var(--dm-border); box-shadow: none; }
-.dm-item-img-wrap { width: 104px; height: 104px; }
-
 /* Categorie: hover neutro (ink), non più verde — coerente col look editoriale.
    Il verde resta accento solo su numeri sezione e bottone CTA. */
 .dm-landing-card:hover {
@@ -806,11 +780,6 @@ body { background: #fff; }
 a.dm-hero-chip { text-decoration: none; color: rgba(255,255,255,.72); }
 a.dm-hero-chip:hover { color: #fff; }
 
-/* nome piatto: peso 600 (più sobrio del bold), prezzo bilanciato */
-.dm-item-top { gap: 18px; }
-.dm-item-name, .dm-wine-name { font-weight: 600; font-size: 1rem; line-height: 1.35; }
-.dm-item-price { font-weight: 700; font-size: 1rem; }
-.dm-item-desc { font-size: .88rem; }
 /* allergeni: ben visibili (15px / 500), etichetta vicina alla lista */
 .dm-item-meta .dm-allergen-tag,
 .dm-special-allergens .dm-allergen-tag { font-size: 15px !important; font-weight: 500 !important; color: #6c757d !important; }
