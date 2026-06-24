@@ -789,8 +789,12 @@ body { background: #fff; }
 .dm-hero-chip i { font-size: .86rem; color: rgba(255,255,255,.5); }
 
 @media (max-width: 600px) {
-    .dm-hero-name { font-size: 1.95rem; }
-    .dm-hero--photo { min-height: 300px; }
-    .dm-hero--plain { min-height: 290px; padding: 2.25rem 0; }
-    .dm-hero-content { padding: 2rem 1.25rem 2.25rem; }
+    .dm-hero--photo { min-height: 240px; }
+    .dm-hero--plain { min-height: 225px; padding: 1.4rem 0; }
+    .dm-hero-content { padding: 1.4rem 1.25rem 1.6rem; }
+    .dm-hero-over { margin-bottom: .45rem; }
+    .dm-hero-name { font-size: 1.8rem; margin-bottom: .35rem; }
+    .dm-hero-tagline { font-size: .9rem; margin-bottom: .55rem; }
+    .dm-hero-info { margin-top: .55rem; gap: .4rem 1.1rem; }
+    .dm-hero-chip { font-size: .76rem; }
 }
