@@ -398,7 +398,7 @@ body {
    ============================================================ */
 .dm-allergen-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: .3rem; }
 .dm-allergen-tag {
-    display: inline-flex; align-items: center; gap: .3rem;
+    display: inline-flex; align-items: center;
     padding: .2rem .55rem; border-radius: 20px;
     font-size: .65rem; font-weight: 600; line-height: 1.3; white-space: nowrap;
     transition: transform .1s;
@@ -614,20 +614,20 @@ body {
 .dm-item-meta .dm-allergen-tags::before {
     content: 'Allergeni';
     display: inline-block;
-    font-size: .56rem;
     text-transform: uppercase;
-    letter-spacing: .1em;
-    color: #c7c4cc;
-    margin-right: .4rem;
+    font-size: .72rem;
+    letter-spacing: 1px;
+    margin-right: .3rem;
+    color: #9a979f;
 }
 .dm-item-meta .dm-allergen-tag,
 .dm-special-allergens .dm-allergen-tag {
     background: transparent !important;
-    color: var(--dm-text-light) !important;
+    color: #6c757d !important;
     padding: 0 !important;
     border-radius: 0 !important;
-    font-weight: 500;
-    font-size: .7rem;
+    font-weight: 500 !important;
+    font-size: 14px !important;
 }
 .dm-item-meta .dm-allergen-tag:hover,
 .dm-special-allergens .dm-allergen-tag:hover { transform: none; }
@@ -636,7 +636,7 @@ body {
 .dm-item-meta .dm-allergen-tag:not(:last-child)::after,
 .dm-special-allergens .dm-allergen-tag:not(:last-child)::after {
     content: '·';
-    margin: 0 .35rem;
+    margin: 0 .18rem;
     color: var(--dm-border);
 }
 
@@ -773,9 +773,3 @@ body { background: #fff; }
 a.dm-hero-chip { text-decoration: none; color: rgba(255,255,255,.72); }
 a.dm-hero-chip:hover { color: #fff; }
 
-/* allergeni: ben visibili (15px / 500), etichetta vicina alla lista */
-.dm-item-meta .dm-allergen-tag,
-.dm-special-allergens .dm-allergen-tag { font-size: 15px !important; font-weight: 500 !important; color: #6c757d !important; }
-.dm-item-meta .dm-allergen-tags::before { font-size: .72rem; margin-right: .3rem; color: #9a979f; }
-.dm-item-meta .dm-allergen-tag:not(:last-child)::after,
-.dm-special-allergens .dm-allergen-tag:not(:last-child)::after { margin: 0 .18rem; }
