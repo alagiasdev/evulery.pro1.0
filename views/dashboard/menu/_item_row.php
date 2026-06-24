@@ -1,4 +1,5 @@
-<div class="dm-admin-item">
+<div class="dm-admin-item" data-id="<?= (int)$item['id'] ?>" draggable="true">
+    <span class="dm-admin-drag" title="Trascina per riordinare"><i class="bi bi-grip-vertical"></i></span>
     <?php if ($item['image_url']): ?>
     <img src="<?= e($item['image_url']) ?>" alt="" class="dm-admin-item-thumb">
     <?php else: ?>

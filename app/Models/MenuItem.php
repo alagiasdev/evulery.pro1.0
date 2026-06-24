@@ -407,6 +407,28 @@ class MenuItem
         return (int)$stmt->fetch()['next_sort'];
     }
 
+    /** Riordina i piatti in base alla sequenza di id ricevuta (sort_order = posizione). */
+    public function reorder(int $tenantId, array $orderedIds): void
+    {
+        $this->db->beginTransaction();
+        try {
+            $stmt = $this->db->prepare(
+                'UPDATE menu_items SET sort_order = :s WHERE id = :id AND tenant_id = :t'
+            );
+            $s = 0;
+            foreach ($orderedIds as $id) {
+                $id = (int)$id;
+                if ($id <= 0) continue;
+                $stmt->execute(['s' => $s, 'id' => $id, 't' => $tenantId]);
+                $s++;
+            }
+            $this->db->commit();
+        } catch (\PDOException $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
     private function encodeAllergens(array $allergens): ?string
     {
         $valid = array_intersect($allergens, array_keys(self::ALLERGENS));

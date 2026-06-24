@@ -112,9 +112,13 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                     </div>
 
                     <?php // Items directly in parent (no subcategory) ?>
-                    <?php foreach ($parentItems as $item): ?>
-                    <?php include __DIR__ . '/_item_row.php'; ?>
-                    <?php endforeach; ?>
+                    <?php if (!empty($parentItems)): ?>
+                    <div class="dm-admin-item-list">
+                        <?php foreach ($parentItems as $item): ?>
+                        <?php include __DIR__ . '/_item_row.php'; ?>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
 
                     <?php // Subcategory groups ?>
                     <?php foreach ($childrenWithItems as $cw): ?>
@@ -123,14 +127,25 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                         <i class="bi <?= e($cw['cat']['icon'] ?? 'bi-list') ?>"></i> <?= e($cw['cat']['name']) ?>
                         <span class="dm-admin-cat-group-count"><?= count($cw['items']) ?></span>
                     </div>
-                    <?php foreach ($cw['items'] as $item): ?>
-                    <?php include __DIR__ . '/_item_row.php'; ?>
-                    <?php endforeach; ?>
+                    <div class="dm-admin-item-list">
+                        <?php foreach ($cw['items'] as $item): ?>
+                        <?php include __DIR__ . '/_item_row.php'; ?>
+                        <?php endforeach; ?>
+                    </div>
                     <?php endforeach; ?>
 
                     <?php endif; ?>
                 <?php endforeach; ?>
             </div>
+
+            <form method="POST" action="<?= url('dashboard/menu/items/reorder') ?>" id="dm-reorder-form" style="display:none;">
+                <?= csrf_field() ?>
+                <input type="hidden" name="order" id="dm-reorder-order">
+                <div class="dm-reorder-bar">
+                    <span><i class="bi bi-info-circle me-1"></i> Hai cambiato l'ordine delle voci.</span>
+                    <button type="submit" class="btn btn-sm btn-save"><i class="bi bi-check-circle me-1"></i> Salva ordine</button>
+                </div>
+            </form>
 
             <?php if (!$hasItems): ?>
             <div class="card" style="padding:2.5rem; text-align:center;">
@@ -219,6 +234,61 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
             });
         });
     });
+
+    // ---- Drag & drop riordino voci (entro la stessa categoria) ----
+    var rForm = document.getElementById('dm-reorder-form');
+    var rInput = document.getElementById('dm-reorder-order');
+    if (rForm) {
+        var dragEl = null;
+        var moveOver = function (overRow, clientY) {
+            if (!dragEl || dragEl === overRow) return;
+            if (!overRow || overRow.parentNode !== dragEl.parentNode) return; // solo stessa lista/categoria
+            var rect = overRow.getBoundingClientRect();
+            var after = (clientY - rect.top) > rect.height / 2;
+            dragEl.parentNode.insertBefore(dragEl, after ? overRow.nextSibling : overRow);
+        };
+        var syncOrder = function () {
+            var ids = [];
+            document.querySelectorAll('.dm-admin-item-list .dm-admin-item[data-id]').forEach(function (r) {
+                ids.push(r.getAttribute('data-id'));
+            });
+            rInput.value = ids.join(',');
+            rForm.style.display = '';
+        };
+        document.querySelectorAll('.dm-admin-item-list .dm-admin-item').forEach(function (row) {
+            row.addEventListener('dragstart', function (e) {
+                dragEl = row; row.classList.add('dm-dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+            row.addEventListener('dragend', function () {
+                row.classList.remove('dm-dragging'); dragEl = null; syncOrder();
+            });
+            row.addEventListener('dragover', function (e) {
+                if (!dragEl || dragEl === row) return;
+                e.preventDefault(); moveOver(row, e.clientY);
+            });
+            var handle = row.querySelector('.dm-admin-drag');
+            if (handle) {
+                handle.addEventListener('touchstart', function () {
+                    dragEl = row; row.classList.add('dm-dragging');
+                }, { passive: true });
+                handle.addEventListener('touchmove', function (e) {
+                    if (!dragEl) return;
+                    e.preventDefault();
+                    var t = e.touches[0];
+                    var el = document.elementFromPoint(t.clientX, t.clientY);
+                    var overRow = el ? el.closest('.dm-admin-item') : null;
+                    if (overRow) moveOver(overRow, t.clientY);
+                }, { passive: false });
+                var endTouch = function () {
+                    if (!dragEl) return;
+                    row.classList.remove('dm-dragging'); dragEl = null; syncOrder();
+                };
+                handle.addEventListener('touchend', endTouch);
+                handle.addEventListener('touchcancel', endTouch);
+            }
+        });
+    }
 })();
 </script>
 

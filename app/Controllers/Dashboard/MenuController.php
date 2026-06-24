@@ -458,6 +458,19 @@ class MenuController
         Response::redirect(url('dashboard/menu'));
     }
 
+    public function reorderItems(Request $request): void
+    {
+        if ($this->gate()) return;
+        $tenantId = Auth::tenantId();
+        $raw = (string)$request->input('order', '');
+        $ids = array_filter(array_map('intval', explode(',', $raw)));
+        if (!empty($ids)) {
+            (new MenuItem())->reorder($tenantId, $ids);
+        }
+        flash('success', 'Ordine delle voci aggiornato.');
+        Response::redirect(url('dashboard/menu'));
+    }
+
     public function toggleAvailable(Request $request): void
     {
         if ($this->gate()) return;

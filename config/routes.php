@@ -168,6 +168,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('/menu/appearance', [MenuController::class, 'appearanceIndex']);
     $r->get('/menu/items/create', [MenuController::class, 'createItem']);
     $r->post('/menu/items', [MenuController::class, 'storeItem']);
+    $r->post('/menu/items/reorder', [MenuController::class, 'reorderItems']);
     $r->get('/menu/items/{id}/edit', [MenuController::class, 'editItem']);
     $r->post('/menu/items/{id}/update', [MenuController::class, 'updateItem']);
     $r->post('/menu/items/{id}/toggle', [MenuController::class, 'toggleAvailable']);

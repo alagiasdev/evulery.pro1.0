@@ -3130,8 +3130,20 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .dm-admin-item {
     display: flex; align-items: center; gap: .75rem;
     padding: .6rem .75rem; border-bottom: 1px solid #f8f8f8;
+    background: #fff;
 }
 .dm-admin-item:last-child { border-bottom: none; }
+.dm-admin-item.dm-dragging { opacity: .45; }
+/* maniglia drag riordino voci */
+.dm-admin-drag { flex-shrink: 0; cursor: grab; color: #cbd2d9; font-size: .95rem; padding: 0 .1rem; touch-action: none; }
+.dm-admin-drag:active { cursor: grabbing; }
+/* barra salva ordine */
+.dm-reorder-bar {
+    position: sticky; bottom: .5rem; z-index: 5;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    background: #fff8e6; border: 1px solid #f5e3a8; border-radius: 10px;
+    padding: .55rem .85rem; margin-top: .75rem; font-size: .82rem; color: #7a5b00;
+}
 .dm-admin-item-thumb {
     width: 44px; height: 44px; border-radius: 6px; object-fit: cover; flex-shrink: 0;
 }
