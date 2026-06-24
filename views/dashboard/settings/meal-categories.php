@@ -138,7 +138,7 @@ $tlStart = 9; $tlEnd = 24; $tlSpan = $tlEnd - $tlStart;
                                 <label class="edit-label">Giorni con durata diversa</label>
                                 <div class="cat-dur-days">
                                     <?php foreach ($dayLabels as $dnum => $dlbl): ?>
-                                    <label class="cat-day-chk <?= in_array($dnum, $catAltDays, true) ? 'sel' : '' ?>">
+                                    <label class="cat-day-chk">
                                         <input type="checkbox" name="categories[<?= $i ?>][duration_alt_days][]" value="<?= $dnum ?>"
                                                <?= in_array($dnum, $catAltDays, true) ? 'checked' : '' ?>>
                                         <?= $dlbl ?>

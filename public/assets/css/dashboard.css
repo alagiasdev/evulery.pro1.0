@@ -1583,7 +1583,6 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     border: 1.5px solid #e9ecef; background: #fff; font-size: .74rem;
     font-weight: 700; color: #6c757d; cursor: pointer; user-select: none;
 }
-.cat-day-chk.sel,
 .cat-day-chk:has(input:checked) { background: #EDE7F6; border-color: #7E57C2; color: #4527A0; }
 .cat-day-chk input { display: none; }
 .cat-dur-locked {
