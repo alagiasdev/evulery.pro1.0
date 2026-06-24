@@ -474,10 +474,19 @@ $sourceLabelsPrivacy = [
                     <div class="cs-profile-section-title"><i class="bi bi-shield-lock"></i> Privacy e consensi</div>
                     <div class="cs-privacy-row">
                         <span class="cs-privacy-label">Email marketing</span>
+                        <?php
+                            // Fonte di verità GDPR = marketing_consent (NULL=mai chiesto, 1=sì, 0=no).
+                            // 'unsubscribed' resta solo per l'opt-out esplicito via link email.
+                            $mc = $customer['marketing_consent'] ?? null;
+                        ?>
                         <?php if (!empty($customer['unsubscribed'])): ?>
                         <span class="cs-privacy-value cs-privacy-no"><i class="bi bi-x-circle me-1"></i> Disiscritto</span>
-                        <?php else: ?>
+                        <?php elseif ($mc !== null && $mc !== '' && (int)$mc === 1): ?>
                         <span class="cs-privacy-value cs-privacy-ok"><i class="bi bi-check-circle me-1"></i> Iscritto</span>
+                        <?php elseif ($mc !== null && $mc !== ''): ?>
+                        <span class="cs-privacy-value cs-privacy-no"><i class="bi bi-x-circle me-1"></i> Non iscritto</span>
+                        <?php else: ?>
+                        <span class="cs-privacy-value"><i class="bi bi-dash-circle me-1"></i> Consenso non richiesto</span>
                         <?php endif; ?>
                     </div>
                     <?php if (!empty($customer['unsubscribed_at'])): ?>
