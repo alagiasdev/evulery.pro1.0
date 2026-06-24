@@ -114,7 +114,22 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                         </label>
                         <?php endforeach; ?>
                     </div>
-                    <div style="font-size:.72rem; color:#6c757d; margin-top:.35rem;">Attivando una lingua compare uno switcher nel menu pubblico e i campi di traduzione nelle schede piatto/categoria. L'italiano resta sempre il testo base (fallback automatico).</div>
+                    <div style="font-size:.72rem; color:#6c757d; margin-top:.35rem;">Attivando una lingua compare uno switcher nel menu pubblico e i campi di traduzione nelle schede piatto/categoria. <strong>Le voci non tradotte non compaiono</strong> nel menù in quella lingua (niente menù misto).</div>
+
+                    <?php foreach (($coverage ?? []) as $lc => $cov): ?>
+                    <?php
+                        $missing = ($cov['items_total'] - $cov['items_done']) + ($cov['cats_total'] - $cov['cats_done']);
+                        $langLabel = $allLanguages[$lc]['label'] ?? strtoupper($lc);
+                    ?>
+                    <div style="margin-top:.5rem; font-size:.76rem; padding:.55rem .7rem; border-radius:8px; background:<?= $missing > 0 ? '#fff8e6' : '#e7f4ee' ?>; border:1px solid <?= $missing > 0 ? '#f5e3a8' : '#c9e6d8' ?>;">
+                        <strong><?= e($langLabel) ?></strong> — piatti <?= (int)$cov['items_done'] ?>/<?= (int)$cov['items_total'] ?> · categorie <?= (int)$cov['cats_done'] ?>/<?= (int)$cov['cats_total'] ?>
+                        <?php if ($missing > 0): ?>
+                        <div style="color:#7a5b00; margin-top:.2rem;"><i class="bi bi-exclamation-triangle-fill"></i> <?= (int)$missing ?> voci senza traduzione <strong>non compaiono</strong> nel menù <?= e($langLabel) ?>. Completa i nomi mancanti nelle schede piatto/categoria.</div>
+                        <?php else: ?>
+                        <div style="color:var(--brand); margin-top:.2rem;"><i class="bi bi-check-circle-fill"></i> Traduzione completa: il menù <?= e($langLabel) ?> mostra tutte le voci.</div>
+                        <?php endif; ?>
+                    </div>
+                    <?php endforeach; ?>
                     <?php else: ?>
                     <div style="font-size:.78rem; color:#6c757d;">Disponibile sui piani <strong>Professional</strong> ed <strong>Enterprise</strong>: offri il menu in inglese (e altre lingue) con switcher automatico per i clienti stranieri.</div>
                     <?php endif; ?>

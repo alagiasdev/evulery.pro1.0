@@ -71,20 +71,64 @@ class MenuPageController
             $itemTr   = $tr->bulk((int)$tenant['id'], 'item', $lang);
             $tenantTr = $tr->forEntity((int)$tenant['id'], 'tenant', (int)$tenant['id'], $lang);
 
-            foreach ($categories as &$cat) {
-                $this->overlay($cat, $catTr[(int)$cat['id']] ?? []);
-                foreach ($cat['items'] as &$it) { $this->overlay($it, $itemTr[(int)$it['id']] ?? []); }
-                unset($it);
-                foreach ($cat['subcategories'] as &$sub) {
-                    $this->overlay($sub, $catTr[(int)$sub['id']] ?? []);
-                    foreach ($sub['items'] as &$it2) { $this->overlay($it2, $itemTr[(int)$it2['id']] ?? []); }
-                    unset($it2);
+            // In lingua diversa dall'italiano NASCONDIAMO le voci non tradotte:
+            // un piatto senza NOME tradotto non compare; descrizione mancante = omessa
+            // (mai testo IT in un menu EN). Categorie/sottocategorie vuote spariscono.
+            $applyItem = function (array $it) use ($itemTr) {
+                $t = $itemTr[(int)$it['id']] ?? [];
+                if (empty($t['name'])) {
+                    return null; // niente nome tradotto → nascosto
                 }
-                unset($sub);
+                $it['name'] = $t['name'];
+                $it['description'] = !empty($t['description']) ? $t['description'] : '';
+                return $it;
+            };
+
+            $outCats = [];
+            foreach ($categories as $cat) {
+                $cName = $catTr[(int)$cat['id']]['name'] ?? '';
+                if ($cName === '') {
+                    continue; // categoria senza nome tradotto → nascosta (con i suoi piatti)
+                }
+                $cat['name'] = $cName;
+                $cat['description'] = $catTr[(int)$cat['id']]['description'] ?? '';
+
+                $items = [];
+                foreach ($cat['items'] as $it) {
+                    $a = $applyItem($it);
+                    if ($a !== null) { $items[] = $a; }
+                }
+                $cat['items'] = $items;
+
+                $subs = [];
+                foreach ($cat['subcategories'] as $sub) {
+                    $sName = $catTr[(int)$sub['id']]['name'] ?? '';
+                    if ($sName === '') { continue; }
+                    $sub['name'] = $sName;
+                    $sItems = [];
+                    foreach ($sub['items'] as $it) {
+                        $a = $applyItem($it);
+                        if ($a !== null) { $sItems[] = $a; }
+                    }
+                    if (empty($sItems)) { continue; } // sottocategoria vuota → nascosta
+                    $sub['items'] = $sItems;
+                    $subs[] = $sub;
+                }
+                $cat['subcategories'] = $subs;
+
+                if (empty($cat['items']) && empty($cat['subcategories'])) {
+                    continue; // categoria rimasta vuota → nascosta
+                }
+                $outCats[] = $cat;
             }
-            unset($cat);
-            foreach ($specials as &$sp) { $this->overlay($sp, $itemTr[(int)$sp['id']] ?? []); }
-            unset($sp);
+            $categories = $outCats;
+
+            $outSpecials = [];
+            foreach ($specials as $sp) {
+                $a = $applyItem($sp);
+                if ($a !== null) { $outSpecials[] = $a; }
+            }
+            $specials = $outSpecials;
         }
 
         // Etichetta sezione "in evidenza": traduzione → base tenant → default per lingua
@@ -97,9 +141,11 @@ class MenuPageController
             $featuredLabel = $lang === 'en' ? 'Daily specials' : 'Piatti del giorno';
         }
 
-        $tagline = $tenant['menu_tagline'] ?? null;
-        if ($lang !== 'it' && !empty($tenantTr['tagline'])) {
-            $tagline = $tenantTr['tagline'];
+        // Tagline: in lingua diversa mostro SOLO la versione tradotta (niente IT in EN)
+        if ($lang === 'it') {
+            $tagline = $tenant['menu_tagline'] ?? null;
+        } else {
+            $tagline = !empty($tenantTr['tagline']) ? $tenantTr['tagline'] : null;
         }
 
         view('menu/public', [
@@ -143,16 +189,6 @@ class MenuPageController
             }
         }
         return 'it';
-    }
-
-    /** Applica le traduzioni [field=>value] all'array entita' (solo se non vuote). */
-    private function overlay(array &$entity, array $tr): void
-    {
-        foreach (['name', 'description'] as $f) {
-            if (isset($tr[$f]) && $tr[$f] !== '') {
-                $entity[$f] = $tr[$f];
-            }
-        }
     }
 
     /** Stringhe fisse dell'interfaccia pubblica per lingua (fallback IT). */

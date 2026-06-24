@@ -121,6 +121,23 @@ class MenuController
     {
         if ($this->gate()) return;
         $tenant = TenantResolver::current();
+        $tenantId = Auth::tenantId();
+
+        // Cruscotto completezza traduzioni: quante voci hanno il nome tradotto per lingua.
+        $coverage = [];
+        if (tenant_can('menu_multilang')) {
+            $itemsTotal = (int)(((new MenuItem())->countByTenant($tenantId))['total'] ?? 0);
+            $catsTotal  = count((new MenuCategory())->findAllByTenant($tenantId));
+            $tr = new MenuTranslation();
+            foreach (MenuTranslation::extraLanguages($tenant['menu_languages'] ?? 'it') as $lc) {
+                $coverage[$lc] = [
+                    'items_total' => $itemsTotal,
+                    'items_done'  => $tr->translatedNameCount($tenantId, 'item', $lc),
+                    'cats_total'  => $catsTotal,
+                    'cats_done'   => $tr->translatedNameCount($tenantId, 'category', $lc),
+                ];
+            }
+        }
 
         view('dashboard/menu/appearance', [
             'title'        => 'Menù - Aspetto',
@@ -129,6 +146,7 @@ class MenuController
             'canMultilang' => tenant_can('menu_multilang'),
             'allLanguages' => MenuTranslation::LANGUAGES,
             'tenantLangs'  => MenuTranslation::parseLanguages($tenant['menu_languages'] ?? 'it'),
+            'coverage'     => $coverage,
         ], 'dashboard');
     }
 

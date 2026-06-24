@@ -115,6 +115,23 @@ class MenuTranslation
     }
 
     /**
+     * Numero di entita' (entityType) con il NOME tradotto e non vuoto, in una lingua.
+     * Usato per il cruscotto completezza in dashboard.
+     */
+    public function translatedNameCount(int $tenantId, string $entityType, string $lang): int
+    {
+        if ($lang === 'it') {
+            return 0;
+        }
+        $stmt = $this->db->prepare(
+            "SELECT COUNT(DISTINCT entity_id) AS c FROM menu_translations
+             WHERE tenant_id = :t AND entity_type = :et AND lang = :lang AND field = 'name' AND value <> ''"
+        );
+        $stmt->execute(['t' => $tenantId, 'et' => $entityType, 'lang' => $lang]);
+        return (int)$stmt->fetch()['c'];
+    }
+
+    /**
      * Elimina tutte le traduzioni di un'entita' (cleanup quando si elimina piatto/categoria).
      */
     public function deleteForEntity(int $tenantId, string $entityType, int $entityId): void
