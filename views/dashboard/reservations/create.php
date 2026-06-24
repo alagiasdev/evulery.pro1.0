@@ -101,6 +101,7 @@
                 <span class="section-num">3</span>
                 <h6><i class="bi bi-clock"></i> Orario disponibile</h6>
             </div>
+            <div class="dr-slots-nav" id="dr-slots-nav"></div>
             <div id="dr-slots-container">
                 <div class="dr-slots-empty-state">
                     <p>Seleziona data e coperti per vedere gli orari disponibili.</p>

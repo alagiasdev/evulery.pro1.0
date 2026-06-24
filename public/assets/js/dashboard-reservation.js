@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var timeValue      = $('dr-time-value');
     var sourceValue    = $('dr-source-value');
     var slotsContainer = $('dr-slots-container');
+    var slotsNav = $('dr-slots-nav');
     var customerQ      = $('dr-customer-q');
     var customerResults = $('dr-customer-results');
     var customerBadge  = $('dr-customer-badge');
@@ -343,6 +344,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ===== 3. TIME SLOTS (AJAX) =====
     function loadSlots() {
+        clearSlotsNav();
         if (!state.date || !state.partySize) {
             slotsContainer.innerHTML = '<p class="text-muted small">Seleziona data e coperti per vedere gli orari disponibili.</p>';
             return;
@@ -382,8 +384,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function renderSlots(groups) {
         var html = '';
-        groups.forEach(function(group) {
-            html += '<div class="dr-slot-group">';
+        var navHtml = '';
+        groups.forEach(function(group, gi) {
+            var gid = 'dr-slotgroup-' + gi;
+            navHtml += '<button type="button" class="dr-slots-nav-chip" data-target="' + gid + '">'
+                + escapeHtml(group.display_name) + '</button>';
+            html += '<div class="dr-slot-group" id="' + gid + '">';
             html += '<div class="dr-slot-group-label">' + escapeHtml(group.display_name) + '</div>';
             html += '<div class="dr-slot-grid">';
 
@@ -426,6 +432,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         slotsContainer.innerHTML = html;
 
+        // Indice fasce: mostra i chip solo se c'è più di una fascia
+        if (slotsNav) {
+            if (groups.length > 1) {
+                slotsNav.innerHTML = navHtml;
+                slotsNav.classList.add('is-shown');
+            } else {
+                slotsNav.innerHTML = '';
+                slotsNav.classList.remove('is-shown');
+            }
+        }
+        updateActiveChip();
+
         // Bind slot clicks
         slotsContainer.querySelectorAll('.dr-slot-btn:not([disabled])').forEach(function(btn) {
             btn.addEventListener('click', function() {
@@ -444,6 +462,35 @@ document.addEventListener('DOMContentLoaded', function() {
             timeValue.value = state.time;
             updateSummary();
         }
+    }
+
+    function clearSlotsNav() {
+        if (slotsNav) { slotsNav.classList.remove('is-shown'); slotsNav.innerHTML = ''; }
+    }
+
+    // Scroll-spy: evidenzia il chip della fascia attualmente in cima al pannello.
+    function updateActiveChip() {
+        if (!slotsNav || !slotsNav.classList.contains('is-shown')) return;
+        var groups = slotsContainer.querySelectorAll('.dr-slot-group');
+        var pos = slotsContainer.scrollTop + 10;
+        var currentId = null;
+        groups.forEach(function(g) { if (g.offsetTop <= pos) currentId = g.id; });
+        slotsNav.querySelectorAll('.dr-slots-nav-chip').forEach(function(c) {
+            c.classList.toggle('active', c.dataset.target === currentId);
+        });
+    }
+
+    // Click su un chip: scrolla il pannello fino alla fascia corrispondente.
+    if (slotsNav) {
+        slotsNav.addEventListener('click', function(e) {
+            var chip = e.target.closest('.dr-slots-nav-chip');
+            if (!chip) return;
+            var el = document.getElementById(chip.dataset.target);
+            if (el) slotsContainer.scrollTo({ top: el.offsetTop, behavior: 'smooth' });
+        });
+    }
+    if (slotsContainer) {
+        slotsContainer.addEventListener('scroll', updateActiveChip);
     }
 
     // ===== 4. CUSTOMER SEARCH =====

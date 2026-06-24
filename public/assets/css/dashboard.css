@@ -2646,6 +2646,18 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .dr-slots-header h6 { margin: 0; font-size: .85rem; font-weight: 700; }
 .dr-slots-header h6 i { color: var(--brand); font-size: .8rem; margin-right: .15rem; }
 
+/* Indice fasce (chip) — visibile solo con più di una fascia (classe is-shown via JS) */
+.dr-slots-nav { display: none; flex-wrap: wrap; gap: .35rem; padding: .5rem .75rem; border-bottom: 1px solid #f0f0f0; }
+.dr-slots-nav.is-shown { display: flex; }
+.dr-slots-nav-chip {
+    font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .02em;
+    padding: .25rem .6rem; border-radius: 100px; border: 1px solid #dee2e6;
+    background: #fff; color: #6c757d; cursor: pointer; transition: all .12s;
+}
+.dr-slots-nav-chip:hover { border-color: var(--brand); color: var(--brand); }
+.dr-slots-nav-chip.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+#dr-slots-container { position: relative; }
+
 /* --- Customer Search --- */
 .dr-customer-search { position: relative; }
 .dr-search-input-wrap { position: relative; }
@@ -2752,6 +2764,13 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .dr-btn-cancel:hover { background: #f0f0f0; color: #333; }
 
 /* --- Responsive --- */
+/* Desktop: il pannello orari scorre internamente (non allunga la pagina) e le
+   label di fascia restano sticky -> tutte le fasce raggiungibili senza scroll
+   infinito, l'After Dinner è a un click dai chip indice. */
+@media (min-width: 993px) {
+    #dr-slots-container { max-height: calc(100vh - 200px); overflow-y: auto; }
+    .dr-slot-group-label { position: sticky; top: 0; z-index: 2; }
+}
 @media (max-width: 992px) {
     /* Singola colonna: le card seguono l'ordine del DOM ->
        Data, Coperti, Orario, Cliente, Sorgente, Note+Salva (in fondo). */
@@ -2759,6 +2778,8 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     .dr-form-grid > .section-card,
     .dr-form-grid > .dr-slots-card { grid-column: 1; grid-row: auto; }
     .dr-slots-card { position: static; }
+    /* Su mobile la pagina scorre già naturalmente: niente chip indice. */
+    .dr-slots-nav.is-shown { display: none; }
 }
 @media (max-width: 768px) {
     .dr-date-grid { grid-template-columns: repeat(2, 1fr); }
