@@ -59,12 +59,12 @@ if (is_string($existingAllergens)) {
                     <div class="mb-2">
                         <label class="form-label" style="font-size:.78rem;">Nome (<?= e(strtoupper($lc)) ?>)</label>
                         <input type="text" name="tr[<?= e($lc) ?>][name]" class="form-control form-control-sm" maxlength="150"
-                               value="<?= e($itemTr[$lc]['name'] ?? '') ?>" placeholder="Vuoto = usa l'italiano">
+                               value="<?= e($itemTr[$lc]['name'] ?? '') ?>" placeholder="Vuoto = la voce non appare in <?= e(strtoupper($lc)) ?>">
                     </div>
                     <div>
                         <label class="form-label" style="font-size:.78rem;">Descrizione (<?= e(strtoupper($lc)) ?>)</label>
                         <textarea name="tr[<?= e($lc) ?>][description]" class="form-control form-control-sm" rows="2" maxlength="2000"
-                                  placeholder="Vuoto = usa l'italiano"><?= e($itemTr[$lc]['description'] ?? '') ?></textarea>
+                                  placeholder="Vuoto = nessuna descrizione in <?= e(strtoupper($lc)) ?>"><?= e($itemTr[$lc]['description'] ?? '') ?></textarea>
                     </div>
                 </div>
                 <?php endforeach; ?>
