@@ -781,8 +781,12 @@ body { background: #fff; }
     padding: 3rem 0;
 }
 .dm-hero-content { padding: 2.75rem 1.5rem 3rem; }
-.dm-hero-tagline { font-size: .95rem; margin-bottom: 1rem; }
-.dm-hero-info { gap: .65rem 1.5rem; }
+.dm-hero-over { margin-bottom: .8rem; }
+.dm-hero-name { margin-bottom: .65rem; }
+.dm-hero-tagline { font-size: .98rem; margin: 0 0 1.25rem; opacity: .9; }
+.dm-hero-info { margin-top: 1rem; gap: .8rem 1.75rem; }
+.dm-hero-chip { font-size: .82rem; color: rgba(255,255,255,.72); }
+.dm-hero-chip i { font-size: .86rem; color: rgba(255,255,255,.5); }
 
 @media (max-width: 600px) {
     .dm-hero-name { font-size: 1.95rem; }
