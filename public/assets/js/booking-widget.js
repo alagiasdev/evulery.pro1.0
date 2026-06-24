@@ -1012,8 +1012,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var SOCIAL_PROOF_MIN = 3;
     function showSocialProof(count) {
         if (count >= SOCIAL_PROOF_MIN) {
-            var noun = count === 1 ? 'prenotazione' : 'prenotazioni';
-            socialProofText.textContent = 'Già ' + count + ' ' + noun + ' per oggi';
+            // count è sempre >= 3 qui, quindi "prenotazioni" (plurale) è corretto.
+            socialProofText.textContent = 'Già ' + count + ' prenotazioni per oggi';
             socialProof.style.display = 'flex';
         } else {
             socialProof.style.display = 'none';
