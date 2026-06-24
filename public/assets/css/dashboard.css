@@ -2604,8 +2604,10 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     transition: all .15s; display: flex; flex-direction: column;
     align-items: center; justify-content: center; position: relative;
 }
-.dr-slot-btn:hover:not(:disabled):not(.dr-slot-red) { border-color: var(--brand); color: var(--brand); }
+.dr-slot-btn:hover:not(:disabled):not(.dr-slot-red):not(.active) { border-color: var(--brand); color: var(--brand); }
 .dr-slot-btn.active { border-color: var(--brand); background: var(--brand); color: #fff; }
+/* Slot selezionato in hover: verde più scuro, testo bianco (mai verde-su-verde). */
+.dr-slot-btn.active:hover:not(:disabled) { background: var(--brand-dark); border-color: var(--brand-dark); color: #fff; }
 
 /* Availability indicator dot */
 .dr-slot-btn .dr-slot-indicator {
