@@ -7,7 +7,8 @@ $menuTabs = [
 $menuUrl = url($tenant['slug'] . '/menu');
 $qrData  = urlencode($menuUrl);
 $qrUrl   = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . $qrData; // anteprima
-$qrUrlHd = 'https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&margin=16&ecc=M&format=png&data=' . $qrData; // download stampa
+$qrUrlHd  = 'https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&margin=16&ecc=M&format=png&data=' . $qrData; // download stampa
+$qrUrlSvg = 'https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&margin=16&ecc=M&format=svg&data=' . $qrData; // vettoriale
 $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
 ?>
 
@@ -168,10 +169,13 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                 </a>
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-sm btn-outline-secondary flex-fill" data-copy="<?= e($menuUrl) ?>">
-                        <i class="bi bi-clipboard"></i> Copia link
+                        <i class="bi bi-clipboard"></i> Copia
                     </button>
-                    <a href="<?= e($qrUrlHd) ?>" download="menu-qr-<?= e($tenant['slug']) ?>.png" class="btn btn-sm btn-outline-secondary flex-fill">
-                        <i class="bi bi-qr-code"></i> QR
+                    <a href="<?= e($qrUrlHd) ?>" download="menu-qr-<?= e($tenant['slug']) ?>.png" class="btn btn-sm btn-outline-secondary flex-fill" title="QR PNG alta risoluzione">
+                        <i class="bi bi-qr-code"></i> PNG
+                    </a>
+                    <a href="<?= e($qrUrlSvg) ?>" download="menu-qr-<?= e($tenant['slug']) ?>.svg" class="btn btn-sm btn-outline-secondary flex-fill" title="QR vettoriale (grande formato)">
+                        SVG
                     </a>
                 </div>
                 <div style="font-size:.72rem; color:#adb5bd; margin-top:.5rem; text-align:center; word-break:break-all;">

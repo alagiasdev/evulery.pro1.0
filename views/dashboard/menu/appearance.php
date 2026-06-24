@@ -7,7 +7,8 @@ $menuTabs = [
 $menuUrl = url($tenant['slug'] . '/menu');
 $qrData  = urlencode($menuUrl);
 $qrUrl   = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' . $qrData; // anteprima
-$qrUrlHd = 'https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&margin=16&ecc=M&format=png&data=' . $qrData; // download stampa HD
+$qrUrlHd  = 'https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&margin=16&ecc=M&format=png&data=' . $qrData; // download stampa HD
+$qrUrlSvg = 'https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&margin=16&ecc=M&format=svg&data=' . $qrData; // vettoriale per grande formato
 $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
 ?>
 
@@ -158,9 +159,15 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
             <div style="text-align:center; padding:.5rem;">
                 <img src="<?= e($qrUrl) ?>" alt="QR Code Menu" style="width:160px; height:160px; border-radius:8px; margin-bottom:.75rem;">
                 <p style="font-size:.75rem; color:#6c757d; margin-bottom:.75rem;">Stampa o condividi questo QR code per permettere ai clienti di consultare il menu dal tavolo.</p>
-                <a href="<?= e($qrUrlHd) ?>" download="menu-qr-<?= e($tenant['slug']) ?>.png" class="btn btn-sm btn-outline-secondary">
-                    <i class="bi bi-download me-1"></i> Scarica QR Code HD
-                </a>
+                <div class="d-flex gap-2 justify-content-center">
+                    <a href="<?= e($qrUrlHd) ?>" download="menu-qr-<?= e($tenant['slug']) ?>.png" class="btn btn-sm btn-outline-secondary" title="PNG 1000px, ideale per Word/Canva e stampe standard">
+                        <i class="bi bi-download me-1"></i> PNG HD
+                    </a>
+                    <a href="<?= e($qrUrlSvg) ?>" download="menu-qr-<?= e($tenant['slug']) ?>.svg" class="btn btn-sm btn-outline-secondary" title="Vettoriale: non sgrana a nessuna dimensione (poster, tipografia)">
+                        <i class="bi bi-vector-pen me-1"></i> SVG
+                    </a>
+                </div>
+                <div style="font-size:.68rem; color:#adb5bd; margin-top:.5rem;">PNG per usi comuni · SVG vettoriale per grande formato/tipografia</div>
             </div>
         </div>
         <?php endif; ?>
