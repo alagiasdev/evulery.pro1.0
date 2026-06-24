@@ -53,6 +53,7 @@ function fixText(string $s): string {
         'brulèe' => 'brûlée',
         'pollo,con' => 'pollo, con',
     ];
+    $s = str_replace(["\xC2\xA0", "\xE2\x80\xAF"], ' ', $s); // NBSP / narrow NBSP → spazio normale
     $s = strtr($s, $repl);
     $s = preg_replace('/,(?=\S)/u', ', ', $s);   // virgola senza spazio → ", "
     $s = preg_replace('/\s{2,}/u', ' ', $s);     // spazi multipli
@@ -145,6 +146,36 @@ foreach ($menu as $cat) {
 if (isset($args['dump'])) {
     file_put_contents($args['dump'], "<?php\n// Dati menù validati — generato da scripts/import_menu.php\nreturn " . var_export($menu, true) . ";\n");
     echo "\n>>> Dump dati scritto in: {$args['dump']}\n";
+    exit(0);
+}
+
+// --sql: genera SQL pronto per phpMyAdmin (nessuna CLI necessaria lato cliente)
+if (isset($args['sql'])) {
+    if (!$slug) { fwrite(STDERR, "\n--tenant=SLUG obbligatorio con --sql\n"); exit(3); }
+    $q = fn($s) => "'" . str_replace(["\\", "'"], ["\\\\", "''"], (string)$s) . "'";
+    $out  = "-- Import menù per tenant '$slug' — generato da scripts/import_menu.php\n";
+    $out .= "-- ATTENZIONE: eseguire UNA SOLA VOLTA (il menù del tenant deve essere vuoto).\n";
+    $out .= "-- Se @tid risulta NULL lo slug è errato: gli INSERT falliranno (nessun dato sporco).\n\n";
+    $out .= "SET NAMES utf8mb4;\n";
+    $out .= "SET @tid := (SELECT id FROM tenants WHERE slug = " . $q($slug) . " LIMIT 1);\n\n";
+    $sc = 0;
+    foreach ($menu as $cat) {
+        $out .= "INSERT INTO menu_categories (tenant_id, parent_id, name, description, icon, is_wine, sort_order, is_active)\n";
+        $out .= "VALUES (@tid, NULL, " . $q($cat['name']) . ", '', " . $q($cat['icon']) . ", 0, " . ($sc++) . ", 1);\n";
+        $out .= "SET @c := LAST_INSERT_ID();\n";
+        if (!empty($cat['items'])) {
+            $rows = []; $si = 0;
+            foreach ($cat['items'] as $it) {
+                $alg = empty($it['allergens']) ? 'NULL' : $q(json_encode(array_values($it['allergens']), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+                $rows[] = "(@tid, @c, " . $q($it['name']) . ", '', " . number_format((float)$it['price'], 2, '.', '') . ", $alg, 1, 0, " . ($si++) . ")";
+            }
+            $out .= "INSERT INTO menu_items (tenant_id, category_id, name, description, price, allergens, is_available, is_daily_special, sort_order) VALUES\n";
+            $out .= implode(",\n", $rows) . ";\n";
+        }
+        $out .= "\n";
+    }
+    if (is_string($args['sql'])) { file_put_contents($args['sql'], $out); echo "\n>>> SQL scritto in: {$args['sql']}\n"; }
+    else { echo "\n" . $out; }
     exit(0);
 }
 

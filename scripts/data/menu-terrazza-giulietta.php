@@ -58,7 +58,7 @@ return array (
       ),
       5 => 
       array (
-        'name' => 'Prosciutto iberico (spalla) qualità oro su pizza scrocchiarella romana',
+        'name' => 'Prosciutto iberico (spalla) qualità oro su pizza scrocchiarella romana',
         'price' => 24.0,
         'allergens' => 
         array (
@@ -206,7 +206,7 @@ return array (
       ),
       4 => 
       array (
-        'name' => 'Filetto di orata in crosta di zucchine romanesche e rostì di patate ',
+        'name' => 'Filetto di orata in crosta di zucchine romanesche e rostì di patate',
         'price' => 22.0,
         'allergens' => 
         array (
