@@ -317,10 +317,22 @@
             }
             document.querySelectorAll('.dm-cat-nav-item').forEach(function(l) { l.classList.remove('active'); });
             this.classList.add('active');
+            centerNavItem(this);
         });
     });
 
-    // Scroll spy
+    // Porta il pill attivo al centro della barra (scroll orizzontale)
+    function centerNavItem(el) {
+        var navRect = catNav.getBoundingClientRect();
+        var elRect = el.getBoundingClientRect();
+        var delta = (elRect.left + elRect.width / 2) - (navRect.left + navRect.width / 2);
+        if (Math.abs(delta) > 4) {
+            catNav.scrollTo({ left: catNav.scrollLeft + delta, behavior: 'smooth' });
+        }
+    }
+
+    // Scroll spy + auto-scroll barra sul pill attivo
+    var lastCurrent = '';
     window.addEventListener('scroll', function() {
         var navH = catNav.offsetHeight + 30;
         var sections = document.querySelectorAll('.dm-section-anchor');
@@ -328,9 +340,17 @@
         sections.forEach(function(s) {
             if (s.getBoundingClientRect().top <= navH + 50) current = s.id;
         });
+        // La sezione "del giorno" (lista) condivide il pill della card in evidenza
+        if (current === 'specials-list') current = 'specials';
+        if (current === lastCurrent) return;
+        lastCurrent = current;
+        var activeEl = null;
         document.querySelectorAll('.dm-cat-nav-item').forEach(function(l) {
-            l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+            var on = l.getAttribute('href') === '#' + current;
+            l.classList.toggle('active', on);
+            if (on) activeEl = l;
         });
+        if (activeEl) centerNavItem(activeEl);
     }, { passive: true });
 
     // Legend toggle
