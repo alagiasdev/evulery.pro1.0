@@ -10,7 +10,7 @@ if (is_string($existingAllergens)) {
 <p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Modifica i dettagli della voce</p>
 
 <div class="page-back" style="margin-bottom:1rem;">
-    <a href="<?= url('dashboard/menu') ?>"><i class="bi bi-arrow-left"></i> Torna al menu</a>
+    <a href="<?= url('dashboard/menu') ?>"><i class="bi bi-arrow-left"></i> Torna al menù</a>
 </div>
 
 <div class="row justify-content-center">

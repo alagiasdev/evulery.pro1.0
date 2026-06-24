@@ -13,9 +13,9 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">
-    <i class="bi bi-book me-1" style="color:var(--brand);"></i> Menu Digitale
+    <i class="bi bi-book me-1" style="color:var(--brand);"></i> Menù Digitale
 </h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Gestisci il menu del tuo ristorante</p>
+<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Gestisci il menù del tuo ristorante</p>
 
 <!-- Tabs -->
 <div class="settings-tabs">
@@ -32,20 +32,20 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
         <div class="d-flex align-items-center gap-3">
             <form method="POST" action="<?= url('dashboard/menu/toggle') ?>" class="d-inline">
                 <?= csrf_field() ?>
-                <button type="submit" class="promo-toggle-btn" title="<?= $isMenuEnabled ? 'Disattiva menu pubblico' : 'Attiva menu pubblico' ?>">
+                <button type="submit" class="promo-toggle-btn" title="<?= $isMenuEnabled ? 'Disattiva menù pubblico' : 'Attiva menù pubblico' ?>">
                     <div class="promo-toggle <?= $isMenuEnabled ? 'promo-toggle-on' : '' ?>">
                         <div class="promo-toggle-knob"></div>
                     </div>
                 </button>
             </form>
             <div>
-                <div style="font-weight:600; font-size:.88rem;"><?= $isMenuEnabled ? 'Menu pubblico attivo' : 'Menu pubblico disattivato' ?></div>
+                <div style="font-weight:600; font-size:.88rem;"><?= $isMenuEnabled ? 'Menù pubblico attivo' : 'Menù pubblico disattivato' ?></div>
                 <?php if ($isMenuEnabled): ?>
                 <a href="<?= e($menuUrl) ?>" target="_blank" style="font-size:.78rem; color:var(--brand);">
                     <?= e($menuUrl) ?> <i class="bi bi-box-arrow-up-right"></i>
                 </a>
                 <?php else: ?>
-                <span style="font-size:.78rem; color:#adb5bd;">Attiva per rendere visibile il menu ai clienti</span>
+                <span style="font-size:.78rem; color:#adb5bd;">Attiva per rendere visibile il menù ai clienti</span>
                 <?php endif; ?>
             </div>
         </div>
@@ -87,7 +87,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Orari di apertura</label>
                     <input type="text" name="opening_hours" class="form-control form-control-sm" maxlength="500"
                            value="<?= e($tenant['opening_hours'] ?? '') ?>" placeholder="es. 12:00 – 15:00 / 19:00 – 23:00">
-                    <div style="font-size:.72rem; color:#6c757d; margin-top:.2rem;">Mostrato nell'header della pagina menu</div>
+                    <div style="font-size:.72rem; color:#6c757d; margin-top:.2rem;">Mostrato nell'header della pagina menù</div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Immagine hero (sfondo header)</label>
@@ -117,7 +117,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                         </label>
                         <?php endforeach; ?>
                     </div>
-                    <div style="font-size:.72rem; color:#6c757d; margin-top:.35rem;">Attivando una lingua compare uno switcher nel menu pubblico e i campi di traduzione nelle schede voce/categoria. <strong>Le voci non tradotte non compaiono</strong> nel menù in quella lingua (niente menù misto).</div>
+                    <div style="font-size:.72rem; color:#6c757d; margin-top:.35rem;">Attivando una lingua compare uno switcher nel menù pubblico e i campi di traduzione nelle schede voce/categoria. <strong>Le voci non tradotte non compaiono</strong> nel menù in quella lingua (niente menù misto).</div>
 
                     <?php foreach (($coverage ?? []) as $lc => $cov): ?>
                     <?php
@@ -140,7 +140,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                     </div>
                     <?php endforeach; ?>
                     <?php else: ?>
-                    <div style="font-size:.78rem; color:#6c757d;">Disponibile sui piani <strong>Professional</strong> ed <strong>Enterprise</strong>: offri il menu in inglese (e altre lingue) con switcher automatico per i clienti stranieri.</div>
+                    <div style="font-size:.78rem; color:#6c757d;">Disponibile sui piani <strong>Professional</strong> ed <strong>Enterprise</strong>: offri il menù in inglese (e altre lingue) con switcher automatico per i clienti stranieri.</div>
                     <?php endif; ?>
                 </div>
 
@@ -158,7 +158,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
             </div>
             <div style="text-align:center; padding:.5rem;">
                 <img src="<?= e($qrUrl) ?>" alt="QR Code Menu" style="width:160px; height:160px; border-radius:8px; margin-bottom:.75rem;">
-                <p style="font-size:.75rem; color:#6c757d; margin-bottom:.75rem;">Stampa o condividi questo QR code per permettere ai clienti di consultare il menu dal tavolo.</p>
+                <p style="font-size:.75rem; color:#6c757d; margin-bottom:.75rem;">Stampa o condividi questo QR code per permettere ai clienti di consultare il menù dal tavolo.</p>
                 <div class="d-flex gap-2 justify-content-center">
                     <a href="<?= e($qrUrlHd) ?>" download="menu-qr-<?= e($tenant['slug']) ?>.png" class="btn btn-sm btn-outline-secondary" title="PNG 1000px, ideale per Word/Canva e stampe standard">
                         <i class="bi bi-download me-1"></i> PNG HD
@@ -200,7 +200,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                 </div>
                 <?php if ($isMenuEnabled): ?>
                 <a href="<?= e($menuUrl) ?>" target="_blank" style="font-size:.78rem; color:var(--brand); display:block; margin-top:.75rem;">
-                    <i class="bi bi-box-arrow-up-right me-1"></i> Apri pagina menu
+                    <i class="bi bi-box-arrow-up-right me-1"></i> Apri pagina menù
                 </a>
                 <?php endif; ?>
             </div>

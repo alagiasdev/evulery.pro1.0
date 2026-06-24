@@ -7,9 +7,9 @@ $menuTabs = [
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">
-    <i class="bi bi-book me-1" style="color:var(--brand);"></i> Menu Digitale
+    <i class="bi bi-book me-1" style="color:var(--brand);"></i> Menù Digitale
 </h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Gestisci il menu del tuo ristorante</p>
+<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Gestisci il menù del tuo ristorante</p>
 
 <!-- Tabs -->
 <div class="settings-tabs">
@@ -184,7 +184,7 @@ $menuTabs = [
     </div>
 
     <div style="color:#6c757d; font-size:.75rem; margin-top:.75rem; font-style:italic;">
-        <i class="bi bi-info-circle me-1"></i> Le sottocategorie sono opzionali. Le categorie senza voci non appaiono nel menu pubblico.
+        <i class="bi bi-info-circle me-1"></i> Le sottocategorie sono opzionali. Le categorie senza voci non appaiono nel menù pubblico.
     </div>
 </div>
 

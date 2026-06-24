@@ -13,9 +13,9 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">
-    <i class="bi bi-book me-1" style="color:var(--brand);"></i> Menu Digitale
+    <i class="bi bi-book me-1" style="color:var(--brand);"></i> Menù Digitale
 </h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Gestisci il menu del tuo ristorante</p>
+<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Gestisci il menù del tuo ristorante</p>
 
 <!-- Tabs -->
 <div class="settings-tabs">
@@ -135,7 +135,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
             <?php if (!$hasItems): ?>
             <div class="card" style="padding:2.5rem; text-align:center;">
                 <i class="bi bi-egg-fried" style="font-size:2.5rem; color:#dee2e6;"></i>
-                <p style="color:#6c757d; margin-top:.75rem; font-size:.88rem; margin-bottom:.75rem;">Nessuna voce nel menu.</p>
+                <p style="color:#6c757d; margin-top:.75rem; font-size:.88rem; margin-bottom:.75rem;">Nessuna voce nel menù.</p>
                 <a href="<?= url('dashboard/menu/items/create') ?>" class="btn btn-sm btn-save" style="display:inline-block; width:auto; margin:0 auto;">
                     <i class="bi bi-plus-circle me-1"></i> Aggiungi la prima voce
                 </a>
@@ -165,7 +165,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
             <div style="padding:1rem;">
                 <?php if ($isMenuEnabled): ?>
                 <a href="<?= e($menuUrl) ?>" target="_blank" class="btn btn-sm btn-save w-100" style="margin-bottom:.65rem;">
-                    <i class="bi bi-eye me-1"></i> Vedi menu pubblico
+                    <i class="bi bi-eye me-1"></i> Vedi menù pubblico
                 </a>
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-sm btn-outline-secondary flex-fill" data-copy="<?= e($menuUrl) ?>">
@@ -184,7 +184,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                 <?php else: ?>
                 <div style="text-align:center; padding:.5rem 0;">
                     <i class="bi bi-eye-slash" style="font-size:1.5rem; color:#dee2e6;"></i>
-                    <p style="font-size:.82rem; color:#6c757d; margin:.5rem 0;">Menu pubblico disattivato</p>
+                    <p style="font-size:.82rem; color:#6c757d; margin:.5rem 0;">Menù pubblico disattivato</p>
                     <a href="<?= url('dashboard/menu/appearance') ?>" class="btn btn-sm btn-outline-secondary">
                         <i class="bi bi-palette me-1"></i> Attiva in Aspetto
                     </a>
@@ -197,7 +197,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
         <!-- QR Preview -->
         <div class="card" style="padding:1rem; margin-top:.75rem; text-align:center;">
             <img src="<?= e($qrUrl) ?>" alt="QR Code" style="width:120px; height:120px; border-radius:6px; margin:0 auto .5rem;">
-            <div style="font-size:.72rem; color:#6c757d;">Scansiona per vedere il menu</div>
+            <div style="font-size:.72rem; color:#6c757d;">Scansiona per vedere il menù</div>
         </div>
         <?php endif; ?>
     </div>

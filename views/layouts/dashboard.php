@@ -76,11 +76,11 @@
                 <li class="nav-item">
                     <?php if (tenant_can('digital_menu')): ?>
                     <a class="nav-link <?= ($activeMenu ?? '') === 'menu' ? 'active' : '' ?>" href="<?= url('dashboard/menu') ?>">
-                        <i class="bi bi-book me-2"></i> Menu
+                        <i class="bi bi-book me-2"></i> Menù
                     </a>
                     <?php else: ?>
                     <a class="nav-link" href="<?= url('dashboard/menu') ?>" style="opacity:.5;">
-                        <i class="bi bi-book me-2"></i> Menu <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
+                        <i class="bi bi-book me-2"></i> Menù <i class="bi bi-lock-fill ms-auto" style="font-size:.7rem;"></i>
                     </a>
                     <?php endif; ?>
                 </li>
