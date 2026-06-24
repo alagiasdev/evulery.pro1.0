@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#00844A">
+    <meta name="format-detection" content="telephone=no">
     <title><?= e($title) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,10 +63,14 @@
         <?php endif; ?>
         <div class="dm-hero-info">
             <?php if ($address): ?>
-            <span class="dm-hero-chip"><i class="bi bi-geo-alt-fill"></i> <?= e($address) ?></span>
+            <a class="dm-hero-chip" href="https://www.google.com/maps/search/?api=1&query=<?= rawurlencode($address) ?>" target="_blank" rel="noopener"><i class="bi bi-geo-alt-fill"></i> <?= e($address) ?></a>
             <?php endif; ?>
             <?php if ($phone): ?>
-            <span class="dm-hero-chip"><i class="bi bi-telephone-fill"></i> <?= e($phone) ?></span>
+            <?php
+                $telHref = preg_replace('/[^\d+]/', '', $phone);
+                $phoneDisplay = preg_replace('/^(\+39)\s*/', '$1 ', trim($phone)); // separa il prefisso italiano
+            ?>
+            <a class="dm-hero-chip" href="tel:<?= e($telHref) ?>"><i class="bi bi-telephone-fill"></i> <?= e($phoneDisplay) ?></a>
             <?php endif; ?>
             <?php if ($openingHours): ?>
             <span class="dm-hero-chip"><i class="bi bi-clock-fill"></i> <?= e($openingHours) ?></span>

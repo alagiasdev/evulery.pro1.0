@@ -77,6 +77,14 @@ function menu_icon(?string $icon, string $extraClass = ''): string
             . '<path d="M3 0h10a.5.5 0 0 1 .5.5C13.5 4 11.6 6.83 8.5 7.43V14H11a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1h2.5V7.43C4.4 6.83 2.5 4 2.5.5A.5.5 0 0 1 3 0Zm.53 1c.18 2.27 1.6 4 3.97 4.43V5.4q0-.02 0 0c2.38-.42 3.8-2.16 3.97-4.4z"/>'
             . '</svg>';
     }
+    if ($icon === 'pasta-bowl') {
+        $svgCls = trim('dm-svg-icon ' . $cls);
+        return '<svg class="' . e($svgCls) . '" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" '
+            . 'viewBox="0 0 16 16" aria-hidden="true" style="vertical-align:-.125em">'
+            . '<path fill="currentColor" d="M2 7h12a6 5 0 0 1-12 0z"/>'
+            . '<path fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" d="M5 6c-.6-.7.6-1.3 0-2.2M8 6c-.6-.7.6-1.3 0-2.2M11 6c-.6-.7.6-1.3 0-2.2"/>'
+            . '</svg>';
+    }
     return '<i class="bi ' . e($icon) . ($cls !== '' ? ' ' . e($cls) : '') . '"></i>';
 }
 

@@ -41,7 +41,7 @@ $force  = isset($args['force']);
 
 // ---- legenda allergeni DEL CLIENTE (numerazione propria, NON standard UE) ----
 $ALLERGEN_MAP = [1=>'gluten',2=>'crustaceans',3=>'molluscs',4=>'eggs',5=>'fish',6=>'milk',7=>'nuts',8=>'celery'];
-$CAT_ICONS = ['per iniziare'=>'bi-egg-fried','le paste'=>'bi-cup-hot','secondi'=>'bi-fire','i contorni'=>'bi-list','i dolci'=>'bi-cake2'];
+$CAT_ICONS = ['per iniziare'=>'bi-egg-fried','le paste'=>'pasta-bowl','secondi'=>'bi-fire','i contorni'=>'bi-flower1','i dolci'=>'bi-cake2'];
 
 // ---- correzioni refusi ----
 function fixText(string $s): string {

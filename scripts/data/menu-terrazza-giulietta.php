@@ -100,7 +100,7 @@ return array (
   1 => 
   array (
     'name' => 'Le paste',
-    'icon' => 'bi-cup-hot',
+    'icon' => 'pasta-bowl',
     'items' => 
     array (
       0 => 
@@ -218,7 +218,7 @@ return array (
   3 => 
   array (
     'name' => 'I contorni',
-    'icon' => 'bi-list',
+    'icon' => 'bi-flower1',
     'items' => 
     array (
       0 => 

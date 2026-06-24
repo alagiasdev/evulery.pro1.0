@@ -798,3 +798,19 @@ body { background: #fff; }
     .dm-hero-info { margin-top: .55rem; gap: .4rem 1.1rem; }
     .dm-hero-chip { font-size: .76rem; }
 }
+
+/* ============================================================
+   CONTATTI HERO TAPPABILI + TIPOGRAFIA RIGHE (sobria ma leggibile)
+   ============================================================ */
+/* indirizzo/telefono come link: niente blu né sottolineatura (anche su iOS) */
+a.dm-hero-chip { text-decoration: none; color: rgba(255,255,255,.72); }
+a.dm-hero-chip:hover { color: #fff; }
+
+/* nome piatto: peso 600 (più sobrio del bold), prezzo bilanciato */
+.dm-item-name, .dm-wine-name { font-weight: 600; font-size: 1rem; line-height: 1.35; }
+.dm-item-price { font-weight: 700; font-size: 1rem; }
+.dm-item-desc { font-size: .88rem; }
+/* allergeni: più leggibili (da .70 a .78) e grigio un filo più scuro */
+.dm-item-meta .dm-allergen-tag,
+.dm-special-allergens .dm-allergen-tag { font-size: .78rem !important; color: #8a8790 !important; }
+.dm-item-meta .dm-allergen-tags::before { font-size: .6rem; color: #b0adb5; }

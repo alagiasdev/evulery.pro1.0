@@ -14,7 +14,9 @@ class MenuCategory
      */
     public const ICONS = [
         'bi-egg-fried'    => 'Antipasto',
-        'bi-cup-hot'      => 'Primo / Zuppa',
+        'pasta-bowl'      => 'Primi / Pasta',
+        'bi-cup-hot'      => 'Zuppa / Brodo',
+        'bi-flower1'      => 'Contorni / Verdure',
         'bi-fire'         => 'Grill / Carne',
         'bi-water'        => 'Pesce / Mare',
         'bi-cake2'        => 'Dolce',

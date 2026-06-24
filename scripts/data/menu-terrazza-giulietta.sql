@@ -20,7 +20,7 @@ INSERT INTO menu_items (tenant_id, category_id, name, description, price, allerg
 (@tid, @c, 'Bruschetta con pomodori datterini Sicilia e olio di pesto al basilico', '', 10.00, '["gluten","nuts"]', 1, 0, 8);
 
 INSERT INTO menu_categories (tenant_id, parent_id, name, description, icon, is_wine, sort_order, is_active)
-VALUES (@tid, NULL, 'Le paste', '', 'bi-cup-hot', 0, 1, 1);
+VALUES (@tid, NULL, 'Le paste', '', 'pasta-bowl', 0, 1, 1);
 SET @c := LAST_INSERT_ID();
 INSERT INTO menu_items (tenant_id, category_id, name, description, price, allergens, is_available, is_daily_special, sort_order) VALUES
 (@tid, @c, 'Tonnarelli con ricciola del basso Tirreno, timo e datterini', '', 20.00, '["gluten","eggs","fish"]', 1, 0, 0),
@@ -40,7 +40,7 @@ INSERT INTO menu_items (tenant_id, category_id, name, description, price, allerg
 (@tid, @c, 'Filetto di orata in crosta di zucchine romanesche e rostì di patate', '', 22.00, '["eggs"]', 1, 0, 4);
 
 INSERT INTO menu_categories (tenant_id, parent_id, name, description, icon, is_wine, sort_order, is_active)
-VALUES (@tid, NULL, 'I contorni', '', 'bi-list', 0, 3, 1);
+VALUES (@tid, NULL, 'I contorni', '', 'bi-flower1', 0, 3, 1);
 SET @c := LAST_INSERT_ID();
 INSERT INTO menu_items (tenant_id, category_id, name, description, price, allergens, is_available, is_daily_special, sort_order) VALUES
 (@tid, @c, 'Insalata verde e olio al basilico', '', 9.00, '["nuts"]', 1, 0, 0),
