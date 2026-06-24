@@ -10,15 +10,13 @@
     $wBottle = $ui['bottle'] ?? 'Bottiglia';
 ?>
 <div class="dm-wine dm-searchable" data-name="<?= e(mb_strtolower($item['name'])) ?>">
-    <div class="dm-wine-head">
-        <span class="dm-wine-name"><?= e($item['name']) ?></span>
-        <span class="dm-wine-prices">
-            <?php if ($wHasCalice): ?><span class="dm-wp"><?= e($wGlass) ?> <b><?= number_format((float)$item['price'], 2, ',', '.') ?>&nbsp;&euro;</b></span><?php endif; ?>
-            <?php if ($wHasCalice && $wHasBottle): ?><span class="dm-wp-sep">&middot;</span><?php endif; ?>
-            <?php if ($wHasBottle): ?><span class="dm-wp"><?= e($wBottle) ?> <b><?= number_format((float)$item['price_bottle'], 2, ',', '.') ?>&nbsp;&euro;</b></span><?php endif; ?>
-        </span>
-    </div>
+    <div class="dm-wine-name"><?= e($item['name']) ?></div>
     <?php if (!empty($item['description'])): ?>
     <div class="dm-wine-sub"><?= e($item['description']) ?></div>
     <?php endif; ?>
+    <div class="dm-wine-prices">
+        <?php if ($wHasCalice): ?><span class="dm-wp"><?= e($wGlass) ?> <b><?= number_format((float)$item['price'], 2, ',', '.') ?>&nbsp;&euro;</b></span><?php endif; ?>
+        <?php if ($wHasCalice && $wHasBottle): ?><span class="dm-wp-sep">&middot;</span><?php endif; ?>
+        <?php if ($wHasBottle): ?><span class="dm-wp"><?= e($wBottle) ?> <b><?= number_format((float)$item['price_bottle'], 2, ',', '.') ?>&nbsp;&euro;</b></span><?php endif; ?>
+    </div>
 </div>
