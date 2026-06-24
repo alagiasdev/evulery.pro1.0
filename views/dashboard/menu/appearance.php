@@ -118,14 +118,20 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
 
                     <?php foreach (($coverage ?? []) as $lc => $cov): ?>
                     <?php
-                        $missing = ($cov['items_total'] - $cov['items_done']) + ($cov['cats_total'] - $cov['cats_done']);
+                        $itemsMissing = (int)$cov['items_total'] - (int)$cov['items_done'];
+                        $catsMissing  = (int)$cov['cats_total'] - (int)$cov['cats_done'];
+                        $complete = ($itemsMissing <= 0 && $catsMissing <= 0);
                         $langLabel = $allLanguages[$lc]['label'] ?? strtoupper($lc);
                     ?>
-                    <div style="margin-top:.5rem; font-size:.76rem; padding:.55rem .7rem; border-radius:8px; background:<?= $missing > 0 ? '#fff8e6' : '#e7f4ee' ?>; border:1px solid <?= $missing > 0 ? '#f5e3a8' : '#c9e6d8' ?>;">
+                    <div style="margin-top:.5rem; font-size:.76rem; padding:.55rem .7rem; border-radius:8px; background:<?= $complete ? '#e7f4ee' : '#fff8e6' ?>; border:1px solid <?= $complete ? '#c9e6d8' : '#f5e3a8' ?>;">
                         <strong><?= e($langLabel) ?></strong> — piatti <?= (int)$cov['items_done'] ?>/<?= (int)$cov['items_total'] ?> · categorie <?= (int)$cov['cats_done'] ?>/<?= (int)$cov['cats_total'] ?>
-                        <?php if ($missing > 0): ?>
-                        <div style="color:#7a5b00; margin-top:.2rem;"><i class="bi bi-exclamation-triangle-fill"></i> <?= (int)$missing ?> voci senza traduzione <strong>non compaiono</strong> nel menù <?= e($langLabel) ?>. Completa i nomi mancanti nelle schede piatto/categoria.</div>
-                        <?php else: ?>
+                        <?php if ($itemsMissing > 0): ?>
+                        <div style="color:#7a5b00; margin-top:.2rem;"><i class="bi bi-exclamation-triangle-fill"></i> <?= $itemsMissing ?> piatti senza nome <?= e($langLabel) ?> <strong>non compaiono</strong> nel menù tradotto.</div>
+                        <?php endif; ?>
+                        <?php if ($catsMissing > 0): ?>
+                        <div style="color:#7a5b00; margin-top:.2rem;"><i class="bi bi-info-circle-fill"></i> <?= $catsMissing ?> categorie senza nome <?= e($langLabel) ?>: l'intestazione resta in italiano.</div>
+                        <?php endif; ?>
+                        <?php if ($complete): ?>
                         <div style="color:var(--brand); margin-top:.2rem;"><i class="bi bi-check-circle-fill"></i> Traduzione completa: il menù <?= e($langLabel) ?> mostra tutte le voci.</div>
                         <?php endif; ?>
                     </div>

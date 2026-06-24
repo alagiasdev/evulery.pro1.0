@@ -86,11 +86,11 @@ class MenuPageController
 
             $outCats = [];
             foreach ($categories as $cat) {
+                // Titolo categoria: usa la traduzione se c'è, altrimenti l'italiano
+                // (è un'etichetta strutturale corta; non nascondiamo i piatti tradotti
+                // solo perché manca il nome categoria). Descrizione: solo se tradotta.
                 $cName = $catTr[(int)$cat['id']]['name'] ?? '';
-                if ($cName === '') {
-                    continue; // categoria senza nome tradotto → nascosta (con i suoi piatti)
-                }
-                $cat['name'] = $cName;
+                $cat['name'] = $cName !== '' ? $cName : $cat['name'];
                 $cat['description'] = $catTr[(int)$cat['id']]['description'] ?? '';
 
                 $items = [];
@@ -103,21 +103,20 @@ class MenuPageController
                 $subs = [];
                 foreach ($cat['subcategories'] as $sub) {
                     $sName = $catTr[(int)$sub['id']]['name'] ?? '';
-                    if ($sName === '') { continue; }
-                    $sub['name'] = $sName;
+                    $sub['name'] = $sName !== '' ? $sName : $sub['name'];
                     $sItems = [];
                     foreach ($sub['items'] as $it) {
                         $a = $applyItem($it);
                         if ($a !== null) { $sItems[] = $a; }
                     }
-                    if (empty($sItems)) { continue; } // sottocategoria vuota → nascosta
+                    if (empty($sItems)) { continue; } // sottocategoria senza piatti tradotti → nascosta
                     $sub['items'] = $sItems;
                     $subs[] = $sub;
                 }
                 $cat['subcategories'] = $subs;
 
                 if (empty($cat['items']) && empty($cat['subcategories'])) {
-                    continue; // categoria rimasta vuota → nascosta
+                    continue; // categoria senza alcun piatto tradotto → nascosta
                 }
                 $outCats[] = $cat;
             }
