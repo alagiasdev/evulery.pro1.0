@@ -2270,6 +2270,8 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     .dh-two-col { grid-template-columns: 1fr; }
     .dh-source-bar-wrap { display: none; }
     .fab { display: flex; }
+    /* lascia spazio sotto le azioni del form così non finiscono dietro al FAB */
+    .ec-actions { margin-bottom: 4rem; }
     .btn-nuova-desktop { display: none !important; }
     .page-body { padding: 1rem; }
     .top-bar { display: none; }

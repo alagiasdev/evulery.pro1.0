@@ -70,10 +70,10 @@
                 placeholder="Es. Per un imprevisto tecnico siamo costretti a sospendere il servizio. Ci scusiamo per il disagio."></textarea>
             <div class="form-text">Verrà incluso nell'email inviata ai clienti.</div>
 
-            <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="d-flex justify-content-between align-items-center mt-4 ec-actions">
                 <a href="<?= url('dashboard/reservations') ?>" class="btn btn-outline-secondary">Annulla</a>
                 <button type="submit" class="btn btn-danger">
-                    <i class="bi bi-people-fill"></i> Avanti: vedi prenotazioni interessate
+                    <i class="bi bi-people-fill"></i> Avanti<span class="d-none d-sm-inline">: vedi prenotazioni interessate</span>
                 </button>
             </div>
         </form>
