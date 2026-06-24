@@ -239,8 +239,10 @@ class MenuController
         }
         // is_wine: solo i parent lo cambiano dal form; le sottocategorie lo ereditano
         // e lo conservano (la modifica avviene a livello di parent, che propaga ai figli).
+        // NB: il toggle è una radio (0/1) → is_wine è SEMPRE presente: va letto il VALORE
+        // (!empty), non isset, altrimenti ogni salvataggio forzerebbe "Vini".
         $isParent = $existing['parent_id'] === null;
-        $isWine = $isParent ? (isset($data['is_wine']) ? 1 : 0) : (int)$existing['is_wine'];
+        $isWine = $isParent ? (!empty($data['is_wine']) ? 1 : 0) : (int)$existing['is_wine'];
 
         $catModel->update($id, $tenantId, [
             'name'        => trim($data['name']),
