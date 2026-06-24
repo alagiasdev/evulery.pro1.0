@@ -1029,8 +1029,84 @@ document.addEventListener('DOMContentLoaded', function() {
         return div.innerHTML;
     }
 
+    // ===== APERTURA SU PRIMA DATA DISPONIBILE =====
+    // Mostra un'etichetta sopra il calendario (es. "Prima disponibilità: 1 luglio").
+    function showCalHint(text) {
+        var header = getEl('cal-days-header');
+        if (!header) return;
+        var hint = getEl('bw-cal-hint');
+        if (!hint) {
+            hint = document.createElement('div');
+            hint.id = 'bw-cal-hint';
+            hint.className = 'bw-cal-hint';
+            header.parentNode.insertBefore(hint, header);
+        }
+        hint.textContent = text;
+    }
+
+    // Una sola fetch sull'intera finestra: ricava i giorni chiusi, alimenta la cache
+    // mensile (zero refetch) e apre il calendario sulla prima data prenotabile.
+    function initFirstAvailable() {
+        // "Prenota di nuovo" gestisce data/mese per conto suo: non interferire.
+        var qs = new URLSearchParams(window.location.search);
+        if (qs.get('rebook') === '1') { renderCalendar(); return; }
+
+        var today = new Date(); today.setHours(0, 0, 0, 0);
+        var minDate = new Date(today); minDate.setDate(minDate.getDate() + advanceMin);
+        var maxDate = new Date(today); maxDate.setDate(maxDate.getDate() + advanceMax);
+
+        fetch(apiUrl + '/tenants/' + slug + '/closures?from=' + formatDateISO(minDate) + '&to=' + formatDateISO(maxDate))
+            .then(function (r) { return checkApiResponse(r); })
+            .then(function (data) {
+                if (!data || !data.success) { renderCalendar(); return; }
+                var closedArr = data.data.closed_dates || [];
+                if (Array.isArray(data.data.working_weekdays)) {
+                    state.workingWeekdays = data.data.working_weekdays.map(Number);
+                }
+
+                // Seed cache: bucket per mese + marca come "caricati" tutti i mesi
+                // della finestra (in JS [] è truthy → fetchClosedDates li salta).
+                var byMonth = {};
+                closedArr.forEach(function (d) {
+                    var k = d.substring(0, 7);
+                    (byMonth[k] = byMonth[k] || []).push(d);
+                });
+                var y = minDate.getFullYear(), m = minDate.getMonth();
+                var span = (maxDate.getFullYear() - y) * 12 + (maxDate.getMonth() - m);
+                for (var i = 0; i <= span; i++) {
+                    var mk = y + '-' + String(m + 1).padStart(2, '0');
+                    state.closedDates[mk] = byMonth[mk] || [];
+                    m++; if (m > 11) { m = 0; y++; }
+                }
+
+                // Prima data prenotabile = stessa logica del calendario
+                // (weekday lavorativo + non chiuso + dentro la finestra).
+                var closed = {};
+                closedArr.forEach(function (d) { closed[d] = true; });
+                var first = null, d = new Date(minDate);
+                while (d <= maxDate) {
+                    var dow = d.getDay() - 1; if (dow < 0) dow = 6;
+                    var working = !Array.isArray(state.workingWeekdays) || state.workingWeekdays.indexOf(dow) !== -1;
+                    if (working && !closed[formatDateISO(d)]) { first = new Date(d); break; }
+                    d.setDate(d.getDate() + 1);
+                }
+
+                if (first) {
+                    state.calendarMonth = first.getMonth();
+                    state.calendarYear = first.getFullYear();
+                    if (first.getTime() !== today.getTime()) {
+                        showCalHint('Prima disponibilità: ' + first.getDate() + ' ' + MONTHS[first.getMonth()].toLowerCase());
+                    }
+                } else {
+                    showCalHint('Nessuna disponibilità al momento.');
+                }
+                renderCalendar();
+            })
+            .catch(function () { renderCalendar(); });
+    }
+
     // ===== INIT =====
-    renderCalendar();
+    initFirstAvailable();
     renderPartyGrid();
 
     // Pre-fill da "Prenota di nuovo" (CTA pagina prenotazione scaduta):

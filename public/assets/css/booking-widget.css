@@ -218,6 +218,18 @@
     padding: 4px 0;
 }
 
+/* Etichetta "prima disponibilità" sopra il calendario */
+.bw-cal-hint {
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--bw-primary-dark);
+    background: var(--bw-primary-light);
+    border-radius: 8px;
+    padding: 6px 10px;
+    margin: 0 0 10px;
+}
+
 .bw-cal-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
