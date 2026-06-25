@@ -1,5 +1,21 @@
 # Evulery.Pro 1.0 - Prossimi Passi
 
+## 📂 Dove si trovano i file di log (riferimento — agg. 2026-06-26)
+
+Base prod: `/home/vpsevlrqrit/evulery/storage/logs/` · Base locale: `storage/logs/`
+
+| File | Cosa contiene | Generato da | Frequenza |
+|---|---|---|---|
+| `storage/logs/AAAA-MM-GG.log` | log applicativo (info/warning/error + warning PHP catturati) | `app_log()` | per giorno, ad evento |
+| `storage/logs/perf-AAAA-MM-GG.log` | richieste lente (> 500ms, soglia `PERF_LOG_THRESHOLD_MS`) | `App\Core\PerfLog` | per giorno, ad evento |
+| `storage/logs/outbox.log` | worker coda email (solo quando invia/fallisce) | cron `process-outbox.php` | ogni minuto (scrive solo se attività) |
+| `storage/logs/cron_expire.log` | scadenza caparre manuali | cron `expire-manual-deposits.php` | ogni ora (:15) |
+
+**Log dei cron nella home (un livello sopra `evulery/`)**: `/home/vpsevlrqrit/cron_broadcast.log`, `cron_reminder.log`, `cron_review_requests.log` (rispettivamente broadcast 5 min, reminder 15 min, review 15 min).
+
+**Pulizia automatica**: cron mensile (1° del mese, 04:00) `find /home/vpsevlrqrit/evulery/storage/logs -name '*.log' -mtime +60 -delete` → cancella i log in `storage/logs/` più vecchi di 60 giorni (soprattutto i `perf-*` e i giornalieri datati). NON tocca i `cron_*.log` nella home (vanno puliti a mano se serve). I log sono solo diagnostica: cancellarli non rompe nulla, l'app li ricrea in append.
+
+
 ## 🪑 Backlog breve periodo — IN PANCHINA (revisione 2026-05-13)
 
 Task pronti, da fare quando emerge il trigger o c'è una finestra di lavoro.
