@@ -248,6 +248,7 @@
             data-delete-all-url="<?= url('dashboard/notifications/delete-all') ?>"
             data-vapid-url="<?= url('dashboard/push/vapid-key') ?>"
             data-subscribe-url="<?= url('dashboard/push/subscribe') ?>"
+            data-impersonating="<?= \App\Core\Auth::isImpersonating() ? '1' : '' ?>"
             data-csrf="<?= csrf_token() ?>"
     ></script>
     <script nonce="<?= csp_nonce() ?>" src="<?= asset('js/notification-sounds.js') ?>" defer

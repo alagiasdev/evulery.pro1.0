@@ -16,7 +16,10 @@
         deleteAllUrl: script.getAttribute('data-delete-all-url'),
         vapidUrl:     script.getAttribute('data-vapid-url'),
         subscribeUrl: script.getAttribute('data-subscribe-url'),
-        csrf:         script.getAttribute('data-csrf')
+        csrf:         script.getAttribute('data-csrf'),
+        // In impersonation non registriamo il device dell'admin sotto il tenant
+        // guardato (la sicurezza vera è lato server; questo evita la chiamata).
+        impersonating: script.getAttribute('data-impersonating') === '1'
     };
 
     var POLL_INTERVAL = 30000; // 30 seconds
@@ -326,6 +329,12 @@
     }
 
     function sendSubscriptionToServer(subscription) {
+        // Guardia impersonation: non inviare l'iscrizione al server (incluso il
+        // re-sync automatico all'avvio). Il server la rifiuterebbe comunque.
+        if (cfg.impersonating) {
+            return;
+        }
+
         var key = subscription.getKey('p256dh');
         var auth = subscription.getKey('auth');
 

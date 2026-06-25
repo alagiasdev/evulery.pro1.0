@@ -18,6 +18,15 @@ class PushController
             Response::json(['error' => 'Servizio non disponibile.'], 403);
         }
 
+        // In impersonation NON registriamo il dispositivo: l'admin sta solo
+        // "guardando" il tenant, non è un suo device. Senza questa guardia i
+        // browser dell'admin finirebbero registrati sotto i tenant impersonati
+        // (e riceverebbero le loro notifiche). La sicurezza è qui, lato server.
+        if (Auth::isImpersonating()) {
+            Response::json(['ok' => true, 'skipped' => 'impersonation']);
+            return;
+        }
+
         $tenantId = Auth::tenantId();
         $userId = Auth::id();
         $data = $request->all();
@@ -51,6 +60,12 @@ class PushController
      */
     public function unsubscribe(Request $request): void
     {
+        // In impersonation non tocchiamo i device del ristoratore reale.
+        if (Auth::isImpersonating()) {
+            Response::json(['ok' => true, 'skipped' => 'impersonation']);
+            return;
+        }
+
         $tenantId = Auth::tenantId();
         $endpoint = trim($request->all()['endpoint'] ?? '');
 
