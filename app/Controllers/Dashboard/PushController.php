@@ -44,6 +44,18 @@ class PushController
             Response::json(['error' => 'Endpoint non valido.'], 422);
         }
 
+        $ps = new PushSubscription();
+
+        // Solo un'azione ESPLICITA dell'utente ("Attiva") crea un'iscrizione
+        // (mode=enable). Il re-sync automatico all'avvio (mode != 'enable') NON
+        // crea nulla: conferma solo se il dispositivo e' gia' registrato. Cosi'
+        // il semplice login — anche con credenziali altrui per assistenza — non
+        // aggiunge il dispositivo alla lista del tenant.
+        if (($data['mode'] ?? '') !== 'enable') {
+            Response::json(['ok' => true, 'registered' => $ps->existsFor($tenantId, $endpoint)]);
+            return;
+        }
+
         $subscription = [
             'endpoint'   => $endpoint,
             'p256dh'     => $p256dh,
@@ -51,8 +63,8 @@ class PushController
             'user_agent' => substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255),
         ];
 
-        (new PushSubscription())->subscribe($tenantId, $userId, $subscription);
-        Response::json(['ok' => true]);
+        $ps->subscribe($tenantId, $userId, $subscription);
+        Response::json(['ok' => true, 'registered' => true]);
     }
 
     /**

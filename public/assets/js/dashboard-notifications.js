@@ -270,13 +270,11 @@
             swRegistration = reg;
             reg.pushManager.getSubscription().then(function (sub) {
                 if (sub) {
-                    // Self-heal: re-invia la subscription al server a ogni avvio.
-                    // Cosi', se era stata rimossa lato server (es. "Rimuovi" da un
-                    // altro dispositivo) ma il browser ce l'ha ancora e il permesso
-                    // e' attivo, questo dispositivo torna registrato da solo —
-                    // senza chiedere nulla all'utente. Operazione idempotente
-                    // (upsert per endpoint lato DB).
-                    sendSubscriptionToServer(sub);
+                    // Re-sync 'sync' all'avvio: NON crea un'iscrizione, la rinfresca
+                    // solo se gia' esiste lato server. Cosi' il semplice login non
+                    // registra il dispositivo sotto il tenant (lo fa solo l'azione
+                    // esplicita "Attiva"). Vedi PushController::subscribe.
+                    sendSubscriptionToServer(sub, 'sync');
                     return;
                 }
                 // Not subscribed yet — will subscribe on first bell click
@@ -296,10 +294,12 @@
 
         return swRegistration.pushManager.getSubscription().then(function (sub) {
             if (sub) {
-                // Gia' subscribed: re-invia al server per sicurezza (potrebbe
-                // essere stato eliminato dal DB lato server).
-                sendSubscriptionToServer(sub);
-                return { status: 'already-subscribed' };
+                // Azione esplicita (Attiva): registra davvero ('enable') e attende
+                // la conferma del server prima di risolvere (cosi' chi chiama puo'
+                // ricaricare la pagina in sicurezza).
+                return sendSubscriptionToServer(sub, 'enable').then(function () {
+                    return { status: 'already-subscribed' };
+                });
             }
 
             if (Notification.permission === 'denied') {
@@ -317,8 +317,9 @@
                     });
                 })
                 .then(function (subscription) {
-                    sendSubscriptionToServer(subscription);
-                    return { status: 'subscribed' };
+                    return sendSubscriptionToServer(subscription, 'enable').then(function () {
+                        return { status: 'subscribed' };
+                    });
                 })
                 .catch(function (err) {
                     // Tipici: NotAllowedError (utente nega), AbortError, errori rete
@@ -328,11 +329,11 @@
         });
     }
 
-    function sendSubscriptionToServer(subscription) {
+    function sendSubscriptionToServer(subscription, mode) {
         // Guardia impersonation: non inviare l'iscrizione al server (incluso il
         // re-sync automatico all'avvio). Il server la rifiuterebbe comunque.
         if (cfg.impersonating) {
-            return;
+            return Promise.resolve();
         }
 
         var key = subscription.getKey('p256dh');
@@ -343,8 +344,11 @@
         params.append('endpoint', subscription.endpoint);
         params.append('p256dh', btoa(String.fromCharCode.apply(null, new Uint8Array(key))));
         params.append('auth', btoa(String.fromCharCode.apply(null, new Uint8Array(auth))));
+        // 'enable' = azione esplicita (crea l'iscrizione); altrimenti 'sync' =
+        // re-sync automatico che NON crea nulla (solo refresh se gia' esiste).
+        params.append('mode', mode === 'enable' ? 'enable' : 'sync');
 
-        fetch(cfg.subscribeUrl, {
+        return fetch(cfg.subscribeUrl, {
             method: 'POST',
             credentials: 'same-origin',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

@@ -52,6 +52,20 @@ class PushSubscription
         return $stmt->fetchAll();
     }
 
+    /**
+     * Esiste gia' un'iscrizione per questo (tenant, endpoint)?
+     * Usato dal re-sync automatico: se non esiste, NON la creiamo (solo
+     * l'azione esplicita "Attiva" crea un'iscrizione).
+     */
+    public function existsFor(int $tenantId, string $endpoint): bool
+    {
+        $stmt = $this->db->prepare(
+            'SELECT 1 FROM push_subscriptions WHERE tenant_id = :tid AND endpoint = :ep LIMIT 1'
+        );
+        $stmt->execute(['tid' => $tenantId, 'ep' => $endpoint]);
+        return (bool)$stmt->fetchColumn();
+    }
+
     public function getByUser(int $tenantId, int $userId): array
     {
         $stmt = $this->db->prepare(

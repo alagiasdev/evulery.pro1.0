@@ -249,7 +249,7 @@ $defaults = [
                     <button type="button" class="push-device-remove" data-push-remove title="Rimuovi dalle notifiche"><i class="bi bi-x-lg"></i></button>
                 </div>
                 <?php endforeach; ?>
-                <div class="push-devices-hint"><i class="bi bi-info-circle me-1"></i> Rimuovendo un dispositivo ancora in uso potrebbe ricomparire alla riapertura della dashboard. Per spegnerle definitivamente su un dispositivo, usa "Rimuovi" da quel dispositivo.</div>
+                <div class="push-devices-hint"><i class="bi bi-info-circle me-1"></i> Qui compaiono solo i dispositivi su cui hai premuto &laquo;Attiva&raquo;. "Rimuovi" spegne le notifiche per quel dispositivo in modo definitivo; per riattivarle, aprire la dashboard da quel dispositivo e premere di nuovo &laquo;Attiva&raquo;.</div>
             </div>
             <?php endif; ?>
         </div>
@@ -373,9 +373,28 @@ $defaults = [
             // mostra "non supportato qui" invece dello spinner perpetuo.
             if (s.ready === false)         return showBox('push-status-unsupported');
             if (s.permission === 'denied') return showBox('push-status-denied');
-            if (s.subscribed)              return showBox('push-status-active');
-            showBox('push-status-inactive');
+            // "Attivo" = registrato lato server PER QUESTO ristorante (endpoint
+            // presente nella lista dispositivi), non solo "browser iscritto".
+            // Cosi' un semplice login NON mostra "attivo": serve premere "Attiva".
+            currentEndpoint().then(function (ep) {
+                showBox(endpointInList(ep) ? 'push-status-active' : 'push-status-inactive');
+            });
         });
+    }
+    function currentEndpoint() {
+        if (!('serviceWorker' in navigator)) return Promise.resolve(null);
+        return navigator.serviceWorker.ready
+            .then(function (reg) { return reg.pushManager.getSubscription(); })
+            .then(function (sub) { return sub ? sub.endpoint : null; })
+            .catch(function () { return null; });
+    }
+    function endpointInList(ep) {
+        if (!ep) return false;
+        var rows = document.querySelectorAll('.push-device');
+        for (var i = 0; i < rows.length; i++) {
+            if (rows[i].getAttribute('data-endpoint') === ep) return true;
+        }
+        return false;
     }
     var btn = document.getElementById('push-activate-btn');
     if (btn) {
@@ -383,6 +402,13 @@ $defaults = [
             btn.disabled = true;
             btn.innerHTML = '<i class="bi bi-arrow-repeat me-1" style="animation:spin 1s linear infinite;"></i> Attivazione…';
             window.EvuleryPush.subscribe().then(function (res) {
+                // La subscribe attende la conferma del server: a registrazione
+                // riuscita ricarico, cosi' lista dispositivi e stato si aggiornano
+                // dal server. Su negato/errore ripristino il bottone.
+                if (res && (res.status === 'subscribed' || res.status === 'already-subscribed')) {
+                    location.reload();
+                    return;
+                }
                 btn.disabled = false;
                 btn.innerHTML = '<i class="bi bi-bell-fill me-1"></i> Attiva';
                 render();
