@@ -103,9 +103,9 @@ HTML
         'icon'        => 'bi-calendar-x',
         'color'       => '#C62828',
         'category'    => 'configurazione',
-        'count_label' => '1 articolo',
-        'keywords'    => 'chiusure ferie giorni riposo eventi privati',
-        'read_time'   => 2,
+        'count_label' => '2 articoli',
+        'keywords'    => 'chiusure ferie giorni riposo eventi privati straordinaria imprevisto emergenza guasto allagamento sospendi annulla riapri sospesa',
+        'read_time'   => 3,
         'body' => <<<'HTML'
 <p>In <em>Impostazioni &rarr; Chiusure</em> puoi bloccare specifici giorni o periodi (ferie, riposo settimanale, eventi privati).</p>
 <ul>
@@ -114,6 +114,15 @@ HTML
     <li><strong>Chiusura parziale</strong>: solo una fascia oraria di un giorno</li>
 </ul>
 <p>Nei giorni di chiusura il widget non accetta prenotazioni e mostra un messaggio al cliente.</p>
+
+<h4>Chiusura straordinaria (imprevisti)</h4>
+<p>Diversa dalle chiusure programmate: serve per <strong>emergenze improvvise</strong> (guasto, allagamento, problema tecnico) quando hai gi&agrave; prenotazioni prese. La trovi nella stessa pagina <em>Impostazioni &rarr; Chiusure</em>, nella card rossa &ldquo;Imprevisto improvviso?&rdquo;.</p>
+<p>Scegli la durata (giorno intero o una fascia oraria) e cosa fare delle prenotazioni gi&agrave; presenti:</p>
+<ul>
+    <li><strong>Sospendi</strong> (recuperabile): le prenotazioni restano e continuano a occupare i coperti. Se l&rsquo;emergenza rientra puoi <strong>riaprire</strong> e recuperarle.</li>
+    <li><strong>Annulla</strong>: annulla le prenotazioni del periodo e avvisa i clienti via email con il messaggio che scrivi tu.</li>
+</ul>
+<p>Prima di confermare vedi sempre l&rsquo;elenco delle <strong>prenotazioni interessate</strong>. Mentre una chiusura straordinaria &egrave; attiva, un banner ti permette di <strong>riaprire</strong> rapidamente appena torni operativo.</p>
 HTML
     ],
 
@@ -495,6 +504,31 @@ HTML
 HTML
     ],
 
+    'marketing' => [
+        'title'       => 'Marketing e Provenienza',
+        'subtitle'    => 'Scopri da dove arrivano le prenotazioni',
+        'icon'        => 'bi-megaphone',
+        'color'       => '#6A1B9A',
+        'category'    => 'avanzati',
+        'count_label' => '1 articolo',
+        'keywords'    => 'marketing provenienza canale utm link tracciati qr code campagne attribuzione instagram facebook google hub origine sorgente',
+        'read_time'   => 3,
+        'body' => <<<'HTML'
+<p>La sezione <em>Marketing</em> ti dice <strong>da dove arrivano le tue prenotazioni</strong> e ti d&agrave; gli strumenti per misurare i tuoi canali. &Egrave; disponibile sui piani <strong>Professional ed Enterprise</strong>.</p>
+
+<h4>Report provenienza</h4>
+<p>Per ogni prenotazione il sistema registra il <strong>canale di arrivo</strong> (Instagram, Facebook, Google, sito, link diretto&hellip;) leggendo i parametri di tracciamento presenti nel link. Nel report vedi quante prenotazioni e quanti coperti arrivano da ciascun canale.</p>
+
+<h4>Generatore di link e QR</h4>
+<p>Crei <strong>link tracciati</strong> da usare nei tuoi canali (bio Instagram, post Facebook, Google, volantini). Ogni link porta dove vuoi tu &mdash; widget di prenotazione, hub, menu o ordini &mdash; e il sistema attribuisce automaticamente la prenotazione a quel canale. Puoi anche generare il <strong>QR code</strong> da stampare.</p>
+
+<h4>Campagne salvate</h4>
+<p>Salvi i link che usi pi&ugrave; spesso come <strong>campagne</strong>, cos&igrave; li ritrovi al volo e ne confronti i risultati nel tempo.</p>
+
+<div class="hg-tip"><strong><i class="bi bi-lightbulb me-1"></i>Consiglio:</strong> usa un link tracciato diverso per ogni canale (uno per Instagram, uno per Google, ecc.). Dopo qualche settimana saprai quale canale ti porta pi&ugrave; clienti e dove conviene investire.</div>
+HTML
+    ],
+
     'notifiche' => [
         'title'       => 'Notifiche',
         'subtitle'    => 'Non perdere mai una prenotazione',
@@ -516,8 +550,8 @@ HTML
 <h4>Dispositivi collegati</h4>
 <p>Sempre in <em>Impostazioni &rarr; Notifiche</em> trovi l&rsquo;elenco <strong>Dispositivi collegati</strong>: per ognuno vedi il browser, il sistema operativo e quando &egrave; stato collegato. Quello che stai usando ora &egrave; segnato con &ldquo;Questo dispositivo&rdquo;.</p>
 <ul>
-    <li>Per smettere di ricevere le notifiche su un dispositivo, usa il pulsante <strong>&times; Rimuovi</strong> accanto ad esso.</li>
-    <li>Se rimuovi un dispositivo ancora in uso, alla riapertura della dashboard potrebbe ricollegarsi da solo: per spegnerle in modo definitivo, usa &ldquo;Rimuovi&rdquo; <strong>da quel dispositivo</strong>.</li>
+    <li>In elenco compaiono <strong>solo i dispositivi su cui hai premuto &ldquo;Attiva&rdquo;</strong>: il semplice accesso alla dashboard non aggiunge nulla.</li>
+    <li>Per smettere di ricevere le notifiche su un dispositivo, usa il pulsante <strong>&times; Rimuovi</strong>: la rimozione &egrave; <strong>definitiva</strong> e il dispositivo non si ricollega da solo. Per riattivarle, riapri la pagina da quel dispositivo e premi di nuovo &ldquo;Attiva&rdquo;.</li>
 </ul>
 <div class="hg-info"><strong><i class="bi bi-info-circle me-1"></i>Su iPhone:</strong> le push del browser funzionano solo aggiungendo Evulery alla schermata Home (PWA) con iOS 16.4 o superiore.</div>
 HTML
