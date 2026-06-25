@@ -295,6 +295,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
             <span><span class="tm-dot" style="background:#E6F4ED;box-shadow:inset 0 0 0 1.5px #b3dec7;"></span> Libero</span>
             <span><span class="tm-dot" style="background:#00844A;"></span> Confermato</span>
             <span><span class="tm-dot" style="background:#cfe2ff;box-shadow:inset 0 0 0 2px #0EA5E9;"></span> Arrivato</span>
+            <span><i class="bi bi-clock" style="color:#B26500;"></i> Prossima prenotazione</span>
         </span>
     </div>
 
@@ -485,11 +486,13 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                     <?php endif; ?>
                     <?php if ($nextTurn && !$tBlocked):
                         $nsur      = mb_strtoupper(trim((string)$nextTurn['surname']));
-                        $nsurShort = mb_strlen($nsur) > 8 ? mb_substr($nsur, 0, 8) . '…' : $nsur;
+                        // Badge compatto: cognome troncato a 4 lettere + punto (nome
+                        // completo resta nel tooltip e nel popup al click).
+                        $nsurShort = mb_strlen($nsur) > 4 ? mb_substr($nsur, 0, 4) . '.' : $nsur;
                     ?>
                     <span class="tm-next-badge" data-pop="tm-pop-res-<?= (int)$nextTurn['rid'] ?>"
                           title="<?= e(implode(' · ', array_map(fn($x) => substr((string)$x['time'], 0, 5) . ' ' . mb_strtoupper((string)$x['surname']) . ' ' . (int)$x['party'] . 'p', $tFuture))) ?>">
-                        <?= e($nsurShort) ?> <?= (int)$nextTurn['party'] ?>p<?php if ($extraTurns > 0): ?> <span class="tm-next-extra">+<?= $extraTurns ?></span><?php endif; ?>
+                        <i class="bi bi-clock"></i> <?= e(substr((string)$nextTurn['time'], 0, 5)) ?> &middot; <?= e($nsurShort) ?> <?= (int)$nextTurn['party'] ?>p<?php if ($extraTurns > 0): ?> <span class="tm-next-extra">+<?= $extraTurns ?></span><?php endif; ?>
                     </span>
                     <?php endif; ?>
                 </div>

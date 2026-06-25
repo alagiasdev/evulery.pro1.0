@@ -4809,8 +4809,11 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-map-table.hl { box-shadow: 0 0 0 3px #ffc107, 0 0 0 6px rgba(255,193,7,.4); z-index: 9; }
 /* Badge "prossima prenotazione" agganciato sotto il tavolo: cognome (max 8) +
    posti, +N se ci sono altri turni dopo. Cliccabile → popup della prenotazione. */
-.tm-next-badge { position: absolute; top: calc(100% + 3px); left: 50%; transform: translateX(-50%); white-space: nowrap; background: #fff; border: 1.5px solid #e8857c; color: #b3382b; border-radius: 7px; padding: 2px 7px; font-size: .6rem; font-weight: 800; line-height: 1.25; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,.14); z-index: 6; }
-.tm-next-badge:hover { background: #fff5f4; border-color: #d9534f; }
+/* Badge "prossima prenotazione": ambra (= in arrivo). NON rosso: nel sistema il
+   rosso = no-show, generava confusione. Verde=seduto ora, blu=arrivato, ambra=dopo. */
+.tm-next-badge { position: absolute; top: calc(100% + 3px); left: 50%; transform: translateX(-50%); white-space: nowrap; background: #FFF8E0; border: 1.5px solid #E8C76B; color: #B26500; border-radius: 7px; padding: 2px 7px; font-size: .6rem; font-weight: 800; line-height: 1.25; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,.14); z-index: 6; }
+.tm-next-badge .bi-clock { font-size: .62rem; margin-right: 1px; }
+.tm-next-badge:hover { background: #FFF3C4; border-color: #D9A93B; }
 .tm-next-extra { color: #9a9a9a; }
 /* Fase 3c — avviso coerenza coperti / posti tavoli */
 .tm-cap-warn { display: flex; gap: 11px; margin-top: 16px; padding: 12px 14px; background: #fff8e6; border: 1px solid #ffe082; border-radius: 10px; }

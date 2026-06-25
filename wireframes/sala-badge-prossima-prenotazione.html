@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe — Sala: badge "prossima prenotazione" (prima/dopo)</title>
+<style>
+  :root { --brand:#00844A; --brand-dark:#006837; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; background: #f4f6f5; color: #1a1d23; padding: 24px; }
+  h1 { font-size: 1.25rem; margin: 0 0 4px; }
+  .sub { color: #6c757d; font-size: .9rem; margin: 0 0 24px; }
+  .panel { background: #fff; border: 1px solid #e9ecef; border-radius: 14px; padding: 20px 22px 56px; margin-bottom: 22px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+  .panel-h { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1rem; margin: 0 0 6px; }
+  .tag { font-size: .68rem; font-weight: 800; padding: 2px 9px; border-radius: 100px; text-transform: uppercase; letter-spacing: .03em; }
+  .tag-bad  { background: #FDECEA; color: #b3382b; }
+  .tag-good { background: #E6F4ED; color: #014b29; }
+  .panel-note { color: #6c757d; font-size: .85rem; margin: 0 0 26px; }
+
+  /* ===== floor / tables (CSS reale della mappa) ===== */
+  .floor { position: relative; display: flex; flex-wrap: wrap; gap: 44px 40px; padding: 14px 8px 8px; background:
+      radial-gradient(circle, #d7e3dd 1px, transparent 1px); background-size: 22px 22px; border-radius: 10px; }
+  .tm-map-table { position: relative; width: 76px; height: 76px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: var(--brand); color: #fff; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,.18); }
+  .tm-map-table.round { border-radius: 50%; }
+  .tm-map-name { font-size: .72rem; font-weight: 700; white-space: nowrap; max-width: 70px; overflow: hidden; text-overflow: ellipsis; }
+  .tm-map-cap  { font-size: .6rem; opacity: .88; white-space: nowrap; }
+  .tm-map-tag  { font-size: .58rem; font-weight: 800; opacity: .85; }
+
+  /* stati */
+  .tm-status-free      { background: #E6F4ED; color: #014b29; box-shadow: inset 0 0 0 1.5px #b3dec7, 0 1px 3px rgba(0,0,0,.06); }
+  .tm-status-confirmed { background: var(--brand); color: #fff; }
+  .tm-status-arrived   { background: #cfe2ff; color: #075985; box-shadow: inset 0 0 0 2px #0EA5E9, 0 1px 3px rgba(0,0,0,.08); }
+  .in-combo { box-shadow: 0 0 0 2px #fff, 0 0 0 5px #0d6efd, 0 2px 6px rgba(0,0,0,.22); }
+  .tm-combo-chain { position: absolute; top: -8px; right: -8px; background:#0d6efd; color:#fff; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.6rem; }
+  .tm-area-dot { position:absolute; top:6px; left:6px; width:8px; height:8px; border-radius:50%; }
+
+  /* badge prossima prenotazione — VERSIONE ATTUALE (rosso) */
+  .badge-old { position: absolute; top: calc(100% + 3px); left: 50%; transform: translateX(-50%); white-space: nowrap; background: #fff; border: 1.5px solid #e8857c; color: #b3382b; border-radius: 7px; padding: 2px 7px; font-size: .6rem; font-weight: 800; line-height: 1.25; box-shadow: 0 1px 3px rgba(0,0,0,.14); }
+
+  /* badge prossima prenotazione — VERSIONE PROPOSTA (ambra + orologio + orario) */
+  .badge-new { position: absolute; top: calc(100% + 3px); left: 50%; transform: translateX(-50%); white-space: nowrap; background: #FFF8E0; border: 1.5px solid #E8C76B; color: #B26500; border-radius: 7px; padding: 2px 7px; font-size: .6rem; font-weight: 800; line-height: 1.25; box-shadow: 0 1px 3px rgba(0,0,0,.14); }
+  .badge-new .clk { margin-right: 2px; }
+  .badge-extra { color: #9a9a9a; }
+
+  /* legenda */
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 26px; padding-top: 16px; border-top: 1px dashed #e9ecef; font-size: .8rem; color: #495057; }
+  .legend .li { display: flex; align-items: center; gap: 6px; }
+  .sw { width: 16px; height: 16px; border-radius: 4px; display: inline-block; }
+  .sw-free { background: #E6F4ED; box-shadow: inset 0 0 0 1.5px #b3dec7; }
+  .sw-conf { background: var(--brand); }
+  .sw-arr  { background: #cfe2ff; box-shadow: inset 0 0 0 2px #0EA5E9; }
+  .sw-next { background:#FFF8E0; border:1.5px solid #E8C76B; color:#B26500; font-size:.62rem; font-weight:800; padding:0 4px; border-radius:5px; width:auto; height:auto; line-height:1.4; }
+  .new-pill { background:#E6F4ED; color:#014b29; font-size:.62rem; font-weight:800; padding:1px 7px; border-radius:100px; }
+</style>
+</head>
+<body>
+
+<h1>Sala — badge "prossima prenotazione"</h1>
+<p class="sub">Stato tavoli alle <strong>22:15</strong> · confronto resa attuale vs proposta. 5 tavoli di esempio.</p>
+
+<!-- ============ PRIMA ============ -->
+<div class="panel">
+  <div class="panel-h"><span class="tag tag-bad">Prima — attuale</span></div>
+  <p class="panel-note">Il pill è <strong>rosso</strong> (che nel sistema = no-show → sembra un allarme) e <strong>non ha l'orario</strong>: non si capisce che è una prenotazione futura.</p>
+  <div class="floor">
+    <!-- T1 libero, nessuna prossima -->
+    <div class="tm-map-table tm-status-free"><span class="tm-map-name">T1</span><span class="tm-map-cap">2-3 posti</span></div>
+    <!-- T4 libero CON prossima (badge rosso) -->
+    <div class="tm-map-table tm-status-free">
+      <span class="tm-map-name">T4</span><span class="tm-map-cap">2 posti</span>
+      <span class="badge-old">ALAGIA 2p</span>
+    </div>
+    <!-- T7 occupato ora + prossima (badge rosso) — cognome LUNGO -->
+    <div class="tm-map-table tm-status-confirmed">
+      <span class="tm-map-tag">T7</span><span class="tm-map-name">BIANCHI</span><span class="tm-map-cap">2p · 21:30</span>
+      <span class="badge-old">PROVENZA… 4p</span>
+    </div>
+    <!-- T9 + T9B combinati, occupati (6p) -->
+    <div class="tm-map-table tm-status-confirmed in-combo">
+      <span class="tm-combo-chain">🔗</span>
+      <span class="tm-map-tag">T9</span><span class="tm-map-name">ALAGIA</span><span class="tm-map-cap">6p · 22:00</span>
+    </div>
+    <div class="tm-map-table tm-status-confirmed in-combo">
+      <span class="tm-combo-chain">🔗</span>
+      <span class="tm-map-tag">T9B</span><span class="tm-map-name">ALAGIA</span><span class="tm-map-cap">6p · 22:00</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DOPO ============ -->
+<div class="panel">
+  <div class="panel-h"><span class="tag tag-good">Dopo — proposta</span></div>
+  <p class="panel-note">Badge <strong>ambra</strong> (= "in arrivo", non collide con verde/blu/rosso) con <strong>orologio + orario</strong>: si legge subito "libero ora, prossima alle 22:45". Più voce in legenda.<br>Cognome <strong>troncato a 4 lettere + punto</strong> (es. ALAGIA → <em>ALAG.</em>, PROVENZANO → <em>PROV.</em>) per larghezza compatta e prevedibile; nome completo nel tooltip e nel popup al click.</p>
+  <div class="floor">
+    <div class="tm-map-table tm-status-free"><span class="tm-map-name">T1</span><span class="tm-map-cap">2-3 posti</span></div>
+    <div class="tm-map-table tm-status-free">
+      <span class="tm-map-name">T4</span><span class="tm-map-cap">2 posti</span>
+      <span class="badge-new"><span class="clk">🕐</span>22:45 · ALAG. 2p</span>
+    </div>
+    <div class="tm-map-table tm-status-confirmed">
+      <span class="tm-map-tag">T7</span><span class="tm-map-name">BIANCHI</span><span class="tm-map-cap">2p · 21:30</span>
+      <span class="badge-new"><span class="clk">🕐</span>23:30 · PROV. 4p</span>
+    </div>
+    <div class="tm-map-table tm-status-confirmed in-combo">
+      <span class="tm-combo-chain">🔗</span>
+      <span class="tm-map-tag">T9</span><span class="tm-map-name">ALAGIA</span><span class="tm-map-cap">6p · 22:00</span>
+    </div>
+    <div class="tm-map-table tm-status-confirmed in-combo">
+      <span class="tm-combo-chain">🔗</span>
+      <span class="tm-map-tag">T9B</span><span class="tm-map-name">ALAGIA</span><span class="tm-map-cap">6p · 22:00</span>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="li"><span class="sw sw-free"></span> Libero</span>
+    <span class="li"><span class="sw sw-conf"></span> Confermato (seduto)</span>
+    <span class="li"><span class="sw sw-arr"></span> Arrivato</span>
+    <span class="li"><span class="sw-next">🕐 22:45</span> Prossima prenotazione</span>
+  </div>
+</div>
+
+<p class="sub" style="margin-top:0;">Nota: il caso con <strong>+N</strong> (più turni futuri) resterebbe es. <span class="badge-new" style="position:static;transform:none;display:inline-block;">🕐 22:45 · ALAG. 2p <span class="badge-extra">+1</span></span> &nbsp;·&nbsp; Regola: cognome &gt; 4 lettere → prime 4 + punto (l'eventuale variante a 5 lettere si cambia con un numero).</p>
+
+</body>
+</html>
