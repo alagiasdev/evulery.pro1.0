@@ -287,17 +287,21 @@
     // Promise-based: l'API esposta a window.EvuleryPush.subscribe() permette
     // ai banner/CTA di sapere l'esito (permesso accordato / negato / errore)
     // e mostrare il feedback corretto all'utente.
-    function subscribeToPush() {
+    // explicit=true  -> l'utente ha premuto "Attiva": crea l'iscrizione (mode=enable).
+    // explicit falso -> chiamata AUTOMATICA (es. self-heal del banner col permesso
+    //   gia' concesso): usa mode=sync, che NON crea binding. Cosi' il solo login /
+    //   il permesso pregresso non registrano il device sotto il tenant.
+    function subscribeToPush(explicit) {
         if (!swRegistration) {
             return Promise.reject(new Error('service-worker-not-registered'));
         }
+        var mode = explicit ? 'enable' : 'sync';
 
         return swRegistration.pushManager.getSubscription().then(function (sub) {
             if (sub) {
-                // Azione esplicita (Attiva): registra davvero ('enable') e attende
-                // la conferma del server prima di risolvere (cosi' chi chiama puo'
-                // ricaricare la pagina in sicurezza).
-                return sendSubscriptionToServer(sub, 'enable').then(function () {
+                // Attende la conferma del server prima di risolvere (cosi' chi
+                // chiama in modo esplicito puo' ricaricare la pagina in sicurezza).
+                return sendSubscriptionToServer(sub, mode).then(function () {
                     return { status: 'already-subscribed' };
                 });
             }
@@ -317,7 +321,7 @@
                     });
                 })
                 .then(function (subscription) {
-                    return sendSubscriptionToServer(subscription, 'enable').then(function () {
+                    return sendSubscriptionToServer(subscription, mode).then(function () {
                         return { status: 'subscribed' };
                     });
                 })
@@ -428,7 +432,7 @@
             activateBtn.addEventListener('click', function () {
                 activateBtn.disabled = true;
                 activateBtn.textContent = 'Attivazione…';
-                subscribeToPush().then(function (res) {
+                subscribeToPush(true).then(function (res) {
                     if (res.status === 'subscribed' || res.status === 'already-subscribed') {
                         banner.classList.remove('is-visible');
                     } else if (res.status === 'denied') {
@@ -492,7 +496,7 @@
 
     // ========== API globale per CTA esterne (pagina settings, ecc) ==========
     window.EvuleryPush = {
-        subscribe: function () { return subscribeToPush(); },
+        subscribe: function () { return subscribeToPush(true); },
         getStatus: function () {
             // Promise resolved con { supported, permission, subscribed }
             //
