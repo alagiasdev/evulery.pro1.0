@@ -20,7 +20,7 @@ Base prod: `/home/vpsevlrqrit/evulery/storage/logs/` · Base locale: `storage/lo
 
 **Trigger**: quando raggiungiamo ~10 ristoranti attivi, rifare un **check performance** sui `perf-*.log` reali (atteso: creazione prenotazione ~300ms dopo la Fase 1 email async). In base ai dati, valutare:
 - [ ] **Fase 2 — push asincrono** (complessità bassa-media, ~mezza giornata / 4-6h, NIENTE migration: la tabella `notification_outbox` ha già `channel`). Sposta anche il push nella coda: split `NotificationService::sendPush` → enqueue(web)/transmitPush(invio) + flag `PUSH_ASYNC` (default off, rollout dormiente) + branch `'push'` nel worker. Beneficio latenza MODESTO (push < 2 email SMTP) e tocca il percorso push appena stabilizzato → fare solo se misurato come collo di bottiglia. Dettagli in [[project-perf-email-async]].
-- [ ] **`auth/login` ~1s** (complessità bassa, ~1h diagnosi): probabile cold-start (prima richiesta di sessione → opcache/connessione fredde), forse fisiologico. Prima misurare *cosa* impiega quel secondo, poi decidere se vale un micro-fix.
+- [x] ~~**`auth/login` ~1s**~~ **DIAGNOSTICATO 2026-06-26 → NESSUNA AZIONE**: in locale la GET /auth/login risponde in ~15ms (warm); `showForm` non fa DB né lavoro pesante. Il ~1s in prod è **cold-start** (la login è la prima richiesta di sessione → opcache/FPM freddi). Confermato dai log: compare sopra i 500ms solo sporadicamente (non a ogni login) = primo-hit-dopo-inattività, non sistematico. Fisiologico, tollerabile. Unica leva eventuale = warm-keeping lato server (opcache/FPM tuning o ping), NON ne vale la pena.
 
 (Annotato 2026-06-26: il critico per il lancio è chiuso; questi si rivalutano col volume reale.)
 
