@@ -45,6 +45,30 @@ class MailService
 
     public function send(string $to, string $subject, string $htmlBody, ?string $fromName = null, ?string $replyTo = null): bool
     {
+        // In richiesta web, se l'invio asincrono e' attivo (MAIL_ASYNC=1),
+        // accodiamo e torniamo subito: la trasmissione SMTP la fa il worker
+        // (scripts/process-outbox.php). In CLI (cron/worker/broadcast) si invia
+        // sempre in sincrono. Se l'accodamento fallisce -> fallback inline, cosi'
+        // non perdiamo mai un'email (es. tabella/coda non disponibile).
+        $async = PHP_SAPI !== 'cli' && (string)env('MAIL_ASYNC', '0') === '1';
+        if ($async) {
+            try {
+                MailOutbox::enqueueEmail($to, $subject, $htmlBody, $fromName, $replyTo);
+                return true;
+            } catch (\Throwable $e) {
+                app_log('MailOutbox enqueue fallito, fallback invio inline: ' . $e->getMessage(), 'warning');
+                // prosegue con la trasmissione inline qui sotto
+            }
+        }
+        return $this->transmit($to, $subject, $htmlBody, $fromName, $replyTo);
+    }
+
+    /**
+     * Trasmissione SMTP effettiva e sincrona. Usata dal worker della coda e dal
+     * fallback inline. NON passa dalla coda (e' il punto in cui si invia davvero).
+     */
+    public function transmit(string $to, string $subject, string $htmlBody, ?string $fromName = null, ?string $replyTo = null): bool
+    {
         try {
             $this->mailer->clearAddresses();
             $this->mailer->clearReplyTos();
