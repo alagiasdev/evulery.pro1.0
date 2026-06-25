@@ -28,6 +28,7 @@ Base prod: `/home/vpsevlrqrit/evulery/storage/logs/` · Base locale: `storage/lo
 - [ ] **`domain/verify` — timeout DNS fino a 10s** (PARCHEGGIATO 2026-06-26): la verifica del dominio personalizzato può restare appesa ~10s se il DNS non risolve. Domini custom al momento **oscurati/disattivati** → riprendere solo se si riattiva quella funzione. Fix: abbassare il timeout DNS (3-4s) o verifica non bloccante.
 - [ ] **Sfasare i cron `*/15`** (nice-to-have, non urgente): oggi ai minuti tondi (:00/:15/:30/:45) partono insieme broadcasts + reminders + reviews + monitor-outbox (+ expire alle :15). Sono processi brevi e su VPS multi-core è trascurabile, ma per pulizia si possono distribuire su minuti diversi (es. reminders `0,15,30,45`, reviews `5,20,35,50`, monitor `10,25,40,55`) così non partono mai tutti nello stesso minuto. (Annotato 2026-06-26.)
 - [ ] *(leva nota, se mai servisse)* `process-outbox.php` gira ogni minuto con loop interno ~55s → di fatto sempre attivo ma ~dormiente (CPU≈0). Se si volesse togliere il processo "sempre on", basta rimuovere il loop interno: un solo batch al minuto (email entro ~60s invece di ~5s). Non serve ora.
+- [ ] **reCAPTCHA v3 invisibile sul submit del widget di prenotazione** (difesa-in-profondità, FUTURO — annotato 2026-06-26): si usa già reCAPTCHA v3 su demo-request/landing. Aggiungerlo al POST prenotazione alzerebbe il muro contro bot che creano prenotazioni-spam, **senza attrito per i clienti veri** (v3 è invisibile). Da fare **se** compaiono prenotazioni-spam: oggi il fronte è coperto da rate limit POST 10/min/IP + (quando attivo) Cloudflare bot mitigation. Non urgente.
 
 ## 🪑 Backlog breve periodo — IN PANCHINA (revisione 2026-05-13)
 
@@ -46,6 +47,8 @@ Decisione: NON costruirli in cieco, aspettare il segnale reale.
   - I 9 record di servizio (cpanel, whm, ftp, webdisk, autoconfig, autodiscover, cpcalendars, cpcontacts, webmail) sono stati portati a DNS only (grigio)
   - Proxiati correttamente: `evulery.it` root, `www`, `dash`, `app`
   - **Nameserver NON ancora cambiati al registrar** — la zona Cloudflare e' incompleta
+
+  **App-readiness (lato codice) FATTA 2026-06-26**: `Request::ip()` ora legge il vero IP del visitatore da `CF-Connecting-IP` (validato sui range pubblici Cloudflare, IPv4+IPv6), gated da env `TRUST_CLOUDFLARE` (default **off**). Senza questo, dietro Cloudflare rate limit / login throttle / audit log vedrebbero l'IP edge di CF (rotti). **Attivazione (in quest'ordine)**: 1) Cloudflare davvero davanti (nameserver attivi); 2) **firewall origin ristretto agli IP Cloudflare** lato cPanel/Serverplan (ESSENZIALE: senza, l'header `CF-Connecting-IP` sarebbe falsificabile colpendo l'origin diretto → bypass rate limit); 3) `TRUST_CLOUDFLARE=1` in `.env` prod. La validazione sui range CF nel codice è una rete di sicurezza in più, ma il firewall-lock resta necessario.
 
   **Cosa manca da importare manualmente in Cloudflare** (prima di "Continue to activation"):
   - **3 record DKIM** TXT (lunghi, da copiare interi dal cPanel zone editor):
