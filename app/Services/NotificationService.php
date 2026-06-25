@@ -196,11 +196,26 @@ class NotificationService
             }
 
             $pushModel = new PushSubscription();
+            $okCount = 0;
+            $failCount = 0;
             foreach ($webPush->flush() as $report) {
+                $endpoint = $report->getRequest()->getUri()->__toString();
+                if ($report->isSuccess()) {
+                    $okCount++;
+                    continue;
+                }
+                $failCount++;
                 if ($report->isSubscriptionExpired()) {
-                    $pushModel->deleteByEndpoint($report->getRequest()->getUri()->__toString());
+                    // Iscrizione non piu' valida: la rimuoviamo (self-clean).
+                    $pushModel->deleteByEndpoint($endpoint);
+                    app_log("NotificationService: push subscription scaduta rimossa (tenant {$tenantId}): " . substr($endpoint, 0, 60), 'info');
+                } else {
+                    // Fallimento NON dovuto a scadenza (es. Apple/FCM rifiuta): prima
+                    // veniva ingoiato in silenzio. Logghiamo il motivo per diagnosticare.
+                    app_log("NotificationService: push NON consegnata (tenant {$tenantId}): " . $report->getReason() . " [" . substr($endpoint, 0, 60) . "]", 'warning');
                 }
             }
+            app_log("NotificationService: push tenant {$tenantId} — ok={$okCount}, fallite={$failCount}", 'info');
         } catch (\Throwable $e) {
             app_log("NotificationService: push failed for tenant {$tenantId}: " . $e->getMessage(), 'warning');
         }
