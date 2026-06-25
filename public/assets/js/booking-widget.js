@@ -789,7 +789,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 confHtml += '</div>';
 
-                var resId = (data.data && data.data.reservation_id) ? data.data.reservation_id : '';
+                // Numero mostrato al cliente = booking_number (progressivo per
+                // ristorante, coerente con email e dashboard). Nel widget resId serve
+                // solo per il testo "Prenotazione n. X"; fallback all'id globale.
+                var resId = (data.data && data.data.booking_number) ? data.data.booking_number
+                          : ((data.data && data.data.reservation_id) ? data.data.reservation_id : '');
                 var depType = (data.data && data.data.deposit_type) ? data.data.deposit_type : '';
                 var isGuarantee = !!(data.data && data.data.guarantee);
                 var isPendingDeposit = data.data && data.data.deposit_required;

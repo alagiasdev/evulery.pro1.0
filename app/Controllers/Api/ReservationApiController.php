@@ -309,8 +309,15 @@ class ReservationApiController
             app_log('Auto-assegnazione tavolo (widget) fallita: ' . $e->getMessage(), 'error');
         }
 
+        // Numero mostrato al cliente = booking_number (progressivo per ristorante,
+        // coerente con email e dashboard). reservation_id (id globale) resta per usi
+        // interni. $full e' gia' caricato sopra per l'invio email; fallback difensivo.
+        $bookingRow = $full ?? (new Reservation())->findWithCustomer($reservationId);
+        $bookingNumber = (int)(is_array($bookingRow) ? ($bookingRow['booking_number'] ?? 0) : 0) ?: $reservationId;
+
         $responseData = [
             'reservation_id' => $reservationId,
+            'booking_number' => $bookingNumber,
             'status'         => $status,
             'date'           => $data['date'],
             'time'           => $data['time'],

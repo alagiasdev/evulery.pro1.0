@@ -113,6 +113,9 @@ class MailService
         $lastName    = e($reservation['last_name'] ?? '');
         $partySize   = (int)($reservation['party_size'] ?? 0);
         $notes       = $reservation['customer_notes'] ?? '';
+        // Numero prenotazione mostrato al cliente = booking_number (progressivo per
+        // ristorante, coerente con dashboard e widget). Fallback all'id se assente.
+        $bookingNumber = (int)($reservation['booking_number'] ?? 0) ?: (int)($reservation['id'] ?? 0);
         $date        = $reservation['reservation_date'] ?? '';
         $time        = substr($reservation['reservation_time'] ?? '', 0, 5);
 
@@ -280,6 +283,18 @@ class MailService
                 <!-- Details card -->
                 <div style="margin:20px 32px 24px;background:#f8f9fa;border-radius:12px;padding:20px;">
                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td style="padding:10px 0;">
+                                <table cellpadding="0" cellspacing="0" border="0"><tr>
+                                    <td style="width:36px;height:36px;border-radius:10px;background:#fff;color:{$iconColor};text-align:center;font-size:15px;line-height:36px;" width="36">&#127915;</td>
+                                    <td style="padding-left:12px;">
+                                        <div style="font-size:11px;color:#6c757d;font-weight:500;text-transform:uppercase;letter-spacing:.3px;">Prenotazione</div>
+                                        <div style="font-size:15px;font-weight:600;color:#1a1d23;">n. {$bookingNumber}</div>
+                                    </td>
+                                </tr></table>
+                            </td>
+                        </tr>
+                        <tr><td style="border-top:1px solid #e9ecef;"></td></tr>
                         <tr>
                             <td style="padding:10px 0;">
                                 <table cellpadding="0" cellspacing="0" border="0"><tr>
