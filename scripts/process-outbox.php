@@ -154,8 +154,12 @@ do {
 flock($lockHandle, LOCK_UN);
 fclose($lockHandle);
 
-$line = sprintf('[%s] process-outbox: inviate=%d, fallite=%d', date('Y-m-d H:i:s'), $totSent, $totFailed);
-echo $line . "\n";
-if ($totFailed > 0) {
-    app_log($line, 'warning');
+// Logga solo se c'e' stata attivita': i giri a vuoto (ogni minuto) non scrivono
+// nulla, cosi' outbox.log resta pulito e non cresce inutilmente.
+if ($totSent > 0 || $totFailed > 0) {
+    $line = sprintf('[%s] process-outbox: inviate=%d, fallite=%d', date('Y-m-d H:i:s'), $totSent, $totFailed);
+    echo $line . "\n";
+    if ($totFailed > 0) {
+        app_log($line, 'warning');
+    }
 }
