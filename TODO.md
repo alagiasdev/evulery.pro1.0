@@ -16,6 +16,10 @@ Base prod: `/home/vpsevlrqrit/evulery/storage/logs/` · Base locale: `storage/lo
 **Pulizia automatica**: cron mensile (1° del mese, 04:00) `find /home/vpsevlrqrit/evulery/storage/logs -name '*.log' -mtime +60 -delete` → cancella i log in `storage/logs/` più vecchi di 60 giorni (soprattutto i `perf-*` e i giornalieri datati). NON tocca i `cron_*.log` nella home (vanno puliti a mano se serve). I log sono solo diagnostica: cancellarli non rompe nulla, l'app li ricrea in append.
 
 
+## 🔧 Sviluppo futuro — ops/cron
+- [ ] **Sfasare i cron `*/15`** (nice-to-have, non urgente): oggi ai minuti tondi (:00/:15/:30/:45) partono insieme broadcasts + reminders + reviews + monitor-outbox (+ expire alle :15). Sono processi brevi e su VPS multi-core è trascurabile, ma per pulizia si possono distribuire su minuti diversi (es. reminders `0,15,30,45`, reviews `5,20,35,50`, monitor `10,25,40,55`) così non partono mai tutti nello stesso minuto. (Annotato 2026-06-26.)
+- [ ] *(leva nota, se mai servisse)* `process-outbox.php` gira ogni minuto con loop interno ~55s → di fatto sempre attivo ma ~dormiente (CPU≈0). Se si volesse togliere il processo "sempre on", basta rimuovere il loop interno: un solo batch al minuto (email entro ~60s invece di ~5s). Non serve ora.
+
 ## 🪑 Backlog breve periodo — IN PANCHINA (revisione 2026-05-13)
 
 Task pronti, da fare quando emerge il trigger o c'è una finestra di lavoro.
