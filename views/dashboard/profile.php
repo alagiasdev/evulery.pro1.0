@@ -135,7 +135,13 @@
                 <?php if (!empty($allServices)): ?>
                 <?php
                     $includedKeys = array_column($planServices ?? [], 'key');
-                    $sortedServices = $allServices;
+                    // Servizi non ancora disponibili: nascosti del tutto nel profilo
+                    // (non pubblicizziamo funzioni non attive). Chiavi da tabella services.
+                    $hiddenServiceKeys = ['multi_location', 'api_access', 'custom_domain'];
+                    $sortedServices = array_values(array_filter(
+                        $allServices,
+                        fn($s) => !in_array($s['key'], $hiddenServiceKeys, true)
+                    ));
                     usort($sortedServices, function ($a, $b) use ($includedKeys) {
                         $aIn = in_array($a['key'], $includedKeys) ? 0 : 1;
                         $bIn = in_array($b['key'], $includedKeys) ? 0 : 1;
