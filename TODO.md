@@ -16,7 +16,16 @@ Base prod: `/home/vpsevlrqrit/evulery/storage/logs/` · Base locale: `storage/lo
 **Pulizia automatica**: cron mensile (1° del mese, 04:00) `find /home/vpsevlrqrit/evulery/storage/logs -name '*.log' -mtime +60 -delete` → cancella i log in `storage/logs/` più vecchi di 60 giorni (soprattutto i `perf-*` e i giornalieri datati). NON tocca i `cron_*.log` nella home (vanno puliti a mano se serve). I log sono solo diagnostica: cancellarli non rompe nulla, l'app li ricrea in append.
 
 
+## 📈 Sviluppo futuro — performance (CHECKPOINT a ~10 clienti attivi)
+
+**Trigger**: quando raggiungiamo ~10 ristoranti attivi, rifare un **check performance** sui `perf-*.log` reali (atteso: creazione prenotazione ~300ms dopo la Fase 1 email async). In base ai dati, valutare:
+- [ ] **Fase 2 — push asincrono** (complessità bassa-media, ~mezza giornata / 4-6h, NIENTE migration: la tabella `notification_outbox` ha già `channel`). Sposta anche il push nella coda: split `NotificationService::sendPush` → enqueue(web)/transmitPush(invio) + flag `PUSH_ASYNC` (default off, rollout dormiente) + branch `'push'` nel worker. Beneficio latenza MODESTO (push < 2 email SMTP) e tocca il percorso push appena stabilizzato → fare solo se misurato come collo di bottiglia. Dettagli in [[project-perf-email-async]].
+- [ ] **`auth/login` ~1s** (complessità bassa, ~1h diagnosi): probabile cold-start (prima richiesta di sessione → opcache/connessione fredde), forse fisiologico. Prima misurare *cosa* impiega quel secondo, poi decidere se vale un micro-fix.
+
+(Annotato 2026-06-26: il critico per il lancio è chiuso; questi si rivalutano col volume reale.)
+
 ## 🔧 Sviluppo futuro — ops/cron
+- [ ] **`domain/verify` — timeout DNS fino a 10s** (PARCHEGGIATO 2026-06-26): la verifica del dominio personalizzato può restare appesa ~10s se il DNS non risolve. Domini custom al momento **oscurati/disattivati** → riprendere solo se si riattiva quella funzione. Fix: abbassare il timeout DNS (3-4s) o verifica non bloccante.
 - [ ] **Sfasare i cron `*/15`** (nice-to-have, non urgente): oggi ai minuti tondi (:00/:15/:30/:45) partono insieme broadcasts + reminders + reviews + monitor-outbox (+ expire alle :15). Sono processi brevi e su VPS multi-core è trascurabile, ma per pulizia si possono distribuire su minuti diversi (es. reminders `0,15,30,45`, reviews `5,20,35,50`, monitor `10,25,40,55`) così non partono mai tutti nello stesso minuto. (Annotato 2026-06-26.)
 - [ ] *(leva nota, se mai servisse)* `process-outbox.php` gira ogni minuto con loop interno ~55s → di fatto sempre attivo ma ~dormiente (CPU≈0). Se si volesse togliere il processo "sempre on", basta rimuovere il loop interno: un solo batch al minuto (email entro ~60s invece di ~5s). Non serve ora.
 
