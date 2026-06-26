@@ -51,11 +51,13 @@ Decisione: NON costruirli in cieco, aspettare il segnale reale.
 
   **App-readiness (lato codice) — COMPLETATA 2026-06-26**: l'IP reale del visitatore si legge SOLO via `Request::ip()` / `Request::clientIp()` (statico, per servizi senza istanza Request). Legge `CF-Connecting-IP` se `TRUST_CLOUDFLARE=1` E la connessione proviene dai range pubblici Cloudflare (anti-spoof IPv4+IPv6). **Fix copertura 2026-06-26**: trovati e corretti 4 punti che leggevano `REMOTE_ADDR` diretto (dietro CF vedevano l'IP edge): `LoginController` (throttle brute-force), `DemoRequestController` (rate limit demo), `DeliveryBoardController` (PIN consegne), `AuditLog` (IP nei log di sicurezza). Verificato: `REMOTE_ADDR` ora compare solo in `Request.php` (la fonte). Cookie `secure` già proxy-aware (`Session` controlla anche `X-Forwarded-Proto`).
 
-  **Verifiche residue nel pannello Cloudflare (da confermare manualmente)**:
-  - [ ] Speed → Optimization: `Rocket Loader`, `Auto Minify`, `Email Obfuscation` = **OFF** (iniettano script inline → bloccati dalla CSP nonce-based / rompono mailto)
-  - [ ] SSL/TLS → Edge Certificates: `Always Use HTTPS` = **ON**
-  - [ ] Security → Bots: testare il widget embeddato su un **sito cliente reale** (Bot Fight Mode può sfidare l'availability API pubblica)
-  - [ ] Caching: nessuna page-rule che cachi HTML dinamico (rischio servire pagine con CSRF/contenuti altrui)
+  **Verifiche pannello Cloudflare — COMPLETATE 2026-06-26**:
+  - [x] Speed → Optimization: `Rocket Loader` = **OFF** (con CSP nonce romperebbe tutto il JS), `Auto Minify` = OFF, Brotli/HTTP-2/HTTP-3 = ON
+  - [x] Scrape Shield → Email Obfuscation = **ON, lasciato ON** (rivisto: lo script di decodifica e' same-origin `/cdn-cgi/` → la CSP `'self'` lo consente, non rompe; in piu' anti-spam su info@). NON era da spegnere.
+  - [x] SSL/TLS → Edge Certificates: `Always Use HTTPS` = **ON** (nessun redirect-loop: siamo in Full, non Flexible)
+  - [x] Security → Bots: **Bot Fight Mode = OFF** (sul Free non si puo' escludere `/api/` e dava falsi positivi sul widget embeddato; il DDoS L7 resta sempre attivo a prescindere). `Browser Integrity Check` = ON (basso rischio, scopabile per `/api/` via Configuration Rule se servisse). **Widget embeddato testato su sito cliente reale: disponibilita' + prenotazioni OK.**
+  - [x] Caching: 0 Page Rules, nessuna Cache Rule su HTML → ok
+  - Futuro: se si passa a **Pro**, valutare **Super Bot Fight Mode** con esclusione dei path `/api/` (la versione configurabile).
 
   **Storico**: import via **export BIND da WHM** (76 record reali; cPanel Zone Editor ne nascondeva 7 = SOA + 2 apex NS + 4 NS delega). L'import automatico CF iniziale aveva preso solo ~25/70 record; aggiunte a mano le 4 deleghe NS PowerMail (`mail` + `default._domainkey`) e i sottodomini `*.app`/`*.dash` → 72 record finali. Dettagli completi in memoria `project-cloudflare-migration`.
 
