@@ -80,7 +80,7 @@ $wa = $settings['whatsapp_number'] ?? '';
     </div>
 
     <div class="hub-public-body">
-        <h1 class="hub-public-name<?= $logoUrl ? ' hub-sr-only' : '' ?>"><?= e($tenantName) ?></h1>
+        <h1 class="hub-public-name"><?= e($tenantName) ?></h1>
         <?php if ($subtitle): ?>
         <p class="hub-public-tag"><?= e($subtitle) ?></p>
         <?php endif; ?>
@@ -150,7 +150,7 @@ $wa = $settings['whatsapp_number'] ?? '';
         <?php endif; ?>
 
         <?php if (!$hideBranding): ?>
-        <div class="hub-evulery-mark">Powered by Evulery</div>
+        <div class="hub-evulery-mark"><a href="https://evulery.it" target="_blank" rel="noopener">Powered by Evulery</a></div>
         <?php endif; ?>
     </footer>
 

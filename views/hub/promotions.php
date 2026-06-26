@@ -111,7 +111,7 @@ $primaryRgb = $hexToRgb($primary);
         <div><?= e($tenant['address']) ?></div>
         <?php endif; ?>
         <?php if (!$hideBranding): ?>
-        <div class="hub-evulery-mark">Powered by Evulery</div>
+        <div class="hub-evulery-mark"><a href="https://evulery.it" target="_blank" rel="noopener">Powered by Evulery</a></div>
         <?php endif; ?>
     </footer>
 

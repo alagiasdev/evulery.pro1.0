@@ -158,7 +158,7 @@ class HubService
         return match ($presetKey) {
             'whatsapp' => $settings['whatsapp_number'] ?? null,
             'phone'    => $tenant['phone'] ?? null,
-            'maps'     => $this->shortAddress($tenant['address'] ?? null),
+            'maps'     => $tenant['address'] ?? null,
             default    => null,
         };
     }
@@ -177,13 +177,5 @@ class HubService
     {
         // wa.me / tel: prefer digits only with leading country code
         return preg_replace('/[^0-9+]/', '', $phone);
-    }
-
-    private function shortAddress(?string $address): ?string
-    {
-        if (!$address) return null;
-        // Show only the first part before the first comma to keep the sub short
-        $parts = explode(',', $address, 2);
-        return trim($parts[0]);
     }
 }

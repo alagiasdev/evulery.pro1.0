@@ -429,6 +429,8 @@
 .hub-public-social a { color: #6c757d; text-decoration: none; transition: color .12s; }
 .hub-public-social a:hover { color: var(--hub-primary); }
 .hub-evulery-mark { font-size: .68rem; opacity: .8; margin-top: .35rem; }
+.hub-evulery-mark a { color: inherit; text-decoration: none; }
+.hub-evulery-mark a:hover { text-decoration: underline; }
 /* ============ Hub — mobile/tablet refinements ============ */
 /* Fixes applied after first round of mobile testing */
 
