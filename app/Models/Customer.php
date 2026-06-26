@@ -23,6 +23,12 @@ class Customer
 
     public function findByTenantAndEmail(int $tenantId, string $email): ?array
     {
+        // Email vuota non identifica un cliente: i clienti senza email hanno
+        // email NULL (vedi vincolo uk_tenant_email). Evita falsi match sul
+        // "bucket vuoto" che unirebbe per errore clienti telefono-only diversi.
+        if ($email === '') {
+            return null;
+        }
         $stmt = $this->db->prepare(
             'SELECT * FROM customers WHERE tenant_id = :tenant_id AND email = :email LIMIT 1'
         );
@@ -176,7 +182,7 @@ class Customer
             'tenant_id'  => $tenantId,
             'first_name' => $data['first_name'],
             'last_name'  => $data['last_name'],
-            'email'      => $data['email'],
+            'email'      => ($data['email'] ?? '') !== '' ? $data['email'] : null,
             'phone'      => $data['phone'],
             'source'     => $data['source'] ?? 'import',
         ];
@@ -205,6 +211,17 @@ class Customer
         if (isset($data['unsubscribed'])) {
             $cols[] = 'unsubscribed';
             $vals['unsubscribed'] = (int)$data['unsubscribed'];
+        }
+        // Consenso marketing dal CSV: va persistito (il filtro broadcast usa
+        // marketing_consent=1), altrimenti i clienti importati con consenso
+        // non riceverebbero mai le campagne.
+        if (isset($data['marketing_consent'])) {
+            $cols[] = 'marketing_consent';
+            $vals['marketing_consent'] = (int)$data['marketing_consent'];
+            $cols[] = 'marketing_consent_at';
+            $vals['marketing_consent_at'] = date('Y-m-d H:i:s');
+            $cols[] = 'marketing_consent_source';
+            $vals['marketing_consent_source'] = $data['marketing_consent_source'] ?? 'csv_import';
         }
 
         $placeholders = array_map(fn($c) => ':' . $c, $cols);
@@ -281,7 +298,7 @@ class Customer
             'tenant_id'  => $tenantId,
             'first_name' => $data['first_name'],
             'last_name'  => $data['last_name'],
-            'email'      => $data['email'],
+            'email'      => ($data['email'] ?? '') !== '' ? $data['email'] : null,
             'phone'      => $data['phone'],
         ];
         if ($birthday !== null) {

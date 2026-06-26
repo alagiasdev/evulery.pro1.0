@@ -443,8 +443,15 @@ class CustomersController
                     if ($notesRaw) $data['notes'] = mb_substr($notesRaw, 0, 2000);
                 }
 
-                $customerModel->createImported($tenantId, $data);
-                $created++;
+                try {
+                    $customerModel->createImported($tenantId, $data);
+                    $created++;
+                } catch (\Throwable $e) {
+                    // Una singola riga problematica non deve far fallire (500)
+                    // l'intero import: la contiamo come errore e proseguiamo.
+                    $errors++;
+                    app_log('Import cliente fallito: ' . $e->getMessage(), 'warning');
+                }
             }
 
             fclose($handle);
