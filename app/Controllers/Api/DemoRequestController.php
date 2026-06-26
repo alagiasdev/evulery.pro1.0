@@ -56,7 +56,7 @@ class DemoRequestController
         }
 
         // 2. Rate limit IP-based: max 3 richieste/ora per IP
-        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $ip = $request->ip();
         $limiter = new RateLimit();
         if (!$limiter->checkCustom($ip, 'demo_form', 3, 3600)) {
             Response::json([

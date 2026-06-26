@@ -36,49 +36,28 @@ Task pronti, da fare quando emerge il trigger o c'è una finestra di lavoro.
 Decisione: NON costruirli in cieco, aspettare il segnale reale.
 
 ### Pianificato a data
-- [ ] **Cloudflare davanti a `dash.evulery.it` + `evulery.it` + `app.evulery.it`** — pianificato per il pomeriggio del 2026-06-08, **sospeso 2026-06-09 in fase di setup** perche' migrazione DNS piu' complessa del previsto: serve sessione dedicata ~1-2h.
+- [x] **Cloudflare davanti a `dash.evulery.it` + `evulery.it` + `app.evulery.it`** — **COMPLETATO 2026-06-26** (avviato 2026-06-08, sospeso 2026-06-09, ripreso e chiuso 2026-06-26).
   Proxy gratuito che dà: DDoS protection automatico, bot mitigation, cache statica, rate limiting, WAF base.
   **Driver di urgenza**: il 03/06/2026 il VPS ha subito un attacco scraping da 2 subnet cinesi (89.106.110.0/24 e 149.62.193.0/24) con load avg fino a 77 su 8 core. Davide di Serverplan è dovuto intervenire manualmente. Cloudflare assorbirebbe automaticamente eventi simili senza intervento umano.
   **Pre-requisito** per portare in produzione il primo cliente pagante.
 
-  **Stato attuale (sospeso 2026-06-09)**:
-  - Account Cloudflare creato, dominio `evulery.it` aggiunto, piano Free
-  - Import automatico Cloudflare ha preso solo ~25 record su ~70 reali della zona cPanel
-  - I 9 record di servizio (cpanel, whm, ftp, webdisk, autoconfig, autodiscover, cpcalendars, cpcontacts, webmail) sono stati portati a DNS only (grigio)
-  - Proxiati correttamente: `evulery.it` root, `www`, `dash`, `app`
-  - **Nameserver NON ancora cambiati al registrar** — la zona Cloudflare e' incompleta
+  **ESITO 2026-06-26 (ATTIVO in prod)**:
+  - Zona completata via **import BIND** (export zona da WHM → import Cloudflare), 72 record = 1:1 con WHM. Nameserver cambiati al registrar, Cloudflare **Active**.
+  - Proxiati (arancione) i 6 host web: `evulery.it`, `www`, `app`, `www.app`, `dash`, `www.dash`. Tutto il resto **DNS only** (cPanel/webmail/posta su porte non-standard).
+  - **Deleghe posta PowerMail preservate** (4 NS: `mail` + `default._domainkey` → ns1/ns2.powermailhost.com); TXT DKIM `default._domainkey` root rimosso (occluso dalla delega). Posta entrata/uscita testata OK.
+  - `TRUST_CLOUDFLARE=1` in `.env` prod → **verificato**: `rate_limits.ip_address` mostra l'IP reale del visitatore (non l'edge CF). Vedi memoria `project-cloudflare-migration`.
+  - **SSL/TLS = "Automatic SSL/TLS (recommended)"** (decisione 2026-06-26): attualmente gira in **Full** (cifrato su entrambe le tratte, nessun buco), e salirà da solo a **Full (Strict)** al prossimo scan. **Scelta**: lasciato Automatic per zero-rischio; **in futuro valutare il passaggio esplicito a Full (Strict)** se si vuole forzare subito la verifica del certificato origin. Nessuna urgenza.
+  - **PENDING (hardening, non bloccante)**: firewall origin ristretto agli IP Cloudflare lato cPanel/Serverplan. Da fare con cautela (rischio lock-out). Nota: il codice valida già `REMOTE_ADDR` sui range CF (anti-spoof), quindi non è un buco di sicurezza, ma il firewall-lock nasconde/protegge meglio l'origin.
 
-  **App-readiness (lato codice) FATTA 2026-06-26**: `Request::ip()` ora legge il vero IP del visitatore da `CF-Connecting-IP` (validato sui range pubblici Cloudflare, IPv4+IPv6), gated da env `TRUST_CLOUDFLARE` (default **off**). Senza questo, dietro Cloudflare rate limit / login throttle / audit log vedrebbero l'IP edge di CF (rotti). **Attivazione (in quest'ordine)**: 1) Cloudflare davvero davanti (nameserver attivi); 2) **firewall origin ristretto agli IP Cloudflare** lato cPanel/Serverplan (ESSENZIALE: senza, l'header `CF-Connecting-IP` sarebbe falsificabile colpendo l'origin diretto → bypass rate limit); 3) `TRUST_CLOUDFLARE=1` in `.env` prod. La validazione sui range CF nel codice è una rete di sicurezza in più, ma il firewall-lock resta necessario.
+  **App-readiness (lato codice) — COMPLETATA 2026-06-26**: l'IP reale del visitatore si legge SOLO via `Request::ip()` / `Request::clientIp()` (statico, per servizi senza istanza Request). Legge `CF-Connecting-IP` se `TRUST_CLOUDFLARE=1` E la connessione proviene dai range pubblici Cloudflare (anti-spoof IPv4+IPv6). **Fix copertura 2026-06-26**: trovati e corretti 4 punti che leggevano `REMOTE_ADDR` diretto (dietro CF vedevano l'IP edge): `LoginController` (throttle brute-force), `DemoRequestController` (rate limit demo), `DeliveryBoardController` (PIN consegne), `AuditLog` (IP nei log di sicurezza). Verificato: `REMOTE_ADDR` ora compare solo in `Request.php` (la fonte). Cookie `secure` già proxy-aware (`Session` controlla anche `X-Forwarded-Proto`).
 
-  **Cosa manca da importare manualmente in Cloudflare** (prima di "Continue to activation"):
-  - **3 record DKIM** TXT (lunghi, da copiare interi dal cPanel zone editor):
-    - `default._domainkey.evulery.it`
-    - `default._domainkey.app.evulery.it`
-    - `default._domainkey.dash.evulery.it`
-  - **TurboSMTP DKIM** TXT: `turbo-smtp._domainkey.evulery.it` (transazionali finiscono in spam se manca)
-  - **SRV autodiscover**: `_autodiscover._tcp.evulery.it` (+ varianti `.app` e `.dash`) destinazione `cpanelemaildiscovery.cpanel.net`, porta 443 — autoconfig client Outlook/Thunderbird
-  - **Tutti i sottodomini `*.app.evulery.it`** (autoconfig.app, autodiscover.app, cpanel.app, cpcalendars.app, cpcontacts.app, ftp.app, webdisk.app, webmail.app, whm.app, www.app, _caldav/_carddav SRV+TXT) — servono ai 4-5 clienti dell'app legacy
-  - **Tutti i sottodomini `*.dash.evulery.it`** equivalenti
-  - **TXT SPF `dash.evulery.it`**: `v=spf1 +a +mx -all`
-  - **4 record NS delega PowerMail** (per la posta):
-    - `mail.evulery.it` NS `ns1.powermailhost.com`
-    - `mail.evulery.it` NS `ns2.powermailhost.com`
-    - `default._domainkey.evulery.it` NS `ns1.powermailhost.com`
-    - `default._domainkey.evulery.it` NS `ns2.powermailhost.com`
-    - (Nota: questi sostituiscono il record TXT DKIM se PowerMail richiede sub-zone delegation;
-     verificare con doc Serverplan https://supporto.serverplan.com → Powermail → "Configurare MX con DNS esterno")
+  **Verifiche residue nel pannello Cloudflare (da confermare manualmente)**:
+  - [ ] Speed → Optimization: `Rocket Loader`, `Auto Minify`, `Email Obfuscation` = **OFF** (iniettano script inline → bloccati dalla CSP nonce-based / rompono mailto)
+  - [ ] SSL/TLS → Edge Certificates: `Always Use HTTPS` = **ON**
+  - [ ] Security → Bots: testare il widget embeddato su un **sito cliente reale** (Bot Fight Mode può sfidare l'availability API pubblica)
+  - [ ] Caching: nessuna page-rule che cachi HTML dinamico (rischio servire pagine con CSRF/contenuti altrui)
 
-  **Strategia di completamento** (~1-2h, opzioni):
-  - **A. Manuale**: copiare i record uno-a-uno dal cPanel zone editor a Cloudflare. Sicuro, lungo.
-  - **B. AXFR**: aprire ticket Serverplan chiedendo export zona DNS in formato BIND, importarlo in Cloudflare ("Import DNS records" sotto DNS → Records). Veloce ma serve attendere il ticket (24-48h).
-
-  **Dopo il completamento**:
-  - Verifica zona Cloudflare = zona cPanel (record per record, no campioni)
-  - SSL/TLS → Full (Strict), Always Use HTTPS ON
-  - NON attivare Auto Minify, Rocket Loader, Email Obfuscation (rompono JS/mailto)
-  - Cambio nameserver al registrar
-  - Test: `curl -I https://dash.evulery.it` deve avere header `cf-ray:`
-  - Test email outbound (invia test e verifica header SPF/DKIM pass)
+  **Storico**: import via **export BIND da WHM** (76 record reali; cPanel Zone Editor ne nascondeva 7 = SOA + 2 apex NS + 4 NS delega). L'import automatico CF iniziale aveva preso solo ~25/70 record; aggiunte a mano le 4 deleghe NS PowerMail (`mail` + `default._domainkey`) e i sottodomini `*.app`/`*.dash` → 72 record finali. Dettagli completi in memoria `project-cloudflare-migration`.
 
 ### Monitoraggio (warning ricorrenti nei log)
 
@@ -198,14 +177,7 @@ Decisione: NON costruirli in cieco, aspettare il segnale reale.
   **occupato** (rosso/viola, status `arrived` = cliente seduto ORA). Oggi i tavoli sono
   colorati ma la differenza prenotato-vs-occupato non si legge. Toccare `views/dashboard/settings/tables-map.php`
   + CSS `.tm-*` + logica `floorState` in `TableAssigner`. Stima ~2-3h. Annotato 2026-05-30.
-- [ ] **Cloudflare davanti a `dash.evulery.it`** (sicurezza + performance) — proxy gratuito
-  che dà: DDoS protection automatico, bot mitigation, cache statica, rate limiting,
-  WAF base. Setup ~30 min (cambio nameserver dal registrar). Costo €0/mese (piano free).
-  **Trigger**: il 03/06/2026 il VPS ha subito un attacco scraping da 2 subnet cinesi
-  (89.106.110.0/24 e 149.62.193.0/24) con load avg fino a 77 su 8 core. Davide di
-  Serverplan è dovuto intervenire manualmente per bloccarli. Cloudflare assorbirebbe
-  automaticamente eventi simili senza intervento umano. Da fare prima del primo picco
-  reale (acquisizione clienti, lancio commerciale, picco mediatico).
+- [x] **Cloudflare davanti a `dash.evulery.it`** (sicurezza + performance) — **COMPLETATO 2026-06-26** (voce duplicata; dettagli completi nella sezione "Pianificato a data" sopra).
 
 ### Progetti grossi — deferiti coi loro trigger
 - [ ] **Analytics module** — dopo 20+ clienti (servono dati aggregati reali)

@@ -102,6 +102,17 @@ class Request
 
     public function ip(): string
     {
+        return self::clientIp();
+    }
+
+    /**
+     * IP reale del client. Statico per essere usabile anche senza istanza
+     * Request (es. servizi come AuditLog). DEVE restare l'unica fonte dell'IP
+     * in tutta l'app: leggere $_SERVER['REMOTE_ADDR'] direttamente, dietro
+     * Cloudflare, restituirebbe l'IP edge di CF invece del visitatore.
+     */
+    public static function clientIp(): string
+    {
         $remote = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 
         // Dietro Cloudflare il vero IP del visitatore arriva in CF-Connecting-IP.

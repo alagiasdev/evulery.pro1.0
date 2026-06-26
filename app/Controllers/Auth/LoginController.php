@@ -24,7 +24,7 @@ class LoginController
     {
         $email = trim($request->input('email', ''));
         $password = $request->input('password', '');
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        $ip = $request->ip();
 
         if (!$email || !$password) {
             flash('danger', 'Inserisci email e password.');

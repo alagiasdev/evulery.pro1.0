@@ -45,7 +45,7 @@ class DeliveryBoardController
         $tenant = $this->resolveTenant($token);
 
         // Rate limiting: max 5 tentativi per IP in 15 min
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        $ip = $request->ip();
         $rateLimitKey = 'delivery_pin_' . md5($ip . $token);
         $attempts = (int)($_SESSION[$rateLimitKey . '_count'] ?? 0);
         $firstAttempt = (int)($_SESSION[$rateLimitKey . '_time'] ?? 0);

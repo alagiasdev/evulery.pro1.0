@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database;
+use App\Core\Request;
 use PDO;
 
 class AuditLog
@@ -165,7 +166,7 @@ class AuditLog
                 'tenant_id'   => $tenantId,
                 'event'       => $event,
                 'description' => $description ? substr($description, 0, 500) : null,
-                'ip'          => $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0',
+                'ip'          => Request::clientIp(),
                 'ua'          => isset($_SERVER['HTTP_USER_AGENT']) ? substr($_SERVER['HTTP_USER_AGENT'], 0, 500) : null,
             ]);
         } catch (\PDOException $e) {
