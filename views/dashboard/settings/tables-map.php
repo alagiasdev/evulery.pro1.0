@@ -400,6 +400,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
                 <div class="tm-list-empty">
                     <i class="bi bi-calendar-x"></i>
                     <span>Nessuna prenotazione per questa data.</span>
+                    <small><a href="<?= url('dashboard/reservations') ?>?upcoming=1">Vedi le prossime prenotazioni <i class="bi bi-arrow-right"></i></a></small>
                 </div>
                 <?php else: ?>
                 <div class="tm-list-empty">
