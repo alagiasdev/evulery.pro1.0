@@ -8,6 +8,32 @@
 // Define base path
 define('BASE_PATH', dirname(__DIR__));
 
+// Logger di prima linea per i fatal "fantasma": cattura gli errori che NON
+// arrivano all'exception handler dell'app (memoria esaurita, timeout, parse
+// error, anche un autoload corrotto), che altrimenti danno 500 senza traccia.
+// E' autonomo (scrive da solo, senza dipendere dalle classi) e registrato
+// PRIMA dell'autoload, cosi' intercetta anche i fatal di bootstrap.
+// mem_peak e' la spia chiave: se vicino al memory_limit -> OOM.
+register_shutdown_function(function () {
+    $e = error_get_last();
+    if ($e === null || !in_array($e['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR], true)) {
+        return;
+    }
+    $line = sprintf(
+        "[%s] [FATAL type=%d] %s in %s:%d | uri=%s method=%s mem_peak=%.1fMB remote=%s\n",
+        date('Y-m-d H:i:s'),
+        $e['type'],
+        $e['message'],
+        $e['file'],
+        $e['line'],
+        $_SERVER['REQUEST_URI'] ?? '-',
+        $_SERVER['REQUEST_METHOD'] ?? '-',
+        memory_get_peak_usage(true) / 1048576,
+        $_SERVER['REMOTE_ADDR'] ?? '-'
+    );
+    @file_put_contents(BASE_PATH . '/storage/logs/fatal-' . date('Y-m-d') . '.log', $line, FILE_APPEND | LOCK_EX);
+});
+
 // Load Composer autoloader
 require_once BASE_PATH . '/vendor/autoload.php';
 
