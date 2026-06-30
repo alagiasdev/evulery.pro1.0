@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe - Verifica webhook Stripe (Impostazioni Caparra)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+    :root { --brand:#00844A; --brand-dark:#006837; --stripe:#635BFF; --danger:#C62828; --amber:#E65100; }
+    body { background:#f5f6fa; font-family:system-ui,-apple-system,sans-serif; margin:0; padding:2rem 1rem; color:#1a1d23; }
+    .wrap { max-width:640px; margin:0 auto; }
+    .wf-note { background:#E8F5E9; border:1px dashed var(--brand); border-radius:8px; padding:.7rem 1rem; margin-bottom:1.25rem; font-size:.8rem; color:#1B5E20; }
+    .wf-note b { color:#B71C1C; }
+    .card { background:#fff; border-radius:12px; box-shadow:0 1px 3px rgba(0,0,0,.06); padding:1.25rem; margin-bottom:1.25rem; }
+    .sec-head { display:flex; align-items:center; gap:.5rem; font-weight:700; font-size:.95rem; margin-bottom:.9rem; }
+    .sec-head .ic { width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#efeefe;color:var(--stripe); }
+    .field-label { display:block; font-size:.78rem; font-weight:600; color:#495057; margin-bottom:.25rem; }
+    .field-input { width:100%; border:1px solid #dee2e6; border-radius:8px; padding:.45rem .6rem; font-size:.82rem; box-sizing:border-box; background:#fff; }
+    .field-hint { font-size:.72rem; color:#6c757d; margin-top:.2rem; }
+    .ok { color:var(--brand)!important; }
+    code { font-size:.72rem; background:#f3f3f7; padding:1px 5px; border-radius:4px; }
+
+    .verify-bar { display:flex; align-items:center; gap:.6rem; margin-top:1rem; padding-top:.9rem; border-top:1px solid #f0f0f0; flex-wrap:wrap; }
+    .btn-verify { background:var(--stripe); color:#fff; border:none; border-radius:8px; padding:.5rem .9rem; font-size:.82rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:.4rem; }
+    .btn-verify:hover { filter:brightness(.95); }
+    .endpoint-hint { font-size:.72rem; color:#6c757d; }
+
+    /* Result box */
+    .result { border-radius:10px; padding:.85rem 1rem; margin-top:.9rem; font-size:.8rem; display:none; }
+    .result.show { display:block; }
+    .result .r-head { display:flex; align-items:center; gap:.5rem; font-weight:700; margin-bottom:.5rem; }
+    .result.green { background:#E8F5E9; color:#1B5E20; }
+    .result.green .r-head { color:var(--brand-dark); }
+    .result.red { background:#FFEBEE; color:#7a1f1f; }
+    .result.red .r-head { color:#B71C1C; }
+    .result.amber { background:#FFF3E0; color:#7a3b00; }
+    .result.amber .r-head { color:#9A4A00; }
+    .ev-line { display:flex; align-items:center; gap:.45rem; font-size:.76rem; padding:.12rem 0; }
+    .ev-line .bi-check-circle-fill { color:var(--brand); }
+    .ev-line .bi-x-circle-fill { color:var(--danger); }
+    .ev-line code { background:rgba(0,0,0,.05); }
+    .fix { font-size:.74rem; margin-top:.5rem; padding-top:.5rem; border-top:1px solid rgba(0,0,0,.08); }
+
+    .scenario { margin:1.25rem 0 .4rem; font-size:.72rem; color:#6c757d; }
+    .chips { display:flex; gap:.4rem; flex-wrap:wrap; margin-bottom:1rem; }
+    .chip { border:1px solid #dee2e6; background:#fff; border-radius:20px; padding:.3rem .7rem; font-size:.74rem; cursor:pointer; }
+    .chip.active { border-color:var(--stripe); color:var(--stripe); font-weight:600; }
+    .spin { display:none; align-items:center; gap:.4rem; font-size:.78rem; color:#6c757d; margin-top:.9rem; }
+    .spin.show { display:flex; }
+    .spin .bi { animation:rot 1s linear infinite; } @keyframes rot { to { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+    <div class="wf-note">
+        <b>WIREFRAME — "Verifica webhook" via API Stripe</b> (Impostazioni &rarr; Caparra).
+        Niente euristica/last-received: il bottone <b>interroga Stripe</b> con la secret key del ristoratore
+        (<code>WebhookEndpoint::all()</code>) e dice lo stato <b>reale</b>. Prova i bottoni qui sotto: clicca
+        <b>Verifica webhook</b> e cambia scenario per vedere i vari esiti.
+    </div>
+
+    <div class="card">
+        <div class="sec-head"><span class="ic"><i class="bi bi-credit-card"></i></span> Pagamento con Stripe</div>
+
+        <div style="margin-bottom:.6rem;">
+            <label class="field-label">Secret Key</label>
+            <input class="field-input" type="password" value="••••••••••••" disabled>
+            <div class="field-hint ok"><i class="bi bi-check-circle me-1"></i>Chiave configurata: sk_live_…HMKd</div>
+        </div>
+        <div>
+            <label class="field-label">Webhook Secret</label>
+            <input class="field-input" type="password" value="••••••••••••" disabled>
+            <div class="field-hint ok"><i class="bi bi-check-circle me-1"></i>Secret configurato: whsec_…vO4W</div>
+            <div class="field-hint">Endpoint webhook: <code>https://dash.evulery.it/api/v1/stripe/webhook</code></div>
+        </div>
+
+        <!-- Bottone verifica -->
+        <div class="verify-bar">
+            <button class="btn-verify" id="verifyBtn"><i class="bi bi-broadcast"></i> Verifica webhook</button>
+            <span class="endpoint-hint">Controlla che il webhook nel tuo Stripe sia attivo e iscritto agli eventi giusti.</span>
+        </div>
+
+        <div class="spin" id="spin"><i class="bi bi-arrow-repeat"></i> Interrogo Stripe…</div>
+
+        <!-- RISULTATO (cambia con gli scenari) -->
+        <!-- A: tutto ok -->
+        <div class="result green" data-state="ok">
+            <div class="r-head"><i class="bi bi-check-circle-fill"></i> Webhook configurato correttamente</div>
+            <div class="ev-line"><i class="bi bi-check-circle-fill"></i> Endpoint trovato e <b>attivo</b></div>
+            <div class="ev-line"><i class="bi bi-check-circle-fill"></i> <code>checkout.session.completed</code></div>
+            <div class="ev-line"><i class="bi bi-check-circle-fill"></i> <code>checkout.session.expired</code></div>
+        </div>
+        <!-- B: manca un evento (il bug del 29/06) -->
+        <div class="result red" data-state="missing-event">
+            <div class="r-head"><i class="bi bi-exclamation-triangle-fill"></i> Manca un evento — le conferme non arriveranno</div>
+            <div class="ev-line"><i class="bi bi-check-circle-fill"></i> Endpoint trovato e attivo</div>
+            <div class="ev-line"><i class="bi bi-x-circle-fill"></i> <code>checkout.session.completed</code> &nbsp;<b>NON iscritto</b></div>
+            <div class="ev-line"><i class="bi bi-check-circle-fill"></i> <code>checkout.session.expired</code></div>
+            <div class="fix"><i class="bi bi-wrench me-1"></i> In Stripe &rarr; Webhook &rarr; modifica la destinazione e <b>aggiungi <code>checkout.session.completed</code></b>, poi riprova la verifica.</div>
+        </div>
+        <!-- C: nessun endpoint -->
+        <div class="result red" data-state="no-endpoint">
+            <div class="r-head"><i class="bi bi-x-octagon-fill"></i> Nessun webhook configurato</div>
+            <div class="ev-line"><i class="bi bi-x-circle-fill"></i> Nessun endpoint Stripe punta a <code>…/api/v1/stripe/webhook</code></div>
+            <div class="fix"><i class="bi bi-wrench me-1"></i> In Stripe &rarr; Sviluppatori &rarr; Webhook &rarr; <b>Aggiungi endpoint</b> con l'URL qui sopra, eventi <code>checkout.session.completed</code> + <code>checkout.session.expired</code>, poi incolla il signing secret nel campo "Webhook Secret".</div>
+        </div>
+        <!-- D: endpoint disabilitato -->
+        <div class="result red" data-state="disabled">
+            <div class="r-head"><i class="bi bi-pause-circle-fill"></i> Endpoint presente ma disabilitato</div>
+            <div class="ev-line"><i class="bi bi-x-circle-fill"></i> L'endpoint esiste ma è in stato <b>disabled</b> su Stripe.</div>
+            <div class="fix"><i class="bi bi-wrench me-1"></i> In Stripe &rarr; Webhook, ri-abilita la destinazione.</div>
+        </div>
+        <!-- E: manca secret key (non posso verificare) -->
+        <div class="result amber" data-state="no-key">
+            <div class="r-head"><i class="bi bi-exclamation-triangle-fill"></i> Impossibile verificare</div>
+            <div class="ev-line"><i class="bi bi-x-circle-fill"></i> Manca la <b>Secret Key</b> di Stripe: senza non posso interrogare il tuo account.</div>
+            <div class="fix"><i class="bi bi-wrench me-1"></i> Inserisci prima la Secret Key (<code>sk_live_…</code>) qui sopra.</div>
+        </div>
+    </div>
+
+    <div class="scenario">↓ Cambia scenario per vedere gli esiti (in reale lo decide la risposta di Stripe):</div>
+    <div class="chips" id="chips">
+        <span class="chip active" data-s="ok">✅ Tutto ok</span>
+        <span class="chip" data-s="missing-event">🔴 Manca un evento (bug 29/06)</span>
+        <span class="chip" data-s="no-endpoint">🔴 Nessun endpoint</span>
+        <span class="chip" data-s="disabled">🔴 Disabilitato</span>
+        <span class="chip" data-s="no-key">🟠 Manca Secret Key</span>
+    </div>
+
+    <div class="wf-note" style="background:#fff;border-color:#dee2e6;color:#6c757d;">
+        <b style="color:#1a1d23;">Come funziona (lato server)</b>: al click il controller usa <code>stripe_sk</code> del tenant e chiama
+        <code>\Stripe\WebhookEndpoint::all()</code> &rarr; cerca un endpoint con l'URL del nostro webhook &rarr; controlla
+        <code>status='enabled'</code> e che <code>enabled_events</code> contenga i 2 eventi (o <code>['*']</code>). Esito via AJAX.
+        <b>Niente migration, niente falsi positivi</b>: legge lo stato reale di Stripe.
+    </div>
+
+</div>
+
+<script>
+    var btn = document.getElementById('verifyBtn');
+    var spin = document.getElementById('spin');
+    var chips = document.getElementById('chips');
+    var current = 'ok';
+    function render(state){
+        document.querySelectorAll('.result').forEach(function(r){ r.classList.toggle('show', r.getAttribute('data-state') === state); });
+    }
+    function hideAll(){ document.querySelectorAll('.result').forEach(function(r){ r.classList.remove('show'); }); }
+    btn.addEventListener('click', function(){
+        hideAll(); spin.classList.add('show');
+        setTimeout(function(){ spin.classList.remove('show'); render(current); }, 700);
+    });
+    chips.addEventListener('click', function(e){
+        var c = e.target.closest('.chip'); if(!c) return;
+        chips.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('active'); });
+        c.classList.add('active'); current = c.getAttribute('data-s');
+        if(document.querySelector('.result.show')) render(current);
+    });
+</script>
+
+</body>
+</html>

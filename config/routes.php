@@ -134,6 +134,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('/settings/notifications', [SettingsController::class, 'notifications']);
     $r->post('/settings/notifications', [SettingsController::class, 'updateNotifications']);
     $r->get('/settings/deposit', [SettingsController::class, 'deposit']);
+    $r->get('/settings/deposit/webhook-status', [SettingsController::class, 'verifyWebhook']);
     $r->post('/settings/deposit', [SettingsController::class, 'updateDeposit']);
     $r->get('/settings/meal-categories', [MealCategoriesController::class, 'index']);
     $r->post('/settings/meal-categories', [MealCategoriesController::class, 'update']);

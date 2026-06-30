@@ -327,6 +327,65 @@ class SettingsController
         ], 'dashboard');
     }
 
+    /**
+     * Verifica via API Stripe (SOLO LETTURA) lo stato del webhook del tenant:
+     * esiste un endpoint verso il nostro URL? è abilitato? è iscritto agli
+     * eventi che ci servono (`checkout.session.completed`/`expired`)? Risponde
+     * in JSON per il bottone "Verifica webhook". Non crea/modifica MAI nulla su
+     * Stripe; gli errori API sono gestiti in modo morbido (mai 500).
+     */
+    public function verifyWebhook(Request $request): void
+    {
+        $tenant = TenantResolver::current();
+        if (!tenant_can('deposit')) {
+            Response::json(['status' => 'error', 'message' => 'Servizio non disponibile.']);
+            return;
+        }
+
+        $sk = !empty($tenant['stripe_sk']) ? decrypt_value($tenant['stripe_sk']) : '';
+        $secretSet = !empty($tenant['stripe_wh_secret']);
+
+        if (!$sk) {
+            Response::json(['status' => 'no-key', 'secret_set' => $secretSet]);
+            return;
+        }
+
+        $required = ['checkout.session.completed', 'checkout.session.expired'];
+        $ourPath  = '/api/v1/stripe/webhook';
+
+        try {
+            \Stripe\Stripe::setApiKey($sk);
+            $endpoints = \Stripe\WebhookEndpoint::all(['limit' => 100]);
+
+            $match = null;
+            foreach ($endpoints->data as $ep) {
+                if (str_contains((string)($ep->url ?? ''), $ourPath)) { $match = $ep; break; }
+            }
+
+            if (!$match) {
+                Response::json(['status' => 'no-endpoint', 'secret_set' => $secretSet]);
+                return;
+            }
+            if (($match->status ?? '') !== 'enabled') {
+                Response::json(['status' => 'disabled', 'secret_set' => $secretSet]);
+                return;
+            }
+
+            $events    = $match->enabled_events ?? [];
+            $coversAll = in_array('*', $events, true);
+            $missing   = $coversAll ? [] : array_values(array_diff($required, $events));
+
+            if (empty($missing)) {
+                Response::json(['status' => 'ok', 'secret_set' => $secretSet]);
+            } else {
+                Response::json(['status' => 'missing-event', 'missing' => $missing, 'secret_set' => $secretSet]);
+            }
+        } catch (\Exception $e) {
+            app_log('Verifica webhook Stripe fallita (tenant ' . ($tenant['id'] ?? '?') . '): ' . $e->getMessage(), 'warning');
+            Response::json(['status' => 'error', 'message' => 'Non è stato possibile verificare ora. Controlla la Secret Key e riprova.']);
+        }
+    }
+
     public function updateDeposit(Request $request): void
     {
         if (gate_service('deposit', url('dashboard/settings'))) return;

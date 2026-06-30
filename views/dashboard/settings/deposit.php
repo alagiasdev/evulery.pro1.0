@@ -325,6 +325,68 @@ $mealCategories = $mealCategories ?? [];
                             <div class="field-hint">
                                 Endpoint webhook: <code style="font-size:.7rem;"><?= url('api/v1/stripe/webhook') ?></code>
                             </div>
+
+                            <!-- Verifica webhook (read-only via API Stripe) -->
+                            <div style="margin-top:1rem;padding-top:.9rem;border-top:1px solid #f0f0f0;">
+                                <button type="button" id="whVerifyBtn" class="btn btn-sm" style="background:#635BFF;color:#fff;border:none;font-weight:600;font-size:.8rem;">
+                                    <i class="bi bi-broadcast me-1"></i> Verifica webhook
+                                </button>
+                                <span style="font-size:.72rem;color:#6c757d;margin-left:.5rem;">Controlla che il webhook nel tuo Stripe sia attivo e iscritto agli eventi giusti.</span>
+                                <div id="whResult" style="margin-top:.8rem;font-size:.8rem;"></div>
+                            </div>
+                            <script nonce="<?= csp_nonce() ?>">
+                            (function(){
+                                var btn = document.getElementById('whVerifyBtn');
+                                var out = document.getElementById('whResult');
+                                if (!btn || !out) return;
+                                var statusUrl = '<?= url('dashboard/settings/deposit/webhook-status') ?>';
+                                var hookUrl = '<?= e(url('api/v1/stripe/webhook')) ?>';
+                                function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+                                function box(color, html){
+                                    var bg = color==='green'?'#E8F5E9':(color==='amber'?'#FFF3E0':'#FFEBEE');
+                                    var fg = color==='green'?'#1B5E20':(color==='amber'?'#9A4A00':'#B71C1C');
+                                    out.innerHTML = '<div style="background:'+bg+';color:'+fg+';border-radius:8px;padding:.7rem .9rem;line-height:1.45;">'+html+'</div>';
+                                }
+                                function evLine(okFlag, code){
+                                    var icon = okFlag
+                                        ? '<i class="bi bi-check-circle-fill" style="color:#00844A;"></i>'
+                                        : '<i class="bi bi-x-circle-fill" style="color:#C62828;"></i>';
+                                    return '<div style="display:flex;align-items:center;gap:.4rem;padding:.1rem 0;">'+icon
+                                        +'<code style="background:rgba(0,0,0,.06);padding:1px 5px;border-radius:4px;">'+code+'</code>'
+                                        +(okFlag?'':' <b>NON iscritto</b>')+'</div>';
+                                }
+                                function render(d){
+                                    if (d.status === 'ok') {
+                                        box('green', '<b><i class="bi bi-check-circle-fill me-1"></i>Webhook configurato correttamente</b>'
+                                            + evLine(true,'checkout.session.completed') + evLine(true,'checkout.session.expired')
+                                            + (d.secret_set ? '' : '<div style="margin-top:.4rem;color:#9A4A00;"><i class="bi bi-exclamation-triangle me-1"></i>Manca per&ograve; il <b>Webhook Secret</b>: incollalo nel campo qui sopra.</div>'));
+                                    } else if (d.status === 'missing-event') {
+                                        var miss = d.missing || [];
+                                        box('red', '<b><i class="bi bi-exclamation-triangle-fill me-1"></i>Manca un evento &mdash; le conferme non arriveranno</b>'
+                                            + evLine(miss.indexOf('checkout.session.completed')<0, 'checkout.session.completed')
+                                            + evLine(miss.indexOf('checkout.session.expired')<0, 'checkout.session.expired')
+                                            + '<div style="margin-top:.4rem;"><i class="bi bi-wrench me-1"></i>In Stripe &rarr; Webhook, modifica la destinazione, aggiungi l\'evento mancante e riprova.</div>');
+                                    } else if (d.status === 'no-endpoint') {
+                                        box('red', '<b><i class="bi bi-x-octagon-fill me-1"></i>Nessun webhook configurato</b>'
+                                            + '<div style="margin-top:.3rem;">Nessun endpoint Stripe punta a <code style="background:rgba(0,0,0,.06);padding:1px 5px;border-radius:4px;">'+esc(hookUrl)+'</code></div>'
+                                            + '<div style="margin-top:.4rem;"><i class="bi bi-wrench me-1"></i>In Stripe &rarr; Sviluppatori &rarr; Webhook &rarr; <b>Aggiungi endpoint</b> con quell\'URL, eventi <code>checkout.session.completed</code> + <code>checkout.session.expired</code>, poi incolla il signing secret qui sopra.</div>');
+                                    } else if (d.status === 'disabled') {
+                                        box('red', '<b><i class="bi bi-pause-circle-fill me-1"></i>Endpoint presente ma disabilitato</b><div style="margin-top:.3rem;">Ri-abilita la destinazione in Stripe &rarr; Webhook.</div>');
+                                    } else if (d.status === 'no-key') {
+                                        box('amber', '<b><i class="bi bi-exclamation-triangle-fill me-1"></i>Impossibile verificare</b><div style="margin-top:.3rem;">Manca la <b>Secret Key</b>: inseriscila e salva, poi riprova.</div>');
+                                    } else {
+                                        box('amber', '<b><i class="bi bi-exclamation-triangle-fill me-1"></i>Verifica non riuscita</b><div style="margin-top:.3rem;">'+esc(d.message||'Riprova tra poco.')+'</div>');
+                                    }
+                                }
+                                btn.addEventListener('click', function(){
+                                    out.innerHTML = '<span style="color:#6c757d;"><i class="bi bi-arrow-repeat me-1"></i> Interrogo Stripe&hellip;</span>';
+                                    fetch(statusUrl + '?_=' + Date.now(), { headers:{'X-Requested-With':'XMLHttpRequest'} })
+                                        .then(function(r){ return r.json(); })
+                                        .then(render)
+                                        .catch(function(){ box('amber','<b>Verifica non riuscita</b><div style="margin-top:.3rem;">Problema di rete, riprova.</div>'); });
+                                });
+                            })();
+                            </script>
                         </div>
                     </div>
                 </div>
