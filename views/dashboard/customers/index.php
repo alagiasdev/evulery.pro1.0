@@ -61,7 +61,13 @@ $segTabs = [
 </div>
 
 <!-- Action bar -->
-<div class="d-flex align-items-center justify-content-end" style="margin-bottom:.5rem;">
+<div class="d-flex align-items-center justify-content-end gap-2" style="margin-bottom:.5rem;">
+    <?php if (!empty($deletableImportedCount)): ?>
+    <button type="button" class="btn btn-sm btn-outline-danger" style="font-size:.78rem;"
+            id="bulkDelImportedBtn" data-count="<?= (int)$deletableImportedCount ?>">
+        <i class="bi bi-trash3 me-1"></i> Elimina importati mai prenotati (<?= (int)$deletableImportedCount ?>)
+    </button>
+    <?php endif; ?>
     <a href="<?= url('dashboard/customers/import') ?>" class="btn btn-sm btn-outline-secondary" style="font-size:.78rem;">
         <i class="bi bi-cloud-upload me-1"></i> Importa CSV
     </a>
@@ -117,6 +123,9 @@ $segTabs = [
         <div>
             <div class="c-name">
                 <?= e($c['first_name'] . ' ' . $c['last_name']) ?>
+                <?php if (($c['source'] ?? '') === 'import'): ?>
+                <span class="origin-import-badge" title="Cliente importato da CSV" style="display:inline-block;padding:1px 7px;border-radius:10px;font-size:.66rem;font-weight:700;background:#EEF2F7;color:#5a6b7b;vertical-align:middle;"><i class="bi bi-cloud-upload"></i> importato</span>
+                <?php endif; ?>
                 <?php if (!empty($c['is_blocked'])): ?>
                 <span class="blocked-badge"><i class="bi bi-slash-circle"></i> Bloccato</span>
                 <?php endif; ?>
@@ -186,6 +195,9 @@ $segTabs = [
         <div class="mc-info">
             <div class="mc-name">
                 <?= e($c['first_name'] . ' ' . $c['last_name']) ?>
+                <?php if (($c['source'] ?? '') === 'import'): ?>
+                <span class="origin-import-badge" title="Importato da CSV" style="display:inline-block;padding:0 6px;border-radius:10px;font-size:.62rem;font-weight:700;background:#EEF2F7;color:#5a6b7b;vertical-align:middle;"><i class="bi bi-cloud-upload"></i></span>
+                <?php endif; ?>
                 <?php if (!empty($c['is_blocked'])): ?>
                 <span class="blocked-badge"><i class="bi bi-slash-circle"></i></span>
                 <?php endif; ?>
@@ -227,3 +239,49 @@ $segTabs = [
     <?php endif; ?>
     <?php endif; ?>
 </div>
+
+<?php if (!empty($deletableImportedCount)): ?>
+<!-- Modale conferma forte: eliminazione bulk clienti importati mai prenotati -->
+<div id="bulkDelOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1050;align-items:center;justify-content:center;padding:1rem;">
+    <div style="background:#fff;border-radius:14px;max-width:460px;width:100%;padding:1.4rem 1.5rem;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+        <div style="width:42px;height:42px;border-radius:50%;background:#FFEBEE;color:#C62828;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:.6rem;">
+            <i class="bi bi-exclamation-triangle"></i>
+        </div>
+        <h5 style="font-weight:800;margin:0 0 .5rem;">Elimina clienti importati</h5>
+        <p style="font-size:.88rem;color:#495057;margin:0 0 .2rem;">Stai per eliminare definitivamente:</p>
+        <div style="font-size:2rem;font-weight:800;color:#B71C1C;text-align:center;margin:.3rem 0;"><?= (int)$deletableImportedCount ?> client<?= (int)$deletableImportedCount === 1 ? 'e' : 'i' ?></div>
+        <p style="text-align:center;font-size:.82rem;color:#6c757d;margin:0 0 .6rem;">importati che non hanno mai prenotato né ordinato.</p>
+        <div style="background:#E8F5E9;border-radius:8px;padding:.6rem .8rem;font-size:.8rem;color:#1B5E20;margin:.2rem 0 .8rem;">
+            <i class="bi bi-shield-check me-1"></i> Restano <strong>protetti</strong> i clienti che hanno prenotato o ordinato — non vengono toccati.
+        </div>
+        <p style="color:#B71C1C;font-size:.82rem;font-weight:600;margin:0 0 .5rem;"><i class="bi bi-exclamation-octagon me-1"></i> Operazione NON reversibile.</p>
+        <form method="POST" action="<?= url('dashboard/customers/bulk-delete-imported') ?>">
+            <?= csrf_field() ?>
+            <label style="font-size:.8rem;color:#6c757d;display:block;">Per confermare, digita il numero <strong><?= (int)$deletableImportedCount ?></strong>:</label>
+            <input type="text" name="confirm_count" id="bulkDelConfirmInput" autocomplete="off" inputmode="numeric"
+                   style="width:100%;border:2px solid #dee2e6;border-radius:8px;padding:.5rem .7rem;font-size:1rem;font-weight:700;text-align:center;margin-top:.3rem;">
+            <div style="display:flex;justify-content:flex-end;gap:.5rem;margin-top:1.1rem;">
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="bulkDelCancel">Annulla</button>
+                <button type="submit" class="btn btn-sm btn-danger" id="bulkDelSubmit" disabled>Elimina <?= (int)$deletableImportedCount ?></button>
+            </div>
+        </form>
+    </div>
+</div>
+<script nonce="<?= csp_nonce() ?>">
+(function(){
+    var btn = document.getElementById('bulkDelImportedBtn');
+    var ovl = document.getElementById('bulkDelOverlay');
+    if (!btn || !ovl) return;
+    var input = document.getElementById('bulkDelConfirmInput');
+    var submit = document.getElementById('bulkDelSubmit');
+    var cancel = document.getElementById('bulkDelCancel');
+    var target = String(btn.getAttribute('data-count'));
+    function open(){ ovl.style.display = 'flex'; input.value = ''; submit.disabled = true; setTimeout(function(){ input.focus(); }, 50); }
+    function close(){ ovl.style.display = 'none'; }
+    btn.addEventListener('click', open);
+    cancel.addEventListener('click', close);
+    ovl.addEventListener('click', function(e){ if (e.target === ovl) close(); });
+    input.addEventListener('input', function(){ submit.disabled = (input.value.trim() !== target); });
+})();
+</script>
+<?php endif; ?>

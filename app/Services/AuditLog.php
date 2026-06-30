@@ -28,6 +28,7 @@ class AuditLog
     // Clienti
     public const CUSTOMER_NOTES_UPDATED = 'customer_notes_updated';
     public const CUSTOMER_BLOCKED       = 'customer_blocked';
+    public const CUSTOMER_DELETED       = 'customer_deleted';
 
     // Menù
     public const MENU_CATEGORY_CREATED = 'menu_category_created';
@@ -106,6 +107,7 @@ class AuditLog
             self::RESERVATION_DELETED    => 'Prenotazione eliminata',
             self::CUSTOMER_NOTES_UPDATED => 'Note cliente aggiornate',
             self::CUSTOMER_BLOCKED       => 'Cliente bloccato/sbloccato',
+            self::CUSTOMER_DELETED       => 'Cliente eliminato',
             self::MENU_CATEGORY_CREATED  => 'Categoria menù creata',
             self::MENU_CATEGORY_UPDATED  => 'Categoria menù modificata',
             self::MENU_CATEGORY_DELETED  => 'Categoria menù eliminata',

@@ -21,6 +21,60 @@ class Customer
         return $stmt->fetch() ?: null;
     }
 
+    /**
+     * Un cliente è eliminabile SOLO se importato da CSV (`source='import'`) e
+     * mai ingaggiato: nessuna prenotazione e nessun ordine. I clienti widget o
+     * chi ha uno storico restano gestibili solo con "Blocca".
+     */
+    public function isDeletableImport(int $id, int $tenantId): bool
+    {
+        $stmt = $this->db->prepare(
+            "SELECT 1 FROM customers c
+             WHERE c.id = :id AND c.tenant_id = :tid AND c.source = 'import'
+               AND NOT EXISTS (SELECT 1 FROM reservations r WHERE r.customer_id = c.id)
+               AND NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id)
+             LIMIT 1"
+        );
+        $stmt->execute(['id' => $id, 'tid' => $tenantId]);
+        return (bool) $stmt->fetchColumn();
+    }
+
+    /** Conta i clienti importati mai ingaggiati (eliminabili in blocco). */
+    public function countDeletableImported(int $tenantId): int
+    {
+        $stmt = $this->db->prepare(
+            "SELECT COUNT(*) FROM customers c
+             WHERE c.tenant_id = :tid AND c.source = 'import'
+               AND NOT EXISTS (SELECT 1 FROM reservations r WHERE r.customer_id = c.id)
+               AND NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id)"
+        );
+        $stmt->execute(['tid' => $tenantId]);
+        return (int) $stmt->fetchColumn();
+    }
+
+    /**
+     * Elimina i clienti importati mai ingaggiati del tenant. Il WHERE è esso
+     * stesso la guardia (source='import' + nessuna prenotazione/ordine): non può
+     * MAI cancellare un cliente widget o con storico, e riapplica il filtro in
+     * modo atomico (nessuna race tra controllo e delete). Usato sia per il bulk
+     * sia per la singola (con $onlyId). Ritorna il numero di righe eliminate.
+     */
+    public function deleteDeletableImported(int $tenantId, ?int $onlyId = null): int
+    {
+        $sql = "DELETE c FROM customers c
+                WHERE c.tenant_id = :tid AND c.source = 'import'
+                  AND NOT EXISTS (SELECT 1 FROM reservations r WHERE r.customer_id = c.id)
+                  AND NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id)";
+        $params = ['tid' => $tenantId];
+        if ($onlyId !== null) {
+            $sql .= ' AND c.id = :id';
+            $params['id'] = $onlyId;
+        }
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->rowCount();
+    }
+
     public function findByTenantAndEmail(int $tenantId, string $email): ?array
     {
         // Email vuota non identifica un cliente: i clienti senza email hanno

@@ -56,6 +56,7 @@ class CustomersController
             'stats'      => $stats,
             'tenant'     => $tenant,
             'pagination' => $paginator->links(),
+            'deletableImportedCount' => $customerModel->countDeletableImported($tenantId),
         ], 'dashboard');
     }
 
@@ -172,7 +173,74 @@ class CustomersController
             'customer'     => $customer,
             'reservations' => $reservations,
             'tenant'       => TenantResolver::current(),
+            // Eliminabile solo se importato da CSV e mai ingaggiato (vedi Customer::isDeletableImport)
+            'deletable'    => (new Customer())->isDeletableImport($id, (int)Auth::tenantId()),
         ], 'dashboard');
+    }
+
+    /**
+     * Eliminazione SINGOLA di un cliente importato mai ingaggiato.
+     * La guardia è nel model (DELETE con WHERE source='import' + 0 prenotazioni/0
+     * ordini): la UI nasconde il bottone, ma qui ri-verifichiamo lato server —
+     * la UI non è enforcement.
+     */
+    public function destroy(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $tenantId = (int)Auth::tenantId();
+        $customerModel = new Customer();
+        $customer = $customerModel->findById($id);
+
+        if (!$customer || (int)$customer['tenant_id'] !== $tenantId) {
+            flash('danger', 'Cliente non trovato.');
+            Response::redirect(url('dashboard/customers'));
+            return;
+        }
+
+        $name = trim(($customer['first_name'] ?? '') . ' ' . ($customer['last_name'] ?? ''));
+        $deleted = $customerModel->deleteDeletableImported($tenantId, $id);
+
+        if ($deleted > 0) {
+            AuditLog::log(AuditLog::CUSTOMER_DELETED, "Cliente importato eliminato: {$name} (ID {$id})", Auth::id(), $tenantId);
+            flash('success', "Cliente \"{$name}\" eliminato.");
+            Response::redirect(url('dashboard/customers'));
+            return;
+        }
+
+        // Non eliminabile: widget, oppure importato ma con prenotazioni/ordini.
+        flash('warning', 'Questo cliente non può essere eliminato (ha prenotazioni/ordini o non è importato da CSV). Puoi solo bloccarlo.');
+        Response::redirect(url("dashboard/customers/{$id}"));
+    }
+
+    /**
+     * Eliminazione BULK dei clienti importati mai ingaggiati del tenant.
+     * Conferma forte: il form invia il conteggio esatto da eliminare, che deve
+     * combaciare col conteggio reale lato server (anti click accidentale + anti
+     * count stale). Lo scoping per tenant è nel model.
+     */
+    public function bulkDeleteImported(Request $request): void
+    {
+        $tenantId = (int)Auth::tenantId();
+        $customerModel = new Customer();
+
+        $confirmCount = (int)$request->input('confirm_count', -1);
+        $actual = $customerModel->countDeletableImported($tenantId);
+
+        if ($actual === 0) {
+            flash('info', 'Nessun cliente importato mai prenotato da eliminare.');
+            Response::redirect(url('dashboard/customers'));
+            return;
+        }
+        if ($confirmCount !== $actual) {
+            flash('warning', 'Conferma non valida: il numero inserito non corrisponde al totale attuale. Operazione annullata, riprova.');
+            Response::redirect(url('dashboard/customers'));
+            return;
+        }
+
+        $deleted = $customerModel->deleteDeletableImported($tenantId);
+        AuditLog::log(AuditLog::CUSTOMER_DELETED, "Eliminazione massiva clienti importati mai prenotati: {$deleted}", Auth::id(), $tenantId);
+        flash('success', "{$deleted} client" . ($deleted === 1 ? 'e importato eliminato' : 'i importati eliminati') . '.');
+        Response::redirect(url('dashboard/customers'));
     }
 
     public function updateNotes(Request $request): void

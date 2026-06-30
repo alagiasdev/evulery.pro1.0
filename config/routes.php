@@ -114,6 +114,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('/customers/search/json', [CustomersController::class, 'searchJson']);
     $r->get('/customers/import', [CustomersController::class, 'import']);
     $r->post('/customers/import', [CustomersController::class, 'processImport']);
+    $r->post('/customers/bulk-delete-imported', [CustomersController::class, 'bulkDeleteImported']);
     $r->get('/customers/{id}', [CustomersController::class, 'show']);
     $r->post('/customers/{id}/notes', [CustomersController::class, 'updateNotes']);
     $r->post('/customers/{id}/toggle-block', [CustomersController::class, 'toggleBlock']);
@@ -121,6 +122,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->post('/customers/{id}/birthday', [CustomersController::class, 'updateBirthday']);
     $r->post('/customers/{id}/add-tag', [CustomersController::class, 'addTag']);
     $r->post('/customers/{id}/remove-tag', [CustomersController::class, 'removeTag']);
+    $r->post('/customers/{id}/delete', [CustomersController::class, 'destroy']);
     $r->get('/help', [HelpController::class, 'index']);
     $r->post('/help/feedback', [HelpController::class, 'feedback']);
     $r->get('/help/{slug}', [HelpController::class, 'show']);

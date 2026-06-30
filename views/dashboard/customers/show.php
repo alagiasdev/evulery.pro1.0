@@ -295,6 +295,15 @@ $sourceLabelsPrivacy = [
             </button>
         </form>
         <?php endif; ?>
+        <?php if (!empty($deletable)): ?>
+        <form method="POST" action="<?= url("dashboard/customers/{$customer['id']}/delete") ?>" style="display:inline;">
+            <?= csrf_field() ?>
+            <button type="submit" class="btn btn-outline-danger" title="Elimina cliente importato"
+                    data-confirm="Eliminare definitivamente <?= e($customer['first_name'] . ' ' . $customer['last_name']) ?>? Cliente importato, mai prenotato — operazione NON reversibile.">
+                <i class="bi bi-trash3 me-1"></i> Elimina
+            </button>
+        </form>
+        <?php endif; ?>
         <a href="<?= url('dashboard/customers') ?>" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-1"></i> Lista
         </a>
