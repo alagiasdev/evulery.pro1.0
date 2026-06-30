@@ -98,13 +98,13 @@
                         <?= csrf_field() ?>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
                             <input type="text" name="first_name" value="<?= e($u['first_name']) ?>" placeholder="Nome"
-                                   style="padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                                   style="width:100%;min-width:0;box-sizing:border-box;padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
                             <input type="text" name="last_name" value="<?= e($u['last_name']) ?>" placeholder="Cognome"
-                                   style="padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                                   style="width:100%;min-width:0;box-sizing:border-box;padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
                         </div>
                         <div style="margin-bottom:.5rem;">
                             <input type="email" name="email" value="<?= e($u['email']) ?>" placeholder="Email"
-                                   style="width:100%;padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                                   style="width:100%;box-sizing:border-box;padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
                         </div>
                         <div style="display:flex;align-items:center;justify-content:space-between;">
                             <span class="adm-badge <?= $u['is_active'] ? 'adm-badge-active' : 'adm-badge-inactive' ?>" style="font-size:.7rem;">
