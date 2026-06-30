@@ -73,6 +73,7 @@
                         <i class="bi bi-people me-2"></i> Clienti
                     </a>
                 </li>
+                <?php if (!is_staff()): ?>
                 <li class="nav-item">
                     <?php if (tenant_can('digital_menu')): ?>
                     <a class="nav-link <?= ($activeMenu ?? '') === 'menu' ? 'active' : '' ?>" href="<?= url('dashboard/menu') ?>">
@@ -84,6 +85,7 @@
                     </a>
                     <?php endif; ?>
                 </li>
+                <?php endif; ?>
                 <?php if (tenant_can('online_ordering')): ?>
                 <li class="nav-item">
                     <a class="nav-link <?= ($activeMenu ?? '') === 'orders' ? 'active' : '' ?>" href="<?= url('dashboard/orders') ?>">
@@ -96,6 +98,7 @@
                     $_t = tenant();
                     if (!empty($_t['ordering_enabled']) && ($_t['delivery_mode'] ?? 'none') !== 'none'):
                 ?>
+                <?php if (!is_staff()): ?>
                 <li class="nav-item">
                     <a class="nav-link <?= ($activeMenu ?? '') === 'riders' ? 'active' : '' ?>" href="<?= url('dashboard/riders') ?>">
                         <i class="bi bi-bicycle me-2"></i> Rider
@@ -103,6 +106,8 @@
                 </li>
                 <?php endif; ?>
                 <?php endif; ?>
+                <?php endif; ?>
+                <?php if (!is_staff()): ?>
                 <li class="nav-item">
                     <?php if (tenant_can('email_broadcast')): ?>
                     <a class="nav-link <?= ($activeMenu ?? '') === 'communications' ? 'active' : '' ?>" href="<?= url('dashboard/communications') ?>">
@@ -114,14 +119,15 @@
                     </a>
                     <?php endif; ?>
                 </li>
-                <?php if (tenant_can('review_management')): ?>
+                <?php endif; ?>
+                <?php if (tenant_can('review_management') && !is_staff()): ?>
                 <li class="nav-item">
                     <a class="nav-link <?= ($activeMenu ?? '') === 'reputation' ? 'active' : '' ?>" href="<?= url('dashboard/reputation') ?>">
                         <i class="bi bi-star me-2"></i> Reputazione
                     </a>
                 </li>
                 <?php endif; ?>
-                <?php if (tenant_can('marketing')): ?>
+                <?php if (tenant_can('marketing') && !is_staff()): ?>
                 <li class="nav-item">
                     <a class="nav-link <?= ($activeMenu ?? '') === 'marketing' ? 'active' : '' ?>" href="<?= url('dashboard/marketing') ?>">
                         <i class="bi bi-megaphone me-2"></i> Marketing
@@ -134,11 +140,13 @@
                     </a>
                 </li>
                 <?php $settingsKeys = ['settings','slots','meal-categories','closures','promotions','settings-notifications','deposit','settings-ordering','settings-reviews','domain']; ?>
+                <?php if (!is_staff()): ?>
                 <li class="nav-item">
                     <a class="nav-link <?= in_array($activeMenu ?? '', $settingsKeys) ? 'active' : '' ?>" href="<?= url('dashboard/settings') ?>">
                         <i class="bi bi-gear me-2"></i> Impostazioni
                     </a>
                 </li>
+                <?php endif; ?>
                 <li class="nav-item">
                     <a class="nav-link <?= ($activeMenu ?? '') === 'help' ? 'active' : '' ?>" href="<?= url('dashboard/help') ?>">
                         <i class="bi bi-book me-2"></i> Guida
@@ -249,6 +257,7 @@
             data-vapid-url="<?= url('dashboard/push/vapid-key') ?>"
             data-subscribe-url="<?= url('dashboard/push/subscribe') ?>"
             data-impersonating="<?= \App\Core\Auth::isImpersonating() ? '1' : '' ?>"
+            data-staff="<?= is_staff() ? '1' : '' ?>"
             data-csrf="<?= csrf_token() ?>"
     ></script>
     <script nonce="<?= csp_nonce() ?>" src="<?= asset('js/notification-sounds.js') ?>" defer

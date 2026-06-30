@@ -20,6 +20,7 @@ use App\Controllers\Dashboard\HeartbeatController;
 use App\Controllers\Dashboard\ReservationsController;
 use App\Controllers\Dashboard\CustomersController;
 use App\Controllers\Dashboard\SettingsController;
+use App\Controllers\Dashboard\CollaboratorsController;
 use App\Controllers\Dashboard\SlotsController;
 use App\Controllers\Dashboard\DomainController;
 use App\Controllers\Dashboard\HubController;
@@ -74,7 +75,7 @@ $router->group('/auth', ['csrf'], function ($r) {
 });
 
 // --- DASHBOARD ROUTES (restaurant owner) ---
-$router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], function ($r) {
+$router->group('/dashboard', ['auth', 'tenant', 'staff', 'csrf', 'dashboard-ratelimit'], function ($r) {
     $r->get('/suspended', [SuspendedController::class, 'index']);
     $r->post('/stop-impersonation', [ImpersonationController::class, 'stop']);
     $r->get('', [HomeController::class, 'index']);
@@ -136,6 +137,11 @@ $router->group('/dashboard', ['auth', 'tenant', 'csrf', 'dashboard-ratelimit'], 
     $r->get('/settings/deposit', [SettingsController::class, 'deposit']);
     $r->get('/settings/deposit/webhook-status', [SettingsController::class, 'verifyWebhook']);
     $r->post('/settings/deposit', [SettingsController::class, 'updateDeposit']);
+    $r->get('/settings/collaborators', [CollaboratorsController::class, 'index']);
+    $r->post('/settings/collaborators', [CollaboratorsController::class, 'store']);
+    $r->post('/settings/collaborators/{id}/toggle', [CollaboratorsController::class, 'toggle']);
+    $r->post('/settings/collaborators/{id}/password', [CollaboratorsController::class, 'resetPassword']);
+    $r->post('/settings/collaborators/{id}/delete', [CollaboratorsController::class, 'destroy']);
     $r->get('/settings/meal-categories', [MealCategoriesController::class, 'index']);
     $r->post('/settings/meal-categories', [MealCategoriesController::class, 'update']);
     $r->get('/sala', [TablesController::class, 'sala']);

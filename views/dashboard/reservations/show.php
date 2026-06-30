@@ -269,7 +269,7 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
         </form>
         <?php endif; ?>
 
-        <?php if ($reservation['deposit_required'] && !$reservation['deposit_paid']): ?>
+        <?php if ($reservation['deposit_required'] && !$reservation['deposit_paid'] && !is_staff()): ?>
         <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/deposit-paid") ?>" class="d-inline">
             <?= csrf_field() ?>
             <button type="submit" class="btn-action" style="background:#E8F5E9;color:#2E7D32;border:1px solid #C8E6C9;"><i class="bi bi-cash-coin"></i> Segna caparra ricevuta</button>
@@ -315,7 +315,7 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
         // Azione "Accetta e richiedi caparra" in riga propria sotto la barra:
         // ha un campo importo, starebbe stretta tra i bottoni di stato. Solo su
         // prenotazione in attesa, con caparra nel piano + configurata + non già attiva.
-        $canReqDeposit = $reservation['status'] === 'pending' && tenant_can('deposit')
+        $canReqDeposit = !is_staff() && $reservation['status'] === 'pending' && tenant_can('deposit')
             && !empty($tenant['deposit_type'])
             && !$reservation['deposit_required'] && ($reservation['guarantee_status'] ?? 'none') === 'none';
         if ($canReqDeposit):
@@ -358,12 +358,14 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
                 <i class="bi bi-exclamation-triangle-fill me-1"></i>
                 Caparra di <strong>&euro;<?= number_format($reservation['deposit_amount'], 2) ?></strong> da rimborsare
             </div>
+            <?php if (!is_staff()): ?>
             <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/deposit-refunded") ?>" class="d-inline" data-confirm="Confermi di aver rimborsato la caparra?">
                 <?= csrf_field() ?>
                 <button type="submit" class="btn btn-sm" style="background:#2E7D32;color:#fff;font-size:.78rem;">
                     <i class="bi bi-check2 me-1"></i> Segna come rimborsata
                 </button>
             </form>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
     <?php endif; ?>
@@ -382,6 +384,7 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
             Il cliente ha registrato una carta. In caso di mancata presentazione puoi addebitare la penale di
             <strong>&euro;<?= $gAmount ?></strong>. Altrimenti chiudi la garanzia senza alcun addebito.
         </div>
+        <?php if (!is_staff()): ?>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
             <form method="POST" action="<?= url("dashboard/reservations/{$reservation['id']}/guarantee-charge") ?>" class="d-inline"
                   data-confirm="Confermi l'addebito della penale di &euro;<?= $gAmount ?> sulla carta del cliente?">
@@ -398,6 +401,7 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
                 </button>
             </form>
         </div>
+        <?php endif; // !is_staff: azioni garanzia ?>
     </div>
     <?php elseif ($gStatus === 'charged'): ?>
     <div style="margin-top:1rem;padding:.85rem 1rem;border-radius:8px;background:#FDECEA;border:1px solid #F5C6CB;font-size:.85rem;color:#C62828;">
@@ -444,7 +448,7 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
         </div>
 
         <!-- Delete zone -->
-        <?php if ($canDelete): ?>
+        <?php if ($canDelete && !is_staff()): ?>
         <div class="delete-zone">
             <div class="delete-zone-info">
                 <strong><i class="bi bi-trash me-1"></i>Elimina prenotazione</strong>

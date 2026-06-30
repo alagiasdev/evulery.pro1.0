@@ -108,7 +108,9 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         <span class="tm-head-title"><i class="bi bi-grid-3x3 me-1"></i> <?= $mode === 'operativa' ? 'Stato sala' : 'Mappa sala' ?></span>
         <div class="tm-mode-toggle">
             <a href="<?= $opUrl ?>" class="<?= $mode === 'operativa' ? 'active' : '' ?>"><i class="bi bi-eye"></i> Operativa</a>
+            <?php if (!is_staff()): // Setup tavoli = owner; lo staff resta in Operativa ?>
             <a href="<?= $setupUrl ?>" class="<?= $mode === 'setup' ? 'active' : '' ?>"><i class="bi bi-pencil"></i> Setup</a>
+            <?php endif; ?>
         </div>
         <?php if ($mode === 'setup' && !empty($tables)): ?>
         <button type="submit" form="tm-map-form" class="btn-tm-new" style="margin-left:auto;"><i class="bi bi-check-circle me-1"></i> Salva posizioni</button>

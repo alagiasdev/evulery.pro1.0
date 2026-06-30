@@ -63,6 +63,12 @@
                             <input type="text" class="adm-form-input" value="<?= e($tenant['slug']) ?>" disabled>
                         </div>
                     </div>
+                    <div class="adm-form-row-3">
+                        <div>
+                            <label class="adm-form-label">Max collaboratori staff</label>
+                            <input type="number" class="adm-form-input" name="max_staff" value="<?= ($tenant['max_staff'] ?? null) !== null ? (int)$tenant['max_staff'] : '' ?>" min="0" placeholder="vuoto = default piano (Enterprise 3)">
+                        </div>
+                    </div>
                     <div class="adm-form-check">
                         <input type="checkbox" name="is_active" id="is_active" <?= $tenant['is_active'] ? 'checked' : '' ?>>
                         <label for="is_active">Attivo</label>

@@ -24,7 +24,7 @@ function ohPctChange(float $current, float $previous): ?int {
             <?php endforeach; ?>
         </div>
         <?php endif; ?>
-        <?php if ($currentTab === 'ordini'): ?>
+        <?php if ($currentTab === 'ordini' && !is_staff()): ?>
         <a href="<?= url('dashboard/orders/history/csv') ?>?status=<?= e($filters['status'] ?? '') ?>&type=<?= e($filters['order_type'] ?? '') ?>&from=<?= e($filters['date_from'] ?? '') ?>&to=<?= e($filters['date_to'] ?? '') ?>&q=<?= e($filters['search'] ?? '') ?>"
            class="oh-export-btn"><i class="bi bi-download"></i> CSV</a>
         <?php endif; ?>

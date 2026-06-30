@@ -273,6 +273,7 @@ $sourceLabelsPrivacy = [
             <i class="bi bi-plus-circle me-1"></i> Prenota
         </a>
         <?php endif; ?>
+        <?php if (!is_staff()): // azioni account: nascoste allo staff (sola lettura) ?>
         <form method="POST" action="<?= url("dashboard/customers/{$customer['id']}/toggle-block") ?>" style="display:inline;">
             <?= csrf_field() ?>
             <?php if (!empty($customer['is_blocked'])): ?>
@@ -304,6 +305,7 @@ $sourceLabelsPrivacy = [
             </button>
         </form>
         <?php endif; ?>
+        <?php endif; // !is_staff hero-actions ?>
         <a href="<?= url('dashboard/customers') ?>" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-1"></i> Lista
         </a>
@@ -367,21 +369,25 @@ $sourceLabelsPrivacy = [
         ?>
         <span class="customer-tag <?= $colorClass ?>">
             <?= e($tag) ?>
+            <?php if (!is_staff()): ?>
             <form method="POST" action="<?= url("dashboard/customers/{$customer['id']}/remove-tag") ?>" style="display:inline;">
                 <?= csrf_field() ?>
                 <input type="hidden" name="tag" value="<?= e($tag) ?>">
                 <button type="submit" class="tag-remove" title="Rimuovi">&times;</button>
             </form>
+            <?php endif; ?>
         </span>
         <?php endforeach; ?>
         <?php if (empty($customerTags)): ?>
         <span style="font-size:.75rem;color:#adb5bd;">Nessun tag</span>
         <?php endif; ?>
+        <?php if (!is_staff()): ?>
         <form method="POST" action="<?= url("dashboard/customers/{$customer['id']}/add-tag") ?>" class="cs-add-tag-inline" style="display:inline-flex;">
             <?= csrf_field() ?>
             <input type="text" name="tag" placeholder="Nuovo tag..." maxlength="50" required>
             <button type="submit">+ Aggiungi</button>
         </form>
+        <?php endif; ?>
     </div>
     <?php if (count($customerTags) > 8): ?>
     <button class="cs-tag-toggle" id="csTagToggle">Mostra tutti (<?= count($customerTags) ?>)</button>
@@ -431,10 +437,12 @@ $sourceLabelsPrivacy = [
                     <div class="cs-profile-section-title"><i class="bi bi-cake2"></i> Data di nascita</div>
                     <form method="POST" action="<?= url("dashboard/customers/{$customer['id']}/birthday") ?>" class="d-flex align-items-center gap-2 mb-2">
                         <?= csrf_field() ?>
-                        <input type="date" class="form-control form-control-sm" name="birthday" value="<?= e($customer['birthday'] ?? '') ?>" style="max-width:160px; font-size:.8rem;">
+                        <input type="date" class="form-control form-control-sm" name="birthday" value="<?= e($customer['birthday'] ?? '') ?>" style="max-width:160px; font-size:.8rem;" <?= is_staff() ? 'readonly' : '' ?>>
+                        <?php if (!is_staff()): ?>
                         <button type="submit" class="btn-action btn-act-edit" style="display:inline-flex;white-space:nowrap;">
                             <i class="bi bi-check-lg"></i> Salva
                         </button>
+                        <?php endif; ?>
                     </form>
 
                     <?php if (!empty($reservations)): ?>
@@ -464,16 +472,18 @@ $sourceLabelsPrivacy = [
                     <div class="cs-profile-section-title"><i class="bi bi-sticky"></i> Note interne</div>
                     <form method="POST" action="<?= url("dashboard/customers/{$customer['id']}/notes") ?>">
                         <?= csrf_field() ?>
-                        <textarea class="notes-textarea" name="notes" rows="5" placeholder="Allergie, preferenze, tavolo preferito..."><?= e($customer['notes'] ?? '') ?></textarea>
+                        <textarea class="notes-textarea" name="notes" rows="5" placeholder="Allergie, preferenze, tavolo preferito..." <?= is_staff() ? 'readonly' : '' ?>><?= e($customer['notes'] ?? '') ?></textarea>
                         <div class="d-flex justify-content-between align-items-center mt-2">
                             <span style="font-size:.65rem;color:#adb5bd;">
                                 <?php if (!empty($customer['updated_at'])): ?>
                                 Ultima modifica: <?= format_date($customer['updated_at'], 'd M Y') ?>
                                 <?php endif; ?>
                             </span>
+                            <?php if (!is_staff()): ?>
                             <button type="submit" class="btn-action btn-act-edit" style="display:inline-flex;">
                                 <i class="bi bi-check-lg"></i> Salva note
                             </button>
+                            <?php endif; ?>
                         </div>
                     </form>
                 </div>

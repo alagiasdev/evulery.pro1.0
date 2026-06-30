@@ -84,7 +84,7 @@
             </div>
         </div>
 
-        <?php if (!empty($plan)): ?>
+        <?php if (!empty($plan) && !is_staff()): // piano/prezzo nascosti allo staff ?>
         <?php
         $sub = $subscription ?? null;
         $cycle = $sub['billing_cycle'] ?? 'annual';

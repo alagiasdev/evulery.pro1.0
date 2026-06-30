@@ -60,7 +60,8 @@ $segTabs = [
     <?php endif; ?>
 </div>
 
-<!-- Action bar -->
+<!-- Action bar (nascosta allo staff: Clienti in sola lettura) -->
+<?php if (!is_staff()): ?>
 <div class="d-flex align-items-center justify-content-end gap-2" style="margin-bottom:.5rem;">
     <?php if (!empty($deletableImportedCount)): ?>
     <button type="button" class="btn btn-sm btn-outline-danger" style="font-size:.78rem;"
@@ -72,6 +73,7 @@ $segTabs = [
         <i class="bi bi-cloud-upload me-1"></i> Importa CSV
     </a>
 </div>
+<?php endif; ?>
 
 <!-- Filter bar -->
 <form method="GET" action="<?= url('dashboard/customers') ?>">

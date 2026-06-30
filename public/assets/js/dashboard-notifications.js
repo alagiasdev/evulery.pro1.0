@@ -19,7 +19,10 @@
         csrf:         script.getAttribute('data-csrf'),
         // In impersonation non registriamo il device dell'admin sotto il tenant
         // guardato (la sicurezza vera è lato server; questo evita la chiamata).
-        impersonating: script.getAttribute('data-impersonating') === '1'
+        impersonating: script.getAttribute('data-impersonating') === '1',
+        // Lo staff non gestisce la push in v1: niente banner né registrazione
+        // (la campanella resta attiva). /push/* è bloccato lato server.
+        staff: script.getAttribute('data-staff') === '1'
     };
 
     var POLL_INTERVAL = 30000; // 30 seconds
@@ -336,7 +339,7 @@
     function sendSubscriptionToServer(subscription, mode) {
         // Guardia impersonation: non inviare l'iscrizione al server (incluso il
         // re-sync automatico all'avvio). Il server la rifiuterebbe comunque.
-        if (cfg.impersonating) {
+        if (cfg.impersonating || cfg.staff) {
             return Promise.resolve();
         }
 
@@ -392,6 +395,7 @@
     var BANNER_DISMISS_DAYS = 7;
 
     function maybeShowPushBanner() {
+        if (cfg.staff) return; // lo staff non gestisce la push in v1
         var banner = document.getElementById('push-prompt-banner');
         if (!banner) return; // pagina non lo include
 

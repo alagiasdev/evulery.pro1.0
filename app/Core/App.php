@@ -96,6 +96,7 @@ class App
             'admin'     => \App\Middleware\AdminMiddleware::class,
             'reseller'  => \App\Middleware\ResellerMiddleware::class,
             'tenant'    => \App\Middleware\TenantMiddleware::class,
+            'staff'     => \App\Middleware\StaffMiddleware::class,
             'csrf'      => \App\Middleware\CSRFMiddleware::class,
             'ratelimit' => \App\Middleware\RateLimitMiddleware::class,
             'dashboard-ratelimit' => \App\Middleware\DashboardRateLimitMiddleware::class,

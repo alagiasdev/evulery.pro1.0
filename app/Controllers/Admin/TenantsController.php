@@ -262,6 +262,7 @@ class TenantsController
             'table_duration' => $data['table_duration'] ?? 90,
             'time_step'      => $data['time_step'] ?? 30,
             'is_active'      => isset($data['is_active']) ? 1 : 0,
+            'max_staff'      => ($data['max_staff'] ?? '') === '' ? null : (int)$data['max_staff'],
         ]);
 
         // Update or create subscription if plan changed

@@ -93,7 +93,14 @@ function menu_icon(?string $icon, string $extraClass = ''): string
  */
 function old(string $key, string $default = ''): string
 {
-    return e(\App\Core\Session::getFlash('old_input')[$key] ?? $default);
+    // getFlash() è consume-on-read: leggiamo l'intero array UNA volta e lo
+    // teniamo in cache per la richiesta, così più old() nello stesso form
+    // (first_name, last_name, email...) vedono tutti i valori, non solo il 1°.
+    static $oldInput = null;
+    if ($oldInput === null) {
+        $oldInput = \App\Core\Session::getFlash('old_input') ?? [];
+    }
+    return e($oldInput[$key] ?? $default);
 }
 
 /**
@@ -322,6 +329,7 @@ function settings_nav(): array
             ['url' => url('dashboard/settings/meal-categories'), 'icon' => 'bi-tags',         'label' => 'Categorie Pasto',   'key' => 'meal-categories',        'desc' => 'Pranzo, cena, brunch: fasce con regole proprie'],
             ['url' => url('dashboard/settings/tables'),          'icon' => 'bi-grid-3x3',     'label' => 'Tavoli',            'key' => 'settings-tables',        'desc' => 'Sala, mappa, auto-assegnazione tavoli',          'service' => 'table_management'],
             ['url' => url('dashboard/settings/closures'),        'icon' => 'bi-calendar-x',   'label' => 'Chiusure',          'key' => 'closures',               'desc' => 'Giorni di chiusura straordinaria e ferie'],
+            ['url' => url('dashboard/settings/collaborators'),   'icon' => 'bi-people-fill',  'label' => 'Collaboratori',     'key' => 'collaborators',          'desc' => 'Accessi staff al gestionale (account limitati)', 'service' => 'staff_accounts'],
         ],
         'Servizi clienti' => [
             ['url' => url('dashboard/settings/promotions'),      'icon' => 'bi-percent',      'label' => 'Promozioni',        'key' => 'promotions',             'desc' => 'Sconti e offerte nel widget di prenotazione',    'service' => 'promotions'],
@@ -370,6 +378,25 @@ function role_label(string $role): string
         'reseller'    => 'Reseller',
         default       => ucfirst($role),
     };
+}
+
+/** True se l'utente loggato è un collaboratore (ruolo 'staff'). */
+function is_staff(): bool
+{
+    return \App\Core\Auth::role() === 'staff';
+}
+
+/**
+ * Numero massimo di collaboratori 'staff' per il tenant.
+ * Override esplicito via `tenants.max_staff`; altrimenti default di piano:
+ * chi ha il servizio `staff_accounts` (Enterprise) = 3, gli altri = 0.
+ */
+function tenant_staff_limit(array $tenant): int
+{
+    if (isset($tenant['max_staff']) && $tenant['max_staff'] !== null && $tenant['max_staff'] !== '') {
+        return (int)$tenant['max_staff'];
+    }
+    return tenant_can('staff_accounts') ? 3 : 0;
 }
 
 /**

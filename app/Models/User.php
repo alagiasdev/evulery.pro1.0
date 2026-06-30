@@ -54,6 +54,19 @@ class User
     }
 
     /**
+     * Elimina un collaboratore 'staff'. Il WHERE è la guardia: solo un utente
+     * staff di QUEL tenant può essere rimosso (mai un owner, mai altri tenant).
+     */
+    public function deleteStaff(int $id, int $tenantId): int
+    {
+        $stmt = $this->db->prepare(
+            "DELETE FROM users WHERE id = :id AND tenant_id = :tid AND role = 'staff'"
+        );
+        $stmt->execute(['id' => $id, 'tid' => $tenantId]);
+        return $stmt->rowCount();
+    }
+
+    /**
      * Aggiorna l'utente.
      *
      * I campi privilegiati `role` e `is_active` sono accettati solo se
