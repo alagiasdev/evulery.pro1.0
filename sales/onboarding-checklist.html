@@ -36,6 +36,10 @@
   .a-admin{background:#f3e5f5;color:#7b1fa2} .a-rist{background:#e8f5ee;color:var(--brand-d)} .a-res{background:#e3f2fd;color:#0d6efd}
   .phase-b{padding:8px 16px 14px}
 
+  .subhead{font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--brand-d);margin:14px 4px 2px;padding-top:10px;border-top:1px dashed #e1e8e4;display:flex;align-items:center;gap:7px}
+  .subhead:first-child{border-top:none;padding-top:2px;margin-top:4px}
+  .subhead .adv{font-weight:600;text-transform:none;letter-spacing:0;color:var(--muted);font-size:.9em}
+
   .item{display:flex;gap:11px;padding:9px 4px;border-bottom:1px solid #f5f6f8;cursor:pointer;align-items:flex-start}
   .item:last-child{border-bottom:none}
   .item input{display:none}
@@ -65,7 +69,7 @@
 <div class="wrap">
   <div class="brandbar"></div>
   <h1><i class="bi bi-clipboard-check" style="color:var(--brand)"></i> Checklist Onboarding Ristoratore</h1>
-  <p class="sub">Guida passo-passo per portare un nuovo cliente da "contratto firmato" a "widget di prenotazione attivo". Pensata per la simulazione in affiancamento col reseller. Le spunte si salvano sul tuo browser.</p>
+  <p class="sub">Guida passo-passo per portare un cliente da <b>account appena creato</b> a <b>widget di prenotazione attivo</b> e ristoratore autonomo. L’account lo crea l’<b>admin</b> (fuori da questa checklist): qui si parte dal <b>primo accesso</b>. Pensata per l’affiancamento col reseller. Le spunte si salvano sul tuo browser.</p>
 
   <div class="prog">
     <div class="prog-bar"><div class="prog-fill" id="fill"></div></div>
@@ -77,11 +81,18 @@
   <div class="pitfalls">
     <h2><i class="bi bi-exclamation-triangle" style="color:#e8a200"></i> Errori comuni da evitare</h2>
     <ul>
-      <li><b>Orari non allineati allo step.</b> Se lo "step di prenotazione" è 30 min ma gli orari in "Orari e Coperti" sono a :15/:45, il widget mostra pochi o nessuno slot. Lo step e gli orari devono combaciare.</li>
-      <li><b>Categorie pasto disattivate.</b> Se la fascia (es. Cena) è disattivata, gli slot in quell'orario non compaiono nel widget anche se hai messo i coperti. Attiva le fasce che usi.</li>
+      <li><b>Orari non allineati allo step.</b> Step 30 min ma orari a :15/:45 → il widget mostra pochi o nessuno slot. Lo step e gli orari devono combaciare.</li>
+      <li><b>Categorie pasto disattivate.</b> Se la fascia (es. Cena) è disattivata, gli slot in quell’orario non compaiono nel widget anche coi coperti impostati. Attiva le fasce che usi.</li>
+      <li><b>Fasce con orari sbagliati.</b> Se il range della fascia non copre gli slot (es. Cena 20:00–22:00 ma ci sono slot alle 19:30/22:30), quegli slot restano "scoperti". Allarga il range.</li>
       <li><b>Coperti a zero.</b> Uno slot con 0 coperti non è prenotabile. Usa "Compila tutti" per partire veloce.</li>
-      <li><b>Promettere servizi non nel piano.</b> Se in Impostazioni una voce ha il <i class="bi bi-lock-fill"></i> lucchetto, quel servizio non è incluso nel piano del cliente: è un'occasione di upsell, non una cosa da configurare.</li>
+      <li><b>Giorno di chiusura nel posto sbagliato.</b> Il riposo settimanale si imposta <b>lasciando il giorno vuoto in Orari e Coperti</b>, non in "Chiusure" (che serve solo per ferie e date straordinarie).</li>
+      <li><b>Email del ristorante sbagliata o non controllata.</b> È l’indirizzo che riceve le notifiche di prenotazione: se è errato o inattivo, il ristoratore non le vede arrivare. Verificala e fai il test.</li>
+      <li><b>Notifiche sul dispositivo sbagliato.</b> Le push vanno attivate sul telefono/tablet che sta <b>in sala</b>, non sul PC dell’ufficio, altrimenti gli avvisi non arrivano dove serve.</li>
+      <li><b>Durata tavolo non realistica.</b> Troppo lunga → libera pochi slot (sembra sempre pieno); troppo corta → rischio sovrapposizioni. Impostala sul tempo medio reale del servizio.</li>
+      <li><b>Tavolo "jolly" scambiato per bloccato.</b> Un tavolo <b>solo manuale (jolly)</b> è utilizzabile ma non viene auto-assegnato dal widget; un tavolo <b>bloccato</b> è fuori uso. Non confonderli.</li>
+      <li><b>Promettere servizi non nel piano.</b> Se una voce ha il <i class="bi bi-lock-fill"></i> lucchetto non è inclusa: è un upsell, non una cosa da configurare. Non prometterla come "già attiva".</li>
       <li><b>Saltare il test del widget.</b> Fai sempre una prenotazione di prova reale prima di consegnare: è la dimostrazione che "tutto funziona".</li>
+      <li><b>Widget attivo ma non pubblicato.</b> Configurare il widget e non mettere il link su sito/Google/social è come avere un negozio senza insegna: nessuno lo trova. Pubblicalo ovunque.</li>
     </ul>
   </div>
 
@@ -92,99 +103,116 @@
 </div>
 
 <script>
-// Dati checklist. actor: admin | reseller | rist
+// Dati checklist. actor: admin | res | rist
+// items: stringa = voce spuntabile · {head:'…'} = sotto-intestazione (non spuntabile)
 const PHASES = [
   {
-    n: 0, t: 'Prima dell’incontro', s: 'Preparazione (reseller)', actor: 'res',
+    n: 1, t: 'Setup essenziale', s: 'I passi senza cui il widget non funziona', actor: 'rist',
     items: [
-      'Lead già <b>acquisito e assegnato</b> a te (form sito o aggiunto da <code>/reseller/leads</code>).',
-      'Individuato il <b>piano consigliato</b> in base alle esigenze del locale (solo prenotazioni → base; caparra/reminder → intermedio; tavoli/ordini/recensioni → completo).',
-      'Materiali pronti: <b>demo script</b>, <b>ROI calculator</b>, <b>FAQ ristoratore</b>.',
-      'Deciso con il cliente: usiamo un <b>account demo di prova</b> o creiamo subito quello reale?',
+      '<b>Primo accesso</b>: login con <b>email + password del titolare</b> (credenziali consegnate dall’admin). Conviene cambiare la password da <b>Profilo</b>.',
+      '<b>Impostazioni → Generali</b> <span class="star">★</span>: controlla <b>nome, contatti ed email del ristorante</b> (è quella che riceve le notifiche di prenotazione), carica il <b>logo</b>, imposta lo <b>step di prenotazione</b> e la <b>durata tavolo</b>.',
+      '<b>Impostazioni → Categorie Pasto</b>: attiva le fasce che il locale usa (Pranzo, Cena, Aperitivo…) e controlla gli <b>orari inizio/fine</b> di ogni fascia.',
+      '<b>Impostazioni → Orari e Coperti</b> <span class="star">★</span>: compila la griglia giorni × orari con i <b>coperti massimi per slot</b> ("Compila tutti" per partire). Gli orari devono essere <b>allineati allo step</b>.',
+      '<b>Chiusura settimanale</b>: non c’è un interruttore "giorno chiuso". Un giorno è chiuso quando <b>non ha coperti</b> → lascia <b>vuota</b> la sua riga in <b>Orari e Coperti</b> (es. lunedì di riposo).',
+      '<b>Impostazioni → Chiusure</b>: solo per <b>date specifiche</b> — ferie e chiusure straordinarie (giorni singoli o periodi). <b>Non</b> gestisce il riposo settimanale ricorrente.',
     ],
-    notes: [{type:'say', txt:'<b>Da dire al cliente:</b> "Ti seguo io passo passo: in mezz’ora sei online e prendi prenotazioni h24, anche mentre sei in cucina."'}]
+    notes: [
+      {type:'tip', txt:'<b>Regola d’oro:</b> lo step e gli orari devono combaciare. Step 30 min + orari a :00/:30. Se non torna, il widget mostra pochi o nessuno slot — è l’errore più frequente.'},
+      {type:'say', txt:'<b>Da dire al cliente:</b> "Con questi passi sei già online: le persone possono prenotare h24, anche mentre sei in cucina."'},
+    ]
   },
   {
-    n: 1, t: 'Creazione account', s: 'Conversione lead → cliente', actor: 'admin',
+    n: 2, t: 'Servizi del piano', s: 'Configura ciò che è incluso', actor: 'rist',
     items: [
-      'Admin apre <code>/admin/leads</code> e trova il lead.',
-      'Clic su <b>"Converti"</b> → si apre il form creazione con i dati già precompilati.',
-      'Compila: <b>nome ristorante</b>, email, telefono, indirizzo.',
-      'Seleziona il <b>piano</b> concordato.',
-      'Imposta <b>email + password del titolare</b> (sono le credenziali che consegnerai al cliente).',
-      'Clic <b>Crea</b>: il sistema genera slug, abbonamento, categorie pasto di default e l’utente titolare.',
+      'In <b>Impostazioni</b>, le voci con il <i class="bi bi-lock-fill"></i> lucchetto <b>non sono nel piano</b> → salta (è un’occasione di upsell).',
+      '<b>Caparra</b> (se inclusa): tipo (informativa / link / Stripe / carta a garanzia), importo, da quante persone scatta, giorni/fasce.',
+      '<b>Menu digitale</b>: crea o importa categorie e piatti; prezzi e <b>allergeni</b>; volendo la <b>carta dei vini</b> e le voci "in evidenza".',
+      '<b>Promozioni</b> (se incluse): sconti ricorrenti o su date/fasce specifiche.',
+      '<b>Notifiche</b>: attiva le <b>email</b> al ristorante e, sul dispositivo di sala, le <b>push del browser</b>.',
+      {head:'Gestione Tavoli <span class="adv">· servizio avanzato</span>'},
+      '<b>Crea i tavoli</b> della sala con la <b>capacità elastica min–max</b> (es. un tavolo da 2 che al bisogno regge 4).',
+      'Imposta lo <b>stato</b> di ogni tavolo: <b>Prenotabile online</b> (auto-assegnato dal widget) · <b>Solo manuale "jolly"</b> (fuori dall’auto-assegnazione, bordo ambra) · <b>Bloccato</b> (fuori uso, con motivo) · <b>Archiviato</b> (rimosso, lo storico resta).',
+      'Definisci la <b>priorità</b> di assegnazione (quali riempire prima) e i <b>tavoli combinati</b> per i gruppi grandi.',
+      'Disegna la <b>mappa sala</b>: vista <b>Setup</b> (disponi i tavoli) e vista <b>Operativa</b> (assegni/segui durante il servizio).',
+      {head:'Ordini online — asporto &amp; consegna <span class="adv">· servizio avanzato</span>'},
+      'Scegli la <b>modalità</b>: Solo asporto · Solo consegna · Asporto + Consegna.',
+      'Imposta il <b>tempo di preparazione</b> e, per la consegna, le <b>zone</b> (con costo e ordine minimo per zona).',
+      'Gestisci gli ordini dalla <b>board kanban</b> (nuovo → in preparazione → pronto → consegnato).',
+      '<b>Rider (fattorini)</b>: creali (nome, telefono, colore), <b>assegnali</b> agli ordini di consegna e consulta le <b>statistiche</b> (ordini del mese per fattorino).',
+      '<b>Stampa</b> su <b>stampante termica</b>: ricevuta cliente e comanda cucina.',
+      '<b>Area riservata rider</b>: pagina dedicata con accesso a <b>PIN</b> per gestire le consegne dal telefono, senza entrare in dashboard.',
+      {head:'Gestione Reputazione <span class="adv">· servizio avanzato</span>'},
+      'Attiva le <b>richieste di recensione</b> post-visita, via <b>email tracciata</b> e/o <b>QR/NFC anonimo</b> da esporre al tavolo.',
+      '<b>Filtro sentimento</b>: i soddisfatti vanno alla recensione pubblica (Google), gli altri diventano <b>feedback privato</b>. Testo dell’email personalizzabile.',
+      {head:'Collaboratori / Staff <span class="adv">· se incluso nel piano</span>'},
+      'Crea gli <b>account collaboratori</b> da <b>Impostazioni → Collaboratori</b> (visibile solo al titolare). Il numero massimo dipende dal piano.',
+      'Lo staff ha <b>accesso operativo limitato</b>: gestisce prenotazioni/servizio, <b>clienti in sola lettura</b>; niente soldi, impostazioni, comunicazioni e marketing.',
     ],
-    notes: [{type:'tip', txt:'<b>Solo l’admin</b> converte/crea l’account. Il reseller osserva: è importante che capisca che lui porta il lead, l’attivazione la fa l’admin.'}]
+    notes: [{type:'say', txt:'<b>Upsell naturale:</b> "Le voci col lucchetto sono funzioni del piano superiore — quando vorrai la caparra, la gestione tavoli o gli ordini online, le attiviamo in un attimo."'}]
   },
   {
-    n: 2, t: 'Setup essenziale', s: 'I 4 passi senza cui il widget non funziona', actor: 'rist',
+    n: 3, t: 'Widget & Vetrina', s: 'Mettere il locale "in vetrina"', actor: 'rist',
     items: [
-      'Il ristoratore <b>accede</b> alla dashboard con email + password del titolare.',
-      '<b>Impostazioni → Generali</b>: nome, contatti, <b>logo</b>, e soprattutto lo <b>step di prenotazione</b> (ogni quanti minuti uno slot). <span class="star">★</span>',
-      '<b>Impostazioni → Orari e Coperti</b> <span class="star">★</span>: compila la griglia giorni × orari con i <b>coperti massimi</b> per slot (usa "Compila tutti" per partire veloce).',
-      '<b>Impostazioni → Categorie Pasto</b>: attiva le fasce che usa (Pranzo, Cena…) e controlla gli orari.',
-      '<b>Impostazioni → Chiusure</b>: inserisci giorni di chiusura settimanale e ferie.',
+      'Copia il <b>link pubblico di prenotazione</b> del locale (in dashboard / Impostazioni).',
+      'Per il sito web: usa il <b>codice embed</b> (iframe) — vedi <b>Guida → Widget online</b>.',
+      {head:'Vetrina Digitale <span class="adv">· hub del locale</span>'},
+      'Attiva la <b>Vetrina Digitale</b> (Impostazioni → Vetrina Digitale): è la <b>mini-pagina/hub</b> che raccoglie prenota, menù, ordina e contatti.',
+      'È il <b>link unico</b> da mettere nella <b>bio dei social</b>, sul <b>Profilo Google (Business)</b> e su <b>WhatsApp</b> — perfetta <b>per chi non ha un sito</b>.',
+      '<b>Personalizzala</b>: immagine di <b>copertina</b>, <b>colori</b> del brand e (con Enterprise) <b>link extra</b> verso altri canali.',
+      'Genera il <b>QR code</b> e stampalo (tavoli, vetrina, menu cartaceo).',
+      '<b>Pubblica il link</b> su tutti i canali: sito, scheda <b>Google</b>, <b>Instagram/Facebook</b> (bio e post), stato/broadcast <b>WhatsApp</b>.',
+      '<b>TEST insieme</b> <span class="star">★</span>: aprite il link, fate una <b>prenotazione di prova reale</b> e verificate che compaia in dashboard e che arrivi l’email di notifica.',
     ],
-    notes: [{type:'tip', txt:'<b>Lo step e gli orari devono combaciare.</b> Step 30 min + orari a :00/:30. Se non torna, il widget mostra pochi slot — è l’errore più frequente.'}]
+    notes: [{type:'tip', txt:'Il test dal vivo è il momento "wow" dell’onboarding: il cliente vede la prenotazione comparire in tempo reale e l’email arrivare. Non saltarlo.'}]
   },
   {
-    n: 3, t: 'Servizi del piano', s: 'Configura ciò che è incluso', actor: 'rist',
+    n: 4, t: 'Marketing', s: 'Farsi trovare e far tornare i clienti · Professional / Enterprise', actor: 'rist',
     items: [
-      'In <b>Impostazioni</b>, le voci con il <i class="bi bi-lock-fill"></i> lucchetto <b>non sono nel piano</b>: salta (eventuale upsell).',
-      '<b>Caparra</b> (se inclusa): tipo, importo, da quante persone, giorni/fasce.',
-      '<b>Menu digitale</b>: crea o importa categorie e piatti (con allergeni).',
-      '<b>Promozioni</b> (se incluse): sconti ricorrenti o su date/fasce.',
-      '<b>Notifiche</b>: attiva email + (sul dispositivo) le push del browser.',
-      'Servizi avanzati del piano completo: <b>Tavoli</b> (sala/mappa), <b>Ordini online</b>, <b>Gestione reputazione</b>.',
+      '<b>Generatore link tracciati</b> (Impostazioni → Marketing): crea link con tracciamento scegliendo <b>destinazione</b> (Vetrina, Prenota, Menù, Ordina, il tuo Sito) e <b>canale</b> (Meta/Facebook, Instagram bio, Google Ads, TikTok, Volantino QR, Google Business, Newsletter…).',
+      '<b>Statistiche / Provenienza</b>: prenotazioni e ordini che arrivano da quei link vengono <b>attribuiti</b> al canale/campagna → vedi quale porta davvero clienti.',
+      '<b>Comunicazioni email ai clienti</b>: invii mirati per <b>compleanni del mese</b> o per <b>tipologia di cliente</b> (nuovo, abituale, VIP). Attenzione: <b>massimo 1 invio al giorno</b> e il servizio funziona <b>a crediti</b>.',
     ],
-    notes: [{type:'say', txt:'<b>Upsell naturale:</b> "Le voci col lucchetto sono funzioni del piano superiore — quando vorrai caparra o gestione tavoli, le attiviamo in un attimo."'}]
-  },
-  {
-    n: 4, t: 'Widget online', s: 'Mettere il locale "in vetrina"', actor: 'rist',
-    items: [
-      'Copia il <b>link pubblico</b> di prenotazione: <code>dominio/nome-ristorante/booking</code>.',
-      'Per il sito: usa il <b>codice embed</b> (iframe) — vedi <b>Guida → Widget online</b>.',
-      'Genera il <b>QR code</b> da <b>Impostazioni → Vetrina Digitale</b> e stampalo (tavoli, vetrina, menu).',
-      'Pubblica il link su: <b>sito</b>, scheda <b>Google</b>, <b>Instagram/Facebook</b>, stato <b>WhatsApp</b>.',
-      '<b>TEST insieme</b> <span class="star">★</span>: aprite il link, fate una <b>prenotazione di prova</b> e verificate che arrivi in dashboard.',
-    ],
-    notes: [{type:'tip', txt:'Il test dal vivo è il momento "wow" dell’onboarding: il cliente vede la prenotazione comparire in tempo reale. Non saltarlo.'}]
+    notes: [{type:'say', txt:'<b>Da dire al cliente:</b> "Non serve indovinare dove investire: coi link tracciati vedi nero su bianco quale canale ti riempie la sala."'}]
   },
   {
     n: 5, t: 'Formazione operativa', s: 'Come si usa ogni giorno', actor: 'rist',
     items: [
-      '<b>Dashboard</b>: la panoramica del giorno (coperti attesi, stati).',
-      '<b>Prenotazioni</b>: stati (in attesa → confermata → arrivato / no-show) e azioni rapide.',
+      '<b>Dashboard</b>: la panoramica del giorno (coperti attesi, prossimi arrivi, stati).',
+      '<b>Prenotazioni</b>: il ciclo di vita (in attesa → confermata → arrivato / no-show) e le azioni rapide; come crearne una <b>a mano</b> (telefono/walk-in).',
       '<b>Sala</b> (piano completo): mappa, fasce di servizio, assegnazione tavoli.',
-      'Attiva le <b>notifiche push</b> sul dispositivo che userà in servizio (telefono/tablet di sala).',
+      'Attiva le <b>notifiche push</b> sul dispositivo che userà in servizio (telefono/tablet di sala), non solo sul PC dell’ufficio.',
       'Mostra la <b>Guida in-app</b> (voce "Guida" nella sidebar): il cliente è autonomo per i dubbi.',
     ],
   },
   {
-    n: 6, t: 'Chiusura & follow-up', s: 'Consegna e continuità (reseller)', actor: 'res',
+    n: 6, t: 'Chiusura & follow-up', s: 'Consegna e continuità', actor: 'res',
     items: [
-      'Consegna al cliente: <b>credenziali</b>, <b>link widget</b>, <b>QR</b>.',
-      'Fissa un <b>follow-up</b> (es. dopo 7 giorni) per dubbi e ottimizzazioni.',
-      'Annota il cliente tra i tuoi <b>clienti acquisiti</b> (<code>/reseller/clients</code>).',
-      'Ricorda: ogni cliente attivo conta per la tua <b>attivazione</b> e per le <b>commissioni</b>.',
+      'Consegna al cliente: <b>credenziali</b> di accesso, <b>link del widget</b>, <b>QR code</b>.',
+      'Verifica che il cliente sappia <b>dove trovare la Guida</b> e <b>come contattare il supporto</b>.',
+      'Fissa un <b>follow-up</b> (es. dopo 7 giorni) per dubbi, ottimizzazioni e primi risultati.',
     ],
   },
 ];
 
-const KEY = 'evulery_onboarding_checklist';
+const KEY = 'evulery_onboarding_checklist_v2';
 var state = {};
 try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ state = {}; }
 
 const ACTOR = { admin:['Admin','a-admin'], rist:['Ristoratore','a-rist'], res:['Reseller','a-res'] };
 
+function isCheck(it){ return typeof it === 'string'; }
+
 function render(){
   var host = document.getElementById('phases');
   host.innerHTML = PHASES.map(function(p){
-    var rows = p.items.map(function(txt, i){
+    var rows = p.items.map(function(it, i){
+      if (!isCheck(it)) {
+        return '<div class="subhead">'+it.head+'</div>';
+      }
       var id = p.n + '-' + i;
       var done = state[id] ? ' done' : '';
       return '<label class="item'+done+'" data-id="'+id+'"><input type="checkbox"'+(state[id]?' checked':'')+'>'
-           + '<span class="box"><i class="bi bi-check-lg"></i></span><span class="txt">'+txt+'</span></label>';
+           + '<span class="box"><i class="bi bi-check-lg"></i></span><span class="txt">'+it+'</span></label>';
     }).join('');
     var notes = (p.notes||[]).map(function(nt){
       var ic = nt.type==='tip' ? 'bi-lightbulb' : 'bi-chat-quote';
@@ -214,7 +242,7 @@ function bind(){
 }
 function updateProgress(){
   var total = 0, done = 0;
-  PHASES.forEach(function(p){ p.items.forEach(function(_,i){ total++; if(state[p.n+'-'+i]) done++; }); });
+  PHASES.forEach(function(p){ p.items.forEach(function(it,i){ if(isCheck(it)){ total++; if(state[p.n+'-'+i]) done++; } }); });
   document.getElementById('fill').style.width = total ? (done/total*100)+'%' : '0';
   document.getElementById('ptxt').textContent = done + ' / ' + total + ' completati';
 }
