@@ -124,6 +124,7 @@ return array(
     'App\\Services\\AvailabilityService' => $baseDir . '/app/Services/AvailabilityService.php',
     'App\\Services\\BroadcastService' => $baseDir . '/app/Services/BroadcastService.php',
     'App\\Services\\CommissionCalculator' => $baseDir . '/app/Services/CommissionCalculator.php',
+    'App\\Services\\DemoSeeder' => $baseDir . '/app/Services/DemoSeeder.php',
     'App\\Services\\EmergencyClosureService' => $baseDir . '/app/Services/EmergencyClosureService.php',
     'App\\Services\\HeartbeatService' => $baseDir . '/app/Services/HeartbeatService.php',
     'App\\Services\\HubAnalyticsService' => $baseDir . '/app/Services/HubAnalyticsService.php',

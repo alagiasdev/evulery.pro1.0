@@ -127,6 +127,21 @@
             </div>
         </div>
 
+        <?php if (in_array($tenant['slug'], ['trattoria-genovese', 'trattoria-da-mario'], true)): ?>
+        <div class="adm-info-card" style="border:1px solid #ffe0b2;">
+            <div class="adm-info-hdr" style="background:#fff8f0;"><i class="bi bi-stars me-1"></i> Dati demo (vetrina)</div>
+            <div class="adm-info-body">
+                <p style="font-size:.8rem;color:#6c757d;margin:0 0 .6rem;">Rigenera ~30 clienti e ~100 prenotazioni con date aggiornate. Sostituisce i soli dati demo (marcati); tavoli e menu restano. Rilancia ~ogni mese.</p>
+                <form method="POST" action="<?= url("admin/tenants/{$tenant['id']}/seed-demo") ?>" data-confirm="Rigenerare i dati demo di <?= e($tenant['name']) ?>? I clienti e le prenotazioni demo attuali verranno sostituiti.">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="adm-btn adm-btn-primary" style="width:100%;">
+                        <i class="bi bi-arrow-repeat"></i> Rigenera dati demo
+                    </button>
+                </form>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <!-- Crediti Email -->
         <div class="adm-info-card">
             <div class="adm-info-hdr"><i class="bi bi-envelope me-1"></i> Crediti Email</div>

@@ -300,6 +300,37 @@ class TenantsController
         Response::redirect(url('admin/tenants'));
     }
 
+    /**
+     * Rigenera i DATI DEMO (clienti + prenotazioni rolling) di un tenant vetrina.
+     * Guardato: consentito SOLO sugli slug demo in allowlist (mai un tenant reale).
+     */
+    public function seedDemo(Request $request): void
+    {
+        $id = (int) $request->param('id');
+        $tenant = (new Tenant())->findById($id);
+        if (!$tenant) {
+            flash('danger', 'Tenant non trovato.');
+            Response::redirect(url('admin/tenants'));
+            return;
+        }
+
+        $demoSlugs = ['trattoria-genovese', 'trattoria-da-mario'];
+        if (!in_array($tenant['slug'], $demoSlugs, true)) {
+            flash('danger', 'Operazione consentita solo sui tenant demo/vetrina.');
+            Response::redirect(url("admin/tenants/{$id}/edit"));
+            return;
+        }
+
+        try {
+            $res = (new \App\Services\DemoSeeder())->run($tenant['slug']);
+            AuditLog::log('demo_seeded', "Demo {$tenant['slug']}: {$res['clienti']} clienti, {$res['prenotazioni']} prenotazioni", Auth::id());
+            flash('success', "Dati demo rigenerati: {$res['clienti']} clienti e {$res['prenotazioni']} prenotazioni.");
+        } catch (\Throwable $e) {
+            flash('danger', 'Errore durante la rigenerazione demo: ' . $e->getMessage());
+        }
+        Response::redirect(url("admin/tenants/{$id}/edit"));
+    }
+
     public function updateUser(Request $request): void
     {
         $tenantId = (int)$request->param('id');

@@ -264,6 +264,7 @@ $router->group('/admin', ['auth', 'admin', 'csrf', 'dashboard-ratelimit'], funct
     $r->post('/tenants/{id}/toggle', [TenantsController::class, 'toggle']);
     $r->post('/tenants/{id}/users/{userId}', [TenantsController::class, 'updateUser']);
     $r->post('/tenants/{id}/credits', [TenantsController::class, 'assignCredits']);
+    $r->post('/tenants/{id}/seed-demo', [TenantsController::class, 'seedDemo']);
     $r->post('/tenants/{id}', [TenantsController::class, 'update']);
     // Subscriptions
     $r->get('/subscriptions', [SubscriptionsController::class, 'index']);
