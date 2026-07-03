@@ -30,6 +30,10 @@ Base prod: `/home/vpsevlrqrit/evulery/storage/logs/` · Base locale: `storage/lo
 - [ ] *(leva nota, se mai servisse)* `process-outbox.php` gira ogni minuto con loop interno ~55s → di fatto sempre attivo ma ~dormiente (CPU≈0). Se si volesse togliere il processo "sempre on", basta rimuovere il loop interno: un solo batch al minuto (email entro ~60s invece di ~5s). Non serve ora.
 - [ ] **reCAPTCHA v3 invisibile sul submit del widget di prenotazione** (difesa-in-profondità, FUTURO — annotato 2026-06-26): si usa già reCAPTCHA v3 su demo-request/landing. Aggiungerlo al POST prenotazione alzerebbe il muro contro bot che creano prenotazioni-spam, **senza attrito per i clienti veri** (v3 è invisibile). Da fare **se** compaiono prenotazioni-spam: oggi il fronte è coperto da rate limit POST 10/min/IP + (quando attivo) Cloudflare bot mitigation. Non urgente.
 
+## 🎨 Sviluppo futuro — UX pagina cliente
+
+- [ ] **Storico prenotazioni: paginazione server-side** (opzione C, annotato 2026-07-03): oggi `CustomersController::show` carica TUTTE le prenotazioni del cliente e la view le renderizza tutte con filtri client-side (contatori sull'intero set). L'opzione A (pannello scrollabile ad altezza fissa + header sticky, fatta 2026-07-03) risolve l'altezza pagina. Passare a paginazione server-side (N per pagina dal DB) **quando un cliente supera ~200 prenotazioni**: richiede spostare filtri+contatori lato server/AJAX (contatori aggregati da query separata). Effort ~2-3h. Trigger: performance/DOM su clienti molto abituali.
+
 ## 🪑 Backlog breve periodo — IN PANCHINA (revisione 2026-05-13)
 
 Task pronti, da fare quando emerge il trigger o c'è una finestra di lavoro.

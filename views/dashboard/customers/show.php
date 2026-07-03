@@ -565,6 +565,7 @@ $sourceLabelsPrivacy = [
                 <span class="cs-filter-chip" data-filter="cancelled"><i class="bi bi-dash-circle me-1" style="color:#adb5bd;font-size:.6rem;"></i>Annullate <span class="cs-fc-count"><?= $statusCounts['cancelled'] ?></span></span>
             </div>
 
+            <div class="ch-scroll">
             <div class="ch-header">
                 <span>Data</span>
                 <span>Ora</span>
@@ -591,10 +592,12 @@ $sourceLabelsPrivacy = [
                 <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
             </div>
             <?php endforeach; ?>
+            </div>
         </div>
 
         <!-- Mobile history -->
         <div class="mobile-history">
+            <div class="mh-scroll">
             <?php foreach ($reservations as $r):
                 $hour = (int)substr($r['reservation_time'], 0, 2);
                 $mealType = $hour >= 16 ? 'Cena' : 'Pranzo';
@@ -613,6 +616,7 @@ $sourceLabelsPrivacy = [
                 </div>
             </a>
             <?php endforeach; ?>
+            </div>
         </div>
 
         <?php endif; ?>
