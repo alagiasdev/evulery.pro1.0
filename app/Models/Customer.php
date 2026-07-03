@@ -262,6 +262,10 @@ class Customer
             $cols[] = 'notes';
             $vals['notes'] = $data['notes'];
         }
+        if (!empty($data['is_demo'])) {
+            $cols[] = 'is_demo';
+            $vals['is_demo'] = 1;
+        }
         if (isset($data['unsubscribed'])) {
             $cols[] = 'unsubscribed';
             $vals['unsubscribed'] = (int)$data['unsubscribed'];

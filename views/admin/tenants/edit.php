@@ -73,6 +73,10 @@
                         <input type="checkbox" name="is_active" id="is_active" <?= $tenant['is_active'] ? 'checked' : '' ?>>
                         <label for="is_active">Attivo</label>
                     </div>
+                    <div class="adm-form-check">
+                        <input type="checkbox" name="is_demo" id="is_demo" <?= !empty($tenant['is_demo']) ? 'checked' : '' ?>>
+                        <label for="is_demo">Tenant demo (vetrina) — abilita "Rigenera dati demo"</label>
+                    </div>
                 </div>
             </div>
 
@@ -127,7 +131,7 @@
             </div>
         </div>
 
-        <?php if (in_array($tenant['slug'], ['trattoria-genovese', 'trattoria-da-mario'], true)): ?>
+        <?php if (!empty($tenant['is_demo'])): ?>
         <div class="adm-info-card" style="border:1px solid #ffe0b2;">
             <div class="adm-info-hdr" style="background:#fff8f0;"><i class="bi bi-stars me-1"></i> Dati demo (vetrina)</div>
             <div class="adm-info-body">

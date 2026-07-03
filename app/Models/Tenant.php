@@ -175,7 +175,7 @@ class Tenant
             'sound_on_new_reservation', 'sound_on_cancellation',
             'sound_on_deposit_received', 'sound_on_new_order', 'sound_on_new_feedback',
             'menu_hero_image', 'menu_tagline', 'menu_featured_label', 'menu_languages',
-            'opening_hours', 'is_active', 'max_staff',
+            'opening_hours', 'is_active', 'is_demo', 'max_staff',
             'ordering_enabled', 'ordering_mode', 'ordering_prep_minutes',
             'ordering_min_amount', 'ordering_max_per_slot', 'ordering_hours',
             'ordering_payment_methods', 'ordering_pickup_interval', 'ordering_auto_accept',

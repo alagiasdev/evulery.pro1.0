@@ -262,6 +262,7 @@ class TenantsController
             'table_duration' => $data['table_duration'] ?? 90,
             'time_step'      => $data['time_step'] ?? 30,
             'is_active'      => isset($data['is_active']) ? 1 : 0,
+            'is_demo'        => isset($data['is_demo']) ? 1 : 0,
             'max_staff'      => ($data['max_staff'] ?? '') === '' ? null : (int)$data['max_staff'],
         ]);
 
@@ -314,9 +315,8 @@ class TenantsController
             return;
         }
 
-        $demoSlugs = ['trattoria-genovese', 'trattoria-da-mario'];
-        if (!in_array($tenant['slug'], $demoSlugs, true)) {
-            flash('danger', 'Operazione consentita solo sui tenant demo/vetrina.');
+        if ((int) ($tenant['is_demo'] ?? 0) !== 1) {
+            flash('danger', 'Operazione consentita solo sui tenant marcati come demo/vetrina.');
             Response::redirect(url("admin/tenants/{$id}/edit"));
             return;
         }

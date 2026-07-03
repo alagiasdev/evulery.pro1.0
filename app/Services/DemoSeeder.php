@@ -30,9 +30,6 @@ class DemoSeeder
 {
     private const DEMO_DOMAIN = 'demo.evulery.local';
 
-    /** Slug consentiti: SOLO tenant vetrina. Protegge i tenant reali da qualunque entry point. */
-    private const DEMO_SLUGS = ['trattoria-genovese', 'trattoria-da-mario'];
-
     private \PDO $db;
     /** @var int[] tavoli gia' assegnati a prenotazioni di oggi (evita doppio uso) */
     private array $usedTablesToday = [];
@@ -49,13 +46,14 @@ class DemoSeeder
      */
     public function run(string $slug, bool $cleanOnly = false): array
     {
-        // Guardia primaria: MAI su un tenant non-demo, da nessun entry point.
-        if (!in_array($slug, self::DEMO_SLUGS, true)) {
-            throw new \RuntimeException("Slug '{$slug}' non e' un tenant demo/vetrina: seeding RIFIUTATO (protezione tenant reali).");
-        }
         $tenant = $this->findTenant($slug);
         if (!$tenant) {
             throw new \RuntimeException("Tenant '{$slug}' non trovato: seeding annullato.");
+        }
+        // Guardia primaria: SOLO tenant marcati is_demo=1 nel DB. Un tenant reale
+        // (is_demo=0, il default) e' RIFIUTATO da qualunque entry point.
+        if ((int) $tenant['is_demo'] !== 1) {
+            throw new \RuntimeException("Tenant '{$slug}' non e' marcato come demo (is_demo=0): seeding RIFIUTATO (protezione tenant reali).");
         }
         $tid = (int) $tenant['id'];
         $out = ['tenant' => $tenant['name'], 'slug' => $slug, 'tenant_id' => $tid];
@@ -82,7 +80,7 @@ class DemoSeeder
 
     private function findTenant(string $slug): ?array
     {
-        $stmt = $this->db->prepare('SELECT id, name, slug FROM tenants WHERE slug = :s LIMIT 1');
+        $stmt = $this->db->prepare('SELECT id, name, slug, is_demo FROM tenants WHERE slug = :s LIMIT 1');
         $stmt->execute(['s' => $slug]);
         return $stmt->fetch() ?: null;
     }
@@ -91,8 +89,11 @@ class DemoSeeder
 
     private function cleanDemo(int $tid): array
     {
-        $stmt = $this->db->prepare('SELECT id FROM customers WHERE tenant_id = :t AND email LIKE :dom');
-        $stmt->execute(['t' => $tid, 'dom' => '%@' . self::DEMO_DOMAIN]);
+        // Cancella SOLO i clienti demo (is_demo=1). I clienti reali (is_demo=0)
+        // non vengono MAI toccati: protezione assoluta anche se il tenant fosse
+        // marcato demo per errore.
+        $stmt = $this->db->prepare('SELECT id FROM customers WHERE tenant_id = :t AND is_demo = 1');
+        $stmt->execute(['t' => $tid]);
         $ids = array_map('intval', array_column($stmt->fetchAll(), 'id'));
 
         $res = 0;
@@ -258,6 +259,7 @@ class DemoSeeder
                 'birthday'   => sprintf('%04d-%02d-%02d', rand(1962, 2001), rand(1, 12), rand(1, 28)),
                 'tags'       => $tags,
                 'source'     => 'booking',
+                'is_demo'    => 1,
                 'marketing_consent' => rand(0, 100) < 70 ? 1 : 0,
             ]);
             $customers[] = ['id' => $id, 'seg' => $seg];
@@ -362,23 +364,22 @@ class DemoSeeder
     // Aggiorna total_bookings + last_visit dei clienti demo dai dati reali.
     private function refreshCustomerStats(int $tid): void
     {
-        $like = '%@' . self::DEMO_DOMAIN;
         $u1 = $this->db->prepare(
             "UPDATE customers c SET c.total_bookings = (
                 SELECT COUNT(*) FROM reservations r
                 WHERE r.customer_id = c.id AND r.tenant_id = :t1 AND r.status NOT IN ('cancelled','noshow')
-             ) WHERE c.tenant_id = :t2 AND c.email LIKE :dom"
+             ) WHERE c.tenant_id = :t2 AND c.is_demo = 1"
         );
-        $u1->execute(['t1' => $tid, 't2' => $tid, 'dom' => $like]);
+        $u1->execute(['t1' => $tid, 't2' => $tid]);
 
         $u2 = $this->db->prepare(
             "UPDATE customers c SET c.last_visit = (
                 SELECT MAX(r.reservation_date) FROM reservations r
                 WHERE r.customer_id = c.id AND r.tenant_id = :t1
                   AND r.status IN ('arrived','confirmed') AND r.reservation_date <= CURDATE()
-             ) WHERE c.tenant_id = :t2 AND c.email LIKE :dom"
+             ) WHERE c.tenant_id = :t2 AND c.is_demo = 1"
         );
-        $u2->execute(['t1' => $tid, 't2' => $tid, 'dom' => $like]);
+        $u2->execute(['t1' => $tid, 't2' => $tid]);
     }
 
     private function slugify(string $s): string
