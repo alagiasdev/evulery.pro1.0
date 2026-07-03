@@ -706,11 +706,12 @@ body {
             </div>
 
             <h3>Schermata 3 · Caparra <small style="color:var(--muted);">(2 min)</small></h3>
-            <p><strong>Torna in dashboard → Impostazioni → Caparra.</strong> Mostra le 3 modalità:</p>
+            <p><strong>Torna in dashboard → Impostazioni → Caparra.</strong> Mostra i 4 tipi:</p>
             <ul>
                 <li><strong>Informativa</strong> (gratis, senza Stripe)</li>
                 <li><strong>Link di pagamento</strong> (Satispay, PayPal, ecc.)</li>
                 <li><strong>Stripe automatico</strong></li>
+                <li><strong>Carta a garanzia</strong> (blocca la carta, penale automatica in caso di no-show)</li>
             </ul>
             <div class="ds-script">
                 "La caparra è il single best tool contro i no-show. Mediamente li riduce del 70-80%. Questo significa per un ristorante di 60 coperti circa €5-7.000 al mese di tavoli recuperati che prima andavano persi."
@@ -922,8 +923,8 @@ info@evulery.it</div>
             <div class="ds-warn"><strong>Piano</strong> (è impostato su Enterprise per mostrare tutte le feature)</div>
             <div class="ds-warn"><strong>Email del ristorante demo</strong> (riceveremmo email reali)</div>
 
-            <h3>Reset settimanale</h3>
-            <p>Ogni <strong>lunedì alle 6:00</strong> un cron resetta le prenotazioni della settimana e le ricarica con date aggiornate. Se durante la settimana il calendario "vuota troppo", scrivi su #sales-internal e lo rigenero a mano.</p>
+            <h3>Rigenerazione dati demo</h3>
+            <p>I dati demo (clienti + prenotazioni) si rigenerano <strong>a mano dal pannello super-admin</strong>: <em>Ristoranti → [tenant demo] → Modifica → "Rigenera dati demo"</em>. Le prenotazioni vengono ricreate con date aggiornate rispetto a oggi. Rilancialo circa <strong>una volta al mese</strong> — o quando il calendario "vuota troppo" — per avere sempre prenotazioni disponibili in demo.</p>
 
             <h3>Casi d'uso speciali</h3>
             <table class="ds-table">
