@@ -530,6 +530,39 @@ HTML
 HTML
     ],
 
+    'collaboratori' => [
+        'title'       => 'Collaboratori (Staff)',
+        'subtitle'    => 'Dai accesso al tuo team, con permessi limitati',
+        'icon'        => 'bi-people-fill',
+        'color'       => '#00838F',
+        'category'    => 'avanzati',
+        'count_label' => '1 articolo',
+        'keywords'    => 'collaboratori staff accessi permessi team cameriere sala maitre familiari account utenti aggiungi disattiva sola lettura enterprise',
+        'read_time'   => 2,
+        'body' => <<<'HTML'
+<p>Con il piano <strong>Enterprise</strong> puoi creare <strong>account per i tuoi collaboratori</strong> (cameriere di sala, ma&icirc;tre, familiari che ti aiutano) con un accesso <strong>limitato</strong> alla dashboard. La pagina si trova in <em>Impostazioni &rarr; Collaboratori</em> ed &egrave; visibile <strong>solo al titolare</strong>.</p>
+
+<h4>Cosa pu&ograve; fare un collaboratore</h4>
+<ul>
+    <li>Vedere e gestire le <strong>prenotazioni</strong> e il servizio di sala (segnare arrivi e no-show, assegnare i tavoli nella mappa <em>Operativa</em>).</li>
+    <li>Consultare i <strong>clienti in sola lettura</strong>: non pu&ograve; modificarli n&eacute; esportarli.</li>
+</ul>
+
+<h4>Cosa NON pu&ograve; fare</h4>
+<ul>
+    <li>Nessun accesso a <strong>incassi e caparre</strong>, <strong>impostazioni</strong>, <strong>comunicazioni</strong> ed <strong>email marketing</strong>.</li>
+    <li>Non vede piano e prezzi, e non pu&ograve; toccare il <em>Setup</em> della sala (resta di competenza del titolare).</li>
+</ul>
+
+<h4>Come si aggiunge</h4>
+<div class="hg-step"><div class="hg-step-num">1</div><div class="hg-step-content">Vai in <em>Impostazioni &rarr; Collaboratori</em>.</div></div>
+<div class="hg-step"><div class="hg-step-num">2</div><div class="hg-step-content">Compila <strong>nome, email e password</strong> del collaboratore e salva: potr&agrave; accedere subito con quelle credenziali.</div></div>
+<div class="hg-step"><div class="hg-step-num">3</div><div class="hg-step-content">Per togliere l&rsquo;accesso a qualcuno usa <strong>Disattiva</strong>: l&rsquo;account resta nello storico ma non pu&ograve; pi&ugrave; entrare. Puoi riattivarlo quando vuoi.</div></div>
+
+<div class="hg-info"><strong><i class="bi bi-info-circle me-1"></i>Nota:</strong> il numero massimo di collaboratori dipende dal tuo piano (lo vedi nel contatore &ldquo;X / N account staff&rdquo; in cima alla pagina).</div>
+HTML
+    ],
+
     'notifiche' => [
         'title'       => 'Notifiche',
         'subtitle'    => 'Non perdere mai una prenotazione',

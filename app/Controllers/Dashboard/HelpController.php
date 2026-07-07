@@ -43,17 +43,19 @@ class HelpController
         $slug     = (string)$request->param('slug');
         $sections = $this->sections();
 
-        if (!isset($sections[$slug])) {
+        // Sezione inesistente o nascosta (es. dominio personalizzato): 404 soft.
+        // Il flag 'hidden' e' rispettato anche qui, non solo nella griglia.
+        if (!isset($sections[$slug]) || !empty($sections[$slug]['hidden'])) {
             flash('danger', 'Articolo non trovato.');
             Response::redirect(url('dashboard/help'));
         }
 
         $section = $sections[$slug];
 
-        // Related: other sections from same category, excluding current (max 4)
+        // Related: other sections from same category, excluding current e nascoste (max 4)
         $related = [];
         foreach ($sections as $s => $data) {
-            if ($s === $slug) continue;
+            if ($s === $slug || !empty($data['hidden'])) continue;
             if (($data['category'] ?? '') === ($section['category'] ?? '')) {
                 $related[$s] = $data;
                 if (count($related) >= 4) break;
@@ -62,7 +64,7 @@ class HelpController
         // If less than 4 related, top up with other sections
         if (count($related) < 4) {
             foreach ($sections as $s => $data) {
-                if ($s === $slug || isset($related[$s])) continue;
+                if ($s === $slug || isset($related[$s]) || !empty($data['hidden'])) continue;
                 $related[$s] = $data;
                 if (count($related) >= 4) break;
             }
