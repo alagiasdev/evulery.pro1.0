@@ -66,12 +66,14 @@ body {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 12mm;
 }
+.brand-lockup { display: flex; align-items: center; gap: 4mm; }
+.logomark { width: 13mm; height: 13mm; flex: 0 0 13mm; }
 .brand-name {
-    font-size: 26pt; font-weight: 900; letter-spacing: -1.5px;
-    margin: 0;
+    font-size: 25pt; font-weight: 800; letter-spacing: -1px;
+    margin: 0; line-height: 1;
 }
 .brand-sub {
-    font-size: 9.5pt; opacity: .9; margin: 1mm 0 0;
+    font-size: 9pt; opacity: .9; margin: 1mm 0 0;
 }
 .early-tag {
     display: inline-block;
@@ -419,11 +421,18 @@ body {
 
     <div class="hero">
         <div class="brand-mark">
-            <div>
-                <p class="brand-name">EVULERY</p>
-                <p class="brand-sub">Soluzioni per il web &middot; by alagias.</p>
+            <div class="brand-lockup">
+                <svg class="logomark" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" aria-label="evulery">
+                    <circle cx="48" cy="48" r="44" fill="#fff"/>
+                    <path d="M30 48 Q30 32 48 32 Q66 32 66 48 L36 48 Q38 60 50 60 Q58 60 62 56" stroke="#00844A" stroke-width="6" stroke-linecap="round" fill="none"/>
+                    <circle cx="68" cy="62" r="5" fill="#4ade80"/>
+                </svg>
+                <div>
+                    <p class="brand-name">evulery<span style="color:#4ade80;">.</span></p>
+                    <p class="brand-sub">Soluzioni per il web &middot; by alagias.</p>
+                </div>
             </div>
-            <span class="early-tag">Solo 15 posti</span>
+            <span class="early-tag">Prezzo di lancio</span>
         </div>
 
         <h1 class="hero-title">
@@ -440,14 +449,14 @@ body {
     </div>
 
     <div class="offer-card">
-        <p class="offer-title">Offerta valida fino al 30 giugno 2026</p>
+        <p class="offer-title">Offerta valida fino al 30 settembre 2026</p>
         <div class="offer-big"><strong>90 giorni</strong> Enterprise gratis</div>
         <ul class="offer-list">
             <li><strong>Tutte le funzionalita'</strong> Enterprise sbloccate, senza limiti</li>
             <li><strong>Setup dedicato</strong> da noi: configuriamo tutto insieme (1-2 ore)</li>
-            <li><strong>Prezzo bloccato a EUR 129/mese per 36 mesi</strong> (listino EUR 169)</li>
+            <li><strong>Prezzo bloccato a EUR 129/mese per sempre</strong> (listino EUR 169)</li>
             <li>Setup una tantum EUR 249 &middot; <em>nessun rinnovo automatico</em></li>
-            <li>Adesione entro il <strong>30 giugno 2026</strong> &middot; solo per i primi 15</li>
+            <li>Aderisci entro il <strong>30 settembre 2026</strong> e blocchi il prezzo di lancio</li>
         </ul>
     </div>
 
@@ -457,7 +466,7 @@ body {
             <div class="why-item">
                 <div class="why-icon">&minus;</div>
                 <h3 class="why-h">Meno no-show</h3>
-                <p class="why-p">Caparra Stripe, conferme automatiche e reminder. Recupero fino al 90% delle perdite.</p>
+                <p class="why-p">Caparra, conferme automatiche e reminder. Tagli le perdite dei tavoli vuoti.</p>
             </div>
             <div class="why-item">
                 <div class="why-icon">+</div>
@@ -550,7 +559,7 @@ body {
         <div class="pricing-left">
             <p class="pricing-eye">Il tuo prezzo, bloccato</p>
             <div class="pricing-big">EUR 129<span style="font-size:13pt;font-weight:600;opacity:.85;">/mese</span></div>
-            <p class="pricing-sub">Garantito per 36 mesi dall'attivazione. Sconto annuale -17% (EUR 1.290) o semestrale -6% (EUR 729).</p>
+            <p class="pricing-sub">Bloccato per sempre dall'attivazione. Pagamento annuale -17% (EUR 1.290) o semestrale -5% (EUR 729).</p>
         </div>
         <div class="pricing-right">
             <p class="pricing-vs">Listino dal 1&deg; ott 2026</p>
@@ -578,7 +587,7 @@ body {
     </div>
 
     <div class="qr-row">
-        <div class="qr-placeholder">QR<br>evulery.it</div>
+        <div class="qr-placeholder"><img src="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&amp;margin=0&amp;ecc=M&amp;format=svg&amp;data=https%3A%2F%2Fevulery.it" alt="QR evulery.it" style="width:100%;height:100%;display:block;"></div>
         <div class="qr-text">
             <strong>Scansiona per la demo.</strong><br>
             Inquadra il QR con la fotocamera del telefono. Si apre la pagina con video demo, prezzi e modulo per fissare un appuntamento in 30 minuti.
@@ -586,7 +595,7 @@ body {
     </div>
 
     <div class="foot">
-        <strong>Evulery.Pro 1.0</strong> &middot; Offerta riservata ai primi 15 ristoranti, valida fino al 30 giugno 2026<br>
+        <strong>Evulery</strong> &middot; Offerta di lancio valida fino al 30 settembre 2026<br>
         alagias. Soluzioni per il web &middot; P.IVA 01855570766 &middot; info@evulery.it &middot; evulery.it<br>
         <em>Importi non soggetti a IVA ai sensi dell'art. 1 commi 54-89 L. 190/2014 (regime forfettario).</em>
     </div>

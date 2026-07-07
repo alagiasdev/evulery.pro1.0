@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evulery — Cartellina A4 (copertina)</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+@page { size: A4 portrait; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #e9ecef; color: #1a1d23; }
+
+/* ===== Toolbar (solo schermo) ===== */
+.toolbar { background: #fff; padding: 14px 20px; text-align: center; border-bottom: 2px solid #e9ecef; position: sticky; top: 0; z-index: 10; }
+.toolbar button { background: #00844A; color: #fff; border: 0; padding: 10px 22px; font-size: 14px; font-weight: 700; border-radius: 6px; cursor: pointer; }
+.toolbar button:hover { background: #006837; }
+.toolbar .hint { font-size: 12px; color: #6c757d; margin-top: 8px; line-height: 1.5; }
+@media print { .toolbar { display: none !important; } body { background: #fff; } .wrap { padding: 0; } }
+
+.wrap { padding: 28px 20px 50px; display: flex; justify-content: center; }
+
+/* ===== Copertina A4 (210 x 297 mm) ===== */
+.cover {
+    width: 210mm; height: 297mm; position: relative; overflow: hidden;
+    background: linear-gradient(165deg, #042418 0%, #00623a 52%, #00844A 100%);
+    color: #fff; box-shadow: 0 8px 34px rgba(0,0,0,.2);
+    display: flex; flex-direction: column;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+@media print { .cover { box-shadow: none; } }
+.cover::before {
+    content: ""; position: absolute; top: -60mm; right: -50mm; width: 160mm; height: 160mm;
+    background: radial-gradient(circle, #4ade80 0%, transparent 68%); opacity: .18; pointer-events: none;
+}
+.cover::after {
+    content: ""; position: absolute; bottom: -50mm; left: -40mm; width: 120mm; height: 120mm;
+    background: radial-gradient(circle, #4ade80 0%, transparent 70%); opacity: .10; pointer-events: none;
+}
+
+/* Header */
+.cv-head { padding: 24mm 24mm 0; display: flex; align-items: center; gap: 5mm; position: relative; }
+.cv-logomark { width: 20mm; height: 20mm; flex: 0 0 20mm; }
+.cv-word { font-size: 30pt; font-weight: 800; letter-spacing: -1.2px; line-height: 1; }
+.cv-word .dot { color: #4ade80; }
+.cv-word small { display: block; font-size: 9.5pt; font-weight: 500; opacity: .85; letter-spacing: .3px; margin-top: 1.5mm; }
+
+/* Hero */
+.cv-hero { padding: 0 24mm; margin-top: auto; position: relative; }
+.cv-eyebrow {
+    display: inline-block; font-size: 10pt; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: #b6f3d0; border: 1.5px solid rgba(255,255,255,.35); border-radius: 100px; padding: 4px 14px; margin-bottom: 8mm;
+}
+.cv-claim { font-size: 46pt; font-weight: 900; letter-spacing: -1.8px; line-height: 1.06; margin: 0 0 7mm; }
+.cv-claim span, .cv-claim em { display: block; font-style: normal; }
+.cv-claim em { color: #7defb0; }
+.cv-payoff { font-size: 16pt; font-style: italic; opacity: .95; margin: 0 0 6mm; font-weight: 500; }
+.cv-desc { font-size: 12.5pt; line-height: 1.5; opacity: .92; max-width: 150mm; margin: 0; }
+.cv-desc strong { color: #b6f3d0; font-weight: 700; }
+
+/* Footer */
+.cv-foot {
+    margin-top: auto; padding: 12mm 24mm 20mm; position: relative;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 8mm;
+}
+.cv-contacts { display: flex; flex-direction: column; gap: 1.5mm; }
+.cv-contacts .row { display: flex; align-items: center; gap: 3mm; font-size: 12pt; font-weight: 600; }
+.cv-contacts .ico {
+    width: 6mm; height: 6mm; border-radius: 50%; background: rgba(255,255,255,.14);
+    display: flex; align-items: center; justify-content: center; font-size: 8pt; font-weight: 800; color: #7defb0;
+}
+.cv-law {
+    text-align: right; font-size: 9.5pt; line-height: 1.4; opacity: .9;
+    border-right: 2px solid #4ade80; padding-right: 5mm;
+}
+.cv-law strong { display: block; font-size: 11pt; color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+    <button type="button" onclick="window.print()">Stampa copertina A4</button>
+    <div class="hint">
+        Questa &egrave; la <strong>copertina</strong> (fronte A4) della cartellina.<br>
+        Per una cartellina <strong>fustellata con aletta portadocumenti</strong>, esporta in PDF e invia questo file alla tipografia chiedendo il loro <strong>tracciato fustella A4 con tasca</strong>: la copertina va posizionata sul pannello frontale.
+    </div>
+</div>
+
+<div class="wrap">
+    <div class="cover">
+
+        <div class="cv-head">
+            <svg class="cv-logomark" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" aria-label="evulery">
+                <circle cx="48" cy="48" r="44" fill="#fff"/>
+                <path d="M30 48 Q30 32 48 32 Q66 32 66 48 L36 48 Q38 60 50 60 Q58 60 62 56" stroke="#00844A" stroke-width="6" stroke-linecap="round" fill="none"/>
+                <circle cx="68" cy="62" r="5" fill="#4ade80"/>
+            </svg>
+            <div class="cv-word">evulery<span class="dot">.</span>
+                <small>Soluzioni per il web &middot; by alagias.</small>
+            </div>
+        </div>
+
+        <div class="cv-hero">
+            <span class="cv-eyebrow">Il sistema per il tuo ristorante</span>
+            <h1 class="cv-claim">
+                <span>Meno no-show.</span>
+                <span>Pi&ugrave; coperti.</span>
+                <em>Zero commissioni.</em>
+            </h1>
+            <p class="cv-payoff">&mdash; Pieni la sera, felici la mattina.</p>
+            <p class="cv-desc">
+                Prenotazioni, <strong>tavoli</strong>, ordini online e <strong>recensioni</strong> del tuo ristorante in un'unica piattaforma. Canone fisso, nessuna commissione per coperto.
+            </p>
+        </div>
+
+        <div class="cv-foot">
+            <div class="cv-contacts">
+                <div class="row"><span class="ico">@</span> info@evulery.it</div>
+                <div class="row"><span class="ico">W</span> evulery.it</div>
+            </div>
+            <div class="cv-law">
+                <strong>Conforme</strong>
+                Legge 34/2026<br>sulle recensioni online
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
