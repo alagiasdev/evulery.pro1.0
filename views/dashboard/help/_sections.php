@@ -242,14 +242,15 @@ HTML
         'color'       => '#5E35B1',
         'category'    => 'operativita',
         'count_label' => '1 articolo',
-        'keywords'    => 'caparra deposito noshow stripe link pagamento informativa bonifico',
+        'keywords'    => 'caparra deposito noshow stripe link pagamento informativa bonifico carta garanzia preautorizzazione',
         'read_time'   => 3,
         'body' => <<<'HTML'
-<p>La caparra &egrave; la soluzione pi&ugrave; efficace per ridurre i no-show. Evulery offre 3 modalit&agrave;:</p>
+<p>La caparra &egrave; la soluzione pi&ugrave; efficace per ridurre i no-show. Evulery offre 4 modalit&agrave;:</p>
 <ol>
     <li><strong>Informativa</strong>: comunichi l&rsquo;importo al cliente, che paga di persona o con bonifico</li>
     <li><strong>Link di pagamento</strong>: il cliente paga con il metodo che preferisci (Satispay, PayPal, ecc.)</li>
     <li><strong>Stripe</strong>: pagamento automatico con carta di credito durante la prenotazione</li>
+    <li><strong>Carta a garanzia</strong>: blocco preautorizzato sulla carta; addebiti la penale solo in caso di no-show</li>
 </ol>
 <p>Puoi configurare <strong>quando richiedere la caparra</strong> (es. solo per tavoli &gt;4 persone, solo nel weekend, solo per eventi specifici).</p>
 <div class="hg-warn"><strong><i class="bi bi-exclamation-triangle me-1"></i>Attenzione:</strong> una prenotazione con caparra Stripe resta <em>in attesa</em> fino al pagamento. Se il cliente non paga entro 30 minuti, viene cancellata automaticamente.</div>
