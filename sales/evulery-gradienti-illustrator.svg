@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="760" viewBox="0 0 960 760" font-family="Inter, Arial, sans-serif">
+  <defs>
+    <!-- Lineare 2 stop (uso volantino/biglietto) -->
+    <linearGradient id="grad2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#042418"/>
+      <stop offset="1" stop-color="#00844A"/>
+    </linearGradient>
+    <!-- Lineare 3 stop (canonico brand) -->
+    <linearGradient id="grad3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#042418"/>
+      <stop offset="0.5" stop-color="#00844A"/>
+      <stop offset="1" stop-color="#00b86b"/>
+    </linearGradient>
+    <!-- Lineare verticale (uso cartellina) -->
+    <linearGradient id="gradV" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#042418"/>
+      <stop offset="0.5" stop-color="#00623a"/>
+      <stop offset="1" stop-color="#00844A"/>
+    </linearGradient>
+    <!-- Glow radiale d'accento -->
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#4ade80" stop-opacity="1"/>
+      <stop offset="1" stop-color="#4ade80" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="960" height="760" fill="#ffffff"/>
+
+  <text x="40" y="48" font-size="26" font-weight="800" fill="#042418">evulery<tspan fill="#00844A">.</tspan> &#8212; Gradienti (riferimento Illustrator)</text>
+  <text x="40" y="72" font-size="13" fill="#6c757d">Apri in Illustrator: ogni rettangolo ha il gradiente come riempimento modificabile. Diagonale = alto-sinistra (scuro) &#8594; basso-destra (verde), ~ -45&#176;.</text>
+
+  <!-- 2 stop -->
+  <rect x="40" y="96" width="420" height="170" rx="10" fill="url(#grad2)"/>
+  <text x="52" y="122" font-size="13" font-weight="700" fill="#ffffff">Lineare 2 stop &#183; diagonale</text>
+  <text x="52" y="250" font-size="11" fill="#d7f5e6">#042418  0%   &#8594;   #00844A  100%</text>
+
+  <!-- 3 stop -->
+  <rect x="500" y="96" width="420" height="170" rx="10" fill="url(#grad3)"/>
+  <text x="512" y="122" font-size="13" font-weight="700" fill="#ffffff">Lineare 3 stop &#183; canonico brand</text>
+  <text x="512" y="250" font-size="11" fill="#d7f5e6">#042418 0%  &#8594;  #00844A 50%  &#8594;  #00b86b 100%</text>
+
+  <!-- verticale -->
+  <rect x="40" y="296" width="420" height="170" rx="10" fill="url(#gradV)"/>
+  <text x="52" y="322" font-size="13" font-weight="700" fill="#ffffff">Lineare verticale &#183; cartellina (~ -90&#176;)</text>
+  <text x="52" y="450" font-size="11" fill="#d7f5e6">#042418 0% &#8594; #00623a 50% &#8594; #00844A 100%</text>
+
+  <!-- glow -->
+  <rect x="500" y="296" width="420" height="170" rx="10" fill="#042418"/>
+  <circle cx="880" cy="316" r="150" fill="url(#glow)" opacity="0.16"/>
+  <circle cx="640" cy="392" r="70" fill="url(#glow)" opacity="0.16"/>
+  <text x="512" y="322" font-size="13" font-weight="700" fill="#ffffff">Glow radiale d'accento</text>
+  <text x="512" y="450" font-size="11" fill="#a7e8c4">#4ade80 centro &#8594; trasparente &#183; opacit&#224; 10-18% &#183; fusione Screen</text>
+
+  <text x="40" y="520" font-size="15" font-weight="800" fill="#042418">Palette</text>
+  <g font-size="11">
+    <rect x="40" y="536" width="210" height="120" rx="8" fill="#042418"/>
+    <text x="56" y="600" font-size="12" font-weight="700" fill="#ffffff">Verde scuro</text>
+    <text x="56" y="620" fill="#c9d6ce">#042418 &#183; RGB 4 36 24</text>
+
+    <rect x="264" y="536" width="210" height="120" rx="8" fill="#00844A"/>
+    <text x="280" y="600" font-size="12" font-weight="700" fill="#ffffff">Verde brand</text>
+    <text x="280" y="620" fill="#e4f7ec">#00844A &#183; RGB 0 132 74</text>
+
+    <rect x="488" y="536" width="210" height="120" rx="8" fill="#00b86b"/>
+    <text x="504" y="600" font-size="12" font-weight="700" fill="#ffffff">Verde vivo</text>
+    <text x="504" y="620" fill="#eafff3">#00b86b &#183; RGB 0 184 107</text>
+
+    <rect x="712" y="536" width="210" height="120" rx="8" fill="#4ade80"/>
+    <text x="728" y="600" font-size="12" font-weight="700" fill="#0a0e14">Accento</text>
+    <text x="728" y="620" fill="#0a3a22">#4ade80 &#183; RGB 74 222 128</text>
+  </g>
+
+  <text x="40" y="700" font-size="11" fill="#6c757d">Stampa: documento CMYK. #042418 = verde-nero profondo (max ~300% inchiostro). #4ade80 fuori gamut CMYK: in stampa piu' spento (valuta Pantone spot).</text>
+  <text x="40" y="720" font-size="11" fill="#6c757d">Schermo/PDF: resta in RGB con gli Hex esatti. Tinte piatte anche in evulery-palette.ase.</text>
+</svg>
