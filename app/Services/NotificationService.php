@@ -107,7 +107,7 @@ class NotificationService
                 // 'cliente', non quando 'staff' (sarebbe assurdo suonare al
                 // ristoratore subito dopo che ha cliccato Annulla).
                 'cancelled_by'   => $cancelledBy,
-                'url'            => url('dashboard/reservations'),
+                'url'            => url("dashboard/reservations/{$reservation['id']}"),
             ];
 
             (new Notification())->create($tenantId, 'cancellation', $title, $body, $data);
