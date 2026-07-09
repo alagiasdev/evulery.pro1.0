@@ -260,7 +260,7 @@ class ReservationApiController
         $isManualMode = !$depositRequired && ($tenant['confirmation_mode'] ?? 'auto') === 'manual';
         $logNote = $isManualMode ? 'Prenotazione da widget (in attesa di conferma)' : 'Prenotazione da widget';
         (new ReservationLog())->create($reservationId, null, $status, null, $logNote);
-        (new Customer())->incrementBookings($customer['id']);
+        (new Customer())->recomputeStats((int)$customer['id']);
 
         // Send confirmation email (non-blocking: failure doesn't affect booking)
         // In manual mode, email is sent later when the owner confirms

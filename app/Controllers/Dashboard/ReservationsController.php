@@ -351,7 +351,7 @@ class ReservationsController
         $sourceLabels = ['phone' => 'telefono', 'walkin' => 'walk-in', 'altro' => 'altro'];
         $sourceLabel = $sourceLabels[$source] ?? 'dashboard';
         (new ReservationLog())->create($reservationId, null, 'confirmed', Auth::id(), "Creata da dashboard ({$sourceLabel})");
-        (new Customer())->incrementBookings($customer['id']);
+        (new Customer())->recomputeStats((int)$customer['id']);
 
         // Send confirmation email (non-blocking: failure doesn't affect booking)
         $full = (new Reservation())->findWithCustomer($reservationId);
@@ -409,8 +409,10 @@ class ReservationsController
         if ($newStatus === 'arrived' && $reservation['customer_id']) {
             (new Customer())->updateLastVisit((int)$reservation['customer_id'], $reservation['reservation_date']);
         }
-        if ($newStatus === 'noshow') {
-            (new Customer())->incrementNoshow($reservation['customer_id']);
+        // Ricalcolo contatori (bookings/noshow) da QUALUNQUE transizione di stato:
+        // fonte di verità unica, niente drift (es. no-show corretto in "arrivato").
+        if ($reservation['customer_id']) {
+            (new Customer())->recomputeStats((int)$reservation['customer_id']);
         }
 
         // Send confirmation email when manually confirming a pending reservation
@@ -782,14 +784,17 @@ class ReservationsController
             Response::redirect(url("dashboard/reservations/{$id}"));
         }
 
-        // Decrement customer booking count
-        (new Customer())->decrementBookings($reservation['customer_id']);
-
         // Delete related logs first (foreign key)
         (new ReservationLog())->deleteByReservation($id);
 
         // Delete the reservation
         $reservationModel->delete($id);
+
+        // Ricalcola i contatori del cliente DOPO l'eliminazione (così la
+        // prenotazione appena rimossa non viene più conteggiata).
+        if ($reservation['customer_id']) {
+            (new Customer())->recomputeStats((int)$reservation['customer_id']);
+        }
 
         AuditLog::log(AuditLog::RESERVATION_DELETED, "Prenotazione #{$id}", Auth::id(), (int)$reservation['tenant_id']);
 

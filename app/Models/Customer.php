@@ -381,22 +381,32 @@ class Customer
         return $this->findById((int)$this->db->lastInsertId());
     }
 
-    public function incrementBookings(int $id): void
+    /**
+     * Ricalcola i contatori denormalizzati del cliente dalle prenotazioni reali.
+     * Fonte di verità unica (sostituisce i vecchi +1/-1, che potevano derivare):
+     *  - total_bookings  = prenotazioni onorate/valide (confermate + arrivate)
+     *  - total_noshow    = no-show
+     *  - last_booking_at = data/ora dell'ultima prenotazione creata
+     * Va chiamata dopo ogni creazione / cambio stato / eliminazione di prenotazione.
+     * Scoped su customer_id (indicizzato) → una query leggera.
+     */
+    public function recomputeStats(int $id): void
     {
-        $this->db->prepare('UPDATE customers SET total_bookings = total_bookings + 1, last_booking_at = NOW() WHERE id = :id')
-                 ->execute(['id' => $id]);
-    }
-
-    public function decrementBookings(int $id): void
-    {
-        $this->db->prepare('UPDATE customers SET total_bookings = GREATEST(total_bookings - 1, 0) WHERE id = :id')
-                 ->execute(['id' => $id]);
-    }
-
-    public function incrementNoshow(int $id): void
-    {
-        $this->db->prepare('UPDATE customers SET total_noshow = total_noshow + 1 WHERE id = :id')
-                 ->execute(['id' => $id]);
+        $this->db->prepare(
+            "UPDATE customers c SET
+                c.total_bookings = (
+                    SELECT COUNT(*) FROM reservations r
+                    WHERE r.customer_id = c.id AND r.status IN ('confirmed','arrived')
+                ),
+                c.total_noshow = (
+                    SELECT COUNT(*) FROM reservations r
+                    WHERE r.customer_id = c.id AND r.status = 'noshow'
+                ),
+                c.last_booking_at = (
+                    SELECT MAX(r.created_at) FROM reservations r WHERE r.customer_id = c.id
+                )
+             WHERE c.id = :id"
+        )->execute(['id' => $id]);
     }
 
     public function updateNotes(int $id, string $notes): void

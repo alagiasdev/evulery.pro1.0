@@ -361,16 +361,24 @@ class DemoSeeder
         }
     }
 
-    // Aggiorna total_bookings + last_visit dei clienti demo dai dati reali.
+    // Aggiorna total_bookings + total_noshow + last_visit dei clienti demo dai
+    // dati reali. Stesse definizioni di Customer::recomputeStats:
+    // total_bookings = confermate+arrivate, total_noshow = no-show.
     private function refreshCustomerStats(int $tid): void
     {
         $u1 = $this->db->prepare(
-            "UPDATE customers c SET c.total_bookings = (
-                SELECT COUNT(*) FROM reservations r
-                WHERE r.customer_id = c.id AND r.tenant_id = :t1 AND r.status NOT IN ('cancelled','noshow')
-             ) WHERE c.tenant_id = :t2 AND c.is_demo = 1"
+            "UPDATE customers c SET
+                c.total_bookings = (
+                    SELECT COUNT(*) FROM reservations r
+                    WHERE r.customer_id = c.id AND r.status IN ('confirmed','arrived')
+                ),
+                c.total_noshow = (
+                    SELECT COUNT(*) FROM reservations r
+                    WHERE r.customer_id = c.id AND r.status = 'noshow'
+                )
+             WHERE c.tenant_id = :t2 AND c.is_demo = 1"
         );
-        $u1->execute(['t1' => $tid, 't2' => $tid]);
+        $u1->execute(['t2' => $tid]);
 
         $u2 = $this->db->prepare(
             "UPDATE customers c SET c.last_visit = (
