@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evulery — Modulo di attivazione</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+@page { size: A4 portrait; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #e9ecef; color: #1a1d23; }
+
+.toolbar { background:#fff; padding:14px 20px; text-align:center; border-bottom:2px solid #e9ecef; position:sticky; top:0; z-index:10; }
+.toolbar button { background:#00844A; color:#fff; border:0; padding:10px 22px; font-size:14px; font-weight:700; border-radius:6px; cursor:pointer; }
+.toolbar button:hover { background:#006837; }
+.toolbar .hint { font-size:12px; color:#6c757d; margin-top:8px; }
+@media print { .toolbar { display:none !important; } body { background:#fff; } .page { margin:0; box-shadow:none; } }
+
+.page {
+    width:210mm; min-height:297mm; margin:20px auto; background:#fff;
+    box-shadow:0 6px 26px rgba(0,0,0,.14); padding:14mm 16mm 12mm; position:relative;
+    display:flex; flex-direction:column;
+}
+
+/* Header */
+.head { display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #00844A; padding-bottom:5mm; margin-bottom:6mm; }
+.lock { display:flex; align-items:center; gap:3mm; }
+.logomark { width:12mm; height:12mm; }
+.word { font-size:19pt; font-weight:800; letter-spacing:-.6px; color:#042418; }
+.word .dot { color:#00844A; }
+.head-r { text-align:right; }
+.head-r .t { font-size:14pt; font-weight:800; color:#1a1d23; }
+.head-r .s { font-size:8.5pt; color:#6c757d; }
+
+/* Sezioni */
+.sec { margin-bottom:5mm; }
+.sec-h { font-size:9.5pt; font-weight:800; color:#00844A; text-transform:uppercase; letter-spacing:1px; margin-bottom:2.5mm; padding-bottom:1mm; border-bottom:1px solid #e8edf0; }
+.row { display:flex; gap:6mm; margin-bottom:3.5mm; }
+.f { flex:1; }
+.f label { display:block; font-size:8pt; color:#6c757d; font-weight:600; margin-bottom:3.6mm; }
+.f .line { border-bottom:1px dotted #9aa1a9; height:0; }
+.f.small { flex:0 0 42mm; }
+
+/* Opzioni */
+.opts { display:flex; flex-wrap:wrap; gap:3mm 8mm; font-size:10pt; }
+.opt { display:flex; align-items:center; gap:2mm; }
+.box { width:4mm; height:4mm; border:1.4px solid #1a1d23; border-radius:1px; display:inline-block; }
+
+/* Consensi */
+.consent { display:flex; gap:2.5mm; font-size:8.6pt; line-height:1.4; color:#232830; margin-bottom:2.5mm; align-items:flex-start; }
+.consent .box { margin-top:.6mm; flex:0 0 4mm; }
+.consent a, .consent strong { color:#006837; }
+
+/* Firma */
+.sign { display:flex; gap:10mm; margin-top:5mm; }
+.sign .f label { margin-bottom:8mm; }
+
+/* Footer */
+.foot { margin-top:auto; padding-top:4mm; border-top:1px solid #d8dde3; font-size:7.5pt; color:#6c757d; text-align:center; line-height:1.5; }
+.foot strong { color:#1a1d23; }
+
+/* Pagina contratto (retro) */
+.contract-h { font-size:13pt; font-weight:800; color:#1a1d23; margin:0 0 1mm; }
+.contract-sub { font-size:8pt; color:#6c757d; margin-bottom:4mm; }
+.draft-band { background:#fff8e1; border:1px solid #f0d9a8; border-radius:4px; padding:2.2mm 3mm; font-size:8pt; color:#7a5b00; margin-bottom:4.5mm; }
+.draft-band strong { color:#8a4b00; }
+.parties { font-size:8.4pt; line-height:1.5; margin-bottom:4mm; }
+.parties b { color:#042418; }
+.art { font-size:8.3pt; line-height:1.45; text-align:justify; margin-bottom:2.6mm; }
+.art b { color:#00623a; }
+.sign2 { display:flex; gap:10mm; margin-top:4mm; }
+.approve { font-size:7.8pt; color:#495057; line-height:1.45; margin-top:4mm; padding-top:2.5mm; border-top:1px solid #e8edf0; }
+.approve b { color:#1a1d23; }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+    <button type="button" onclick="window.print()">Stampa fronte-retro A4</button>
+    <div class="hint">Stampa <strong>fronte-retro</strong>: modulo dati sul fronte, condizioni contrattuali sul retro. Il cliente compila e firma.</div>
+</div>
+
+<div class="page">
+
+    <div class="head">
+        <div class="lock">
+            <svg class="logomark" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" aria-label="evulery">
+                <circle cx="48" cy="48" r="44" fill="#00844A"/>
+                <path d="M30 48 Q30 32 48 32 Q66 32 66 48 L36 48 Q38 60 50 60 Q58 60 62 56" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none"/>
+                <circle cx="68" cy="62" r="5" fill="#4ade80"/>
+            </svg>
+            <span class="word">evulery<span class="dot">.</span></span>
+        </div>
+        <div class="head-r">
+            <div class="t">Modulo di attivazione</div>
+            <div class="s">Dati per attivare il tuo account &middot; compila in stampatello</div>
+        </div>
+    </div>
+
+    <!-- Il ristorante -->
+    <div class="sec">
+        <div class="sec-h">1 · Il ristorante</div>
+        <div class="row">
+            <div class="f"><label>Nome del locale</label><div class="line"></div></div>
+        </div>
+        <div class="row">
+            <div class="f"><label>Indirizzo</label><div class="line"></div></div>
+            <div class="f small"><label>Citt&agrave; / CAP</label><div class="line"></div></div>
+        </div>
+        <div class="row">
+            <div class="f"><label>Telefono</label><div class="line"></div></div>
+            <div class="f"><label>Email del locale (riceve le notifiche prenotazione)</label><div class="line"></div></div>
+        </div>
+        <div class="row">
+            <div class="f"><label>Sito web (se presente)</label><div class="line"></div></div>
+        </div>
+    </div>
+
+    <!-- Titolare -->
+    <div class="sec">
+        <div class="sec-h">2 · Titolare / referente</div>
+        <div class="row">
+            <div class="f"><label>Nome e cognome</label><div class="line"></div></div>
+            <div class="f small"><label>Telefono</label><div class="line"></div></div>
+        </div>
+        <div class="row">
+            <div class="f"><label>Email di accesso alla dashboard</label><div class="line"></div></div>
+        </div>
+    </div>
+
+    <!-- Fatturazione -->
+    <div class="sec">
+        <div class="sec-h">3 · Dati per la fatturazione</div>
+        <div class="row">
+            <div class="f"><label>Ragione sociale / Ditta</label><div class="line"></div></div>
+        </div>
+        <div class="row">
+            <div class="f small"><label>Partita IVA</label><div class="line"></div></div>
+            <div class="f small"><label>Codice Fiscale</label><div class="line"></div></div>
+            <div class="f"><label>Codice destinatario SDI / PEC</label><div class="line"></div></div>
+        </div>
+        <div class="row">
+            <div class="f"><label>Sede legale (se diversa dall'indirizzo del locale)</label><div class="line"></div></div>
+        </div>
+    </div>
+
+    <!-- Piano -->
+    <div class="sec">
+        <div class="sec-h">4 · Piano e pagamento</div>
+        <div class="row" style="margin-bottom:2.5mm;">
+            <div class="opts">
+                <span style="font-size:8pt;color:#6c757d;font-weight:600;align-self:center;">Piano:</span>
+                <span class="opt"><span class="box"></span> Starter</span>
+                <span class="opt"><span class="box"></span> Professional</span>
+                <span class="opt"><span class="box"></span> Enterprise</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="opts">
+                <span style="font-size:8pt;color:#6c757d;font-weight:600;align-self:center;">Pagamento:</span>
+                <span class="opt"><span class="box"></span> Mensile</span>
+                <span class="opt"><span class="box"></span> Semestrale</span>
+                <span class="opt"><span class="box"></span> Annuale</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="f"><label>Note / richieste particolari</label><div class="line"></div></div>
+        </div>
+    </div>
+
+    <!-- Consensi + firma -->
+    <div class="sec">
+        <div class="sec-h">5 · Consensi e firma</div>
+        <div class="consent"><span class="box"></span><span>Ho preso visione dell'<strong>informativa privacy</strong> e acconsento al trattamento dei dati per l'attivazione e la gestione del servizio (Reg. UE 2016/679 - GDPR).</span></div>
+        <div class="consent"><span class="box"></span><span>Dichiaro di aver letto e di accettare le <strong>condizioni contrattuali</strong> riportate sul retro (che confermer&ograve; anche al primo accesso alla dashboard).</span></div>
+        <div class="sign">
+            <div class="f small"><label>Data</label><div class="line"></div></div>
+            <div class="f"><label>Firma del titolare</label><div class="line"></div></div>
+        </div>
+    </div>
+
+    <div class="foot">
+        <strong>Evulery</strong> &middot; alagias. di Stefano Alagia &middot; P.IVA 01855570766 &middot; info@evulery.it &middot; evulery.it<br>
+        I dati raccolti servono esclusivamente all'attivazione e gestione del servizio. Non vengono ceduti a terzi.
+    </div>
+
+</div>
+
+<!-- ============ RETRO — CONDIZIONI CONTRATTUALI (BOZZA) ============ -->
+<div class="page">
+
+    <div class="head">
+        <div class="lock">
+            <svg class="logomark" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" aria-label="evulery">
+                <circle cx="48" cy="48" r="44" fill="#00844A"/>
+                <path d="M30 48 Q30 32 48 32 Q66 32 66 48 L36 48 Q38 60 50 60 Q58 60 62 56" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none"/>
+                <circle cx="68" cy="62" r="5" fill="#4ade80"/>
+            </svg>
+            <span class="word">evulery<span class="dot">.</span></span>
+        </div>
+        <div class="head-r">
+            <div class="t">Condizioni del servizio</div>
+            <div class="s">Contratto di abbonamento &middot; retro del modulo di attivazione</div>
+        </div>
+    </div>
+
+    <div class="draft-band"><strong>BOZZA</strong> &mdash; testo di riferimento da far validare da un legale prima dell'uso. I campi tra parentesi quadre [&nbsp;] vanno definiti.</div>
+
+    <p class="parties">
+        Tra <b>alagias. di Stefano Alagia</b> (di seguito &ldquo;Fornitore&rdquo;), P.IVA 01855570766, C.da Menavoli 29, 85044 Lauria (PZ), titolare del servizio <b>Evulery</b>,
+        e il <b>Cliente</b> i cui dati sono indicati nel modulo di attivazione sul fronte, si conviene quanto segue.
+    </p>
+
+    <p class="art"><b>Art. 1 &middot; Oggetto.</b> Il Fornitore concede al Cliente l'uso del software gestionale in cloud &ldquo;Evulery&rdquo; (modalit&agrave; SaaS) per la gestione di prenotazioni, sala, ordini, comunicazioni e reputazione del proprio locale, nei limiti dei moduli inclusi nel piano scelto.</p>
+
+    <p class="art"><b>Art. 2 &middot; Attivazione e durata.</b> Il servizio si attiva dopo il setup iniziale. Il contratto ha durata pari al ciclo di pagamento scelto (mensile, semestrale o annuale) e si rinnova automaticamente per un periodo di pari durata, salvo disdetta. Non &egrave; previsto alcun vincolo minimo di permanenza.</p>
+
+    <p class="art"><b>Art. 3 &middot; Corrispettivi.</b> Il Cliente corrisponde il canone del piano scelto e l'eventuale quota di attivazione una-tantum. I pagamenti anticipati (semestrale/annuale) danno diritto agli sconti del listino vigente. Importi non soggetti a IVA ai sensi dell'art. 1 commi 54-89 L. 190/2014 (regime forfettario).</p>
+
+    <p class="art"><b>Art. 4 &middot; Obblighi del Cliente.</b> Il Cliente fornisce dati veritieri, custodisce con diligenza le credenziali di accesso, utilizza il servizio nel rispetto della legge e non ne cede l'uso a terzi senza autorizzazione scritta del Fornitore.</p>
+
+    <p class="art"><b>Art. 5 &middot; Trattamento dei dati (GDPR).</b> Per i dati dei clienti finali caricati sulla piattaforma, il Cliente &egrave; <b>Titolare</b> del trattamento e il Fornitore agisce come <b>Responsabile</b> ai sensi dell'art. 28 Reg. UE 2016/679, secondo apposita nomina/informativa. Il Cliente resta proprietario dei propri dati e pu&ograve; esportarli in qualsiasi momento.</p>
+
+    <p class="art"><b>Art. 6 &middot; Propriet&agrave; intellettuale.</b> Il software, il marchio e i contenuti Evulery restano di propriet&agrave; del Fornitore. Al Cliente &egrave; concessa una licenza d'uso non esclusiva e non trasferibile, per la durata del contratto.</p>
+
+    <p class="art"><b>Art. 7 &middot; Servizio e responsabilit&agrave;.</b> Il Fornitore eroga il servizio con la massima diligenza e continuit&agrave;, senza tuttavia garantire un funzionamento ininterrotto e privo di errori. Il Fornitore non risponde di danni indiretti o mancati guadagni; la responsabilit&agrave; complessiva &egrave; comunque limitata ai corrispettivi degli ultimi [3] mesi.</p>
+
+    <p class="art"><b>Art. 8 &middot; Recesso e cessazione.</b> Il Cliente pu&ograve; disdire in qualsiasi momento, con effetto dal termine del periodo gi&agrave; pagato. Alla cessazione i dati restano disponibili per l'export per [30] giorni, decorsi i quali vengono cancellati.</p>
+
+    <p class="art"><b>Art. 9 &middot; Modifiche.</b> Il Fornitore pu&ograve; aggiornare le presenti condizioni e i piani dandone comunicazione; le modifiche si applicano a partire dal rinnovo successivo.</p>
+
+    <p class="art"><b>Art. 10 &middot; Legge applicabile e foro.</b> Il contratto &egrave; regolato dalla legge italiana. Per ogni controversia &egrave; competente in via esclusiva il Foro di [&nbsp;&nbsp;&nbsp;&nbsp;].</p>
+
+    <div class="sign2">
+        <div class="f small"><label>Luogo e data</label><div class="line"></div></div>
+        <div class="f"><label>Firma del Cliente (per accettazione)</label><div class="line"></div></div>
+    </div>
+
+    <p class="approve">
+        Ai sensi e per gli effetti degli <b>artt. 1341 e 1342 c.c.</b>, il Cliente approva specificamente gli articoli
+        <b>7</b> (limitazione di responsabilit&agrave;), <b>8</b> (recesso e cessazione), <b>9</b> (modifiche) e <b>10</b> (foro competente).
+    </p>
+    <div class="sign2">
+        <div class="f"><label>Firma del Cliente (approvazione clausole)</label><div class="line"></div></div>
+    </div>
+
+    <div class="foot">
+        <strong>Evulery</strong> &middot; alagias. di Stefano Alagia &middot; P.IVA 01855570766 &middot; info@evulery.it &middot; evulery.it<br>
+        Bozza a scopo di riferimento. Prima dell'uso far verificare il testo a un professionista legale.
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evulery — Kit benvenuto (credenziali)</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{ --brand:#00844A; --brand-d:#006837; --ink:#1a1d23; --muted:#6c757d; --line:#e8edf0; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f4f6f8;color:var(--ink);line-height:1.5}
+  .wrap{max-width:760px;margin:0 auto;padding:28px 20px 70px}
+  .bar{height:4px;background:linear-gradient(90deg,var(--brand),#4ade80);border-radius:6px;margin-bottom:22px}
+  .head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .logomark{width:34px;height:34px}
+  h1{font-size:1.4rem;font-weight:800}
+  .word .dot{color:var(--brand)}
+  .sub{color:var(--muted);font-size:.92rem;margin:2px 0 22px}
+  .legend{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:.86rem;margin-bottom:22px}
+  .legend code{background:#eef7f1;color:var(--brand-d);border-radius:5px;padding:1px 6px;font-weight:600}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;margin-bottom:20px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .card-t{font-size:1.02rem;font-weight:800;display:flex;align-items:center;gap:8px}
+  .card-t .ic{width:26px;height:26px;border-radius:7px;background:#eef7f1;color:var(--brand-d);display:flex;align-items:center;justify-content:center;font-size:.9rem}
+  .copy{background:var(--brand);color:#fff;border:0;padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer}
+  .copy:hover{background:var(--brand-d)}
+  .copy.ok{background:#146c43}
+  pre{white-space:pre-wrap;font-family:'Inter',sans-serif;font-size:.9rem;color:#232830;background:#fbfdfc;border:1px solid var(--line);border-radius:10px;padding:14px 16px;line-height:1.55}
+  .subject{font-size:.82rem;color:var(--muted);margin:0 0 8px}
+  .subject b{color:var(--ink)}
+  .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:20px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar"></div>
+  <div class="head">
+    <svg class="logomark" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" aria-label="evulery">
+      <circle cx="48" cy="48" r="44" fill="#00844A"/>
+      <path d="M30 48 Q30 32 48 32 Q66 32 66 48 L36 48 Q38 60 50 60 Q58 60 62 56" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none"/>
+      <circle cx="68" cy="62" r="5" fill="#4ade80"/>
+    </svg>
+    <h1 class="word">Kit benvenuto — credenziali</h1>
+  </div>
+  <p class="sub">Testi pronti da inviare al cliente dopo aver creato l'account. Personalizza i campi, copia e manda.</p>
+
+  <div class="legend">
+    <strong>Prima di inviare</strong>, sostituisci i segnaposto:
+    <code>{{nome}}</code> nome del titolare ·
+    <code>{{email}}</code> email di accesso ·
+    <code>{{password}}</code> la password che hai impostato.
+    Il link di accesso è già pronto: <code>https://dash.evulery.it</code>
+  </div>
+
+  <!-- EMAIL -->
+  <div class="card">
+    <div class="card-h">
+      <div class="card-t"><span class="ic">✉</span> Versione email</div>
+      <button class="copy" type="button" data-target="mail">Copia testo</button>
+    </div>
+    <p class="subject"><b>Oggetto:</b> Benvenuto in Evulery — il tuo account è attivo</p>
+    <pre id="mail">Ciao {{nome}},
+
+il tuo account Evulery è pronto: da adesso gestisci prenotazioni, sala, ordini e recensioni da un'unica dashboard.
+
+Ecco come entrare:
+• Accedi: https://dash.evulery.it
+• Email: {{email}}
+• Password: {{password}}
+
+Ti consigliamo di cambiare la password al primo accesso (Profilo → Password): così la conosci solo tu.
+
+Primi passi: una volta dentro, apri la voce "Guida" nella barra laterale — trovi tutto per impostare orari, coperti e il widget di prenotazione. Se preferisci, ti accompagniamo noi.
+
+Per qualsiasi cosa siamo qui: info@evulery.it
+
+A presto,
+Il team Evulery
+— Pieni la sera, felici la mattina.</pre>
+  </div>
+
+  <!-- WHATSAPP -->
+  <div class="card">
+    <div class="card-h">
+      <div class="card-t"><span class="ic">◍</span> Versione WhatsApp</div>
+      <button class="copy" type="button" data-target="wa">Copia testo</button>
+    </div>
+    <pre id="wa">Ciao {{nome}}! 👋 Il tuo account Evulery è attivo 🎉
+
+Accedi qui 👉 https://dash.evulery.it
+✉️ Email: {{email}}
+🔑 Password: {{password}}
+(ti consigliamo di cambiarla al primo accesso, da Profilo)
+
+Dentro trovi la "Guida" con i primi passi. Per qualsiasi dubbio scrivimi pure qui o a info@evulery.it 🟢</pre>
+  </div>
+
+  <p class="foot">Suggerimento: manda prima l'email (traccia scritta) e poi un WhatsApp breve per avvisare che è arrivata.<br>© <span id="yr"></span> Evulery · by alagias. - Soluzioni per il web</p>
+</div>
+
+<script>
+document.getElementById('yr').textContent = '2026';
+document.querySelectorAll('.copy').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var txt = document.getElementById(btn.getAttribute('data-target')).innerText;
+    navigator.clipboard.writeText(txt).then(function(){
+      var old = btn.textContent; btn.textContent = '✓ Copiato'; btn.classList.add('ok');
+      setTimeout(function(){ btn.textContent = old; btn.classList.remove('ok'); }, 1600);
+    });
+  });
+});
+</script>
+</body>
+</html>
