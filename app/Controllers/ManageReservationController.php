@@ -33,6 +33,38 @@ class ManageReservationController
         return $daysSince > self::TOKEN_TTL_DAYS_AFTER_RESERVATION;
     }
 
+    private function isPastDate(array $reservation): bool
+    {
+        if (empty($reservation['reservation_date'])) {
+            return false;
+        }
+        return strtotime($reservation['reservation_date']) < strtotime(date('Y-m-d'));
+    }
+
+    /**
+     * True se il cliente NON puo' piu' annullare da solo:
+     *  - cutoff > 0: manca meno del limite (ore) all'orario della prenotazione
+     *    (copre anche il caso di orario gia' passato);
+     *  - cutoff = 0 (nessun limite): mantiene il comportamento storico, ossia
+     *    blocca solo le prenotazioni di una data gia' passata.
+     * Il limite (`cancellation_cutoff_hours`) e' per-ristorante. Fuso Europe/Rome.
+     */
+    private function isTooLateToCancel(array $reservation): bool
+    {
+        $cutoff = (int)($reservation['cancellation_cutoff_hours'] ?? 0);
+        if ($cutoff <= 0) {
+            return $this->isPastDate($reservation);
+        }
+        if (empty($reservation['reservation_date']) || empty($reservation['reservation_time'])) {
+            return false;
+        }
+        $resTs = strtotime($reservation['reservation_date'] . ' ' . $reservation['reservation_time']);
+        if ($resTs === false) {
+            return false;
+        }
+        return time() > ($resTs - $cutoff * 3600);
+    }
+
     public function show(Request $request): void
     {
         $token = $request->param('token');
@@ -56,10 +88,16 @@ class ManageReservationController
             return;
         }
 
+        $tooLate = $this->isTooLateToCancel($reservation);
         view('manage/show', [
             'title'       => 'La tua prenotazione',
             'reservation' => $reservation,
             'token'       => $token,
+            'tooLate'     => $tooLate,
+            // Messaggio "contatta il ristorante" solo se la prenotazione e' futura
+            // ma ormai dentro la finestra di blocco (non per le date gia' passate).
+            'cutoffBlocked' => $tooLate && !$this->isPastDate($reservation),
+            'cutoffHours' => (int)($reservation['cancellation_cutoff_hours'] ?? 0),
         ], 'minimal');
     }
 
@@ -81,6 +119,13 @@ class ManageReservationController
 
         if (in_array($reservation['status'], ['cancelled', 'arrived', 'noshow'])) {
             flash('danger', 'Questa prenotazione non può essere annullata.');
+            Response::redirect(url("manage/{$token}"));
+        }
+
+        // Enforcement lato server del limite orario: protegge anche dalla POST
+        // diretta all'URL (oltre alla scomparsa del bottone in pagina).
+        if ($this->isTooLateToCancel($reservation)) {
+            flash('danger', 'Non è più possibile annullare online: sei troppo vicino all\'orario della prenotazione. Ti chiediamo di contattare direttamente il ristorante.');
             Response::redirect(url("manage/{$token}"));
         }
 

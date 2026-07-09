@@ -1,7 +1,10 @@
 <?php
 $status = $reservation['status'];
 $canCancel = in_array($status, ['confirmed', 'pending']);
-$isPast = strtotime($reservation['reservation_date']) < strtotime(date('Y-m-d'));
+// Passati dal controller (ManageReservationController::show). Difensivi se assenti.
+$tooLate = $tooLate ?? false;
+$cutoffBlocked = $cutoffBlocked ?? false;
+$cutoffHours = (int)($cutoffHours ?? 0);
 
 $statusLabels = [
     'confirmed' => 'Confermata',
@@ -111,7 +114,7 @@ $time = substr($reservation['reservation_time'], 0, 5);
         <?php endif; ?>
     </div>
 
-    <?php if ($canCancel && !$isPast): ?>
+    <?php if ($canCancel && !$tooLate): ?>
     <div class="manage-actions">
         <form method="POST" action="<?= url("manage/{$token}/cancel") ?>" id="cancel-form">
             <?= csrf_field() ?>
@@ -119,6 +122,13 @@ $time = substr($reservation['reservation_time'], 0, 5);
                 <i class="bi bi-x-circle me-1"></i> Annulla prenotazione
             </button>
         </form>
+    </div>
+    <?php elseif ($canCancel && $cutoffBlocked): ?>
+    <div class="manage-actions">
+        <div class="manage-policy" style="background:#fff8e1;border-color:#f0d9a8;text-align:left;">
+            <strong><i class="bi bi-clock-history me-1"></i> Annullamento online non più disponibile</strong><br>
+            Sei ormai a ridosso dell'orario<?= $cutoffHours > 0 ? ' (le cancellazioni online si chiudono ' . $cutoffHours . ($cutoffHours === 1 ? ' ora' : ' ore') . ' prima)' : '' ?>. Per annullare o modificare, contatta direttamente il ristorante<?= !empty($reservation['tenant_phone']) ? ' al ' . e($reservation['tenant_phone']) : '' ?>.
+        </div>
     </div>
     <?php endif; ?>
 

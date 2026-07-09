@@ -189,6 +189,15 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                             <div class="field-hint">Visibile al cliente nella pagina di prenotazione</div>
                         </div>
                         <div class="col-12 field-row">
+                            <label class="field-label">Annullamento autonomo del cliente</label>
+                            <select name="cancellation_cutoff_hours" class="form-select form-select-sm" style="max-width:280px;">
+                                <?php $cc = (int)($tenant['cancellation_cutoff_hours'] ?? 0); foreach ([0 => 'Nessun limite', 2 => 'Fino a 2 ore prima', 4 => 'Fino a 4 ore prima', 6 => 'Fino a 6 ore prima', 12 => 'Fino a 12 ore prima', 24 => 'Fino a 24 ore prima'] as $h => $lbl): ?>
+                                <option value="<?= $h ?>" <?= $cc === $h ? 'selected' : '' ?>><?= $lbl ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="field-hint">Entro quanto tempo prima dell'orario il cliente può annullare da solo dal link email. Oltre il limite dovrà contattare il ristorante. Ricordati di indicarlo anche nella politica qui sopra.</div>
+                        </div>
+                        <div class="col-12 field-row">
                             <label class="field-label">Istruzioni per il cliente</label>
                             <textarea class="field-input field-textarea" name="booking_instructions" rows="3" maxlength="1000" placeholder="Es. Il tavolo resta riservato per 15 minuti dall'orario di prenotazione. Dress code: smart casual."><?= e($tenant['booking_instructions'] ?? '') ?></textarea>
                             <div class="field-hint">Mostrate nella conferma prenotazione e nell'email al cliente (max 1000 caratteri)</div>

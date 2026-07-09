@@ -117,6 +117,13 @@ class SettingsController
             $websiteUrl = null;
         }
 
+        // Limite ore per la cancellazione autonoma del cliente (magic link).
+        // Solo valori preimpostati dalla UI; 0 = nessun limite.
+        $cancelCutoff = (int)($data['cancellation_cutoff_hours'] ?? 0);
+        if (!in_array($cancelCutoff, [0, 2, 4, 6, 12, 24], true)) {
+            $cancelCutoff = 0;
+        }
+
         $updateData = [
             'name'                 => $data['name'] ?? '',
             'email'                => $data['email'] ?? '',
@@ -124,6 +131,7 @@ class SettingsController
             'address'              => $data['address'] ?? null,
             'website_url'          => $websiteUrl,
             'cancellation_policy'  => $data['cancellation_policy'] ?? null,
+            'cancellation_cutoff_hours' => $cancelCutoff,
             'booking_instructions' => $data['booking_instructions'] ?? null,
             'confirmation_mode'    => $confirmationMode,
             'manual_approval_min_party_size' => $approvalMin,
