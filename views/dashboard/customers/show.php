@@ -5,8 +5,14 @@ $thAbi = (int)($tenant['segment_abituale'] ?? 4);
 $thVip = (int)($tenant['segment_vip'] ?? 10);
 
 // Calculate segment
-$bookings = (int)$customer['total_bookings'];
-$noshow = (int)$customer['total_noshow'];
+$bookings = (int)$customer['total_bookings']; // memorizzato: usato SOLO per il segmento (coerente con la lista clienti)
+// No-show e n. prenotazioni dei KPI: contati DAL VIVO dalle prenotazioni reali, così
+// coincidono sempre con lo storico qui sotto. I contatori memorizzati (customers.total_*)
+// possono derivare (es. no-show corretto in "arrivato" non decrementa) o essere
+// disallineati sui tenant demo. Fix 2026-07-08.
+$bookingsLive = count($reservations);
+$noshow = 0;
+foreach ($reservations as $r) { if ($r['status'] === 'noshow') $noshow++; }
 if ($bookings >= $thVip) { $segment = 'vip'; $segmentLabel = 'VIP'; }
 elseif ($bookings >= $thAbi) { $segment = 'abituale'; $segmentLabel = 'Abituale'; }
 elseif ($bookings >= $thOcc) { $segment = 'occasionale'; $segmentLabel = 'Occasionale'; }
@@ -20,7 +26,7 @@ $initials = mb_strtoupper(mb_substr($customer['first_name'], 0, 1) . mb_substr($
 // Stats
 $completedRes = array_filter($reservations, fn($r) => in_array($r['status'], ['confirmed', 'arrived']));
 $avgPartySize = !empty($completedRes) ? round(array_sum(array_column($completedRes, 'party_size')) / count($completedRes), 1) : 0;
-$noshowRate = $bookings > 0 ? round(($noshow / $bookings) * 100) : 0;
+$noshowRate = $bookingsLive > 0 ? round(($noshow / $bookingsLive) * 100) : 0;
 // Use DB last_visit first, fallback to reservation history
 $lastVisit = $customer['last_visit'] ?? null;
 if (!$lastVisit) {
@@ -57,7 +63,7 @@ function tagColorClass(string $tag): string {
 }
 
 // Reliability
-$reliability = $bookings > 0 ? max(0, 100 - $noshowRate) : 100;
+$reliability = $bookingsLive > 0 ? max(0, 100 - $noshowRate) : 100;
 if ($reliability >= 90) { $relColor = 'var(--brand)'; $relLabel = 'Ottima'; }
 elseif ($reliability >= 70) { $relColor = '#ffc107'; $relLabel = 'Buona'; }
 elseif ($reliability >= 50) { $relColor = '#E65100'; $relLabel = 'Scarsa'; }
@@ -322,7 +328,7 @@ $sourceLabelsPrivacy = [
         <?php else: ?>
         <span class="cs-stat-trend neutral">—</span>
         <?php endif; ?>
-        <div class="stat-value" style="color: var(--brand);"><?= $bookings ?></div>
+        <div class="stat-value" style="color: var(--brand);"><?= $bookingsLive ?></div>
         <div class="stat-label">Prenotazioni</div>
     </div>
     <div class="stat-card">
