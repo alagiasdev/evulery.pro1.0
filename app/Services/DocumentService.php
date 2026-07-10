@@ -48,9 +48,37 @@ class DocumentService
             if (!isset($out[$c])) {
                 $out[$c] = [];
             }
+            // Disponibilità: un PDF caricato via FTP potrebbe non esserci ancora.
+            $doc['_available'] = self::fileExists($doc['file'] ?? '');
             $out[$c][$key] = $doc;
         }
         return array_filter($out, static fn($docs) => !empty($docs));
+    }
+
+    /** Radici consentite per i file dei documenti. */
+    private static function allowedRoots(): array
+    {
+        return array_filter([
+            realpath(BASE_PATH . '/sales'),                // documenti HTML sorgente
+            realpath(BASE_PATH . '/storage/documents'),    // PDF caricati via FTP
+        ]);
+    }
+
+    private static function fileExists(string $relPath): bool
+    {
+        if ($relPath === '') {
+            return false;
+        }
+        $real = realpath(BASE_PATH . '/' . $relPath);
+        if (!$real || !is_file($real)) {
+            return false;
+        }
+        foreach (self::allowedRoots() as $root) {
+            if (strncmp($real, $root . DIRECTORY_SEPARATOR, strlen($root) + 1) === 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -67,13 +95,18 @@ class DocumentService
         }
 
         $real = realpath(BASE_PATH . '/' . $relPath);
-        $salesRoot = realpath(BASE_PATH . '/sales');
-        // Difensivo: il file deve risolversi dentro sales/.
-        if (!$real || !$salesRoot || strncmp($real, $salesRoot . DIRECTORY_SEPARATOR, strlen($salesRoot) + 1) !== 0) {
-            Response::error('File non disponibile.', 'NOT_FOUND', 404);
-            return;
+        // Difensivo: il file deve risolversi dentro una radice consentita
+        // (sales/ oppure storage/documents/) ed esistere.
+        $inside = false;
+        if ($real && is_file($real)) {
+            foreach (self::allowedRoots() as $root) {
+                if (strncmp($real, $root . DIRECTORY_SEPARATOR, strlen($root) + 1) === 0) {
+                    $inside = true;
+                    break;
+                }
+            }
         }
-        if (!is_file($real)) {
+        if (!$inside) {
             Response::error('File non disponibile.', 'NOT_FOUND', 404);
             return;
         }

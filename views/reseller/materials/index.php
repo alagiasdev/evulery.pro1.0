@@ -10,21 +10,13 @@
     <h3><i class="bi bi-send"></i> Da presentare al cliente</h3>
     <div class="rs-mat-grid">
         <?php foreach ($forClient as $key => $m): ?>
-            <?php $hasPdf = !empty($m['download_file']); ?>
             <div class="rs-mat-card">
                 <div class="rs-mat-icon"><i class="bi bi-<?= e($m['icon']) ?>"></i></div>
                 <h4><?= e($m['title']) ?></h4>
                 <p><?= e($m['description']) ?></p>
-                <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
-                    <a href="<?= url('reseller/materials/' . $key . '/preview') ?>" target="_blank" rel="noopener" class="rs-btn <?= $hasPdf ? 'rs-btn-ghost' : 'rs-btn-primary' ?> rs-btn-sm">
-                        <i class="bi bi-eye"></i> Apri
-                    </a>
-                    <?php if ($hasPdf): ?>
-                        <a href="<?= url('reseller/materials/' . $key) ?>" target="_blank" rel="noopener" class="rs-btn rs-btn-primary rs-btn-sm">
-                            <i class="bi bi-download"></i> Scarica PDF
-                        </a>
-                    <?php endif; ?>
-                </div>
+                <a href="<?= url('reseller/materials/' . $key . '/preview') ?>" target="_blank" rel="noopener" class="rs-btn rs-btn-primary rs-btn-sm">
+                    <i class="bi bi-eye"></i> Apri
+                </a>
             </div>
         <?php endforeach; ?>
     </div>

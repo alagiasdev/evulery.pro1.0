@@ -18,6 +18,9 @@
 .doc-lib .doc-acts { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:4px; }
 .doc-lib .doc-btn { display:inline-flex; align-items:center; gap:6px; font-size:.78rem; font-weight:700; border-radius:8px; padding:7px 14px; text-decoration:none; border:1.5px solid #00844A; background:#00844A; color:#fff; }
 .doc-lib .doc-btn:hover { background:#006837; border-color:#006837; }
+.doc-lib .doc-btn-ghost { background:#fff; color:#006837; }
+.doc-lib .doc-btn-ghost:hover { background:#eef7f1; }
+.doc-lib .doc-soon { display:inline-flex; align-items:center; gap:6px; font-size:.76rem; font-weight:600; color:#9a7b00; background:#fff8e1; border:1px solid #f0d9a8; border-radius:8px; padding:6px 12px; }
 .doc-lib .doc-badge { position:absolute; top:12px; right:12px; background:#fff8e1; border:1px solid #f0d9a8; color:#8a5b00; font-size:.62rem; font-weight:800; letter-spacing:.03em; border-radius:20px; padding:2px 8px; }
 .doc-lib .doc-empty { color:#6c757d; font-size:.85rem; }
 </style>
@@ -36,7 +39,14 @@
                 <h4 class="doc-t"><?= e($d['title']) ?></h4>
                 <p class="doc-p"><?= e($d['description'] ?? '') ?></p>
                 <div class="doc-acts">
-                    <a href="<?= url($previewBase . '/' . $key . '/preview') ?>" target="_blank" rel="noopener" class="doc-btn"><i class="bi bi-eye"></i> Apri</a>
+                    <?php if (empty($d['_available'])): ?>
+                        <span class="doc-soon"><i class="bi bi-hourglass-split"></i> In preparazione</span>
+                    <?php else: ?>
+                        <a href="<?= url($previewBase . '/' . $key . '/preview') ?>" target="_blank" rel="noopener" class="doc-btn"><i class="bi bi-eye"></i> Apri</a>
+                        <?php if (!empty($d['downloadable'])): ?>
+                        <a href="<?= url($previewBase . '/' . $key) ?>" target="_blank" rel="noopener" class="doc-btn doc-btn-ghost"><i class="bi bi-download"></i> Scarica</a>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 </div>
             </div>
             <?php endforeach; ?>

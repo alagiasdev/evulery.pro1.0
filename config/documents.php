@@ -25,7 +25,8 @@ return [
         'title'        => 'Modulo di attivazione',
         'description'  => 'A4 fronte-retro: presa dati del cliente + condizioni contrattuali. Da stampare e far firmare.',
         'icon'         => 'file-earmark-text',
-        'file'         => 'sales/modulo-attivazione.html',
+        // PDF caricato via FTP in storage/documents/ (sorgente HTML: sales/modulo-attivazione.html).
+        'file'         => 'storage/documents/modulo-attivazione.pdf',
         'downloadable' => true,
     ],
 
@@ -42,7 +43,8 @@ return [
         'title'        => 'Informativa privacy (GDPR)',
         'description'  => 'Informativa sul trattamento dei dati da consegnare/far firmare al cliente. Bozza da validare dal legale.',
         'icon'         => 'shield-check',
-        'file'         => 'sales/informativa-privacy.html',
+        // PDF caricato via FTP in storage/documents/ (sorgente HTML: sales/informativa-privacy.html).
+        'file'         => 'storage/documents/informativa-privacy.pdf',
         'downloadable' => true,
         'draft'        => true,
     ],

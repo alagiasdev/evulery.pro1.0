@@ -1,0 +1,5 @@
+# Documenti caricati via FTP (PDF firmabili: modulo attivazione, informativa privacy...).
+# Tenuti FUORI dal repo: si aggiornano via FTP/File Manager senza deploy di codice.
+# Questo file mantiene la cartella nel repo (così esiste dopo il git pull).
+*
+!.gitignore

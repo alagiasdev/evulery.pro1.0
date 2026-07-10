@@ -22,8 +22,6 @@ class MaterialsController
             'description'   => 'Riassunto di 1 pagina. Da inviare via email dopo il primo contatto.',
             'icon'          => 'file-earmark-text',
             'preview_file'  => 'sales/onepager.html',
-            // 'download_file' rimosso: il PDF e disallineato dall'HTML aggiornato.
-            // Ripristinare 'download_file' => 'sales/onepager.pdf' dopo il ri-export.
         ],
         'pitch-deck' => [
             'category'      => 'client',
@@ -31,8 +29,6 @@ class MaterialsController
             'description'   => 'Presentazione completa: problema, soluzione, ROI, prezzi. Usalo in demo.',
             'icon'          => 'file-earmark-slides',
             'preview_file'  => 'sales/pitch-deck.html',
-            // 'download_file' rimosso: il PDF e disallineato dall'HTML aggiornato.
-            // Ripristinare 'download_file' => 'sales/pitch-deck.pdf' dopo il ri-export.
         ],
         'faq-ristoratore' => [
             'category'    => 'client',
@@ -124,7 +120,7 @@ class MaterialsController
     }
 
     /**
-     * Scarica il materiale (PDF se disponibile, altrimenti file principale).
+     * Serve il materiale come download (per gli HTML e' comunque forzato inline).
      */
     public function download(Request $request): void
     {
@@ -133,7 +129,7 @@ class MaterialsController
             Response::error('Materiale non trovato.', 'NOT_FOUND', 404);
             return;
         }
-        $path = $entry['download_file'] ?? $entry['file'] ?? null;
+        $path = $entry['file'] ?? $entry['preview_file'] ?? null;
         if (!$path) {
             Response::error('Download non disponibile per questo materiale.', 'NOT_FOUND', 404);
             return;
