@@ -89,6 +89,9 @@
         <a class="rs-sidebar-link <?= ($activeMenu ?? '') === 'reseller-materials' ? 'active' : '' ?>" href="<?= url('reseller/materials') ?>">
             <i class="bi bi-file-earmark-text"></i> Materiali
         </a>
+        <a class="rs-sidebar-link <?= ($activeMenu ?? '') === 'reseller-documents' ? 'active' : '' ?>" href="<?= url('reseller/documents') ?>">
+            <i class="bi bi-folder-check"></i> Documenti
+        </a>
 
         <div class="rs-sidebar-section">Account</div>
         <a class="rs-sidebar-link <?= ($activeMenu ?? '') === 'reseller-profile' ? 'active' : '' ?>" href="<?= url('reseller/profile') ?>">

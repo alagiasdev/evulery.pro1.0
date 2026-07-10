@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — Area Documenti (reseller + admin)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+  :root{ --brand:#00844A; --brand-d:#006837; --ink:#1a1d23; --muted:#6c757d; --line:#e8edf0; --side:#0f1b16; --side2:#0b1511; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#eef1f4;color:var(--ink);line-height:1.5;padding:26px 18px 70px}
+  .wrap{max-width:1120px;margin:0 auto}
+  .doc-title{font-size:1.5rem;font-weight:800;margin-bottom:4px}
+  .doc-sub{color:var(--muted);font-size:.9rem;margin-bottom:8px}
+  .legend{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:.84rem;margin:16px 0 26px}
+  .legend b{color:var(--brand-d)}
+  .legend code{background:#eef7f1;color:var(--brand-d);border-radius:5px;padding:1px 6px}
+
+  .wf-label{display:inline-flex;align-items:center;gap:8px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--brand);padding:5px 12px;border-radius:7px 7px 0 0}
+  .frame{margin-bottom:34px}
+
+  /* App shell mock */
+  .app{display:flex;background:#f4f6f8;border:1px solid #d9dee3;border-radius:0 12px 12px 12px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.08);min-height:520px}
+  .side{width:214px;flex:0 0 214px;background:var(--side);color:#c8d2cd;padding:16px 12px;display:flex;flex-direction:column;gap:2px}
+  .side .brand{padding:6px 8px 14px}
+  .side .brand .b{font-size:1.15rem;font-weight:800;color:#fff}
+  .side .brand .b .dot{color:#4ade80}
+  .side .brand .role{font-size:.62rem;font-weight:800;letter-spacing:.12em;color:#4ade80;margin-top:2px}
+  .side .grp{font-size:.6rem;font-weight:800;letter-spacing:.12em;color:#5c6b64;margin:14px 8px 6px}
+  .side a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;color:#c8d2cd;text-decoration:none;font-size:.82rem}
+  .side a i{font-size:.95rem;width:18px;text-align:center}
+  .side a.active{background:var(--brand);color:#fff;font-weight:600}
+  .side a .badge{margin-left:auto;background:#e8a200;color:#3a2c00;font-size:.62rem;font-weight:800;border-radius:20px;padding:1px 7px}
+  .side.admin{background:#141a22}
+  .side.admin a.active{background:var(--brand)}
+  .side.admin .role{color:#7dd3fc}
+  .side.admin .brand .b .dot{color:#4ade80}
+
+  .main{flex:1;min-width:0;display:flex;flex-direction:column}
+  .topbar{height:52px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:.85rem}
+  .topbar .u{display:flex;align-items:center;gap:8px;color:var(--muted)}
+  .topbar .u .av{width:26px;height:26px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:.7rem;font-weight:700}
+  .content{padding:22px 24px;overflow:auto}
+  .ph{margin-bottom:6px}
+  .ph h1{font-size:1.3rem;font-weight:800}
+  .ph p{color:var(--muted);font-size:.84rem}
+
+  .sec{margin-top:20px}
+  .sec h3{font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--brand-d);display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .sec h3 .muted{font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted);font-size:.9em}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:820px){ .grid{grid-template-columns:1fr 1fr} .side{display:none} }
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;position:relative}
+  .card .ic{width:38px;height:38px;border-radius:10px;background:#eef7f1;color:var(--brand-d);display:grid;place-items:center;font-size:1.1rem}
+  .card h4{font-size:.94rem;font-weight:700}
+  .card p{font-size:.79rem;color:var(--muted);line-height:1.45;flex:1}
+  .card .acts{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:4px}
+  .btn{display:inline-flex;align-items:center;gap:6px;font-size:.76rem;font-weight:700;border-radius:8px;padding:6px 12px;text-decoration:none;border:1.5px solid var(--brand)}
+  .btn-primary{background:var(--brand);color:#fff}
+  .btn-ghost{background:#fff;color:var(--brand-d)}
+  .badge-draft{position:absolute;top:12px;right:12px;background:#fff8e1;border:1px solid #f0d9a8;color:#8a5b00;font-size:.62rem;font-weight:800;letter-spacing:.03em;border-radius:20px;padding:2px 8px}
+  .soon{background:#fff8e1;border-left:3px solid #ffc107;padding:.65rem 1rem;border-radius:6px;font-size:.78rem;color:#5d4037;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="doc-title">Wireframe — Area <span style="color:var(--brand)">Documenti</span></div>
+  <p class="doc-sub">Nuova sezione operativa/legale, distinta dai materiali commerciali. Stessa lista in area reseller e admin.</p>
+
+  <div class="legend">
+    <b>Come funziona:</b> un unico <b>registro condiviso</b> (<code>config/documents.php</code>) alimenta entrambe le viste — aggiungere un documento in futuro = <b>una riga</b> e compare ovunque.
+    I file sono serviti dalla stessa logica sicura dei Materiali (whitelist + nonce CSP). Bottoni: <b>Apri</b> (anteprima/stampa) e, dove ha senso, <b>Scarica</b>.
+  </div>
+
+  <!-- ======================= RESELLER ======================= -->
+  <div class="frame">
+    <div class="wf-label"><i class="bi bi-people-fill"></i> Vista RESELLER · /reseller/documents</div>
+    <div class="app">
+      <aside class="side">
+        <div class="brand"><div class="b">evulery<span class="dot">.</span></div><div class="role">Area Reseller</div></div>
+        <a href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="#"><i class="bi bi-funnel"></i> I miei lead <span class="badge">1</span></a>
+        <a href="#"><i class="bi bi-shop"></i> I miei clienti</a>
+        <a href="#"><i class="bi bi-cash-stack"></i> Le mie commissioni</a>
+        <a href="#"><i class="bi bi-envelope-paper"></i> Ricariche crediti</a>
+        <div class="grp">Strumenti</div>
+        <a href="#"><i class="bi bi-file-earmark-text"></i> Materiali</a>
+        <a href="#" class="active"><i class="bi bi-folder-check"></i> Documenti</a>
+        <div class="grp">Account</div>
+        <a href="#"><i class="bi bi-person"></i> Profilo</a>
+      </aside>
+      <div class="main">
+        <div class="topbar"><span>Documenti</span><span class="u"><span>Elisa Sinieri</span><span class="av">E</span></span></div>
+        <div class="content">
+          <div class="ph"><h1>Documenti</h1><p>Modulistica e documenti operativi da usare nell'attivazione dei clienti.</p></div>
+
+          <div class="sec">
+            <h3><i class="bi bi-clipboard-check"></i> Onboarding &amp; attivazione</h3>
+            <div class="grid">
+              <div class="card">
+                <div class="ic"><i class="bi bi-file-earmark-text"></i></div>
+                <h4>Modulo di attivazione</h4>
+                <p>A4 fronte-retro: presa dati del cliente + condizioni contrattuali. Da stampare e far firmare.</p>
+                <div class="acts"><a class="btn btn-ghost" href="#"><i class="bi bi-eye"></i> Apri</a><a class="btn btn-primary" href="#"><i class="bi bi-printer"></i> Stampa</a></div>
+              </div>
+              <div class="card">
+                <div class="ic"><i class="bi bi-chat-dots"></i></div>
+                <h4>Messaggi di attivazione</h4>
+                <p>Testi pronti (email + WhatsApp) per consegnare le credenziali al cliente. Con pulsante "Copia".</p>
+                <div class="acts"><a class="btn btn-ghost" href="#"><i class="bi bi-eye"></i> Apri</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sec">
+            <h3><i class="bi bi-shield-lock"></i> Legale &amp; privacy</h3>
+            <div class="grid">
+              <div class="card">
+                <span class="badge-draft">BOZZA</span>
+                <div class="ic"><i class="bi bi-shield-check"></i></div>
+                <h4>Informativa privacy (GDPR)</h4>
+                <p>Informativa sul trattamento dati da consegnare/far firmare al cliente. Bozza da validare dal legale.</p>
+                <div class="acts"><a class="btn btn-ghost" href="#"><i class="bi bi-eye"></i> Apri</a><a class="btn btn-primary" href="#"><i class="bi bi-printer"></i> Stampa</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="soon"><i class="bi bi-info-circle"></i> In arrivo: contratto procacciatore B2B, condizioni d'uso, altri moduli. Si aggiungono con una riga nel registro.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= ADMIN ======================= -->
+  <div class="frame">
+    <div class="wf-label"><i class="bi bi-gear-fill"></i> Vista ADMIN · /admin/documents</div>
+    <div class="app">
+      <aside class="side admin">
+        <div class="brand"><div class="b">evulery<span class="dot">.</span></div><div class="role">Amministrazione</div></div>
+        <a href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="#"><i class="bi bi-shop"></i> Ristoranti</a>
+        <a href="#"><i class="bi bi-people"></i> Utenti</a>
+        <a href="#"><i class="bi bi-funnel"></i> Lead</a>
+        <a href="#"><i class="bi bi-credit-card-2-front"></i> Abbonamenti</a>
+        <a href="#"><i class="bi bi-envelope-paper"></i> Ricariche crediti</a>
+        <a href="#" class="active"><i class="bi bi-folder-check"></i> Documenti</a>
+        <a href="#"><i class="bi bi-clock-history"></i> Log Attività</a>
+        <a href="#"><i class="bi bi-database-fill-gear"></i> Migration DB</a>
+        <a href="#"><i class="bi bi-gear"></i> Impostazioni</a>
+      </aside>
+      <div class="main">
+        <div class="topbar"><span>Documenti</span><span class="u"><span>Admin</span><span class="av">A</span></span></div>
+        <div class="content">
+          <div class="ph"><h1>Documenti</h1><p>Modulistica e documenti operativi/legali. Stessa libreria vista dai reseller.</p></div>
+
+          <div class="sec">
+            <h3><i class="bi bi-clipboard-check"></i> Onboarding &amp; attivazione</h3>
+            <div class="grid">
+              <div class="card">
+                <div class="ic"><i class="bi bi-file-earmark-text"></i></div>
+                <h4>Modulo di attivazione</h4>
+                <p>A4 fronte-retro: presa dati + condizioni contrattuali. Da stampare e far firmare.</p>
+                <div class="acts"><a class="btn btn-ghost" href="#"><i class="bi bi-eye"></i> Apri</a><a class="btn btn-primary" href="#"><i class="bi bi-printer"></i> Stampa</a></div>
+              </div>
+              <div class="card">
+                <div class="ic"><i class="bi bi-chat-dots"></i></div>
+                <h4>Messaggi di attivazione</h4>
+                <p>Testi email + WhatsApp per la consegna credenziali.</p>
+                <div class="acts"><a class="btn btn-ghost" href="#"><i class="bi bi-eye"></i> Apri</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sec">
+            <h3><i class="bi bi-shield-lock"></i> Legale &amp; privacy</h3>
+            <div class="grid">
+              <div class="card">
+                <span class="badge-draft">BOZZA</span>
+                <div class="ic"><i class="bi bi-shield-check"></i></div>
+                <h4>Informativa privacy (GDPR)</h4>
+                <p>Informativa trattamento dati da far firmare al cliente. Bozza da validare.</p>
+                <div class="acts"><a class="btn btn-ghost" href="#"><i class="bi bi-eye"></i> Apri</a><a class="btn btn-primary" href="#"><i class="bi bi-printer"></i> Stampa</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="soon"><i class="bi bi-info-circle"></i> (Eventuale, futuro) Da qui l'admin potrebbe anche <b>caricare/gestire</b> i documenti, se un domani vorrai renderli editabili senza passare dal codice.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend" style="margin-top:0">
+    <b>Note sul wireframe</b> — è un mock statico (i bottoni non fanno nulla). Contenuto iniziale: <b>Modulo di attivazione</b> e <b>Messaggi di attivazione</b> (già esistenti) + <b>Informativa privacy</b> (da creare, bozza). Categorie e documenti sono indicativi: si aggiustano prima di costruire.
+  </div>
+
+</div>
+</body>
+</html>

@@ -75,6 +75,9 @@
                 <span class="sidebar-badge"><?= $pendingCreditsCount ?></span>
             <?php endif; ?>
         </a>
+        <a class="sidebar-link <?= ($activeMenu ?? '') === 'documents' ? 'active' : '' ?>" href="<?= url('admin/documents') ?>">
+            <i class="bi bi-folder-check"></i> Documenti
+        </a>
 
         <div class="sidebar-section">Sistema</div>
         <a class="sidebar-link <?= ($activeMenu ?? '') === 'activity-log' ? 'active' : '' ?>" href="<?= url('admin/activity-log') ?>">

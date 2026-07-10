@@ -14,6 +14,7 @@ use App\Controllers\Admin\ActivityLogController;
 use App\Controllers\Admin\MigrationsController;
 use App\Controllers\Admin\UsersController;
 use App\Controllers\Admin\LeadsController;
+use App\Controllers\Admin\DocumentsController as AdminDocumentsController;
 use App\Controllers\Dashboard\HomeController;
 use App\Controllers\Dashboard\HelpController;
 use App\Controllers\Dashboard\HeartbeatController;
@@ -59,6 +60,7 @@ use App\Controllers\Reseller\LeadsController as ResellerLeadsController;
 use App\Controllers\Reseller\ProfileController as ResellerProfileController;
 use App\Controllers\Reseller\ClientsController as ResellerClientsController;
 use App\Controllers\Reseller\MaterialsController as ResellerMaterialsController;
+use App\Controllers\Reseller\DocumentsController as ResellerDocumentsController;
 use App\Controllers\Reseller\CommissionsController as ResellerCommissionsController;
 use App\Controllers\Reseller\CreditsController as ResellerCreditsController;
 use App\Controllers\Admin\CreditRequestsController as AdminCreditRequestsController;
@@ -306,6 +308,10 @@ $router->group('/admin', ['auth', 'admin', 'csrf', 'dashboard-ratelimit'], funct
     // Migrations DB
     $r->get('/migrations', [MigrationsController::class, 'index']);
     $r->post('/migrations/run', [MigrationsController::class, 'run']);
+    // Documenti (libreria condivisa con i reseller)
+    $r->get('/documents', [AdminDocumentsController::class, 'index']);
+    $r->get('/documents/{key}/preview', [AdminDocumentsController::class, 'preview']);
+    $r->get('/documents/{key}', [AdminDocumentsController::class, 'download']);
     // Profile
     $r->get('/profile', [ProfileController::class, 'show']);
     $r->post('/profile', [ProfileController::class, 'update']);
@@ -328,6 +334,9 @@ $router->group('/reseller', ['auth', 'reseller', 'csrf', 'dashboard-ratelimit'],
     $r->get('/materials', [ResellerMaterialsController::class, 'index']);
     $r->get('/materials/{key}/preview', [ResellerMaterialsController::class, 'preview']);
     $r->get('/materials/{key}', [ResellerMaterialsController::class, 'download']);
+    $r->get('/documents', [ResellerDocumentsController::class, 'index']);
+    $r->get('/documents/{key}/preview', [ResellerDocumentsController::class, 'preview']);
+    $r->get('/documents/{key}', [ResellerDocumentsController::class, 'download']);
     $r->get('/profile', [ResellerProfileController::class, 'show']);
     $r->post('/profile', [ResellerProfileController::class, 'update']);
 });
