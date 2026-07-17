@@ -36,8 +36,15 @@ class CSRFMiddleware
             $contentType = $_SERVER['CONTENT_TYPE'] ?? 'n/a';
             $contentLen  = $_SERVER['CONTENT_LENGTH'] ?? 'n/a';
             $clientIp    = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? 'n/a';
+            // Distingue "body assente" da "body arrivato ma non parsato da PHP":
+            // raw_len = SOLO la lunghezza del body grezzo (mai il contenuto: c'e' la password).
+            // transfer_encoding=chunked spiegherebbe content_len assente + $_POST vuoto.
+            $rawLen = strlen((string) file_get_contents('php://input'));
+            $transferEnc = $_SERVER['HTTP_TRANSFER_ENCODING'] ?? 'n/a';
+            $protocol    = $_SERVER['SERVER_PROTOCOL'] ?? 'n/a';
+            $cfRay       = $_SERVER['HTTP_CF_RAY'] ?? 'n/a';
             app_log(sprintf(
-                'CSRF FAIL uri=%s method=%s session_id=%s has_cookie=%s submitted_token=%s session_token=%s idle_sec=%s post_keys=[%s] content_len=%s content_type=%s ip=%s referer=%s ua=%s',
+                'CSRF FAIL uri=%s method=%s session_id=%s has_cookie=%s submitted_token=%s session_token=%s idle_sec=%s post_keys=[%s] raw_len=%s transfer_encoding=%s protocol=%s cf_ray=%s content_len=%s content_type=%s ip=%s referer=%s ua=%s',
                 $uri,
                 $request->method(),
                 session_id() ?: 'NONE',
@@ -46,6 +53,10 @@ class CSRFMiddleware
                 $sessionToken ? substr($sessionToken, 0, 8) . '...' : 'MISSING',
                 $idleSec ?? 'n/a',
                 $postKeys,
+                $rawLen,
+                $transferEnc,
+                $protocol,
+                $cfRay,
                 $contentLen,
                 $contentType,
                 $clientIp,
