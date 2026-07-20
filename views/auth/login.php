@@ -8,7 +8,7 @@
         <label class="auth-label" for="email">Email</label>
         <div class="auth-input-wrap">
             <span class="auth-input-icon"><?= bi_icon('envelope') ?></span>
-            <input type="email" class="auth-input has-icon" id="email" name="email" value="<?= old('email') ?>" placeholder="nome@ristorante.it" required autofocus>
+            <input type="email" class="auth-input has-icon" id="email" name="email" value="<?= old('email') ?>" placeholder="nome@ristorante.it" autocomplete="username" required autofocus>
         </div>
     </div>
 
@@ -16,7 +16,7 @@
         <label class="auth-label" for="password">Password</label>
         <div class="auth-input-wrap">
             <span class="auth-input-icon"><?= bi_icon('lock') ?></span>
-            <input type="password" class="auth-input has-icon has-toggle" id="password" name="password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" required>
+            <input type="password" class="auth-input has-icon has-toggle" id="password" name="password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="current-password" required>
             <button type="button" class="auth-toggle-pw"><?= bi_icon('eye') ?></button>
         </div>
     </div>
