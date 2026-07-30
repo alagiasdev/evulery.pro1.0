@@ -65,25 +65,35 @@ class WebhookController
                     $this->handleGuaranteeSetup($session, (int)$reservationId, $reservationModel, $logModel);
                 } elseif ($reservationId) {
                     $reservation = $reservationModel->findById((int)$reservationId);
-                    if ($reservation && !$reservation['deposit_paid']) {
+                    if ($reservation) {
                         $db = Database::getInstance();
+                        // Guardia atomica: la transizione avviene SOLO se la prenotazione è
+                        // ancora 'pending' e non pagata. Impedisce che un pagamento tardivo
+                        // "resusciti" una prenotazione annullata; il gate su rowCount() evita
+                        // email/log duplicati sui retry Stripe (consegne at-least-once).
                         $stmt = $db->prepare(
-                            'UPDATE reservations SET deposit_paid = 1, status = "confirmed", stripe_payment_id = :payment_id WHERE id = :id'
+                            'UPDATE reservations SET deposit_paid = 1, status = "confirmed", stripe_payment_id = :payment_id
+                             WHERE id = :id AND status = "pending" AND deposit_paid = 0'
                         );
                         $stmt->execute([
                             'payment_id' => $session->payment_intent ?? $session->id,
                             'id'         => $reservationId,
                         ]);
-                        $logModel->create((int)$reservationId, 'pending', 'confirmed', null, 'Caparra pagata via Stripe');
 
-                        // Send confirmation email to customer
-                        $full = $reservationModel->findWithCustomer((int)$reservationId);
-                        $tenantId = $session->metadata->tenant_id ?? ($reservation['tenant_id'] ?? null);
-                        if ($full && $tenantId) {
-                            $tenant = (new Tenant())->findById((int)$tenantId);
-                            if ($tenant) {
-                                MailService::sendReservationConfirmation($full, $tenant);
+                        if ($stmt->rowCount() === 1) {
+                            $logModel->create((int)$reservationId, 'pending', 'confirmed', null, 'Caparra pagata via Stripe');
+
+                            // Email di conferma al cliente (solo alla vera transizione)
+                            $full = $reservationModel->findWithCustomer((int)$reservationId);
+                            $tenantId = $session->metadata->tenant_id ?? ($reservation['tenant_id'] ?? null);
+                            if ($full && $tenantId) {
+                                $tenant = (new Tenant())->findById((int)$tenantId);
+                                if ($tenant) {
+                                    MailService::sendReservationConfirmation($full, $tenant);
+                                }
                             }
+                        } else {
+                            app_log("Webhook checkout.completed: prenotazione #{$reservationId} non pagabile (stato='{$reservation['status']}', deposit_paid={$reservation['deposit_paid']}) — nessuna azione (retry duplicato o annullata)", 'info');
                         }
                     }
                 } elseif ($orderId) {
@@ -164,11 +174,15 @@ class WebhookController
         }
 
         $db = Database::getInstance();
+        // Guardia atomica: la transizione 'pending' -> 'secured' vince UNA sola volta.
+        // Il check a inizio metodo (guarantee_status !== 'pending') copre le consegne
+        // duplicate sequenziali; questa guardia + il gate su rowCount() copre anche due
+        // consegne CONCORRENTI, evitando email/log doppi.
         $stmt = $db->prepare(
             'UPDATE reservations
              SET guarantee_status = "secured", status = "confirmed",
                  stripe_customer_id = :cust, stripe_payment_method_id = :pm, stripe_setup_intent_id = :si
-             WHERE id = :id'
+             WHERE id = :id AND guarantee_status = "pending"'
         );
         $stmt->execute([
             'cust' => $customerId,
@@ -176,6 +190,11 @@ class WebhookController
             'si'   => $setupIntentId,
             'id'   => $reservationId,
         ]);
+        if ($stmt->rowCount() !== 1) {
+            // Un'altra consegna concorrente ha già registrato la garanzia: niente doppioni.
+            app_log("Webhook guarantee setup: prenotazione #{$reservationId} già processata (consegna duplicata) — skip email/log", 'info');
+            return;
+        }
         $logModel->create($reservationId, 'pending', 'confirmed', null, 'Carta a garanzia registrata');
 
         // Email di conferma al cliente (il ristoratore è già stato notificato alla creazione)
