@@ -30,11 +30,21 @@ class WebhookController
         if ($tenantId) {
             $tenantRecord = (new Tenant())->findById((int)$tenantId);
             if ($tenantRecord && !empty($tenantRecord['stripe_wh_secret'])) {
+                // Il tenant HA un proprio webhook secret: si usa ESCLUSIVAMENTE quello.
+                // Se il decrypt fallisce (APP_ENCRYPTION_KEY errata / dato corrotto) NON
+                // si fa fallback al secret di piattaforma: la firma sarebbe comunque
+                // invalida, constructEvent darebbe 400 e Stripe ritenterebbe all'infinito
+                // lasciando le caparre PAGATE "in attesa" SENZA traccia. Meglio fermarsi
+                // con un errore DIAGNOSTICABILE che indichi la vera causa (loggata).
                 $webhookSecret = decrypt_value($tenantRecord['stripe_wh_secret']) ?: '';
+                if (!$webhookSecret) {
+                    app_log("Webhook secret NON decifrabile per tenant #{$tenantId}: verificare APP_ENCRYPTION_KEY / stripe_wh_secret. Evento Stripe non processato.", 'error');
+                    Response::error('Webhook secret del tenant non decifrabile.', 'WEBHOOK_SECRET_DECRYPT_FAILED', 400);
+                }
             }
         }
 
-        // Fallback to platform webhook secret
+        // Fallback al secret di piattaforma SOLO se il tenant non ha un proprio secret.
         if (!$webhookSecret) {
             $webhookSecret = env('STRIPE_WEBHOOK_SECRET', '');
         }
