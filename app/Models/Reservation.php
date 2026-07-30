@@ -361,13 +361,20 @@ class Reservation
      */
     public function markGuaranteeCharged(int $id, float $amount, ?string $paymentId): bool
     {
+        // Guardia atomica: la transizione 'secured' -> 'charged' può vincere UNA sola
+        // volta. Con un doppio submit concorrente la seconda richiesta trova
+        // rowCount()=0 e il chiamante NON duplica log/audit/notifiche. La sicurezza sul
+        // DENARO è invece garantita dall'idempotency key su PaymentIntent::create
+        // (vedi ReservationsController::chargeGuarantee): entrambe le richieste possono
+        // chiamare Stripe prima di questo UPDATE, quindi la guardia qui non basta da sola.
         $stmt = $this->db->prepare(
             'UPDATE reservations
              SET guarantee_status = "charged", guarantee_charged_at = NOW(),
                  guarantee_charged_amount = :amt, stripe_payment_id = :pid
-             WHERE id = :id'
+             WHERE id = :id AND guarantee_status = "secured"'
         );
-        return $stmt->execute(['amt' => $amount, 'pid' => $paymentId, 'id' => $id]);
+        $stmt->execute(['amt' => $amount, 'pid' => $paymentId, 'id' => $id]);
+        return $stmt->rowCount() === 1;
     }
 
     /**

@@ -620,6 +620,13 @@ class ReservationsController
                     'tenant_id'      => $tenant['id'],
                     'kind'           => 'guarantee_penalty',
                 ],
+            ], [
+                // Idempotency key STABILE per prenotazione: un doppio submit concorrente
+                // o un retry del browser NON generano due addebiti — Stripe deduplica
+                // sulla stessa chiave (una richiesta concorrente riceve 409, non un
+                // secondo charge). È QUESTA la difesa contro il doppio addebito, perché
+                // entrambe le richieste possono arrivare a Stripe prima dell'UPDATE del DB.
+                'idempotency_key' => "guar-charge-{$id}",
             ]);
 
             if (($pi->status ?? '') !== 'succeeded') {
@@ -628,7 +635,16 @@ class ReservationsController
                 return;
             }
 
-            $reservationModel->markGuaranteeCharged($id, $amount, $pi->id);
+            $charged = $reservationModel->markGuaranteeCharged($id, $amount, $pi->id);
+            if (!$charged) {
+                // Una richiesta concorrente ha già registrato QUESTO addebito (stesso
+                // PaymentIntent, grazie all'idempotency key): nessun doppio addebito,
+                // ma evitiamo di duplicare log/audit/notifica di successo.
+                app_log("Guarantee charge: transizione già registrata per prenotazione #{$id} (pi={$pi->id}), skip duplicato", 'warning');
+                Response::redirect(url("dashboard/reservations/{$id}"));
+                return;
+            }
+
             (new ReservationLog())->create(
                 $id, $reservation['status'], $reservation['status'], Auth::id(),
                 'Penale no-show addebitata: €' . number_format($amount, 2, ',', '.')
