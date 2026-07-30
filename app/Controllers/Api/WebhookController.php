@@ -173,6 +173,24 @@ class WebhookController
             }
         }
 
+        // [09] Non marcare MAI 'secured' senza i dati per addebitare davvero: servono
+        // sia il payment method sia il customer (chargeGuarantee li esige entrambi). Se
+        // il retrieve della SetupIntent è fallito (chiave non decifrabile, errore API)
+        // restano null: lasciamo guarantee_status='pending' (niente FALSA garanzia),
+        // logghiamo per diagnosi e NON confermiamo/inviamo email. Meglio "in attesa"
+        // visibile che una garanzia fittizia non addebitabile.
+        if (empty($paymentMethodId) || empty($customerId)) {
+            app_log(sprintf(
+                'Guarantee setup INCOMPLETO prenotazione #%d (tenant %s): payment_method=%s, customer=%s, setup_intent=%s — lasciata in attesa, NON marcata secured.',
+                $reservationId,
+                $tenantId ?? 'n/a',
+                $paymentMethodId ? 'ok' : 'NULL',
+                $customerId ? 'ok' : 'NULL',
+                $setupIntentId ?? 'n/a'
+            ), 'error');
+            return;
+        }
+
         $db = Database::getInstance();
         // Guardia atomica: la transizione 'pending' -> 'secured' vince UNA sola volta.
         // Il check a inizio metodo (guarantee_status !== 'pending') copre le consegne
