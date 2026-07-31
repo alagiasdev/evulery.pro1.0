@@ -15,18 +15,27 @@ class Order
     }
 
     /**
-     * Genera il prossimo order_number atomico per il tenant: ORD-001, ORD-002, ...
+     * Alloca ATOMICAMENTE il prossimo order_number del tenant: ORD-001, ORD-002, ...
+     * Usa tenant_order_counters + LAST_INSERT_ID(expr) (stesso pattern di
+     * Reservation::allocateBookingNumber): le allocazioni concorrenti sono serializzate
+     * dal row-lock sul contatore, eliminando la race del vecchio MAX+1. Il vincolo
+     * UNIQUE (tenant_id, order_number) fa da rete di sicurezza. NB: CONSUMA un numero
+     * ad ogni chiamata (usato solo da create()).
      */
     public function getNextOrderNumber(int $tenantId): string
     {
-        $stmt = $this->db->prepare(
-            'SELECT MAX(CAST(SUBSTRING(order_number, 5) AS UNSIGNED)) as max_num
-             FROM orders WHERE tenant_id = :tenant_id'
-        );
-        $stmt->execute(['tenant_id' => $tenantId]);
-        $row = $stmt->fetch();
-        $next = ($row['max_num'] ?? 0) + 1;
-        return 'ORD-' . str_pad($next, 3, '0', STR_PAD_LEFT);
+        $this->db->prepare(
+            'INSERT IGNORE INTO tenant_order_counters (tenant_id, last_number) VALUES (:tid, 0)'
+        )->execute(['tid' => $tenantId]);
+
+        $this->db->prepare(
+            'UPDATE tenant_order_counters
+             SET last_number = LAST_INSERT_ID(last_number + 1)
+             WHERE tenant_id = :tid'
+        )->execute(['tid' => $tenantId]);
+
+        $next = (int)$this->db->lastInsertId();
+        return 'ORD-' . str_pad((string)$next, 3, '0', STR_PAD_LEFT);
     }
 
     /**
