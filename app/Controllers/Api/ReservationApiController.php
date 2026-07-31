@@ -341,8 +341,19 @@ class ReservationApiController
                     }
                     \Stripe\Stripe::setApiKey($tenantStripeKey);
 
+                    // Serve un Customer Stripe per poter addebitare la penale OFF-SESSION
+                    // in caso di no-show: in setup mode Stripe NON lo crea da solo qui, e
+                    // senza customer il payment method salvato NON è addebitabile
+                    // (chargeGuarantee esige stripe_customer_id). Lo creiamo e agganciamo.
+                    $stripeCustomer = \Stripe\Customer::create(array_filter([
+                        'email'    => $customer['email'] ?? null,
+                        'name'     => trim(($customer['first_name'] ?? '') . ' ' . ($customer['last_name'] ?? '')) ?: null,
+                        'metadata' => ['reservation_id' => $reservationId, 'tenant_id' => $tenant['id']],
+                    ]));
+
                     $setupParams = [
                         'mode'                 => 'setup',
+                        'customer'             => $stripeCustomer->id,
                         'payment_method_types' => ['card'],
                         'success_url' => url("{$slug}/booking/success") . '?session_id={CHECKOUT_SESSION_ID}',
                         'cancel_url'  => url("{$slug}/booking/cancel") . "?reservation_id={$reservationId}",
@@ -353,9 +364,6 @@ class ReservationApiController
                         ],
                         'expires_at' => time() + 1800,
                     ];
-                    if (!empty($customer['email'])) {
-                        $setupParams['customer_email'] = $customer['email'];
-                    }
                     $session = \Stripe\Checkout\Session::create($setupParams);
 
                     $responseData['stripe_checkout_url'] = $session->url;

@@ -202,9 +202,14 @@ class BookingController
             if ($depositType === 'guarantee') {
                 $params['mode'] = 'setup';
                 $params['metadata']['kind'] = 'guarantee';
-                if (!empty($reservation['email'])) {
-                    $params['customer_email'] = $reservation['email'];
-                }
+                // Customer necessario per l'addebito OFF-SESSION della penale (in setup
+                // mode Stripe non lo crea da solo): senza, la garanzia non è addebitabile.
+                $stripeCustomer = \Stripe\Customer::create(array_filter([
+                    'email'    => $reservation['email'] ?? null,
+                    'name'     => trim(($reservation['first_name'] ?? '') . ' ' . ($reservation['last_name'] ?? '')) ?: null,
+                    'metadata' => ['reservation_id' => $rid, 'tenant_id' => $tenant['id']],
+                ]));
+                $params['customer'] = $stripeCustomer->id;
             } else {
                 $params['mode'] = 'payment';
                 $params['line_items'] = [[
