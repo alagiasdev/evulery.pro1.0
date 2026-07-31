@@ -344,6 +344,30 @@ class Reservation
         return $stmt->execute($data);
     }
 
+    /**
+     * Annulla ATOMICAMENTE una prenotazione a caparra manuale SOLO se è ancora
+     * 'pending' e non pagata. Usato dal cron expire-manual-deposits: la guardia nella
+     * WHERE evita che il cron sovrascriva a 'cancelled' una prenotazione che il webhook
+     * Stripe ha confermato/pagato nella finestra fra la SELECT del cron e questa UPDATE.
+     * Basta status='pending' (sia il branch payment sia guarantee del webhook impostano
+     * status='confirmed'); deposit_paid=0 e deposit_manual_request=1 sono sicurezza extra.
+     * Ritorna true SOLO se ha davvero annullato (rowCount()===1): il chiamante invia
+     * email/log della cancellazione solo in quel caso.
+     */
+    public function cancelIfStillPending(int $id, string $cancelledBy = 'system'): bool
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE reservations
+             SET status = "cancelled", cancelled_at = NOW(), cancelled_by = :by
+             WHERE id = :id
+               AND deposit_manual_request = 1
+               AND status = "pending"
+               AND deposit_paid = 0'
+        );
+        $stmt->execute(['by' => $cancelledBy, 'id' => $id]);
+        return $stmt->rowCount() === 1;
+    }
+
     public function markDepositPaid(int $id): bool
     {
         $stmt = $this->db->prepare('UPDATE reservations SET deposit_paid = 1 WHERE id = :id');

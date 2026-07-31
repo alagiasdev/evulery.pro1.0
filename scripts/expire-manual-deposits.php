@@ -78,7 +78,16 @@ $errors = 0;
 
 foreach ($rows as $row) {
     try {
-        $reservationModel->updateStatus((int)$row['id'], 'cancelled', 'system');
+        // Cancellazione ATOMICA: annulla solo se ancora 'pending' e non pagata. Se nel
+        // frattempo il webhook Stripe ha confermato/pagato (race SELECT->UPDATE), la
+        // guardia nella WHERE fa vincere 0 righe -> NON annulliamo e NON inviamo la mail
+        // di "caparra non completata" su una prenotazione ormai valida.
+        if (!$reservationModel->cancelIfStillPending((int)$row['id'], 'system')) {
+            app_log("Cron expire-manual-deposits: [SKIP] #{$row['id']} confermata/pagata nel frattempo — non annullata", 'info');
+            echo "    [SKIP] #{$row['id']} confermata nel frattempo — non annullata\n";
+            continue;
+        }
+
         $logModel->create((int)$row['id'], 'pending', 'cancelled', null, 'Caparra non completata entro la finestra');
 
         $tenant = [
