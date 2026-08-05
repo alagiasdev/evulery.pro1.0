@@ -246,6 +246,20 @@ class TableAssigner
     }
 
     /**
+     * True se l'assegnazione tavolo corrente e' stata fatta A MANO (is_auto=0): in
+     * tal caso la ri-assegnazione automatica (es. dopo una modifica prenotazione) NON
+     * deve sovrascrivere la scelta del ristoratore.
+     */
+    public function isManuallyAssigned(int $reservationId): bool
+    {
+        $stmt = $this->db->prepare(
+            'SELECT COUNT(*) FROM reservation_tables WHERE reservation_id = :r AND is_auto = 0'
+        );
+        $stmt->execute(['r' => $reservationId]);
+        return (int)$stmt->fetchColumn() > 0;
+    }
+
+    /**
      * Mappa reservationId => [['id'=>int,'name'=>string,'is_auto'=>int], ...]
      * per più prenotazioni in una query sola (evita N+1 nella lista).
      */

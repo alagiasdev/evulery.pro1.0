@@ -980,6 +980,20 @@ class ReservationsController
 
         $reservationModel->updateDetails($id, $updateData);
 
+        // [06] Se data/ora/coperti sono cambiati e la Gestione Tavoli e' attiva,
+        // ri-assegna il tavolo automaticamente: dopo lo spostamento il tavolo di prima
+        // potrebbe essere sottodimensionato o in conflitto con un'altra prenotazione.
+        // MA solo se l'assegnazione corrente e' AUTOMATICA: un tavolo scelto a mano dal
+        // ristoratore (is_auto=0) non va sovrascritto. autoAssign e' no-op se il tenant
+        // e' in modalita' solo-manuale (table_auto_assign=0) o se non trova un tavolo
+        // (in tal caso resta l'assegnazione precedente, che il ristoratore puo' correggere).
+        if (!empty($changes) && (new Tenant())->canUseService($tenantId, 'table_management')) {
+            $assigner = new TableAssigner();
+            if (!$assigner->isManuallyAssigned($id)) {
+                $assigner->autoAssign($tenantId, $id, $data['reservation_date'], $data['reservation_time'], (int)$data['party_size']);
+            }
+        }
+
         // Log
         if (!empty($changes)) {
             $note = 'Modificata da dashboard: ' . implode(', ', $changes);
