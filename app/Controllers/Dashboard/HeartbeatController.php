@@ -4,6 +4,7 @@ namespace App\Controllers\Dashboard;
 
 use App\Core\Auth;
 use App\Core\Request;
+use App\Core\Session;
 use App\Services\HeartbeatService;
 
 /**
@@ -22,6 +23,7 @@ class HeartbeatController
     public function reservations(Request $request): void
     {
         $tenantId = Auth::tenantId();
+        Session::closeWrite(); // endpoint pollato read-only: rilascia il lock sessione
 
         $date   = $this->validDate($request->query('date', date('Y-m-d')));
         $dateTo = $request->query('date_to');
@@ -47,6 +49,7 @@ class HeartbeatController
         }
 
         $tenantId = Auth::tenantId();
+        Session::closeWrite(); // endpoint pollato read-only: rilascia il lock sessione
         $date = $this->validDate($request->query('date', date('Y-m-d')));
 
         $state = HeartbeatService::forFloor($tenantId, $date);

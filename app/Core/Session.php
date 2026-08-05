@@ -140,4 +140,20 @@ class Session
     {
         session_regenerate_id(true);
     }
+
+    /**
+     * Chiude in scrittura la sessione e RILASCIA il lock del file, mantenendo i dati
+     * leggibili in $_SESSION per il resto della richiesta. Da chiamare sugli endpoint
+     * read-only ad alta frequenza (polling) DOPO aver letto cio' che serve dalla
+     * sessione: PHP tiene un lock esclusivo sul file di sessione fino a fine script,
+     * quindi senza questo le richieste concorrenti dello stesso browser (polling +
+     * navigazione) si serializzano. _last_activity, gia' scritto in start(), viene
+     * flushato qui, quindi la sessione resta viva.
+     */
+    public static function closeWrite(): void
+    {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
+    }
 }

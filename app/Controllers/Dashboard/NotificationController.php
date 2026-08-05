@@ -5,6 +5,7 @@ namespace App\Controllers\Dashboard;
 use App\Core\Auth;
 use App\Core\Request;
 use App\Core\Response;
+use App\Core\Session;
 use App\Models\Notification;
 
 class NotificationController
@@ -44,6 +45,7 @@ class NotificationController
     public function apiUnread(Request $request): void
     {
         $tenantId = Auth::tenantId();
+        Session::closeWrite(); // endpoint pollato (30s) read-only: rilascia il lock sessione
         $model = new Notification();
         $count = $model->getUnreadCount($tenantId);
 
@@ -70,6 +72,7 @@ class NotificationController
     public function apiRecent(Request $request): void
     {
         $tenantId = Auth::tenantId();
+        Session::closeWrite(); // endpoint pollato read-only: rilascia il lock sessione
         $items = (new Notification())->getRecent($tenantId, 15);
         Response::json(['notifications' => $items]);
     }
