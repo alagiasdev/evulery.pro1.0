@@ -10,6 +10,7 @@ use App\Models\OrderItem;
 use App\Models\Tenant;
 use App\Services\AuditLog;
 use App\Services\NotificationService;
+use App\Services\RateLimit;
 
 class DeliveryBoardController
 {
@@ -44,13 +45,16 @@ class DeliveryBoardController
         $token = $request->param('token');
         $tenant = $this->resolveTenant($token);
 
-        // Rate limiting: max 5 tentativi per IP in 15 min
+        // Rate limiting SERVER-SIDE (DB) per IP + token: NON aggirabile scartando il
+        // cookie di sessione, come invece era col vecchio contatore in $_SESSION (bastava
+        // non inviare il cookie per azzerare il limite e brute-forzare il PIN a 4 cifre).
+        // Nota: RateLimit::cleanup() elimina i record oltre 300s, quindi la finestra
+        // effettiva e' ~5 min (limite condiviso della classe): 5 tentativi / 5 min / IP.
         $ip = $request->ip();
-        $rateLimitKey = 'delivery_pin_' . md5($ip . $token);
-        $attempts = (int)($_SESSION[$rateLimitKey . '_count'] ?? 0);
-        $firstAttempt = (int)($_SESSION[$rateLimitKey . '_time'] ?? 0);
+        $limiter = new RateLimit();
+        $rlKey = 'dlvpin_' . md5($token);
 
-        if ($attempts >= 5 && (time() - $firstAttempt) < 900) {
+        if (!$limiter->checkCustom($ip, $rlKey, 5, 300)) {
             view('delivery/board', [
                 'title'  => 'Board Consegne - ' . $tenant['name'],
                 'tenant' => $tenant,
@@ -63,22 +67,15 @@ class DeliveryBoardController
 
         $pin = trim($request->input('pin') ?? '');
 
-        if ($pin === $tenant['delivery_board_pin']) {
-            // Reset rate limit
-            unset($_SESSION[$rateLimitKey . '_count'], $_SESSION[$rateLimitKey . '_time']);
-            // Set session
+        // Confronto timing-safe; $pin non vuoto per evitare match con un PIN non impostato.
+        if ($pin !== '' && hash_equals((string)($tenant['delivery_board_pin'] ?? ''), $pin)) {
             $_SESSION['delivery_board_' . $token] = true;
             header('Location: ' . url("delivery/{$token}/board"));
             exit;
         }
 
-        // Track failed attempt
-        if ($firstAttempt === 0 || (time() - $firstAttempt) >= 900) {
-            $_SESSION[$rateLimitKey . '_count'] = 1;
-            $_SESSION[$rateLimitKey . '_time'] = time();
-        } else {
-            $_SESSION[$rateLimitKey . '_count'] = $attempts + 1;
-        }
+        // Tentativo fallito: conta verso il limite server-side.
+        $limiter->recordCustom($ip, $rlKey);
 
         view('delivery/board', [
             'title'  => 'Board Consegne - ' . $tenant['name'],
