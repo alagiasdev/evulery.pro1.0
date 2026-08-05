@@ -195,27 +195,42 @@ class NotificationService
                 );
             }
 
-            $pushModel = new PushSubscription();
-            $okCount = 0;
-            $failCount = 0;
-            foreach ($webPush->flush() as $report) {
-                $endpoint = $report->getRequest()->getUri()->__toString();
-                if ($report->isSuccess()) {
-                    $okCount++;
-                    continue;
+            // [P2a] La flush() fa chiamate HTTP a FCM/Apple (lente): la DIFFERIAMO a dopo
+            // la risposta al client. Sotto FPM/LiteSpeed (prod) fastcgi_finish_request
+            // chiude la risposta e il resto gira in background -> il booking POST non
+            // aspetta la rete push. Fuori da FPM (Apache locale, CLI cron) la funzione non
+            // esiste: la push parte comunque a shutdown, senza rompere nulla (solo non
+            // anticipa la risposta). La accodatura sopra e' gia' fatta (veloce).
+            register_shutdown_function(function () use ($webPush, $tenantId) {
+                if (function_exists('fastcgi_finish_request')) {
+                    fastcgi_finish_request();
                 }
-                $failCount++;
-                if ($report->isSubscriptionExpired()) {
-                    // Iscrizione non piu' valida: la rimuoviamo (self-clean).
-                    $pushModel->deleteByEndpoint($endpoint);
-                    app_log("NotificationService: push subscription scaduta rimossa (tenant {$tenantId}): " . substr($endpoint, 0, 60), 'info');
-                } else {
-                    // Fallimento NON dovuto a scadenza (es. Apple/FCM rifiuta): prima
-                    // veniva ingoiato in silenzio. Logghiamo il motivo per diagnosticare.
-                    app_log("NotificationService: push NON consegnata (tenant {$tenantId}): " . $report->getReason() . " [" . substr($endpoint, 0, 60) . "]", 'warning');
+                try {
+                    $pushModel = new PushSubscription();
+                    $okCount = 0;
+                    $failCount = 0;
+                    foreach ($webPush->flush() as $report) {
+                        $endpoint = $report->getRequest()->getUri()->__toString();
+                        if ($report->isSuccess()) {
+                            $okCount++;
+                            continue;
+                        }
+                        $failCount++;
+                        if ($report->isSubscriptionExpired()) {
+                            // Iscrizione non piu' valida: la rimuoviamo (self-clean).
+                            $pushModel->deleteByEndpoint($endpoint);
+                            app_log("NotificationService: push subscription scaduta rimossa (tenant {$tenantId}): " . substr($endpoint, 0, 60), 'info');
+                        } else {
+                            // Fallimento NON dovuto a scadenza (es. Apple/FCM rifiuta):
+                            // logghiamo il motivo per diagnosticare.
+                            app_log("NotificationService: push NON consegnata (tenant {$tenantId}): " . $report->getReason() . " [" . substr($endpoint, 0, 60) . "]", 'warning');
+                        }
+                    }
+                    app_log("NotificationService: push tenant {$tenantId} — ok={$okCount}, fallite={$failCount}", 'info');
+                } catch (\Throwable $e) {
+                    app_log("NotificationService: push flush failed for tenant {$tenantId}: " . $e->getMessage(), 'warning');
                 }
-            }
-            app_log("NotificationService: push tenant {$tenantId} — ok={$okCount}, fallite={$failCount}", 'info');
+            });
         } catch (\Throwable $e) {
             app_log("NotificationService: push failed for tenant {$tenantId}: " . $e->getMessage(), 'warning');
         }
