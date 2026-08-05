@@ -65,20 +65,29 @@ class DemoRequestController
             ], 429);
         }
 
-        // 3. Verifica reCAPTCHA v3
+        // 3. Verifica reCAPTCHA v3 — FAIL-CLOSED: se la protezione e' configurata
+        // (secret presente), token mancante o errore di rete/verifica BLOCCANO la
+        // richiesta invece di lasciarla passare (prima un bot poteva bypassare
+        // semplicemente omettendo il token, o sfruttando un errore di rete silenziato).
         $secretKey = env('RECAPTCHA_SECRET_KEY', '');
-        if ($secretKey && $token) {
+        if ($secretKey) {
+            if (!$token) {
+                Response::json(['success' => false, 'error' => 'Verifica anti-spam mancante. Riprova.'], 403);
+            }
+
             $verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
             $response = @file_get_contents($verifyUrl . '?' . http_build_query([
                 'secret'   => $secretKey,
                 'response' => $token,
             ]));
 
-            if ($response) {
-                $result = json_decode($response, true);
-                if (!($result['success'] ?? false) || ($result['score'] ?? 0) < 0.3) {
-                    Response::json(['success' => false, 'error' => 'Verifica anti-spam fallita. Riprova.'], 403);
-                }
+            if ($response === false) {
+                Response::json(['success' => false, 'error' => 'Verifica anti-spam non riuscita. Riprova.'], 403);
+            }
+
+            $result = json_decode($response, true);
+            if (!($result['success'] ?? false) || ($result['score'] ?? 0) < 0.3) {
+                Response::json(['success' => false, 'error' => 'Verifica anti-spam fallita. Riprova.'], 403);
             }
         }
 

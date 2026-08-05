@@ -21,10 +21,14 @@ class CSRF
 
     public static function validate(?string $token): bool
     {
-        if ($token === null) {
+        $sessionToken = Session::get('_csrf_token', '');
+        // Fail-closed: rifiuta token vuoto/null E sessione senza token PRIMA di
+        // hash_equals. Altrimenti _csrf='' su una sessione priva di token darebbe
+        // hash_equals('', '') === true -> bypass CSRF.
+        if ($token === null || $token === '' || $sessionToken === '') {
             return false;
         }
-        return hash_equals(Session::get('_csrf_token', ''), $token);
+        return hash_equals($sessionToken, $token);
     }
 
     public static function field(): string
