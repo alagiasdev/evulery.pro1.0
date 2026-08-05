@@ -95,6 +95,16 @@ class TenantsController
             Response::redirect(url('admin/tenants/create'));
         }
 
+        // Pre-check: owner_email gia' esistente -> fail fast. users.email e' UNIQUE:
+        // senza questo controllo, User::create piu' avanti lancerebbe una PDOException
+        // di duplicate key non gestita (500) DOPO aver gia' creato tenant/subscription/
+        // categorie, lasciando entita' orfane. Coerente con updateUser().
+        if ((new User())->findByEmail($data['owner_email'])) {
+            flash('danger', 'Email proprietario gia\' usata da un altro account.');
+            \App\Core\Session::flash('old_input', $data);
+            Response::redirect(url('admin/tenants/create'));
+        }
+
         $slug = slugify($data['name']);
 
         // Slug riservati dal sistema (vedi Tenant::RESERVED_SLUGS): se il nome del
@@ -132,46 +142,61 @@ class TenantsController
             }
         }
 
-        // Create tenant
-        $tenantId = $tenantModel->create([
-            'slug'      => $slug,
-            'name'      => $data['name'],
-            'email'     => $data['email'],
-            'phone'     => $data['phone'] ?? null,
-            'address'   => $data['address'] ?? null,
-            'plan'      => 'base',
-            'plan_id'   => $planId,
-            'is_active' => isset($data['is_active']) ? 1 : 0,
-            'acquired_by_reseller_id' => $acquiredByReseller,
-        ]);
-
-        // Create subscription
-        if ($plan) {
-            $db = Database::getInstance();
-            $calc = Plan::calculatePrice($plan, 'annual', 0);
-            $db->prepare(
-                "INSERT INTO subscriptions (tenant_id, plan_id, plan, price, billing_cycle, extra_discount, status, current_period_start, current_period_end)
-                 VALUES (:tid, :pid, 'base', :price, 'annual', 0, 'active', CURDATE(), DATE_ADD(CURDATE(), INTERVAL 12 MONTH))"
-            )->execute([
-                'tid'   => $tenantId,
-                'pid'   => $planId,
-                'price' => $calc['total'],
+        // Creazione ATOMICA di tenant + subscription + categorie + owner. Senza
+        // transazione, un fallimento tardivo (es. owner_email duplicata sfuggita al
+        // pre-check per una race) lascerebbe un tenant ORFANO senza owner. Tutti i model
+        // usano la stessa connessione singleton, quindi la transazione qui li copre.
+        $db = Database::getInstance();
+        $db->beginTransaction();
+        try {
+            // Create tenant
+            $tenantId = $tenantModel->create([
+                'slug'      => $slug,
+                'name'      => $data['name'],
+                'email'     => $data['email'],
+                'phone'     => $data['phone'] ?? null,
+                'address'   => $data['address'] ?? null,
+                'plan'      => 'base',
+                'plan_id'   => $planId,
+                'is_active' => isset($data['is_active']) ? 1 : 0,
+                'acquired_by_reseller_id' => $acquiredByReseller,
             ]);
+
+            // Create subscription
+            if ($plan) {
+                $calc = Plan::calculatePrice($plan, 'annual', 0);
+                $db->prepare(
+                    "INSERT INTO subscriptions (tenant_id, plan_id, plan, price, billing_cycle, extra_discount, status, current_period_start, current_period_end)
+                     VALUES (:tid, :pid, 'base', :price, 'annual', 0, 'active', CURDATE(), DATE_ADD(CURDATE(), INTERVAL 12 MONTH))"
+                )->execute([
+                    'tid'   => $tenantId,
+                    'pid'   => $planId,
+                    'price' => $calc['total'],
+                ]);
+            }
+
+            // Seed default meal categories
+            (new MealCategory())->seedDefaults($tenantId);
+
+            // Create owner user
+            $userModel = new User();
+            $userModel->create([
+                'tenant_id'  => $tenantId,
+                'email'      => $data['owner_email'],
+                'password'   => $data['owner_password'],
+                'first_name' => $data['owner_first_name'],
+                'last_name'  => $data['owner_last_name'],
+                'role'       => 'owner',
+            ]);
+
+            $db->commit();
+        } catch (\Throwable $e) {
+            $db->rollBack();
+            app_log('Creazione tenant fallita (rollback): ' . $e->getMessage(), 'error');
+            flash('danger', 'Errore nella creazione del ristorante. Nessuna modifica salvata. Riprova.');
+            \App\Core\Session::flash('old_input', $data);
+            Response::redirect(url('admin/tenants/create'));
         }
-
-        // Seed default meal categories
-        (new MealCategory())->seedDefaults($tenantId);
-
-        // Create owner user
-        $userModel = new User();
-        $userModel->create([
-            'tenant_id'  => $tenantId,
-            'email'      => $data['owner_email'],
-            'password'   => $data['owner_password'],
-            'first_name' => $data['owner_first_name'],
-            'last_name'  => $data['owner_last_name'],
-            'role'       => 'owner',
-        ]);
 
         AuditLog::log(AuditLog::TENANT_CREATED, "Tenant: {$data['name']} (ID: {$tenantId})", Auth::id());
 
