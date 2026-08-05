@@ -18,6 +18,7 @@ use App\Services\AuditLog;
 use App\Services\AvailabilityService;
 use App\Services\HeartbeatService;
 use App\Services\MailService;
+use App\Services\MealDurationResolver;
 use App\Services\NotificationService;
 use App\Services\TableAssigner;
 
@@ -947,7 +948,7 @@ class ReservationsController
         $forceBooking = !empty($data['force_booking']) && (Auth::isOwner() || Auth::isSuperAdmin());
         if (!$forceBooking) {
             $availability = new AvailabilityService();
-            if (!$availability->canBook($tenantId, $data['reservation_date'], $data['reservation_time'], (int)$data['party_size'])) {
+            if (!$availability->canBook($tenantId, $data['reservation_date'], $data['reservation_time'], (int)$data['party_size'], $id)) {
                 flash('warning', 'Attenzione: orario non disponibile per il numero di coperti selezionato. Seleziona un orario diverso o forza la modifica.');
                 \App\Core\Session::flash('old_input', $data);
                 Response::redirect(url("dashboard/reservations/{$id}/edit"));
@@ -971,6 +972,10 @@ class ReservationsController
             'reservation_time' => $data['reservation_time'],
             'party_size'       => (int)$data['party_size'],
             'customer_notes'   => isset($data['customer_notes']) ? substr($data['customer_notes'], 0, 1000) : null,
+            // Ricalcola lo snapshot durata: se la prenotazione cambia fascia/giorno, la
+            // vecchia duration_minutes libererebbe il tavolo all'orario sbagliato ->
+            // rischio doppia assegnazione. Alla creazione la calcola Reservation::create.
+            'duration_minutes' => (new MealDurationResolver())->resolve($tenantId, $data['reservation_date'], $data['reservation_time']),
         ];
 
         $reservationModel->updateDetails($id, $updateData);

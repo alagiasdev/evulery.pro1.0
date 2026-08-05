@@ -444,7 +444,7 @@ class Reservation
 
     public function updateDetails(int $id, array $data): bool
     {
-        $allowed = ['reservation_date', 'reservation_time', 'party_size', 'customer_notes'];
+        $allowed = ['reservation_date', 'reservation_time', 'party_size', 'customer_notes', 'duration_minutes'];
         $sets = [];
         $params = ['id' => $id];
 
@@ -548,24 +548,31 @@ class Reservation
      * resta come FALLBACK per le prenotazioni storiche senza snapshot
      * (duration_minutes NULL) -> retrocompatibile.
      */
-    public function getOccupiedCovers(int $tenantId, string $date, string $slotTime, int $tableDuration): int
+    public function getOccupiedCovers(int $tenantId, string $date, string $slotTime, int $tableDuration, int $excludeReservationId = 0): int
     {
-        $stmt = $this->db->prepare(
-            'SELECT COALESCE(SUM(party_size), 0) as occupied
-             FROM reservations
-             WHERE tenant_id = :tenant_id
-             AND reservation_date = :date
-             AND reservation_time <= CAST(:slot_time AS TIME)
-             AND ADDTIME(reservation_time, SEC_TO_TIME(COALESCE(duration_minutes, :duration) * 60)) > CAST(:slot_time2 AS TIME)
-             AND status IN ("confirmed", "pending", "arrived", "suspended")'
-        );
-        $stmt->execute([
-            'tenant_id' => $tenantId,
-            'date'      => $date,
-            'slot_time' => $slotTime,
-            'duration'  => $tableDuration,
+        $sql = 'SELECT COALESCE(SUM(party_size), 0) as occupied
+                FROM reservations
+                WHERE tenant_id = :tenant_id
+                AND reservation_date = :date
+                AND reservation_time <= CAST(:slot_time AS TIME)
+                AND ADDTIME(reservation_time, SEC_TO_TIME(COALESCE(duration_minutes, :duration) * 60)) > CAST(:slot_time2 AS TIME)
+                AND status IN ("confirmed", "pending", "arrived", "suspended")';
+        $params = [
+            'tenant_id'  => $tenantId,
+            'date'       => $date,
+            'slot_time'  => $slotTime,
+            'duration'   => $tableDuration,
             'slot_time2' => $slotTime,
-        ]);
+        ];
+        // In fase di MODIFICA: escludi la prenotazione stessa dal conteggio, altrimenti
+        // i suoi coperti sarebbero contati due volte -> falso "orario non disponibile".
+        // Default 0 (creazione/widget) = nessuna esclusione, comportamento invariato.
+        if ($excludeReservationId > 0) {
+            $sql .= ' AND id <> :ex';
+            $params['ex'] = $excludeReservationId;
+        }
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
         return (int)$stmt->fetch()['occupied'];
     }
 }

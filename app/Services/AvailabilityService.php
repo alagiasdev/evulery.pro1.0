@@ -18,7 +18,7 @@ class AvailabilityService
         $this->db = Database::getInstance();
     }
 
-    public function getAvailableSlots(int $tenantId, string $date, int $partySize, string $source = 'widget'): array
+    public function getAvailableSlots(int $tenantId, string $date, int $partySize, string $source = 'widget', int $excludeReservationId = 0): array
     {
         // Get tenant config
         $stmt = $this->db->prepare('SELECT table_duration, time_step, promo_widget_only FROM tenants WHERE id = :id');
@@ -80,7 +80,7 @@ class AvailabilityService
             }
 
             // Calculate occupied covers considering overlapping reservations
-            $occupied = $reservationModel->getOccupiedCovers($tenantId, $date, $slotTime, $tableDuration);
+            $occupied = $reservationModel->getOccupiedCovers($tenantId, $date, $slotTime, $tableDuration, $excludeReservationId);
             $available = $maxCovers - $occupied;
 
             // Flag past slots when date is today
@@ -133,9 +133,9 @@ class AvailabilityService
         return array_slice($suggestions, 0, 3);
     }
 
-    public function canBook(int $tenantId, string $date, string $time, int $partySize): bool
+    public function canBook(int $tenantId, string $date, string $time, int $partySize, int $excludeReservationId = 0): bool
     {
-        $slots = $this->getAvailableSlots($tenantId, $date, $partySize);
+        $slots = $this->getAvailableSlots($tenantId, $date, $partySize, 'widget', $excludeReservationId);
 
         foreach ($slots as $slot) {
             if ($slot['time'] === $time && $slot['is_available']) {
