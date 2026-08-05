@@ -103,7 +103,7 @@ $nPending = count($pending);
             </li>
             <?php endforeach; ?>
         </ul>
-        <form method="POST" action="<?= url('admin/migrations/run') ?>" onsubmit="return confirm('Confermi l\'esecuzione di <?= $nPending ?> migration sul database? Operazione non reversibile.');">
+        <form method="POST" action="<?= url('admin/migrations/run') ?>" data-confirm="Confermi l'esecuzione di <?= (int)$nPending ?> migration sul database? Operazione non reversibile.">
             <?= csrf_field() ?>
             <button type="submit" class="btn btn-success btn-lg">
                 <i class="bi bi-play-fill me-1"></i>
