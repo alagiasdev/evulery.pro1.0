@@ -40,6 +40,18 @@ use App\Core\Database;
 use App\Models\Tenant;
 use App\Services\MailService;
 
+// Lock: una sola istanza. Evita che due run sovrapposti mandino lo STESSO reminder
+// due volte: il flag reminder_*_sent_at viene scritto solo DOPO l'invio, quindi senza
+// lock un run lento + il successivo leggerebbero entrambi 'IS NULL' e invierebbero.
+// Il reminder è spedito SOLO da questo cron, quindi il single-instance basta (nessun
+// claim atomico "marca-prima", che rischierebbe reminder persi su fallimento SMTP).
+$lockDir = BASE_PATH . '/storage';
+if (!is_dir($lockDir)) { @mkdir($lockDir, 0775, true); }
+$lockHandle = fopen($lockDir . '/send-reminders.lock', 'c');
+if (!$lockHandle || !flock($lockHandle, LOCK_EX | LOCK_NB)) {
+    exit(0); // un'altra istanza sta gia' girando: esci senza fare nulla
+}
+
 $db = Database::getInstance();
 
 // Sync MySQL timezone with PHP timezone

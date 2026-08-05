@@ -42,6 +42,18 @@ use App\Models\EmailCampaign;
 use App\Models\Tenant;
 use App\Services\BroadcastService;
 
+// Lock: una sola istanza. Una campagna grande (molti destinatari a 100ms l'uno) può
+// sforare i 5 min del cron; senza lock il run successivo si sovrapporrebbe e potrebbe
+// rileggere gli stessi recipient 'pending' inviando due volte (doppio consumo crediti
+// + reputazione mittente). Il broadcast parte SOLO da questo cron → il single-instance
+// basta (niente claim atomico "marca-prima", che rischierebbe destinatari persi su SMTP).
+$lockDir = BASE_PATH . '/storage';
+if (!is_dir($lockDir)) { @mkdir($lockDir, 0775, true); }
+$lockHandle = fopen($lockDir . '/send-broadcasts.lock', 'c');
+if (!$lockHandle || !flock($lockHandle, LOCK_EX | LOCK_NB)) {
+    exit(0); // un'altra istanza sta gia' girando: esci senza fare nulla
+}
+
 $db = Database::getInstance();
 
 // Sync MySQL timezone with PHP timezone
