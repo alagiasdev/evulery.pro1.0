@@ -11,14 +11,28 @@
         .unsub-icon { width: 64px; height: 64px; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 1.5rem; }
         .unsub-icon.ok { background: #d1fae5; color: #00844A; }
         .unsub-icon.err { background: #fee2e2; color: #dc3545; }
+        .unsub-icon.ask { background: #fff3cd; color: #b8860b; }
         .unsub-title { font-size: 1.25rem; font-weight: 700; color: #1a1d23; margin-bottom: .75rem; }
         .unsub-text { font-size: .9rem; color: #6c757d; line-height: 1.6; margin-bottom: 1.5rem; }
-        .unsub-footer { font-size: .75rem; color: #ced4da; border-top: 1px solid #f0f0f0; padding-top: 1.25rem; }
+        .unsub-btn { display: inline-block; background: #dc3545; color: #fff; border: none; border-radius: 10px; padding: .75rem 1.5rem; font-size: .92rem; font-weight: 700; cursor: pointer; transition: background .15s; }
+        .unsub-btn:hover { background: #b02a37; }
+        .unsub-footer { font-size: .75rem; color: #ced4da; border-top: 1px solid #f0f0f0; padding-top: 1.25rem; margin-top: 1.5rem; }
     </style>
 </head>
 <body>
     <div class="unsub-card">
-        <?php if ($success): ?>
+        <?php if (($state ?? '') === 'confirm'): ?>
+            <div class="unsub-icon ask">&#9993;</div>
+            <h1 class="unsub-title">Confermi la disiscrizione?</h1>
+            <p class="unsub-text">
+                Non riceverai pi&ugrave; comunicazioni email da <strong><?= e($tenantName) ?></strong>.<br>
+                Clicca il pulsante per confermare.
+            </p>
+            <form method="POST" action="<?= e(url('email/unsubscribe/' . $token)) ?>">
+                <?= csrf_field() ?>
+                <button type="submit" class="unsub-btn">Conferma disiscrizione</button>
+            </form>
+        <?php elseif (($state ?? '') === 'done'): ?>
             <div class="unsub-icon ok">&#10003;</div>
             <h1 class="unsub-title">Ti sei disiscritto</h1>
             <p class="unsub-text">
@@ -29,7 +43,7 @@
             <div class="unsub-icon err">&#10007;</div>
             <h1 class="unsub-title">Link non valido</h1>
             <p class="unsub-text">
-                Questo link di disiscrizione non &egrave; valido o &egrave; gi&agrave; stato utilizzato.
+                Questo link di disiscrizione non &egrave; valido.
             </p>
         <?php endif; ?>
         <div class="unsub-footer">

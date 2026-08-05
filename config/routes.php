@@ -363,6 +363,7 @@ $router->group('/api/v1', ['ratelimit'], function ($r) {
 
 // --- EMAIL UNSUBSCRIBE (public, GDPR) ---
 $router->get('/email/unsubscribe/{token}', [UnsubscribeController::class, 'show'], ['ratelimit']);
+$router->post('/email/unsubscribe/{token}', [UnsubscribeController::class, 'confirm'], ['ratelimit', 'csrf']);
 
 // --- MANAGE RESERVATION (magic link, public) ---
 $router->get('/booking/complete/{token}', [BookingController::class, 'complete']);
