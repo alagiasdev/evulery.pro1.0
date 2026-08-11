@@ -143,6 +143,17 @@
                 if (alert) alert.style.display = 'none';
             });
         });
+        // iOS/Safari: se la pagina auth viene ripristinata dalla CACHE (bfcache, o lo
+        // snapshot della web-app aperta dall'icona in home), il token CSRF nel form e'
+        // quello vecchio e non combacia con la sessione -> "Token di sicurezza non valido".
+        // Ricarichiamo per ottenere un form fresco allineato alla sessione. Inerte sui
+        // caricamenti normali (persisted=false): nessun impatto sul login regolare, e mai
+        // un loop (il reload e' una navigazione fresca -> persisted=false).
+        window.addEventListener('pageshow', function(e) {
+            if (e.persisted) {
+                window.location.reload();
+            }
+        });
     })();
     </script>
 </body>
