@@ -278,17 +278,25 @@ class TenantsController
         $tenant = $tenantModel->findById($id);
         $oldPlanId = (int)($tenant['plan_id'] ?? 0);
 
+        // [33] Clamp difensivo dei parametri numerici: la validazione HTML (min/step)
+        // NON è enforce lato server, e un time_step=0 manderebbe in loop la generazione
+        // slot. Stessi range accettati dalla via tenant (SettingsController::between).
+        // Il clamp corregge i fuori-range senza mai rifiutare il salvataggio dell'admin.
+        $tableDuration = max(15, min(300, (int)($data['table_duration'] ?? 90)));
+        $timeStep      = max(5, min(120, (int)($data['time_step'] ?? 30)));
+        $maxStaff      = ($data['max_staff'] ?? '') === '' ? null : max(0, min(100, (int)$data['max_staff']));
+
         $tenantModel->update($id, [
             'name'           => $data['name'],
             'email'          => $data['email'],
             'phone'          => $data['phone'] ?? null,
             'address'        => $data['address'] ?? null,
             'plan_id'        => $planId ?: null,
-            'table_duration' => $data['table_duration'] ?? 90,
-            'time_step'      => $data['time_step'] ?? 30,
+            'table_duration' => $tableDuration,
+            'time_step'      => $timeStep,
             'is_active'      => isset($data['is_active']) ? 1 : 0,
             'is_demo'        => isset($data['is_demo']) ? 1 : 0,
-            'max_staff'      => ($data['max_staff'] ?? '') === '' ? null : (int)$data['max_staff'],
+            'max_staff'      => $maxStaff,
         ]);
 
         // Update or create subscription if plan changed
@@ -426,7 +434,20 @@ class TenantsController
             return;
         }
 
-        $tenantModel->addCredits($tenantId, $amount);
+        // [32] Applica la variazione in modo ATOMICO per evitare il TOCTOU tra il
+        // controllo del saldo (sopra) e la scrittura: una rimozione concorrente
+        // potrebbe portare il saldo sotto zero. Per le rimozioni uso deductCredits,
+        // che garantisce l'invariante balance >= importo nella stessa UPDATE.
+        if ($amount < 0) {
+            $ok = $tenantModel->deductCredits($tenantId, abs($amount));
+            if (!$ok) {
+                flash('danger', "Operazione non consentita: crediti insufficienti (saldo attuale: {$currentBalance}). Ricarica la pagina e riprova.");
+                Response::redirect(url("admin/tenants/{$tenantId}/edit"));
+                return;
+            }
+        } else {
+            $tenantModel->addCredits($tenantId, $amount);
+        }
 
         // Description e flash dinamici in base al segno
         $isAdd = $amount > 0;
