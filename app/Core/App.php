@@ -56,16 +56,12 @@ class App
         $match = $this->router->resolve($method, $uri);
 
         if (!$match) {
-            // Try tenant resolution for booking pages
-            $tenant = TenantResolver::resolve($this->request->host(), $uri);
-            if ($tenant) {
-                // Re-resolve with tenant-aware URI
-                $match = $this->router->resolve($method, $uri);
-            }
-
-            if (!$match) {
-                Response::notFound();
-            }
+            // Nessuna rotta: risolvi il tenant SOLO per dare contesto alla 404
+            // (TenantResolver::current() per la 404 brandizzata). La vecchia
+            // ri-risoluzione era codice morto: stessi argomenti -> stesso risultato null,
+            // non poteva mai recuperare un match.
+            TenantResolver::resolve($this->request->host(), $uri);
+            Response::notFound();
         }
 
         // Set route params on request
