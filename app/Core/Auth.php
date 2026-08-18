@@ -116,6 +116,10 @@ class Auth
         Session::set('user_role', $user['role']);
         Session::set('user_email', $user['email']);
         Session::set('user_name', $user['first_name'] . ' ' . $user['last_name']);
+
+        // Cambio di privilegio -> rigenera l'ID di sessione (anti session-fixation),
+        // coerente con Auth::attempt(). I dati in $_SESSION sono preservati.
+        Session::regenerate();
     }
 
     public static function stopImpersonation(): void
@@ -145,6 +149,9 @@ class Auth
         Session::remove('original_admin_id');
         Session::remove('original_admin_name');
         Session::remove('impersonating');
+
+        // Ritorno all'admin = cambio di privilegio -> rigenera l'ID di sessione.
+        Session::regenerate();
     }
 
     public static function isImpersonating(): bool
