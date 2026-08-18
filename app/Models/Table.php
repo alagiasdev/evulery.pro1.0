@@ -250,23 +250,6 @@ class Table
         return $stmt->fetchAll();
     }
 
-    /** Id dei tavoli combinabili con $tableId. */
-    public function combinableWith(int $tableId): array
-    {
-        $stmt = $this->db->prepare(
-            'SELECT table_a_id, table_b_id FROM table_combinations
-             WHERE table_a_id = :id OR table_b_id = :id2'
-        );
-        $stmt->execute(['id' => $tableId, 'id2' => $tableId]);
-        $ids = [];
-        foreach ($stmt->fetchAll() as $row) {
-            $ids[] = (int)$row['table_a_id'] === $tableId
-                ? (int)$row['table_b_id']
-                : (int)$row['table_a_id'];
-        }
-        return $ids;
-    }
-
     /**
      * Sincronizza le combinazioni di un tavolo: rimuove tutte le coppie che lo
      * coinvolgono e reinserisce quelle verso gli id selezionati. Coppie sempre

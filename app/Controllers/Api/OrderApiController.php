@@ -296,7 +296,7 @@ class OrderApiController
         $status = $tenant['ordering_auto_accept'] ? 'accepted' : 'pending';
 
         // Create order
-        $orderModel = $orderModel ?? new Order();
+        $orderModel = new Order();
         $orderId = $orderModel->create((int)$tenant['id'], [
             'customer_id'       => $customerId,
             'order_type'        => $orderType,

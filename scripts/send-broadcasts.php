@@ -161,9 +161,8 @@ foreach ($campaigns as $campaign) {
     // Update campaign counts and status
     $campaignModel->updateCounts($campaignId, $sent, $failed);
 
-    // Mark as sent
-    $db->prepare('UPDATE email_campaigns SET status = :status, sent_at = NOW() WHERE id = :id')
-       ->execute(['status' => 'sent', 'id' => $campaignId]);
+    // Mark as sent (EmailCampaign::updateStatus imposta gia' sent_at per 'sent')
+    $campaignModel->updateStatus($campaignId, 'sent');
 
     echo "    Completed: {$sent} sent, {$failed} failed.\n";
 
