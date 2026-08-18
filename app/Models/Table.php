@@ -282,12 +282,26 @@ class Table
             );
             $del->execute(['t' => $tenantId, 'id' => $tableId, 'id2' => $tableId]);
 
+            // Valida gli id combinabili: tieni SOLO i tavoli realmente appartenenti al
+            // tenant (evita scritture cross-tenant di id non del tenant, coerente col
+            // pattern di scoping usato ovunque). Scarta <=0 e l'auto-combinazione.
+            $wanted = array_values(array_unique(array_filter(
+                array_map('intval', $otherIds),
+                fn($x) => $x > 0 && $x !== $tableId
+            )));
+            $valid = [];
+            if (!empty($wanted)) {
+                $ph = implode(',', array_fill(0, count($wanted), '?'));
+                $q = $this->db->prepare("SELECT id FROM restaurant_tables WHERE tenant_id = ? AND id IN ({$ph})");
+                $q->execute(array_merge([$tenantId], $wanted));
+                $valid = array_map('intval', array_column($q->fetchAll(), 'id'));
+            }
+
             $ins = $this->db->prepare(
                 'INSERT IGNORE INTO table_combinations (tenant_id, table_a_id, table_b_id)
                  VALUES (:t, :a, :b)'
             );
-            foreach (array_unique(array_map('intval', $otherIds)) as $other) {
-                if ($other <= 0 || $other === $tableId) continue;
+            foreach ($valid as $other) {
                 $ins->execute([
                     't' => $tenantId,
                     'a' => min($tableId, $other),
