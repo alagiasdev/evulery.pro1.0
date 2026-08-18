@@ -23,6 +23,7 @@ class CollaboratorsController
 
     public function index(Request $request): void
     {
+        $this->requireOwner();
         if (gate_service('staff_accounts', url('dashboard/settings'))) return;
 
         $tenant   = TenantResolver::current();
@@ -43,6 +44,7 @@ class CollaboratorsController
 
     public function store(Request $request): void
     {
+        $this->requireOwner();
         if (gate_service('staff_accounts', url('dashboard/settings'))) return;
 
         $tenant   = TenantResolver::current();
@@ -100,6 +102,7 @@ class CollaboratorsController
 
     public function toggle(Request $request): void
     {
+        $this->requireOwner();
         if (gate_service('staff_accounts', url('dashboard/settings'))) return;
         $target = $this->findOwnStaff((int)$request->param('id'));
         if (!$target) return;
@@ -112,6 +115,7 @@ class CollaboratorsController
 
     public function destroy(Request $request): void
     {
+        $this->requireOwner();
         if (gate_service('staff_accounts', url('dashboard/settings'))) return;
         $target = $this->findOwnStaff((int)$request->param('id'));
         if (!$target) return;
@@ -124,6 +128,7 @@ class CollaboratorsController
 
     public function resetPassword(Request $request): void
     {
+        $this->requireOwner();
         if (gate_service('staff_accounts', url('dashboard/settings'))) return;
         $target = $this->findOwnStaff((int)$request->param('id'));
         if (!$target) return;
@@ -139,6 +144,21 @@ class CollaboratorsController
         AuditLog::log(AuditLog::USER_UPDATED, "Password collaboratore aggiornata: {$target['email']}", Auth::id(), (int)Auth::tenantId());
         flash('success', "Password aggiornata per {$target['first_name']} {$target['last_name']}.");
         Response::redirect($back);
+    }
+
+    /**
+     * Guardia esplicita: solo il titolare (role 'owner') gestisce i collaboratori.
+     * Difesa in profondità OLTRE la StaffMiddleware, che restringe solo il ruolo
+     * 'staff' ed è inerte per ogni altro ruolo: se la sua allow-list cambiasse,
+     * questa guardia impedisce comunque a un non-owner di creare/gestire staff.
+     * Response::redirect termina la richiesta (exit).
+     */
+    private function requireOwner(): void
+    {
+        if (!Auth::isOwner()) {
+            flash('danger', 'Sezione riservata al titolare del ristorante.');
+            Response::redirect(url('dashboard'));
+        }
     }
 
     /** Solo i collaboratori 'staff' del tenant corrente. */
