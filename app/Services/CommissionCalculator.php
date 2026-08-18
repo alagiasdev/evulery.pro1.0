@@ -18,7 +18,7 @@ use App\Models\ResellerProfile;
  *  - Pagamento al reseller in unica soluzione al pagamento del cliente
  *    (annual = commissione_annuale, semiannual = commissione_annuale / 2)
  *  - Numero pagamenti completati = intdiv(mesi_dall'attivazione, billing_months) + 1
- *    dove billing_months = 6 (semiannual) o 12 (annual)
+ *    dove billing_months = 1 (monthly) / 6 (semiannual) / 12 (annual)
  */
 class CommissionCalculator
 {
@@ -39,10 +39,19 @@ class CommissionCalculator
     /**
      * Mesi tra due pagamenti del cliente in base al billing_cycle.
      * Default 12 (annual) per resilienza se il valore è null/sconosciuto.
+     * Il caso 'monthly' e' gestito esplicitamente (=1): prima cadeva nel default 12,
+     * trattando un cliente mensile come annuale -> commissione per pagamento e schedule
+     * sovrastimati fino a 12x. Con monthly=1 il reseller incassa annuale/12 a ogni
+     * pagamento mensile: in un anno la stessa commissione annuale, come annual/semiannual.
      */
     public static function billingMonthsFor(?string $billingCycle): int
     {
-        return $billingCycle === 'semiannual' ? 6 : 12;
+        return match ($billingCycle) {
+            'monthly'    => 1,
+            'semiannual' => 6,
+            'annual'     => 12,
+            default      => 12, // fallback resiliente per null/valore sconosciuto
+        };
     }
 
     /**
