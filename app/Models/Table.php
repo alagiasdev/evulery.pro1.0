@@ -66,9 +66,11 @@ class Table
     /** Crea un tavolo; la priorità è assegnata in coda (max+1). */
     public function create(int $tenantId, array $data): int
     {
-        $maxPrio = (int)$this->db->query(
-            'SELECT COALESCE(MAX(priority), -1) FROM restaurant_tables WHERE tenant_id = ' . (int)$tenantId
-        )->fetchColumn();
+        $stmt = $this->db->prepare(
+            'SELECT COALESCE(MAX(priority), -1) FROM restaurant_tables WHERE tenant_id = :t'
+        );
+        $stmt->execute(['t' => $tenantId]);
+        $maxPrio = (int)$stmt->fetchColumn();
 
         [$min, $max] = $this->normalizeCapacity($data);
 

@@ -272,6 +272,9 @@ class OrderApiController
             $originalSubtotal = 0;
             foreach ($orderItems as $oi) {
                 $mi = $menuItemModel->findById($oi['menu_item_id'], (int)$tenant['id']);
+                if (!$mi) {
+                    continue; // piatto rimosso nella micro-race dopo la validazione: non conteggiarlo
+                }
                 $originalSubtotal += (float)$mi['price'] * $oi['quantity'];
             }
             $discountAmount = round($originalSubtotal - $subtotal, 2);

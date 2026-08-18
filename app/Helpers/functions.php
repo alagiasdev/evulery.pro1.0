@@ -185,6 +185,12 @@ function normalize_email(string $raw): string
 function format_date(string $date, string $format = 'd/m/Y'): string
 {
     $ts = strtotime($date);
+    // Vuoto/spazzatura (strtotime false) o zero-date MySQL (che invece darebbe
+    // '30/11/-0001'): meglio stringa vuota che una data fuorviante. NB: non filtro
+    // sui timestamp negativi, sarebbero compleanni pre-1970 legittimi.
+    if ($ts === false || str_starts_with($date, '0000-00-00')) {
+        return '';
+    }
 
     // Fast path: nessun token testuale → niente da tradurre
     if (!preg_match('/[DlMF]/', $format)) {
