@@ -170,7 +170,7 @@ class OrderApiController
 
             $menuItem = $menuItemModel->findById($menuItemId, (int)$tenant['id']);
             if (!$menuItem || !$menuItem['is_available'] || !$menuItem['is_orderable']) {
-                Response::error("Il piatto \"{$item['item_name']}\" non è disponibile.", 'ITEM_UNAVAILABLE', 422);
+                Response::error('Uno dei piatti selezionati non è più disponibile.', 'ITEM_UNAVAILABLE', 422);
             }
 
             $unitPrice = (float)$menuItem['price'];

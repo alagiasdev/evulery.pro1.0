@@ -156,7 +156,7 @@ $totalPages = max(1, (int)ceil($totalCount / $limit));
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
         <span class="lbl">Stato:</span>
-        <select name="status" onchange="this.form.submit()">
+        <select name="status" class="lead-filter-auto">
             <option value="">Tutti</option>
             <?php foreach ($statuses as $key => $label): ?>
                 <option value="<?= e($key) ?>" <?= ($filters['status'] ?? '') === $key ? 'selected' : '' ?>><?= e($label) ?></option>
@@ -165,7 +165,7 @@ $totalPages = max(1, (int)ceil($totalCount / $limit));
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
         <span class="lbl">Periodo:</span>
-        <select name="period" onchange="this.form.submit()">
+        <select name="period" class="lead-filter-auto">
             <option value="7d">Ultimi 7 giorni</option>
             <option value="30d" selected>Ultimi 30 giorni</option>
             <option value="month">Questo mese</option>
@@ -176,6 +176,13 @@ $totalPages = max(1, (int)ceil($totalCount / $limit));
         <i class="bi bi-funnel"></i> Filtra
     </button>
 </form>
+<script nonce="<?= csp_nonce() ?>">
+// Auto-submit al cambio del filtro (l'onchange inline era bloccato dalla CSP).
+// Il bottone "Filtra" resta come fallback.
+document.querySelectorAll('.lead-filter-auto').forEach(function (s) {
+    s.addEventListener('change', function () { if (s.form) s.form.submit(); });
+});
+</script>
 
 <!-- Tabella -->
 <div class="leads-table-card">
