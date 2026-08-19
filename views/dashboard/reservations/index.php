@@ -463,9 +463,8 @@ $kpiUrl = function (string $st) use ($isUpcoming, $date, $dateTo, $source): stri
             <div class="res-info">
                 <div class="res-name"><?= e($r['first_name'] . ' ' . $r['last_name']) ?> <?= getSegmentBadge((int)($r['total_bookings'] ?? 0)) ?> <span class="res-id">#<?= (int)($r['booking_number'] ?? $r['id']) ?></span></div>
                 <div class="res-contact">
-                    <i class="bi bi-telephone me-1"></i><?= e($r['phone']) ?>
-                    &nbsp;&middot;&nbsp;
-                    <i class="bi bi-envelope me-1"></i><?= e($r['email']) ?>
+                    <a href="tel:<?= e(preg_replace('/[^0-9+]/', '', (string)$r['phone'])) ?>" class="res-phone"><i class="bi bi-telephone me-1"></i><?= e($r['phone']) ?></a>
+                    <span class="res-email">&nbsp;&middot;&nbsp;<i class="bi bi-envelope me-1"></i><?= e($r['email']) ?></span>
                 </div>
             </div>
             <div class="res-right">
