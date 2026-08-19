@@ -1248,7 +1248,7 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     font-size: .9rem; color: #fff; flex-shrink: 0;
 }
 .section-title { font-size: .88rem; font-weight: 700; color: #495057; }
-.section-subtitle { font-size: .72rem; color: #adb5bd; }
+.section-subtitle { font-size: .8rem; color: #868e96; }
 
 /* ===== Settings form fields ===== */
 .form-body { padding: 1rem 1.25rem; }
@@ -1257,7 +1257,7 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     font-size: .78rem; font-weight: 600; color: #495057;
     margin-bottom: .3rem; display: block;
 }
-.field-hint { font-size: .7rem; color: #adb5bd; margin-top: .2rem; }
+.field-hint { font-size: .8rem; color: #868e96; margin-top: .2rem; }
 .field-input {
     width: 100%; border: 1px solid #dee2e6; border-radius: 8px;
     padding: .45rem .75rem; font-size: .85rem;
@@ -1299,7 +1299,7 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     font-size: .72rem; font-weight: 600; cursor: pointer; white-space: nowrap;
 }
 .link-copy:hover { background: var(--brand-dark); }
-.link-label { font-size: .72rem; font-weight: 600; color: #6c757d; margin-bottom: .3rem; }
+.link-label { font-size: .8rem; font-weight: 600; color: #6c757d; margin-bottom: .3rem; }
 .embed-code {
     background: #1a1d23; border-radius: 8px; padding: .65rem .85rem;
     font-family: 'SF Mono', 'Fira Code', monospace;
@@ -1324,7 +1324,7 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
 }
 .logo-dropzone:hover { border-color: var(--brand); background: #f0faf5; }
 .logo-dropzone-text { font-size: .85rem; font-weight: 600; color: #495057; }
-.logo-dropzone-hint { font-size: .72rem; color: #adb5bd; }
+.logo-dropzone-hint { font-size: .8rem; color: #868e96; }
 .logo-preview {
     display: inline-flex; align-items: center; gap: .75rem;
     padding: .5rem; background: #f8f9fa; border-radius: 10px;
