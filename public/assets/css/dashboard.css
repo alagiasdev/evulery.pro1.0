@@ -967,7 +967,7 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
 }
 
 /* ===== Birthday inline in hero-meta ===== */
-.cs-hero-birthday { font-size: .72rem; color: #6c757d; }
+.cs-hero-birthday { font-size: .82rem; color: #6c757d; }
 .cs-hero-birthday i { color: #E65100; }
 
 /* ===== Stat trend badges ===== */
@@ -989,8 +989,8 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     display: flex; justify-content: space-between; align-items: center;
     margin-bottom: .5rem;
 }
-.cs-tags-title { font-size: .78rem; font-weight: 600; color: #495057; }
-.cs-tags-count { font-size: .7rem; color: #adb5bd; }
+.cs-tags-title { font-size: .82rem; font-weight: 600; color: #495057; }
+.cs-tags-count { font-size: .78rem; color: #868e96; }
 .cs-tags-wrap { display: flex; flex-wrap: wrap; gap: .35rem; }
 .cs-tags-wrap.collapsed { max-height: 34px; overflow: hidden; }
 .cs-tag-toggle {
@@ -1071,8 +1071,8 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     font-size: .82rem;
 }
 .cs-privacy-row:last-child { border: none; }
-.cs-privacy-label { color: #6c757d; font-size: .75rem; }
-.cs-privacy-value { font-weight: 600; font-size: .78rem; }
+.cs-privacy-label { color: #6c757d; font-size: .82rem; }
+.cs-privacy-value { font-weight: 600; font-size: .82rem; }
 .cs-privacy-ok { color: #2E7D32; }
 .cs-privacy-no { color: #E65100; }
 .cs-privacy-info {

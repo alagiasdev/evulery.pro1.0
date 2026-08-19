@@ -385,7 +385,7 @@ $sourceLabelsPrivacy = [
         </span>
         <?php endforeach; ?>
         <?php if (empty($customerTags)): ?>
-        <span style="font-size:.75rem;color:#adb5bd;">Nessun tag</span>
+        <span style="font-size:.82rem;color:#868e96;">Nessun tag</span>
         <?php endif; ?>
         <?php if (!is_staff()): ?>
         <form method="POST" action="<?= url("dashboard/customers/{$customer['id']}/add-tag") ?>" class="cs-add-tag-inline" style="display:inline-flex;">
@@ -454,7 +454,7 @@ $sourceLabelsPrivacy = [
                     <?php if (!empty($reservations)): ?>
                     <hr style="margin: .75rem 0; border-color: #f0f0f0;">
                     <div class="cs-profile-section-title"><i class="bi bi-graph-up"></i> Frequenza visite</div>
-                    <div style="font-size:.65rem;color:#adb5bd;margin-bottom:.25rem;">Ultimi 6 mesi</div>
+                    <div style="font-size:.75rem;color:#868e96;margin-bottom:.25rem;">Ultimi 6 mesi</div>
                     <div class="cs-frequency-chart">
                         <?php foreach ($freqMonths as $ym => $count):
                             $pct = round(($count / $freqMax) * 100);
@@ -480,7 +480,7 @@ $sourceLabelsPrivacy = [
                         <?= csrf_field() ?>
                         <textarea class="notes-textarea" name="notes" rows="5" placeholder="Allergie, preferenze, tavolo preferito..." <?= is_staff() ? 'readonly' : '' ?>><?= e($customer['notes'] ?? '') ?></textarea>
                         <div class="d-flex justify-content-between align-items-center mt-2">
-                            <span style="font-size:.65rem;color:#adb5bd;">
+                            <span style="font-size:.75rem;color:#868e96;">
                                 <?php if (!empty($customer['updated_at'])): ?>
                                 Ultima modifica: <?= format_date($customer['updated_at'], 'd M Y') ?>
                                 <?php endif; ?>
