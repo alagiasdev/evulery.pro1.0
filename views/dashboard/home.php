@@ -54,6 +54,8 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
     <?php $ec = $emergencyClosure; include __DIR__ . '/../partials/emergency-banner.php'; ?>
 <?php endif; ?>
 
+<?php include __DIR__ . '/../partials/onboarding.php'; ?>
+
 <?php if (tenant_can('push_notifications')): ?>
 <!--
     iOS PWA install banner — mostrato dal JS (dashboard-notifications.js)

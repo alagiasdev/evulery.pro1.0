@@ -151,6 +151,11 @@ class SettingsController
 
         (new Tenant())->update($tenantId, $updateData);
 
+        // Onboarding: la pagina Generali e' stata salvata -> step "Dati" completato.
+        \App\Core\Database::getInstance()
+            ->prepare('UPDATE tenants SET general_configured = 1 WHERE id = :id')
+            ->execute(['id' => $tenantId]);
+
         AuditLog::log(AuditLog::SETTINGS_UPDATED, null, Auth::id(), $tenantId);
 
         // Refresh tenant in resolver

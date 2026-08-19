@@ -42,3 +42,10 @@ $groupMeta = [
     </div>
     <?php endforeach; ?>
 </div>
+
+<div class="set-onboarding-reopen">
+    <form method="POST" action="<?= url('dashboard/onboarding/reactivate') ?>">
+        <?= csrf_field() ?>
+        <button type="submit" class="set-reopen-btn"><i class="bi bi-stars"></i> Rivedi la guida alla configurazione</button>
+    </form>
+</div>

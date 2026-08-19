@@ -81,6 +81,11 @@ $router->group('/dashboard', ['auth', 'tenant', 'staff', 'csrf', 'dashboard-rate
     $r->get('/suspended', [SuspendedController::class, 'index']);
     $r->post('/stop-impersonation', [ImpersonationController::class, 'stop']);
     $r->get('', [HomeController::class, 'index']);
+    // Onboarding guidato (card "Completa la configurazione")
+    $r->post('/onboarding/collapse', [HomeController::class, 'onboardingCollapse']);
+    $r->post('/onboarding/expand', [HomeController::class, 'onboardingExpand']);
+    $r->post('/onboarding/dismiss', [HomeController::class, 'onboardingDismiss']);
+    $r->post('/onboarding/reactivate', [HomeController::class, 'onboardingReactivate']);
     // Fase C — auto-refresh: endpoint heartbeat (light, polling 60s, ETag/304)
     $r->get('/heartbeat/reservations', [HeartbeatController::class, 'reservations']);
     $r->get('/heartbeat/floor', [HeartbeatController::class, 'floor']);

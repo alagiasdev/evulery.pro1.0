@@ -11,6 +11,8 @@ use App\Models\Customer;
 use App\Models\EmergencyClosure;
 use App\Models\Reservation;
 use App\Services\HeartbeatService;
+use App\Core\Response;
+use App\Models\Tenant;
 
 class HomeController
 {
@@ -124,7 +126,130 @@ class HomeController
             'tenantName'    => $tenant['name'] ?? '',
             'heartbeat'     => $heartbeat,
             'emergencyClosure' => $emergencyClosure,
+            'onboarding'    => $this->buildOnboardingState($tenantId, $tenant),
         ], 'dashboard');
+    }
+
+    /**
+     * Stato dell'onboarding guidato per la home. Ritorna null se la card NON va
+     * mostrata (gia' completato/nascosto per sempre, oppure tenant creato da oltre
+     * 30 giorni: backstop anti-nag). Altrimenti costruisce la checklist plan-aware
+     * dai servizi del piano, con lo stato "fatto" di ogni passo.
+     */
+    private function buildOnboardingState(int $tenantId, ?array $tenant): ?array
+    {
+        $db = Database::getInstance();
+        $stmt = $db->prepare(
+            'SELECT slug, created_at, general_configured, onboarding_completed_at,
+                    onboarding_collapsed, deposit_enabled
+             FROM tenants WHERE id = :id'
+        );
+        $stmt->execute(['id' => $tenantId]);
+        $row = $stmt->fetch();
+        if (!$row) {
+            return null;
+        }
+        if (!empty($row['onboarding_completed_at'])) {
+            return null; // completato o "non mostrare piu'" (incl. grandfathering)
+        }
+        if (!empty($row['created_at']) && strtotime((string)$row['created_at']) < strtotime('-30 days')) {
+            return null; // backstop: non assillare oltre 30 giorni dall'attivazione
+        }
+
+        $tm = new Tenant();
+        $catActive  = (int) $this->onboardingScalar($db, 'SELECT COUNT(*) FROM meal_categories WHERE tenant_id = :t AND is_active = 1', $tenantId);
+        $slotCount  = (int) $this->onboardingScalar($db, 'SELECT COUNT(*) FROM time_slots WHERE tenant_id = :t', $tenantId);
+        $menuCount  = (int) $this->onboardingScalar($db, 'SELECT COUNT(*) FROM menu_items WHERE tenant_id = :t', $tenantId);
+        $tableCount = (int) $this->onboardingScalar($db, 'SELECT COUNT(*) FROM restaurant_tables WHERE tenant_id = :t', $tenantId);
+
+        $steps = [];
+        // Core: sempre (base prenotazioni)
+        $steps[] = ['label' => 'Completa i dati del ristorante', 'hint' => 'Logo, sito web, modalità di conferma, durata tavolo, contatti.', 'done' => (int)$row['general_configured'] === 1, 'url' => url('dashboard/settings/general'), 'cta' => 'Completa', 'optional' => false];
+        $steps[] = ['label' => 'Attiva le categorie pasto', 'hint' => 'Pranzo, cena, brunch.', 'done' => $catActive > 0, 'url' => url('dashboard/settings/meal-categories'), 'cta' => 'Configura', 'optional' => false];
+        $steps[] = ['label' => 'Imposta orari e coperti', 'hint' => 'Fasce di apertura e limite di coperti per slot.', 'done' => $slotCount > 0, 'url' => url('dashboard/settings/slots'), 'cta' => 'Configura', 'optional' => false];
+        // Condizionali: solo se il piano include il servizio
+        if ($tm->canUseService($tenantId, 'digital_menu')) {
+            $steps[] = ['label' => 'Carica il menù', 'hint' => 'I piatti per la vetrina e il menù pubblico.', 'done' => $menuCount > 0, 'url' => url('dashboard/menu'), 'cta' => 'Aggiungi', 'optional' => false];
+        }
+        if ($tm->canUseService($tenantId, 'deposit')) {
+            $steps[] = ['label' => 'Configura la caparra', 'hint' => 'Caparra o carta a garanzia sulle prenotazioni.', 'done' => (int)($row['deposit_enabled'] ?? 0) === 1, 'url' => url('dashboard/settings/deposit'), 'cta' => 'Imposta', 'optional' => true];
+        }
+        if ($tm->canUseService($tenantId, 'table_management')) {
+            $steps[] = ['label' => 'Disegna la sala', 'hint' => 'Tavoli e assegnazione automatica.', 'done' => $tableCount > 0, 'url' => url('dashboard/settings/tables'), 'cta' => 'Configura', 'optional' => true];
+        }
+
+        $done = 0;
+        foreach ($steps as $s) {
+            if ($s['done']) {
+                $done++;
+            }
+        }
+        $total = count($steps);
+
+        // Tutto fatto -> stampa completed_at e non mostrare piu' (idempotente).
+        if ($total > 0 && $done >= $total) {
+            $db->prepare('UPDATE tenants SET onboarding_completed_at = NOW() WHERE id = :id AND onboarding_completed_at IS NULL')
+               ->execute(['id' => $tenantId]);
+            return null;
+        }
+
+        $slug = (string)($row['slug'] ?? '');
+        return [
+            'steps'     => $steps,
+            'done'      => $done,
+            'total'     => $total,
+            'collapsed' => (int)($row['onboarding_collapsed'] ?? 0) === 1,
+            'share_url' => $slug !== '' ? url($slug) : null,
+            'has_qr'    => $tm->canUseService($tenantId, 'vetrina_digitale'),
+            'qr_url'    => url('dashboard/settings/hub'),
+        ];
+    }
+
+    private function onboardingScalar(\PDO $db, string $sql, int $tenantId)
+    {
+        $s = $db->prepare($sql);
+        $s->execute(['t' => $tenantId]);
+        return $s->fetchColumn();
+    }
+
+    /** "Nascondi per ora": riduce la card a barra (riespandibile). */
+    public function onboardingCollapse(Request $request): void
+    {
+        $this->setOnboardingCollapsed(1);
+        Response::redirect(url('dashboard'));
+    }
+
+    /** "Riprendi": riespande la card. */
+    public function onboardingExpand(Request $request): void
+    {
+        $this->setOnboardingCollapsed(0);
+        Response::redirect(url('dashboard'));
+    }
+
+    /** "Non mostrare più": chiude l'onboarding per sempre. */
+    public function onboardingDismiss(Request $request): void
+    {
+        Database::getInstance()
+            ->prepare('UPDATE tenants SET onboarding_completed_at = NOW() WHERE id = :id AND onboarding_completed_at IS NULL')
+            ->execute(['id' => Auth::tenantId()]);
+        Response::redirect(url('dashboard'));
+    }
+
+    /** "Rivedi la guida alla configurazione": riattiva l'onboarding (dalle Impostazioni). */
+    public function onboardingReactivate(Request $request): void
+    {
+        Database::getInstance()
+            ->prepare('UPDATE tenants SET onboarding_completed_at = NULL, onboarding_collapsed = 0 WHERE id = :id')
+            ->execute(['id' => Auth::tenantId()]);
+        flash('success', 'Guida alla configurazione riattivata.');
+        Response::redirect(url('dashboard'));
+    }
+
+    private function setOnboardingCollapsed(int $val): void
+    {
+        Database::getInstance()
+            ->prepare('UPDATE tenants SET onboarding_collapsed = :v WHERE id = :id')
+            ->execute(['v' => $val ? 1 : 0, 'id' => Auth::tenantId()]);
     }
 
     private function getStatsForDate(int $tenantId, string $date): array
