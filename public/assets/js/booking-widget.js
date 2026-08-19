@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(function(r) { return checkApiResponse(r); })
             .then(function(data) {
                 if (!data.success) {
-                    slotsContainer.innerHTML = '<div class="bw-no-slots">Errore nel caricamento.</div>';
+                    slotsContainer.innerHTML = '<div class="bw-no-slots"><i class="bi bi-exclamation-circle"></i> Errore nel caricamento.</div>';
                     return;
                 }
 
@@ -293,13 +293,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 renderGroupedSlots();
             })
             .catch(function() {
-                slotsContainer.innerHTML = '<div class="bw-no-slots">Errore di connessione.</div>';
+                slotsContainer.innerHTML = '<div class="bw-no-slots"><i class="bi bi-exclamation-circle"></i> Errore di connessione.</div>';
             });
     }
 
     function renderGroupedSlots() {
         if (!state.groupedSlots.length) {
-            slotsContainer.innerHTML = '<div class="bw-no-slots">Nessun orario disponibile per questa data.</div>';
+            slotsContainer.innerHTML = '<div class="bw-no-slots"><i class="bi bi-calendar-x"></i> Nessun orario disponibile per questa data.</div>';
             return;
         }
 
@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (!hasAnySlot) {
-            slotsContainer.innerHTML = '<div class="bw-no-slots">Nessun orario disponibile per questa data.</div>';
+            slotsContainer.innerHTML = '<div class="bw-no-slots"><i class="bi bi-calendar-x"></i> Nessun orario disponibile per questa data.</div>';
             return;
         }
 
@@ -491,7 +491,7 @@ document.addEventListener('DOMContentLoaded', function() {
         partyExtended.style.display = isHidden ? 'grid' : 'none';
         this.innerHTML = isHidden
             ? 'Nascondi opzioni extra <i class="bi bi-dash"></i>'
-            : 'Opzioni per piu persone <i class="bi bi-plus"></i>';
+            : 'Opzioni per più persone <i class="bi bi-plus"></i>';
     });
 
     // ===== STEP NAVIGATION =====

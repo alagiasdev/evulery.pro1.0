@@ -54,7 +54,7 @@
         <div class="bw-party-max-hint" id="party-max-hint" style="display:none;"></div>
         <div class="bw-party-grid" id="party-grid"></div>
         <div class="bw-more-options" id="party-more-toggle">
-            <a href="#" id="party-more-link">Opzioni per piu persone <i class="bi bi-plus"></i></a>
+            <a href="#" id="party-more-link">Opzioni per più persone <i class="bi bi-plus"></i></a>
         </div>
         <div class="bw-party-grid bw-party-extended" id="party-extended" style="display:none;"></div>
     </div>
