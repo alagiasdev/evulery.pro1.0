@@ -245,10 +245,17 @@ class HomeController
     /** "Rivedi la guida alla configurazione": riattiva l'onboarding (dalle Impostazioni). */
     public function onboardingReactivate(Request $request): void
     {
+        $tenantId = Auth::tenantId();
         Database::getInstance()
             ->prepare('UPDATE tenants SET onboarding_completed_at = NULL, onboarding_collapsed = 0 WHERE id = :id')
-            ->execute(['id' => Auth::tenantId()]);
-        flash('success', 'Guida alla configurazione riattivata.');
+            ->execute(['id' => $tenantId]);
+        // Se e' gia' tutto configurato, buildOnboardingState ri-completa e torna null:
+        // messaggio onesto invece di far credere che comparira' una card.
+        if ($this->buildOnboardingState($tenantId, null) === null) {
+            flash('success', 'La tua configurazione è già completa: non c\'è nulla da guidare. 👍');
+        } else {
+            flash('success', 'Guida alla configurazione riattivata.');
+        }
         Response::redirect(url('dashboard'));
     }
 
