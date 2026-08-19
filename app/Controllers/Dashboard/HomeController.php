@@ -252,7 +252,7 @@ class HomeController
         // Se e' gia' tutto configurato, buildOnboardingState ri-completa e torna null:
         // messaggio onesto invece di far credere che comparira' una card.
         if ($this->buildOnboardingState($tenantId, null) === null) {
-            flash('success', 'La tua configurazione è già completa: non c\'è nulla da guidare. 👍');
+            flash('success', 'La tua configurazione è già completa: non ci sono altri passaggi da completare. 👍');
         } else {
             flash('success', 'Guida alla configurazione riattivata.');
         }
