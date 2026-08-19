@@ -347,6 +347,9 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
                 <span style="font-size:.72rem;color:var(--gray-600);">vs <?= strtolower($DAYS_IT[(int)date('w', strtotime($lastWeekDate))]) ?> scorso</span>
             </div>
             <div class="dh-week-compare">
+                <?php if ($thisCovers === 0 && $lastCovers === 0): ?>
+                <div class="text-center text-muted py-3" style="font-size:.85rem;">Ancora nessun coperto: qui vedrai il confronto con la settimana scorsa.</div>
+                <?php else: ?>
                 <div class="dh-wc-row">
                     <div class="dh-wc-label">Sett. scorsa</div>
                     <div class="dh-wc-bar-wrap"><div class="dh-wc-bar" style="width:<?= $maxBar > 0 ? round(($lastCovers/$maxBar)*100) : 0 ?>%;background:var(--gray-500);"></div></div>
@@ -365,6 +368,7 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
                     <span style="font-size:.72rem;color:var(--gray-600);margin-left:6px;">rispetto alla settimana precedente</span>
                 </div>
                 <?php endif; ?>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -377,6 +381,9 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
                     <span style="font-size:.68rem;color:var(--gray-600);">ultimi 30 gg</span>
                 </div>
                 <div class="dh-noshow-wrap">
+                    <?php if ((int)$noshow['total'] === 0): ?>
+                    <div class="text-center text-muted py-3" style="font-size:.85rem;">Ancora nessun dato: il tasso di no-show comparir&agrave; con le prime prenotazioni.</div>
+                    <?php else: ?>
                     <?php
                     $nsRate = $noshow['rate'];
                     $nsClass = 'ok';
@@ -394,6 +401,7 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
                         <i class="bi bi-info-circle me-1"></i>
                         Sotto il 5% = ottimo. Media settore: 15-20%.
                     </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
