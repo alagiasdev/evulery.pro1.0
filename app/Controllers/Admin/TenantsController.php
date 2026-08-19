@@ -20,24 +20,38 @@ class TenantsController
     public function index(Request $request): void
     {
         $search = $request->query('q');
+        $status = $request->query('status', 'active');
+        if (!in_array($status, ['active', 'inactive', 'all'], true)) {
+            $status = 'active';
+        }
         $page = max(1, (int)$request->query('page', 1));
         $perPage = 25;
 
         $tenantModel = new Tenant();
-        $total = $tenantModel->countFiltered($search);
+        $total = $tenantModel->countFiltered($search, $status);
+
+        // Conteggi per i tab (rispettano la ricerca corrente).
+        $counts = [
+            'active'   => $tenantModel->countFiltered($search, 'active'),
+            'inactive' => $tenantModel->countFiltered($search, 'inactive'),
+            'all'      => $tenantModel->countFiltered($search, 'all'),
+        ];
 
         $baseParams = [];
         if ($search) $baseParams[] = 'q=' . urlencode($search);
+        if ($status !== 'active') $baseParams[] = 'status=' . $status; // 'active' = default, URL pulito
         $baseUrl = url('admin/tenants') . ($baseParams ? '?' . implode('&', $baseParams) : '');
 
         $paginator = new Paginator($total, $perPage, $page, $baseUrl);
-        $tenants = $tenantModel->allPaginated($search, $paginator->limit(), $paginator->offset());
+        $tenants = $tenantModel->allPaginated($search, $paginator->limit(), $paginator->offset(), $status);
 
         view('admin/tenants/index', [
             'title'      => 'Ristoranti',
             'activeMenu' => 'tenants',
             'tenants'    => $tenants,
             'search'     => $search,
+            'status'     => $status,
+            'counts'     => $counts,
             'pagination' => $paginator->links(),
         ], 'admin');
     }
@@ -396,13 +410,31 @@ class TenantsController
             Response::redirect(url("admin/tenants/{$tenantId}/edit"));
         }
 
-        $userModel->update($userId, [
+        $updateData = [
             'first_name' => trim($data['first_name']),
             'last_name'  => trim($data['last_name']),
             'email'      => trim($data['email']),
-        ]);
+        ];
 
-        flash('success', 'Utente aggiornato.');
+        // Reset password opzionale (vuoto = invariata). Stessa policy dei collaboratori.
+        $newPassword = (string)($data['password'] ?? '');
+        $passwordChanged = false;
+        if ($newPassword !== '') {
+            if (strlen($newPassword) < 8 || !preg_match('/[A-Z]/', $newPassword) || !preg_match('/[0-9]/', $newPassword)) {
+                flash('danger', 'Password troppo debole: minimo 8 caratteri, una maiuscola e un numero.');
+                Response::redirect(url("admin/tenants/{$tenantId}/edit"));
+            }
+            $updateData['password'] = $newPassword;
+            $passwordChanged = true;
+        }
+
+        $userModel->update($userId, $updateData);
+
+        if ($passwordChanged) {
+            AuditLog::log(AuditLog::USER_UPDATED, "Password reimpostata da admin per {$user['email']} (tenant #{$tenantId})", Auth::id(), $tenantId);
+        }
+
+        flash('success', $passwordChanged ? 'Utente aggiornato e password reimpostata.' : 'Utente aggiornato.');
         Response::redirect(url("admin/tenants/{$tenantId}/edit"));
     }
 

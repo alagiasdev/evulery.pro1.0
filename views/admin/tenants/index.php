@@ -8,8 +8,27 @@
     </a>
 </div>
 
+<?php
+$tabs = ['active' => 'Attivi', 'inactive' => 'Inattivi', 'all' => 'Tutti'];
+$cur = $status ?? 'active';
+?>
+<div style="display:flex;gap:.2rem;margin-bottom:1rem;border-bottom:1px solid #e9ecef;">
+    <?php foreach ($tabs as $key => $label):
+        $qs = [];
+        if (!empty($search)) $qs[] = 'q=' . urlencode($search);
+        if ($key !== 'active') $qs[] = 'status=' . $key;
+        $href = url('admin/tenants') . ($qs ? '?' . implode('&', $qs) : '');
+        $on = ($cur === $key);
+    ?>
+    <a href="<?= $href ?>" style="padding:.55rem .9rem;text-decoration:none;font-size:.85rem;font-weight:600;color:<?= $on ? '#00844A' : '#6c757d' ?>;border-bottom:2px solid <?= $on ? '#00844A' : 'transparent' ?>;margin-bottom:-1px;">
+        <?= e($label) ?> <span style="font-size:.75rem;color:#adb5bd;">(<?= (int)($counts[$key] ?? 0) ?>)</span>
+    </a>
+    <?php endforeach; ?>
+</div>
+
 <!-- Search bar -->
 <form method="GET" action="<?= url('admin/tenants') ?>" style="margin-bottom:1rem;">
+    <?php if (($status ?? 'active') !== 'active'): ?><input type="hidden" name="status" value="<?= e($status) ?>"><?php endif; ?>
     <div style="display:flex;gap:.5rem;align-items:center;">
         <div style="position:relative;flex:1;max-width:400px;">
             <i class="bi bi-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#adb5bd;"></i>
@@ -18,7 +37,7 @@
         </div>
         <button type="submit" class="adm-btn adm-btn-primary" style="padding:.5rem 1rem;"><i class="bi bi-search"></i></button>
         <?php if (!empty($search)): ?>
-        <a href="<?= url('admin/tenants') ?>" class="adm-btn" style="padding:.5rem 1rem;"><i class="bi bi-x-lg"></i></a>
+        <a href="<?= url('admin/tenants') . (($status ?? 'active') !== 'active' ? '?status=' . e($status) : '') ?>" class="adm-btn" style="padding:.5rem 1rem;"><i class="bi bi-x-lg"></i></a>
         <?php endif; ?>
     </div>
 </form>

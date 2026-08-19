@@ -84,17 +84,26 @@ class Tenant
         return $stmt->fetchAll();
     }
 
-    public function allPaginated(?string $search, int $limit, int $offset): array
+    public function allPaginated(?string $search, int $limit, int $offset, string $status = 'all'): array
     {
         $sql = 'SELECT t.*, p.name as plan_name, p.color as plan_color FROM tenants t LEFT JOIN plans p ON p.id = t.plan_id';
+        $where = [];
         $params = [];
 
+        if ($status === 'active') {
+            $where[] = 't.is_active = 1';
+        } elseif ($status === 'inactive') {
+            $where[] = 't.is_active = 0';
+        }
         if ($search) {
-            $sql .= ' WHERE (t.name LIKE :s1 OR t.slug LIKE :s2 OR t.email LIKE :s3)';
+            $where[] = '(t.name LIKE :s1 OR t.slug LIKE :s2 OR t.email LIKE :s3)';
             $like = "%{$search}%";
             $params['s1'] = $like;
             $params['s2'] = $like;
             $params['s3'] = $like;
+        }
+        if ($where) {
+            $sql .= ' WHERE ' . implode(' AND ', $where);
         }
 
         $sql .= ' ORDER BY t.created_at DESC LIMIT :lim OFFSET :off';
@@ -108,17 +117,26 @@ class Tenant
         return $stmt->fetchAll();
     }
 
-    public function countFiltered(?string $search): int
+    public function countFiltered(?string $search, string $status = 'all'): int
     {
         $sql = 'SELECT COUNT(*) FROM tenants';
+        $where = [];
         $params = [];
 
+        if ($status === 'active') {
+            $where[] = 'is_active = 1';
+        } elseif ($status === 'inactive') {
+            $where[] = 'is_active = 0';
+        }
         if ($search) {
-            $sql .= ' WHERE (name LIKE :s1 OR slug LIKE :s2 OR email LIKE :s3)';
+            $where[] = '(name LIKE :s1 OR slug LIKE :s2 OR email LIKE :s3)';
             $like = "%{$search}%";
             $params['s1'] = $like;
             $params['s2'] = $like;
             $params['s3'] = $like;
+        }
+        if ($where) {
+            $sql .= ' WHERE ' . implode(' AND ', $where);
         }
 
         $stmt = $this->db->prepare($sql);

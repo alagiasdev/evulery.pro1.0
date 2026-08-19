@@ -110,6 +110,11 @@
                             <input type="email" name="email" value="<?= e($u['email']) ?>" placeholder="Email"
                                    style="width:100%;box-sizing:border-box;padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
                         </div>
+                        <div style="margin-bottom:.5rem;">
+                            <input type="password" name="password" placeholder="Nuova password (vuoto = invariata)" autocomplete="new-password"
+                                   style="width:100%;box-sizing:border-box;padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                            <span style="font-size:.68rem;color:#adb5bd;">Min 8 caratteri, una maiuscola, un numero.</span>
+                        </div>
                         <div style="display:flex;align-items:center;justify-content:space-between;">
                             <span class="adm-badge <?= $u['is_active'] ? 'adm-badge-active' : 'adm-badge-inactive' ?>" style="font-size:.7rem;">
                                 <?= e(role_label($u['role'])) ?> &middot; <?= $u['is_active'] ? 'Attivo' : 'Inattivo' ?>
