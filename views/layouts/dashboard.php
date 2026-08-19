@@ -49,6 +49,7 @@
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
+        <a href="<?= url('dashboard/profile') ?>" class="sidebar-user-mobile d-md-none"><i class="bi bi-person-circle me-1"></i><?= e(auth()['name'] ?? 'Il tuo account') ?> <i class="bi bi-pencil-square" style="opacity:.5;font-size:.75rem;"></i></a>
         <nav style="padding:.5rem 0;">
             <ul class="nav flex-column">
                 <li class="nav-item">

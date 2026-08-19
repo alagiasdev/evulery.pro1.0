@@ -22,6 +22,8 @@ body { background: #f5f6fa; }
     width: var(--sidebar-w); background: #1a1d23; color: #fff;
     z-index: 100; transition: margin-left 0.3s;
     overflow-y: auto;
+    /* Su iOS il menu off-canvas parte da top:0: rispetta la status bar (notch). env=0 altrove. */
+    padding-top: env(safe-area-inset-top, 0px);
 }
 .sidebar-brand {
     padding: .85rem 1rem; font-weight: 700; font-size: 1.05rem;
@@ -29,6 +31,8 @@ body { background: #f5f6fa; }
 }
 a.sidebar-user { padding: .25rem 1rem .65rem; font-size: .75rem; color: #6c757d; display:block; text-decoration:none; transition:color .15s; }
 a.sidebar-user:hover { color: #adb5bd; }
+.sidebar-user-mobile { display: block; padding: .7rem 1rem; color: #c4ccd4; text-decoration: none; font-size: .9rem; border-bottom: 1px solid #333; }
+.sidebar-user-mobile:hover { color: #fff; }
 .sidebar-section {
     padding: .75rem 1rem .25rem; font-size: .7rem; color: #555;
     text-transform: uppercase; letter-spacing: .5px;
@@ -469,7 +473,8 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
 
 /* ===== Reservation row contact line ===== */
 .res-contact { font-size: .82rem; color: #6c757d; }
-.res-phone { color: inherit; text-decoration: none; }
+.res-call { color: var(--brand); text-decoration: none; padding: 3px 6px; margin: 0 .15rem 0 -4px; }
+.res-phone-num { color: inherit; }
 
 /* ===== Action buttons (small) ===== */
 .btn-action-sm {
@@ -2283,7 +2288,7 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     /* lascia spazio sotto le azioni del form così non finiscono dietro al FAB */
     .ec-actions { margin-bottom: 4rem; }
     .btn-nuova-desktop { display: none !important; }
-    .page-body { padding: 1rem; }
+    .page-body { padding: 1rem; padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px)); }
     .top-bar { display: none; }
     .filter-row { gap: .5rem; }
     .filter-divider { display: none; }
@@ -2427,7 +2432,7 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     .res-name { font-size: .82rem; }
     .res-pax { font-size: .72rem; padding: 2px 6px; }
     /* Phase C: page body tighter */
-    .page-body { padding: .75rem; }
+    .page-body { padding: .75rem; padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px)); }
     /* Phase C: card header compact */
     .card-header h6 { font-size: .82rem; }
     /* Phase C: date chip minimal */
