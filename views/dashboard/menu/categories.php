@@ -136,16 +136,16 @@ $menuTabs = [
             <?= csrf_field() ?>
             <div style="display:flex; gap:.5rem; margin-bottom:.5rem;">
                 <div style="flex:1;">
-                    <label class="form-label fw-semibold" style="font-size:.75rem; margin-bottom:.2rem;">Nome *</label>
+                    <label class="form-label fw-semibold" style="font-size:.82rem; margin-bottom:.2rem;">Nome *</label>
                     <input type="text" name="name" class="form-control form-control-sm" placeholder="es. Contorni" required maxlength="100">
                 </div>
                 <div style="flex:1;">
-                    <label class="form-label fw-semibold" style="font-size:.75rem; margin-bottom:.2rem;">Descrizione</label>
+                    <label class="form-label fw-semibold" style="font-size:.82rem; margin-bottom:.2rem;">Descrizione</label>
                     <input type="text" name="description" class="form-control form-control-sm" placeholder="opzionale" maxlength="500">
                 </div>
             </div>
             <div style="margin-bottom:.5rem;">
-                <label class="form-label fw-semibold" style="font-size:.75rem; margin-bottom:.2rem;">Icona</label>
+                <label class="form-label fw-semibold" style="font-size:.82rem; margin-bottom:.2rem;">Icona</label>
                 <div class="dm-icon-grid-mini">
                     <?php foreach ($categoryIcons as $iconClass => $iconLabel): ?>
                     <label class="dm-icon-option" title="<?= e($iconLabel) ?>">
@@ -156,19 +156,19 @@ $menuTabs = [
                 </div>
             </div>
             <div style="margin-bottom:.6rem;">
-                <label class="form-label fw-semibold" style="font-size:.75rem; margin-bottom:.2rem;">Tipo categoria</label>
+                <label class="form-label fw-semibold" style="font-size:.82rem; margin-bottom:.2rem;">Tipo categoria</label>
                 <div class="btn-group btn-group-sm d-flex" role="group" style="max-width:280px;">
                     <input type="radio" class="btn-check" name="is_wine" id="ct-food" value="0" checked>
                     <label class="btn btn-outline-success" for="ct-food"><i class="bi bi-egg-fried me-1"></i> Piatti</label>
                     <input type="radio" class="btn-check" name="is_wine" id="ct-wine" value="1">
                     <label class="btn btn-outline-secondary" for="ct-wine"><i class="bi bi-cup-straw me-1"></i> Vini</label>
                 </div>
-                <div style="font-size:.7rem; color:#6c757d; margin-top:.25rem;">Le categorie "Vini" mostrano righe-vino: doppio prezzo (calice/bottiglia), niente foto né allergeni. Le sottocategorie ereditano il tipo.</div>
+                <div style="font-size:.8rem; color:#6c757d; margin-top:.25rem;">Le categorie "Vini" mostrano righe-vino: doppio prezzo (calice/bottiglia), niente foto né allergeni. Le sottocategorie ereditano il tipo.</div>
             </div>
             <?php if (!empty($menuLangs)): ?>
             <?php foreach ($menuLangs as $lc): ?>
             <div style="border:1px solid #c9e6d8; background:#f3faf6; border-radius:8px; padding:.5rem .6rem; margin-bottom:.5rem;">
-                <div style="font-size:.7rem; font-weight:700; color:var(--brand); margin-bottom:.35rem;"><i class="bi bi-translate me-1"></i> <?= e($langMeta[$lc]['label'] ?? strtoupper($lc)) ?></div>
+                <div style="font-size:.8rem; font-weight:700; color:var(--brand); margin-bottom:.35rem;"><i class="bi bi-translate me-1"></i> <?= e($langMeta[$lc]['label'] ?? strtoupper($lc)) ?></div>
                 <input type="text" name="tr[<?= e($lc) ?>][name]" class="form-control form-control-sm mb-1" placeholder="Nome (<?= e(strtoupper($lc)) ?>) — vuoto = italiano" maxlength="100">
                 <input type="text" name="tr[<?= e($lc) ?>][description]" class="form-control form-control-sm" placeholder="Descrizione (<?= e(strtoupper($lc)) ?>)" maxlength="500">
             </div>
@@ -210,7 +210,7 @@ $menuTabs = [
                     <?php if (!empty($menuLangs)): ?>
                     <?php foreach ($menuLangs as $lc): ?>
                     <div class="mb-2" style="border:1px solid #c9e6d8; background:#f3faf6; border-radius:8px; padding:.5rem .6rem;">
-                        <div style="font-size:.7rem; font-weight:700; color:var(--brand); margin-bottom:.35rem;"><i class="bi bi-translate me-1"></i> <?= e($langMeta[$lc]['label'] ?? strtoupper($lc)) ?></div>
+                        <div style="font-size:.8rem; font-weight:700; color:var(--brand); margin-bottom:.35rem;"><i class="bi bi-translate me-1"></i> <?= e($langMeta[$lc]['label'] ?? strtoupper($lc)) ?></div>
                         <input type="text" name="tr[<?= e($lc) ?>][name]" id="editCatTr_<?= e($lc) ?>_name" class="form-control form-control-sm mb-1" placeholder="Nome (<?= e(strtoupper($lc)) ?>) — vuoto = italiano" maxlength="100">
                         <input type="text" name="tr[<?= e($lc) ?>][description]" id="editCatTr_<?= e($lc) ?>_description" class="form-control form-control-sm" placeholder="Descrizione (<?= e(strtoupper($lc)) ?>)" maxlength="500">
                     </div>
@@ -224,7 +224,7 @@ $menuTabs = [
                             <input type="radio" class="btn-check" name="is_wine" id="ct-edit-wine" value="1">
                             <label class="btn btn-outline-secondary" for="ct-edit-wine"><i class="bi bi-cup-straw me-1"></i> Vini</label>
                         </div>
-                        <div style="font-size:.7rem; color:#6c757d; margin-top:.25rem;">Cambiando il tipo, anche le sottocategorie vengono aggiornate.</div>
+                        <div style="font-size:.8rem; color:#6c757d; margin-top:.25rem;">Cambiando il tipo, anche le sottocategorie vengono aggiornate.</div>
                     </div>
                     <div class="mb-2">
                         <label class="form-label fw-semibold" style="font-size:.82rem;">Icona</label>

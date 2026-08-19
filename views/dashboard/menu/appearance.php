@@ -75,19 +75,19 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Tagline / Descrizione breve</label>
                     <input type="text" name="menu_tagline" class="form-control form-control-sm" maxlength="200"
                            value="<?= e($tenant['menu_tagline'] ?? '') ?>" placeholder="es. Cucina italiana d'autore dal 1987">
-                    <div style="font-size:.72rem; color:#6c757d; margin-top:.2rem;">Appare sotto il nome del ristorante nell'header</div>
+                    <div style="font-size:.8rem; color:#6c757d; margin-top:.2rem;">Appare sotto il nome del ristorante nell'header</div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Titolo sezione "in evidenza"</label>
                     <input type="text" name="menu_featured_label" class="form-control form-control-sm" maxlength="40"
                            value="<?= e($tenant['menu_featured_label'] ?? '') ?>" placeholder="Piatti del giorno">
-                    <div style="font-size:.72rem; color:#6c757d; margin-top:.2rem;">Titolo del blocco che raccoglie le voci marcate "in evidenza". Es. "Selezionati dallo chef", "Piatto del mese", "Scelti per voi". Vuoto = "Piatti del giorno".</div>
+                    <div style="font-size:.8rem; color:#6c757d; margin-top:.2rem;">Titolo del blocco che raccoglie le voci marcate "in evidenza". Es. "Selezionati dallo chef", "Piatto del mese", "Scelti per voi". Vuoto = "Piatti del giorno".</div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Orari di apertura</label>
                     <input type="text" name="opening_hours" class="form-control form-control-sm" maxlength="500"
                            value="<?= e($tenant['opening_hours'] ?? '') ?>" placeholder="es. 12:00 – 15:00 / 19:00 – 23:00">
-                    <div style="font-size:.72rem; color:#6c757d; margin-top:.2rem;">Mostrato nell'header della pagina menù</div>
+                    <div style="font-size:.8rem; color:#6c757d; margin-top:.2rem;">Mostrato nell'header della pagina menù</div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Immagine hero (sfondo header)</label>
@@ -102,7 +102,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                     </div>
                     <?php endif; ?>
                     <input type="file" name="menu_hero_image" class="form-control form-control-sm" accept="image/jpeg,image/png,image/webp">
-                    <div style="font-size:.72rem; color:#6c757d; margin-top:.2rem;">JPG, PNG o WebP. Max 5MB. Consigliata: 1200x400px. Senza immagine viene usato uno sfondo scuro.</div>
+                    <div style="font-size:.8rem; color:#6c757d; margin-top:.2rem;">JPG, PNG o WebP. Max 5MB. Consigliata: 1200x400px. Senza immagine viene usato uno sfondo scuro.</div>
                 </div>
                 <div class="mb-3" style="border-top:1px solid #eee; padding-top:1rem;">
                     <label class="form-label fw-semibold" style="font-size:.82rem;"><i class="bi bi-translate me-1" style="color:var(--brand);"></i> Lingue del menu</label>

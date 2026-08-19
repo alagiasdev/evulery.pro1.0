@@ -193,7 +193,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                         SVG
                     </a>
                 </div>
-                <div style="font-size:.72rem; color:#adb5bd; margin-top:.5rem; text-align:center; word-break:break-all;">
+                <div style="font-size:.8rem; color:#868e96; margin-top:.5rem; text-align:center; word-break:break-all;">
                     <?= e($menuUrl) ?>
                 </div>
                 <?php else: ?>
@@ -212,7 +212,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
         <!-- QR Preview -->
         <div class="card" style="padding:1rem; margin-top:.75rem; text-align:center;">
             <img src="<?= e($qrUrl) ?>" alt="QR Code" style="width:120px; height:120px; border-radius:6px; margin:0 auto .5rem;">
-            <div style="font-size:.72rem; color:#6c757d;">Scansiona per vedere il menù</div>
+            <div style="font-size:.8rem; color:#6c757d;">Scansiona per vedere il menù</div>
         </div>
         <?php endif; ?>
     </div>

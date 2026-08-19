@@ -42,22 +42,22 @@
                     <label class="form-label fw-semibold" style="font-size:.82rem;" id="descLabel">Descrizione</label>
                     <textarea name="description" class="form-control form-control-sm" rows="2" maxlength="2000"
                               placeholder="Ingredienti, preparazione..."><?= e($old['description'] ?? '') ?></textarea>
-                    <div id="descHint" style="font-size:.72rem; color:#6c757d; margin-top:.2rem; display:none;">Per i vini: produttore, regione, annata. Es. "Castello di Ama &middot; Toscana &middot; 2020"</div>
+                    <div id="descHint" style="font-size:.8rem; color:#6c757d; margin-top:.2rem; display:none;">Per i vini: produttore, regione, annata. Es. "Castello di Ama &middot; Toscana &middot; 2020"</div>
                 </div>
 
                 <?php if (!empty($menuLangs)): ?>
                 <?php foreach ($menuLangs as $lc): ?>
                 <div class="card mb-3" style="background:#f3faf6; border:1px solid #c9e6d8; padding:.75rem;">
-                    <div style="font-size:.75rem; font-weight:700; color:var(--brand); margin-bottom:.5rem;">
+                    <div style="font-size:.82rem; font-weight:700; color:var(--brand); margin-bottom:.5rem;">
                         <i class="bi bi-translate me-1"></i> Traduzione <?= e($langMeta[$lc]['label'] ?? strtoupper($lc)) ?>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label" style="font-size:.78rem;">Nome (<?= e(strtoupper($lc)) ?>)</label>
+                        <label class="form-label" style="font-size:.82rem;">Nome (<?= e(strtoupper($lc)) ?>)</label>
                         <input type="text" name="tr[<?= e($lc) ?>][name]" class="form-control form-control-sm" maxlength="150"
                                value="<?= e($itemTr[$lc]['name'] ?? '') ?>" placeholder="Vuoto = la voce non appare in <?= e(strtoupper($lc)) ?>">
                     </div>
                     <div>
-                        <label class="form-label" style="font-size:.78rem;">Descrizione (<?= e(strtoupper($lc)) ?>)</label>
+                        <label class="form-label" style="font-size:.82rem;">Descrizione (<?= e(strtoupper($lc)) ?>)</label>
                         <textarea name="tr[<?= e($lc) ?>][description]" class="form-control form-control-sm" rows="2" maxlength="2000"
                                   placeholder="Vuoto = nessuna descrizione in <?= e(strtoupper($lc)) ?>"><?= e($itemTr[$lc]['description'] ?? '') ?></textarea>
                     </div>
@@ -78,13 +78,13 @@
                                    placeholder="0.00" value="<?= e($old['price_bottle'] ?? '') ?>">
                         </div>
                     </div>
-                    <div id="priceHint" style="font-size:.72rem; color:#6c757d; margin-top:.2rem; display:none;">Per i vini compila almeno uno tra calice e bottiglia (es. solo bottiglia per i grandi rossi).</div>
+                    <div id="priceHint" style="font-size:.8rem; color:#6c757d; margin-top:.2rem; display:none;">Per i vini compila almeno uno tra calice e bottiglia (es. solo bottiglia per i grandi rossi).</div>
                 </div>
 
                 <div class="mb-3" id="fotoBlock">
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Foto (opzionale)</label>
                     <input type="file" name="image" class="form-control form-control-sm" accept="image/jpeg,image/png,image/webp">
-                    <div style="font-size:.72rem; color:#6c757d; margin-top:.25rem;">JPG, PNG o WebP. Max 2MB.</div>
+                    <div style="font-size:.8rem; color:#6c757d; margin-top:.25rem;">JPG, PNG o WebP. Max 2MB.</div>
                 </div>
 
                 <div class="mb-3" id="allergeniBlock">
@@ -123,12 +123,12 @@
                     </div>
                     <div class="row g-2">
                         <div class="col-6">
-                            <label style="font-size:.75rem; color:#6c757d;">Tempo preparazione (min)</label>
+                            <label style="font-size:.82rem; color:#6c757d;">Tempo preparazione (min)</label>
                             <input type="number" name="prep_minutes" class="form-control form-control-sm" min="1" max="180"
                                    value="<?= e($old['prep_minutes'] ?? '') ?>" placeholder="Default tenant">
                         </div>
                         <div class="col-6">
-                            <label style="font-size:.75rem; color:#6c757d;">Max ordini giornalieri</label>
+                            <label style="font-size:.82rem; color:#6c757d;">Max ordini giornalieri</label>
                             <input type="number" name="max_daily_qty" class="form-control form-control-sm" min="1"
                                    value="<?= e($old['max_daily_qty'] ?? '') ?>" placeholder="Illimitato">
                         </div>

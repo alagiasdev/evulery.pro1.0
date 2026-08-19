@@ -3154,7 +3154,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .dm-subcat-count { font-size: .7rem; color: #adb5bd; }
 .dm-subcat-actions { display: flex; gap: .15rem; opacity: 0; transition: opacity .15s; }
 .dm-subcat-row:hover .dm-subcat-actions { opacity: 1; }
-.dm-subcat-empty { padding: .65rem 1rem .65rem 3.25rem; color: #adb5bd; font-size: .78rem; font-style: italic; }
+.dm-subcat-empty { padding: .65rem 1rem .65rem 3.25rem; color: #868e96; font-size: .82rem; font-style: italic; }
 
 /* Inline add subcategory */
 .dm-subcat-add-trigger { display: flex; align-items: center; gap: .35rem; padding: .45rem 1rem .45rem 3.25rem; color: var(--brand); font-size: .78rem; font-weight: 500; cursor: pointer; border-top: 1px solid #f5f5f5; }
