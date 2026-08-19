@@ -2405,7 +2405,7 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     /* Phase B: pagination compact */
     .pagination-bar { flex-direction: column; gap: .5rem; align-items: center; }
     .pagination-info { font-size: .75rem; }
-    .pg-btn { min-width: 28px; height: 28px; font-size: .75rem; }
+    .pg-btn { min-width: 38px; height: 38px; font-size: .75rem; }
 }
 @media (max-width: 576px) {
     /* Phase B/C: stat cards single column */
@@ -2792,6 +2792,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 @media (max-width: 768px) {
     .dr-date-grid { grid-template-columns: repeat(2, 1fr); }
     .dr-party-grid { grid-template-columns: repeat(4, 1fr); }
+    .dr-party-btn { min-height: 44px; display: flex; align-items: center; justify-content: center; }
     .dr-customer-fields { grid-template-columns: 1fr; }
     .dr-source-grid { flex-wrap: wrap; }
 }
@@ -4698,7 +4699,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-svc-rng { color: #6c757d; font-weight: 500; }
 .tm-svc-cnt { background: #eef3f0; color: #006b3c; border-radius: 20px; padding: 1px 9px; font-size: .74rem; font-weight: 700; }
 .tm-svc-car { color: #9aa3aa; font-size: .8rem; }
-.tm-svc-menu { position: absolute; top: calc(100% + 5px); left: 0; z-index: 30; background: #fff; border: 1px solid var(--border, #e9ecef); border-radius: 13px; box-shadow: 0 10px 30px rgba(0,0,0,.14); min-width: 290px; padding: 7px; display: none; }
+.tm-svc-menu { position: absolute; top: calc(100% + 5px); left: 0; z-index: 30; background: #fff; border: 1px solid var(--border, #e9ecef); border-radius: 13px; box-shadow: 0 10px 30px rgba(0,0,0,.14); min-width: 290px; max-width: calc(100vw - 24px); padding: 7px; display: none; }
 .tm-svc-menu.on { display: block; }
 .tm-svc-item { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 11px 12px; border-radius: 9px; cursor: pointer; font-size: .88rem; text-decoration: none; color: #1a1d23; }
 .tm-svc-item:hover { background: #f4f7f5; }
@@ -5482,4 +5483,17 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 @media (max-width: 576px) {
     .ios-pwa-banner { font-size: .8rem; padding: .7rem .8rem; }
     .ios-pwa-banner-steps { font-size: .75rem; }
+}
+
+/* ===== Mobile: anti auto-zoom iOS sui campi (Blocco C1) =====
+   iOS Safari zooma al focus su qualsiasi input con font-size < 16px, sballando il
+   layout. Forziamo 16px su tutti i campi di testo <=768px. !important necessario per
+   vincere sulle classi input piu' specifiche (.dr-field-input, .gs-input, .filter-input,
+   .tm-fi, .export-input, ecc.). Non tocca il desktop. */
+@media (max-width: 768px) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
 }
