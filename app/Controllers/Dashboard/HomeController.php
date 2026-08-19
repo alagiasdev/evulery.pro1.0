@@ -139,13 +139,20 @@ class HomeController
     private function buildOnboardingState(int $tenantId, ?array $tenant): ?array
     {
         $db = Database::getInstance();
-        $stmt = $db->prepare(
-            'SELECT slug, created_at, general_configured, onboarding_completed_at,
-                    onboarding_collapsed, deposit_enabled
-             FROM tenants WHERE id = :id'
-        );
-        $stmt->execute(['id' => $tenantId]);
-        $row = $stmt->fetch();
+        try {
+            $stmt = $db->prepare(
+                'SELECT slug, created_at, general_configured, onboarding_completed_at,
+                        onboarding_collapsed, deposit_enabled
+                 FROM tenants WHERE id = :id'
+            );
+            $stmt->execute(['id' => $tenantId]);
+            $row = $stmt->fetch();
+        } catch (\Throwable $e) {
+            // Colonne onboarding assenti (migration 085 non ancora applicata in prod):
+            // non rompere la dashboard, semplicemente nessuna card finche' non gira.
+            app_log('Onboarding non disponibile (migration 085?): ' . $e->getMessage(), 'warning');
+            return null;
+        }
         if (!$row) {
             return null;
         }
