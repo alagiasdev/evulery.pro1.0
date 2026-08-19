@@ -340,5 +340,25 @@ $statusLabel = $statuses[$lead['status']] ?? $lead['status'];
                 </div>
             </div>
         <?php endif; ?>
+
+        <!-- Elimina lead (spam / dati non validi) — non disponibile se già convertito -->
+        <?php if (empty($lead['converted_tenant_id'])): ?>
+            <div class="lead-card" style="border-color:#f0d5d5;">
+                <div class="lead-card-body">
+                    <div style="font-size:.72rem;font-weight:800;color:#c0392b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">
+                        <i class="bi bi-trash"></i> Elimina lead
+                    </div>
+                    <div style="font-size:.82rem;color:#6c757d;margin-bottom:12px;line-height:1.5;">
+                        Se è spam o contiene dati non validi, puoi rimuoverlo definitivamente. Operazione irreversibile.
+                    </div>
+                    <form method="POST" action="<?= url("admin/leads/{$lead['id']}/delete") ?>" data-confirm="Eliminare definitivamente questo lead? L'operazione non è reversibile.">
+                        <?= csrf_field() ?>
+                        <button type="submit" style="display:inline-flex;align-items:center;gap:.4rem;background:#fff;color:#c0392b;border:1px solid #e0b4b4;border-radius:8px;padding:.5rem .9rem;font-size:.85rem;font-weight:600;cursor:pointer;">
+                            <i class="bi bi-trash"></i> Elimina definitivamente
+                        </button>
+                    </form>
+                </div>
+            </div>
+        <?php endif; ?>
     </div>
 </div>

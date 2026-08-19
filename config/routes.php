@@ -302,6 +302,7 @@ $router->group('/admin', ['auth', 'admin', 'csrf', 'dashboard-ratelimit'], funct
     $r->get('/leads/{id}', [LeadsController::class, 'show']);
     $r->post('/leads/{id}/contact', [LeadsController::class, 'updateContact']);
     $r->post('/leads/{id}', [LeadsController::class, 'update']);
+    $r->post('/leads/{id}/delete', [LeadsController::class, 'destroy']);
     $r->get('/leads/{id}/convert', [LeadsController::class, 'convert']);
     // Credit requests
     $r->get('/credit-requests', [AdminCreditRequestsController::class, 'index']);

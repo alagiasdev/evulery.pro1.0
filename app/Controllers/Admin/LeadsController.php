@@ -213,6 +213,33 @@ class LeadsController
     }
 
     /**
+     * POST /admin/leads/{id}/delete — elimina definitivamente un lead spazzatura.
+     * Guardia: i lead già convertiti a cliente NON si eliminano (origine di un cliente reale).
+     */
+    public function destroy(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $leadModel = new DemoRequest();
+        $lead = $leadModel->findById($id);
+
+        if (!$lead) {
+            flash('danger', 'Lead non trovato.');
+            Response::redirect(url('admin/leads'));
+        }
+
+        // Guardia intelligente: non eliminare un lead già convertito a cliente.
+        if (!empty($lead['converted_tenant_id'])) {
+            flash('danger', 'Questo lead è già stato convertito a cliente: non può essere eliminato.');
+            Response::redirect(url("admin/leads/{$id}"));
+        }
+
+        $leadModel->delete($id);
+        AuditLog::log('lead_deleted', "Lead eliminato: {$lead['name']} ({$lead['email']})", Auth::id());
+        flash('success', 'Lead eliminato.');
+        Response::redirect(url('admin/leads'));
+    }
+
+    /**
      * POST /admin/leads/{id}/contact — corregge l'anagrafica del lead
      * (nome, ristorante, email, telefono). Caso d'uso: typo in fase di inserimento.
      */

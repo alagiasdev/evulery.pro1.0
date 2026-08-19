@@ -53,6 +53,23 @@ class DemoRequest
     }
 
     /**
+     * Elimina definitivamente un lead e le sue attività (transazione).
+     * La guardia sui lead convertiti è nel controller (dove può dare un flash).
+     */
+    public function delete(int $id): void
+    {
+        $this->db->beginTransaction();
+        try {
+            $this->db->prepare('DELETE FROM demo_request_activities WHERE demo_request_id = :id')->execute(['id' => $id]);
+            $this->db->prepare('DELETE FROM demo_requests WHERE id = :id')->execute(['id' => $id]);
+            $this->db->commit();
+        } catch (\PDOException $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
+    /**
      * Cerca richiesta duplicata recente (stessa email negli ultimi N ore).
      * Usato per anti-duplicato visibile sul form pubblico.
      */
