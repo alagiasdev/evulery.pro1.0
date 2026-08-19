@@ -341,8 +341,9 @@ $statusLabel = $statuses[$lead['status']] ?? $lead['status'];
             </div>
         <?php endif; ?>
 
-        <!-- Elimina lead (spam / dati non validi) — non disponibile se già convertito -->
-        <?php if (empty($lead['converted_tenant_id'])): ?>
+        <!-- Elimina lead: SOLO stato "Nuovo" (mai lavorato = candidato spazzatura).
+             Un lead contattato/in trattativa/convertito è reale e si conserva. -->
+        <?php if ($lead['status'] === 'new' && empty($lead['converted_tenant_id'])): ?>
             <div class="lead-card" style="border-color:#f0d5d5;">
                 <div class="lead-card-body">
                     <div style="font-size:.72rem;font-weight:800;color:#c0392b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">

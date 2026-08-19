@@ -227,9 +227,10 @@ class LeadsController
             Response::redirect(url('admin/leads'));
         }
 
-        // Guardia intelligente: non eliminare un lead già convertito a cliente.
-        if (!empty($lead['converted_tenant_id'])) {
-            flash('danger', 'Questo lead è già stato convertito a cliente: non può essere eliminato.');
+        // Guardia: si eliminano SOLO i lead "Nuovo" (mai lavorati = candidati spazzatura).
+        // Un lead contattato / in trattativa / convertito è un prospect reale e va conservato.
+        if ($lead['status'] !== 'new' || !empty($lead['converted_tenant_id'])) {
+            flash('danger', 'Solo i lead "Nuovo" (mai lavorati) possono essere eliminati. Questo lead è già in lavorazione.');
             Response::redirect(url("admin/leads/{$id}"));
         }
 
