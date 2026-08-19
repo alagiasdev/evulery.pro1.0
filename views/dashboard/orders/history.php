@@ -207,7 +207,7 @@ $pctCompletion = $ps ? ohPctChange($s['completion_rate'], $ps['completion_rate']
 <div class="oh-filters">
     <form method="GET" action="<?= url('dashboard/orders/history/orders') ?>" class="row g-2 align-items-end">
         <div class="col-md-2">
-            <label class="form-label" style="font-size:.72rem; font-weight:600; color:#6c757d;">Stato</label>
+            <label class="form-label" style="font-size:.8rem; font-weight:600; color:#6c757d;">Stato</label>
             <select name="status" class="form-select form-select-sm">
                 <option value="">Tutti</option>
                 <?php foreach (['pending','accepted','preparing','ready','completed','cancelled','rejected'] as $sv): ?>
@@ -216,7 +216,7 @@ $pctCompletion = $ps ? ohPctChange($s['completion_rate'], $ps['completion_rate']
             </select>
         </div>
         <div class="col-md-2">
-            <label class="form-label" style="font-size:.72rem; font-weight:600; color:#6c757d;">Tipo</label>
+            <label class="form-label" style="font-size:.8rem; font-weight:600; color:#6c757d;">Tipo</label>
             <select name="type" class="form-select form-select-sm">
                 <option value="">Tutti</option>
                 <option value="takeaway" <?= ($filters['order_type'] ?? '') === 'takeaway' ? 'selected' : '' ?>>Asporto</option>
@@ -224,15 +224,15 @@ $pctCompletion = $ps ? ohPctChange($s['completion_rate'], $ps['completion_rate']
             </select>
         </div>
         <div class="col-md-2">
-            <label class="form-label" style="font-size:.72rem; font-weight:600; color:#6c757d;">Da</label>
+            <label class="form-label" style="font-size:.8rem; font-weight:600; color:#6c757d;">Da</label>
             <input type="date" name="from" class="form-control form-control-sm" value="<?= e($filters['date_from'] ?? '') ?>">
         </div>
         <div class="col-md-2">
-            <label class="form-label" style="font-size:.72rem; font-weight:600; color:#6c757d;">A</label>
+            <label class="form-label" style="font-size:.8rem; font-weight:600; color:#6c757d;">A</label>
             <input type="date" name="to" class="form-control form-control-sm" value="<?= e($filters['date_to'] ?? '') ?>">
         </div>
         <div class="col-md-2">
-            <label class="form-label" style="font-size:.72rem; font-weight:600; color:#6c757d;">Cerca</label>
+            <label class="form-label" style="font-size:.8rem; font-weight:600; color:#6c757d;">Cerca</label>
             <input type="text" name="q" class="form-control form-control-sm" placeholder="Nome, #ordine, tel..." value="<?= e($filters['search'] ?? '') ?>">
         </div>
         <div class="col-md-2">
@@ -268,13 +268,13 @@ $pctCompletion = $ps ? ohPctChange($s['completion_rate'], $ps['completion_rate']
                     <td class="oh-td"><?= date('d/m H:i', strtotime($o['created_at'])) ?></td>
                     <td class="oh-td">
                         <div style="font-weight:600; font-size:.8rem;"><?= e($o['customer_name']) ?></div>
-                        <div style="font-size:.68rem; color:#6c757d;"><?= e($o['customer_phone']) ?></div>
+                        <div style="font-size:.78rem; color:#6c757d;"><?= e($o['customer_phone']) ?></div>
                     </td>
                     <td class="oh-td">
                         <i class="bi <?= $o['order_type'] === 'delivery' ? 'bi-truck' : 'bi-bag' ?>" style="color:<?= $o['order_type'] === 'delivery' ? '#1565C0' : '#E65100' ?>;"></i>
                         <?= order_type_label($o['order_type']) ?>
                     </td>
-                    <td class="oh-td" style="font-size:.72rem; color:#6c757d; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                    <td class="oh-td" style="font-size:.8rem; color:#6c757d; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
                         <?= e($itemSummaries[$o['id']] ?? '') ?>
                     </td>
                     <td class="oh-td"><strong>&euro; <?= number_format((float)$o['total'], 2, ',', '.') ?></strong></td>

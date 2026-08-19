@@ -187,10 +187,10 @@ $statusClass = $statusColors[$order['status']] ?? 'pending';
                 <p class="mb-1" style="font-size:.82rem;"><span class="badge bg-light text-dark">CAP <?= e($order['delivery_cap']) ?></span></p>
                 <?php endif; ?>
                 <?php if ((float)$order['delivery_fee'] > 0): ?>
-                <p class="mb-1" style="font-size:.78rem; color:#6c757d;">Costo consegna: <strong>&euro; <?= number_format((float)$order['delivery_fee'], 2, ',', '.') ?></strong></p>
+                <p class="mb-1" style="font-size:.82rem; color:#6c757d;">Costo consegna: <strong>&euro; <?= number_format((float)$order['delivery_fee'], 2, ',', '.') ?></strong></p>
                 <?php endif; ?>
                 <?php if ($order['delivery_notes']): ?>
-                <div style="margin-top:.5rem; padding:.5rem .75rem; background:#f8f9fa; border-radius:8px; font-size:.78rem; color:#495057;">
+                <div style="margin-top:.5rem; padding:.5rem .75rem; background:#f8f9fa; border-radius:8px; font-size:.82rem; color:#495057;">
                     <i class="bi bi-info-circle me-1"></i> <?= e($order['delivery_notes']) ?>
                 </div>
                 <?php endif; ?>

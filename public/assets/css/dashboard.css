@@ -3902,9 +3902,9 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .do-detail-tl { display: flex; gap: .65rem; padding: .5rem 0; border-bottom: 1px solid #f8f8f8; }
 .do-detail-tl:last-child { border-bottom: none; }
 .do-detail-tl-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: .4rem; flex-shrink: 0; }
-.do-detail-tl-text { font-size: .78rem; color: #495057; }
+.do-detail-tl-text { font-size: .82rem; color: #495057; }
 .do-detail-tl-text strong { color: #1a1d23; }
-.do-detail-tl-date { font-size: .65rem; color: #adb5bd; }
+.do-detail-tl-date { font-size: .75rem; color: #868e96; }
 
 /* ═══════════════════════════════════════════════════════════
    Order History — Storico Ordini (namespace: .oh-*)
@@ -4020,7 +4020,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     display: flex; justify-content: space-between; align-items: center;
     padding: .75rem 1rem; border-top: 1px solid #f0f0f0;
 }
-.oh-pagination-info { font-size: .75rem; color: #6c757d; }
+.oh-pagination-info { font-size: .82rem; color: #6c757d; }
 .oh-page-btns { display: flex; gap: .25rem; }
 .oh-page-btn {
     padding: .25rem .6rem; border-radius: 6px; font-size: .72rem; font-weight: 600;
