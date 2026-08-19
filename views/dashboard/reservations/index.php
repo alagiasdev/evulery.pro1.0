@@ -179,7 +179,7 @@ $kpiUrl = function (string $st) use ($isUpcoming, $date, $dateTo, $source): stri
 <div class="card" style="margin-bottom:1.25rem;">
     <div class="card-header">
         <h6><i class="bi bi-search me-1"></i> Risultati per "<?= e($searchQuery) ?>"</h6>
-        <span style="font-size:.78rem;color:#6c757d;"><?= count($searchResults) ?> trovate</span>
+        <span style="font-size:.82rem;color:#6c757d;"><?= count($searchResults) ?> trovate</span>
     </div>
     <?php if (empty($searchResults)): ?>
         <div class="text-center text-muted py-4">

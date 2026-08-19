@@ -170,9 +170,9 @@ a.sidebar-user:hover { color: #adb5bd; }
 .res-row:last-child { border-bottom: none; }
 .res-time { font-weight: 700; font-size: .9rem; color: #212529; min-width: 48px; }
 .res-info { flex: 1; min-width: 0; }
-.res-name { font-weight: 600; font-size: .88rem; color: #212529; }
-.res-id { font-size: .7rem; font-weight: 500; color: #adb5bd; margin-left: .25rem; }
-.res-meta { font-size: .75rem; color: #6c757d; }
+.res-name { font-weight: 600; font-size: .92rem; color: #212529; }
+.res-id { font-size: .78rem; font-weight: 500; color: #868e96; margin-left: .25rem; }
+.res-meta { font-size: .82rem; color: #6c757d; }
 .res-right { display: flex; align-items: center; gap: .5rem; }
 .res-pax {
     background: #f0f0f0; border-radius: 6px;
@@ -468,7 +468,7 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
 .meal-divider span { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #6c757d; }
 
 /* ===== Reservation row contact line ===== */
-.res-contact { font-size: .72rem; color: #6c757d; }
+.res-contact { font-size: .82rem; color: #6c757d; }
 
 /* ===== Action buttons (small) ===== */
 .btn-action-sm {
@@ -2494,7 +2494,7 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
 .dr-date-btn:hover { border-color: var(--brand); color: var(--brand); }
 .dr-date-btn.active { border-color: var(--brand); background: var(--brand); color: #fff; }
 .dr-date-label { font-weight: 600; font-size: .85rem; }
-.dr-date-sub { font-size: .7rem; opacity: .65; }
+.dr-date-sub { font-size: .78rem; opacity: .7; }
 .dr-date-btn.active .dr-date-sub { opacity: .85; }
 
 /* "Altra data" button */
@@ -2632,7 +2632,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .dr-slot-btn.dr-slot-past.active { opacity: 1; border-color: #6c757d; background: #6c757d; color: #fff; }
 .dr-slot-btn.dr-slot-past.active .dr-slot-covers { color: rgba(255,255,255,.7); }
 .dr-slot-btn.dr-slot-past .dr-slot-covers { font-style: italic; }
-.dr-slot-covers { font-size: .65rem; color: #adb5bd; display: block; font-weight: 400; }
+.dr-slot-covers { font-size: .72rem; color: #868e96; display: block; font-weight: 400; }
 .dr-slot-btn.active .dr-slot-covers { color: rgba(255,255,255,.7); }
 .dr-slot-promo { display: block; font-size: .6rem; font-weight: 700; color: #E65100; background: #FFF3E0; padding: 1px 4px; border-radius: 3px; margin-top: 1px; }
 .dr-slot-btn.active .dr-slot-promo { background: rgba(255,255,255,.25); color: #fff; }
@@ -2694,7 +2694,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .dr-customer-item:hover { background: var(--brand-light); }
 .dr-customer-item:last-child { border-bottom: none; }
 .dr-customer-name { font-weight: 600; }
-.dr-customer-detail { font-size: .75rem; color: #6c757d; }
+.dr-customer-detail { font-size: .82rem; color: #6c757d; }
 
 /* --- Customer Fields --- */
 .dr-customer-fields {
@@ -4652,7 +4652,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .res-auto-pill { font-size: .66rem; font-weight: 600; color: #2E7D32; background: #E8F5E9; padding: 2px 9px; border-radius: 20px; }
 .res-table-form { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
 .res-table-form .form-select { max-width: 320px; }
-.res-section-hint { font-size: .75rem; color: #9aa1a9; margin-top: .5rem; }
+.res-section-hint { font-size: .82rem; color: #868e96; margin-top: .5rem; }
 .res-table-ro { font-size: .9rem; font-weight: 600; color: #1a1d23; background: #f5f6f8; border: 1px solid #e9ecef; border-radius: 8px; padding: .5rem .8rem; display: inline-block; }
 
 /* Gestione Tavoli — pulsante ghost + mappa sala */

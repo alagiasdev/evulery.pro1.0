@@ -538,7 +538,7 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
                             <div class="tl-user">da <?= e($log['first_name'] . ' ' . $log['last_name']) ?></div>
                         <?php endif; ?>
                         <?php if ($log['note']): ?>
-                            <div class="tl-text" style="font-size:.75rem;color:#6c757d;"><?= e($log['note']) ?></div>
+                            <div class="tl-text" style="font-size:.82rem;color:#6c757d;"><?= e($log['note']) ?></div>
                         <?php endif; ?>
                     </div>
                 </div>
