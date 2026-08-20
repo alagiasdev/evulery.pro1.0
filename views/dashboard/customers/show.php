@@ -328,32 +328,6 @@ $sourceLabelsPrivacy = [
     </div>
 </div>
 
-<?php if (!is_staff()): // Modifica dati/contatto: owner only (clienti sola-lettura per staff) ?>
-<details class="cs-edit-card">
-    <summary class="cs-edit-toggle"><i class="bi bi-pencil-square"></i> Modifica dati cliente</summary>
-    <form method="POST" action="<?= url("dashboard/customers/{$customer['id']}/update") ?>" class="cs-edit-form">
-        <?= csrf_field() ?>
-        <div class="cs-edit-grid">
-            <label class="cs-edit-field">Nome *
-                <input type="text" name="first_name" value="<?= e($customer['first_name']) ?>" required maxlength="100">
-            </label>
-            <label class="cs-edit-field">Cognome
-                <input type="text" name="last_name" value="<?= e($customer['last_name']) ?>" maxlength="100">
-            </label>
-            <label class="cs-edit-field">Telefono
-                <input type="tel" name="phone" value="<?= e($customer['phone']) ?>" maxlength="30">
-            </label>
-            <label class="cs-edit-field">Email
-                <input type="email" name="email" value="<?= e($customer['email']) ?>" maxlength="255">
-            </label>
-        </div>
-        <div class="cs-edit-actions">
-            <button type="submit" class="btn btn-brand"><i class="bi bi-check-lg me-1"></i> Salva modifiche</button>
-        </div>
-    </form>
-</details>
-<?php endif; ?>
-
 <!-- Stats Strip -->
 <div class="stats-strip">
     <div class="stat-card">
@@ -466,6 +440,31 @@ $sourceLabelsPrivacy = [
 
                 <!-- Tab: Profilo -->
                 <div class="cs-profile-panel active" id="csTab-profilo">
+                    <?php if (!is_staff()): // Modifica dati/contatto (owner) — clienti sola-lettura per staff ?>
+                    <div class="cs-profile-section-title"><i class="bi bi-person-vcard"></i> Dati cliente</div>
+                    <form method="POST" action="<?= url("dashboard/customers/{$customer['id']}/update") ?>" class="cs-data-form">
+                        <?= csrf_field() ?>
+                        <div class="cs-edit-grid">
+                            <label class="cs-edit-field">Nome *
+                                <input type="text" name="first_name" value="<?= e($customer['first_name']) ?>" required maxlength="100">
+                            </label>
+                            <label class="cs-edit-field">Cognome
+                                <input type="text" name="last_name" value="<?= e($customer['last_name']) ?>" maxlength="100">
+                            </label>
+                            <label class="cs-edit-field">Telefono
+                                <input type="tel" name="phone" value="<?= e($customer['phone']) ?>" maxlength="30">
+                            </label>
+                            <label class="cs-edit-field">Email
+                                <input type="email" name="email" value="<?= e($customer['email']) ?>" maxlength="255">
+                            </label>
+                        </div>
+                        <button type="submit" class="btn-action btn-act-edit" style="display:inline-flex;margin-top:.6rem;white-space:nowrap;">
+                            <i class="bi bi-check-lg"></i> Salva
+                        </button>
+                    </form>
+                    <hr style="margin:.75rem 0;border-color:#f0f0f0;">
+                    <?php endif; ?>
+
                     <?php if (!empty($insights)): ?>
                     <div class="cs-profile-section-title"><i class="bi bi-lightbulb"></i> Insight</div>
                     <div style="margin-bottom: .75rem;">

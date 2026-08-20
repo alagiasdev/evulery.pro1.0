@@ -5638,37 +5638,24 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     .fb-pop { min-width: 0; width: calc(100vw - 3rem); left: auto; right: 0; }
 }
 
-/* ===== Scheda cliente — modifica dati/contatto (owner) ===== */
+/* ===== Scheda cliente — modifica dati/contatto (owner, tab Profilo) ===== */
 .hero-contact-empty { color: #868e96; font-size: .84rem; }
-.cs-edit-card {
-    background: #fff; border: 1px solid #e9edf0; border-radius: 12px;
-    margin: 0 0 1.25rem; overflow: hidden;
-}
-.cs-edit-toggle {
-    list-style: none; cursor: pointer; user-select: none;
-    display: flex; align-items: center; gap: .5rem;
-    padding: .7rem .95rem; font-size: .9rem; font-weight: 600; color: #495057;
-}
-.cs-edit-toggle::-webkit-details-marker { display: none; }
-.cs-edit-toggle:hover { background: #f6f8f9; }
-.cs-edit-card[open] .cs-edit-toggle { border-bottom: 1px solid #eef1f3; color: var(--brand, #00844A); }
-.cs-edit-form { padding: 1rem .95rem 1.15rem; }
+.cs-data-form { margin: 0; }
 .cs-edit-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: .8rem 1rem;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: .6rem .8rem;
 }
 .cs-edit-field {
-    display: flex; flex-direction: column; gap: .3rem;
-    font-size: .8rem; font-weight: 600; color: #6c757d;
+    display: flex; flex-direction: column; gap: .25rem;
+    font-size: .74rem; font-weight: 600; color: #868e96;
 }
 .cs-edit-field input {
-    font-size: .92rem; font-weight: 400; color: #212529;
-    padding: .5rem .7rem; border: 1px solid #dee2e6; border-radius: 8px;
+    font-size: .86rem; font-weight: 400; color: #212529;
+    padding: .42rem .6rem; border: 1px solid #dee2e6; border-radius: 7px;
 }
 .cs-edit-field input:focus {
     outline: none; border-color: var(--brand, #00844A);
     box-shadow: 0 0 0 3px rgba(0,132,74,.1);
 }
-.cs-edit-actions { margin-top: 1rem; }
 @media (max-width: 560px) {
     .cs-edit-grid { grid-template-columns: 1fr; }
 }
