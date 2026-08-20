@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Api;
 
+use App\Core\Auth;
 use App\Core\Request;
 use App\Core\Response;
 use App\Models\SlotOverride;
@@ -31,6 +32,15 @@ class AvailabilityController
 
         if (!$tenant || !$tenant['is_active']) {
             Response::error('Ristorante non trovato.', 'TENANT_NOT_FOUND', 404);
+        }
+
+        // "dashboard" bypassa il blocco "Al completo" (il ristoratore aggiunge a
+        // mano): NON e' fidabile dal client — un utente pubblico potrebbe passarlo
+        // per scavalcare lo stop online. Lo concediamo SOLO a un owner/staff
+        // autenticato di QUESTO tenant; altrimenti si ricade su 'widget'.
+        if ($source === 'dashboard'
+            && !(Auth::isLoggedIn() && (int)Auth::tenantId() === (int)$tenant['id'])) {
+            $source = 'widget';
         }
 
         // Block expired subscriptions

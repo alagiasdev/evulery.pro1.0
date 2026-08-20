@@ -12,6 +12,7 @@ use App\Models\EmergencyClosure;
 use App\Models\Reservation;
 use App\Models\Promotion;
 use App\Models\ReservationLog;
+use App\Models\SlotOverride;
 use App\Models\Table;
 use App\Models\Tenant;
 use App\Services\AuditLog;
@@ -92,6 +93,18 @@ class ReservationsController
             app_log('Banner chiusura straordinaria non disponibile: ' . $e->getMessage(), 'warning');
         }
 
+        // Stato "Al completo" (stop prenotazioni online per giorno/servizio) —
+        // solo nella vista GIORNO SINGOLO. Deploy-safe: non deve rompere la
+        // pagina se qualcosa va storto.
+        $fullState = null;
+        if (!$upcoming && $searchQuery === '' && !$isRange) {
+            try {
+                $fullState = (new AvailabilityService())->getDayFullState($tenantId, $date);
+            } catch (\Throwable $e) {
+                app_log('Stato "Al completo" non disponibile: ' . $e->getMessage(), 'warning');
+            }
+        }
+
         view('dashboard/reservations/index', [
             'title'        => 'Prenotazioni',
             'activeMenu'   => 'reservations',
@@ -108,7 +121,95 @@ class ReservationsController
             'tableAssignments' => $tableAssignments,
             'heartbeat'        => $heartbeat,
             'emergencyClosure' => $emergencyClosure,
+            'fullState'        => $fullState,
         ], 'dashboard');
+    }
+
+    /**
+     * "Al completo": chiude le prenotazioni ONLINE per un giorno o un singolo
+     * servizio (fascia). Il ristoratore resta operativo e continua ad aggiungere
+     * a mano. Riusa slot_overrides (per-slot max_covers=0). Reversibile.
+     */
+    public function markFull(Request $request): void
+    {
+        $tenantId = (int)Auth::tenantId();
+        $date  = (string)$request->input('date', '');
+        $scope = (string)$request->input('scope', 'day'); // 'day' | <nome fascia>
+
+        if (!$this->validFullDate($date)) {
+            flash('danger', 'Data non valida.');
+            Response::redirect(url('dashboard/reservations'));
+            return;
+        }
+
+        $label = null;
+        $times = $this->resolveScopeTimes($tenantId, $date, $scope, $label);
+        if (empty($times)) {
+            flash('warning', 'Nessun orario da bloccare per questa selezione.');
+            Response::redirect(url('dashboard/reservations?date=' . urlencode($date)));
+            return;
+        }
+
+        $n = (new SlotOverride())->markFull($tenantId, $date, $times);
+        AuditLog::log('reservation_full_marked', "Al completo: {$label} del {$date} ({$n} orari)", Auth::id(), $tenantId);
+        flash('success', $n > 0
+            ? "{$label}: prenotazioni online chiuse. Puoi comunque aggiungere prenotazioni a mano."
+            : "{$label} era già al completo.");
+        Response::redirect(url('dashboard/reservations?date=' . urlencode($date)));
+    }
+
+    /**
+     * Riapre le prenotazioni online (rimuove il blocco "Al completo"). scope
+     * 'all'/'day' = tutta la giornata; altrimenti il singolo servizio.
+     */
+    public function reopenFull(Request $request): void
+    {
+        $tenantId = (int)Auth::tenantId();
+        $date  = (string)$request->input('date', '');
+        $scope = (string)$request->input('scope', 'all'); // 'all' | <nome fascia>
+
+        if (!$this->validFullDate($date)) {
+            flash('danger', 'Data non valida.');
+            Response::redirect(url('dashboard/reservations'));
+            return;
+        }
+
+        $override = new SlotOverride();
+        if ($scope === 'all' || $scope === 'day') {
+            $n = $override->unmarkFull($tenantId, $date, null);
+            $label = 'Giornata';
+        } else {
+            $label = null;
+            $times = $this->resolveScopeTimes($tenantId, $date, $scope, $label);
+            $n = $override->unmarkFull($tenantId, $date, $times ?: []);
+        }
+        AuditLog::log('reservation_full_reopened', "Riapertura online: {$label} del {$date} ({$n} orari)", Auth::id(), $tenantId);
+        flash('success', 'Prenotazioni online riaperte.');
+        Response::redirect(url('dashboard/reservations?date=' . urlencode($date)));
+    }
+
+    /** Orari (HH:MM:SS) di uno scope ('day' o nome fascia). $label valorizzato. */
+    private function resolveScopeTimes(int $tenantId, string $date, string $scope, ?string &$label = null): array
+    {
+        $state = (new AvailabilityService())->getDayFullState($tenantId, $date);
+        if ($scope === 'day') {
+            $label = 'Giornata';
+            return $state['whole_day_times'];
+        }
+        foreach ($state['services'] as $sv) {
+            if ($sv['name'] === $scope) {
+                $label = $sv['display_name'];
+                return $sv['times'];
+            }
+        }
+        $label = ucfirst($scope);
+        return [];
+    }
+
+    private function validFullDate(string $date): bool
+    {
+        $d = \DateTime::createFromFormat('Y-m-d', $date);
+        return $d !== false && $d->format('Y-m-d') === $date;
     }
 
     public function show(Request $request): void
@@ -338,10 +439,12 @@ class ReservationsController
             // Force booking: skip availability check
             $reservationId = (new Reservation())->create($reservationData);
         } else {
-            // Atomic check + book (prevents race condition / double-booking)
+            // Atomic check + book (prevents race condition / double-booking).
+            // source='dashboard': il ristoratore non e' bloccato dallo stop
+            // online "Al completo" (la capienza reale resta comunque protetta).
             $availability = new AvailabilityService();
             $reservationId = $availability->atomicBook(
-                $tenantId, $data['reservation_date'], $data['reservation_time'], (int)$data['party_size'], $reservationData
+                $tenantId, $data['reservation_date'], $data['reservation_time'], (int)$data['party_size'], $reservationData, 'dashboard'
             );
 
             if ($reservationId === null) {
@@ -951,7 +1054,7 @@ class ReservationsController
         $forceBooking = !empty($data['force_booking']) && (Auth::isOwner() || Auth::isSuperAdmin());
         if (!$forceBooking) {
             $availability = new AvailabilityService();
-            if (!$availability->canBook($tenantId, $data['reservation_date'], $data['reservation_time'], (int)$data['party_size'], $id)) {
+            if (!$availability->canBook($tenantId, $data['reservation_date'], $data['reservation_time'], (int)$data['party_size'], $id, 'dashboard')) {
                 flash('warning', 'Attenzione: orario non disponibile per il numero di coperti selezionato. Seleziona un orario diverso o forza la modifica.');
                 \App\Core\Session::flash('old_input', $data);
                 Response::redirect(url("dashboard/reservations/{$id}/edit"));

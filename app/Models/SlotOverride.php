@@ -200,4 +200,103 @@ class SlotOverride
         $stmt->execute(array_merge([$tenantId], $ids));
         return $stmt->rowCount();
     }
+
+    // =========================================================================
+    // "AL COMPLETO" — blocco del canale ONLINE per un giorno/servizio.
+    //
+    // Meccanismo volutamente DISGIUNTO dalle chiusure straordinarie: un blocco
+    // al-completo e' un override per-slot con `max_covers = 0` e `is_closed = 0`.
+    //   - AvailabilityService salta gli slot con max_covers <= 0 -> il widget
+    //     mostra "pieno" (nessun orario), NON "chiuso" (che sarebbe is_closed).
+    //   - getClosedDates() filtra is_closed=1 -> la data NON risulta chiusa nel
+    //     calendario del widget (giorno operativo, non "chiuso").
+    //   - le chiusure straordinarie usano is_closed=1: spazi WHERE disgiunti,
+    //     nessuna collisione (una non cancella l'altra).
+    // =========================================================================
+
+    /** Nota-marcatore (documentazione in DB; il match avviene sulla struttura). */
+    public const FULL_NOTE = 'Al completo';
+
+    /**
+     * Marca "al completo" un insieme di slot per una data. Idempotente per slot
+     * (non duplica). $slotTimes: array di orari 'HH:MM' o 'HH:MM:SS'. Ritorna il
+     * numero di slot effettivamente marcati (nuovi).
+     */
+    public function markFull(int $tenantId, string $date, array $slotTimes): int
+    {
+        $check = $this->db->prepare(
+            'SELECT id FROM slot_overrides
+             WHERE tenant_id = :t AND override_date = :d AND slot_time = :s
+             AND is_closed = 0 AND max_covers = 0 LIMIT 1'
+        );
+        $insert = $this->db->prepare(
+            'INSERT INTO slot_overrides (tenant_id, override_date, slot_time, max_covers, is_closed, note)
+             VALUES (:t, :d, :s, 0, 0, :n)'
+        );
+
+        $count = 0;
+        foreach ($slotTimes as $slotTime) {
+            $slotTime = substr($slotTime, 0, 8); // normalizza a HH:MM(:SS)
+            if ($slotTime === '') {
+                continue;
+            }
+            $check->execute(['t' => $tenantId, 'd' => $date, 's' => $slotTime]);
+            if ($check->fetch()) {
+                continue; // gia' al completo
+            }
+            $insert->execute(['t' => $tenantId, 'd' => $date, 's' => $slotTime, 'n' => self::FULL_NOTE]);
+            $count++;
+        }
+        return $count;
+    }
+
+    /**
+     * Rimuove i blocchi "al completo" per una data. $slotTimes null = tutti gli
+     * slot al-completo della data; altrimenti solo quelli indicati. NON tocca
+     * le chiusure straordinarie (is_closed=1) ne' altri override. Ritorna il n.
+     * di righe rimosse.
+     */
+    public function unmarkFull(int $tenantId, string $date, ?array $slotTimes = null): int
+    {
+        if ($slotTimes === null) {
+            $stmt = $this->db->prepare(
+                'DELETE FROM slot_overrides
+                 WHERE tenant_id = :t AND override_date = :d
+                 AND slot_time IS NOT NULL AND is_closed = 0 AND max_covers = 0'
+            );
+            $stmt->execute(['t' => $tenantId, 'd' => $date]);
+            return $stmt->rowCount();
+        }
+
+        $times = array_values(array_filter(array_map(
+            fn($s) => substr((string)$s, 0, 8),
+            $slotTimes
+        )));
+        if (empty($times)) {
+            return 0;
+        }
+        $in = implode(',', array_fill(0, count($times), '?'));
+        $stmt = $this->db->prepare(
+            "DELETE FROM slot_overrides
+             WHERE tenant_id = ? AND override_date = ?
+             AND is_closed = 0 AND max_covers = 0
+             AND slot_time IN ($in)"
+        );
+        $stmt->execute(array_merge([$tenantId, $date], $times));
+        return $stmt->rowCount();
+    }
+
+    /**
+     * Gli orari (HH:MM:SS) marcati "al completo" per una data.
+     */
+    public function fullSlotTimes(int $tenantId, string $date): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT slot_time FROM slot_overrides
+             WHERE tenant_id = :t AND override_date = :d
+             AND slot_time IS NOT NULL AND is_closed = 0 AND max_covers = 0'
+        );
+        $stmt->execute(['t' => $tenantId, 'd' => $date]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
 }

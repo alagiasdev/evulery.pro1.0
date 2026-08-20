@@ -5575,3 +5575,65 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .set-onboarding-reopen form{ margin:0; }
 .set-reopen-btn{ background:none; border:0; font:inherit; font-size:.82rem; color:#6c757d; cursor:pointer; display:inline-flex; gap:.4rem; align-items:center; padding:.45rem .7rem; border-radius:8px; }
 .set-reopen-btn:hover{ color:var(--brand,#00844A); background:var(--brand-light,#e6f4ed); }
+
+/* ===== "Al completo" — stop prenotazioni ONLINE per giorno/servizio ===== */
+.fb-bar { margin: 0 0 1.1rem; display: flex; flex-direction: column; gap: .6rem; }
+
+/* Banner stato attivo — AMBRA (aperto ma pieno, NON "chiuso" che sarebbe rosso) */
+.fb-banner {
+    display: flex; align-items: center; gap: .75rem;
+    background: #fbf1dc; border: 1px solid #ead9ad; border-radius: 12px;
+    padding: .7rem .9rem;
+}
+.fb-banner .fb-ic {
+    width: 32px; height: 32px; border-radius: 8px; flex: none;
+    background: #f6e6c2; color: #9a6a13; display: grid; place-items: center; font-size: 1.05rem;
+}
+.fb-tx { flex: 1; min-width: 0; }
+.fb-tx b { display: block; font-size: .92rem; color: #7a5410; }
+.fb-tx span { font-size: .82rem; color: #9a6a13; }
+.fb-reopen-form { flex: none; margin: 0; }
+.fb-reopen {
+    background: #fff; border: 1px solid #00844A; color: #00844A;
+    border-radius: 8px; padding: .45rem .8rem; font-size: .84rem; font-weight: 600;
+    cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: .35rem;
+}
+.fb-reopen:hover { background: #00844A; color: #fff; }
+
+/* Azione: bottone verde (brand) + popover scelta scope via <details> nativo */
+.fb-actions { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.fb-lbl { font-size: .84rem; color: #6c757d; }
+.fb-details { position: relative; }
+.fb-toggle {
+    list-style: none; cursor: pointer;
+    display: inline-flex; align-items: center; gap: .4rem;
+    border: 1px solid #00844A; background: #fff; color: #00844A;
+    border-radius: 8px; padding: .42rem .8rem; font-size: .84rem; font-weight: 600;
+}
+.fb-toggle::-webkit-details-marker { display: none; }
+.fb-toggle:hover { background: #e6f4ed; }
+.fb-caret { font-size: .75rem; transition: transform .2s; }
+.fb-details[open] .fb-caret { transform: rotate(180deg); }
+.fb-pop {
+    position: absolute; z-index: 20; margin-top: .5rem; left: 0;
+    background: #fff; border: 1px solid #e3e6ea; border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.12); padding: .7rem; min-width: 300px; max-width: 360px;
+}
+.fb-pop-t { font-size: .82rem; color: #212529; padding: .1rem .3rem .55rem; }
+.fb-opt {
+    display: flex; align-items: center; gap: .55rem; padding: .5rem .45rem;
+    border-radius: 8px; font-size: .9rem; cursor: pointer; color: #343a40;
+}
+.fb-opt:hover { background: #f6f8f9; }
+.fb-opt input { accent-color: #00844A; }
+.fb-go {
+    margin-top: .45rem; width: 100%; background: #9a6a13; color: #fff;
+    border: 0; border-radius: 8px; padding: .5rem; font-size: .86rem; font-weight: 700; cursor: pointer;
+}
+.fb-go:hover { background: #855b10; }
+@media (max-width: 640px) {
+    .fb-banner { flex-wrap: wrap; }
+    .fb-reopen-form { width: 100%; }
+    .fb-reopen { width: 100%; justify-content: center; }
+    .fb-pop { min-width: 0; width: calc(100vw - 3rem); left: auto; right: 0; }
+}

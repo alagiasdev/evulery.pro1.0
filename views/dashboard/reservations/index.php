@@ -139,6 +139,64 @@ $kpiUrl = function (string $st) use ($isUpcoming, $date, $dateTo, $source): stri
     <?php $ec = $emergencyClosure; include __DIR__ . '/../../partials/emergency-banner.php'; ?>
 <?php endif; ?>
 
+<?php /* "Al completo": stop prenotazioni online per giorno/servizio (solo vista giorno singolo). */ ?>
+<?php if (!empty($fullState) && !empty($fullState['has_slots'])): ?>
+    <?php
+        $fbWholeFull = !empty($fullState['whole_day_full']);
+        $fbAnyFull   = !empty($fullState['any_full']);
+        $fbLabels    = $fullState['full_labels'] ?? [];
+        // Servizi ancora prenotabili online (non al completo) per la marcatura.
+        $fbMarkable  = array_values(array_filter($fullState['services'] ?? [], fn($s) => empty($s['is_full'])));
+    ?>
+    <div class="fb-bar">
+        <?php if ($fbAnyFull): ?>
+        <div class="fb-banner">
+            <span class="fb-ic"><i class="bi bi-emoji-frown"></i></span>
+            <div class="fb-tx">
+                <b><?= $fbWholeFull ? 'Giornata al completo' : e(implode(', ', $fbLabels)) . ' al completo' ?></b>
+                <span>Prenotazioni online chiuse<?= $fbWholeFull ? '' : ' per: ' . e(implode(', ', $fbLabels)) ?>. Puoi comunque aggiungere prenotazioni a mano.</span>
+            </div>
+            <form method="POST" action="<?= url('dashboard/reservations/reopen-full') ?>" class="fb-reopen-form">
+                <?= csrf_field() ?>
+                <input type="hidden" name="date" value="<?= e($date) ?>">
+                <input type="hidden" name="scope" value="all">
+                <button type="submit" class="fb-reopen"><i class="bi bi-arrow-counterclockwise"></i> Riapri prenotazioni</button>
+            </form>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!$fbWholeFull && !empty($fbMarkable)): ?>
+        <div class="fb-actions">
+            <span class="fb-lbl">Prenotazioni online per questo giorno:</span>
+            <details class="fb-details">
+                <summary class="fb-toggle"><i class="bi bi-slash-circle"></i> Al completo <i class="bi bi-chevron-down fb-caret"></i></summary>
+                <div class="fb-pop">
+                    <form method="POST" action="<?= url('dashboard/reservations/mark-full') ?>">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="date" value="<?= e($date) ?>">
+                        <div class="fb-pop-t">Blocca le prenotazioni online di <b><?= e(format_date($date, 'd/m')) ?></b></div>
+                        <?php $fbMulti = count($fbMarkable) > 1; ?>
+                        <?php if ($fbMulti): ?>
+                        <label class="fb-opt">
+                            <input type="radio" name="scope" value="day" checked>
+                            <span>Tutto il giorno</span>
+                        </label>
+                        <?php endif; ?>
+                        <?php foreach ($fbMarkable as $i => $sv): ?>
+                        <label class="fb-opt">
+                            <input type="radio" name="scope" value="<?= e($sv['name']) ?>" <?= (!$fbMulti && $i === 0) ? 'checked' : '' ?>>
+                            <span>Solo <?= e($sv['display_name']) ?></span>
+                        </label>
+                        <?php endforeach; ?>
+                        <button type="submit" class="fb-go">Segna al completo</button>
+                    </form>
+                </div>
+            </details>
+        </div>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
+
 <?php if (!empty($heartbeat)): ?>
 <!--
     Fase C — auto-refresh banner contestuale.

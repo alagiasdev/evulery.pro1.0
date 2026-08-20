@@ -7,6 +7,7 @@ use App\Models\TimeSlot;
 use App\Models\Reservation;
 use App\Models\MealCategory;
 use App\Models\Promotion;
+use App\Models\SlotOverride;
 use PDO;
 
 class AvailabilityService
@@ -69,6 +70,14 @@ class AvailabilityService
                         continue 2; // Skip this slot
                     }
                     if ($override['max_covers'] !== null) {
+                        // "Al completo" = max_covers 0 (is_closed 0): blocca il
+                        // canale ONLINE (widget) ma NON il ristoratore, che dalla
+                        // dashboard continua ad aggiungere a mano (locale aperto,
+                        // solo pieno online). Per source='dashboard' si ignora il
+                        // blocco e si usa la capienza reale dello slot.
+                        if ((int)$override['max_covers'] === 0 && $source === 'dashboard') {
+                            continue; // owner: bypassa il blocco al-completo
+                        }
                         $maxCovers = (int)$override['max_covers'];
                     }
                 }
@@ -133,9 +142,9 @@ class AvailabilityService
         return array_slice($suggestions, 0, 3);
     }
 
-    public function canBook(int $tenantId, string $date, string $time, int $partySize, int $excludeReservationId = 0): bool
+    public function canBook(int $tenantId, string $date, string $time, int $partySize, int $excludeReservationId = 0, string $source = 'widget'): bool
     {
-        $slots = $this->getAvailableSlots($tenantId, $date, $partySize, 'widget', $excludeReservationId);
+        $slots = $this->getAvailableSlots($tenantId, $date, $partySize, $source, $excludeReservationId);
 
         foreach ($slots as $slot) {
             if ($slot['time'] === $time && $slot['is_available']) {
@@ -150,7 +159,7 @@ class AvailabilityService
      * Atomic check + book: locks time_slots for tenant+day, re-checks availability, creates reservation.
      * Returns reservation ID on success, null if slot not available.
      */
-    public function atomicBook(int $tenantId, string $date, string $time, int $partySize, array $reservationData): ?int
+    public function atomicBook(int $tenantId, string $date, string $time, int $partySize, array $reservationData, string $source = 'widget'): ?int
     {
         $dayOfWeek = (int)date('N', strtotime($date)) - 1;
 
@@ -163,7 +172,7 @@ class AvailabilityService
             $stmt->execute(['tid' => $tenantId, 'dow' => $dayOfWeek]);
 
             // Re-check availability within the transaction (consistent read after lock)
-            if (!$this->canBook($tenantId, $date, $time, $partySize)) {
+            if (!$this->canBook($tenantId, $date, $time, $partySize, 0, $source)) {
                 $this->db->rollBack();
                 return null;
             }
@@ -229,6 +238,102 @@ class AvailabilityService
         }
 
         return array_values(array_filter($grouped, fn($g) => !empty($g['slots'])));
+    }
+
+    /**
+     * Stato "Al completo" per una data: quali servizi (fasce) esistono quel
+     * giorno, quali sono attualmente al completo, e gli orari coinvolti — per il
+     * bottone/popover e il banner nella pagina Prenotazioni.
+     *
+     * Ritorna:
+     *   has_slots        bool   il giorno ha slot attivi (altrimenti niente UI)
+     *   services         array  [{name, display_name, times[], total, is_full}]
+     *   whole_day_times  array  tutti gli orari attivi del giorno (HH:MM:SS)
+     *   whole_day_full   bool   ogni slot attivo del giorno e' al completo
+     *   any_full         bool   almeno uno slot al completo
+     *   full_labels      array  display_name dei servizi interamente al completo
+     */
+    public function getDayFullState(int $tenantId, string $date): array
+    {
+        $dayOfWeek  = (int)date('N', strtotime($date)) - 1;
+        $slots      = (new TimeSlot())->findByTenantAndDay($tenantId, $dayOfWeek);
+        $catModel   = new MealCategory();
+        $categories = $catModel->findActiveByTenant($tenantId);
+
+        $fullFlip = array_flip(array_map(
+            fn($t) => substr($t, 0, 5),
+            (new SlotOverride())->fullSlotTimes($tenantId, $date)
+        ));
+
+        // Prepara i contenitori per ogni categoria attiva
+        $services = [];
+        foreach ($categories as $cat) {
+            $services[$cat['name']] = [
+                'name'         => $cat['name'],
+                'display_name' => $cat['display_name'],
+                'times'        => [],
+                'full'         => 0,
+            ];
+        }
+        $orphanTimes = [];
+        $orphanFull  = 0;
+
+        foreach ($slots as $s) {
+            $t5   = substr($s['slot_time'], 0, 5);
+            $full = isset($fullFlip[$t5]);
+            $match = !empty($categories) ? $catModel->categorizeTime($categories, $t5) : null;
+            if ($match && isset($services[$match['name']])) {
+                $services[$match['name']]['times'][] = $s['slot_time'];
+                if ($full) {
+                    $services[$match['name']]['full']++;
+                }
+            } else {
+                $orphanTimes[] = $s['slot_time'];
+                if ($full) {
+                    $orphanFull++;
+                }
+            }
+        }
+
+        // Tieni solo i servizi con slot quel giorno; calcola is_full
+        $services = array_values(array_filter($services, fn($sv) => !empty($sv['times'])));
+        foreach ($services as &$sv) {
+            $sv['total']   = count($sv['times']);
+            $sv['is_full'] = $sv['total'] > 0 && $sv['full'] >= $sv['total'];
+            unset($sv['full']);
+        }
+        unset($sv);
+
+        // Slot che non ricadono in nessuna fascia (raro): gruppo "Altro"
+        if (!empty($orphanTimes)) {
+            $services[] = [
+                'name'         => 'altro',
+                'display_name' => 'Altro',
+                'times'        => $orphanTimes,
+                'total'        => count($orphanTimes),
+                'is_full'      => $orphanFull >= count($orphanTimes),
+            ];
+        }
+
+        $allTimes  = array_map(fn($s) => $s['slot_time'], $slots);
+        $fullCount = 0;
+        foreach ($allTimes as $t) {
+            if (isset($fullFlip[substr($t, 0, 5)])) {
+                $fullCount++;
+            }
+        }
+
+        return [
+            'has_slots'       => count($allTimes) > 0,
+            'services'        => $services,
+            'whole_day_times' => $allTimes,
+            'whole_day_full'  => count($allTimes) > 0 && $fullCount >= count($allTimes),
+            'any_full'        => $fullCount > 0,
+            'full_labels'     => array_values(array_map(
+                fn($sv) => $sv['display_name'],
+                array_filter($services, fn($sv) => $sv['is_full'])
+            )),
+        ];
     }
 
     public function getTodayBookingCount(int $tenantId): int
