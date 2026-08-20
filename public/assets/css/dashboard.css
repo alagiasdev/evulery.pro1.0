@@ -2647,6 +2647,21 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .dr-slot-promo { display: block; font-size: .6rem; font-weight: 700; color: #E65100; background: #FFF3E0; padding: 1px 4px; border-radius: 3px; margin-top: 1px; }
 .dr-slot-btn.active .dr-slot-promo { background: rgba(255,255,255,.25); color: #fff; }
 
+/* Blocco richiudibile "orari passati": compatta gli slot gia' trascorsi
+   (default chiuso) per non sprecare colonna su schermi piccoli. */
+.dr-slot-past-toggle {
+    display: flex; align-items: center; gap: .45rem;
+    width: 100%; margin: 0; padding: .5rem .75rem;
+    background: #fafbfc; border: none; border-bottom: 1px solid #f0f0f0;
+    cursor: pointer; text-align: left;
+    font-size: .78rem; font-weight: 600; color: #868e96;
+    transition: background .15s, color .15s;
+}
+.dr-slot-past-toggle:hover { background: #f1f3f5; color: #495057; }
+.dr-slot-past-toggle .dr-slot-past-caret { margin-left: auto; font-size: .8rem; transition: transform .2s; }
+.dr-slot-past-toggle.is-open .dr-slot-past-caret { transform: rotate(180deg); }
+.dr-slot-past-grid[hidden] { display: none; }
+
 .dr-slots-loading { text-align: center; padding: 1.5rem; color: #6c757d; font-size: .85rem; }
 .dr-slots-empty { text-align: center; padding: 1.5rem; color: #dc3545; font-weight: 500; }
 .dr-slots-empty-state { padding: 1.5rem 1rem; text-align: center; color: #adb5bd; font-size: .85rem; }

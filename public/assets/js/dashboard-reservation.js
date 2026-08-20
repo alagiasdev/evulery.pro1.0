@@ -382,6 +382,41 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+    function buildSlotButton(slot) {
+        var available = slot.available_covers;
+        var max = slot.max_covers;
+        var ratio = max > 0 ? available / max : 0;
+        var isPast = !!slot.is_past;
+
+        var colorClass = 'dr-slot-green';
+        if (isPast) {
+            colorClass = 'dr-slot-past';
+        } else if (!slot.is_available || available <= 0) {
+            colorClass = 'dr-slot-red';
+        } else if (ratio <= 0.25) {
+            colorClass = 'dr-slot-yellow';
+        }
+
+        var slotTimeShort = slot.time.substring(0, 5);
+        var isActive = (state.time === slotTimeShort || state.time === slot.time);
+        var disabled = (!slot.is_available && !isPast) ? ' disabled' : '';
+
+        var coversLabel = isPast ? 'Passato' : available + ' liberi';
+        var promoBadge = (slot.discount_percent && slot.discount_percent > 0)
+            ? '<span class="dr-slot-promo">-' + slot.discount_percent + '%</span>'
+            : '';
+
+        var btnHtml = '<button type="button" class="dr-slot-btn ' + colorClass + (isActive ? ' active' : '') + '"'
+            + ' data-time="' + slot.time + '"'
+            + disabled + '>'
+            + '<span class="dr-slot-indicator"></span>'
+            + '<span>' + slotTimeShort + '</span>'
+            + promoBadge
+            + '<span class="dr-slot-covers">' + coversLabel + '</span>'
+            + '</button>';
+        return { html: btnHtml, isActive: isActive };
+    }
+
     function renderSlots(groups) {
         var html = '';
         var navHtml = '';
@@ -391,43 +426,47 @@ document.addEventListener('DOMContentLoaded', function() {
                 + escapeHtml(group.display_name) + '</button>';
             html += '<div class="dr-slot-group" id="' + gid + '">';
             html += '<div class="dr-slot-group-label">' + escapeHtml(group.display_name) + '</div>';
-            html += '<div class="dr-slot-grid">';
+
+            var pastHtml = '';
+            var liveHtml = '';
+            var pastCount = 0;
+            var activeInPast = false;
 
             group.slots.forEach(function(slot) {
-                var available = slot.available_covers;
-                var max = slot.max_covers;
-                var ratio = max > 0 ? available / max : 0;
-                var isPast = !!slot.is_past;
-
-                var colorClass = 'dr-slot-green';
-                if (isPast) {
-                    colorClass = 'dr-slot-past';
-                } else if (!slot.is_available || available <= 0) {
-                    colorClass = 'dr-slot-red';
-                } else if (ratio <= 0.25) {
-                    colorClass = 'dr-slot-yellow';
+                var built = buildSlotButton(slot);
+                if (slot.is_past) {
+                    pastHtml += built.html;
+                    pastCount++;
+                    if (built.isActive) activeInPast = true;
+                } else {
+                    liveHtml += built.html;
                 }
-
-                var slotTimeShort = slot.time.substring(0, 5);
-                var activeClass = (state.time === slotTimeShort || state.time === slot.time) ? ' active' : '';
-                var disabled = (!slot.is_available && !isPast) ? ' disabled' : '';
-
-                var coversLabel = isPast ? 'Passato' : available + ' liberi';
-                var promoBadge = (slot.discount_percent && slot.discount_percent > 0)
-                    ? '<span class="dr-slot-promo">-' + slot.discount_percent + '%</span>'
-                    : '';
-
-                html += '<button type="button" class="dr-slot-btn ' + colorClass + activeClass + '"'
-                    + ' data-time="' + slot.time + '"'
-                    + disabled + '>'
-                    + '<span class="dr-slot-indicator"></span>'
-                    + '<span>' + slotTimeShort + '</span>'
-                    + promoBadge
-                    + '<span class="dr-slot-covers">' + coversLabel + '</span>'
-                    + '</button>';
             });
 
-            html += '</div></div>';
+            // Compatta gli orari gia' passati in un blocco richiudibile (chiuso di
+            // default): su schermi piccoli il pranzo ormai trascorso occupava mezza
+            // colonna e costringeva a scrollare. Se lo slot attivo e' tra i passati
+            // (es. modifica di una prenotazione vecchia) il blocco parte aperto.
+            if (pastCount > 0) {
+                var pastId = 'dr-past-' + gi;
+                var openPast = activeInPast;
+                html += '<button type="button" class="dr-slot-past-toggle' + (openPast ? ' is-open' : '') + '"'
+                    + ' data-target="' + pastId + '" aria-expanded="' + (openPast ? 'true' : 'false') + '">'
+                    + '<i class="bi bi-clock-history"></i>'
+                    + '<span>' + pastCount + (pastCount === 1 ? ' orario passato' : ' orari passati') + '</span>'
+                    + '<i class="bi bi-chevron-down dr-slot-past-caret"></i>'
+                    + '</button>';
+                html += '<div class="dr-slot-grid dr-slot-past-grid" id="' + pastId + '"' + (openPast ? '' : ' hidden') + '>'
+                    + pastHtml + '</div>';
+            }
+
+            // Griglia degli orari ancora disponibili. Se la fascia e' interamente
+            // passata (es. pranzo trascorso) non renderizzo un box vuoto: resta solo
+            // il toggle "orari passati".
+            if (liveHtml !== '') {
+                html += '<div class="dr-slot-grid">' + liveHtml + '</div>';
+            }
+            html += '</div>';
         });
 
         slotsContainer.innerHTML = html;
@@ -454,6 +493,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 state.time = this.dataset.time;
                 timeValue.value = state.time;
                 updateSummary();
+            });
+        });
+
+        // Toggle blocco "orari passati" (apri/chiudi)
+        slotsContainer.querySelectorAll('.dr-slot-past-toggle').forEach(function(toggle) {
+            toggle.addEventListener('click', function() {
+                var grid = document.getElementById(this.dataset.target);
+                if (!grid) return;
+                var willOpen = grid.hasAttribute('hidden');
+                if (willOpen) { grid.removeAttribute('hidden'); }
+                else { grid.setAttribute('hidden', ''); }
+                this.classList.toggle('is-open', willOpen);
+                this.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+                updateActiveChip();
             });
         });
 
