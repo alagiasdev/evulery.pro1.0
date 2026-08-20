@@ -441,26 +441,32 @@ $sourceLabelsPrivacy = [
                 <!-- Tab: Profilo -->
                 <div class="cs-profile-panel active" id="csTab-profilo">
                     <?php if (!is_staff()): // Modifica dati/contatto (owner) — clienti sola-lettura per staff ?>
-                    <div class="cs-profile-section-title"><i class="bi bi-person-vcard"></i> Dati cliente</div>
-                    <form method="POST" action="<?= url("dashboard/customers/{$customer['id']}/update") ?>" class="cs-data-form">
+                    <div class="cs-profile-section-title cs-data-head">
+                        <span><i class="bi bi-person-vcard"></i> Dati cliente</span>
+                        <button type="button" class="cs-data-edit-btn" id="csDataEdit"><i class="bi bi-pencil"></i> Modifica</button>
+                    </div>
+                    <form method="POST" action="<?= url("dashboard/customers/{$customer['id']}/update") ?>" class="cs-data-form" id="csDataForm">
                         <?= csrf_field() ?>
                         <div class="cs-edit-grid">
                             <label class="cs-edit-field">Nome *
-                                <input type="text" name="first_name" value="<?= e($customer['first_name']) ?>" required maxlength="100">
+                                <input type="text" name="first_name" value="<?= e($customer['first_name']) ?>" required maxlength="100" placeholder="Nome" readonly>
                             </label>
                             <label class="cs-edit-field">Cognome
-                                <input type="text" name="last_name" value="<?= e($customer['last_name']) ?>" maxlength="100">
+                                <input type="text" name="last_name" value="<?= e($customer['last_name']) ?>" maxlength="100" placeholder="—" readonly>
                             </label>
                             <label class="cs-edit-field">Telefono
-                                <input type="tel" name="phone" value="<?= e($customer['phone']) ?>" maxlength="30">
+                                <input type="tel" name="phone" value="<?= e($customer['phone']) ?>" maxlength="30" placeholder="—" readonly>
                             </label>
                             <label class="cs-edit-field">Email
-                                <input type="email" name="email" value="<?= e($customer['email']) ?>" maxlength="255">
+                                <input type="email" name="email" value="<?= e($customer['email']) ?>" maxlength="255" placeholder="—" readonly>
                             </label>
                         </div>
-                        <button type="submit" class="btn-action btn-act-edit" style="display:inline-flex;margin-top:.6rem;white-space:nowrap;">
-                            <i class="bi bi-check-lg"></i> Salva
-                        </button>
+                        <div class="cs-data-actions" id="csDataActions" hidden>
+                            <button type="submit" class="btn-action btn-act-edit" style="display:inline-flex;white-space:nowrap;">
+                                <i class="bi bi-check-lg"></i> Salva
+                            </button>
+                            <button type="button" class="cs-data-cancel" id="csDataCancel">Annulla</button>
+                        </div>
                     </form>
                     <hr style="margin:.75rem 0;border-color:#f0f0f0;">
                     <?php endif; ?>
@@ -723,5 +729,30 @@ $sourceLabelsPrivacy = [
             window.location.href = this.dataset.url;
         });
     });
+
+    // Dati cliente: SOLA LETTURA finché non si clicca "Modifica". Evita modifiche
+    // accidentali (es. cambiare l'email → il cliente non riceve più le notifiche).
+    var cdForm = document.getElementById('csDataForm');
+    var cdEdit = document.getElementById('csDataEdit');
+    var cdActions = document.getElementById('csDataActions');
+    var cdCancel = document.getElementById('csDataCancel');
+    if (cdForm && cdEdit) {
+        var cdInputs = cdForm.querySelectorAll('.cs-edit-field input');
+        cdEdit.addEventListener('click', function() {
+            cdInputs.forEach(function(i) { i.removeAttribute('readonly'); });
+            cdForm.classList.add('is-editing');
+            if (cdActions) cdActions.hidden = false;
+            cdEdit.hidden = true;
+            var first = cdForm.querySelector('.cs-edit-field input');
+            if (first) first.focus();
+        });
+        if (cdCancel) cdCancel.addEventListener('click', function() {
+            // Ripristina i valori originali e ri-blocca (annullamento sicuro).
+            cdInputs.forEach(function(i) { i.value = i.defaultValue; i.setAttribute('readonly', ''); });
+            cdForm.classList.remove('is-editing');
+            if (cdActions) cdActions.hidden = true;
+            cdEdit.hidden = false;
+        });
+    }
 })();
 </script>
