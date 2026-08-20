@@ -166,10 +166,11 @@ $totalPages = max(1, (int)ceil($totalCount / $limit));
     <div style="display:flex;align-items:center;gap:8px;">
         <span class="lbl">Periodo:</span>
         <select name="period" class="lead-filter-auto">
-            <option value="7d">Ultimi 7 giorni</option>
-            <option value="30d" selected>Ultimi 30 giorni</option>
-            <option value="month">Questo mese</option>
-            <option value="all">Sempre</option>
+            <?php $per = $period ?? 'all'; ?>
+            <option value="7d" <?= $per === '7d' ? 'selected' : '' ?>>Ultimi 7 giorni</option>
+            <option value="30d" <?= $per === '30d' ? 'selected' : '' ?>>Ultimi 30 giorni</option>
+            <option value="month" <?= $per === 'month' ? 'selected' : '' ?>>Questo mese</option>
+            <option value="all" <?= $per === 'all' ? 'selected' : '' ?>>Sempre</option>
         </select>
     </div>
     <button type="submit" style="background:#00844A;color:#fff;padding:.45rem .9rem;border:0;border-radius:6px;font-weight:600;font-size:.82rem;cursor:pointer;">

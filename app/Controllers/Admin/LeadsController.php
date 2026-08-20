@@ -19,12 +19,14 @@ class LeadsController
     {
         $leadModel = new DemoRequest();
 
-        // Filtri da query string
+        // Filtri da query string. Default periodo 'all': la lista mostra TUTTI i lead
+        // (coerente coi KPI e per non nascondere lo spam vecchio da eliminare).
+        $period = $request->query('period', 'all');
         $filters = [
             'status'               => $request->query('status', '') ?: null,
             'assigned_reseller_id' => $request->query('assigned', '') ?: null,
             'search'               => trim($request->query('search', '')) ?: null,
-            'date_from'            => $this->resolveDateFrom($request->query('period', '30d')),
+            'date_from'            => $this->resolveDateFrom($period),
         ];
         $filters = array_filter($filters, fn($v) => $v !== null);
 
@@ -48,6 +50,7 @@ class LeadsController
             'statusCounts' => $statusCounts,
             'statuses'     => DemoRequest::STATUSES,
             'filters'      => $filters,
+            'period'       => $period,
             'page'         => $page,
             'limit'        => $limit,
             'resellers'    => $resellers,
