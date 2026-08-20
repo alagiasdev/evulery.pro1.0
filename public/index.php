@@ -37,6 +37,21 @@ register_shutdown_function(function () {
 // Load Composer autoloader
 require_once BASE_PATH . '/vendor/autoload.php';
 
+// Fallback autoloader per il namespace App\: se il classmap "authoritative" di
+// Composer non contiene una classe (es. una classe NUOVA appena deployata mentre
+// il vendor/autoload sulla prod e' ancora indietro o in cache OPcache), la cerca
+// su filesystem. Registrato DOPO Composer -> interviene solo quando il classmap
+// non trova la classe. Evita i "Class not found" al deploy di nuove classi.
+spl_autoload_register(function (string $class): void {
+    if (!str_starts_with($class, 'App\\')) {
+        return;
+    }
+    $path = BASE_PATH . '/app/' . str_replace('\\', '/', substr($class, 4)) . '.php';
+    if (is_file($path)) {
+        require $path;
+    }
+});
+
 // Load .env file
 $envFile = BASE_PATH . '/.env';
 if (file_exists($envFile)) {
