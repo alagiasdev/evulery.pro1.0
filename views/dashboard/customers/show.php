@@ -240,6 +240,7 @@ $sourceLabelsPrivacy = [
             <?php endif; ?>
         </div>
         <div class="hero-contacts">
+            <?php if (!empty($customer['phone'])): ?>
             <div class="hero-contact">
                 <i class="bi bi-telephone-fill"></i>
                 <a href="tel:<?= e($customer['phone']) ?>"><?= e($customer['phone']) ?></a>
@@ -253,10 +254,19 @@ $sourceLabelsPrivacy = [
                 <i class="bi bi-whatsapp"></i>
                 <a href="https://wa.me/<?= e($waNum) ?>" target="_blank" rel="noopener">Inizia a Chattare</a>
             </div>
+            <?php endif; ?>
+            <?php if (!empty($customer['email'])): ?>
             <div class="hero-contact">
                 <i class="bi bi-envelope-fill"></i>
                 <a href="mailto:<?= e($customer['email']) ?>"><?= e($customer['email']) ?></a>
             </div>
+            <?php endif; ?>
+            <?php if (empty($customer['phone']) && empty($customer['email'])): ?>
+            <div class="hero-contact hero-contact-empty">
+                <i class="bi bi-info-circle"></i>
+                <span>Nessun contatto<?= is_staff() ? '' : ' — aggiungilo con "Modifica dati"' ?></span>
+            </div>
+            <?php endif; ?>
         </div>
         <div class="hero-meta">
             Cliente dal <?= format_date($customer['created_at'], 'd F Y') ?>
@@ -317,6 +327,32 @@ $sourceLabelsPrivacy = [
         </a>
     </div>
 </div>
+
+<?php if (!is_staff()): // Modifica dati/contatto: owner only (clienti sola-lettura per staff) ?>
+<details class="cs-edit-card">
+    <summary class="cs-edit-toggle"><i class="bi bi-pencil-square"></i> Modifica dati cliente</summary>
+    <form method="POST" action="<?= url("dashboard/customers/{$customer['id']}/update") ?>" class="cs-edit-form">
+        <?= csrf_field() ?>
+        <div class="cs-edit-grid">
+            <label class="cs-edit-field">Nome *
+                <input type="text" name="first_name" value="<?= e($customer['first_name']) ?>" required maxlength="100">
+            </label>
+            <label class="cs-edit-field">Cognome
+                <input type="text" name="last_name" value="<?= e($customer['last_name']) ?>" maxlength="100">
+            </label>
+            <label class="cs-edit-field">Telefono
+                <input type="tel" name="phone" value="<?= e($customer['phone']) ?>" maxlength="30">
+            </label>
+            <label class="cs-edit-field">Email
+                <input type="email" name="email" value="<?= e($customer['email']) ?>" maxlength="255">
+            </label>
+        </div>
+        <div class="cs-edit-actions">
+            <button type="submit" class="btn btn-brand"><i class="bi bi-check-lg me-1"></i> Salva modifiche</button>
+        </div>
+    </form>
+</details>
+<?php endif; ?>
 
 <!-- Stats Strip -->
 <div class="stats-strip">

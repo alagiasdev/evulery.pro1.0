@@ -484,6 +484,9 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
                     <div class="hs-label">Coperti tot.</div>
                 </div>
             </div>
+            <a href="<?= url('dashboard/customers/' . (int)$reservation['customer_id']) ?>" class="rs-open-customer">
+                <i class="bi bi-person-lines-fill me-1"></i> Apri scheda cliente
+            </a>
             <?php if (!empty($history)): ?>
             <div class="history-list">
                 <?php foreach (array_slice($history, 0, 8) as $h): ?>

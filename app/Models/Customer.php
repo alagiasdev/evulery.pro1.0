@@ -104,6 +104,7 @@ class Customer
             $params['search4'] = $like;
         }
 
+        $sql .= $this->visibleClause();
         $sql .= ' ORDER BY last_name ASC, first_name ASC';
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
@@ -134,6 +135,7 @@ class Customer
         }
 
         $sql .= $this->segmentWhere($segment, $thresholds, $params);
+        $sql .= $this->visibleClause();
         $sql .= ' ORDER BY last_name ASC, first_name ASC LIMIT :lim OFFSET :off';
 
         $stmt = $this->db->prepare($sql);
@@ -168,6 +170,7 @@ class Customer
         }
 
         $sql .= $this->segmentWhere($segment, $thresholds, $params);
+        $sql .= $this->visibleClause();
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
@@ -186,7 +189,7 @@ class Customer
                 SUM(CASE WHEN total_bookings >= :th_occ2 AND total_bookings < :th_abi1 THEN 1 ELSE 0 END) as occasionale,
                 SUM(CASE WHEN total_bookings >= :th_abi2 AND total_bookings < :th_vip1 THEN 1 ELSE 0 END) as abituale,
                 SUM(CASE WHEN total_bookings >= :th_vip2 THEN 1 ELSE 0 END) as vip
-             FROM customers WHERE tenant_id = :tenant_id'
+             FROM customers WHERE tenant_id = :tenant_id' . $this->visibleClause()
         );
         $stmt->execute([
             'tenant_id' => $tenantId,
@@ -205,6 +208,25 @@ class Customer
             'abituale'    => (int)$row['abituale'],
             'vip'         => (int)$row['vip'],
         ];
+    }
+
+    /**
+     * Clausola SQL (senza parametri) che ESCLUDE dall'elenco i clienti "solo
+     * nome": placeholder creati da una prenotazione veloce col solo nome, senza
+     * cognome né telefono né email → non contattabili, non sono clienti da CRM
+     * (evita l'elenco pieno di "Maria"). Un cliente torna VISIBILE appena ha un
+     * cognome OPPURE un telefono OPPURE un'email; gli importati da CSV restano
+     * sempre in elenco. Il filtro è DINAMICO: aggiungendo un contatto alla scheda
+     * il cliente ricompare da solo (nessuna migration, nessun flag).
+     */
+    private function visibleClause(): string
+    {
+        return " AND (
+            source = 'import'
+            OR (last_name IS NOT NULL AND last_name <> '')
+            OR (phone IS NOT NULL AND phone <> '')
+            OR (email IS NOT NULL AND email <> '')
+        )";
     }
 
     private function segmentWhere(?string $segment, array $thresholds, array &$params): string
@@ -424,9 +446,51 @@ class Customer
                  ->execute(['id' => $id, 'notes' => $notes]);
     }
 
+    /**
+     * Aggiorna i dati anagrafici/contatto dalla scheda cliente (nome, cognome,
+     * email, telefono). Tenant-scoped. Email vuota → NULL. Consente al ristoratore
+     * di arricchire un cliente "solo nome" (aggiungendo il telefono/l'email
+     * ricompare automaticamente in elenco).
+     *
+     * @return true se aggiornato, 'duplicate' se l'email è già di un altro
+     *         cliente dello stesso ristorante (vincolo uk_tenant_email).
+     */
+    public function updateContactInfo(int $id, int $tenantId, array $data): bool|string
+    {
+        $email = trim((string)($data['email'] ?? ''));
+        $email = $email !== '' ? $email : null;
+
+        // Unicità email per tenant: un'altra scheda con la stessa email bloccherebbe
+        // l'UPDATE (uk_tenant_email). Intercettiamo prima per un messaggio chiaro.
+        if ($email !== null) {
+            $chk = $this->db->prepare(
+                'SELECT id FROM customers WHERE tenant_id = :t AND email = :e AND id <> :id LIMIT 1'
+            );
+            $chk->execute(['t' => $tenantId, 'e' => $email, 'id' => $id]);
+            if ($chk->fetch()) {
+                return 'duplicate';
+            }
+        }
+
+        $stmt = $this->db->prepare(
+            'UPDATE customers
+             SET first_name = :fn, last_name = :ln, email = :em, phone = :ph
+             WHERE id = :id AND tenant_id = :t'
+        );
+        $stmt->execute([
+            'fn' => trim((string)($data['first_name'] ?? '')),
+            'ln' => trim((string)($data['last_name'] ?? '')),
+            'em' => $email,
+            'ph' => trim((string)($data['phone'] ?? '')),
+            'id' => $id,
+            't'  => $tenantId,
+        ]);
+        return true;
+    }
+
     public function countByTenant(int $tenantId): int
     {
-        $stmt = $this->db->prepare('SELECT COUNT(*) FROM customers WHERE tenant_id = :tenant_id');
+        $stmt = $this->db->prepare('SELECT COUNT(*) FROM customers WHERE tenant_id = :tenant_id' . $this->visibleClause());
         $stmt->execute(['tenant_id' => $tenantId]);
         return (int)$stmt->fetchColumn();
     }
@@ -458,21 +522,21 @@ class Customer
      */
     public function getStats(int $tenantId, string $dateFrom, string $dateTo): array
     {
-        // Total customers
-        $stmt = $this->db->prepare('SELECT COUNT(*) FROM customers WHERE tenant_id = :tid');
+        // Total customers (esclude i "solo nome" non contattabili)
+        $stmt = $this->db->prepare('SELECT COUNT(*) FROM customers WHERE tenant_id = :tid' . $this->visibleClause());
         $stmt->execute(['tid' => $tenantId]);
         $totalCustomers = (int)$stmt->fetchColumn();
 
         // New customers in period
         $stmt = $this->db->prepare(
-            'SELECT COUNT(*) FROM customers WHERE tenant_id = :tid AND created_at >= :from AND created_at <= :to'
+            'SELECT COUNT(*) FROM customers WHERE tenant_id = :tid AND created_at >= :from AND created_at <= :to' . $this->visibleClause()
         );
         $stmt->execute(['tid' => $tenantId, 'from' => $dateFrom . ' 00:00:00', 'to' => $dateTo . ' 23:59:59']);
         $newInPeriod = (int)$stmt->fetchColumn();
 
         // Average bookings per customer (only customers with at least 1 booking)
         $stmt = $this->db->prepare(
-            'SELECT AVG(total_bookings) FROM customers WHERE tenant_id = :tid AND total_bookings > 0'
+            'SELECT AVG(total_bookings) FROM customers WHERE tenant_id = :tid AND total_bookings > 0' . $this->visibleClause()
         );
         $stmt->execute(['tid' => $tenantId]);
         $avgBookings = round((float)$stmt->fetchColumn(), 1);

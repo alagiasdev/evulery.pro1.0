@@ -126,6 +126,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'staff', 'csrf', 'dashboard-rate
     $r->post('/customers/import', [CustomersController::class, 'processImport']);
     $r->post('/customers/bulk-delete-imported', [CustomersController::class, 'bulkDeleteImported']);
     $r->get('/customers/{id}', [CustomersController::class, 'show']);
+    $r->post('/customers/{id}/update', [CustomersController::class, 'update']);
     $r->post('/customers/{id}/notes', [CustomersController::class, 'updateNotes']);
     $r->post('/customers/{id}/toggle-block', [CustomersController::class, 'toggleBlock']);
     $r->post('/customers/{id}/resubscribe', [CustomersController::class, 'resubscribe']);

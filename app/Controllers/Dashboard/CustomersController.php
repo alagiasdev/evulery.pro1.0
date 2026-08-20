@@ -7,6 +7,7 @@ use App\Core\Paginator;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\TenantResolver;
+use App\Core\Validator;
 use App\Models\Customer;
 use App\Models\Reservation;
 use App\Services\AuditLog;
@@ -259,6 +260,53 @@ class CustomersController
         AuditLog::log(AuditLog::CUSTOMER_NOTES_UPDATED, "Cliente ID: {$id}", Auth::id(), Auth::tenantId());
 
         flash('success', 'Note aggiornate.');
+        Response::redirect(url("dashboard/customers/{$id}"));
+    }
+
+    /**
+     * Modifica dati/contatto del cliente (nome, cognome, email, telefono) dalla
+     * scheda. Consente di "promuovere" un cliente solo-nome aggiungendo il
+     * contatto (ricompare in elenco). Solo owner (clienti sola-lettura per staff).
+     */
+    public function update(Request $request): void
+    {
+        $id = (int)$request->param('id');
+        $tenantId = (int)Auth::tenantId();
+        $model = new Customer();
+        $customer = $model->findById($id);
+
+        if (!$customer || (int)$customer['tenant_id'] !== $tenantId) {
+            flash('danger', 'Cliente non trovato.');
+            Response::redirect(url('dashboard/customers'));
+            return;
+        }
+
+        $data = [
+            'first_name' => trim((string)$request->input('first_name', '')),
+            'last_name'  => trim((string)$request->input('last_name', '')),
+            'email'      => trim((string)$request->input('email', '')),
+            'phone'      => trim((string)$request->input('phone', '')),
+        ];
+
+        $v = Validator::make($data)->required('first_name', 'Nome');
+        if ($data['email'] !== '') {
+            $v->email('email', 'Email');
+        }
+        if ($v->fails()) {
+            flash('danger', $v->firstError());
+            Response::redirect(url("dashboard/customers/{$id}"));
+            return;
+        }
+
+        $result = $model->updateContactInfo($id, $tenantId, $data);
+        if ($result === 'duplicate') {
+            flash('danger', 'Esiste già un cliente con questa email in questo ristorante.');
+            Response::redirect(url("dashboard/customers/{$id}"));
+            return;
+        }
+
+        AuditLog::log('customer_updated', "Cliente ID: {$id}", Auth::id(), Auth::tenantId());
+        flash('success', 'Dati cliente aggiornati.');
         Response::redirect(url("dashboard/customers/{$id}"));
     }
 
