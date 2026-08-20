@@ -151,10 +151,10 @@ $kpiUrl = function (string $st) use ($isUpcoming, $date, $dateTo, $source): stri
     <div class="fb-bar">
         <?php if ($fbAnyFull): ?>
         <div class="fb-banner">
-            <span class="fb-ic"><i class="bi bi-emoji-frown"></i></span>
+            <span class="fb-ic"><i class="bi bi-slash-circle"></i></span>
             <div class="fb-tx">
-                <b><?= $fbWholeFull ? 'Giornata al completo' : e(implode(', ', $fbLabels)) . ' al completo' ?></b>
-                <span>Prenotazioni online chiuse<?= $fbWholeFull ? '' : ' per: ' . e(implode(', ', $fbLabels)) ?>. Puoi comunque aggiungere prenotazioni a mano.</span>
+                <b><?= $fbWholeFull ? 'Prenotazioni online chiuse' : 'Prenotazioni online chiuse: ' . e(implode(', ', $fbLabels)) ?></b>
+                <span><?= $fbWholeFull ? 'Chiuse per tutto il giorno. ' : '' ?>Puoi comunque aggiungere prenotazioni a mano.</span>
             </div>
             <form method="POST" action="<?= url('dashboard/reservations/reopen-full') ?>" class="fb-reopen-form">
                 <?= csrf_field() ?>
@@ -169,12 +169,12 @@ $kpiUrl = function (string $st) use ($isUpcoming, $date, $dateTo, $source): stri
         <div class="fb-actions">
             <span class="fb-lbl">Prenotazioni online per questo giorno:</span>
             <details class="fb-details">
-                <summary class="fb-toggle"><i class="bi bi-slash-circle"></i> Al completo <i class="bi bi-chevron-down fb-caret"></i></summary>
+                <summary class="fb-toggle"><i class="bi bi-slash-circle"></i> Chiudi le prenotazioni <i class="bi bi-chevron-down fb-caret"></i></summary>
                 <div class="fb-pop">
                     <form method="POST" action="<?= url('dashboard/reservations/mark-full') ?>">
                         <?= csrf_field() ?>
                         <input type="hidden" name="date" value="<?= e($date) ?>">
-                        <div class="fb-pop-t">Blocca le prenotazioni online di <b><?= e(format_date($date, 'd/m')) ?></b></div>
+                        <div class="fb-pop-t">Chiudi le prenotazioni online di <b><?= e(format_date($date, 'd/m')) ?></b></div>
                         <?php $fbMulti = count($fbMarkable) > 1; ?>
                         <?php if ($fbMulti): ?>
                         <label class="fb-opt">
@@ -188,7 +188,7 @@ $kpiUrl = function (string $st) use ($isUpcoming, $date, $dateTo, $source): stri
                             <span>Solo <?= e($sv['display_name']) ?></span>
                         </label>
                         <?php endforeach; ?>
-                        <button type="submit" class="fb-go">Segna al completo</button>
+                        <button type="submit" class="fb-go">Chiudi le prenotazioni</button>
                     </form>
                 </div>
             </details>

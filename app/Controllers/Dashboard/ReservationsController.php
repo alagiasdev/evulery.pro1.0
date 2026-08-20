@@ -151,10 +151,10 @@ class ReservationsController
         }
 
         $n = (new SlotOverride())->markFull($tenantId, $date, $times);
-        AuditLog::log('reservation_full_marked', "Al completo: {$label} del {$date} ({$n} orari)", Auth::id(), $tenantId);
+        AuditLog::log('reservation_full_marked', "Prenotazioni online chiuse: {$label} del {$date} ({$n} orari)", Auth::id(), $tenantId);
         flash('success', $n > 0
             ? "{$label}: prenotazioni online chiuse. Puoi comunque aggiungere prenotazioni a mano."
-            : "{$label} era già al completo.");
+            : "{$label}: prenotazioni online già chiuse.");
         Response::redirect(url('dashboard/reservations?date=' . urlencode($date)));
     }
 
