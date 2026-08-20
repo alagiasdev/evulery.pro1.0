@@ -145,15 +145,20 @@
                            id="dr-first-name" placeholder="Nome *"
                            value="<?= old('first_name') ?>" required>
                     <input type="text" class="dr-field-input" name="last_name"
-                           id="dr-last-name" placeholder="Cognome *"
-                           value="<?= old('last_name') ?>" required>
+                           id="dr-last-name" placeholder="Cognome"
+                           value="<?= old('last_name') ?>">
                     <input type="tel" class="dr-field-input" name="phone"
-                           id="dr-phone" placeholder="Telefono *"
-                           value="<?= old('phone') ?>" required>
+                           id="dr-phone" placeholder="Telefono"
+                           value="<?= old('phone') ?>">
                     <input type="email" class="dr-field-input" name="email"
-                           id="dr-email" placeholder="Email *"
-                           value="<?= old('email') ?>" required>
+                           id="dr-email" placeholder="Email"
+                           value="<?= old('email') ?>">
                 </div>
+                <p class="dr-customer-hint field-hint">
+                    <i class="bi bi-info-circle"></i>
+                    Basta il <strong>nome</strong>. Telefono ed email sono facoltativi:
+                    senza contatto non potrai inviare conferme o promemoria al cliente.
+                </p>
             </div>
         </div>
 

@@ -259,18 +259,21 @@ class ReservationsController
         $data = $request->all();
         $tenantId = Auth::tenantId();
 
+        // Prenotazione "veloce" lato ristoratore: minimo Nome + coperti + data/ora.
+        // Cognome, email e telefono sono FACOLTATIVI (walk-in / telefono in sala
+        // rumorosa: il ristoratore vuole solo un nome). L'email si valida SOLO se
+        // fornita (Validator::email fallisce sulla stringa vuota).
         $v = Validator::make($data)
             ->required('first_name', 'Nome')
-            ->required('last_name', 'Cognome')
-            ->required('email', 'Email')
-            ->email('email', 'Email')
-            ->required('phone', 'Telefono')
             ->required('reservation_date', 'Data')
             ->date('reservation_date', 'Data')
             ->required('reservation_time', 'Orario')
             ->required('party_size', 'Persone')
             ->integer('party_size', 'Persone')
             ->between('party_size', 1, 50, 'Persone');
+        if (!empty($data['email'])) {
+            $v->email('email', 'Email');
+        }
 
         if ($v->fails()) {
             flash('danger', $v->firstError());
@@ -297,9 +300,9 @@ class ReservationsController
         // Find or create customer (before locking to minimize transaction duration)
         $customer = (new Customer())->findOrCreate($tenantId, [
             'first_name' => $data['first_name'],
-            'last_name'  => $data['last_name'],
-            'email'      => $data['email'],
-            'phone'      => $data['phone'],
+            'last_name'  => $data['last_name'] ?? '',
+            'email'      => $data['email'] ?? '',
+            'phone'      => $data['phone'] ?? '',
         ]);
 
         // Validate source

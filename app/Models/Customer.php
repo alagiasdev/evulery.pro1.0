@@ -307,13 +307,18 @@ class Customer
         $consent = array_key_exists('marketing_consent', $data) ? $data['marketing_consent'] : null;
 
         if ($existing) {
-            $sets = ['first_name = :first_name', 'last_name = :last_name', 'phone = :phone'];
-            $params = [
-                'id'         => $existing['id'],
-                'first_name' => $data['first_name'],
-                'last_name'  => $data['last_name'],
-                'phone'      => $data['phone'],
-            ];
+            // Non sovrascrivere con vuoto: una prenotazione "veloce" (solo nome, senza
+            // telefono/cognome) NON deve azzerare i dati gia' salvati del cliente.
+            $sets = ['first_name = :first_name'];
+            $params = ['id' => $existing['id'], 'first_name' => $data['first_name']];
+            if (!empty($data['last_name'])) {
+                $sets[] = 'last_name = :last_name';
+                $params['last_name'] = $data['last_name'];
+            }
+            if (!empty($data['phone'])) {
+                $sets[] = 'phone = :phone';
+                $params['phone'] = $data['phone'];
+            }
 
             // Birthday: scrivi se arriva un nuovo valore E e' diverso da quello in DB.
             // Permette la correzione di una data inserita per sbaglio dal widget
@@ -344,8 +349,12 @@ class Customer
             $stmt = $this->db->prepare('UPDATE customers SET ' . implode(', ', $sets) . ' WHERE id = :id');
             $stmt->execute($params);
             $existing['first_name'] = $data['first_name'];
-            $existing['last_name'] = $data['last_name'];
-            $existing['phone'] = $data['phone'];
+            if (!empty($data['last_name'])) {
+                $existing['last_name'] = $data['last_name'];
+            }
+            if (!empty($data['phone'])) {
+                $existing['phone'] = $data['phone'];
+            }
             return $existing;
         }
 
