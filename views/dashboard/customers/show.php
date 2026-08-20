@@ -471,16 +471,6 @@ $sourceLabelsPrivacy = [
                     <hr style="margin:.75rem 0;border-color:#f0f0f0;">
                     <?php endif; ?>
 
-                    <?php if (!empty($insights)): ?>
-                    <div class="cs-profile-section-title"><i class="bi bi-lightbulb"></i> Insight</div>
-                    <div style="margin-bottom: .75rem;">
-                        <?php foreach ($insights as $ins): ?>
-                        <span class="insight-chip"><i class="bi <?= $ins[0] ?>" style="color:<?= $ins[1] ?>;"></i> <?= e($ins[2]) ?></span>
-                        <?php endforeach; ?>
-                    </div>
-                    <hr style="margin: .75rem 0; border-color: #f0f0f0;">
-                    <?php endif; ?>
-
                     <div class="cs-profile-section-title"><i class="bi bi-cake2"></i> Data di nascita</div>
                     <form method="POST" action="<?= url("dashboard/customers/{$customer['id']}/birthday") ?>" class="d-flex align-items-center gap-2 mb-2">
                         <?= csrf_field() ?>
@@ -491,6 +481,16 @@ $sourceLabelsPrivacy = [
                         </button>
                         <?php endif; ?>
                     </form>
+
+                    <?php if (!empty($insights)): ?>
+                    <hr style="margin: .75rem 0; border-color: #f0f0f0;">
+                    <div class="cs-profile-section-title"><i class="bi bi-lightbulb"></i> Insight</div>
+                    <div style="margin-bottom: .75rem;">
+                        <?php foreach ($insights as $ins): ?>
+                        <span class="insight-chip"><i class="bi <?= $ins[0] ?>" style="color:<?= $ins[1] ?>;"></i> <?= e($ins[2]) ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
 
                     <?php if (!empty($reservations)): ?>
                     <hr style="margin: .75rem 0; border-color: #f0f0f0;">

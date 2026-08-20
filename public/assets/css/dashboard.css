@@ -5650,25 +5650,30 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 }
 .cs-data-edit-btn:hover { color: var(--brand, #00844A); border-color: var(--brand, #00844A); background: #e6f4ed; }
 .cs-edit-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: .6rem .8rem;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: .95rem 1.1rem;
 }
 .cs-edit-field {
-    display: flex; flex-direction: column; gap: .25rem;
-    font-size: .74rem; font-weight: 600; color: #868e96;
+    display: flex; flex-direction: column; gap: .2rem;
+    font-size: .66rem; font-weight: 700; letter-spacing: .05em;
+    text-transform: uppercase; color: #9aa4ab;
 }
 .cs-edit-field input {
-    font-size: .86rem; font-weight: 400; color: #212529;
-    padding: .42rem .6rem; border: 1px solid #dee2e6; border-radius: 7px;
-    background: #fff;
+    font-size: .92rem; font-weight: 500; color: #1f2a33;
+    letter-spacing: normal; text-transform: none;
+    padding: .45rem .6rem; border: 1px solid #dee2e6; border-radius: 8px;
+    background: #fff; transition: border-color .15s, box-shadow .15s;
 }
+.cs-edit-field input::placeholder { color: #c4cbd0; font-weight: 400; }
 .cs-edit-field input:focus {
     outline: none; border-color: var(--brand, #00844A);
     box-shadow: 0 0 0 3px rgba(0,132,74,.1);
 }
-/* Sola lettura: gli input sembrano testo statico finché non si clicca "Modifica"
-   (nessun bordo/sfondo, non selezionabili) → niente modifiche accidentali. */
+/* Sola lettura: il valore appare come TESTO pulito (niente box), allineato sotto
+   l'etichetta; il box con bordo compare solo cliccando "Modifica" → niente
+   modifiche accidentali (es. cambiare l'email e perdere le notifiche). */
 .cs-data-form input[readonly] {
     border-color: transparent; background: transparent; cursor: default;
+    padding-left: 0; padding-right: 0; font-weight: 600; color: #1f2a33;
 }
 .cs-data-form input[readonly]:focus { box-shadow: none; border-color: transparent; }
 .cs-data-actions { display: flex; align-items: center; gap: .6rem; margin-top: .7rem; }
