@@ -18,6 +18,12 @@ class LoginController
             $this->redirectByRole();
         }
 
+        // "Ricordami": sessione assente ma cookie valido -> auto-login e vai in dashboard.
+        // (Serve qui perche' la root '/' e la pagina di login NON passano dall'AuthMiddleware.)
+        if (RememberMe::attemptFromCookie()) {
+            $this->redirectByRole();
+        }
+
         view('auth/login', ['title' => 'Accedi'], 'auth');
     }
 
