@@ -258,7 +258,7 @@ $statusLabel = $statuses[$lead['status']] ?? $lead['status'];
                             <div class="lead-tl-icon" style="border-color:<?= $color ?>;color:<?= $color ?>;"><i class="bi <?= $icon ?>"></i></div>
                             <div class="lead-tl-content">
                                 <div class="lead-tl-action"><?= e($label) ?></div>
-                                <div class="lead-tl-meta"><?= e($author) ?> · <?= date('d M Y · H:i', strtotime($a['created_at'])) ?></div>
+                                <div class="lead-tl-meta"><?= e($author) ?> · <?= format_date($a['created_at'], 'd M Y · H:i') ?></div>
                                 <?php if (!empty($a['description'])): ?>
                                     <div class="lead-tl-note"><?= e($a['description']) ?></div>
                                 <?php endif; ?>

@@ -247,7 +247,7 @@ document.querySelectorAll('.lead-filter-auto').forEach(function (s) {
                                 <?php endif; ?>
                             </td>
                             <td class="leads-cell-date">
-                                <?= date('d M H:i', strtotime($l['created_at'])) ?>
+                                <?= format_date($l['created_at'], 'd M H:i') ?>
                                 <span class="secondary"><?= date('Y', strtotime($l['created_at'])) ?></span>
                             </td>
                             <td class="leads-cell-actions">
