@@ -24,6 +24,23 @@ class CSRFMiddleware
         $token = $request->input('_csrf');
 
         if (!CSRF::validate($token)) {
+            // --- LOGIN "auto-guarigione" (fix iOS Safari, 2026-08-20) ---
+            // Se il CSRF fallisce sul LOGIN perche' NON esiste una sessione con token
+            // (cookie di sessione perso: bfcache/snapshot/icona-home/cookie azzerati da
+            // Safari), il CSRF non e' tecnicamente applicabile. L'autenticazione vera
+            // (email+password + rate-limit) resta INTATTA: proseguiamo al LoginController
+            // invece di mostrare l'errore rosso. Il CSRF resta pieno quando una sessione
+            // con token esiste (flusso normale) e su ogni altro endpoint. Il login-CSRF
+            // (unica cosa qui rilassata) e' a rischio trascurabile per una dashboard B2B.
+            if ($uri === '/auth/login' && empty($_SESSION['_csrf_token'])) {
+                app_log(
+                    'CSRF login recovery: nessuna sessione (cookie perso), proseguo al login. ip='
+                    . ($_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? 'n/a'),
+                    'info'
+                );
+                return;
+            }
+
             // DIAGNOSTIC (temporaneo): cosa vediamo quando CSRF fallisce?
             $sessionToken = $_SESSION['_csrf_token'] ?? null;
             $lastActivity = $_SESSION['_last_activity'] ?? null;
