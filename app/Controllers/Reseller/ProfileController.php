@@ -90,6 +90,9 @@ class ProfileController
         }
 
         (new User())->update($userId, $updateData);
+        if (isset($updateData['password'])) {
+            \App\Core\RememberMe::clearAllForUser($userId);
+        }
         AuditLog::log(AuditLog::PROFILE_UPDATED, null, $userId);
 
         Session::set('user_name', $updateData['first_name'] . ' ' . $updateData['last_name']);

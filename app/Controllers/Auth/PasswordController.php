@@ -116,6 +116,9 @@ class PasswordController
             $stmt = $db->prepare('UPDATE users SET password_hash = :hash WHERE id = :id');
             $stmt->execute(['hash' => $hash, 'id' => $reset['user_id']]);
 
+            // Reset password -> invalida tutti i "Ricordami" dell'utente (sicurezza).
+            \App\Core\RememberMe::clearAllForUser((int) $reset['user_id']);
+
             $db->commit();
             AuditLog::log(AuditLog::PASSWORD_RESET_DONE, "User ID: {$reset['user_id']}", (int)$reset['user_id']);
         } catch (\PDOException $e) {

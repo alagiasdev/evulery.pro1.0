@@ -3,6 +3,7 @@
 namespace App\Controllers\Auth;
 
 use App\Core\Auth;
+use App\Core\RememberMe;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
@@ -44,6 +45,9 @@ class LoginController
 
         if (Auth::attempt($email, $password)) {
             $throttle->clearAttempts($email);
+            if ($request->input('remember')) {
+                RememberMe::issue((int) Auth::id());
+            }
             AuditLog::log(AuditLog::LOGIN_SUCCESS, "Email: {$email}", Auth::id(), Auth::tenantId());
             $this->redirectByRole();
         }
@@ -68,6 +72,7 @@ class LoginController
         }
 
         AuditLog::log(AuditLog::LOGOUT, null, Auth::id(), Auth::tenantId());
+        RememberMe::clear();
         Auth::logout();
         flash('success', 'Logout effettuato con successo.');
         Response::redirect(url('auth/login'));

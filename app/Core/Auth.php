@@ -30,6 +30,35 @@ class Auth
         return true;
     }
 
+    /**
+     * Stabilisce la sessione per un utente per ID, SENZA password: usato SOLO
+     * dall'auto-login "Ricordami" (RememberMe), dopo che il token e' stato
+     * validato. Rispecchia attempt() (regenerate + set sessione + last_login).
+     */
+    public static function loginById(int $userId): bool
+    {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('SELECT * FROM users WHERE id = :id AND is_active = 1 LIMIT 1');
+        $stmt->execute(['id' => $userId]);
+        $user = $stmt->fetch();
+
+        if (!$user) {
+            return false;
+        }
+
+        Session::regenerate();
+
+        Session::set('user_id', $user['id']);
+        Session::set('tenant_id', $user['tenant_id']);
+        Session::set('user_role', $user['role']);
+        Session::set('user_email', $user['email']);
+        Session::set('user_name', $user['first_name'] . ' ' . $user['last_name']);
+
+        $db->prepare('UPDATE users SET last_login_at = NOW() WHERE id = :id')->execute(['id' => $user['id']]);
+
+        return true;
+    }
+
     public static function logout(): void
     {
         Session::destroy();

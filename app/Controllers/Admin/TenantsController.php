@@ -431,6 +431,7 @@ class TenantsController
         $userModel->update($userId, $updateData);
 
         if ($passwordChanged) {
+            \App\Core\RememberMe::clearAllForUser($userId);
             AuditLog::log(AuditLog::USER_UPDATED, "Password reimpostata da admin per {$user['email']} (tenant #{$tenantId})", Auth::id(), $tenantId);
         }
 

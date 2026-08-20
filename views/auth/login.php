@@ -21,6 +21,11 @@
         </div>
     </div>
 
+    <label class="auth-remember" style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;font-size:.9rem;color:#495057;cursor:pointer;">
+        <input type="checkbox" name="remember" value="1" style="width:16px;height:16px;accent-color:#00844A;flex:none;">
+        Ricordami su questo dispositivo
+    </label>
+
     <button type="submit" class="auth-btn">
         <?= bi_icon('box-arrow-in-right') ?> Accedi
     </button>

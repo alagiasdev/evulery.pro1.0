@@ -141,6 +141,7 @@ class CollaboratorsController
             return;
         }
         (new User())->update((int)$target['id'], ['password' => $password]);
+        \App\Core\RememberMe::clearAllForUser((int)$target['id']);
         AuditLog::log(AuditLog::USER_UPDATED, "Password collaboratore aggiornata: {$target['email']}", Auth::id(), (int)Auth::tenantId());
         flash('success', "Password aggiornata per {$target['first_name']} {$target['last_name']}.");
         Response::redirect($back);

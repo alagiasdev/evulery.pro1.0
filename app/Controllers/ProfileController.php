@@ -125,6 +125,11 @@ class ProfileController
 
         (new User())->update($userId, $updateData);
 
+        // Password cambiata -> sgancia tutti i "Ricordami" dell'utente (sicurezza).
+        if (isset($updateData['password'])) {
+            \App\Core\RememberMe::clearAllForUser($userId);
+        }
+
         AuditLog::log(AuditLog::PROFILE_UPDATED, null, Auth::id());
 
         // Refresh session data

@@ -75,6 +75,7 @@ return array(
     'App\\Core\\Database' => $baseDir . '/app/Core/Database.php',
     'App\\Core\\Paginator' => $baseDir . '/app/Core/Paginator.php',
     'App\\Core\\PerfLog' => $baseDir . '/app/Core/PerfLog.php',
+    'App\\Core\\RememberMe' => $baseDir . '/app/Core/RememberMe.php',
     'App\\Core\\Request' => $baseDir . '/app/Core/Request.php',
     'App\\Core\\Response' => $baseDir . '/app/Core/Response.php',
     'App\\Core\\Router' => $baseDir . '/app/Core/Router.php',
