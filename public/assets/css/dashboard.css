@@ -5757,6 +5757,13 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     display: inline-flex; align-items: center; gap: .3rem;
 }
 .av-reopen:hover { background: #e6f4ed; border-color: var(--brand, #00844A); }
+/* Mobile: la riga va a capo (data su riga 1; pill + info + Riapri su riga 2) →
+   il tasto Riapri resta sempre nello schermo. */
+@media (max-width: 560px) {
+    .av-row { flex-wrap: wrap; row-gap: .5rem; }
+    .av-date-link { flex-basis: 100%; min-width: 0; }
+    .av-meta { font-size: .74rem; }
+}
 .av-empty { text-align: center; padding: 1.8rem 1rem; color: #98a2a8; }
 .av-empty i { font-size: 1.8rem; color: #c9d2d7; }
 .av-empty-t { font-weight: 600; color: #6c757d; margin-top: .4rem; font-size: .9rem; }
