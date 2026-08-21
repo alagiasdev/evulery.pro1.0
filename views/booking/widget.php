@@ -56,7 +56,7 @@
             <div class="bw-next-avail-t"><i class="bi bi-emoji-frown"></i> Tutto prenotato per questa data</div>
             <div class="bw-next-avail-s">Il primo posto disponibile è:</div>
             <button type="button" class="bw-next-avail-cta" id="party-next-cta"></button>
-            <div class="bw-next-avail-alt">…oppure scegli un altro giorno</div>
+            <button type="button" class="bw-next-avail-alt" id="party-next-back">…oppure scegli un altro giorno</button>
         </div>
         <div class="bw-party-grid" id="party-grid"></div>
         <div class="bw-more-options" id="party-more-toggle">

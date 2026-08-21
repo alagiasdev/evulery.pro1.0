@@ -306,6 +306,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    // "…oppure scegli un altro giorno" → torna al calendario (step Data).
+    var partyNextBack = getEl('party-next-back');
+    if (partyNextBack) {
+        partyNextBack.addEventListener('click', function() {
+            goToStep(1);
+        });
+    }
 
     // ===== TIME SLOTS =====
     function loadGroupedSlots() {

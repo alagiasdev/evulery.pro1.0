@@ -446,10 +446,19 @@
 }
 .bw-next-avail-cta:hover { background: var(--bw-primary-dark); }
 .bw-next-avail-alt {
+    display: inline-block;
+    background: none;
+    border: 0;
+    padding: 4px 6px;
+    font-family: var(--bw-font);
     font-size: 0.76rem;
     color: var(--bw-text-muted);
     margin-top: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
 }
+.bw-next-avail-alt:hover { color: var(--bw-primary); }
 
 .bw-more-options { text-align: center; margin-top: 16px; }
 
