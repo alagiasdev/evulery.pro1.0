@@ -126,39 +126,6 @@ class ReservationsController
     }
 
     /**
-     * "Al completo": chiude le prenotazioni ONLINE per un giorno o un singolo
-     * servizio (fascia). Il ristoratore resta operativo e continua ad aggiungere
-     * a mano. Riusa slot_overrides (per-slot max_covers=0). Reversibile.
-     */
-    public function markFull(Request $request): void
-    {
-        $tenantId = (int)Auth::tenantId();
-        $date  = (string)$request->input('date', '');
-        $scope = (string)$request->input('scope', 'day'); // 'day' | <nome fascia>
-
-        if (!$this->validFullDate($date)) {
-            flash('danger', 'Data non valida.');
-            Response::redirect(url('dashboard/reservations'));
-            return;
-        }
-
-        $label = null;
-        $times = $this->resolveScopeTimes($tenantId, $date, $scope, $label);
-        if (empty($times)) {
-            flash('warning', 'Nessun orario da bloccare per questa selezione.');
-            Response::redirect(url('dashboard/reservations?date=' . urlencode($date)));
-            return;
-        }
-
-        $n = (new SlotOverride())->markFull($tenantId, $date, $times);
-        AuditLog::log('reservation_full_marked', "Prenotazioni online chiuse: {$label} del {$date} ({$n} orari)", Auth::id(), $tenantId);
-        flash('success', $n > 0
-            ? "{$label}: prenotazioni online chiuse. Puoi comunque aggiungere prenotazioni a mano."
-            : "{$label}: prenotazioni online già chiuse.");
-        Response::redirect(url('dashboard/reservations?date=' . urlencode($date)));
-    }
-
-    /**
      * Riapre le prenotazioni online (rimuove il blocco "Al completo"). scope
      * 'all'/'day' = tutta la giornata; altrimenti il singolo servizio.
      */

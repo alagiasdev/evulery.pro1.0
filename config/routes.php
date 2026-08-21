@@ -94,7 +94,6 @@ $router->group('/dashboard', ['auth', 'tenant', 'staff', 'csrf', 'dashboard-rate
     $r->get('/reservations/create', [ReservationsController::class, 'create']);
     $r->get('/reservations/export', [ReservationsController::class, 'export']);
     $r->post('/reservations', [ReservationsController::class, 'store']);
-    $r->post('/reservations/mark-full', [ReservationsController::class, 'markFull']);
     $r->post('/reservations/reopen-full', [ReservationsController::class, 'reopenFull']);
     $r->get('/reservations/availability', [AvailabilityBlocksController::class, 'index']);
     $r->post('/reservations/availability/close', [AvailabilityBlocksController::class, 'close']);
