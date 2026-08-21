@@ -31,6 +31,7 @@ use App\Controllers\Dashboard\MealCategoriesController;
 use App\Controllers\Dashboard\TablesController;
 use App\Controllers\Dashboard\ClosuresController;
 use App\Controllers\Dashboard\EmergencyClosureController;
+use App\Controllers\Dashboard\AvailabilityBlocksController;
 use App\Controllers\Dashboard\MarketingController;
 use App\Controllers\Dashboard\PromotionsController;
 use App\Controllers\Dashboard\MenuController;
@@ -95,6 +96,9 @@ $router->group('/dashboard', ['auth', 'tenant', 'staff', 'csrf', 'dashboard-rate
     $r->post('/reservations', [ReservationsController::class, 'store']);
     $r->post('/reservations/mark-full', [ReservationsController::class, 'markFull']);
     $r->post('/reservations/reopen-full', [ReservationsController::class, 'reopenFull']);
+    $r->get('/reservations/availability', [AvailabilityBlocksController::class, 'index']);
+    $r->post('/reservations/availability/close', [AvailabilityBlocksController::class, 'close']);
+    $r->post('/reservations/availability/reopen', [AvailabilityBlocksController::class, 'reopen']);
     $r->get('/reservations/{id}', [ReservationsController::class, 'show']);
     $r->get('/reservations/{id}/edit', [ReservationsController::class, 'edit']);
     $r->post('/reservations/{id}/edit', [ReservationsController::class, 'update']);

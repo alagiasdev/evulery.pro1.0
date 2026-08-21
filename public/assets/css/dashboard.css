@@ -5693,3 +5693,62 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     font-size: .84rem; font-weight: 600; color: #495057; text-decoration: none;
 }
 .rs-open-customer:hover { background: #f6f8f9; color: var(--brand, #00844A); border-color: var(--brand, #00844A); }
+
+/* ===== Pagina "Disponibilità online" ===== */
+.av-page { max-width: 860px; }
+.av-head h1 { margin: 0 0 .3rem; }
+.av-sub { font-size: .9rem; color: #6c757d; max-width: 62ch; margin: 0 0 .4rem; }
+.av-card {
+    background: #fff; border: 1px solid #e9edf0; border-radius: 12px;
+    padding: 1.05rem 1.15rem; box-shadow: 0 1px 2px rgba(20,40,30,.05); margin-top: 1.1rem;
+}
+.av-card-h { font-weight: 700; font-size: .95rem; display: flex; align-items: center; gap: .45rem; margin-bottom: .9rem; }
+.av-form-row { display: flex; gap: .9rem; flex-wrap: wrap; align-items: flex-end; }
+.av-fg { display: flex; flex-direction: column; gap: .3rem; }
+.av-lbl { font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #9aa4ab; }
+.av-opt { font-weight: 500; text-transform: none; letter-spacing: normal; color: #b3bcc2; }
+.av-inp {
+    border: 1px solid #dee2e6; border-radius: 8px; padding: .5rem .65rem;
+    font-size: .88rem; background: #fff; color: #212529; min-width: 160px;
+}
+.av-inp:focus { outline: none; border-color: var(--brand, #00844A); box-shadow: 0 0 0 3px rgba(0,132,74,.1); }
+.av-btn-close {
+    background: #9a6a13; color: #fff; border: 0; border-radius: 8px;
+    padding: .55rem .95rem; font-size: .86rem; font-weight: 700; cursor: pointer;
+    display: inline-flex; align-items: center; gap: .4rem; white-space: nowrap;
+}
+.av-btn-close:hover { background: #855b10; }
+.av-hint { font-size: .78rem; color: #8a949b; margin: .8rem 0 0; display: flex; gap: .4rem; }
+
+.av-sub-count { font-size: .78rem; color: #8a949b; margin: -.4rem 0 .3rem; }
+.av-row { display: flex; align-items: center; gap: .8rem; padding: .7rem .1rem; border-top: 1px solid #f1f3f5; }
+.av-row:first-of-type { border-top: 0; }
+.av-date { font-weight: 700; font-size: .9rem; min-width: 96px; }
+.av-date small { display: block; font-weight: 400; font-size: .72rem; color: #adb5bd; }
+.av-pill { font-size: .72rem; font-weight: 700; color: #9a6a13; background: #fbf1dc; padding: .18rem .6rem; border-radius: 100px; }
+.av-meta { font-size: .76rem; color: #8a949b; }
+.av-spacer { flex: 1; }
+.av-reopen-form { margin: 0; }
+.av-reopen {
+    background: #fff; border: 1px solid #cfe0d6; color: var(--brand, #00844A);
+    border-radius: 8px; padding: .35rem .7rem; font-size: .8rem; font-weight: 600; cursor: pointer;
+    display: inline-flex; align-items: center; gap: .3rem;
+}
+.av-reopen:hover { background: #e6f4ed; border-color: var(--brand, #00844A); }
+.av-empty { text-align: center; padding: 1.8rem 1rem; color: #98a2a8; }
+.av-empty i { font-size: 1.8rem; color: #c9d2d7; }
+.av-empty-t { font-weight: 600; color: #6c757d; margin-top: .4rem; font-size: .9rem; }
+.av-empty-s { font-size: .82rem; color: #98a2a8; margin-top: .2rem; }
+
+.av-note-diff {
+    display: flex; gap: .7rem; align-items: flex-start; margin-top: 1.1rem;
+    background: #fff; border: 1px solid #e9edf0; border-left: 3px solid #c0392b;
+    border-radius: 12px; padding: .85rem 1rem; font-size: .88rem; color: #6c757d;
+}
+.av-note-diff a { color: var(--brand, #00844A); font-weight: 600; }
+.av-note-ic { color: #c0392b; }
+@media (max-width: 640px) {
+    .av-form-row { gap: .7rem; }
+    .av-fg, .av-inp { width: 100%; min-width: 0; }
+    .av-btn-close { width: 100%; justify-content: center; }
+}

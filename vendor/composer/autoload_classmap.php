@@ -26,6 +26,7 @@ return array(
     'App\\Controllers\\Auth\\LoginController' => $baseDir . '/app/Controllers/Auth/LoginController.php',
     'App\\Controllers\\Auth\\PasswordController' => $baseDir . '/app/Controllers/Auth/PasswordController.php',
     'App\\Controllers\\Booking\\BookingController' => $baseDir . '/app/Controllers/Booking/BookingController.php',
+    'App\\Controllers\\Dashboard\\AvailabilityBlocksController' => $baseDir . '/app/Controllers/Dashboard/AvailabilityBlocksController.php',
     'App\\Controllers\\Dashboard\\ClosuresController' => $baseDir . '/app/Controllers/Dashboard/ClosuresController.php',
     'App\\Controllers\\Dashboard\\CollaboratorsController' => $baseDir . '/app/Controllers/Dashboard/CollaboratorsController.php',
     'App\\Controllers\\Dashboard\\CommunicationsController' => $baseDir . '/app/Controllers/Dashboard/CommunicationsController.php',

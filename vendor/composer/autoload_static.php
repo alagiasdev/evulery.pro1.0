@@ -139,6 +139,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Controllers\\Auth\\LoginController' => __DIR__ . '/../..' . '/app/Controllers/Auth/LoginController.php',
         'App\\Controllers\\Auth\\PasswordController' => __DIR__ . '/../..' . '/app/Controllers/Auth/PasswordController.php',
         'App\\Controllers\\Booking\\BookingController' => __DIR__ . '/../..' . '/app/Controllers/Booking/BookingController.php',
+        'App\\Controllers\\Dashboard\\AvailabilityBlocksController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/AvailabilityBlocksController.php',
         'App\\Controllers\\Dashboard\\ClosuresController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/ClosuresController.php',
         'App\\Controllers\\Dashboard\\CollaboratorsController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/CollaboratorsController.php',
         'App\\Controllers\\Dashboard\\CommunicationsController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/CommunicationsController.php',

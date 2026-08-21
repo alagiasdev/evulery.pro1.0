@@ -299,4 +299,23 @@ class SlotOverride
         $stmt->execute(['t' => $tenantId, 'd' => $date]);
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
+
+    /**
+     * Le date FUTURE (oggi incluso) con prenotazioni online chiuse, con il numero
+     * di orari bloccati per ciascuna. Per la pagina "Disponibilità online".
+     * @return array<array{override_date:string, slots:int}>
+     */
+    public function fullDates(int $tenantId): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT override_date, COUNT(*) AS slots
+             FROM slot_overrides
+             WHERE tenant_id = :t AND slot_time IS NOT NULL AND is_closed = 0 AND max_covers = 0
+               AND override_date >= CURDATE()
+             GROUP BY override_date
+             ORDER BY override_date ASC'
+        );
+        $stmt->execute(['t' => $tenantId]);
+        return $stmt->fetchAll();
+    }
 }
