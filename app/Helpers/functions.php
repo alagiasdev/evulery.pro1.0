@@ -558,3 +558,52 @@ function decrypt_value(string $encrypted): ?string
     $result = openssl_decrypt($ciphertext, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag);
     return $result === false ? null : $result;
 }
+
+/**
+ * ============================================================================
+ * "Novità" (release notes) — sezione novità dashboard/reseller.
+ * Sorgente: config/releases.php. Nessun DB.
+ * ============================================================================
+ */
+function releases_config(): array
+{
+    static $cfg = null;
+    if ($cfg === null) {
+        $file = BASE_PATH . '/config/releases.php';
+        $cfg = is_file($file) ? require $file : ['categories' => [], 'releases' => []];
+    }
+    return $cfg;
+}
+
+/** Le novità visibili a un pubblico ('owner'|'reseller'), ordinate per data DESC. */
+function releases_for(string $audience): array
+{
+    $cfg = releases_config();
+    $list = array_filter(
+        $cfg['releases'] ?? [],
+        fn($r) => in_array($audience, $r['audience'] ?? [], true)
+    );
+    usort($list, fn($a, $b) => strcmp($b['date'] ?? '', $a['date'] ?? ''));
+    return array_values($list);
+}
+
+/** Data (Y-m-d) della novità più recente per un pubblico, o null. */
+function releases_latest_date(string $audience): ?string
+{
+    $list = releases_for($audience);
+    return $list[0]['date'] ?? null;
+}
+
+/**
+ * C'è una novità non ancora vista da questo utente? Confronto cookie-based
+ * (nessun DB): il cookie 'novita_seen' contiene l'ultima data vista.
+ */
+function releases_unseen(string $audience): bool
+{
+    $latest = releases_latest_date($audience);
+    if ($latest === null) {
+        return false;
+    }
+    $seen = $_COOKIE['novita_seen_' . $audience] ?? '';
+    return $seen < $latest;
+}

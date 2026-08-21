@@ -19,6 +19,7 @@ use App\Controllers\Dashboard\HomeController;
 use App\Controllers\Dashboard\HelpController;
 use App\Controllers\Dashboard\HeartbeatController;
 use App\Controllers\Dashboard\ReservationsController;
+use App\Controllers\NovitaController;
 use App\Controllers\Dashboard\CustomersController;
 use App\Controllers\Dashboard\SettingsController;
 use App\Controllers\Dashboard\CollaboratorsController;
@@ -212,6 +213,9 @@ $router->group('/dashboard', ['auth', 'tenant', 'staff', 'csrf', 'dashboard-rate
     $r->post('/communications/{id}/archive', [CommunicationsController::class, 'archive']);
     $r->post('/communications/{id}/send-now', [CommunicationsController::class, 'sendNow']);
     $r->post('/communications/{id}/retry', [CommunicationsController::class, 'retryFailed']);
+    // Novità (release notes)
+    $r->get('/novita', [NovitaController::class, 'owner']);
+
     // Notifications
     $r->get('/notifications', [NotificationController::class, 'index']);
     $r->get('/notifications/unread', [NotificationController::class, 'apiUnread']);
@@ -351,6 +355,7 @@ $router->group('/reseller', ['auth', 'reseller', 'csrf', 'dashboard-ratelimit'],
     $r->get('/documents/{key}', [ResellerDocumentsController::class, 'download']);
     $r->get('/profile', [ResellerProfileController::class, 'show']);
     $r->post('/profile', [ResellerProfileController::class, 'update']);
+    $r->get('/novita', [NovitaController::class, 'reseller']);
 });
 
 // --- API ROUTES (JSON) ---

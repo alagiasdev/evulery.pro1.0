@@ -57,6 +57,7 @@ return array(
     'App\\Controllers\\Hub\\PromotionsPublicController' => $baseDir . '/app/Controllers/Hub/PromotionsPublicController.php',
     'App\\Controllers\\ManageReservationController' => $baseDir . '/app/Controllers/ManageReservationController.php',
     'App\\Controllers\\Menu\\MenuPageController' => $baseDir . '/app/Controllers/Menu/MenuPageController.php',
+    'App\\Controllers\\NovitaController' => $baseDir . '/app/Controllers/NovitaController.php',
     'App\\Controllers\\Ordering\\OrderStoreController' => $baseDir . '/app/Controllers/Ordering/OrderStoreController.php',
     'App\\Controllers\\ProfileController' => $baseDir . '/app/Controllers/ProfileController.php',
     'App\\Controllers\\Reseller\\ClientsController' => $baseDir . '/app/Controllers/Reseller/ClientsController.php',

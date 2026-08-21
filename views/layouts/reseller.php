@@ -92,6 +92,12 @@
         <a class="rs-sidebar-link <?= ($activeMenu ?? '') === 'reseller-documents' ? 'active' : '' ?>" href="<?= url('reseller/documents') ?>">
             <i class="bi bi-folder-check"></i> Documenti
         </a>
+        <a class="rs-sidebar-link <?= ($activeMenu ?? '') === 'reseller-novita' ? 'active' : '' ?>" href="<?= url('reseller/novita') ?>">
+            <i class="bi bi-stars"></i> Novità
+            <?php if (releases_unseen('reseller')): ?>
+            <span title="Ci sono novità" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff6b00;margin-left:6px;vertical-align:middle;"></span>
+            <?php endif; ?>
+        </a>
 
         <div class="rs-sidebar-section">Account</div>
         <a class="rs-sidebar-link <?= ($activeMenu ?? '') === 'reseller-profile' ? 'active' : '' ?>" href="<?= url('reseller/profile') ?>">

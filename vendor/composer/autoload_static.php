@@ -170,6 +170,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Controllers\\Hub\\PromotionsPublicController' => __DIR__ . '/../..' . '/app/Controllers/Hub/PromotionsPublicController.php',
         'App\\Controllers\\ManageReservationController' => __DIR__ . '/../..' . '/app/Controllers/ManageReservationController.php',
         'App\\Controllers\\Menu\\MenuPageController' => __DIR__ . '/../..' . '/app/Controllers/Menu/MenuPageController.php',
+        'App\\Controllers\\NovitaController' => __DIR__ . '/../..' . '/app/Controllers/NovitaController.php',
         'App\\Controllers\\Ordering\\OrderStoreController' => __DIR__ . '/../..' . '/app/Controllers/Ordering/OrderStoreController.php',
         'App\\Controllers\\ProfileController' => __DIR__ . '/../..' . '/app/Controllers/ProfileController.php',
         'App\\Controllers\\Reseller\\ClientsController' => __DIR__ . '/../..' . '/app/Controllers/Reseller/ClientsController.php',
