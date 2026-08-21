@@ -142,6 +142,41 @@ class AvailabilityService
         return array_slice($suggestions, 0, 3);
     }
 
+    /**
+     * Primo slot prenotabile a partire da $fromDate (incluso), scansionando in
+     * avanti giorno per giorno. Rispetta: finestra di prenotazione del tenant
+     * (booking_advance_max), chiusure, blocchi "al completo", orari passati.
+     * Usato per il messaggio "prossima disponibilità" nel widget quando la data
+     * richiesta è sold-out. Ritorna ['date'=>'Y-m-d','time'=>'HH:MM'] o null.
+     */
+    public function findNextAvailability(int $tenantId, string $fromDate, int $partySize, int $maxScan = 60): ?array
+    {
+        $stmt = $this->db->prepare('SELECT booking_advance_max FROM tenants WHERE id = :id');
+        $stmt->execute(['id' => $tenantId]);
+        $col = $stmt->fetchColumn();
+        $advanceMax = ($col === false) ? 60 : (int)$col;
+
+        $today   = date('Y-m-d');
+        $start   = $fromDate < $today ? $today : $fromDate;       // non partire nel passato
+        $hardEnd = date('Y-m-d', strtotime($today . ' +' . max(0, $advanceMax) . ' days'));
+        $party   = max(1, $partySize);
+
+        $cursor = new \DateTime($start);
+        for ($i = 0; $i < $maxScan; $i++) {
+            $d = $cursor->format('Y-m-d');
+            if ($d > $hardEnd) {
+                break; // fuori dalla finestra di prenotazione
+            }
+            foreach ($this->getAvailableSlots($tenantId, $d, $party, 'widget') as $slot) {
+                if (!empty($slot['is_available']) && empty($slot['is_past'])) {
+                    return ['date' => $d, 'time' => $slot['time']];
+                }
+            }
+            $cursor->modify('+1 day');
+        }
+        return null;
+    }
+
     public function canBook(int $tenantId, string $date, string $time, int $partySize, int $excludeReservationId = 0, string $source = 'widget'): bool
     {
         $slots = $this->getAvailableSlots($tenantId, $date, $partySize, $source, $excludeReservationId);

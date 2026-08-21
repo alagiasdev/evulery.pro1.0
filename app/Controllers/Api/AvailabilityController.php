@@ -66,6 +66,27 @@ class AvailabilityController
             );
         }
 
+        // Prossima disponibilità: solo quando la data richiesta è priva di posti
+        // (sold-out / al completo / chiusa). Il widget la usa al posto del vicolo
+        // cieco. Calcolata SOLO in questo caso → nessun costo sul percorso normale.
+        $hasAvail = false;
+        if ($grouped) {
+            foreach ($responseData['grouped_slots'] as $g) {
+                foreach ($g['slots'] as $s) {
+                    if (!empty($s['is_available']) && empty($s['is_past'])) { $hasAvail = true; break 2; }
+                }
+            }
+        } else {
+            foreach ($responseData['slots'] as $s) {
+                if (!empty($s['is_available']) && empty($s['is_past'])) { $hasAvail = true; break; }
+            }
+        }
+        if (!$hasAvail) {
+            $responseData['next_available'] = $service->findNextAvailability(
+                (int) $tenant['id'], $date, max(1, $partySize)
+            );
+        }
+
         Response::success($responseData);
     }
 
