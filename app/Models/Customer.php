@@ -219,13 +219,16 @@ class Customer
      * sempre in elenco. Il filtro è DINAMICO: aggiungendo un contatto alla scheda
      * il cliente ricompare da solo (nessuna migration, nessun flag).
      */
-    private function visibleClause(): string
+    private function visibleClause(string $alias = ''): string
     {
+        // $alias: prefisso tabella per le query con JOIN (es. 'c' → c.source),
+        // dove una colonna non qualificata sarebbe ambigua (reservations ha 'source').
+        $p = $alias !== '' ? $alias . '.' : '';
         return " AND (
-            source = 'import'
-            OR (last_name IS NOT NULL AND last_name <> '')
-            OR (phone IS NOT NULL AND phone <> '')
-            OR (email IS NOT NULL AND email <> '')
+            {$p}source = 'import'
+            OR ({$p}last_name IS NOT NULL AND {$p}last_name <> '')
+            OR ({$p}phone IS NOT NULL AND {$p}phone <> '')
+            OR ({$p}email IS NOT NULL AND {$p}email <> '')
         )";
     }
 
@@ -706,7 +709,7 @@ class Customer
              WHERE r.tenant_id = :tid
              AND r.reservation_date >= :from
              AND r.reservation_date <= :to
-             AND r.status IN ("confirmed", "pending", "arrived")
+             AND r.status IN ("confirmed", "pending", "arrived")' . $this->visibleClause('c') . '
              GROUP BY c.id, c.first_name, c.last_name, c.total_bookings, c.total_noshow
              ORDER BY period_bookings DESC
              LIMIT :lim'
