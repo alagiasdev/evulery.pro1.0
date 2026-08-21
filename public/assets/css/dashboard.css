@@ -5723,7 +5723,14 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .av-sub-count { font-size: .78rem; color: #8a949b; margin: -.4rem 0 .3rem; }
 .av-row { display: flex; align-items: center; gap: .8rem; padding: .7rem .1rem; border-top: 1px solid #f1f3f5; }
 .av-row:first-of-type { border-top: 0; }
-.av-date { font-weight: 700; font-size: .9rem; min-width: 96px; }
+.av-date-link { display: flex; align-items: center; gap: .5rem; text-decoration: none; color: inherit; min-width: 168px; }
+.av-date-link:hover .av-date { color: var(--brand, #00844A); }
+.av-date-link:hover .av-date-arrow { color: var(--brand, #00844A); transform: translateX(2px); }
+.av-date-arrow { font-size: .7rem; color: #c4ccd2; transition: transform .15s, color .15s; }
+.av-rel { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: .14rem .45rem; border-radius: 100px; flex: none; }
+.av-rel.today { color: #00844A; background: #e6f4ed; }
+.av-rel.tomorrow { color: #6c757d; background: #eef1f3; }
+.av-date { font-weight: 700; font-size: .9rem; }
 .av-date small { display: block; font-weight: 400; font-size: .72rem; color: #adb5bd; }
 .av-pill { font-size: .72rem; font-weight: 700; color: #9a6a13; background: #fbf1dc; padding: .18rem .6rem; border-radius: 100px; }
 .av-meta { font-size: .76rem; color: #8a949b; }

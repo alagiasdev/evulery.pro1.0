@@ -1,5 +1,6 @@
 <?php
 $giorniIt = [1 => 'Lun', 2 => 'Mar', 3 => 'Mer', 4 => 'Gio', 5 => 'Ven', 6 => 'Sab', 7 => 'Dom'];
+$tomorrow = date('Y-m-d', strtotime($today . ' +1 day'));
 ?>
 <div class="av-page">
 
@@ -56,9 +57,16 @@ $giorniIt = [1 => 'Lun', 2 => 'Mar', 3 => 'Mer', 4 => 'Gio', 5 => 'Ven', 6 => 'S
         <?php else: ?>
         <div class="av-sub-count"><?= count($closedDates) ?> <?= count($closedDates) === 1 ? 'data' : 'date' ?> · dalla più vicina</div>
         <?php foreach ($closedDates as $cd): ?>
-            <?php $wd = $giorniIt[(int)date('N', strtotime($cd['date']))] ?? ''; ?>
+            <?php
+                $wd  = $giorniIt[(int)date('N', strtotime($cd['date']))] ?? '';
+                $rel = $cd['date'] === $today ? 'Oggi' : ($cd['date'] === $tomorrow ? 'Domani' : '');
+            ?>
         <div class="av-row">
-            <div class="av-date"><?= $wd ?> <?= format_date($cd['date'], 'd M') ?><small><?= format_date($cd['date'], 'Y') ?></small></div>
+            <a href="<?= url('dashboard/reservations?date=' . e($cd['date'])) ?>" class="av-date-link" title="Vedi le prenotazioni di questo giorno">
+                <?php if ($rel !== ''): ?><span class="av-rel <?= $rel === 'Oggi' ? 'today' : 'tomorrow' ?>"><?= $rel ?></span><?php endif; ?>
+                <span class="av-date"><?= $wd ?> <?= format_date($cd['date'], 'd M') ?><small><?= format_date($cd['date'], 'Y') ?></small></span>
+                <i class="bi bi-chevron-right av-date-arrow"></i>
+            </a>
             <span class="av-pill"><?= e($cd['label']) ?></span>
             <span class="av-meta"><?= (int)$cd['slots'] ?> orari<?= $cd['whole'] ? '' : ' bloccati' ?></span>
             <span class="av-spacer"></span>
