@@ -5752,3 +5752,31 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     .av-fg, .av-inp { width: 100%; min-width: 0; }
     .av-btn-close { width: 100%; justify-content: center; }
 }
+
+/* ===== Menu "Gestisci giornata" (header Prenotazioni) ===== */
+.res-page-header .gg-menu { margin-left: auto; align-self: center; }
+.gg-menu { position: relative; }
+.gg-toggle {
+    list-style: none; cursor: pointer; user-select: none;
+    display: inline-flex; align-items: center; gap: .4rem;
+    border: 1px solid #dfe4e8; background: #fff; color: #495057;
+    border-radius: 8px; padding: .42rem .8rem; font-size: .84rem; font-weight: 600; white-space: nowrap;
+}
+.gg-toggle::-webkit-details-marker { display: none; }
+.gg-toggle:hover { border-color: #c3ccd2; background: #f6f8f9; }
+.gg-caret { font-size: .72rem; transition: transform .2s; }
+.gg-menu[open] .gg-caret { transform: rotate(180deg); }
+.gg-pop {
+    position: absolute; right: 0; top: calc(100% + .5rem); z-index: 30;
+    width: 300px; max-width: calc(100vw - 2rem);
+    background: #fff; border: 1px solid #e3e6ea; border-radius: 12px;
+    box-shadow: 0 14px 34px rgba(0,0,0,.15); overflow: hidden;
+}
+.gg-item { display: flex; gap: .65rem; align-items: flex-start; padding: .7rem .85rem; text-decoration: none; color: inherit; }
+.gg-item + .gg-item { border-top: 1px solid #f0f2f4; }
+.gg-item:hover { background: #f6f8f9; }
+.gg-ic { width: 26px; height: 26px; border-radius: 7px; display: grid; place-items: center; flex: none; font-size: .9rem; }
+.gg-ic.amber { background: #fbf1dc; color: #9a6a13; }
+.gg-ic.red { background: #fdece9; color: #c0392b; }
+.gg-tx b { font-size: .88rem; display: block; color: #212529; }
+.gg-tx small { font-size: .76rem; color: #8a949b; }

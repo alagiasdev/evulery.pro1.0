@@ -130,26 +130,33 @@ $kpiUrl = function (string $st) use ($isUpcoming, $date, $dateTo, $source): stri
 <div class="res-page-header">
     <h1>Prenotazioni</h1>
     <span class="dh-date-badge"><?= e($headerBadge) ?></span>
-    <a href="<?= url('dashboard/emergency-closure') ?>" class="btn btn-sm btn-emergency" style="margin-left:auto; align-self:center;">
-        <i class="bi bi-exclamation-octagon-fill"></i> Chiusura straordinaria
-    </a>
+    <details class="gg-menu">
+        <summary class="gg-toggle"><i class="bi bi-sliders"></i> Gestisci giornata <i class="bi bi-chevron-down gg-caret"></i></summary>
+        <div class="gg-pop">
+            <a href="<?= url('dashboard/reservations/availability') ?>" class="gg-item">
+                <span class="gg-ic amber"><i class="bi bi-slash-circle"></i></span>
+                <span class="gg-tx"><b>Chiudi le prenotazioni online</b><small>Sei pieno: stop online, resti aperto e aggiungi a mano.</small></span>
+            </a>
+            <a href="<?= url('dashboard/emergency-closure') ?>" class="gg-item">
+                <span class="gg-ic red"><i class="bi bi-exclamation-octagon-fill"></i></span>
+                <span class="gg-tx"><b>Chiusura straordinaria</b><small>Chiuso davvero (guasto, ferie, emergenza).</small></span>
+            </a>
+        </div>
+    </details>
 </div>
 
 <?php if (!empty($emergencyClosure)): ?>
     <?php $ec = $emergencyClosure; include __DIR__ . '/../../partials/emergency-banner.php'; ?>
 <?php endif; ?>
 
-<?php /* "Al completo": stop prenotazioni online per giorno/servizio (solo vista giorno singolo). */ ?>
-<?php if (!empty($fullState) && !empty($fullState['has_slots'])): ?>
+<?php /* Stato "Prenotazioni online chiuse" per il giorno visualizzato: banner ambra
+        + Riapri. La marcatura è ora nella pagina "Disponibilità online" (menu). */ ?>
+<?php if (!empty($fullState) && !empty($fullState['any_full'])): ?>
     <?php
         $fbWholeFull = !empty($fullState['whole_day_full']);
-        $fbAnyFull   = !empty($fullState['any_full']);
         $fbLabels    = $fullState['full_labels'] ?? [];
-        // Servizi ancora prenotabili online (non al completo) per la marcatura.
-        $fbMarkable  = array_values(array_filter($fullState['services'] ?? [], fn($s) => empty($s['is_full'])));
     ?>
     <div class="fb-bar">
-        <?php if ($fbAnyFull): ?>
         <div class="fb-banner">
             <span class="fb-ic"><i class="bi bi-slash-circle"></i></span>
             <div class="fb-tx">
@@ -163,37 +170,6 @@ $kpiUrl = function (string $st) use ($isUpcoming, $date, $dateTo, $source): stri
                 <button type="submit" class="fb-reopen"><i class="bi bi-arrow-counterclockwise"></i> Riapri prenotazioni</button>
             </form>
         </div>
-        <?php endif; ?>
-
-        <?php if (!$fbWholeFull && !empty($fbMarkable)): ?>
-        <div class="fb-actions">
-            <span class="fb-lbl">Prenotazioni online per questo giorno:</span>
-            <details class="fb-details">
-                <summary class="fb-toggle"><i class="bi bi-slash-circle"></i> Chiudi le prenotazioni <i class="bi bi-chevron-down fb-caret"></i></summary>
-                <div class="fb-pop">
-                    <form method="POST" action="<?= url('dashboard/reservations/mark-full') ?>">
-                        <?= csrf_field() ?>
-                        <input type="hidden" name="date" value="<?= e($date) ?>">
-                        <div class="fb-pop-t">Chiudi le prenotazioni online di <b><?= e(format_date($date, 'd/m')) ?></b></div>
-                        <?php $fbMulti = count($fbMarkable) > 1; ?>
-                        <?php if ($fbMulti): ?>
-                        <label class="fb-opt">
-                            <input type="radio" name="scope" value="day" checked>
-                            <span>Tutto il giorno</span>
-                        </label>
-                        <?php endif; ?>
-                        <?php foreach ($fbMarkable as $i => $sv): ?>
-                        <label class="fb-opt">
-                            <input type="radio" name="scope" value="<?= e($sv['name']) ?>" <?= (!$fbMulti && $i === 0) ? 'checked' : '' ?>>
-                            <span>Solo <?= e($sv['display_name']) ?></span>
-                        </label>
-                        <?php endforeach; ?>
-                        <button type="submit" class="fb-go">Chiudi le prenotazioni</button>
-                    </form>
-                </div>
-            </details>
-        </div>
-        <?php endif; ?>
     </div>
 <?php endif; ?>
 
