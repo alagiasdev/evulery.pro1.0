@@ -117,9 +117,7 @@ Decisione: NON costruirli in cieco, aspettare il segnale reale.
 - [ ] **Hint "clienti esclusi dal marketing"** — il broadcast filtra `marketing_consent=1`
   ed esclude in silenzio i clienti vecchi. Mostrare "Clienti CRM: X · Esclusi: Y" sotto
   il preview count. ~30 min. Alla prima segnalazione "vedo 0 destinatari".
-- [ ] **Birthday overwrite** — `Customer::findOrCreate` rifiuta la modifica di un
-  compleanno già salvato. Cliente che ha sbagliato data non può correggerla dal widget.
-  ~15 min permettere update, oppure azione "Correggi compleanno" in dashboard.
+- [x] ~~**Birthday overwrite**~~ — **FATTO (verificato 2026-08-21)**: `Customer::findOrCreate` aggiorna il compleanno se il nuovo valore è diverso da quello salvato (correzione dal widget, Customer.php ~350), e la scheda cliente ha il form "Data di nascita" (`updateBirthday`). Non più un problema.
 - [ ] **CTA slug warning** — email broadcast: se `include_booking_cta=1` ma `tenant.slug`
   vuoto, il bottone "Prenota ora" viene saltato senza avviso. Warning in `store()`. ~20 min.
 
@@ -175,10 +173,17 @@ Decisione: NON costruirli in cieco, aspettare il segnale reale.
   Stima ~4-5h. Bonus: il bottone "Oggi" diventa standard ovunque. **Trigger**: quando ho una
   sessione dedicata a "ripulire base codice" o quando 2+ ristoratori segnalano UX incoerente
   fra le pagine. Per ora il workaround locale nelle stats riders e' sufficiente.
+  **AGG. 2026-08-21**: aggiunta un'ALTRA duplicazione inline in
+  `views/dashboard/reservations/availability.php` (calendario `av-cal-*`, pagina "Disponibilità
+  online", selezione singola/intervallo). Il refactor in modulo riusabile ora conviene ancora di più.
+
+### Minori "Disponibilità online / Widget prossima disponibilità" (annotati 2026-08-21, dopo debug sessione)
+- [ ] **Conteggio "N orari" include gli slot PASSATI su OGGI** (cosmetico): marcando "Tutto il giorno" oggi, il numero (es. "42 orari") somma anche le fasce già trascorse. Il blocco di uno slot passato è un no-op (il widget li salta via `is_past`). Fix: filtrare `is_past` in `AvailabilityService::getDayFullState` quando la data è oggi — ma è metodo condiviso, non vale il rischio. **Lasciare.**
+- [ ] **Vicolo cieco residuo sullo step ORARIO del widget** (raro): la "prossima disponibilità" è sullo step Persone (muro principale). Se il cliente arriva allo step Orario senza slot (caso raro), resta "Nessun orario disponibile". Fix facile: stesso trattamento `next_available` in `renderGroupedSlots` (la risposta grouped già lo include). **Deferire.**
+- [ ] **`findNextAvailability` fino a 60 iterazioni** (perf, bounded): scansiona in avanti fino a `booking_advance_max` giorni, SOLO su data sold-out; in pratica trova entro pochi giorni. Ridurre il tetto degraderebbe la feature per un non-problema. **Lasciare.**
 - [ ] **Slug riservati validation** — impedire tenant con slug `admin`, `api`, `menu`,
   `hub`, `promo`, `order`, `review`, `booking`, ecc. (igiene sicurezza URL).
-- [ ] **Routing fix `/{slug}/booking/success`** — in `config/routes.php` le 2 rotte
-  booking stanno dopo la catch-all `/{slug}`: ordine da correggere.
+- [x] ~~**Routing fix `/{slug}/booking/success`**~~ — **FATTO (verificato 2026-08-21)**: in `config/routes.php` (righe ~407-412) le rotte `/{slug}/booking/success` e `/cancel` sono già PRIMA della catch-all `/{slug}`, con commento esplicito. Ordine corretto.
 - [ ] **Colori tavoli mappa sala** (Gestione Tavoli — UX) — distinguere visivamente
   3 stati: **libero** (verde), **prenotato** (giallo/ambra, prenotazione futura del giorno),
   **occupato** (rosso/viola, status `arrived` = cliente seduto ORA). Oggi i tavoli sono
