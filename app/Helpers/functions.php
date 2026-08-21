@@ -350,6 +350,9 @@ function settings_nav(): array
             // restano intatti). Togliere il flag per riattivarla.
             ['url' => url('dashboard/settings/domain'),          'icon' => 'bi-globe',        'label' => 'Dominio',           'key' => 'domain',                 'desc' => 'Dominio personalizzato per le pagine pubbliche', 'service' => 'custom_domain', 'hidden' => true],
         ],
+        'Prodotto' => [
+            ['url' => url('dashboard/novita'),                   'icon' => 'bi-stars',        'label' => 'Novità',            'key' => 'novita',                 'desc' => 'Le ultime funzioni rilasciate su Evulery'],
+        ],
     ];
 }
 
@@ -606,4 +609,30 @@ function releases_unseen(string $audience): bool
     }
     $seen = $_COOKIE['novita_seen_' . $audience] ?? '';
     return $seen < $latest;
+}
+
+/** Novità degli ultimi $days giorni per un pubblico (DESC). Per la card in dashboard. */
+function releases_recent(string $audience, int $days = 30): array
+{
+    $cutoff = date('Y-m-d', strtotime("-{$days} days"));
+    return array_values(array_filter(
+        releases_for($audience),
+        fn($r) => ($r['date'] ?? '') >= $cutoff
+    ));
+}
+
+/**
+ * La card "Novità" in dashboard va mostrata? Sì se ci sono novità recenti (ultimi
+ * $days giorni) E l'utente non ha fatto "non mostrare più" per questo batch.
+ * Auto-scadenza: dopo $days giorni la card sparisce da sola. Cookie-based, no DB.
+ */
+function releases_card_visible(string $audience, int $days = 30): bool
+{
+    $recent = releases_recent($audience, $days);
+    if (empty($recent)) {
+        return false;
+    }
+    $latest = $recent[0]['date'];
+    $dismissed = $_COOKIE['novita_card_dismissed_' . $audience] ?? '';
+    return $dismissed < $latest;
 }

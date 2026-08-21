@@ -56,6 +56,8 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
 
 <?php include __DIR__ . '/../partials/onboarding.php'; ?>
 
+<?php include __DIR__ . '/../partials/novita-card.php'; ?>
+
 <?php if (tenant_can('push_notifications')): ?>
 <!--
     iOS PWA install banner — mostrato dal JS (dashboard-notifications.js)

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Core\Request;
+use App\Core\Response;
 
 /**
  * Sezione "Novità" (release notes). Stessa lista (config/releases.php) per due
@@ -33,6 +34,24 @@ class NovitaController
             'releases'   => releases_for('reseller'),
             'categories' => releases_config()['categories'] ?? [],
         ], 'reseller');
+    }
+
+    /**
+     * "Non mostrare più" dalla card in dashboard: nasconde la card fino alla
+     * prossima novità (cookie = data più recente vista). Poi torna alla dashboard.
+     */
+    public function dismissCard(Request $request): void
+    {
+        $latest = releases_latest_date('owner');
+        if ($latest !== null && !headers_sent()) {
+            setcookie('novita_card_dismissed_owner', $latest, [
+                'expires'  => time() + 60 * 60 * 24 * 365,
+                'path'     => '/',
+                'httponly' => false,
+                'samesite' => 'Lax',
+            ]);
+        }
+        Response::redirect(url('dashboard'));
     }
 
     /** Segna le novità come "viste": cookie (per pubblico) = data più recente. */

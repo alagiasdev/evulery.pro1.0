@@ -5782,6 +5782,43 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     .av-btn-close { width: 100%; justify-content: center; }
 }
 
+/* ===== Card "Novità" in dashboard (collassabile, auto-scadenza 30gg) ===== */
+.nv-card {
+    background: linear-gradient(135deg, #e9f6ef 0%, #f4faf6 100%);
+    border: 1px solid #cbe7d8; border-radius: 14px;
+    margin-bottom: 1.25rem; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,132,74,.06);
+}
+.nv-summary {
+    list-style: none; cursor: pointer; user-select: none;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: .85rem 1.1rem;
+}
+.nv-summary::-webkit-details-marker { display: none; }
+.nv-summary:hover { background: rgba(0,132,74,.04); }
+.nv-sum-l { font-size: .92rem; color: #16232b; }
+.nv-sum-l b { color: #046b3e; }
+.nv-spark { font-size: 1.05rem; margin-right: .2rem; }
+.nv-sum-cta { display: inline-flex; align-items: center; gap: .4rem; font-size: .84rem; font-weight: 600; color: var(--brand, #00844A); white-space: nowrap; }
+.nv-when-open { display: none; }
+.nv-card[open] .nv-when-closed { display: none; }
+.nv-card[open] .nv-when-open { display: inline; }
+.nv-chev { font-size: .75rem; transition: transform .2s; }
+.nv-card[open] .nv-chev { transform: rotate(180deg); }
+.nv-body { padding: .2rem 1.1rem 1.1rem; }
+.nv-list { list-style: none; margin: 0 0 .9rem; padding: 0; display: flex; flex-direction: column; gap: .5rem; }
+.nv-list li { display: flex; align-items: flex-start; gap: .55rem; font-size: .9rem; color: #2c3a42; }
+.nv-emoji { flex: none; font-size: 1rem; line-height: 1.3; }
+.nv-actions { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
+.nv-btn-primary {
+    background: var(--brand, #00844A); color: #fff; text-decoration: none;
+    border-radius: 8px; padding: .5rem .9rem; font-size: .86rem; font-weight: 600;
+}
+.nv-btn-primary:hover { background: #046b3e; color: #fff; }
+.nv-dismiss-form { margin: 0; }
+.nv-btn-ghost { background: none; border: 0; color: #6c757d; font-size: .84rem; font-weight: 600; cursor: pointer; padding: .5rem .3rem; }
+.nv-btn-ghost:hover { color: #495057; text-decoration: underline; }
+
 /* ===== Menu "Gestisci giornata" (header Prenotazioni) ===== */
 .res-page-header .gg-menu { margin-left: auto; align-self: center; }
 .gg-menu { position: relative; }

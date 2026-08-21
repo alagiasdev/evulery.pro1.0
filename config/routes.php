@@ -215,6 +215,7 @@ $router->group('/dashboard', ['auth', 'tenant', 'staff', 'csrf', 'dashboard-rate
     $r->post('/communications/{id}/retry', [CommunicationsController::class, 'retryFailed']);
     // Novità (release notes)
     $r->get('/novita', [NovitaController::class, 'owner']);
+    $r->post('/novita/dismiss', [NovitaController::class, 'dismissCard']);
 
     // Notifications
     $r->get('/notifications', [NotificationController::class, 'index']);

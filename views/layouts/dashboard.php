@@ -140,15 +140,9 @@
                         <i class="bi bi-bell me-2"></i> Notifiche
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= ($activeMenu ?? '') === 'novita' ? 'active' : '' ?>" href="<?= url('dashboard/novita') ?>">
-                        <i class="bi bi-stars me-2"></i> Novità
-                        <?php if (releases_unseen('owner')): ?>
-                        <span title="Ci sono novità" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff6b00;margin-left:6px;vertical-align:middle;"></span>
-                        <?php endif; ?>
-                    </a>
-                </li>
-                <?php $settingsKeys = ['settings','slots','meal-categories','closures','promotions','settings-notifications','deposit','settings-ordering','settings-reviews','domain']; ?>
+                <?php // "Novità" NON in menu (evita affollamento): card in dashboard + pagina in Impostazioni.
+                      // 'novita' è tra le settingsKeys così Impostazioni resta evidenziata sulla pagina Novità. ?>
+                <?php $settingsKeys = ['settings','slots','meal-categories','closures','promotions','settings-notifications','deposit','settings-ordering','settings-reviews','domain','novita']; ?>
                 <?php if (!is_staff()): ?>
                 <li class="nav-item">
                     <a class="nav-link <?= in_array($activeMenu ?? '', $settingsKeys) ? 'active' : '' ?>" href="<?= url('dashboard/settings') ?>">
