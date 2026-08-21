@@ -5718,7 +5718,22 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     display: inline-flex; align-items: center; gap: .4rem; white-space: nowrap;
 }
 .av-btn-close:hover { background: #855b10; }
+.av-btn-close:disabled { opacity: .5; cursor: default; }
 .av-hint { font-size: .78rem; color: #8a949b; margin: .8rem 0 0; display: flex; gap: .4rem; }
+
+/* Layout col calendario Evulery (dr-cal-*) */
+.av-cal-block { display: flex; gap: 1.6rem; flex-wrap: wrap; align-items: flex-start; }
+.av-cal-side { flex: 0 0 320px; max-width: 320px; }
+.av-cal-right { flex: 1; min-width: 210px; display: flex; flex-direction: column; gap: .85rem; }
+.av-cal-right .av-fg, .av-cal-right .av-inp { width: 100%; }
+.av-cal-right .av-hint { margin-top: 0; }
+.av-cal-sel { margin-bottom: .7rem; }
+.av-cal-sel-label { font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #9aa4ab; margin-bottom: .35rem; }
+.av-sel-placeholder { font-size: .84rem; color: #adb5bd; }
+@media (max-width: 640px) {
+    .av-cal-side { flex-basis: 100%; max-width: 100%; }
+    .av-cal-right { width: 100%; }
+}
 
 .av-sub-count { font-size: .78rem; color: #8a949b; margin: -.4rem 0 .3rem; }
 .av-row { display: flex; align-items: center; gap: .8rem; padding: .7rem .1rem; border-top: 1px solid #f1f3f5; }
