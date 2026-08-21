@@ -52,6 +52,12 @@
         </button>
         <h5 class="bw-step-title">Numero di persone</h5>
         <div class="bw-party-max-hint" id="party-max-hint" style="display:none;"></div>
+        <div class="bw-next-avail" id="party-next-avail" style="display:none;">
+            <div class="bw-next-avail-t"><i class="bi bi-emoji-frown"></i> Tutto prenotato per questa data</div>
+            <div class="bw-next-avail-s">Il primo posto disponibile è:</div>
+            <button type="button" class="bw-next-avail-cta" id="party-next-cta"></button>
+            <div class="bw-next-avail-alt">…oppure scegli un altro giorno</div>
+        </div>
         <div class="bw-party-grid" id="party-grid"></div>
         <div class="bw-more-options" id="party-more-toggle">
             <a href="#" id="party-more-link">Opzioni per più persone <i class="bi bi-plus"></i></a>

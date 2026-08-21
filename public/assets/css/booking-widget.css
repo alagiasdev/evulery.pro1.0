@@ -409,6 +409,48 @@
     text-align: center;
 }
 
+/* "Prossima disponibilità": niente vicolo cieco quando la data è al completo. */
+.bw-next-avail {
+    text-align: center;
+    background: var(--bw-bg-light);
+    border: 1px solid var(--bw-border);
+    border-radius: var(--bw-radius-sm);
+    padding: 18px 16px;
+    margin-bottom: 14px;
+}
+.bw-next-avail-t {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--bw-text);
+}
+.bw-next-avail-t .bi { color: var(--bw-orange); }
+.bw-next-avail-s {
+    font-size: 0.82rem;
+    color: var(--bw-text-muted);
+    margin: 4px 0 12px;
+}
+.bw-next-avail-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bw-primary);
+    color: #fff;
+    border: 0;
+    border-radius: var(--bw-radius-sm);
+    padding: 11px 18px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--bw-font);
+    transition: background 0.15s;
+}
+.bw-next-avail-cta:hover { background: var(--bw-primary-dark); }
+.bw-next-avail-alt {
+    font-size: 0.76rem;
+    color: var(--bw-text-muted);
+    margin-top: 12px;
+}
+
 .bw-more-options { text-align: center; margin-top: 16px; }
 
 .bw-more-options a {

@@ -30,7 +30,8 @@ document.addEventListener('DOMContentLoaded', function() {
         closedDates: {},       // { 'YYYY-MM': ['YYYY-MM-DD', ...] }
         closedDatesLoading: {}, // { 'YYYY-MM': true }
         workingWeekdays: null,  // [0..6] weekdays (Mon=0..Sun=6) with at least one active slot; null = unknown
-        maxPartyForDate: null   // max available covers across all slots for selectedDate; null = unknown
+        maxPartyForDate: null,  // max available covers across all slots for selectedDate; null = unknown
+        nextAvailable: null     // {date,time} prossima disponibilità quando il giorno è sold-out
     };
 
     // ===== ITALIAN LOCALE =====
@@ -207,6 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
         state.selectedEndTime = null;
         state.selectedDuration = 0;
         state.maxPartyForDate = null;
+        state.nextAvailable = null;
         updatePill('date', formatDatePill(dateStr));
         if (pills.time) pills.time.style.display = 'none';
         renderCalendar();
@@ -230,10 +232,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                     state.maxPartyForDate = max;
                 }
+                // Prossima disponibilità (presente solo se la data è sold-out).
+                state.nextAvailable = (data.data && data.data.next_available) || null;
                 applyPartyAvailability();
             })
             .catch(function() {
                 state.maxPartyForDate = null;
+                state.nextAvailable = null;
                 applyPartyAvailability();
             });
     }
@@ -253,19 +258,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 btn.removeAttribute('aria-disabled');
             }
         });
+        var nextBox = getEl('party-next-avail');
         if (hint) {
-            if (max === null) {
-                hint.textContent = '';
+            if (max === 0 && state.nextAvailable) {
+                // Vicolo cieco evitato: la data è al completo → proponiamo la
+                // prossima disponibilità invece di un "nessun posto" senza uscita.
                 hint.style.display = 'none';
+                if (nextBox) {
+                    var cta = getEl('party-next-cta');
+                    if (cta) {
+                        cta.textContent = formatNextDateLabel(state.nextAvailable.date)
+                            + ' · ' + String(state.nextAvailable.time).substring(0, 5) + '  →';
+                    }
+                    nextBox.style.display = '';
+                }
             } else if (max === 0) {
+                // Sold-out ma nessuna disponibilità entro la finestra: messaggio semplice.
                 hint.textContent = 'Nessun posto disponibile in questa data';
                 hint.style.display = '';
+                if (nextBox) nextBox.style.display = 'none';
             } else {
                 // Non esponiamo la capienza numerica al cliente: i bottoni oltre
                 // il massimo restano comunque disabilitati (vedi sopra), ma senza
                 // rivelare quanti posti sono liberi.
                 hint.textContent = '';
                 hint.style.display = 'none';
+                if (nextBox) nextBox.style.display = 'none';
             }
         }
 
@@ -277,6 +295,16 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (max !== null && state.todayBookings) {
             showSocialProof(state.todayBookings);
         }
+    }
+
+    // CTA "prossima disponibilità": salta alla prima data/ora libera.
+    var partyNextCta = getEl('party-next-cta');
+    if (partyNextCta) {
+        partyNextCta.addEventListener('click', function() {
+            if (state.nextAvailable && state.nextAvailable.date) {
+                selectDate(state.nextAvailable.date);
+            }
+        });
     }
 
     // ===== TIME SLOTS =====
@@ -579,6 +607,17 @@ document.addEventListener('DOMContentLoaded', function() {
         if (d.getTime() === today.getTime()) return 'Oggi';
         if (d.getTime() === tomorrow.getTime()) return 'Domani';
         return d.getDate() + ' ' + MONTHS[d.getMonth()].substring(0, 3);
+    }
+
+    // Etichetta ricca per la "prossima disponibilità": Oggi/Domani oppure
+    // "Giovedì 28 Ago" (giorno della settimana + giorno + mese breve).
+    var DAYS_FULL = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
+    function formatNextDateLabel(dateStr) {
+        var pill = formatDatePill(dateStr);
+        if (pill === 'Oggi' || pill === 'Domani') return pill;
+        var d = new Date(dateStr + 'T00:00:00');
+        var dow = d.getDay() - 1; if (dow < 0) dow = 6;
+        return DAYS_FULL[dow] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()].substring(0, 3);
     }
 
     // ===== INLINE VALIDATION =====
