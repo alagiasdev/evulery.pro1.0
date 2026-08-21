@@ -6,6 +6,35 @@ $MESI = [1=>'gennaio',2=>'febbraio',3=>'marzo',4=>'aprile',5=>'maggio',6=>'giugn
 $heroSub = ($context ?? 'owner') === 'reseller'
     ? 'Le ultime funzioni rilasciate — pronte da mostrare ai tuoi clienti e prospect.'
     : 'Le ultime funzioni che abbiamo rilasciato per far lavorare meglio il tuo ristorante.';
+
+// Card singola (riusata sia nel mese corrente sia nei mesi in tendina).
+$renderCard = function (array $r) use ($categories, $MESI): string {
+    $cat = $categories[$r['category']] ?? ['label' => 'Novità', 'color' => 'green', 'icon' => 'stars', 'emoji' => '✨'];
+    $ts = strtotime($r['date']);
+    $isNew = $ts >= strtotime('-10 days');
+    $dateLabel = (int)date('j', $ts) . ' ' . ($MESI[(int)date('n', $ts)] ?? '') . ' ' . date('Y', $ts);
+    ob_start(); ?>
+    <div class="rel-card <?= $isNew ? 'is-new' : '' ?>">
+        <div class="rel-ic <?= e($cat['color']) ?>"><?= $cat['emoji'] ?? '✨' ?></div>
+        <div class="rel-body">
+            <div class="rel-meta">
+                <span class="rel-chip <?= e($cat['color']) ?>"><?= e($cat['label']) ?></span>
+                <?php if ($isNew): ?><span class="rel-newbadge">Nuovo</span><?php endif; ?>
+                <span class="rel-date"><?= e($dateLabel) ?></span>
+            </div>
+            <h3><?= e($r['title']) ?></h3>
+            <p><?= e($r['desc']) ?></p>
+        </div>
+    </div>
+    <?php return ob_get_clean();
+};
+
+// Raggruppa per mese (Y-m). $releases è già DESC → i mesi restano dal più recente.
+$byMonth = [];
+foreach ($releases as $r) {
+    $byMonth[substr($r['date'], 0, 7)][] = $r;
+}
+$monthKeys = array_keys($byMonth);
 ?>
 <style nonce="<?= csp_nonce() ?>">
 .rel-page{ max-width:820px; }
@@ -16,10 +45,23 @@ $heroSub = ($context ?? 'owner') === 'reseller'
 .rel-hero h1{ font-size:1.9rem; font-weight:800; margin:.3rem 0 .35rem; }
 .rel-hero p{ margin:0; font-size:.95rem; opacity:.92; max-width:52ch; }
 .rel-feed{ display:flex; flex-direction:column; gap:1rem; }
+/* intestazione mese corrente (sempre aperto) */
+.rel-month-head{ font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#93a0a7; margin:.2rem 0 -.1rem; }
+/* mesi precedenti: tendina */
+.rel-month{ border:1px solid #e4e9eb; border-radius:12px; background:#fff; overflow:hidden; }
+.rel-month>summary{ list-style:none; cursor:pointer; user-select:none; display:flex; align-items:center; gap:.6rem;
+    padding:.85rem 1.1rem; font-weight:700; font-size:.95rem; color:#16232b; }
+.rel-month>summary::-webkit-details-marker{ display:none; }
+.rel-month>summary:hover{ background:#f6f8f9; }
+.rel-month-count{ font-weight:500; font-size:.8rem; color:#93a0a7; }
+.rel-month .rel-chev{ margin-left:auto; font-size:.78rem; color:#adb5bd; transition:transform .2s; }
+.rel-month[open] .rel-chev{ transform:rotate(180deg); }
+.rel-month-body{ padding:0 .9rem .9rem; display:flex; flex-direction:column; gap:.8rem; border-top:1px solid #f1f3f5; padding-top:.9rem; }
 .rel-card{ display:flex; gap:1rem; background:#fff; border:1px solid #e4e9eb; border-radius:14px; padding:1.1rem 1.2rem;
     box-shadow:0 1px 2px rgba(16,40,30,.04); transition:transform .12s, box-shadow .12s; }
 .rel-card:hover{ transform:translateY(-2px); box-shadow:0 12px 32px rgba(16,40,30,.08); }
 .rel-card.is-new{ border-color:#bfe3ce; box-shadow:0 0 0 3px rgba(0,132,74,.07); }
+.rel-month-body .rel-card{ border-color:#eef1f3; box-shadow:none; }
 .rel-ic{ width:44px; height:44px; border-radius:12px; flex:none; display:grid; place-items:center; font-size:1.3rem; }
 .rel-ic.green{ background:#e6f4ed; } .rel-ic.blue{ background:#e7f0fb; } .rel-ic.amber{ background:#fdf0d9; } .rel-ic.violet{ background:#efe9fb; }
 .rel-body{ flex:1; min-width:0; }
@@ -50,25 +92,27 @@ $heroSub = ($context ?? 'owner') === 'reseller'
                 Nessuna novità al momento. Torna presto!
             </div>
         <?php else: ?>
-            <?php foreach ($releases as $r): ?>
+            <?php foreach ($monthKeys as $i => $ym): ?>
                 <?php
-                    $cat = $categories[$r['category']] ?? ['label' => 'Novità', 'color' => 'green', 'icon' => 'stars', 'emoji' => '✨'];
-                    $ts = strtotime($r['date']);
-                    $isNew = $ts >= strtotime('-10 days');
-                    $dateLabel = (int)date('j', $ts) . ' ' . ($MESI[(int)date('n', $ts)] ?? '') . ' ' . date('Y', $ts);
+                    $ts = strtotime($ym . '-01');
+                    $monthLabel = ucfirst($MESI[(int)date('n', $ts)] ?? '') . ' ' . date('Y', $ts);
+                    $items = $byMonth[$ym];
                 ?>
-                <div class="rel-card <?= $isNew ? 'is-new' : '' ?>">
-                    <div class="rel-ic <?= e($cat['color']) ?>"><?= $cat['emoji'] ?? '✨' ?></div>
-                    <div class="rel-body">
-                        <div class="rel-meta">
-                            <span class="rel-chip <?= e($cat['color']) ?>"><?= e($cat['label']) ?></span>
-                            <?php if ($isNew): ?><span class="rel-newbadge">Nuovo</span><?php endif; ?>
-                            <span class="rel-date"><?= e($dateLabel) ?></span>
+                <?php if ($i === 0): // mese più recente: sempre aperto ?>
+                    <div class="rel-month-head"><?= e($monthLabel) ?></div>
+                    <?php foreach ($items as $r): ?><?= $renderCard($r) ?><?php endforeach; ?>
+                <?php else: // mesi precedenti: in tendina (pagina sempre ordinata) ?>
+                    <details class="rel-month">
+                        <summary>
+                            <?= e($monthLabel) ?>
+                            <span class="rel-month-count"><?= count($items) ?> <?= count($items) === 1 ? 'novità' : 'novità' ?></span>
+                            <i class="bi bi-chevron-down rel-chev"></i>
+                        </summary>
+                        <div class="rel-month-body">
+                            <?php foreach ($items as $r): ?><?= $renderCard($r) ?><?php endforeach; ?>
                         </div>
-                        <h3><?= e($r['title']) ?></h3>
-                        <p><?= e($r['desc']) ?></p>
-                    </div>
-                </div>
+                    </details>
+                <?php endif; ?>
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
