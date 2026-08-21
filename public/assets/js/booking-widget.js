@@ -268,6 +268,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 hint.style.display = 'none';
             }
         }
+
+        // Riprova sociale coerente con la disponibilità della data selezionata:
+        // se è al completo/bloccata (max===0) nascondiamo "Già X per oggi" —
+        // l'urgenza contraddirebbe il "tutto esaurito". Se c'è posto, la mostriamo.
+        if (max === 0) {
+            socialProof.style.display = 'none';
+        } else if (max !== null && state.todayBookings) {
+            showSocialProof(state.todayBookings);
+        }
     }
 
     // ===== TIME SLOTS =====
@@ -289,7 +298,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 state.groupedSlots = data.data.grouped_slots || [];
                 state.todayBookings = data.data.today_bookings || 0;
 
-                showSocialProof(state.todayBookings);
+                // Niente urgenza quando non ci sono orari (sold-out / bloccato).
+                if (state.groupedSlots.length > 0) {
+                    showSocialProof(state.todayBookings);
+                } else {
+                    socialProof.style.display = 'none';
+                }
                 renderGroupedSlots();
             })
             .catch(function() {
@@ -1186,12 +1200,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     })();
 
-    // Load social proof count on page load
+    // Load social proof count on page load. Mostriamo "Già X per oggi" SOLO se
+    // oggi ha ancora disponibilità: se è al completo/bloccato, l'urgenza
+    // contraddirebbe il "tutto esaurito" (incoerenza che confonde il cliente).
     fetch(apiUrl + '/tenants/' + slug + '/availability?date=' + formatDateISO(new Date()) + '&party_size=2&grouped=1')
         .then(function(r) { return checkApiResponse(r); })
         .then(function(data) {
-            if (data.success && data.data.today_bookings) {
-                showSocialProof(data.data.today_bookings);
+            if (data.success) {
+                state.todayBookings = data.data.today_bookings || 0;
+                if ((data.data.grouped_slots || []).length > 0) {
+                    showSocialProof(state.todayBookings);
+                }
             }
         })
         .catch(function() {});
