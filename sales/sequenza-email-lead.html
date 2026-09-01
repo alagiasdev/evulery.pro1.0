@@ -19,7 +19,6 @@
   .wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px}
   .bar{height:4px;background:linear-gradient(90deg,var(--brand),#4ade80);border-radius:6px;margin-bottom:22px}
   .head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
-  .logomark{width:34px;height:34px;flex:0 0 auto}
   h1{font-size:1.5rem;font-weight:800;letter-spacing:-.3px}
   .sub{color:var(--muted);font-size:.94rem;margin:4px 0 24px;max-width:680px}
 
@@ -68,11 +67,6 @@
 <div class="wrap">
   <div class="bar"></div>
   <div class="head">
-    <svg class="logomark" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" aria-label="evulery">
-      <circle cx="48" cy="48" r="44" fill="#00844A"/>
-      <path d="M30 48 Q30 32 48 32 Q66 32 66 48 L36 48 Q38 60 50 60 Q58 60 62 56" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none"/>
-      <circle cx="68" cy="62" r="5" fill="#4ade80"/>
-    </svg>
     <h1>Sequenza email lead</h1>
   </div>
   <p class="sub">Le email da inviare ai lead man mano che avanzano nella pipeline del backend. Ogni email è agganciata a uno stadio: quando cambi lo stato del lead, sai già quale mandare. Personalizza i campi, copia e invia.</p>
@@ -130,8 +124,7 @@ Quando vi è comodo? Vi propongo:
 Rispondete con quella che preferite, oppure ditemi voi un orario.
 
 A presto,
-<span class="ph">{{tuo_nome}}</span> — team Evulery
-— Pieni la sera, felici la mattina.</pre>
+<span class="ph">{{tuo_nome}}</span> — team Evulery</pre>
     <div class="actions">
       <button class="copy" type="button" data-target="b1" data-subject="s1">Copia oggetto + testo</button>
       <button class="copy sec" type="button" data-target="b1">Copia solo testo</button>
@@ -144,17 +137,15 @@ A presto,
       <div class="card-t"><span class="n">2</span> Follow-up (nessuna risposta)</div>
       <div class="badges"><span class="badge stage">Contattato</span><span class="badge time">+2–3 giorni</span></div>
     </div>
-    <div class="goal"><b>Obiettivo:</b> una spinta breve. Rispondi alla tua stessa email (oggetto "Re:") per restare nello stesso thread.</div>
+    <div class="goal"><b>Obiettivo:</b> una spinta breve e onesta, che dà una via d'uscita facile. Rispondi alla tua stessa email (oggetto "Re:") per restare nello stesso thread.</div>
     <p class="subject"><b>Oggetto:</b> <span id="s2">Re: {{nome_ristorante}}: vi mostro Evulery in 20 minuti?</span></p>
     <pre id="b2">Buongiorno <span class="ph">{{nome}}</span>,
 
-torno un attimo su questa. La domanda che mi fanno più spesso i ristoratori è: "quanto perdo davvero, tra no-show e telefonate a cui non riesco a rispondere?".
+niente di nuovo da aggiungere, solo un piccolo promemoria: vi avevo scritto per una demo di Evulery e immagino sia finita in fondo alla casella. Succede a tutti, figuratevi a chi ha un ristorante da mandare avanti.
 
-Per <span class="ph">{{nome_ristorante}}</span> bastano 20 minuti per rispondere con i numeri, non a sensazione.
+Se il periodo è storto va bene lo stesso: ditemi solo se ne riparliamo più avanti o se preferite che lasci perdere. Mi basta un rigo.
 
-Vi va questa settimana? Anche un semplice "sì, ma la prossima" mi basta per non disturbarvi nel momento sbagliato.
-
-<span class="ph">{{tuo_nome}}</span> — team Evulery</pre>
+<span class="ph">{{tuo_nome}}</span></pre>
     <div class="actions">
       <button class="copy" type="button" data-target="b2" data-subject="s2">Copia oggetto + testo</button>
       <button class="copy sec" type="button" data-target="b2">Copia solo testo</button>
@@ -167,19 +158,16 @@ Vi va questa settimana? Anche un semplice "sì, ma la prossima" mi basta per non
       <div class="card-t"><span class="n">3</span> Promemoria + preparazione</div>
       <div class="badges"><span class="badge stage">Demo programmata</span><span class="badge time">Giorno prima</span></div>
     </div>
-    <div class="goal"><b>Obiettivo:</b> ridurre i buchi in agenda e far arrivare il cliente con i due numeri che rendono la demo su misura.</div>
-    <p class="subject"><b>Oggetto:</b> <span id="s3">Domani la vostra demo Evulery — 2 minuti di preparazione</span></p>
+    <div class="goal"><b>Obiettivo:</b> confermare l'appuntamento e farli arrivare con due numeri in testa, così la demo parla del loro ristorante e non in astratto.</div>
+    <p class="subject"><b>Oggetto:</b> <span id="s3">Domani la vostra demo: 2 minuti di preparazione</span></p>
     <pre id="b3">Buongiorno <span class="ph">{{nome}}</span>,
 
-ci vediamo <span class="ph">{{data_demo}}</span> alle <span class="ph">{{ora_demo}}</span>. Per sfruttarla al massimo, tenete a mente due numeri (bastano a spanne):
-• quanti coperti fate in una sera piena,
-• quanti no-show avete in media a settimana.
+ci vediamo <span class="ph">{{data_demo}}</span> alle <span class="ph">{{ora_demo}}</span>. Non dovete preparare niente, ci pensiamo noi.
 
-Con quelli vi mostro il ritorno concreto per <span class="ph">{{nome_ristorante}}</span>, non una demo generica.
+L'unica cosa che aiuta davvero: se avete sottomano, anche a spanne, quanti coperti fate in una sera piena e quanti buchi vi lasciano i no-show. Così invece di parlare in generale ragioniamo sui vostri numeri.
 
-Non dovete installare né preparare nulla: ci pensiamo noi. A domani!
-
-<span class="ph">{{tuo_nome}}</span> — team Evulery</pre>
+A domani,
+<span class="ph">{{tuo_nome}}</span></pre>
     <div class="actions">
       <button class="copy" type="button" data-target="b3" data-subject="s3">Copia oggetto + testo</button>
       <button class="copy sec" type="button" data-target="b3">Copia solo testo</button>
@@ -192,21 +180,21 @@ Non dovete installare né preparare nulla: ci pensiamo noi. A domani!
       <div class="card-t"><span class="n">4</span> Riepilogo + offerta</div>
       <div class="badges"><span class="badge stage">Demo effettuata</span><span class="badge time">Stesso giorno</span></div>
     </div>
-    <div class="goal"><b>Obiettivo:</b> mentre è caldo, mettere per iscritto ciò che ha visto e proporre il passo successivo. Personalizza i tre punti con quello che è emerso nella demo.</div>
-    <p class="subject"><b>Oggetto:</b> <span id="s4">Come promesso: il riepilogo per {{nome_ristorante}}</span></p>
+    <div class="goal"><b>Obiettivo:</b> a caldo, mettere per iscritto quello che vi siete detti e proporre il passo dopo senza forzare. Personalizza i punti con ciò che è emerso nella demo.</div>
+    <p class="subject"><b>Oggetto:</b> <span id="s4">Come promesso, il riepilogo per {{nome_ristorante}}</span></p>
     <pre id="b4">Buongiorno <span class="ph">{{nome}}</span>,
 
-grazie per il tempo di oggi. Riassumo i punti che contano per voi:
+grazie per il tempo di oggi, mi ha fatto piacere.
+
+Vi lascio per iscritto le cose che ci siamo detti, così le rileggete con calma:
 • <span class="ph">{{punto_1}}</span>
 • <span class="ph">{{punto_2}}</span>
-• <span class="ph">{{punto_3}}</span>
 
-La proposta: piano <span class="ph">{{piano_consigliato}}</span> a prezzo di lancio, bloccato fino al 30 settembre 2026. Il prezzo che scegliete adesso resta il vostro anche in seguito, senza aumenti.
+Per come lavorate, <span class="ph">{{nome_ristorante}}</span> ci starebbe bene su <span class="ph">{{piano_consigliato}}</span>. Ma decidete voi, con i vostri tempi: nessuna fretta da parte mia.
 
-Il prossimo passo è semplice: vi mando il modulo di attivazione, lo firmate e in giornata siete operativi. Procediamo?
+Quando vi va, il passo dopo è semplice: si firma il modulo di attivazione e a mettere su tutto pensiamo noi. Se invece è rimasto qualche dubbio, rispondete pure qui: vi rispondo io.
 
-<span class="ph">{{tuo_nome}}</span> — team Evulery
-— Pieni la sera, felici la mattina.</pre>
+<span class="ph">{{tuo_nome}}</span></pre>
     <div class="actions">
       <button class="copy" type="button" data-target="b4" data-subject="s4">Copia oggetto + testo</button>
       <button class="copy sec" type="button" data-target="b4">Copia solo testo</button>
@@ -219,19 +207,21 @@ Il prossimo passo è semplice: vi mando il modulo di attivazione, lo firmate e i
       <div class="card-t"><span class="n">5</span> Obiezioni frequenti</div>
       <div class="badges"><span class="badge stage">In trattativa</span><span class="badge time">+3–4 giorni</span></div>
     </div>
-    <div class="goal"><b>Obiettivo:</b> sciogliere i tre dubbi che bloccano la firma, senza pressione. La scadenza dell'offerta è reale, non inventata.</div>
-    <p class="subject"><b>Oggetto:</b> <span id="s5">Le 3 domande che ci fanno più spesso</span></p>
+    <div class="goal"><b>Obiettivo:</b> sciogliere i dubbi che bloccano la decisione, da persona a persona, senza pressione.</div>
+    <p class="subject"><b>Oggetto:</b> <span id="s5">Prima che decidiate, due parole</span></p>
     <pre id="b5">Buongiorno <span class="ph">{{nome}}</span>,
 
-prima che decidiate, tolgo i tre dubbi più comuni:
+ci ho ripensato: quando si cambia il modo di lavorare i dubbi veri sono quasi sempre gli stessi. Ve li tolgo senza girarci intorno.
 
-1) "Quanto ci impegna?" Poco: la configurazione la facciamo insieme, il grosso è pronto in un pomeriggio.
-2) "E i clienti che ho già?" Li importiamo noi dal vostro file: non si perde nulla.
-3) "E se non fa per noi?" Nessun vincolo lungo: si resta perché funziona, non per contratto.
+Sul tempo: la configurazione la facciamo noi insieme a voi, non vi lasciamo davanti a una schermata vuota.
 
-Il prezzo di lancio resta valido fino al 30 settembre 2026. Se per <span class="ph">{{nome_ristorante}}</span> ha senso, il modulo di attivazione è già pronto.
+Sui clienti che avete già: non si perde niente, li portiamo dentro noi dal vostro file.
 
-<span class="ph">{{tuo_nome}}</span> — team Evulery</pre>
+Sull'impegno: si resta finché ha senso per voi. Se un domani non serve più, si chiude e basta, senza penali.
+
+Se invece c'è un dubbio che non ho toccato, scrivetemelo: preferisco rispondere a quello vero. E quando siete pronti, il modulo di attivazione è lì.
+
+<span class="ph">{{tuo_nome}}</span></pre>
     <div class="actions">
       <button class="copy" type="button" data-target="b5" data-subject="s5">Copia oggetto + testo</button>
       <button class="copy sec" type="button" data-target="b5">Copia solo testo</button>
@@ -244,17 +234,18 @@ Il prezzo di lancio resta valido fino al 30 settembre 2026. Se per <span class="
       <div class="card-t"><span class="n">6</span> Nurturing di valore</div>
       <div class="badges"><span class="badge stage">Fermo (non perso)</span><span class="badge time">+7–10 giorni</span></div>
     </div>
-    <div class="goal"><b>Obiettivo:</b> restare presenti dando qualcosa di utile, senza chiedere nulla. Costruisce la fiducia che poi porta alla firma.</div>
+    <div class="goal"><b>Obiettivo:</b> restare presenti dando qualcosa di utile, senza chiedere niente in cambio. È così che si costruisce la fiducia.</div>
     <p class="subject"><b>Oggetto:</b> <span id="s6">Una cosa utile per {{nome_ristorante}}, a prescindere da noi</span></p>
     <pre id="b6">Buongiorno <span class="ph">{{nome}}</span>,
 
-a prescindere da Evulery: dal 2026 le recensioni online hanno regole più severe e le recensioni finte sono sanzionabili. Per un ristorante onesto è un'occasione — chi raccoglie recensioni vere, nel modo giusto, si prende lo spazio degli altri.
+questa non è una mail di vendita, quindi non serve nemmeno rispondere.
 
-Ve lo segnalo perché è utile comunque. Se poi vorrete, Evulery lo fa in automatico: chiede la recensione dopo la visita, solo ai clienti giusti.
+Volevo solo segnalarvi una cosa utile comunque: dal 2026 le regole sulle recensioni online sono più severe e le recensioni finte adesso si possono sanzionare. Per chi lavora onestamente è una buona notizia, perché a contare di più è chi le recensioni se le merita davvero.
 
-Ci sono quando volete.
+Se un giorno vi va di ragionare su come raccoglierle nel modo giusto, io ci sono volentieri. Altrimenti prendetela come un'informazione e nient'altro.
 
-<span class="ph">{{tuo_nome}}</span> — team Evulery</pre>
+Un saluto,
+<span class="ph">{{tuo_nome}}</span></pre>
     <div class="actions">
       <button class="copy" type="button" data-target="b6" data-subject="s6">Copia oggetto + testo</button>
       <button class="copy sec" type="button" data-target="b6">Copia solo testo</button>
@@ -267,17 +258,19 @@ Ci sono quando volete.
       <div class="card-t"><span class="n">7</span> Break-up</div>
       <div class="badges"><span class="badge stage">Prima di “Perso”</span><span class="badge time">+14 giorni</span></div>
     </div>
-    <div class="goal"><b>Obiettivo:</b> chiudere con eleganza. È l'email che, paradossalmente, fa rispondere di più: leva la pressione e lascia la porta aperta.</div>
-    <p class="subject"><b>Oggetto:</b> <span id="s7">Chiudo qui, ma la porta resta aperta</span></p>
+    <div class="goal"><b>Obiettivo:</b> chiudere con dignità. Paradossalmente è l'email che fa rispondere di più, perché toglie la pressione e resta umana.</div>
+    <p class="subject"><b>Oggetto:</b> <span id="s7">L'ultima mia, promesso</span></p>
     <pre id="b7">Buongiorno <span class="ph">{{nome}}</span>,
 
-non voglio insistere: immagino che ora non sia il momento giusto, ed è legittimo.
+non voglio diventare la mail che vi tocca ignorare ogni settimana, quindi mi fermo qui.
 
-Chiudo io il filo, per non riempirvi la casella. Se più avanti vorrete ridurre i no-show e riempire i tavoli vuoti, basta un vostro messaggio e riprendiamo esattamente da qui.
+Non era il momento, o non era la cosa giusta per voi: va bene in tutti e due i casi, davvero.
 
-In bocca al lupo per <span class="ph">{{nome_ristorante}}</span>, di cuore.
+Resto comunque a disposizione. Se più avanti le prenotazioni o i no-show vi daranno filo da torcere, sapete dove trovarmi: rispondete a questa mail, anche fra sei mesi, e riprendiamo da dove eravamo.
 
-<span class="ph">{{tuo_nome}}</span> — team Evulery</pre>
+In bocca al lupo per <span class="ph">{{nome_ristorante}}</span>.
+
+<span class="ph">{{tuo_nome}}</span></pre>
     <div class="actions">
       <button class="copy" type="button" data-target="b7" data-subject="s7">Copia oggetto + testo</button>
       <button class="copy sec" type="button" data-target="b7">Copia solo testo</button>
