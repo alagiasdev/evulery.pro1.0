@@ -7,8 +7,10 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
 use App\Models\Plan;
+use App\Models\ResellerProfile;
 use App\Models\Service;
 use App\Services\AuditLog;
+use App\Services\CommissionCalculator;
 
 class SubscriptionsController
 {
@@ -18,31 +20,52 @@ class SubscriptionsController
     {
         $db = Database::getInstance();
 
-        // KPI — MRR totale + split (da reseller / diretto)
+        // KPI — MRR netto + split (diretto / reseller) + lordo + commissioni scorporate.
+        // La commissione reseller è una revenue-share RICORRENTE lifetime (si ri-incassa
+        // a ogni rinnovo del cliente): denaro che non entra mai in cassa Evulery, quindi
+        // va scorporato dall'MRR. Il setup è una-tantum → NON è ricorrente, resta fuori.
+        // Equivalente mensile della commissione = commissione_annua / 12 (indipendente dal
+        // ciclo di fatturazione). Le commissioni del SINGOLO reseller (custom) via JOIN.
         $activeSubs = $db->query(
             "SELECT p.price, p.price_semiannual, p.price_annual,
                     p.billing_months_semi, p.billing_months_annual,
+                    p.name AS plan_name,
                     s.billing_cycle, s.extra_discount,
-                    t.acquired_by_reseller_id
+                    t.acquired_by_reseller_id,
+                    rp.commission_starter, rp.commission_professional, rp.commission_enterprise
              FROM subscriptions s
              JOIN plans p ON p.id = s.plan_id
              JOIN tenants t ON t.id = s.tenant_id
+             LEFT JOIN reseller_profiles rp ON rp.user_id = t.acquired_by_reseller_id
              WHERE s.status = 'active' AND t.is_active = 1"
         )->fetchAll();
 
-        $mrr = 0;
-        $mrrReseller = 0;
-        $mrrDirect   = 0;
+        $mrr           = 0;   // netto: quello che incassa davvero Evulery
+        $mrrGross      = 0;   // lordo: canone pieno pagato dai clienti
+        $mrrReseller   = 0;   // parte reseller NETTA (canone − commissione)
+        $mrrDirect     = 0;   // parte diretta (nessuna commissione)
+        $mrrCommission = 0;   // commissioni reseller scorporate (mensile)
         foreach ($activeSubs as $as) {
             $calc = Plan::calculatePrice($as, $as['billing_cycle'] ?? 'annual', (float)($as['extra_discount'] ?? 0));
             $monthly = $calc['monthly'];
-            $mrr += $monthly;
+            $mrrGross += $monthly;
             if (!empty($as['acquired_by_reseller_id'])) {
-                $mrrReseller += $monthly;
+                // Commissione annua del piano per QUESTO reseller (default se il profilo
+                // manca) → equivalente mensile. Non si può scorporare più del canone.
+                $profile = [
+                    'commission_starter'      => $as['commission_starter']      ?? ResellerProfile::DEFAULT_COMMISSION_STARTER,
+                    'commission_professional' => $as['commission_professional'] ?? ResellerProfile::DEFAULT_COMMISSION_PROFESSIONAL,
+                    'commission_enterprise'   => $as['commission_enterprise']   ?? ResellerProfile::DEFAULT_COMMISSION_ENTERPRISE,
+                ];
+                $monthlyComm = CommissionCalculator::commissionForPlan($as['plan_name'] ?? '', $profile) / 12;
+                $netMonthly  = max(0, $monthly - $monthlyComm);
+                $mrrReseller   += $netMonthly;
+                $mrrCommission += ($monthly - $netMonthly); // = min(monthly, commissione), tiene lordo = netto + commissioni
             } else {
                 $mrrDirect += $monthly;
             }
         }
+        $mrr = $mrrDirect + $mrrReseller; // MRR netto
 
         // I KPI contano solo ristoranti ATTIVI (t.is_active=1): un ristorante
         // disattivato non è un cliente attivo → fuori da MRR/Attivi/Trial/In scadenza.
@@ -92,8 +115,10 @@ class SubscriptionsController
             'activeMenu'     => 'subscriptions',
             'activeTab'      => 'subscriptions',
             'mrr'            => $mrr,
+            'mrrGross'       => $mrrGross,
             'mrrReseller'    => $mrrReseller,
             'mrrDirect'      => $mrrDirect,
+            'mrrCommission'  => $mrrCommission,
             'activeCount'    => $activeCount,
             'trialCount'     => $trialCount,
             'expiringCount'  => $expiringCount,
