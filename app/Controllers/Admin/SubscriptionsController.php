@@ -71,6 +71,7 @@ class SubscriptionsController
 
         $subscriptions = $db->query(
             "SELECT s.*, t.name as tenant_name, t.slug as tenant_slug,
+                    t.is_active as tenant_active,
                     t.acquired_by_reseller_id,
                     p.name as plan_name, p.color as plan_color, p.price as plan_price,
                     p.price_semiannual, p.price_annual,

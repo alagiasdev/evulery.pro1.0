@@ -158,7 +158,7 @@ class User
 
         $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
         $stmt = $this->db->prepare(
-            "SELECT u.*, t.name AS tenant_name, t.slug AS tenant_slug
+            "SELECT u.*, t.name AS tenant_name, t.slug AS tenant_slug, t.is_active AS tenant_active
              FROM users u
              LEFT JOIN tenants t ON t.id = u.tenant_id
              {$whereSql}

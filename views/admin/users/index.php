@@ -125,6 +125,7 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
                     <span class="adm-sub-card-value">
                         <?php if ($u['tenant_name'] ?? ''): ?>
                             <a href="<?= url("admin/tenants/{$u['tenant_id']}/edit") ?>" style="color:var(--admin-accent);text-decoration:none;font-size:.82rem;"><?= e($u['tenant_name']) ?></a>
+                            <?php if (empty($u['tenant_active'])): ?><span style="display:block;font-size:.68rem;color:#c0392b;" title="Ristorante disattivato">⛔ disattivato</span><?php endif; ?>
                         <?php else: ?>
                             <span style="color:#adb5bd;">&mdash;</span>
                         <?php endif; ?>

@@ -111,6 +111,12 @@ $tabs = [
         } else {
             $s['_statusBadge'] = '<span class="adm-badge adm-badge-inactive">' . e(ucfirst($s['status'])) . '</span>';
         }
+        // Badge "ristorante disattivato" = stato del RISTORANTE (distinto dallo
+        // stato abbonamento): non conta in MRR/Attivi e il ristoratore vede la
+        // pagina "sospeso". Chiarisce perché un abbonamento "Attivo" è comunque spento.
+        $s['_deactBadge'] = empty($s['tenant_active'])
+            ? '<span class="adm-badge adm-badge-inactive" title="Ristorante disattivato: escluso da MRR/Attivi; il ristoratore vede la pagina sospeso">⛔ Ristorante disattivato</span>'
+            : '';
         // Expiry display
         if ($s['current_period_end']) {
             $endTs = strtotime($s['current_period_end']);
@@ -132,6 +138,7 @@ $tabs = [
             <div class="adm-sub-card-top">
                 <div>
                     <div class="adm-sub-card-name"><?= e($s['tenant_name']) ?></div>
+                    <?php if ($s['_deactBadge']): ?><div style="margin:.2rem 0;"><?= $s['_deactBadge'] ?></div><?php endif; ?>
                     <div class="adm-sub-card-plan">
                         <?php if ($s['plan_name']): ?>
                         <span class="adm-badge-plan" style="background:<?= e($s['plan_color']) ?>15;color:<?= e($s['plan_color']) ?>;"><?= e($s['plan_name']) ?></span>
@@ -198,7 +205,7 @@ $tabs = [
             <tbody>
                 <?php foreach ($subscriptions as $s): ?>
                 <tr>
-                    <td class="cell-name"><?= e($s['tenant_name']) ?></td>
+                    <td class="cell-name"><?= e($s['tenant_name']) ?><?php if ($s['_deactBadge']): ?><br><?= $s['_deactBadge'] ?><?php endif; ?></td>
                     <td>
                         <?php if ($s['plan_name']): ?>
                         <span class="adm-badge-plan" style="background:<?= e($s['plan_color']) ?>15;color:<?= e($s['plan_color']) ?>;"><?= e($s['plan_name']) ?></span>
