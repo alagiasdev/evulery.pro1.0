@@ -84,6 +84,14 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
         $u['_statusBadge'] = $u['is_active']
             ? '<span class="adm-badge adm-badge-active" style="font-size:.68rem;">Attivo</span>'
             : '<span class="adm-badge adm-badge-inactive" style="font-size:.68rem;">Inattivo</span>';
+        // Ristorante dell'utente disattivato: la pillola stato utente non deve
+        // sembrare "sana" (verde) e la riga si attenua, coerente con Abbonamenti.
+        // L'etichetta resta vera (l'account può ancora loggare), ma il verde non
+        // deve dire "tutto ok" mentre il ristorante è spento.
+        $u['_tenantOff'] = !empty($u['tenant_name']) && empty($u['tenant_active']);
+        if ($u['_tenantOff']) {
+            $u['_statusBadge'] = str_replace('adm-badge-active', 'adm-badge-inactive', $u['_statusBadge']);
+        }
         $u['_lastLogin'] = $u['last_login_at']
             ? format_date($u['last_login_at'], 'd/m/Y H:i')
             : '<span style="font-style:italic;color:#adb5bd;">Mai</span>';
@@ -92,10 +100,20 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
     unset($u);
     ?>
 
+    <!-- Ristorante disattivato: la riga si attenua (sbiadisce nell'elenco), il
+         segnale "⛔ disattivato" resta accanto al ristorante. La colonna Azioni
+         NON si attenua; hover ripristina la riga piena. -->
+    <style>
+        .adm-row-off > td:not(:last-child){ opacity:.55; }
+        .adm-row-off:hover > td{ opacity:1; }
+        .adm-sub-card.adm-off{ opacity:.62; }
+        .adm-sub-card.adm-off:hover{ opacity:1; }
+    </style>
+
     <!-- Mobile: card list -->
     <div class="adm-user-mobile d-md-none">
         <?php foreach ($users as $u): ?>
-        <div class="adm-sub-card">
+        <div class="adm-sub-card<?= !empty($u['_tenantOff']) ? ' adm-off' : '' ?>">
             <div class="adm-sub-card-top">
                 <div>
                     <div class="adm-sub-card-name"><?= $u['_name'] ?></div>
@@ -156,7 +174,7 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
         </thead>
         <tbody>
             <?php foreach ($users as $u): ?>
-            <tr>
+            <tr<?= !empty($u['_tenantOff']) ? ' class="adm-row-off"' : '' ?>>
                 <td style="font-weight:600;font-size:.85rem;"><?= $u['_name'] ?></td>
                 <td style="font-size:.82rem;"><?= e($u['email']) ?></td>
                 <td>

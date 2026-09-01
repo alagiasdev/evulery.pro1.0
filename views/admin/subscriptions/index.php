@@ -117,6 +117,16 @@ $tabs = [
         $s['_deactBadge'] = empty($s['tenant_active'])
             ? '<span class="adm-badge adm-badge-inactive" title="Ristorante disattivato: escluso da MRR/Attivi; il ristoratore vede la pagina sospeso">⛔ Ristorante disattivato</span>'
             : '';
+        // Ristorante spento: la pillola di stato non deve sembrare "sana" (verde/blu).
+        // La rendiamo dormiente (grigia) mantenendo l'etichetta vera (l'abbonamento
+        // fattura davvero); il verde tornerebbe a mentire "tutto ok".
+        if (empty($s['tenant_active'])) {
+            $s['_statusBadge'] = str_replace(
+                ['adm-badge-active', 'adm-badge-trial'],
+                'adm-badge-inactive',
+                $s['_statusBadge']
+            );
+        }
         // Expiry display
         if ($s['current_period_end']) {
             $endTs = strtotime($s['current_period_end']);
@@ -131,10 +141,20 @@ $tabs = [
     unset($s);
     ?>
 
+    <!-- Ristorante disattivato: la riga si attenua (sbiadisce nell'elenco), il
+         badge ⛔ resta il segnale. La colonna Azioni NON si attenua (riattivazione
+         sempre leggibile); hover ripristina la riga piena. -->
+    <style>
+        .adm-row-off > td:not(.cell-actions){ opacity:.55; }
+        .adm-row-off:hover > td{ opacity:1; }
+        .adm-sub-card.adm-off{ opacity:.62; }
+        .adm-sub-card.adm-off:hover{ opacity:1; }
+    </style>
+
     <!-- Mobile: card list -->
     <div class="adm-sub-mobile d-md-none">
         <?php foreach ($subscriptions as $s): ?>
-        <div class="adm-sub-card">
+        <div class="adm-sub-card<?= empty($s['tenant_active']) ? ' adm-off' : '' ?>">
             <div class="adm-sub-card-top">
                 <div>
                     <div class="adm-sub-card-name"><?= e($s['tenant_name']) ?></div>
@@ -204,7 +224,7 @@ $tabs = [
             </thead>
             <tbody>
                 <?php foreach ($subscriptions as $s): ?>
-                <tr>
+                <tr<?= empty($s['tenant_active']) ? ' class="adm-row-off"' : '' ?>>
                     <td class="cell-name"><?= e($s['tenant_name']) ?><?php if ($s['_deactBadge']): ?><br><?= $s['_deactBadge'] ?><?php endif; ?></td>
                     <td>
                         <?php if ($s['plan_name']): ?>
