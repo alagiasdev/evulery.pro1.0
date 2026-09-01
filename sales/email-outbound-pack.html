@@ -610,7 +610,7 @@ p { margin: 0 0 14px 0; }
         </div>
         <div class="bp">
             <div class="bp-title"><span class="num">4</span>Un link, mai due</div>
-            <div class="bp-body">Più link = più filtri spam attivati. Un solo link, possibilmente al ROI calculator (calculator-v2.html) o alla landing. Mai PDF allegati: trigger di spam quasi automatico in cold outreach.</div>
+            <div class="bp-body">Più link = più filtri spam attivati. In cold outreach il massimo è un link (alla landing), ma spesso converte di più chiudere con una domanda e chiedere una risposta: zero link, zero filtri, e apri una conversazione. Mai PDF allegati: trigger di spam quasi automatico.</div>
         </div>
         <div class="bp">
             <div class="bp-title"><span class="num">5</span>Plain text, niente HTML pesante</div>
@@ -643,7 +643,7 @@ p { margin: 0 0 14px 0; }
         <div class="subj-cat-label">Funzionano perché creano curiosità immediata</div>
         <div class="subj-list">
             <div class="subj"><div class="subj-text">Quante prenotazioni perdete al mese?</div><span class="subj-meta">32 char</span><button class="subj-copy" data-text="Quante prenotazioni perdete al mese?">📋</button></div>
-            <div class="subj"><div class="subj-text">Quanto vi costa davvero TheFork?</div><span class="subj-meta">31 char</span><button class="subj-copy" data-text="Quanto vi costa davvero TheFork?">📋</button></div>
+            <div class="subj"><div class="subj-text">Quante commissioni pagate ogni mese?</div><span class="subj-meta">36 char</span><button class="subj-copy" data-text="Quante commissioni pagate ogni mese?">📋</button></div>
             <div class="subj"><div class="subj-text">Una domanda sulle vostre commissioni</div><span class="subj-meta">36 char</span><button class="subj-copy" data-text="Una domanda sulle vostre commissioni">📋</button></div>
         </div>
     </div>
@@ -718,22 +718,19 @@ p { margin: 0 0 14px 0; }
         </div>
         <div class="tpl-email">
             <div class="email-headers">
-                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;commerciale@evulery.it&gt;</div></div>
+                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;info@evulery.it&gt;</div></div>
                 <div class="row"><div class="label">A:</div><div class="value">{{email_ristorante}}</div></div>
-                <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-1">Quanto vi costa davvero TheFork?</div></div>
+                <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-1">Quante commissioni pagate ogni mese?</div></div>
             </div>
             <div class="email-body" id="body-1">Buongiorno <span class="placeholder">{{nome_ristorante}}</span>,
 
 scrivo dal team di Evulery, una piattaforma italiana per la gestione delle prenotazioni dei ristoranti indipendenti.
 
-Una domanda diretta: nel vostro ristorante, quante prenotazioni al mese arrivano da TheFork o piattaforme simili? Se sono 200-300 con scontrino medio €30-€40, in un anno state pagando tra 7.000 e 15.000 euro in commissioni. Soldi che spariscono ogni mese in modo invisibile.
+Una domanda diretta: nel vostro ristorante, quante prenotazioni al mese arrivano dai portali a commissione? Se sono 200-300 con scontrino medio €30-€40, in un anno state pagando tra 7.000 e 15.000 euro in commissioni. Soldi che spariscono ogni mese in modo invisibile.
 
 Evulery offre lo stesso servizio (prenotazioni online dal vostro sito, dashboard, menù digitale con QR) a canone fisso da €49 al mese. Niente percentuali sui coperti.
 
-Vi lascio il calcolatore — è online e ci mettete 30 secondi:
-👉 evulery.it/calculator-v2.html
-
-Se vi interessa una demo (in italiano, senza obbligo) rispondete a questa email.<div class="signature">In caso non vi interessi, ditemelo direttamente: niente follow-up.
+Se vi va, rispondete a questa email: vi calcolo su misura quanto risparmiereste sul vostro volume e, se vi interessa, fissiamo una demo di 20 minuti (in italiano, senza obbligo).<div class="signature">In caso non vi interessi, ditemelo direttamente: niente follow-up.
 
 — Team Evulery
 evulery.it · info@evulery.it
@@ -770,20 +767,19 @@ P.S. Conformi alla Legge 34/2026 sulle recensioni online, nativamente.</div></di
         </div>
         <div class="tpl-email">
             <div class="email-headers">
-                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;commerciale@evulery.it&gt;</div></div>
+                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;info@evulery.it&gt;</div></div>
                 <div class="row"><div class="label">A:</div><div class="value">{{email_ristorante}}</div></div>
-                <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-2">Re: Quanto vi costa davvero TheFork?</div></div>
+                <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-2">Re: Quante commissioni pagate ogni mese?</div></div>
             </div>
             <div class="email-body" id="body-2">Buongiorno <span class="placeholder">{{nome_ristorante}}</span>,
 
 vi scrivo solo per aggiungere una cosa che ho dimenticato l'altro giorno.
 
-Spesso i ristoratori ci dicono "TheFork mi porta clienti". È vero in parte. Ma dai dati di settore, il 60-70% di chi prenota su TheFork sono persone che <em>vi conoscevano già</em> — vi avrebbero cercato comunque su Google, e con un widget di prenotazione vostro avrebbero prenotato direttamente.
+Spesso i ristoratori ci dicono "il portale mi porta clienti". È vero in parte. Ma dai dati di settore, il 60-70% di chi prenota dai portali sono persone che <em>vi conoscevano già</em> — vi avrebbero cercato comunque su Google, e con un widget di prenotazione vostro avrebbero prenotato direttamente.
 
 Quindi state pagando commissioni per la maggior parte dei vostri clienti già acquisiti.
 
-Vale la pena calcolare quanto sarebbe?
-👉 evulery.it/calculator-v2.html<div class="signature">— Team Evulery
+Vale la pena calcolarlo insieme: rispondete e vi mando due conti sul vostro volume.<div class="signature">— Team Evulery
 evulery.it</div></div>
         </div>
         <div class="tpl-actions">
@@ -815,7 +811,7 @@ evulery.it</div></div>
         </div>
         <div class="tpl-email">
             <div class="email-headers">
-                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;commerciale@evulery.it&gt;</div></div>
+                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;info@evulery.it&gt;</div></div>
                 <div class="row"><div class="label">A:</div><div class="value">{{email_ristorante}}</div></div>
                 <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-3">Sulla nuova legge recensioni 2026</div></div>
             </div>
@@ -862,7 +858,7 @@ evulery.it</div></div>
         </div>
         <div class="tpl-email">
             <div class="email-headers">
-                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;commerciale@evulery.it&gt;</div></div>
+                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;info@evulery.it&gt;</div></div>
                 <div class="row"><div class="label">A:</div><div class="value">{{email_ristorante}}</div></div>
                 <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-4">Solo un'ultima cosa, poi vi lascio</div></div>
             </div>
@@ -903,7 +899,7 @@ evulery.it · info@evulery.it</div></div>
         </div>
         <div class="tpl-email">
             <div class="email-headers">
-                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;commerciale@evulery.it&gt;</div></div>
+                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;info@evulery.it&gt;</div></div>
                 <div class="row"><div class="label">A:</div><div class="value">{{email_ristorante}}</div></div>
                 <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-5">Da {{nome_referrer}}, vi presento Evulery</div></div>
             </div>
@@ -911,7 +907,7 @@ evulery.it · info@evulery.it</div></div>
 
 vi scrivo su consiglio di <span class="placeholder">{{nome_referrer}}</span>, che ci ha detto che potreste essere interessati a una piattaforma italiana di prenotazioni a canone fisso (no commissioni sui coperti).
 
-Sintetizzo in 30 secondi: Evulery gestisce prenotazioni online, menù digitale ed email marketing già dal piano base a €49 al mese; salendo di piano aggiungi caparra, recensioni conformi alla legge, gestione tavoli e ordini takeaway/delivery. Stesso lavoro di TheFork e simili, senza percentuali su ogni cliente.
+Sintetizzo in 30 secondi: Evulery gestisce prenotazioni online, menù digitale ed email marketing già dal piano base a €49 al mese; salendo di piano aggiungi caparra, recensioni conformi alla legge, gestione tavoli e ordini takeaway/delivery. Stesso lavoro dei portali a commissione, senza percentuali su ogni cliente.
 
 Se vi va di vederlo dal vivo, fissiamo 30 minuti? Scegliete voi quando.
 
@@ -947,7 +943,7 @@ evulery.it</div></div>
         </div>
         <div class="tpl-email">
             <div class="email-headers">
-                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;commerciale@evulery.it&gt;</div></div>
+                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;info@evulery.it&gt;</div></div>
                 <div class="row"><div class="label">A:</div><div class="value">{{email_ristorante}}</div></div>
                 <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-6">A proposito di {{nome_ristorante}}...</div></div>
             </div>
@@ -992,7 +988,7 @@ evulery.it</div></div>
         </div>
         <div class="tpl-email">
             <div class="email-headers">
-                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;commerciale@evulery.it&gt;</div></div>
+                <div class="row"><div class="label">Da:</div><div class="value">Team Evulery &lt;info@evulery.it&gt;</div></div>
                 <div class="row"><div class="label">A:</div><div class="value">{{email_ristorante}}</div></div>
                 <div class="row subject"><div class="label">Oggetto:</div><div class="value" id="subj-7">Ho visto la vostra recensione su {{piattaforma}}</div></div>
             </div>
@@ -1004,7 +1000,7 @@ Una domanda concreta: dal 2026 le recensioni online devono essere verificabili �
 
 Evulery è conforme nativamente: ogni recensione raccolta tramite il sistema è collegata a una visita verificata.
 
-Se ti va di vederlo: evulery.it/calculator-v2.html (per il costo) o rispondi a questa email per una demo di 30 minuti.<div class="signature">— Team Evulery
+Se ti va di vederlo, rispondi a questa email: ti mostro come funziona in una demo di 20 minuti.<div class="signature">— Team Evulery
 evulery.it</div></div>
         </div>
         <div class="tpl-actions">

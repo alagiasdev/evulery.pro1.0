@@ -15,6 +15,7 @@ use App\Core\Response;
 class DocumentService
 {
     public const CATEGORIES = [
+        'sales'      => ['label' => 'Vendite & follow-up',     'icon' => 'envelope-paper'],
         'onboarding' => ['label' => 'Onboarding & attivazione', 'icon' => 'clipboard-check'],
         'legal'      => ['label' => 'Legale & privacy',        'icon' => 'shield-lock'],
     ];

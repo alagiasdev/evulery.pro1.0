@@ -24,6 +24,14 @@
  */
 
 return [
+    'sequenza-email-lead' => [
+        'category'     => 'sales',
+        'title'        => 'Sequenza email lead',
+        'description'  => 'Le email da inviare ai lead man mano che avanzano nella pipeline (Nuovo → Contattato → Demo → Trattativa → Cliente). 7 testi pronti, agganciati agli stadi, con pulsante "Copia".',
+        'icon'         => 'envelope-paper',
+        'file'         => 'sales/sequenza-email-lead.html',
+    ],
+
     'modulo-attivazione' => [
         'category'     => 'onboarding',
         'title'        => 'Modulo di attivazione',
