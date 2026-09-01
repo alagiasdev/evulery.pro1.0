@@ -116,7 +116,7 @@ class DashboardController
             "SELECT s.id, t.name as tenant_name, s.current_period_end
              FROM subscriptions s
              JOIN tenants t ON t.id = s.tenant_id
-             WHERE s.status = 'active' AND s.current_period_end < CURDATE()
+             WHERE s.status = 'active' AND t.is_active = 1 AND s.current_period_end < CURDATE()
              ORDER BY s.current_period_end ASC
              LIMIT 5"
         )->fetchAll();
@@ -126,7 +126,7 @@ class DashboardController
             "SELECT s.id, t.name as tenant_name, s.current_period_end
              FROM subscriptions s
              JOIN tenants t ON t.id = s.tenant_id
-             WHERE s.status = 'active'
+             WHERE s.status = 'active' AND t.is_active = 1
              AND s.current_period_end BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)
              ORDER BY s.current_period_end ASC
              LIMIT 5"

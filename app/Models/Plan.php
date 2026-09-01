@@ -17,7 +17,9 @@ class Plan
     public function all(): array
     {
         return $this->db->query(
-            'SELECT p.*, (SELECT COUNT(*) FROM subscriptions s WHERE s.plan_id = p.id AND s.status = "active") as active_count
+            'SELECT p.*, (SELECT COUNT(*) FROM subscriptions s
+                          JOIN tenants t ON t.id = s.tenant_id
+                          WHERE s.plan_id = p.id AND s.status = "active" AND t.is_active = 1) as active_count
              FROM plans p ORDER BY p.sort_order ASC'
         )->fetchAll();
     }

@@ -27,7 +27,7 @@ class SubscriptionsController
              FROM subscriptions s
              JOIN plans p ON p.id = s.plan_id
              JOIN tenants t ON t.id = s.tenant_id
-             WHERE s.status = 'active'"
+             WHERE s.status = 'active' AND t.is_active = 1"
         )->fetchAll();
 
         $mrr = 0;
@@ -44,23 +44,25 @@ class SubscriptionsController
             }
         }
 
-        $activeCount = (int)$db->query("SELECT COUNT(*) FROM subscriptions WHERE status = 'active'")->fetchColumn();
-        $trialCount  = (int)$db->query("SELECT COUNT(*) FROM subscriptions WHERE status = 'trialing'")->fetchColumn();
+        // I KPI contano solo ristoranti ATTIVI (t.is_active=1): un ristorante
+        // disattivato non è un cliente attivo → fuori da MRR/Attivi/Trial/In scadenza.
+        $activeCount = (int)$db->query("SELECT COUNT(*) FROM subscriptions s JOIN tenants t ON t.id = s.tenant_id WHERE s.status = 'active' AND t.is_active = 1")->fetchColumn();
+        $trialCount  = (int)$db->query("SELECT COUNT(*) FROM subscriptions s JOIN tenants t ON t.id = s.tenant_id WHERE s.status = 'trialing' AND t.is_active = 1")->fetchColumn();
 
         $expiringCount = (int)$db->query(
-            "SELECT COUNT(*) FROM subscriptions
-             WHERE status = 'active' AND current_period_end BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)"
+            "SELECT COUNT(*) FROM subscriptions s JOIN tenants t ON t.id = s.tenant_id
+             WHERE s.status = 'active' AND t.is_active = 1 AND s.current_period_end BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)"
         )->fetchColumn();
 
         // Filter
         $filter = $request->query('filter', '');
         $where  = '';
         if ($filter === 'active') {
-            $where = " AND s.status = 'active'";
+            $where = " AND s.status = 'active' AND t.is_active = 1";
         } elseif ($filter === 'trialing') {
-            $where = " AND s.status = 'trialing'";
+            $where = " AND s.status = 'trialing' AND t.is_active = 1";
         } elseif ($filter === 'expiring') {
-            $where = " AND s.status = 'active' AND s.current_period_end BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)";
+            $where = " AND s.status = 'active' AND t.is_active = 1 AND s.current_period_end BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)";
         } elseif ($filter === 'cancelled') {
             $where = " AND s.status IN ('cancelled','past_due')";
         } elseif ($filter === 'reseller') {
