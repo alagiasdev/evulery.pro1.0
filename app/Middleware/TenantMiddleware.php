@@ -18,18 +18,34 @@ class TenantMiddleware
             Response::error('Nessun tenant associato.', 'NO_TENANT', 403);
         }
 
-        // Load tenant data if not already resolved
+        // Load tenant data if not already resolved.
         if (!TenantResolver::current()) {
             $db = Database::getInstance();
-            $stmt = $db->prepare('SELECT * FROM tenants WHERE id = :id AND is_active = 1 LIMIT 1');
+            // NB: nessun filtro is_active qui. Un ristorante disattivato manualmente
+            // deve vedere la pagina "sospeso" GENTILE (come l'abbonamento scaduto),
+            // non un 403 JSON grezzo. Il filtro sarebbe stato: is_active = 1.
+            $stmt = $db->prepare('SELECT * FROM tenants WHERE id = :id LIMIT 1');
             $stmt->execute(['id' => $tenantId]);
             $tenant = $stmt->fetch();
 
             if (!$tenant) {
-                Response::error('Tenant non trovato o disattivato.', 'TENANT_INACTIVE', 403);
+                Response::error('Tenant non trovato.', 'TENANT_NOT_FOUND', 403);
             }
 
-            // Check subscription expiry — redirect to suspended page (keep logged in)
+            // Pagine accessibili anche quando sospeso (sospeso/logout/profilo).
+            $uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+            $allowedWhenSuspended = str_contains($uri, '/dashboard/suspended')
+                                 || str_contains($uri, '/auth/logout')
+                                 || str_contains($uri, '/dashboard/profile');
+
+            // (1) Ristorante disattivato manualmente dal super admin → pagina sospeso.
+            //     L'impersonation la bypassa: l'admin deve poter gestire il tenant spento.
+            if (empty($tenant['is_active']) && !$allowedWhenSuspended && !Auth::isImpersonating()) {
+                TenantResolver::setCurrent($tenant);
+                Response::redirect(url('dashboard/suspended'));
+            }
+
+            // (2) Abbonamento scaduto → stessa pagina sospeso (comportamento invariato).
             $subStmt = $db->prepare(
                 'SELECT current_period_end FROM subscriptions
                  WHERE tenant_id = :tid AND status IN ("active","trialing")
@@ -40,13 +56,7 @@ class TenantMiddleware
 
             $subscriptionExpired = $sub && $sub['current_period_end'] && strtotime($sub['current_period_end']) < time();
 
-            // Allow access to suspended page, logout, and profile even if expired
-            $uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
-            $allowedWhenExpired = str_contains($uri, '/dashboard/suspended')
-                               || str_contains($uri, '/auth/logout')
-                               || str_contains($uri, '/dashboard/profile');
-
-            if ($subscriptionExpired && !$allowedWhenExpired && !Auth::isImpersonating()) {
+            if ($subscriptionExpired && !$allowedWhenSuspended && !Auth::isImpersonating()) {
                 TenantResolver::setCurrent($tenant);
                 Response::redirect(url('dashboard/suspended'));
             }

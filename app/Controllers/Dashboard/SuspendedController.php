@@ -30,9 +30,14 @@ class SuspendedController
         $daysSinceExpiry = $expiredDate ? (int)ceil((time() - strtotime($expiredDate)) / 86400) : 0;
         $planName = $subscription['plan_name'] ?? ($tenant['plan'] ?? 'Base');
 
+        // Motivo della sospensione: ristorante disattivato dall'admin (is_active=0)
+        // → messaggio "account sospeso"; altrimenti abbonamento scaduto.
+        $reason = empty($tenant['is_active']) ? 'deactivated' : 'expired';
+
         view('dashboard/suspended', [
-            'title'           => 'Abbonamento Sospeso',
+            'title'           => $reason === 'deactivated' ? 'Account sospeso' : 'Abbonamento Sospeso',
             'activeMenu'      => '',
+            'reason'          => $reason,
             'subscription'    => $subscription,
             'expiredDate'     => $expiredDate,
             'daysSinceExpiry' => $daysSinceExpiry,
