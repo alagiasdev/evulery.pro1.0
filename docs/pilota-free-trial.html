@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Pilota prova gratis</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f8f5; --surface:#ffffff; --surface-2:#eef3ec; --surface-3:#e7efe6;
+    --ink:#13201a; --ink-soft:#45524b; --muted:#788a80; --line:#e2e9e2;
+    --brand:#00844A; --brand-d:#006837; --brand-soft:#e6f3ea;
+    --pos:#1b7a43; --pos-soft:#e6f3ea; --neg:#b23b2e; --neg-soft:#f8ebe8;
+    --warn:#a9701f; --warn-soft:#f6efe1;
+    --shadow:0 1px 2px rgba(20,40,30,.04),0 8px 24px rgba(20,40,30,.05);
+  }
+  :root:not([data-theme="light"]){ }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0d1310; --surface:#141d18; --surface-2:#1a2620; --surface-3:#213029;
+      --ink:#e8efe9; --ink-soft:#aebbb2; --muted:#7e8d84; --line:#27332c;
+      --brand:#34b06f; --brand-d:#48c483; --brand-soft:#16241c;
+      --pos:#4cc27e; --pos-soft:#15271c; --neg:#e0796b; --neg-soft:#2a1a17;
+      --warn:#d3a24e; --warn-soft:#271f12;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0d1310; --surface:#141d18; --surface-2:#1a2620; --surface-3:#213029;
+    --ink:#e8efe9; --ink-soft:#aebbb2; --muted:#7e8d84; --line:#27332c;
+    --brand:#34b06f; --brand-d:#48c483; --brand-soft:#16241c;
+    --pos:#4cc27e; --pos-soft:#15271c; --neg:#e0796b; --neg-soft:#2a1a17;
+    --warn:#d3a24e; --warn-soft:#271f12;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+    line-height:1.6; font-size:16px;
+    font-feature-settings:"cv05","ss01";
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:40px 22px 80px}
+  .num{font-variant-numeric:tabular-nums}
+
+  .eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--brand-d);margin-bottom:14px}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:2.5rem;line-height:1.08;letter-spacing:-.01em;margin:0 0 12px;text-wrap:balance}
+  .lede{font-size:1.08rem;color:var(--ink-soft);max-width:60ch;margin:0}
+
+  .verdict{margin-top:26px;background:var(--brand-soft);border:1px solid color-mix(in srgb,var(--brand) 22%,transparent);border-radius:14px;padding:18px 20px;font-size:.97rem;line-height:1.6}
+  .verdict b{color:var(--brand-d)}
+  .verdict .big{font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;color:var(--ink);display:block;margin-bottom:4px}
+
+  h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.5rem;letter-spacing:-.01em;margin:52px 0 6px}
+  h2 .k{color:var(--brand-d);font-family:'Inter',sans-serif;font-weight:800;font-size:.9rem;vertical-align:middle;margin-right:10px;letter-spacing:.02em}
+  .sec-sub{color:var(--muted);font-size:.92rem;margin:0 0 20px}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+  .design-list{list-style:none;margin:0;padding:0}
+  .design-list li{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+  .design-list li:last-child{border-bottom:0}
+  .design-list .tag{flex:0 0 auto;width:130px;font-weight:700;color:var(--ink)}
+  .design-list .val{color:var(--ink-soft)}
+  .design-list .val b{color:var(--ink)}
+
+  .assump{margin:0;padding-left:0;list-style:none;font-size:.92rem;color:var(--ink-soft)}
+  .assump li{padding:6px 0 6px 26px;position:relative}
+  .assump li::before{content:"›";position:absolute;left:6px;top:5px;color:var(--brand);font-weight:800}
+  .assump b{color:var(--ink)}
+
+  .twrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+  table{width:100%;border-collapse:collapse;font-size:.9rem;background:var(--surface);min-width:520px}
+  th,td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+  th:first-child,td:first-child{text-align:left}
+  thead th{background:var(--surface-2);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);font-weight:700}
+  tbody tr:last-child td{border-bottom:0}
+  tfoot td{font-weight:800;background:var(--surface-2);border-top:2px solid var(--line)}
+  .pos{color:var(--pos);font-weight:700}
+  .neg{color:var(--neg);font-weight:700}
+  .be{background:var(--pos-soft)}
+  .be td{font-weight:700}
+  .be td:first-child::after{content:" ✓ pareggio";color:var(--pos);font-weight:700;font-size:.78rem}
+
+  .scen{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+  .scen .s{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 18px 20px;box-shadow:var(--shadow)}
+  .scen .s.mid{border-color:color-mix(in srgb,var(--brand) 45%,transparent);box-shadow:0 0 0 1px color-mix(in srgb,var(--brand) 30%,transparent),var(--shadow)}
+  .scen .rate{font-family:'Fraunces',serif;font-weight:600;font-size:1.9rem;color:var(--ink);line-height:1}
+  .scen .rate small{font-size:.8rem;color:var(--muted);font-family:'Inter';font-weight:600;display:block;margin-top:4px;letter-spacing:.02em;text-transform:uppercase}
+  .scen .rows{margin-top:16px;font-size:.86rem}
+  .scen .r{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--line)}
+  .scen .r span{color:var(--muted)}
+  .scen .r b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .scen .flag{display:inline-block;margin-bottom:6px;font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--brand-d);background:var(--brand-soft);padding:2px 9px;border-radius:100px}
+
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:560px){.compare{grid-template-columns:1fr}}
+  .compare .c{border-radius:16px;padding:18px;border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow)}
+  .compare .c.bad{background:var(--neg-soft);border-color:color-mix(in srgb,var(--neg) 25%,transparent)}
+  .compare .c.good{background:var(--pos-soft);border-color:color-mix(in srgb,var(--pos) 30%,transparent)}
+  .compare h4{margin:0 0 8px;font-size:.95rem}
+  .compare p{margin:0;font-size:.88rem;color:var(--ink-soft)}
+  .compare .hd{font-family:'Fraunces',serif;font-size:1.15rem;color:var(--ink);font-weight:600}
+
+  .lever{border-left:3px solid var(--brand);background:var(--surface-2);border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:12px;font-size:.92rem}
+  .lever b{color:var(--ink)}
+  .risk{border-left-color:var(--warn);}
+  .risk b{color:var(--warn)}
+
+  .foot{margin-top:54px;padding-top:20px;border-top:1px solid var(--line);font-size:.8rem;color:var(--muted);line-height:1.7}
+  .foot b{color:var(--ink-soft)}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Pilota reseller · modello di cassa</div>
+  <h1>Prova gratis fino al 31 dicembre</h1>
+  <p class="lede">10 ristoranti in prova via reseller, €50 di anticipo per attivazione, conversione a gennaio con carta a garanzia. Ecco cassa e pareggio, prima di metterci i €500.</p>
+
+  <div class="verdict">
+    <span class="big">Verdetto: si fa. Il rischio non è la cassa.</span>
+    Il pilota è <b>cash-positivo entro l'anno anche nello scenario pessimista (20%)</b>. Con fatturazione annuale rientri già a <b>gennaio</b>; con la mensile a <b>marzo</b>. Il CAC va da <b>€50 a €200</b> per cliente, contro un cliente che vale migliaia di euro l'anno. Batte nettamente €500 di ads. Ciò che devi davvero sorvegliare è la <b>qualità delle attivazioni</b> e la <b>conversione reale</b> — ed è esattamente quello che il pilota serve a misurare.
+  </div>
+
+  <h2><span class="k">01</span>Il disegno</h2>
+  <p class="sec-sub">Le scelte che rendono i numeri qui sotto veri.</p>
+  <div class="card">
+    <ul class="design-list">
+      <li><span class="tag">Durata</span><span class="val">Gratis <b>fino al 31/12/2026</b>. Iscrizioni chiuse entro il <b>30/09</b> (chi entra tardi avrebbe una prova-moncone).</span></li>
+      <li><span class="tag">Conversione</span><span class="val"><b>Carta a garanzia</b> obbligatoria, addebito automatico dal <b>1° gennaio</b> salvo disdetta. È opt-out: converte per inerzia e risolve il "gennaio morto".</span></li>
+      <li><span class="tag">Setup</span><span class="val"><b>Azzerato</b> per il pilota (il filtro lo fa la carta, non una fee da €250 che ucciderebbe il "gratis").</span></li>
+      <li><span class="tag">Reseller</span><span class="val"><b>€50</b> all'attivazione <b>vera</b> (cliente che prende prenotazioni reali, non semplice sign-up). Scorporati dalla commissione alla conversione.</span></li>
+      <li><span class="tag">Coorte</span><span class="val">10 trial, mix ipotizzato <b>5 Starter · 4 Professional · 1 Enterprise</b>.</span></li>
+    </ul>
+  </div>
+
+  <h2><span class="k">02</span>Economia per cliente</h2>
+  <p class="sec-sub">A conversione, con fatturazione annuale. Il netto è ciò che resta a Evulery ogni anno, dopo la commissione reseller.</p>
+  <div class="twrap">
+    <table class="num">
+      <thead><tr><th>Piano</th><th>Annuale</th><th>Comm. reseller/anno</th><th>Netto Evulery/anno</th></tr></thead>
+      <tbody>
+        <tr><td>Starter</td><td>€490</td><td>€120</td><td class="pos">€370</td></tr>
+        <tr><td>Professional</td><td>€790</td><td>€200</td><td class="pos">€590</td></tr>
+        <tr><td>Enterprise</td><td>€1.290</td><td>€320</td><td class="pos">€970</td></tr>
+      </tbody>
+      <tfoot><tr><td>Coorte piena (5·4·1)</td><td>€6.900</td><td>€1.720</td><td class="pos">€5.180/anno</td></tr></tfoot>
+    </table>
+  </div>
+  <p class="sec-sub" style="margin-top:12px">Il <b>€50</b> non compare qui perché sui convertiti è solo un <b>anticipo</b>: −€50 a settembre, +€50 recuperati a gennaio via scorporo. Sui convertiti costo netto = €0; l'unico soldo perso è il €50 sui <b>non</b> convertiti.</p>
+
+  <h2><span class="k">03</span>I tre scenari</h2>
+  <p class="sec-sub">Stessa spesa iniziale (€500). Cambia solo quanti convertono. Valori attesi sul mix di coorte, fatturazione annuale.</p>
+  <div class="scen">
+    <div class="s">
+      <div class="rate">20%<small>Pessimista</small></div>
+      <div class="rows">
+        <div class="r"><span>Clienti acquisiti</span><b>2</b></div>
+        <div class="r"><span>Costo perso (no-conv.)</span><b>€400</b></div>
+        <div class="r"><span>CAC per cliente</span><b>€200</b></div>
+        <div class="r"><span>Netto cassa anno 1</span><b class="pos">+€636</b></div>
+        <div class="r"><span>Ricorrente/anno</span><b>€1.036</b></div>
+      </div>
+    </div>
+    <div class="s mid">
+      <span class="flag">Base</span>
+      <div class="rate">30%<small>Realistica</small></div>
+      <div class="rows">
+        <div class="r"><span>Clienti acquisiti</span><b>3</b></div>
+        <div class="r"><span>Costo perso (no-conv.)</span><b>€350</b></div>
+        <div class="r"><span>CAC per cliente</span><b>€117</b></div>
+        <div class="r"><span>Netto cassa anno 1</span><b class="pos">+€1.204</b></div>
+        <div class="r"><span>Ricorrente/anno</span><b>€1.554</b></div>
+      </div>
+    </div>
+    <div class="s">
+      <div class="rate">50%<small>Ottimista</small></div>
+      <div class="rows">
+        <div class="r"><span>Clienti acquisiti</span><b>5</b></div>
+        <div class="r"><span>Costo perso (no-conv.)</span><b>€250</b></div>
+        <div class="r"><span>CAC per cliente</span><b>€50</b></div>
+        <div class="r"><span>Netto cassa anno 1</span><b class="pos">+€2.340</b></div>
+        <div class="r"><span>Ricorrente/anno</span><b>€2.590</b></div>
+      </div>
+    </div>
+  </div>
+
+  <h2><span class="k">04</span>Cassa mese per mese</h2>
+  <p class="sec-sub">Scenario base (30% = 3 convertiti). Il pareggio dipende da come pagano: annuale o mensile.</p>
+
+  <p style="font-weight:700;margin:0 0 8px;font-size:.9rem">A · Se convertono in <span style="color:var(--brand-d)">annuale</span> (pagano l'anno a gennaio)</p>
+  <div class="twrap">
+    <table class="num">
+      <thead><tr><th>Mese</th><th>Entrate</th><th>Reseller</th><th>Netto mese</th><th>Cumulato</th></tr></thead>
+      <tbody>
+        <tr><td>Set 2026</td><td>—</td><td class="neg">−€500</td><td class="neg">−€500</td><td class="neg">−€500</td></tr>
+        <tr><td>Ott–Dic 2026</td><td>—</td><td>—</td><td>—</td><td class="neg">−€500</td></tr>
+        <tr class="be"><td>Gen 2027</td><td>€2.070</td><td>−€366</td><td class="pos">+€1.704</td><td class="pos">+€1.204</td></tr>
+        <tr><td>Feb–Dic 2027</td><td colspan="3" style="text-align:left;color:var(--muted)">annuale già incassato · rinnova a gennaio 2028</td><td class="pos">+€1.204</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p style="font-weight:700;margin:22px 0 8px;font-size:.9rem">B · Se convertono in <span style="color:var(--brand-d)">mensile</span> (più prudente sulla cassa)</p>
+  <div class="twrap">
+    <table class="num">
+      <thead><tr><th>Mese</th><th>Entrate</th><th>Reseller</th><th>Netto mese</th><th>Cumulato</th></tr></thead>
+      <tbody>
+        <tr><td>Set 2026</td><td>—</td><td class="neg">−€500</td><td class="neg">−€500</td><td class="neg">−€500</td></tr>
+        <tr><td>Ott–Dic 2026</td><td>—</td><td>—</td><td>—</td><td class="neg">−€500</td></tr>
+        <tr><td>Gen 2027</td><td>€207</td><td>€0<small style="color:var(--muted)"> *</small></td><td class="pos">+€207</td><td class="neg">−€293</td></tr>
+        <tr><td>Feb 2027</td><td>€207</td><td>€0<small style="color:var(--muted)"> *</small></td><td class="pos">+€207</td><td class="neg">−€86</td></tr>
+        <tr class="be"><td>Mar 2027</td><td>€207</td><td>€0<small style="color:var(--muted)"> *</small></td><td class="pos">+€207</td><td class="pos">+€121</td></tr>
+        <tr><td>Apr 2027</td><td>€207</td><td>−€22</td><td class="pos">+€185</td><td class="pos">+€306</td></tr>
+        <tr><td>Mag 2027 →</td><td>€207</td><td>−€43</td><td class="pos">+€164</td><td class="pos">crescente</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sec-sub" style="margin-top:10px"><b>*</b> Da gennaio ad aprile la commissione reseller (€43/mese) è <b>trattenuta</b> per recuperare i €150 anticipati (3 × €50), poi riprende piena.</p>
+
+  <h2><span class="k">05</span>Contro €500 di ads</h2>
+  <div class="compare">
+    <div class="c bad">
+      <h4>€500 in Meta / Google Ads</h4>
+      <div class="hd">100% a fondo perduto</div>
+      <p>Ti dà click a freddo in cima all'imbuto: qualche lead, forse 1 cliente (spesso 0). Nessun recupero, nessun prodotto in mano a nessuno.</p>
+    </div>
+    <div class="c good">
+      <h4>€500 nel pilota reseller</h4>
+      <div class="hd">≈ €250 recuperati</div>
+      <p>2–5 ristoranti che <b>usano</b> il prodotto nel loro picco, case study e passaparola, cassa positiva entro l'anno anche al 20%. Metà spesa torna via scorporo.</p>
+    </div>
+  </div>
+  <p class="sec-sub" style="margin-top:14px">Non sono davvero alternativi: gli ads hanno senso <b>dopo</b>, quando hai una macchina di conversione provata da alimentare. Ora, per un B2B locale dove contano fiducia e passaparola, canale + prodotto in mano battono il traffico pagato.</p>
+
+  <h2><span class="k">06</span>Leve e rischi</h2>
+  <div class="lever"><b>Leva — prezzo a gennaio.</b> A gennaio 2027 sei fuori dalla finestra di lancio (chiusa 30/09/2026). Se converti al listino pieno (€69/109/169) invece del prezzo di lancio, i netti salgono ancora. Da decidere: onori il lancio come incentivo, o applichi il pieno?</div>
+  <div class="lever risk"><b>Rischio — attivazioni gonfiate.</b> Il €50 premia l'attivazione, non la conversione. Legalo a un uso reale (prenotazioni prese nel primo mese), o un reseller mercenario incassa €500 e sparisce.</div>
+  <div class="lever risk"><b>Rischio — capacità sotto le feste.</b> 10 ristoranti in prova proprio nel loro picco (nov–dic): se il supporto non regge, danno la colpa allo strumento nel momento peggiore.</div>
+  <div class="lever"><b>Leva — misura e decidi.</b> Soglia di successo fissata prima: es. ≥30% convertiti entro 30 giorni dall'addebito. Sopra, scali; sotto, aggiusti il disegno.</div>
+
+  <div class="foot">
+    <b>Ipotesi del modello:</b> prezzi = listino attuale (Starter €490 · Professional €790 · Enterprise €1.290 annuali) · commissioni reseller default €120/€200/€320 · mix coorte 5·4·1 · tutte le attivazioni a settembre 2026 · conversione 1/1/2027. Esclude il costo del tuo tempo di onboarding/supporto (≈0 di cassa marginale, ma reale). La conversione è un'<b>ipotesi</b>: il pilota serve a misurarla davvero.<br><br>
+    © 2026 Evulery · by alagias. - Soluzioni per il web
+  </div>
+</div>
+</body>
+</html>
