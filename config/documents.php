@@ -32,6 +32,14 @@ return [
         'file'         => 'sales/sequenza-email-lead.html',
     ],
 
+    'contatto-a-freddo' => [
+        'category'     => 'sales',
+        'title'        => 'Contatto a freddo',
+        'description'  => 'Primo contatto verso ristoranti trovati online: 5 email + 4 messaggi WhatsApp, con angoli d\'attacco diversi (no-show, commissioni, telefono, recensioni, personalizzato). Con pulsante "Copia".',
+        'icon'         => 'send',
+        'file'         => 'sales/contatto-a-freddo.html',
+    ],
+
     'modulo-attivazione' => [
         'category'     => 'onboarding',
         'title'        => 'Modulo di attivazione',

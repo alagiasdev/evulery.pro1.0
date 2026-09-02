@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evulery — Contatto a freddo (email + WhatsApp)</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand:#00844A; --brand-d:#006837; --brand-l:#eef7f1;
+    --ink:#1a1d23; --ink-soft:#495057; --muted:#6c757d; --line:#e8edf0;
+    --amber:#E65100; --amber-l:#FFF3E0; --wa:#25812f; --wa-l:#e7f6ea;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;background:#f4f6f8;color:var(--ink);line-height:1.55}
+  .wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px}
+  .bar{height:4px;background:linear-gradient(90deg,var(--brand),#4ade80);border-radius:6px;margin-bottom:22px}
+  .head{margin-bottom:6px}
+  h1{font-size:1.5rem;font-weight:800;letter-spacing:-.3px}
+  .sub{color:var(--muted);font-size:.94rem;margin:4px 0 24px;max-width:680px}
+
+  .legend{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:.86rem;margin-bottom:16px;line-height:1.7}
+  .legend code{background:var(--brand-l);color:var(--brand-d);border-radius:5px;padding:1px 6px;font-weight:600;white-space:nowrap}
+  .legend strong{display:block;margin-bottom:6px}
+
+  .note{background:var(--amber-l);border:1px solid #f0d9a8;border-radius:12px;padding:14px 16px;font-size:.85rem;color:#8a5b00;line-height:1.65;margin-bottom:26px}
+  .note b{color:#7a4f00}
+  .note ul{margin:8px 0 0;padding-left:18px}
+  .note li{margin-bottom:4px}
+
+  h2.block{font-size:.78rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--brand);margin:34px 0 14px}
+  h2.block.wa{color:var(--wa-l);color:#1c6a24}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:18px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  .card-t{font-size:1.05rem;font-weight:800;display:flex;align-items:center;gap:10px}
+  .card-t .n{width:28px;height:28px;flex:0 0 auto;border-radius:8px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800}
+  .card-t .n.wa{background:var(--wa)}
+  .badge{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:100px;letter-spacing:.3px;background:var(--brand-l);color:var(--brand-d)}
+  .badge.wa{background:var(--wa-l);color:#1c6a24}
+  .subject{font-size:.86rem;color:var(--muted);margin:0 0 8px}
+  .subject b{color:var(--ink)}
+  pre{white-space:pre-wrap;font-family:'Inter',sans-serif;font-size:.9rem;color:#232830;background:#fbfdfc;border:1px solid var(--line);border-radius:10px;padding:15px 16px;line-height:1.6}
+  .ph{background:#fff4e6;color:#b45309;border-radius:4px;padding:0 4px;font-weight:600}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .copy{background:var(--brand);color:#fff;border:0;padding:9px 15px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit}
+  .copy:hover{background:var(--brand-d)}
+  .copy.wa{background:var(--wa)}
+  .copy.wa:hover{background:#1c6a24}
+  .copy.ok{background:#146c43}
+  .copy.sec{background:transparent;color:var(--brand);border:1px solid var(--brand)}
+  .copy.sec:hover{background:var(--brand);color:#fff}
+
+  .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:26px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar"></div>
+  <div class="head">
+    <h1>Contatto a freddo</h1>
+  </div>
+  <p class="sub">Primo contatto verso ristoranti che ancora non ci conoscono, trovati online. Email brevi e dirette + versioni WhatsApp, con angoli d'attacco diversi: scegli quello più adatto al locale che hai davanti, personalizza e invia.</p>
+
+  <div class="legend">
+    <strong>Segnaposto da sostituire:</strong>
+    <code>{{nome_ristorante}}</code> · <code>{{tuo_nome}}</code> chi scrive ·
+    <code>{{opzione_1}}</code>/<code>{{opzione_2}}</code> due orari che proponi ·
+    <code>{{dettaglio}}</code> un'osservazione vera sul locale (un piatto, il menù, un post).<br>
+    A freddo spesso non sai il nome del titolare: l'apertura è "Buongiorno," e va bene così.
+  </div>
+
+  <div class="note">
+    <b>Tre regole per non bruciarti:</b>
+    <ul>
+      <li><b>Personalizza sempre l'apertura.</b> Una riga concreta sul loro locale (email 5 / WhatsApp 3) vale più di dieci invii identici.</li>
+      <li><b>Email:</b> se rispondono che non interessa, chiudi lì. È la regola (opt-out) e ti fa risparmiare tempo.</li>
+      <li><b>WhatsApp:</b> solo su numeri pubblici dell'attività, primo messaggio senza link né immagini (altrimenti finisci in spam o ti bloccano). Presentati subito.</li>
+    </ul>
+  </div>
+
+  <h2 class="block">Email</h2>
+
+  <!-- EMAIL 1 -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-t"><span class="n">1</span> Angolo no-show / gestione</div>
+      <span class="badge">Dolore concreto</span>
+    </div>
+    <p class="subject"><b>Oggetto:</b> <span id="es1">Meno no-show a {{nome_ristorante}}?</span></p>
+    <pre id="eb1">Buongiorno,
+
+sono <span class="ph">{{tuo_nome}}</span> di Evulery. Aiutiamo i ristoranti a riempire i tavoli e a smettere di regalare coperti ai no-show, gestendo prenotazioni, sala e recensioni da un unico posto.
+
+Ho guardato <span class="ph">{{nome_ristorante}}</span> e c'è margine concreto. Ve lo mostro in 20 minuti, numeri alla mano: <span class="ph">{{opzione_1}}</span> o <span class="ph">{{opzione_2}}</span>?
+
+<span class="ph">{{tuo_nome}}</span> · Evulery</pre>
+    <div class="actions">
+      <button class="copy" type="button" data-target="eb1" data-subject="es1">Copia oggetto + testo</button>
+      <button class="copy sec" type="button" data-target="eb1">Copia solo testo</button>
+    </div>
+  </div>
+
+  <!-- EMAIL 2 -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-t"><span class="n">2</span> Angolo commissioni</div>
+      <span class="badge">Leva economica</span>
+    </div>
+    <p class="subject"><b>Oggetto:</b> <span id="es2">Quante commissioni pagate ogni mese?</span></p>
+    <pre id="eb2">Buongiorno,
+
+sono <span class="ph">{{tuo_nome}}</span> di Evulery. Domanda secca: quanto lasciate ogni mese in commissioni ai portali di prenotazione?
+
+Noi facciamo lo stesso lavoro (prenotazioni dal vostro sito e da Google, sala, recensioni) a canone fisso, senza percentuali sui coperti. Per <span class="ph">{{nome_ristorante}}</span> di solito sono migliaia di euro l'anno che restano a voi.
+
+Ve lo mostro in 20 minuti: <span class="ph">{{opzione_1}}</span> o <span class="ph">{{opzione_2}}</span>?
+
+<span class="ph">{{tuo_nome}}</span> · Evulery</pre>
+    <div class="actions">
+      <button class="copy" type="button" data-target="eb2" data-subject="es2">Copia oggetto + testo</button>
+      <button class="copy sec" type="button" data-target="eb2">Copia solo testo</button>
+    </div>
+  </div>
+
+  <!-- EMAIL 3 -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-t"><span class="n">3</span> Angolo telefono / prenotazioni perse</div>
+      <span class="badge">Dolore concreto</span>
+    </div>
+    <p class="subject"><b>Oggetto:</b> <span id="es3">Quante prenotazioni perdete mentre siete in sala?</span></p>
+    <pre id="eb3">Buongiorno,
+
+sono <span class="ph">{{tuo_nome}}</span> di Evulery. Durante il servizio il telefono squilla e nessuno può rispondere: sono prenotazioni che finiscono dal concorrente.
+
+Con Evulery <span class="ph">{{nome_ristorante}}</span> prende prenotazioni dal sito e da Google 24 ore su 24, senza alzare la cornetta, e le gestisce tutte da un posto solo.
+
+Ve lo mostro in 20 minuti: <span class="ph">{{opzione_1}}</span> o <span class="ph">{{opzione_2}}</span>?
+
+<span class="ph">{{tuo_nome}}</span> · Evulery</pre>
+    <div class="actions">
+      <button class="copy" type="button" data-target="eb3" data-subject="es3">Copia oggetto + testo</button>
+      <button class="copy sec" type="button" data-target="eb3">Copia solo testo</button>
+    </div>
+  </div>
+
+  <!-- EMAIL 4 -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-t"><span class="n">4</span> Angolo recensioni / Legge 2026</div>
+      <span class="badge">Attualità</span>
+    </div>
+    <p class="subject"><b>Oggetto:</b> <span id="es4">Le vostre recensioni sono a norma?</span></p>
+    <pre id="eb4">Buongiorno,
+
+sono <span class="ph">{{tuo_nome}}</span> di Evulery. Dal 2026 le recensioni online hanno regole nuove: le finte si sanzionano e le piattaforme filtrano quelle senza visita verificata.
+
+È un vantaggio per chi lavora bene. Evulery raccoglie recensioni vere e conformi, collegate a una prenotazione reale, e le trasforma in clienti nuovi. Per <span class="ph">{{nome_ristorante}}</span> può fare la differenza sul locale della porta accanto.
+
+Ve lo mostro in 20 minuti: <span class="ph">{{opzione_1}}</span> o <span class="ph">{{opzione_2}}</span>?
+
+<span class="ph">{{tuo_nome}}</span> · Evulery</pre>
+    <div class="actions">
+      <button class="copy" type="button" data-target="eb4" data-subject="es4">Copia oggetto + testo</button>
+      <button class="copy sec" type="button" data-target="eb4">Copia solo testo</button>
+    </div>
+  </div>
+
+  <!-- EMAIL 5 -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-t"><span class="n">5</span> Angolo personalizzato</div>
+      <span class="badge">La più efficace</span>
+    </div>
+    <p class="subject"><b>Oggetto:</b> <span id="es5">Ho visto {{nome_ristorante}}</span></p>
+    <pre id="eb5">Buongiorno,
+
+sono <span class="ph">{{tuo_nome}}</span> di Evulery. Ho guardato <span class="ph">{{nome_ristorante}}</span>: <span class="ph">{{dettaglio}}</span>. Si vede che curate le cose.
+
+Manca solo il pezzo con cui si riempiono i tavoli senza pensieri: prenotazioni online, gestione sala, recensioni e promemoria anti no-show, tutto da un posto solo e a canone fisso.
+
+Ve lo mostro in 20 minuti: <span class="ph">{{opzione_1}}</span> o <span class="ph">{{opzione_2}}</span>?
+
+<span class="ph">{{tuo_nome}}</span> · Evulery</pre>
+    <div class="actions">
+      <button class="copy" type="button" data-target="eb5" data-subject="es5">Copia oggetto + testo</button>
+      <button class="copy sec" type="button" data-target="eb5">Copia solo testo</button>
+    </div>
+  </div>
+
+  <h2 class="block wa">WhatsApp</h2>
+
+  <!-- WA 1 -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-t"><span class="n wa">1</span> Generico / gestione</div>
+      <span class="badge wa">Primo messaggio</span>
+    </div>
+    <pre id="wb1">Buongiorno, sono <span class="ph">{{tuo_nome}}</span> di Evulery. Ho visto <span class="ph">{{nome_ristorante}}</span> e penso possiamo aiutarvi a ridurre i no-show e gestire meglio le prenotazioni, a canone fisso e senza commissioni sui coperti. Vi va se ve lo mostro in 20 minuti?</pre>
+    <div class="actions">
+      <button class="copy wa" type="button" data-target="wb1">Copia messaggio</button>
+    </div>
+  </div>
+
+  <!-- WA 2 -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-t"><span class="n wa">2</span> Commissioni</div>
+      <span class="badge wa">Primo messaggio</span>
+    </div>
+    <pre id="wb2">Buongiorno, sono <span class="ph">{{tuo_nome}}</span> di Evulery. Una curiosità: quanto lasciate ogni mese in commissioni ai portali di prenotazione? Noi facciamo lo stesso lavoro a canone fisso, senza percentuali. Se vi va ve lo mostro in 20 minuti.</pre>
+    <div class="actions">
+      <button class="copy wa" type="button" data-target="wb2">Copia messaggio</button>
+    </div>
+  </div>
+
+  <!-- WA 3 -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-t"><span class="n wa">3</span> Personalizzato</div>
+      <span class="badge wa">Primo messaggio</span>
+    </div>
+    <pre id="wb3">Buongiorno, sono <span class="ph">{{tuo_nome}}</span> di Evulery. Ho visto <span class="ph">{{nome_ristorante}}</span> (<span class="ph">{{dettaglio}}</span>) e ho pensato che con noi potreste prendere prenotazioni online 24 ore su 24 e tagliare i no-show. Vi va una demo di 20 minuti?</pre>
+    <div class="actions">
+      <button class="copy wa" type="button" data-target="wb3">Copia messaggio</button>
+    </div>
+  </div>
+
+  <!-- WA 4 -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-t"><span class="n wa">4</span> Recensioni / Legge 2026</div>
+      <span class="badge wa">Primo messaggio</span>
+    </div>
+    <pre id="wb4">Buongiorno, sono <span class="ph">{{tuo_nome}}</span> di Evulery. Dal 2026 le regole sulle recensioni online sono cambiate: aiutiamo i ristoranti a raccoglierne di vere e a norma, collegate a una prenotazione reale. Se vi interessa ve lo mostro in 20 minuti.</pre>
+    <div class="actions">
+      <button class="copy wa" type="button" data-target="wb4">Copia messaggio</button>
+    </div>
+  </div>
+
+  <p class="foot">Uso interno · non indicizzato.<br>© <span id="yr"></span> Evulery · by alagias. - Soluzioni per il web</p>
+</div>
+
+<script>
+document.getElementById('yr').textContent = '2026';
+document.querySelectorAll('.copy').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var body = document.getElementById(btn.getAttribute('data-target'));
+    var text = body.innerText;
+    var subjId = btn.getAttribute('data-subject');
+    if (subjId){
+      var subj = document.getElementById(subjId);
+      if (subj){ text = 'Oggetto: ' + subj.innerText + '\n\n' + text; }
+    }
+    navigator.clipboard.writeText(text).then(function(){
+      var old = btn.textContent; btn.textContent = '✓ Copiato'; btn.classList.add('ok');
+      setTimeout(function(){ btn.textContent = old; btn.classList.remove('ok'); }, 1600);
+    });
+  });
+});
+</script>
+</body>
+</html>
