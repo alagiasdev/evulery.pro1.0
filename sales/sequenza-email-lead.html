@@ -107,24 +107,17 @@
       <div class="card-t"><span class="n">1</span> Invito alla demo</div>
       <div class="badges"><span class="badge stage">Nuovo</span><span class="badge time">Subito</span></div>
     </div>
-    <div class="goal"><b>Obiettivo:</b> trasformare l'interesse in una demo fissata. Concreto, due slot pronti, zero attrito.</div>
+    <div class="goal"><b>Obiettivo:</b> trasformare l'interesse in un appuntamento: valore chiaro e proposta di orario secca.</div>
     <p class="subject"><b>Oggetto:</b> <span id="s1">{{nome_ristorante}}: vi mostro Evulery in 20 minuti?</span></p>
     <pre id="b1">Buongiorno <span class="ph">{{nome}}</span>,
 
-grazie per l'interesse verso Evulery. In una chiamata di 20 minuti vi mostro come <span class="ph">{{nome_ristorante}}</span> può:
-• ridurre i no-show con promemoria automatici (e, se volete, la caparra),
-• riempire i tavoli vuoti gestendo prenotazioni e sala da un unico posto,
-• avere il pulsante "Prenota" sul vostro sito e su Google.
+grazie per averci contattato.
 
-Niente da installare: si vede tutto dal telefono.
+Evulery è la piattaforma con cui i ristoranti gestiscono prenotazioni, sala e recensioni da un unico posto e smettono di regalare coperti ai no-show. Con <span class="ph">{{nome_ristorante}}</span> vi mostro in 20 minuti cosa cambia, numeri alla mano.
 
-Quando vi è comodo? Vi propongo:
-• <span class="ph">{{opzione_1}}</span>
-• <span class="ph">{{opzione_2}}</span>
-Rispondete con quella che preferite, oppure ditemi voi un orario.
+Vi propongo <span class="ph">{{opzione_1}}</span> o <span class="ph">{{opzione_2}}</span>: ditemi quale preferite e la blocco.
 
-A presto,
-<span class="ph">{{tuo_nome}}</span> — team Evulery</pre>
+<span class="ph">{{tuo_nome}}</span> · Evulery</pre>
     <div class="actions">
       <button class="copy" type="button" data-target="b1" data-subject="s1">Copia oggetto + testo</button>
       <button class="copy sec" type="button" data-target="b1">Copia solo testo</button>
@@ -137,16 +130,15 @@ A presto,
       <div class="card-t"><span class="n">2</span> Follow-up (nessuna risposta)</div>
       <div class="badges"><span class="badge stage">Contattato</span><span class="badge time">+2–3 giorni</span></div>
     </div>
-    <div class="goal"><b>Obiettivo:</b> restare in contatto senza far pesare il silenzio: nessun senso di colpa, solo una porta che resta aperta. Rispondi alla tua stessa email (oggetto "Re:") per restare nello stesso thread.</div>
+    <div class="goal"><b>Obiettivo:</b> riprendere il filo con sicurezza e una proposta di orario concreta. Rispondi alla tua stessa email (oggetto "Re:") per restare nello stesso thread.</div>
     <p class="subject"><b>Oggetto:</b> <span id="s2">Re: {{nome_ristorante}}: vi mostro Evulery in 20 minuti?</span></p>
     <pre id="b2">Buongiorno <span class="ph">{{nome}}</span>,
 
-vi scrivo due righe solo per restare in contatto.
+la mia proposta è ancora sul tavolo: 20 minuti per mostrarvi, numeri alla mano, quanto <span class="ph">{{nome_ristorante}}</span> può recuperare tra no-show e prenotazioni gestite meglio.
 
-Se vi va di vedere Evulery dal vivo bastano 20 minuti, e li scegliete voi in un momento tranquillo, magari a locale chiuso. Se in questo periodo avete altro per la testa va benissimo così: mi trovate qui quando volete.
+<span class="ph">{{opzione_1}}</span> o <span class="ph">{{opzione_2}}</span>? Mi basta il vostro ok e blocco l'orario.
 
-Un saluto,
-<span class="ph">{{tuo_nome}}</span></pre>
+<span class="ph">{{tuo_nome}}</span> · Evulery</pre>
     <div class="actions">
       <button class="copy" type="button" data-target="b2" data-subject="s2">Copia oggetto + testo</button>
       <button class="copy sec" type="button" data-target="b2">Copia solo testo</button>
@@ -163,12 +155,12 @@ Un saluto,
     <p class="subject"><b>Oggetto:</b> <span id="s3">Domani la vostra demo: 2 minuti di preparazione</span></p>
     <pre id="b3">Buongiorno <span class="ph">{{nome}}</span>,
 
-ci vediamo <span class="ph">{{data_demo}}</span> alle <span class="ph">{{ora_demo}}</span>. Non dovete preparare niente, ci pensiamo noi.
+ci vediamo <span class="ph">{{data_demo}}</span> alle <span class="ph">{{ora_demo}}</span>. Non preparate niente, ci pensiamo noi.
 
-L'unica cosa che aiuta davvero: se avete sottomano, anche a spanne, quanti coperti fate in una sera piena e quanti buchi vi lasciano i no-show. Così invece di parlare in generale ragioniamo sui vostri numeri.
+Portate solo due numeri, anche a spanne: quanti coperti fate in una sera piena e quanti no-show avete a settimana. Con quelli la demo parla del vostro ristorante, non in generale.
 
 A domani,
-<span class="ph">{{tuo_nome}}</span></pre>
+<span class="ph">{{tuo_nome}}</span> · Evulery</pre>
     <div class="actions">
       <button class="copy" type="button" data-target="b3" data-subject="s3">Copia oggetto + testo</button>
       <button class="copy sec" type="button" data-target="b3">Copia solo testo</button>
@@ -185,17 +177,17 @@ A domani,
     <p class="subject"><b>Oggetto:</b> <span id="s4">Come promesso, il riepilogo per {{nome_ristorante}}</span></p>
     <pre id="b4">Buongiorno <span class="ph">{{nome}}</span>,
 
-grazie per il tempo di oggi, mi ha fatto piacere.
+grazie per il tempo di oggi.
 
-Vi lascio per iscritto le cose che ci siamo detti, così le rileggete con calma:
+Vi lascio per iscritto i punti che contano, così restano nero su bianco:
 • <span class="ph">{{punto_1}}</span>
 • <span class="ph">{{punto_2}}</span>
 
 Per come lavorate, la scelta giusta per <span class="ph">{{nome_ristorante}}</span> è <span class="ph">{{piano_consigliato}}</span>: vi dà quello che serve senza farvi pagare funzioni che non usereste.
 
-Il passo dopo è semplice: si firma il modulo di attivazione e alla messa in opera pensiamo noi. Se è rimasto un dubbio, rispondete qui e ne parliamo.
+Il passo dopo è semplice: si firma il modulo di attivazione e alla messa in opera pensiamo noi. Se è rimasto un dubbio, rispondete qui e lo chiudiamo.
 
-<span class="ph">{{tuo_nome}}</span></pre>
+<span class="ph">{{tuo_nome}}</span> · Evulery</pre>
     <div class="actions">
       <button class="copy" type="button" data-target="b4" data-subject="s4">Copia oggetto + testo</button>
       <button class="copy sec" type="button" data-target="b4">Copia solo testo</button>
@@ -209,20 +201,20 @@ Il passo dopo è semplice: si firma il modulo di attivazione e alla messa in ope
       <div class="badges"><span class="badge stage">In trattativa</span><span class="badge time">+3–4 giorni</span></div>
     </div>
     <div class="goal"><b>Obiettivo:</b> sciogliere i dubbi che bloccano la decisione, da persona a persona, senza pressione.</div>
-    <p class="subject"><b>Oggetto:</b> <span id="s5">Prima che decidiate, due parole</span></p>
+    <p class="subject"><b>Oggetto:</b> <span id="s5">I dubbi che vi restano, chiariti</span></p>
     <pre id="b5">Buongiorno <span class="ph">{{nome}}</span>,
 
-ci ho ripensato: quando si cambia il modo di lavorare i dubbi veri sono quasi sempre gli stessi. Ve li tolgo senza girarci intorno.
+quando si cambia il modo di lavorare i dubbi sono sempre gli stessi tre. Ve li tolgo subito.
 
-Sul tempo: la configurazione la facciamo noi insieme a voi, non vi lasciamo davanti a una schermata vuota.
+Il tempo: la configurazione la facciamo noi con voi, non vi lasciamo davanti a una schermata vuota.
 
-Sui clienti che avete già: non si perde niente, li portiamo dentro noi dal vostro file.
+I clienti che avete già: li portiamo dentro noi dal vostro file, non si perde niente.
 
-Sull'impegno: si resta finché ha senso per voi. Se un domani non serve più, si chiude e basta, senza penali.
+L'impegno: si resta finché conviene a voi, senza penali.
 
-Se invece c'è un dubbio che non ho toccato, scrivetemelo: preferisco rispondere a quello vero. E quando siete pronti, il modulo di attivazione è lì.
+Se resta un dubbio che non ho toccato, scrivetemelo e ve lo chiarisco. Quando siete pronti, il modulo di attivazione lo è anche lui.
 
-<span class="ph">{{tuo_nome}}</span></pre>
+<span class="ph">{{tuo_nome}}</span> · Evulery</pre>
     <div class="actions">
       <button class="copy" type="button" data-target="b5" data-subject="s5">Copia oggetto + testo</button>
       <button class="copy sec" type="button" data-target="b5">Copia solo testo</button>
@@ -239,14 +231,13 @@ Se invece c'è un dubbio che non ho toccato, scrivetemelo: preferisco rispondere
     <p class="subject"><b>Oggetto:</b> <span id="s6">Una cosa utile per {{nome_ristorante}}, a prescindere da noi</span></p>
     <pre id="b6">Buongiorno <span class="ph">{{nome}}</span>,
 
-questa non è una mail di vendita, quindi non serve nemmeno rispondere.
+niente vendita in questa mail, solo una cosa che vi conviene sapere.
 
-Volevo solo segnalarvi una cosa utile comunque: dal 2026 le regole sulle recensioni online sono più severe e le recensioni finte adesso si possono sanzionare. Per chi lavora onestamente è una buona notizia, perché a contare di più è chi le recensioni se le merita davvero.
+Dal 2026 le regole sulle recensioni online sono cambiate: le finte si sanzionano e conta chi le raccoglie nel modo giusto. Per chi lavora bene è un vantaggio da prendersi, non un problema da subire.
 
-Se un giorno vi va di ragionare su come raccoglierle nel modo giusto, io ci sono volentieri. Altrimenti prendetela come un'informazione e nient'altro.
+Noi le facciamo raccogliere in automatico, collegate a una prenotazione reale. Se volete vederlo funzionare, sono a un messaggio di distanza.
 
-Un saluto,
-<span class="ph">{{tuo_nome}}</span></pre>
+<span class="ph">{{tuo_nome}}</span> · Evulery</pre>
     <div class="actions">
       <button class="copy" type="button" data-target="b6" data-subject="s6">Copia oggetto + testo</button>
       <button class="copy sec" type="button" data-target="b6">Copia solo testo</button>
@@ -263,15 +254,11 @@ Un saluto,
     <p class="subject"><b>Oggetto:</b> <span id="s7">L'ultima mia, promesso</span></p>
     <pre id="b7">Buongiorno <span class="ph">{{nome}}</span>,
 
-non voglio diventare la mail che vi tocca ignorare ogni settimana, quindi mi fermo qui.
+non ho più vostre notizie, quindi chiudo io la pratica: capita, non è il momento.
 
-Non era il momento, o non era la cosa giusta per voi: va bene in tutti e due i casi, davvero.
+Evulery intanto continua a far lavorare meglio i ristoranti che l'hanno scelta. Quando vorrete <span class="ph">{{nome_ristorante}}</span> tra quelli, sapete dove trovarmi: una riga e ripartiamo.
 
-Resto comunque a disposizione. Se più avanti le prenotazioni o i no-show vi daranno filo da torcere, sapete dove trovarmi: rispondete a questa mail, anche fra sei mesi, e riprendiamo da dove eravamo.
-
-In bocca al lupo per <span class="ph">{{nome_ristorante}}</span>.
-
-<span class="ph">{{tuo_nome}}</span></pre>
+<span class="ph">{{tuo_nome}}</span> · Evulery</pre>
     <div class="actions">
       <button class="copy" type="button" data-target="b7" data-subject="s7">Copia oggetto + testo</button>
       <button class="copy sec" type="button" data-target="b7">Copia solo testo</button>
