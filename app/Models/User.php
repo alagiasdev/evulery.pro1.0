@@ -112,8 +112,8 @@ class User
         $params = [];
 
         if ($search !== null && $search !== '') {
-            $where[] = '(u.first_name LIKE :s OR u.last_name LIKE :s OR u.email LIKE :s)';
-            $params['s'] = '%' . $search . '%';
+            $where[] = '(u.first_name LIKE :s1 OR u.last_name LIKE :s2 OR u.email LIKE :s3)';
+            $params['s1'] = $params['s2'] = $params['s3'] = '%' . $search . '%';
         }
         if ($role !== null && $role !== '') {
             $where[] = 'u.role = :role';
@@ -140,8 +140,8 @@ class User
         $params = [];
 
         if ($search !== null && $search !== '') {
-            $where[] = '(u.first_name LIKE :s OR u.last_name LIKE :s OR u.email LIKE :s)';
-            $params['s'] = '%' . $search . '%';
+            $where[] = '(u.first_name LIKE :s1 OR u.last_name LIKE :s2 OR u.email LIKE :s3)';
+            $params['s1'] = $params['s2'] = $params['s3'] = '%' . $search . '%';
         }
         if ($role !== null && $role !== '') {
             $where[] = 'u.role = :role';

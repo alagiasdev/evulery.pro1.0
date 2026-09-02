@@ -241,8 +241,8 @@ class DemoRequest
         }
 
         if (!empty($filters['search'])) {
-            $where[] = '(name LIKE :s OR restaurant LIKE :s OR email LIKE :s)';
-            $params['s'] = '%' . $filters['search'] . '%';
+            $where[] = '(name LIKE :s1 OR restaurant LIKE :s2 OR email LIKE :s3)';
+            $params['s1'] = $params['s2'] = $params['s3'] = '%' . $filters['search'] . '%';
         }
 
         if (!empty($filters['date_from'])) {
@@ -284,8 +284,8 @@ class DemoRequest
             }
         }
         if (!empty($filters['search'])) {
-            $where[] = '(name LIKE :s OR restaurant LIKE :s OR email LIKE :s)';
-            $params['s'] = '%' . $filters['search'] . '%';
+            $where[] = '(name LIKE :s1 OR restaurant LIKE :s2 OR email LIKE :s3)';
+            $params['s1'] = $params['s2'] = $params['s3'] = '%' . $filters['search'] . '%';
         }
         if (!empty($filters['date_from'])) {
             $where[] = 'created_at >= :df';

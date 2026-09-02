@@ -75,7 +75,11 @@ class ReviewRequest
 
     public function countByTenant(int $tenantId, array $filters = []): int
     {
-        $sql = 'SELECT COUNT(*) FROM review_requests rr WHERE rr.tenant_id = :tid';
+        // LEFT JOIN customers: serve al filtro "search" (c.first_name/last_name/email)
+        // usato da applyFilters; il join non moltiplica le righe (customer_id → 1 cliente).
+        $sql = 'SELECT COUNT(*) FROM review_requests rr
+                LEFT JOIN customers c ON rr.customer_id = c.id
+                WHERE rr.tenant_id = :tid';
         $params = ['tid' => $tenantId];
         $sql = $this->applyFilters($sql, $params, $filters);
 
@@ -114,8 +118,8 @@ class ReviewRequest
             $params['dto'] = $filters['date_to'] . ' 23:59:59';
         }
         if (!empty($filters['search'])) {
-            $sql .= ' AND (c.first_name LIKE :srch OR c.last_name LIKE :srch OR c.email LIKE :srch)';
-            $params['srch'] = '%' . $filters['search'] . '%';
+            $sql .= ' AND (c.first_name LIKE :srch1 OR c.last_name LIKE :srch2 OR c.email LIKE :srch3)';
+            $params['srch1'] = $params['srch2'] = $params['srch3'] = '%' . $filters['search'] . '%';
         }
         return $sql;
     }
