@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Evulery — Pitch Deck</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -60,8 +59,8 @@ body {
     align-self: flex-start;
 }
 h1.slide-title { font-size: 48px; font-weight: 800; letter-spacing: -1px; line-height: 1.15; margin: 0 0 24px 0; color: var(--ink); }
-h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-height: 1.2; margin: 0 0 16px 0; color: var(--ink); }
-.slide-sub { font-size: 20px; color: var(--ink-soft); margin: 0 0 28px 0; max-width: 880px; line-height: 1.5; }
+h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-height: 1.18; margin: 0 0 12px 0; color: var(--ink); }
+.slide-sub { font-size: 20px; color: var(--ink-soft); margin: 0 0 20px 0; max-width: 1040px; line-height: 1.45; }
 
 .brand { color: var(--brand); }
 .muted { color: var(--muted); }
@@ -107,11 +106,11 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
 
 /* ============= Solution / hero list ============= */
 .solution-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 8px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px;
 }
 .sol-row {
     display: flex; align-items: flex-start; gap: 14px;
-    padding: 14px 0;
+    padding: 9px 0;
 }
 .sol-icon {
     flex-shrink: 0;
@@ -123,25 +122,25 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
 .sol-text strong { display: block; font-size: 17px; font-weight: 700; margin-bottom: 2px; }
 .sol-text span { font-size: 14px; color: var(--ink-soft); line-height: 1.45; }
 .solution-banner {
-    margin-top: 28px;
+    margin-top: 18px;
     background: var(--ink); color: #fff;
-    padding: 18px 28px; border-radius: 10px;
+    padding: 14px 26px; border-radius: 10px;
     font-size: 17px; font-weight: 600;
     display: flex; align-items: center; gap: 12px;
 }
 .solution-banner i { color: #4ade80; font-size: 22px; }
 
 /* ============= Feature grid ============= */
-.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 8px; }
+.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 6px; }
 .feature-card {
     background: #fff;
     border: 1px solid var(--line);
     border-radius: 12px;
-    padding: 13px 15px;
-    display: flex; flex-direction: column; gap: 5px;
+    padding: 10px 14px;
+    display: flex; flex-direction: column; gap: 4px;
 }
 .feature-card-icon {
-    width: 30px; height: 30px; border-radius: 8px;
+    width: 26px; height: 26px; border-radius: 8px;
     background: var(--brand-light); color: var(--brand);
     display: flex; align-items: center; justify-content: center;
     font-size: 15px;
@@ -221,10 +220,10 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
     background: linear-gradient(135deg, #fafbfc 0%, #ffffff 100%);
     border: 1px solid var(--line);
     border-radius: 16px;
-    padding: 28px 32px;
-    margin-top: 8px;
+    padding: 22px 30px;
+    margin-top: 6px;
 }
-.case-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.case-header { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
 .case-avatar {
     width: 56px; height: 56px; border-radius: 12px;
     background: var(--brand); color: #fff;
@@ -240,10 +239,10 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
 .case-stat-after { font-size: 28px; font-weight: 800; color: var(--brand); line-height: 1.2; }
 .case-stat-delta { font-size: 12px; color: var(--brand); font-weight: 600; margin-top: 2px; }
 .case-roi {
-    margin-top: 20px;
+    margin-top: 14px;
     background: var(--ink); color: #fff;
     border-radius: 10px;
-    padding: 16px 24px;
+    padding: 13px 24px;
     display: flex; align-items: center; justify-content: space-between;
 }
 .case-roi-label { font-size: 14px; opacity: .85; }
@@ -254,7 +253,7 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
 .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px; }
 .price-card {
     background: #fff; border: 1px solid var(--line); border-radius: 14px;
-    padding: 22px 24px; display: flex; flex-direction: column;
+    padding: 17px 22px; display: flex; flex-direction: column;
     position: relative;
 }
 .price-card.popular { border: 2px solid var(--brand); box-shadow: 0 8px 24px rgba(0,132,74,.12); }
@@ -265,15 +264,15 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
     padding: 4px 12px; border-radius: 12px;
 }
 .price-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-.price-desc { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+.price-desc { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
 .price-amount { font-size: 34px; font-weight: 900; color: var(--ink); }
 .price-amount sub { font-size: 14px; font-weight: 500; color: var(--muted); }
 .price-launch { font-size: 11px; color: var(--muted); margin-top: 4px; }
 .price-launch strong { color: var(--brand); font-weight: 700; }
 .price-launch s { color: #b3b3c2; }
-.price-features { list-style: none; padding: 0; margin: 14px 0 0 0; flex: 1; }
+.price-features { list-style: none; padding: 0; margin: 10px 0 0 0; flex: 1; }
 .price-features li {
-    font-size: 12px; padding: 4px 0;
+    font-size: 12px; padding: 2px 0;
     display: flex; align-items: flex-start; gap: 6px;
     color: var(--ink);
 }
@@ -345,9 +344,33 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
     }
     .slide:last-child { page-break-after: auto; }
 }
+/* icone incorporate: SVG inline al posto del font CDN */
+.bi > svg { display: inline-block; width: 1em; height: 1em; vertical-align: -.125em; fill: currentColor; }
 </style>
 </head>
 <body>
+<!-- icone Bootstrap incorporate (scripts/inline-sales-icons.php) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="bi-arrow-clockwise" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+  <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/></symbol><symbol id="bi-arrow-left-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5m14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5"/></symbol><symbol id="bi-bag-check" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M10.854 8.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+  <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/></symbol><symbol id="bi-bell" viewBox="0 0 16 16"><path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/></symbol><symbol id="bi-calendar-check" viewBox="0 0 16 16"><path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></symbol><symbol id="bi-check-circle-fill" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></symbol><symbol id="bi-clock" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></symbol><symbol id="bi-envelope" viewBox="0 0 16 16"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/></symbol><symbol id="bi-envelope-paper" viewBox="0 0 16 16"><path d="M4 0a2 2 0 0 0-2 2v1.133l-.941.502A2 2 0 0 0 0 5.4V14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5.4a2 2 0 0 0-1.059-1.765L14 3.133V2a2 2 0 0 0-2-2zm10 4.267.47.25A1 1 0 0 1 15 5.4v.817l-1 .6zm-1 3.15-3.75 2.25L8 8.917l-1.25.75L3 7.417V2a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1zm-11-.6-1-.6V5.4a1 1 0 0 1 .53-.882L2 4.267zm13 .566v5.734l-4.778-2.867zm-.035 6.88A1 1 0 0 1 14 15H2a1 1 0 0 1-.965-.738L8 10.083zM1 13.116V7.383l4.778 2.867L1 13.117Z"/></symbol><symbol id="bi-flag" viewBox="0 0 16 16"><path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12 12 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A20 20 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a20 20 0 0 0 1.349-.476l.019-.007.004-.002h.001M14 1.221c-.22.078-.48.167-.766.255-.81.252-1.872.523-2.734.523-.886 0-1.592-.286-2.203-.534l-.008-.003C7.662 1.21 7.139 1 6.5 1c-.669 0-1.606.229-2.415.478A21 21 0 0 0 3 1.845v6.433c.22-.078.48-.167.766-.255C4.576 7.77 5.638 7.5 6.5 7.5c.847 0 1.548.28 2.158.525l.028.01C9.32 8.29 9.86 8.5 10.5 8.5c.668 0 1.606-.229 2.415-.478A21 21 0 0 0 14 7.655V1.222z"/></symbol><symbol id="bi-gear" viewBox="0 0 16 16"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
+  <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/></symbol><symbol id="bi-globe2" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855q-.215.403-.395.872c.705.157 1.472.257 2.282.287zM4.249 3.539q.214-.577.481-1.078a7 7 0 0 1 .597-.933A7 7 0 0 0 3.051 3.05q.544.277 1.198.49zM3.509 7.5c.036-1.07.188-2.087.436-3.008a9 9 0 0 1-1.565-.667A6.96 6.96 0 0 0 1.018 7.5zm1.4-2.741a12.3 12.3 0 0 0-.4 2.741H7.5V5.091c-.91-.03-1.783-.145-2.591-.332M8.5 5.09V7.5h2.99a12.3 12.3 0 0 0-.399-2.741c-.808.187-1.681.301-2.591.332zM4.51 8.5c.035.987.176 1.914.399 2.741A13.6 13.6 0 0 1 7.5 10.91V8.5zm3.99 0v2.409c.91.03 1.783.145 2.591.332.223-.827.364-1.754.4-2.741zm-3.282 3.696q.18.469.395.872c.552 1.035 1.218 1.65 1.887 1.855V11.91c-.81.03-1.577.13-2.282.287zm.11 2.276a7 7 0 0 1-.598-.933 9 9 0 0 1-.481-1.079 8.4 8.4 0 0 0-1.198.49 7 7 0 0 0 2.276 1.522zm-1.383-2.964A13.4 13.4 0 0 1 3.508 8.5h-2.49a6.96 6.96 0 0 0 1.362 3.675c.47-.258.995-.482 1.565-.667m6.728 2.964a7 7 0 0 0 2.275-1.521 8.4 8.4 0 0 0-1.197-.49 9 9 0 0 1-.481 1.078 7 7 0 0 1-.597.933M8.5 11.909v3.014c.67-.204 1.335-.82 1.887-1.855q.216-.403.395-.872A12.6 12.6 0 0 0 8.5 11.91zm3.555-.401c.57.185 1.095.409 1.565.667A6.96 6.96 0 0 0 14.982 8.5h-2.49a13.4 13.4 0 0 1-.437 3.008M14.982 7.5a6.96 6.96 0 0 0-1.362-3.675c-.47.258-.995.482-1.565.667.248.92.4 1.938.437 3.008zM11.27 2.461q.266.502.482 1.078a8.4 8.4 0 0 0 1.196-.49 7 7 0 0 0-2.275-1.52c.218.283.418.597.597.932m-.488 1.343a8 8 0 0 0-.395-.872C9.835 1.897 9.17 1.282 8.5 1.077V4.09c.81-.03 1.577-.13 2.282-.287z"/></symbol><symbol id="bi-graph-up" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm14.817 3.113a.5.5 0 0 1 .07.704l-4.5 5.5a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61 4.15-5.073a.5.5 0 0 1 .704-.07"/></symbol><symbol id="bi-graph-up-arrow" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5"/></symbol><symbol id="bi-grid-3x3" viewBox="0 0 16 16"><path d="M0 1.5A1.5 1.5 0 0 1 1.5 0h13A1.5 1.5 0 0 1 16 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5zM1.5 1a.5.5 0 0 0-.5.5V5h4V1zM5 6H1v4h4zm1 4h4V6H6zm-1 1H1v3.5a.5.5 0 0 0 .5.5H5zm1 0v4h4v-4zm5 0v4h3.5a.5.5 0 0 0 .5-.5V11zm0-1h4V6h-4zm0-5h4V1.5a.5.5 0 0 0-.5-.5H11zm-1 0V1H6v4z"/></symbol><symbol id="bi-headset" viewBox="0 0 16 16"><path d="M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v6a2.5 2.5 0 0 1-2.5 2.5H9.366a1 1 0 0 1-.866.5h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 .866.5H11.5A1.5 1.5 0 0 0 13 12h-1a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h1V6a5 5 0 0 0-5-5"/></symbol><symbol id="bi-mortarboard" viewBox="0 0 16 16"><path d="M8.211 2.047a.5.5 0 0 0-.422 0l-7.5 3.5a.5.5 0 0 0 .025.917l7.5 3a.5.5 0 0 0 .372 0L14 7.14V13a1 1 0 0 0-1 1v2h3v-2a1 1 0 0 0-1-1V6.739l.686-.275a.5.5 0 0 0 .025-.917zM8 8.46 1.758 5.965 8 3.052l6.242 2.913z"/>
+  <path d="M4.176 9.032a.5.5 0 0 0-.656.327l-.5 1.7a.5.5 0 0 0 .294.605l4.5 1.8a.5.5 0 0 0 .372 0l4.5-1.8a.5.5 0 0 0 .294-.605l-.5-1.7a.5.5 0 0 0-.656-.327L8 10.466zm-.068 1.873.22-.748 3.496 1.311a.5.5 0 0 0 .352 0l3.496-1.311.22.748L8 12.46z"/></symbol><symbol id="bi-people" viewBox="0 0 16 16"><path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/></symbol><symbol id="bi-percent" viewBox="0 0 16 16"><path d="M13.442 2.558a.625.625 0 0 1 0 .884l-10 10a.625.625 0 1 1-.884-.884l10-10a.625.625 0 0 1 .884 0M4.5 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5m7 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/></symbol><symbol id="bi-person-badge" viewBox="0 0 16 16"><path d="M6.5 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+  <path d="M4.5 0A2.5 2.5 0 0 0 2 2.5V14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2.5A2.5 2.5 0 0 0 11.5 0zM3 2.5A1.5 1.5 0 0 1 4.5 1h7A1.5 1.5 0 0 1 13 2.5v10.795a4.2 4.2 0 0 0-.776-.492C11.392 12.387 10.063 12 8 12s-3.392.387-4.224.803a4.2 4.2 0 0 0-.776.492z"/></symbol><symbol id="bi-person-check" viewBox="0 0 16 16"><path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+  <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/></symbol><symbol id="bi-piggy-bank" viewBox="0 0 16 16"><path d="M5 6.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.138-1.496A6.6 6.6 0 0 1 7.964 4.5c.666 0 1.303.097 1.893.273a.5.5 0 0 0 .286-.958A7.6 7.6 0 0 0 7.964 3.5c-.734 0-1.441.103-2.102.292a.5.5 0 1 0 .276.962"/>
+  <path fill-rule="evenodd" d="M7.964 1.527c-2.977 0-5.571 1.704-6.32 4.125h-.55A1 1 0 0 0 .11 6.824l.254 1.46a1.5 1.5 0 0 0 1.478 1.243h.263c.3.513.688.978 1.145 1.382l-.729 2.477a.5.5 0 0 0 .48.641h2a.5.5 0 0 0 .471-.332l.482-1.351c.635.173 1.31.267 2.011.267.707 0 1.388-.095 2.028-.272l.543 1.372a.5.5 0 0 0 .465.316h2a.5.5 0 0 0 .478-.645l-.761-2.506C13.81 9.895 14.5 8.559 14.5 7.069q0-.218-.02-.431c.261-.11.508-.266.705-.444.315.306.815.306.815-.417 0 .223-.5.223-.461-.026a1 1 0 0 0 .09-.255.7.7 0 0 0-.202-.645.58.58 0 0 0-.707-.098.74.74 0 0 0-.375.562c-.024.243.082.48.32.654a2 2 0 0 1-.259.153c-.534-2.664-3.284-4.595-6.442-4.595M2.516 6.26c.455-2.066 2.667-3.733 5.448-3.733 3.146 0 5.536 2.114 5.536 4.542 0 1.254-.624 2.41-1.67 3.248a.5.5 0 0 0-.165.535l.66 2.175h-.985l-.59-1.487a.5.5 0 0 0-.629-.288c-.661.23-1.39.359-2.157.359a6.6 6.6 0 0 1-2.157-.359.5.5 0 0 0-.635.304l-.525 1.471h-.979l.633-2.15a.5.5 0 0 0-.17-.534 4.65 4.65 0 0 1-1.284-1.541.5.5 0 0 0-.446-.275h-.56a.5.5 0 0 1-.492-.414l-.254-1.46h.933a.5.5 0 0 0 .488-.393m12.621-.857a.6.6 0 0 1-.098.21l-.044-.025c-.146-.09-.157-.175-.152-.223a.24.24 0 0 1 .117-.173c.049-.027.08-.021.113.012a.2.2 0 0 1 .064.199"/></symbol><symbol id="bi-qr-code" viewBox="0 0 16 16"><path d="M2 2h2v2H2z"/>
+  <path d="M6 0v6H0V0zM5 1H1v4h4zM4 12H2v2h2z"/>
+  <path d="M6 10v6H0v-6zm-5 1v4h4v-4zm11-9h2v2h-2z"/>
+  <path d="M10 0v6h6V0zm5 1v4h-4V1zM8 1V0h1v2H8v2H7V1zm0 5V4h1v2zM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8zm0 0v1H2V8H1v1H0V7h3v1zm10 1h-1V7h1zm-1 0h-1v2h2v-1h-1zm-4 0h2v1h-1v1h-1zm2 3v-1h-1v1h-1v1H9v1h3v-2zm0 0h3v1h-2v1h-1zm-4-1v1h1v-2H7v1z"/>
+  <path d="M7 12h1v3h4v1H7zm9 2v2h-3v-1h2v-1z"/></symbol><symbol id="bi-rocket-takeoff" viewBox="0 0 16 16"><path d="M9.752 6.193c.599.6 1.73.437 2.528-.362s.96-1.932.362-2.531c-.599-.6-1.73-.438-2.528.361-.798.8-.96 1.933-.362 2.532"/>
+  <path d="M15.811 3.312c-.363 1.534-1.334 3.626-3.64 6.218l-.24 2.408a2.56 2.56 0 0 1-.732 1.526L8.817 15.85a.51.51 0 0 1-.867-.434l.27-1.899c.04-.28-.013-.593-.131-.956a9 9 0 0 0-.249-.657l-.082-.202c-.815-.197-1.578-.662-2.191-1.277-.614-.615-1.079-1.379-1.275-2.195l-.203-.083a10 10 0 0 0-.655-.248c-.363-.119-.675-.172-.955-.132l-1.896.27A.51.51 0 0 1 .15 7.17l2.382-2.386c.41-.41.947-.67 1.524-.734h.006l2.4-.238C9.005 1.55 11.087.582 12.623.208c.89-.217 1.59-.232 2.08-.188.244.023.435.06.57.093q.1.026.16.045c.184.06.279.13.351.295l.029.073a3.5 3.5 0 0 1 .157.721c.055.485.051 1.178-.159 2.065m-4.828 7.475.04-.04-.107 1.081a1.54 1.54 0 0 1-.44.913l-1.298 1.3.054-.38c.072-.506-.034-.993-.172-1.418a9 9 0 0 0-.164-.45c.738-.065 1.462-.38 2.087-1.006M5.205 5c-.625.626-.94 1.351-1.004 2.09a9 9 0 0 0-.45-.164c-.424-.138-.91-.244-1.416-.172l-.38.054 1.3-1.3c.245-.246.566-.401.91-.44l1.08-.107zm9.406-3.961c-.38-.034-.967-.027-1.746.163-1.558.38-3.917 1.496-6.937 4.521-.62.62-.799 1.34-.687 2.051.107.676.483 1.362 1.048 1.928.564.565 1.25.941 1.924 1.049.71.112 1.429-.067 2.048-.688 3.079-3.083 4.192-5.444 4.556-6.987.183-.771.18-1.345.138-1.713a3 3 0 0 0-.045-.283 3 3 0 0 0-.3-.041Z"/>
+  <path d="M7.009 12.139a7.6 7.6 0 0 1-1.804-1.352A7.6 7.6 0 0 1 3.794 8.86c-1.102.992-1.965 5.054-1.839 5.18.125.126 3.936-.896 5.054-1.902Z"/></symbol><symbol id="bi-shield-check" viewBox="0 0 16 16"><path d="M5.338 1.59a61 61 0 0 0-2.837.856.48.48 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.7 10.7 0 0 0 2.287 2.233c.346.244.652.42.893.533q.18.085.293.118a1 1 0 0 0 .101.025 1 1 0 0 0 .1-.025q.114-.034.294-.118c.24-.113.547-.29.893-.533a10.7 10.7 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"/>
+  <path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/></symbol><symbol id="bi-shield-lock" viewBox="0 0 16 16"><path d="M5.338 1.59a61 61 0 0 0-2.837.856.48.48 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.7 10.7 0 0 0 2.287 2.233c.346.244.652.42.893.533q.18.085.293.118a1 1 0 0 0 .101.025 1 1 0 0 0 .1-.025q.114-.034.294-.118c.24-.113.547-.29.893-.533a10.7 10.7 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"/>
+  <path d="M9.5 6.5a1.5 1.5 0 0 1-1 1.415l.385 1.99a.5.5 0 0 1-.491.595h-.788a.5.5 0 0 1-.49-.595l.384-1.99a1.5 1.5 0 1 1 2-1.415"/></symbol><symbol id="bi-star" viewBox="0 0 16 16"><path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/></symbol><symbol id="bi-translate" viewBox="0 0 16 16"><path d="M4.545 6.714 4.11 8H3l1.862-5h1.284L8 8H6.833l-.435-1.286zm1.634-.736L5.5 3.956h-.049l-.679 2.022z"/>
+  <path d="M0 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v3h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-3H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zm7.138 9.995q.289.451.63.846c-.748.575-1.673 1.001-2.768 1.292.178.217.451.635.555.867 1.125-.359 2.08-.844 2.886-1.494.777.665 1.739 1.165 2.93 1.472.133-.254.414-.673.629-.89-1.125-.253-2.057-.694-2.82-1.284.681-.747 1.222-1.651 1.621-2.757H14V8h-3v1.047h.765c-.318.844-.74 1.546-1.272 2.13a6 6 0 0 1-.415-.492 2 2 0 0 1-.94.31"/></symbol><symbol id="bi-x-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/></symbol></svg>
+<!-- /icone Bootstrap incorporate -->
 
 <div class="deck">
 
@@ -358,8 +381,8 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
         <div class="cover-tagline">La piattaforma italiana<br>per le prenotazioni del tuo ristorante</div>
         <div class="cover-sub">Senza commissioni · Conforme alla Legge 34/2026 · Made in Italy</div>
         <div class="cover-meta">
-            <span><i class="bi bi-globe2"></i> evulery.it</span>
-            <span><i class="bi bi-envelope"></i> info@evulery.it</span>
+            <span><i class="bi bi-globe2" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-globe2"/></svg></i> evulery.it</span>
+            <span><i class="bi bi-envelope" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-envelope"/></svg></i> info@evulery.it</span>
         </div>
     </div>
     <div class="slide-num" style="color:rgba(255,255,255,.5);">01</div>
@@ -403,33 +426,33 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
 
         <div class="solution-grid">
             <div class="sol-row">
-                <div class="sol-icon"><i class="bi bi-globe2"></i></div>
+                <div class="sol-icon"><i class="bi bi-globe2" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-globe2"/></svg></i></div>
                 <div class="sol-text"><strong>Prenotazioni online 24/7</strong><span>Widget sul tuo sito, link in bio Instagram, QR sul tavolo. Il cliente prenota in 30 secondi.</span></div>
             </div>
             <div class="sol-row">
-                <div class="sol-icon"><i class="bi bi-shield-lock"></i></div>
+                <div class="sol-icon"><i class="bi bi-shield-lock" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-shield-lock"/></svg></i></div>
                 <div class="sol-text"><strong>Caparra integrata</strong><span>Informativa, link di pagamento, Stripe o carta a garanzia. Riduce drasticamente i no-show.</span></div>
             </div>
             <div class="sol-row">
-                <div class="sol-icon"><i class="bi bi-people"></i></div>
+                <div class="sol-icon"><i class="bi bi-people" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-people"/></svg></i></div>
                 <div class="sol-text"><strong>CRM clienti automatico</strong><span>Segmentazione (Nuovo, Abituale, VIP) costruita da sola. Importi clienti da TheFork in CSV.</span></div>
             </div>
             <div class="sol-row">
-                <div class="sol-icon"><i class="bi bi-star"></i></div>
+                <div class="sol-icon"><i class="bi bi-star" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-star"/></svg></i></div>
                 <div class="sol-text"><strong>Recensioni a norma di legge</strong><span>Richieste solo a clienti realmente arrivati. Filtro sentimento prima di Google.</span></div>
             </div>
             <div class="sol-row">
-                <div class="sol-icon"><i class="bi bi-bag-check"></i></div>
+                <div class="sol-icon"><i class="bi bi-bag-check" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-bag-check"/></svg></i></div>
                 <div class="sol-text"><strong>Ordini online + Vetrina</strong><span>Asporto, delivery, menu digitale e pagina pubblica con QR — tutto integrato.</span></div>
             </div>
             <div class="sol-row">
-                <div class="sol-icon"><i class="bi bi-bell"></i></div>
+                <div class="sol-icon"><i class="bi bi-bell" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-bell"/></svg></i></div>
                 <div class="sol-text"><strong>Notifiche in tempo reale</strong><span>Email, campanella in dashboard, push browser. Non perdi mai una prenotazione.</span></div>
             </div>
         </div>
 
         <div class="solution-banner">
-            <i class="bi bi-check-circle-fill"></i>
+            <i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i>
             Canone fisso mensile · Zero commissioni · Nessun vincolo
         </div>
     </div>
@@ -445,64 +468,64 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
 
         <div class="feature-grid">
             <div class="feature-card">
-                <div class="feature-card-icon"><i class="bi bi-globe2"></i></div>
+                <div class="feature-card-icon"><i class="bi bi-globe2" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-globe2"/></svg></i></div>
                 <h4>Widget prenotazioni</h4>
                 <p>Embed sul tuo sito, link da bio social, mobile-first.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-card-icon"><i class="bi bi-people"></i></div>
+                <div class="feature-card-icon"><i class="bi bi-people" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-people"/></svg></i></div>
                 <h4>CRM clienti</h4>
                 <p>Profili automatici, segmentazione, import CSV.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-card-icon"><i class="bi bi-shield-lock"></i></div>
+                <div class="feature-card-icon"><i class="bi bi-shield-lock" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-shield-lock"/></svg></i></div>
                 <h4>Caparra</h4>
                 <p>4 tipi: informativa, link, Stripe, carta a garanzia.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-card-icon"><i class="bi bi-percent"></i></div>
+                <div class="feature-card-icon"><i class="bi bi-percent" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-percent"/></svg></i></div>
                 <h4>Promozioni</h4>
                 <p>Sconti per fasce vuote, ricorrenti o data unica.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-card-icon"><i class="bi bi-star"></i></div>
+                <div class="feature-card-icon"><i class="bi bi-star" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-star"/></svg></i></div>
                 <h4>Reputazione</h4>
                 <p>Recensioni post-visita, filtro sentimento, conformi L.34/2026.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-card-icon"><i class="bi bi-bag-check"></i></div>
+                <div class="feature-card-icon"><i class="bi bi-bag-check" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-bag-check"/></svg></i></div>
                 <h4>Ordini online</h4>
                 <p>Asporto + delivery con kanban e zone CAP.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-card-icon"><i class="bi bi-qr-code"></i></div>
+                <div class="feature-card-icon"><i class="bi bi-qr-code" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-qr-code"/></svg></i></div>
                 <h4>Vetrina Digitale</h4>
                 <p>Pagina pubblica con QR — il "link in bio" del ristorante.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-card-icon"><i class="bi bi-envelope-paper"></i></div>
+                <div class="feature-card-icon"><i class="bi bi-envelope-paper" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-envelope-paper"/></svg></i></div>
                 <h4>Email marketing</h4>
                 <p>Campagne segmentate, gestione crediti, GDPR.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-card-icon"><i class="bi bi-grid-3x3"></i></div>
+                <div class="feature-card-icon"><i class="bi bi-grid-3x3" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-grid-3x3"/></svg></i></div>
                 <h4>Gestione tavoli</h4>
                 <p>Mappa sala, auto-assegnazione, stato in tempo reale.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                <div class="feature-card-icon"><i class="bi bi-graph-up-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-graph-up-arrow"/></svg></i></div>
                 <h4>Marketing &amp; Provenienza</h4>
                 <p>Link tracciati UTM, attribuzione prenotazioni per canale.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-card-icon"><i class="bi bi-person-badge"></i></div>
+                <div class="feature-card-icon"><i class="bi bi-person-badge" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-person-badge"/></svg></i></div>
                 <h4>Accessi staff</h4>
                 <p>Account collaboratori con permessi limitati.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-card-icon"><i class="bi bi-translate"></i></div>
+                <div class="feature-card-icon"><i class="bi bi-translate" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-translate"/></svg></i></div>
                 <h4>Menu multilingua</h4>
-                <p>Carta anche in inglese per i clienti stranieri.</p>
+                <p>Menù in inglese, tedesco, francese e spagnolo.</p>
             </div>
         </div>
     </div>
@@ -514,24 +537,24 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
     <div class="slide-body">
         <span class="slide-tag">Compliance</span>
         <div class="compliance-banner">
-            <span class="compliance-badge"><i class="bi bi-shield-check"></i> Conforme Legge 34/2026</span>
+            <span class="compliance-badge"><i class="bi bi-shield-check" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-shield-check"/></svg></i> Conforme Legge 34/2026</span>
             <h3>Dal 7 aprile 2026 le recensioni online sono regolamentate</h3>
             <p>La nuova normativa impone che le recensioni provengano da chi ha effettivamente usufruito del servizio, siano pubblicate entro 30 giorni e non siano legate a sconti o vantaggi. Chi non si adegua rischia perdita di visibilità sui motori di ricerca e sanzioni.</p>
         </div>
 
         <div class="req-list">
             <div class="req-card">
-                <div class="req-card-icon"><i class="bi bi-person-check"></i></div>
+                <div class="req-card-icon"><i class="bi bi-person-check" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-person-check"/></svg></i></div>
                 <h5>Cliente verificato</h5>
                 <p>Solo chi è realmente arrivato al ristorante può recensire. Evulery invia la richiesta a chi è stato segnato come "arrivato" in dashboard.</p>
             </div>
             <div class="req-card">
-                <div class="req-card-icon"><i class="bi bi-clock"></i></div>
+                <div class="req-card-icon"><i class="bi bi-clock" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-clock"/></svg></i></div>
                 <h5>Entro 30 giorni</h5>
                 <p>La richiesta parte poche ore dopo la visita, ben dentro il limite di 30 giorni previsto dalla norma.</p>
             </div>
             <div class="req-card">
-                <div class="req-card-icon"><i class="bi bi-x-circle"></i></div>
+                <div class="req-card-icon"><i class="bi bi-x-circle" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-x-circle"/></svg></i></div>
                 <h5>Senza incentivi</h5>
                 <p>Niente sconti o regali in cambio di recensione. Evulery rispetta nativamente questo requisito.</p>
             </div>
@@ -553,10 +576,11 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
                 <h4>Cliente prenota</h4>
                 <p>Dal tuo sito, dalla bio Instagram o dalla Vetrina con QR.</p>
                 <ul>
-                    <li><i class="bi bi-check-circle-fill"></i> Sceglie data, ora, persone</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Lascia nome, telefono, email</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Paga la caparra (se prevista)</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Riceve conferma istantanea</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Sceglie data, ora, persone</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Lascia nome, telefono, email</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Paga la caparra (se prevista)</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Riceve conferma istantanea</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Se la data è piena, vede il primo posto libero</li>
                 </ul>
             </div>
             <div class="flow-step">
@@ -564,10 +588,11 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
                 <h4>Tu gestisci</h4>
                 <p>Dalla dashboard, anche da tablet o smartphone.</p>
                 <ul>
-                    <li><i class="bi bi-check-circle-fill"></i> Vedi tutti i tavoli del giorno</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Ricevi notifiche real-time</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Segni arrivati / no-show</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Aggiungi note interne</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Vedi tutti i tavoli del giorno</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Ricevi notifiche real-time</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Segni arrivati / no-show</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Aggiungi una prenotazione col solo nome</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Chiudi le prenotazioni online se sei pieno</li>
                 </ul>
             </div>
             <div class="flow-step">
@@ -575,10 +600,10 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
                 <h4>Sistema automatizza</h4>
                 <p>Reminder, recensioni, marketing — tutto in automatico.</p>
                 <ul>
-                    <li><i class="bi bi-check-circle-fill"></i> Email reminder pre-visita</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Richiesta recensione post-visita</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Campagne email segmentate</li>
-                    <li><i class="bi bi-check-circle-fill"></i> CRM aggiornato in tempo reale</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Email reminder pre-visita</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Richiesta recensione post-visita</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Campagne email segmentate</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> CRM aggiornato in tempo reale</li>
                 </ul>
             </div>
         </div>
@@ -723,13 +748,13 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
                 <div class="price-amount">€49<sub>/mese</sub></div>
                 <div class="price-launch">Prezzo di lancio · listino <s>€69</s> · <strong>blocchi €20/mese</strong></div>
                 <ul class="price-features">
-                    <li><i class="bi bi-check-circle-fill"></i> Prenotazioni illimitate</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Widget di prenotazione</li>
-                    <li><i class="bi bi-check-circle-fill"></i> CRM clienti automatico</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Menu digitale + QR</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Promozioni e sconti</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Email marketing</li>
-                    <li class="disabled"><i class="bi bi-x-circle"></i> Caparra · Vetrina · Reputazione</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Prenotazioni illimitate</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Widget di prenotazione</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> CRM clienti automatico</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Menu digitale + QR</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Promozioni e sconti</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Email marketing</li>
+                    <li class="disabled"><i class="bi bi-x-circle" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-x-circle"/></svg></i> Caparra · Vetrina · Reputazione</li>
                 </ul>
             </div>
 
@@ -740,13 +765,13 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
                 <div class="price-amount">€79<sub>/mese</sub></div>
                 <div class="price-launch">Prezzo di lancio · listino <s>€109</s> · <strong>blocchi €30/mese</strong></div>
                 <ul class="price-features">
-                    <li><i class="bi bi-check-circle-fill"></i> Tutto di Starter, più:</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Caparra (info, link, Stripe, garanzia)</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Reputazione L.34/2026</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Vetrina Digitale + QR HD</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Email reminder + notifiche push</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Marketing &amp; Provenienza + statistiche</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Menu multilingua (inglese)</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Tutto di Starter, più:</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Caparra (info, link, Stripe, garanzia)</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Reputazione L.34/2026</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Vetrina Digitale + QR HD</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Email reminder + notifiche push</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Marketing &amp; Provenienza + statistiche</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Menu multilingua (EN, DE, FR, ES)</li>
                 </ul>
             </div>
 
@@ -756,13 +781,13 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
                 <div class="price-amount">€129<sub>/mese</sub></div>
                 <div class="price-launch">Prezzo di lancio · listino <s>€169</s> · <strong>blocchi €40/mese</strong></div>
                 <ul class="price-features">
-                    <li><i class="bi bi-check-circle-fill"></i> Tutto di Professional, più:</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Gestione tavoli e sala</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Ordini online (asporto + delivery)</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Zone consegna per CAP</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Accessi staff (collaboratori)</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Vetrina personalizzabile (colori, font, white-label, link)</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Supporto prioritario</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Tutto di Professional, più:</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Gestione tavoli e sala</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Ordini online (asporto + delivery)</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Zone consegna per CAP</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Accessi staff (collaboratori)</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Vetrina personalizzabile (colori, font, white-label, link)</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Supporto prioritario</li>
                 </ul>
             </div>
         </div>
@@ -780,18 +805,18 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:20px;">
             <div style="background:#f5f6f8;border:1px solid var(--line);border-radius:16px;padding:32px 36px;">
                 <div style="font-size:13px;font-weight:700;color:var(--brand);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;">
-                    <i class="bi bi-rocket-takeoff"></i> Attivazione
+                    <i class="bi bi-rocket-takeoff" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-rocket-takeoff"/></svg></i> Attivazione
                 </div>
                 <div style="font-size:52px;font-weight:900;color:var(--ink);line-height:1;">€249 <span style="font-size:18px;color:var(--ink-soft);font-weight:600;">una-tantum</span></div>
                 <ul style="list-style:none;padding:0;margin:24px 0 0 0;">
-                    <li style="font-size:15px;color:var(--ink);padding:8px 0;display:flex;gap:10px;align-items:flex-start;"><i class="bi bi-check-circle-fill" style="color:var(--brand);margin-top:3px;"></i> Primo mese di servizio incluso</li>
-                    <li style="font-size:15px;color:var(--ink);padding:8px 0;display:flex;gap:10px;align-items:flex-start;"><i class="bi bi-check-circle-fill" style="color:var(--brand);margin-top:3px;"></i> Onboarding dedicato: configuriamo tutto noi</li>
-                    <li style="font-size:15px;color:var(--ink);padding:8px 0;display:flex;gap:10px;align-items:flex-start;"><i class="bi bi-check-circle-fill" style="color:var(--brand);margin-top:3px;"></i> Migrazione dati da TheFork, Quandoo o CSV</li>
+                    <li style="font-size:15px;color:var(--ink);padding:8px 0;display:flex;gap:10px;align-items:flex-start;"><i class="bi bi-check-circle-fill" style="color:var(--brand);margin-top:3px;" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Primo mese di servizio incluso</li>
+                    <li style="font-size:15px;color:var(--ink);padding:8px 0;display:flex;gap:10px;align-items:flex-start;"><i class="bi bi-check-circle-fill" style="color:var(--brand);margin-top:3px;" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Onboarding dedicato: configuriamo tutto noi</li>
+                    <li style="font-size:15px;color:var(--ink);padding:8px 0;display:flex;gap:10px;align-items:flex-start;"><i class="bi bi-check-circle-fill" style="color:var(--brand);margin-top:3px;" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-check-circle-fill"/></svg></i> Migrazione dati da TheFork, Quandoo o CSV</li>
                 </ul>
             </div>
             <div style="background:#f5f6f8;border:1px solid var(--line);border-radius:16px;padding:32px 36px;">
                 <div style="font-size:13px;font-weight:700;color:var(--brand);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;">
-                    <i class="bi bi-piggy-bank"></i> Opzioni di pagamento
+                    <i class="bi bi-piggy-bank" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-piggy-bank"/></svg></i> Opzioni di pagamento
                 </div>
                 <div style="display:flex;flex-direction:column;gap:12px;">
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:#fff;border:1px solid var(--line);border-radius:12px;">
@@ -807,7 +832,7 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
                         <span style="font-size:17px;font-weight:800;color:var(--brand);">−17%</span>
                     </div>
                 </div>
-                <div style="font-size:14px;color:var(--ink-soft);margin-top:20px;line-height:1.5;"><i class="bi bi-shield-check" style="color:var(--brand);"></i> Nessun vincolo: cambi piano o disdici quando vuoi.</div>
+                <div style="font-size:14px;color:var(--ink-soft);margin-top:20px;line-height:1.5;"><i class="bi bi-shield-check" style="color:var(--brand);" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-shield-check"/></svg></i> Nessun vincolo: cambi piano o disdici quando vuoi.</div>
             </div>
         </div>
     </div>
@@ -823,19 +848,19 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
 
         <div class="setup-grid">
             <div class="setup-step">
-                <div class="setup-step-icon"><i class="bi bi-gear"></i></div>
+                <div class="setup-step-icon"><i class="bi bi-gear" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-gear"/></svg></i></div>
                 <div class="day">Giorno 1</div>
                 <h4>Configurazione</h4>
                 <p>Setup orari, coperti, branding, widget. Lo facciamo insieme in una call di 60 minuti.</p>
             </div>
             <div class="setup-step">
-                <div class="setup-step-icon"><i class="bi bi-mortarboard"></i></div>
+                <div class="setup-step-icon"><i class="bi bi-mortarboard" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-mortarboard"/></svg></i></div>
                 <div class="day">Giorno 2</div>
                 <h4>Training staff</h4>
                 <p>Formazione del tuo team sull'uso quotidiano della dashboard. Materiale video e guida in-app sempre disponibile.</p>
             </div>
             <div class="setup-step">
-                <div class="setup-step-icon"><i class="bi bi-rocket-takeoff"></i></div>
+                <div class="setup-step-icon"><i class="bi bi-rocket-takeoff" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-rocket-takeoff"/></svg></i></div>
                 <div class="day">Giorno 3</div>
                 <h4>Live</h4>
                 <p>Widget online, primi clienti che prenotano. Restiamo disponibili in chat per il primo mese.</p>
@@ -843,7 +868,7 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
         </div>
 
         <div class="solution-banner" style="margin-top:48px;">
-            <i class="bi bi-headset"></i>
+            <i class="bi bi-headset" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-headset"/></svg></i>
             Onboarding dedicato · Migrazione dati da TheFork/Quandoo inclusa
         </div>
     </div>
@@ -859,32 +884,32 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
 
         <div class="trust-grid">
             <div class="trust-card">
-                <div class="trust-icon"><i class="bi bi-flag"></i></div>
+                <div class="trust-icon"><i class="bi bi-flag" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-flag"/></svg></i></div>
                 <h5>Made in Italy</h5>
                 <p>Team italiano, sviluppo italiano, supporto in italiano. Conosciamo il settore della ristorazione del nostro Paese.</p>
             </div>
             <div class="trust-card">
-                <div class="trust-icon"><i class="bi bi-shield-check"></i></div>
+                <div class="trust-icon"><i class="bi bi-shield-check" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-shield-check"/></svg></i></div>
                 <h5>GDPR + Server EU</h5>
                 <p>Dati clienti su server europei. Conforme GDPR e Legge 34/2026. Backup quotidiani crittografati.</p>
             </div>
             <div class="trust-card">
-                <div class="trust-icon"><i class="bi bi-graph-up"></i></div>
+                <div class="trust-icon"><i class="bi bi-graph-up" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-graph-up"/></svg></i></div>
                 <h5>99.9% uptime</h5>
                 <p>Infrastruttura ridondata. Monitoraggio H24. Tempi di risposta sotto i 200ms anche nelle ore di picco.</p>
             </div>
             <div class="trust-card">
-                <div class="trust-icon"><i class="bi bi-arrow-clockwise"></i></div>
+                <div class="trust-icon"><i class="bi bi-arrow-clockwise" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-arrow-clockwise"/></svg></i></div>
                 <h5>Aggiornamenti continui</h5>
                 <p>Nuove funzionalità ogni mese, basate sui feedback dei ristoratori. Niente costi aggiuntivi.</p>
             </div>
             <div class="trust-card">
-                <div class="trust-icon"><i class="bi bi-headset"></i></div>
+                <div class="trust-icon"><i class="bi bi-headset" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-headset"/></svg></i></div>
                 <h5>Supporto in italiano</h5>
                 <p>Email e chat dal lunedì al venerdì. Supporto prioritario sul piano Enterprise (anche weekend).</p>
             </div>
             <div class="trust-card">
-                <div class="trust-icon"><i class="bi bi-arrow-left-right"></i></div>
+                <div class="trust-icon"><i class="bi bi-arrow-left-right" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-arrow-left-right"/></svg></i></div>
                 <h5>Niente lock-in</h5>
                 <p>Esporti i dati clienti in CSV in qualunque momento. Nessun vincolo contrattuale, cambi piano quando vuoi.</p>
             </div>
@@ -901,10 +926,10 @@ h2.slide-title { font-size: 40px; font-weight: 800; letter-spacing: -.5px; line-
 
         <div class="cta-actions">
             <a href="https://evulery.it/#demo" class="cta-btn cta-btn-primary">
-                <i class="bi bi-calendar-check"></i> Richiedi demo gratuita
+                <i class="bi bi-calendar-check" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-calendar-check"/></svg></i> Richiedi demo gratuita
             </a>
             <a href="mailto:info@evulery.it" class="cta-btn cta-btn-secondary">
-                <i class="bi bi-envelope"></i> info@evulery.it
+                <i class="bi bi-envelope" aria-hidden="true"><svg viewBox="0 0 16 16"><use href="#bi-envelope"/></svg></i> info@evulery.it
             </a>
         </div>
 

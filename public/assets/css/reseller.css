@@ -221,6 +221,8 @@ body {
 .rs-mat-card h4 { font-size: .95rem; font-weight: 700; margin: 0 0 4px; color: var(--rs-ink); }
 .rs-mat-card p { font-size: .78rem; color: var(--rs-muted); line-height: 1.45; margin: 0 0 12px; flex: 1; }
 .rs-mat-card .rs-btn { align-self: flex-start; }
+.rs-mat-actions { display: flex; flex-wrap: wrap; gap: 8px; align-self: flex-start; }
+.rs-mat-card .rs-mat-actions .rs-btn { align-self: auto; }
 @media (max-width: 768px) {
     .rs-mat-grid { grid-template-columns: 1fr; }
 }

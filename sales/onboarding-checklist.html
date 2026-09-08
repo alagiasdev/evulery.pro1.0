@@ -110,6 +110,7 @@ const PHASES = [
     n: 1, t: 'Setup essenziale', s: 'I passi senza cui il widget non funziona', actor: 'rist',
     items: [
       '<b>Primo accesso</b>: login con <b>email + password del titolare</b> (credenziali consegnate dall’admin). Conviene cambiare la password da <b>Profilo</b>.',
+      '<b>Card "Completa la configurazione"</b>: al primo accesso la dashboard elenca i passi che mancano, scelti in base al piano. Seguila insieme al cliente — sparisce da sola quando i passi sono fatti.',
       '<b>Impostazioni → Generali</b> <span class="star">★</span>: controlla <b>nome, contatti ed email del ristorante</b> (è quella che riceve le notifiche di prenotazione), carica il <b>logo</b>, imposta lo <b>step di prenotazione</b> e la <b>durata tavolo</b>.',
       '<b>Impostazioni → Categorie Pasto</b>: attiva le fasce che il locale usa (Pranzo, Cena, Aperitivo…) e controlla gli <b>orari inizio/fine</b> di ogni fascia.',
       '<b>Impostazioni → Orari e Coperti</b> <span class="star">★</span>: compila la griglia giorni × orari con i <b>coperti massimi per slot</b> ("Compila tutti" per partire). Gli orari devono essere <b>allineati allo step</b>.',
@@ -178,7 +179,8 @@ const PHASES = [
     n: 5, t: 'Formazione operativa', s: 'Come si usa ogni giorno', actor: 'rist',
     items: [
       '<b>Dashboard</b>: la panoramica del giorno (coperti attesi, prossimi arrivi, stati).',
-      '<b>Prenotazioni</b>: il ciclo di vita (in attesa → confermata → arrivato / no-show) e le azioni rapide; come crearne una <b>a mano</b> (telefono/walk-in).',
+      '<b>Prenotazioni</b>: il ciclo di vita (in attesa → confermata → arrivato / no-show) e le azioni rapide; come crearne una <b>a mano</b> (telefono/walk-in) — al volo bastano <b>nome, coperti e orario</b>, telefono ed email non sono obbligatori.',
+      '<b>Prenotazioni → Gestisci giornata → Chiudi le prenotazioni online</b> (pagina <b>Disponibilità online</b>): come fermare le prenotazioni dal sito di un giorno o di un solo servizio (anche più giorni di fila) quando è al completo o ha un evento privato, e come <b>riaprirle</b>. Il locale resta aperto e le prenotazioni già prese non si toccano.',
       '<b>Sala</b> (piano completo): mappa, fasce di servizio, assegnazione tavoli.',
       'Attiva le <b>notifiche push</b> sul dispositivo che userà in servizio (telefono/tablet di sala), non solo sul PC dell’ufficio.',
       'Mostra la <b>Guida in-app</b> (voce "Guida" nella sidebar): il cliente è autonomo per i dubbi.',

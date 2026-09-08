@@ -16,12 +16,15 @@ class MaterialsController
 {
     private const CATALOG = [
         // 1. Da presentare al cliente — anteprima HTML + download PDF
+        // NB: i PDF si rigenerano dall'HTML con scripts/build-sales-pdf.php
+        // (Chrome headless, così font e icone finiscono dentro al file).
         'onepager' => [
             'category'      => 'client',
             'title'         => 'One-pager',
             'description'   => 'Riassunto di 1 pagina. Da inviare via email dopo il primo contatto.',
             'icon'          => 'file-earmark-text',
             'preview_file'  => 'sales/onepager.html',
+            'file'          => 'sales/onepager.pdf',
         ],
         'pitch-deck' => [
             'category'      => 'client',
@@ -29,11 +32,12 @@ class MaterialsController
             'description'   => 'Presentazione completa: problema, soluzione, ROI, prezzi. Usalo in demo.',
             'icon'          => 'file-earmark-slides',
             'preview_file'  => 'sales/pitch-deck.html',
+            'file'          => 'sales/pitch-deck.pdf',
         ],
         'faq-ristoratore' => [
             'category'    => 'client',
             'title'       => 'FAQ ristoratore',
-            'description' => 'Le 15 domande più frequenti su contratti, migrazione, dati, supporto. Invialo dopo la demo ai clienti tiepidi che dicono "ci devo pensare".',
+            'description' => 'Le 20 domande più frequenti su contratti, migrazione, dati, supporto. Invialo dopo la demo ai clienti tiepidi che dicono "ci devo pensare".',
             'icon'        => 'patch-question',
             'file'        => 'sales/faq-ristoratore.html',
         ],

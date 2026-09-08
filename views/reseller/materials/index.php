@@ -14,9 +14,16 @@
                 <div class="rs-mat-icon"><i class="bi bi-<?= e($m['icon']) ?>"></i></div>
                 <h4><?= e($m['title']) ?></h4>
                 <p><?= e($m['description']) ?></p>
-                <a href="<?= url('reseller/materials/' . $key . '/preview') ?>" target="_blank" rel="noopener" class="rs-btn rs-btn-primary rs-btn-sm">
-                    <i class="bi bi-eye"></i> Apri
-                </a>
+                <div class="rs-mat-actions">
+                    <a href="<?= url('reseller/materials/' . $key . '/preview') ?>" target="_blank" rel="noopener" class="rs-btn rs-btn-primary rs-btn-sm">
+                        <i class="bi bi-eye"></i> Apri
+                    </a>
+                    <?php if (!empty($m['file']) && str_ends_with($m['file'], '.pdf')): ?>
+                        <a href="<?= url('reseller/materials/' . $key) ?>" class="rs-btn rs-btn-ghost rs-btn-sm">
+                            <i class="bi bi-file-earmark-pdf"></i> Scarica PDF
+                        </a>
+                    <?php endif; ?>
+                </div>
             </div>
         <?php endforeach; ?>
     </div>

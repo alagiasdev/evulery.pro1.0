@@ -109,6 +109,7 @@ const SCREENS = [
       '<b>KPI giornata</b> — "Vedi qui i tuoi coperti del giorno: confermati, arrivati, no-show. Aggiornato in tempo reale."',
       '<b>Lista prenotazioni</b> — "Ordinate per orario. Ogni riga è una prenotazione; cliccando vedi tutti i dettagli."',
       '<b>Campanella</b> (in alto a destra) — "Quando arriva una nuova prenotazione suona qui, senza tenere la dashboard aperta."',
+      '<b>Nuova prenotazione al volo</b> — "Se il cliente chiama mentre sei in sala: nome, coperti, orario e hai finito. Telefono ed email non sono obbligatori."',
     ],
     say: '"Tutto questo è in tempo reale, anche da tablet o smartphone. Dopo il servizio sai esattamente quanti tavoli hai gestito e con che stato."',
   },
@@ -118,6 +119,7 @@ const SCREENS = [
     show: [
       'Scegli data, orario, numero persone.',
       'Fai notare che il sistema <b>propone solo gli orari realmente disponibili</b>.',
+      'Prova una data al completo: il widget <b>propone il primo giorno con posto libero</b>, invece di lasciare il cliente davanti a un "non disponibile".',
       'Mostra il modulo dati (nome, email, telefono).',
       'Conferma → arriva l’email di conferma (simulazione).',
     ],
@@ -189,6 +191,9 @@ render();
 
 // Approfondimenti on-demand
 const EXTRA = [
+  { ic:'bi-calendar-x', t:'Disponibilità online', trig:'Ha serate al completo, eventi privati, giornate da chiudere',
+    open:'Dashboard → <b>Prenotazioni</b> → menu <b>Gestisci giornata</b> → <b>Chiudi le prenotazioni online</b>',
+    say:'"Quando sei pieno o hai un banchetto, fermi le prenotazioni online di quel giorno — o di un solo servizio, anche per più giorni di fila. Il locale resta aperto, le prenotazioni che hai già preso restano dove sono, e riapri con un clic."' },
   { ic:'bi-grid-3x3', t:'Sala & Tavoli', trig:'Locale strutturato, tanti tavoli',
     open:'Dashboard → <b>Sala</b> (operativa)',
     say:'"Vedi la sala in tempo reale: chi è seduto, chi sta per arrivare, i turni dei tavoli. Il sistema assegna i tavoli da solo e tu sai sempre cosa è libero." (servizio dei piani avanzati)' },
@@ -212,7 +217,7 @@ const EXTRA = [
     say:'"Generi link tracciati per Instagram, Google, volantini… e vedi da quale canale arrivano davvero le prenotazioni. Così sai dove conviene investire." (piani Professional ed Enterprise)' },
   { ic:'bi-translate', t:'Menu multilingua', trig:'Zona turistica, clientela straniera',
     open:'Dashboard → <b>Menu</b> → traduzioni',
-    say:'"Il menu può essere anche in inglese: i turisti leggono nella loro lingua e ordinano con più sicurezza." (piani Professional ed Enterprise)' },
+    say:'"Il menu può essere anche in inglese, tedesco, francese o spagnolo: i turisti leggono nella loro lingua e ordinano con più sicurezza." (piani Professional ed Enterprise)' },
   { ic:'bi-gear', t:'Impostazioni (panoramica)', trig:'Vuole capire quanto è configurabile',
     open:'Dashboard → <b>Impostazioni</b>',
     say:'"Orari, coperti, fasce di servizio, chiusure, caparra, notifiche, vetrina: tutto regolabile da te. E lo configuriamo insieme durante l’attivazione, non ti lascio solo."' },
