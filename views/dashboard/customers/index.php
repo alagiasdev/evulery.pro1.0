@@ -33,12 +33,15 @@ $makeWaLink = static function (array $c) use ($tenant): ?string {
     return 'https://wa.me/' . $num . '?text=' . rawurlencode($text);
 };
 
+// Stesso impianto delle card statistiche del Menu: icona dentro un riquadro
+// colorato, numero e etichetta accanto. Qui in piu' sono filtri, quindi quello
+// attivo resta segnato dal bordo.
 $segTabs = [
-    ['key' => '',            'label' => 'Tutti',       'count' => $stats['totale'],      'color' => '#0d6efd'],
-    ['key' => 'nuovo',       'label' => 'Nuovi',       'count' => $stats['nuovo'],       'color' => '#6c757d'],
-    ['key' => 'occasionale', 'label' => 'Occasionali', 'count' => $stats['occasionale'], 'color' => '#0dcaf0'],
-    ['key' => 'abituale',    'label' => 'Abituali',    'count' => $stats['abituale'],    'color' => '#198754'],
-    ['key' => 'vip',         'label' => 'VIP',         'count' => $stats['vip'],         'color' => '#ffc107'],
+    ['key' => '',            'label' => 'Tutti',       'count' => $stats['totale'],      'color' => '#0d6efd', 'bg' => '#e8f0fe', 'icon' => 'people-fill'],
+    ['key' => 'nuovo',       'label' => 'Nuovi',       'count' => $stats['nuovo'],       'color' => '#6c757d', 'bg' => '#f1f3f5', 'icon' => 'person-plus'],
+    ['key' => 'occasionale', 'label' => 'Occasionali', 'count' => $stats['occasionale'], 'color' => '#0dcaf0', 'bg' => '#e0f7fa', 'icon' => 'person'],
+    ['key' => 'abituale',    'label' => 'Abituali',    'count' => $stats['abituale'],    'color' => '#198754', 'bg' => '#e8f5e9', 'icon' => 'person-check'],
+    ['key' => 'vip',         'label' => 'VIP',         'count' => $stats['vip'],         'color' => '#ffc107', 'bg' => '#fff8e1', 'icon' => 'star-fill'],
 ];
 
 // Compleanni del mese in corso: stessa finestra del segmento email
@@ -48,7 +51,8 @@ $MESI_IT = ['', 'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno',
 $meseCorrente = $MESI_IT[(int)date('n')];
 if (!empty($stats['con_compleanno'])) {
     $segTabs[] = ['key' => 'compleanno', 'label' => 'Compleanni ' . $meseCorrente,
-                  'count' => $stats['compleanno'], 'color' => '#D81B60'];
+                  'count' => $stats['compleanno'], 'color' => '#D81B60',
+                  'bg' => '#fce4ec', 'icon' => 'gift-fill'];
 }
 ?>
 
@@ -61,35 +65,31 @@ if (!empty($stats['con_compleanno'])) {
             : url('dashboard/customers' . ($search ? '?q=' . urlencode($search) : ''));
     ?>
     <a href="<?= $href ?>" class="seg-tab <?= $isActive ? 'active' : '' ?>" style="--seg-color:<?= $tab['color'] ?>;">
-        <div class="seg-dot" style="background:<?= $tab['color'] ?>;"></div>
-        <div>
+        <div class="seg-icon" style="background:<?= $tab['bg'] ?>;color:<?= $tab['color'] ?>;">
+            <i class="bi bi-<?= e($tab['icon']) ?>"></i>
+        </div>
+        <div class="seg-text">
             <div class="seg-count"><?= $tab['count'] ?></div>
             <div class="seg-label"><?= $tab['label'] ?></div>
         </div>
     </a>
     <?php endforeach; ?>
-    <?php if (tenant_can('statistics')): ?>
-    <a href="<?= url('dashboard/customers/stats') ?>" class="seg-tab seg-tab-stats" style="--seg-color:#00844A;">
-        <i class="bi bi-graph-up-arrow"></i>
-        <div>
-            <div class="seg-count" style="font-size:.85rem;">Statistiche</div>
-            <div class="seg-label">analisi</div>
-        </div>
-    </a>
-    <?php else: ?>
-    <a href="<?= url('dashboard/customers/stats') ?>" class="seg-tab seg-tab-stats" style="--seg-color:#adb5bd;opacity:.6;">
-        <i class="bi bi-graph-up-arrow"></i>
-        <div>
-            <div class="seg-count" style="font-size:.85rem;">Statistiche <i class="bi bi-lock-fill" style="font-size:.6rem;"></i></div>
-            <div class="seg-label">analisi</div>
-        </div>
-    </a>
-    <?php endif; ?>
 </div>
 
-<!-- Action bar (nascosta allo staff: Clienti in sola lettura) -->
+<!-- Barra azioni: "Statistiche" sta qui in alto a destra, non piu' come settima
+     casella in mezzo ai filtri (non e' un filtro, e nella griglia restava da
+     sola su una riga). Le azioni di modifica restano nascoste allo staff. -->
+<div class="d-flex align-items-center justify-content-end gap-2 flex-wrap" style="margin-bottom:.5rem;">
+    <?php if (tenant_can('statistics')): ?>
+    <a href="<?= url('dashboard/customers/stats') ?>" class="btn btn-sm btn-outline-success" style="font-size:.78rem;">
+        <i class="bi bi-graph-up-arrow me-1"></i> Statistiche
+    </a>
+    <?php else: ?>
+    <a href="<?= url('dashboard/customers/stats') ?>" class="btn btn-sm btn-outline-secondary" style="font-size:.78rem;opacity:.65;">
+        <i class="bi bi-graph-up-arrow me-1"></i> Statistiche <i class="bi bi-lock-fill" style="font-size:.6rem;"></i>
+    </a>
+    <?php endif; ?>
 <?php if (!is_staff()): ?>
-<div class="d-flex align-items-center justify-content-end gap-2" style="margin-bottom:.5rem;">
     <?php if (!empty($deletableImportedCount)): ?>
     <button type="button" class="btn btn-sm btn-outline-danger" style="font-size:.78rem;"
             id="bulkDelImportedBtn" data-count="<?= (int)$deletableImportedCount ?>">
@@ -99,8 +99,8 @@ if (!empty($stats['con_compleanno'])) {
     <a href="<?= url('dashboard/customers/import') ?>" class="btn btn-sm btn-outline-secondary" style="font-size:.78rem;">
         <i class="bi bi-cloud-upload me-1"></i> Importa CSV
     </a>
-</div>
 <?php endif; ?>
+</div>
 
 <!-- Filter bar -->
 <form method="GET" action="<?= url('dashboard/customers') ?>">
