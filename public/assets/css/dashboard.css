@@ -7,6 +7,13 @@
     --brand: #00844A;
     --brand-light: #E8F5E9;
     --brand-dark: #006837;
+    /* Grigi: erano usati in 9 punti (barre e testi secondari) ma non erano mai
+       stati definiti, quindi la dichiarazione veniva scartata dal browser. La
+       barra "Sett. scorsa" del confronto restava senza colore e sembrava vuota
+       anche quando era piena al 100%. Valori Bootstrap, gli stessi che il resto
+       del file usa gia' scritti per esteso. */
+    --gray-500: #adb5bd;
+    --gray-600: #6c757d;
 }
 
 body { background: #f5f6fa; }

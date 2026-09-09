@@ -30,6 +30,21 @@ class HomeController
         $lastWeekDate = date('Y-m-d', strtotime($date . ' -7 days'));
         $lastWeekStats = $this->getStatsForDate($tenantId, $lastWeekDate);
 
+        // --- Confronto SETTIMANALE (non del singolo giorno) ---
+        // Si confrontano finestre omogenee: da lunedi' al giorno selezionato,
+        // contro gli stessi giorni della settimana prima. Il confronto di un
+        // giorno solo era troppo ballerino - e per giunta metteva una giornata
+        // ancora in corso contro una gia' conclusa.
+        $weekStart     = date('Y-m-d', strtotime('monday this week', strtotime($date)));
+        $lastWeekStart = date('Y-m-d', strtotime($weekStart . ' -7 days'));
+        $weekCompare = [
+            'this'       => $this->getCoversBetween($tenantId, $weekStart, $date),
+            'last'       => $this->getCoversBetween($tenantId, $lastWeekStart, $lastWeekDate),
+            'days'       => (int) ((strtotime($date) - strtotime($weekStart)) / 86400) + 1,
+            'is_today'   => $date === date('Y-m-d'),
+            'week_start' => $weekStart,
+        ];
+
         // --- Prossimi in arrivo (today only, future times) ---
         $nextArrivals = [];
         if ($date === date('Y-m-d')) {
@@ -114,6 +129,7 @@ class HomeController
             'stats'         => $stats,
             'lastWeekStats' => $lastWeekStats,
             'lastWeekDate'  => $lastWeekDate,
+            'weekCompare'   => $weekCompare,
             'reservations'  => $reservations,
             'nextArrivals'  => $nextArrivals,
             'mealCapacity'  => $mealCapacity,
@@ -264,6 +280,22 @@ class HomeController
         Database::getInstance()
             ->prepare('UPDATE tenants SET onboarding_collapsed = :v WHERE id = :id')
             ->execute(['v' => $val ? 1 : 0, 'id' => Auth::tenantId()]);
+    }
+
+    /**
+     * Coperti totali in un intervallo di date (estremi inclusi). Stessa
+     * definizione di "coperti" usata da getStatsForDate: si escludono annullate
+     * e no-show.
+     */
+    private function getCoversBetween(int $tenantId, string $from, string $to): int
+    {
+        $stmt = Database::getInstance()->prepare(
+            'SELECT COALESCE(SUM(CASE WHEN status NOT IN ("cancelled","noshow") THEN party_size ELSE 0 END), 0)
+             FROM reservations
+             WHERE tenant_id = :tenant_id AND reservation_date BETWEEN :from AND :to'
+        );
+        $stmt->execute(['tenant_id' => $tenantId, 'from' => $from, 'to' => $to]);
+        return (int) $stmt->fetchColumn();
     }
 
     private function getStatsForDate(int $tenantId, string $date): array

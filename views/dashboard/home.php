@@ -340,19 +340,27 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
 
         <!-- Confronto settimana -->
         <?php
-        $thisCovers = (int)$stats['covers'];
-        $lastCovers = (int)$lastWeekStats['covers'];
+        // Coperti dell'intera settimana in corso (da lunedi' al giorno mostrato)
+        // contro gli stessi giorni della settimana precedente.
+        $thisCovers = (int)($weekCompare['this'] ?? 0);
+        $lastCovers = (int)($weekCompare['last'] ?? 0);
+        $weekDays   = (int)($weekCompare['days'] ?? 1);
         $maxBar = max($thisCovers, $lastCovers, 1);
         $weekDiff = $lastCovers > 0 ? round((($thisCovers - $lastCovers) / $lastCovers) * 100) : ($thisCovers > 0 ? 100 : 0);
+        // Etichetta: quali giorni sto confrontando, es. "lun-mer" (o "solo lun"
+        // se la settimana e' appena cominciata). Piu' chiaro di "primi N giorni".
+        $periodLabel = $weekDays === 1
+            ? 'solo ' . strtolower($DAYS_IT[1])
+            : strtolower($DAYS_IT[1]) . '–' . strtolower($DAYS_IT[(int)date('w', strtotime($date))]);
         ?>
         <div class="card">
             <div class="card-header">
                 <h6><i class="bi bi-graph-up me-1"></i> Confronto settimana</h6>
-                <span style="font-size:.72rem;color:var(--gray-600);">vs <?= strtolower($DAYS_IT[(int)date('w', strtotime($lastWeekDate))]) ?> scorso</span>
+                <span style="font-size:.72rem;color:var(--gray-600);"><?= e($periodLabel) ?> · stessa finestra</span>
             </div>
             <div class="dh-week-compare">
                 <?php if ($thisCovers === 0 && $lastCovers === 0): ?>
-                <div class="text-center text-muted py-3" style="font-size:.85rem;">Ancora nessun coperto: qui vedrai il confronto con la settimana scorsa.</div>
+                <div class="text-center text-muted py-3" style="font-size:.85rem;">Ancora nessun coperto questa settimana: qui vedrai il confronto con la settimana scorsa.</div>
                 <?php else: ?>
                 <div class="dh-wc-row">
                     <div class="dh-wc-label">Sett. scorsa</div>
@@ -370,6 +378,11 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
                         <i class="bi bi-arrow-<?= $weekDiff > 0 ? 'up' : 'down' ?>"></i> <?= ($weekDiff > 0 ? '+' : '') . $weekDiff ?>%
                     </span>
                     <span style="font-size:.72rem;color:var(--gray-600);margin-left:6px;">rispetto alla settimana precedente</span>
+                </div>
+                <?php endif; ?>
+                <?php if (!empty($weekCompare['is_today'])): ?>
+                <div style="text-align:center;margin-top:4px;font-size:.7rem;color:var(--gray-600);">
+                    <i class="bi bi-info-circle"></i> La giornata di oggi &egrave; ancora in corso.
                 </div>
                 <?php endif; ?>
                 <?php endif; ?>
