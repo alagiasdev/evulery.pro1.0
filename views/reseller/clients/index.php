@@ -5,7 +5,7 @@
     </div>
 </div>
 
-<div class="rs-kpi-grid" style="grid-template-columns:repeat(3,1fr);">
+<div class="rs-kpi-grid rs-kpi-3">
     <div class="rs-kpi-card">
         <div class="rs-kpi-icon" style="background:#E8F5E9;color:#00844A;"><i class="bi bi-shop"></i></div>
         <div>

@@ -32,6 +32,11 @@ $totalPages = max(1, (int)ceil($totalCount / $limit));
 
 <style>
 .leads-stats { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+/* Sette card in riga stanno solo sul desktop: sotto vanno mandate a capo,
+   altrimenti su telefono diventano colonnine illeggibili. */
+@media (max-width: 1100px) { .leads-stats { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 768px)  { .leads-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; } }
+@media (max-width: 576px)  { .leads-stats { grid-template-columns: repeat(2, 1fr); gap: 8px; } }
 .leads-stat-card {
     background: #fff; border: 1px solid #e9ecef; border-radius: 10px;
     padding: 12px 14px; border-top: 3px solid;

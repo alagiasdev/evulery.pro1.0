@@ -11,7 +11,7 @@
 </div>
 
 <!-- Counter status -->
-<div class="rs-kpi-grid" style="grid-template-columns:repeat(5,1fr);">
+<div class="rs-kpi-grid rs-kpi-5">
     <a href="<?= url('reseller/leads') ?>?status=new" class="rs-kpi-card" style="text-decoration:none;color:inherit;padding:.7rem;">
         <div>
             <div class="val" style="color:#0277bd;font-size:1.1rem;"><?= (int)($statusCounts['new'] ?? 0) ?></div>

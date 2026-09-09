@@ -115,6 +115,11 @@ body {
 
 /* ===== KPI ===== */
 .rs-kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.25rem; }
+/* Varianti a 3 e 5 colonne (lead, clienti). Erano scritte inline nelle view:
+   lo stile inline vince sulle media query, quindi su mobile restavano
+   schiacciate in 5 colonne. Come classi, invece, il breakpoint le riprende. */
+.rs-kpi-grid.rs-kpi-3 { grid-template-columns: repeat(3, 1fr); }
+.rs-kpi-grid.rs-kpi-5 { grid-template-columns: repeat(5, 1fr); }
 .rs-kpi-card {
     background: #fff; border: 1px solid var(--rs-line); border-radius: 12px;
     padding: 1rem 1.2rem; display: flex; align-items: center; gap: 12px;
@@ -271,11 +276,19 @@ body {
         display: block;
     }
     .rs-main { margin-left: 0; }
-    .rs-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    /* Le varianti hanno specificita' maggiore: vanno nominate, altrimenti
+       .rs-kpi-grid da sola non le sovrascrive nemmeno qui dentro. */
+    .rs-kpi-grid,
+    .rs-kpi-grid.rs-kpi-3,
+    .rs-kpi-grid.rs-kpi-5 { grid-template-columns: repeat(2, 1fr); }
     .rs-row2 { grid-template-columns: 1fr; }
     .rs-detail-grid { grid-template-columns: 1fr; }
     .rs-comm-row { grid-template-columns: repeat(2, 1fr); }
     .rs-form-grid { grid-template-columns: 1fr; }
+    /* Le tabelle (lead, clienti, commissioni, crediti) sono piu' larghe di un
+       telefono: dentro .rs-card, che ha overflow:hidden, le ultime colonne
+       sarebbero irraggiungibili. Su schermi stretti le si lascia scorrere. */
+    .rs-card { overflow-x: auto; }
     .rs-page { padding: 1rem; }
     .rs-page-title { font-size: 1.25rem; }
 }
