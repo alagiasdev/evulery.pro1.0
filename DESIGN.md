@@ -88,6 +88,71 @@ breakpoints:
   md: 768px
   sm: 576px
 
+surfaces:
+  dashboard:
+    audience: ristoratore
+    canvas: "#f5f6fa"
+    rounded: 12px
+    shadow: "0 1px 3px rgba(0,0,0,.06)"
+    prefix: "dh- dr- cs- tm- oh- av- notif-"
+  booking-widget:
+    audience: cliente del ristorante
+    canvas: "#FFFFFF"
+    surface-soft: "#F8F9FA"
+    rounded: 16px
+    rounded-sm: 10px
+    shadow: "0 4px 24px rgba(0,0,0,0.08)"
+    accent-urgency: "#FF6B00"
+    text: "#1A1A1A"
+    text-muted: "#6B7280"
+    prefix: "bw-"
+  menu-pubblico:
+    audience: cliente del ristorante
+    canvas: "#FAFAF8"
+    rounded: 14px
+    highlight: "#F59E0B"
+    text-body: "#374151"
+    prefix: "dm-"
+  hub:
+    audience: cliente del ristorante
+    canvas: "#ffffff"
+    accent: "#E8F5E9"
+    prefix: "hub-"
+  ordering:
+    audience: cliente del ristorante
+    canvas: "#FAF8F5"
+    rounded: 14px
+    accent: "#E8A317"
+    prefix: "os-"
+  reviews:
+    audience: cliente del ristorante
+    star: "#FFC107"
+    star-empty: "#e9ecef"
+    prefix: "rv-"
+  delivery-board:
+    audience: rider
+    canvas: "#f5f3f0"
+    rounded: 14px
+    states: { nuovo: "#F9A825", in-corso: "#1565C0", consegnato: "#00844A", ritardo: "#E65100" }
+    prefix: "db-"
+  reseller:
+    audience: rivenditore
+    canvas: "#f5f6f8"
+    sidebar-width: 220px
+    prefix: "rs-"
+  admin:
+    audience: super admin
+    accent: "#1565C0"
+    accent-dark: "#0D47A1"
+    sidebar-width: 220px
+    prefix: "adm- admin-"
+  email:
+    audience: cliente del ristorante
+    container: 600px
+    canvas: "#f5f6f8"
+    rounded: "10px / 12px"
+    style: inline (MailService)
+
 components:
   stat-card:
     description: "Riquadro numerico: icona in box colorato, numero, etichetta. Modello per ogni KPI."
@@ -347,6 +412,74 @@ contenitore**, mai trascinare la pagina.
 
 ---
 
+## Le nove superfici
+
+Tutto quanto sopra descrive **la dashboard del ristoratore**, che è la superficie più
+grande (267 KB di CSS su 429 complessivi). Ma il prodotto ne ha nove, e cinque le vede
+il **cliente del ristorante**, non il nostro cliente: sono quelle su cui si gioca la
+reputazione di chi ci paga.
+
+| Superficie | Chi la vede | Fondo | Raggio | Prefisso |
+|---|---|---|---|---|
+| Dashboard | ristoratore | `#f5f6fa` freddo | 12px | `dh- dr- cs- tm- oh-` |
+| Widget prenotazione | cliente | bianco | **16px** | `bw-` |
+| Menù digitale | cliente | `#FAFAF8` caldo | 14px | `dm-` |
+| Vetrina (hub) | cliente | bianco | — | `hub-` |
+| Ordini online | cliente | `#FAF8F5` caldo | 14px | `os-` |
+| Recensioni | cliente | — | — | `rv-` |
+| Board consegne | rider | `#f5f3f0` | 14px | `db-` |
+| Area reseller | rivenditore | `#f5f6f8` | 12px | `rs-` |
+| Area admin | noi | — | 12px | `adm- admin-` |
+| Email | cliente | `#f5f6f8`, 600px | 10–12px | inline in `MailService` |
+
+### La regola implicita che le tiene insieme
+Il **verde di marca è identico ovunque** — `#00844A`, `#006837`, `#E8F5E9` compaiono con
+gli stessi valori in tutti e nove i fogli di stile. È l'unico filo comune, ed è quello
+che fa sembrare lo stesso prodotto un widget su un sito esterno e una dashboard.
+
+Tutto il resto cambia secondo il pubblico, con una logica che nessuno aveva scritto ma
+che il codice segue con coerenza:
+
+- **Le superfici pubbliche sono più calde e più morbide.** Menù e ordini stanno su fondi
+  avorio (`#FAFAF8`, `#FAF8F5`), i raggi salgono a 14–16 px, l'ombra del widget è
+  quattro volte più marcata di quella della dashboard (`0 4px 24px` contro `0 1px 3px`).
+  Chi prenota da telefono, magari mentre cammina, ha bisogno di superfici generose.
+- **Il gestionale è freddo e compatto.** Fondo grigio-azzurro, raggio 12 px, ombra
+  minima, testo sotto il rem: densità, perché si legge in servizio.
+- **Ogni superficie ha un solo accento oltre al verde**, e serve a una cosa sola:
+  arancio `#FF6B00` per l'urgenza nel widget ("ultimi posti"), ambra `#F59E0B` per le
+  voci in evidenza nel menù, `#E8A317` per gli ordini, giallo `#FFC107` per le stelle
+  delle recensioni, blu `#1565C0` per distinguere l'area admin.
+
+### Regole per superficie
+
+**Widget di prenotazione** (`bw-`) — è il volto pubblico: vive dentro il sito di un
+altro, quindi non può ereditare nulla dall'ospite. Font Apple-first
+(`-apple-system, BlinkMacSystemFont`), tutto autoconsistente, nessuna dipendenza da
+Bootstrap. Toccarlo significa toccare la conversione: ogni modifica va provata a 360 px.
+L'asset è **cachato da Cloudflare**, quindi dopo un deploy va purgato.
+
+**Menù digitale** (`dm-`) — si legge al tavolo, spesso con poca luce e una mano sola.
+Testo `#374151` su avorio, mai grigio tenue su bianco. Le voci in evidenza usano l'ambra,
+non il verde: il verde qui significherebbe "disponibile".
+
+**Ordini online** (`os-`) — stesso impianto del menù, con l'arancio per i richiami
+all'azione secondari e il rosso `#dc3545` riservato a errori e rimozioni dal carrello.
+
+**Board consegne** (`db-`) — pensata per stare aperta su un tablet in cucina: colori
+degli stati più saturi del resto (giallo, blu, verde, arancio) perché si guarda da un
+metro di distanza.
+
+**Aree reseller e admin** — riprendono l'impianto della dashboard con la barra laterale
+più larga (220 px). L'admin aggiunge il blu `#1565C0` come accento di ambiente: serve a
+capire a colpo d'occhio che non si sta lavorando nella dashboard di un cliente.
+
+**Email** (`MailService`) — stile inline, contenitore 600 px, raggi 10–12 px, palette
+identica alla dashboard. Nessun webfont, nessun CSS esterno: i client di posta li
+ignorano o li bloccano.
+
+---
+
 ## Voce e testi
 
 Tutta l'interfaccia è in **italiano**, con il vocabolario della ristorazione: coperti,
@@ -387,6 +520,41 @@ turni, servizio, sala, no-show. Mai gergo tecnico rivolto all'utente ("segmento"
 
 ---
 
+## Dove sta cosa
+
+Il foglio della dashboard è cresciuto a 267 KB e le classi sono raggruppate per
+**prefisso di pagina**, non per componente. Sapere a quale pagina appartiene un prefisso
+è metà del lavoro quando si va a modificare qualcosa.
+
+| Prefisso | Regole | Dove vive |
+|---|---|---|
+| `tm-` | 266 | Mappa sala e gestione tavoli — `settings/tables-map.php` |
+| `cs-` | 123 | Scheda cliente — `customers/show.php` |
+| `dr-` | 122 | Prenotazioni e calendario in home |
+| `hg-` | 114 | Guida in-app — `help/detail.php` |
+| `dh-` | 109 | Dashboard home (card statistica, griglie, azioni rapide) |
+| `dm-` | 81 | Menù, lato gestione — `menu/categories.php` |
+| `rd-`, `do-` | 78 + 54 | Ordini, board e dettaglio |
+| `oh-` | 73 | Storico ordini |
+| `promo-` | 61 | Promozioni e aspetto del menù |
+| `av-`, `cl-` | 48 + 35 | Disponibilità online e chiusure |
+| `notif-`, `push-` | 46 + 36 | Notifiche e push del browser |
+| `ob-` | 43 | Card di onboarding — `partials/onboarding.php` |
+| `res-` | 38 | Chiusura straordinaria |
+| `bd-` | 29 | Compleanni in home |
+| `seg-` | 26 | Filtri a card dei clienti |
+| `susp-` | 26 | Pagina "abbonamento sospeso" |
+| `nv-` | 23 | Card Novità — `partials/novita-card.php` |
+| `hero-` | 19 | Intestazione della scheda cliente |
+
+> Questa organizzazione per pagina è comoda finché una pagina è una cosa sola, ma è
+> anche il motivo per cui la card statistica esiste come `dh-stat-card` e il filtro come
+> `seg-tab`, pur essendo lo stesso oggetto con un bordo in più. Quando si crea un
+> componente destinato a comparire in **più pagine**, conviene dargli un nome proprio
+> invece del prefisso della pagina in cui nasce.
+
+---
+
 ## Lacune note
 
 Onestà su ciò che il sistema **non ha ancora**, così chi legge non crede di trovarlo:
@@ -399,8 +567,16 @@ Onestà su ciò che il sistema **non ha ancora**, così chi legge non crede di t
    dichiarare qualunque conformità.
 4. **Spaziature non tokenizzate nel CSS**: i valori sono scritti a mano in rem. I token
    qui sopra descrivono l'uso reale, non esistono come variabili.
-5. **Due aree con palette parallele**: reseller (`--rs-*`) e admin (`--admin-accent`)
-   ripetono valori invece di ereditarli.
+5. **Nove palette parallele.** Ogni superficie ridichiara i propri colori con un prefisso
+   diverso (`--bw-*`, `--dm-*`, `--os-*`, `--rs-*`…). Il verde di marca è per fortuna
+   identico ovunque, ma è ripetuto nove volte: cambiarlo significa toccare nove file.
+6. **Nessun componente condiviso fra superfici.** Un pulsante del widget e uno della
+   dashboard non hanno una riga di CSS in comune. È il prezzo dell'isolamento del widget
+   (che vive dentro siti altrui e non può ereditare nulla), ma vale anche dove non
+   servirebbe — menù, ordini e vetrina potrebbero condividere una base.
+7. **Il gestionale non ha un contenitore a larghezza massima**: su schermi molto larghi
+   le righe degli elenchi si allungano parecchio. Voluto per i tablet in cassa, da
+   rivedere se qualcuno lavorasse su un monitor da 27 pollici.
 
 ---
 
