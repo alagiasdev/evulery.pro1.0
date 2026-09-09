@@ -137,11 +137,21 @@ class CommunicationsController
         $credits = (int)($tenant['email_credits_balance'] ?? 0);
         $tenantSlug = trim((string)($tenant['slug'] ?? ''));
 
+        // Segmento preselezionabile dall'indirizzo: ci si arriva dall'elenco
+        // clienti filtrato per compleanni ("Invia gli auguri"), e il destinatario
+        // dev'essere gia' quello giusto - non "tutti i clienti".
+        $preselect = $request->query('segment', 'all');
+        $valid = ['all', 'nuovo', 'occasionale', 'abituale', 'vip', 'inactive', 'birthday_month'];
+        if (!in_array($preselect, $valid, true)) {
+            $preselect = 'all';
+        }
+
         view('dashboard/communications/create', [
             'title'      => 'Nuova Comunicazione',
             'activeMenu' => 'communications',
             'credits'    => $credits,
             'tenantSlug' => $tenantSlug,
+            'preselect'  => $preselect,
         ], 'dashboard');
     }
 

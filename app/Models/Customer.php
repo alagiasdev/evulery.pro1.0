@@ -136,7 +136,11 @@ class Customer
 
         $sql .= $this->segmentWhere($segment, $thresholds, $params);
         $sql .= $this->visibleClause();
-        $sql .= ' ORDER BY last_name ASC, first_name ASC LIMIT :lim OFFSET :off';
+        // Nel filtro compleanni conta la data, non l'alfabeto: si ordina per
+        // giorno del mese, cosi' in cima c'e' chi festeggia prima.
+        $sql .= $segment === 'compleanno'
+            ? ' ORDER BY DAY(birthday) ASC, last_name ASC LIMIT :lim OFFSET :off'
+            : ' ORDER BY last_name ASC, first_name ASC LIMIT :lim OFFSET :off';
 
         $stmt = $this->db->prepare($sql);
         foreach ($params as $k => $v) {
@@ -188,7 +192,13 @@ class Customer
                 SUM(CASE WHEN total_bookings < :th_occ1 THEN 1 ELSE 0 END) as nuovo,
                 SUM(CASE WHEN total_bookings >= :th_occ2 AND total_bookings < :th_abi1 THEN 1 ELSE 0 END) as occasionale,
                 SUM(CASE WHEN total_bookings >= :th_abi2 AND total_bookings < :th_vip1 THEN 1 ELSE 0 END) as abituale,
-                SUM(CASE WHEN total_bookings >= :th_vip2 THEN 1 ELSE 0 END) as vip
+                SUM(CASE WHEN total_bookings >= :th_vip2 THEN 1 ELSE 0 END) as vip,
+                SUM(CASE WHEN birthday IS NOT NULL AND MONTH(birthday) = MONTH(CURDATE()) THEN 1 ELSE 0 END) as compleanno,
+                SUM(CASE WHEN birthday IS NOT NULL AND MONTH(birthday) = MONTH(CURDATE())
+                          AND email IS NOT NULL AND email <> ""
+                          AND marketing_consent = 1 AND unsubscribed = 0 AND is_blocked = 0
+                     THEN 1 ELSE 0 END) as compleanno_contattabili,
+                SUM(CASE WHEN birthday IS NOT NULL THEN 1 ELSE 0 END) as con_compleanno
              FROM customers WHERE tenant_id = :tenant_id' . $this->visibleClause()
         );
         $stmt->execute([
@@ -207,6 +217,15 @@ class Customer
             'occasionale' => (int)$row['occasionale'],
             'abituale'    => (int)$row['abituale'],
             'vip'         => (int)$row['vip'],
+            // Compleanni del mese in corso: stessa definizione del segmento
+            // 'birthday_month' delle campagne email, cosi' chi vedi nell'elenco
+            // e' esattamente chi ricevera' gli auguri.
+            'compleanno'     => (int)$row['compleanno'],
+            // Quanti di quei festeggiati riceverebbero davvero l'email: gli auguri
+            // partono solo verso chi ha email e consenso marketing (GDPR). Senza
+            // questo dato si vedono "3 compleanni" e poi "0 destinatari".
+            'compleanno_contattabili' => (int)$row['compleanno_contattabili'],
+            'con_compleanno' => (int)$row['con_compleanno'],
         ];
     }
 
@@ -241,6 +260,7 @@ class Customer
             'occasionale' => ' AND total_bookings >= ' . (int)$thresholds['occ'] . ' AND total_bookings < ' . (int)$thresholds['abi'],
             'abituale'    => ' AND total_bookings >= ' . (int)$thresholds['abi'] . ' AND total_bookings < ' . (int)$thresholds['vip'],
             'vip'         => ' AND total_bookings >= ' . (int)$thresholds['vip'],
+            'compleanno'  => ' AND birthday IS NOT NULL AND MONTH(birthday) = MONTH(CURDATE())',
             default       => '',
         };
     }

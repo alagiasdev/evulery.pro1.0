@@ -69,7 +69,7 @@
                         ];
                         foreach ($segments as $key => $seg): ?>
                         <label class="segment-option" style="display:flex;align-items:center;gap:.5rem;padding:.6rem .75rem;border:2px solid #dee2e6;border-radius:8px;cursor:pointer;font-size:.82rem;transition:all .15s;">
-                            <input type="radio" name="segment_filter" value="<?= $key ?>" <?= $key === 'all' ? 'checked' : '' ?> style="accent-color:<?= $seg[2] ?>;">
+                            <input type="radio" name="segment_filter" value="<?= $key ?>" <?= $key === ($preselect ?? 'all') ? 'checked' : '' ?> style="accent-color:<?= $seg[2] ?>;">
                             <i class="bi <?= $seg[1] ?>" style="color:<?= $seg[2] ?>;"></i>
                             <span><?= $seg[0] ?></span>
                         </label>
@@ -250,9 +250,13 @@
         });
     });
 
-    // Initial state
-    document.querySelector('.segment-option').style.borderColor = '#00844A';
-    document.querySelector('.segment-option').style.background = '#f0fdf4';
+    // Initial state: evidenzia l'opzione REALMENTE selezionata, che puo' arrivare
+    // preselezionata dall'indirizzo (es. "Invia gli auguri" dai compleanni) e non
+    // essere la prima della lista.
+    var checkedOpt = document.querySelector('input[name="segment_filter"]:checked');
+    var initialOpt = checkedOpt ? checkedOpt.closest('.segment-option') : document.querySelector('.segment-option');
+    initialOpt.style.borderColor = '#00844A';
+    initialOpt.style.background = '#f0fdf4';
 
     // Initial fetch
     fetchCount();

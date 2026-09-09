@@ -5853,3 +5853,19 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .gg-ic.red { background: #fdece9; color: #c0392b; }
 .gg-tx b { font-size: .88rem; display: block; color: #212529; }
 .gg-tx small { font-size: .76rem; color: #8a949b; }
+
+/* Barra "Compleanni del mese" nell'elenco clienti: riepilogo + invito a mandare
+   gli auguri. Compare solo nel filtro compleanni. */
+.bday-cta {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    background: #FCE4EC; border: 1px solid #F8BBD0; border-left: 4px solid #D81B60;
+    border-radius: 10px; padding: 12px 16px; margin-bottom: 1rem;
+    font-size: .85rem; color: #880E4F;
+}
+.bday-cta-btn {
+    margin-left: auto; background: #D81B60; color: #fff; text-decoration: none;
+    font-size: .82rem; font-weight: 600; padding: .45rem .9rem; border-radius: 8px;
+    display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+}
+.bday-cta-btn:hover { background: #AD1457; color: #fff; }
+@media (max-width: 576px) { .bday-cta-btn { margin-left: 0; width: 100%; justify-content: center; } }

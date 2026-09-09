@@ -578,7 +578,14 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
                 <?php endforeach; ?>
             </div>
             <div class="bd-footer">
-                <a href="<?= url('dashboard/customers') ?>?birthday_filter=upcoming">Vedi tutti i clienti &rarr;</a>
+                <?php
+                // Il vecchio link puntava a ?birthday_filter=upcoming, parametro
+                // che l'elenco clienti non ha mai letto: si finiva sull'elenco
+                // completo e del compleanno non restava traccia.
+                $MESI_CARD = ['', 'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno',
+                              'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+                ?>
+                <a href="<?= url('dashboard/customers') ?>?segment=compleanno">Vedi i compleanni di <?= $MESI_CARD[(int)date('n')] ?> &rarr;</a>
             </div>
             <?php endif; ?>
         </div>

@@ -23,6 +23,16 @@ $segTabs = [
     ['key' => 'abituale',    'label' => 'Abituali',    'count' => $stats['abituale'],    'color' => '#198754'],
     ['key' => 'vip',         'label' => 'VIP',         'count' => $stats['vip'],         'color' => '#ffc107'],
 ];
+
+// Compleanni del mese in corso: stessa finestra del segmento email
+// "Compleanno questo mese", cosi' chi si vede qui e' chi ricevera' gli auguri.
+$MESI_IT = ['', 'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno',
+            'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+$meseCorrente = $MESI_IT[(int)date('n')];
+if (!empty($stats['con_compleanno'])) {
+    $segTabs[] = ['key' => 'compleanno', 'label' => 'Compleanni ' . $meseCorrente,
+                  'count' => $stats['compleanno'], 'color' => '#D81B60'];
+}
 ?>
 
 <!-- Segment tabs + Stats link -->
@@ -99,6 +109,32 @@ $segTabs = [
 </div>
 </form>
 
+<?php if ($currentSeg === 'compleanno'): ?>
+<!-- Ponte verso la campagna: da qui si vedono i festeggiati, di la' si mandano
+     gli auguri. Il segmento e' lo stesso, quindi i destinatari sono esattamente
+     questi. -->
+<div class="bday-cta">
+    <?php $bdContattabili = (int)($stats['compleanno_contattabili'] ?? 0); ?>
+    <div>
+        <strong>Compleanni di <?= e($meseCorrente) ?>:</strong>
+        <?= (int)$stats['compleanno'] ?> client<?= (int)$stats['compleanno'] === 1 ? 'e' : 'i' ?><?php
+            if ((int)$stats['compleanno'] > 0): ?>, di cui <strong><?= $bdContattabili ?></strong> con email e consenso<?php
+            endif; ?>.
+        <span style="color:#6c757d;">Data di nascita nota per <?= (int)$stats['con_compleanno'] ?> client<?= (int)$stats['con_compleanno'] === 1 ? 'e' : 'i' ?> su <?= (int)$stats['totale'] ?>.</span>
+        <?php if ((int)$stats['compleanno'] > 0 && $bdContattabili === 0): ?>
+        <div style="margin-top:4px;font-size:.8rem;">
+            Nessuno di loro pu&ograve; ricevere email: serve il consenso alle comunicazioni, che il cliente d&agrave; prenotando dal widget.
+        </div>
+        <?php endif; ?>
+    </div>
+    <?php if (tenant_can('email_broadcast') && $bdContattabili > 0): ?>
+    <a href="<?= url('dashboard/communications/create') ?>?segment=birthday_month" class="bday-cta-btn">
+        <i class="bi bi-gift"></i> Invia gli auguri
+    </a>
+    <?php endif; ?>
+</div>
+<?php endif; ?>
+
 <!-- Desktop Table -->
 <div class="card desktop-table">
     <div class="cust-header">
@@ -120,6 +156,17 @@ $segTabs = [
     <?php foreach ($customers as $c):
         [$seg, $segLabel] = customerSegment((int)$c['total_bookings'], $thOcc, $thAbi, $thVip);
         $createdDate = isset($c['created_at']) ? format_date($c['created_at'], 'd/m/Y') : '';
+        // Nel filtro compleanni la riga sotto il nome mostra la data (e gli anni
+        // che compie): e' l'informazione per cui si sta guardando l'elenco.
+        $bdayLine = null;
+        if ($currentSeg === 'compleanno' && !empty($c['birthday'])) {
+            $bd = date_create($c['birthday']);
+            if ($bd) {
+                $eta = (int)date('Y') - (int)$bd->format('Y');
+                $bdayLine = '🎂 ' . (int)$bd->format('j') . ' ' . $MESI_IT[(int)$bd->format('n')]
+                          . ' · compie ' . $eta . ' anni';
+            }
+        }
     ?>
     <div class="cust-row<?= !empty($c['is_blocked']) ? ' cust-blocked' : '' ?>" data-url="<?= url("dashboard/customers/{$c['id']}") ?>">
         <div>
@@ -135,7 +182,9 @@ $segTabs = [
                 <span class="unsub-badge"><i class="bi bi-envelope-slash"></i></span>
                 <?php endif; ?>
             </div>
-            <?php if ($createdDate): ?>
+            <?php if ($bdayLine): ?>
+            <div class="c-sub" style="color:#D81B60;font-weight:600;"><?= e($bdayLine) ?></div>
+            <?php elseif ($createdDate): ?>
             <div class="c-sub">Cliente dal <?= $createdDate ?></div>
             <?php endif; ?>
         </div>
@@ -207,7 +256,12 @@ $segTabs = [
                 <span class="unsub-badge"><i class="bi bi-envelope-slash"></i></span>
                 <?php endif; ?>
             </div>
+            <?php if ($currentSeg === 'compleanno' && !empty($c['birthday'])):
+                $bdM = date_create($c['birthday']); ?>
+            <div class="mc-meta" style="color:#D81B60;font-weight:600;">🎂 <?= (int)$bdM->format('j') ?> <?= $MESI_IT[(int)$bdM->format('n')] ?> · compie <?= (int)date('Y') - (int)$bdM->format('Y') ?> anni</div>
+            <?php else: ?>
             <div class="mc-meta"><?= e($c['phone']) ?> &middot; <?= (int)$c['total_bookings'] ?> pren.</div>
+            <?php endif; ?>
         </div>
         <div class="mc-right">
             <span class="seg-badge <?= $seg ?>"><?= $segLabel ?></span>
