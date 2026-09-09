@@ -126,13 +126,13 @@
                         <i class="bi bi-telephone-fill"></i>
                     </a>
                     <?php
-                        $waNum = preg_replace('/[^0-9]/', '', $order['customer_phone']);
-                        if (str_starts_with($waNum, '0')) $waNum = '39' . substr($waNum, 1);
-                        elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . $waNum;
+                        $waNum = wa_phone($order['customer_phone']);   // helper condiviso: vedi functions.php
                     ?>
+                    <?php if ($waNum): ?>
                     <a href="https://wa.me/<?= e($waNum) ?>" target="_blank" rel="noopener" class="db-action-btn db-action-wa" title="WhatsApp">
                         <i class="bi bi-whatsapp"></i>
                     </a>
+                    <?php endif; ?>
                 </div>
             </div>
 

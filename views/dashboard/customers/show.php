@@ -83,7 +83,10 @@ $bdayDaysAway = null;
 $bdayNextAge = null;
 if (!empty($customer['birthday'])) {
     $bday = new DateTime($customer['birthday']);
-    $today = new DateTime();
+    // 'today' e non 'now': con l'ora corrente, il giorno stesso del compleanno
+    // la mezzanotte risultava gia' passata, la ricorrenza slittava all'anno dopo
+    // e il banner "Oggi e' il compleanno!" non compariva mai.
+    $today = new DateTime('today');
     $age = $today->diff($bday)->y;
     // Calculate days until next birthday
     $nextBday = new DateTime($today->format('Y') . '-' . $bday->format('m-d'));
@@ -210,13 +213,19 @@ $sourceLabelsPrivacy = [
         <?php endif; ?>
     </div>
     <?php
-        $waNum = preg_replace('/[^0-9]/', '', $customer['phone']);
-        if (str_starts_with($waNum, '0')) $waNum = '39' . substr($waNum, 1);
-        elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . $waNum;
+        // Numero normalizzato dall'helper condiviso: la vecchia versione scritta
+        // qui a mano sbagliava i cellulari 39x (li scambiava per numeri gia'
+        // prefissati) e i fissi (toglieva lo zero iniziale, che invece va tenuto),
+        // e con il telefono vuoto produceva il link "wa.me/39".
+        $waNum = wa_phone($customer['phone'] ?? '');
+        $waText = 'Ciao ' . trim((string)$customer['first_name']) . ', tanti auguri di buon compleanno da tutti noi!'
+                . "\n" . trim((string)($tenant['name'] ?? ''));
     ?>
-    <a href="https://wa.me/<?= e($waNum) ?>?text=<?= rawurlencode('Tanti auguri di buon compleanno! 🎂') ?>" target="_blank" rel="noopener" class="cs-birthday-alert-action">
-        <i class="bi bi-whatsapp me-1"></i> Invia auguri
+    <?php if ($waNum): ?>
+    <a href="https://wa.me/<?= e($waNum) ?>?text=<?= rawurlencode($waText) ?>" target="_blank" rel="noopener" class="cs-birthday-alert-action">
+        <i class="bi bi-whatsapp me-1"></i> Auguri su WhatsApp
     </a>
+    <?php endif; ?>
 </div>
 <?php endif; ?>
 
@@ -247,12 +256,14 @@ $sourceLabelsPrivacy = [
             </div>
             <div class="hero-contact">
                 <?php
-                    $waNum = preg_replace('/[^0-9]/', '', $customer['phone']);
-                    if (str_starts_with($waNum, '0')) $waNum = '39' . substr($waNum, 1);
-                    elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . $waNum;
+                    $waNum = wa_phone($customer['phone']);   // helper condiviso: vedi functions.php
                 ?>
                 <i class="bi bi-whatsapp"></i>
+                <?php if ($waNum): ?>
                 <a href="https://wa.me/<?= e($waNum) ?>" target="_blank" rel="noopener">Inizia a Chattare</a>
+                <?php else: ?>
+                <span style="color:#9aa4ab;">numero non utilizzabile su WhatsApp</span>
+                <?php endif; ?>
             </div>
             <?php endif; ?>
             <?php if (!empty($customer['email'])): ?>

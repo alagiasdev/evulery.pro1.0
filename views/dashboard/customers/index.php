@@ -145,8 +145,12 @@ if (!empty($stats['con_compleanno'])) {
         <?php endif; ?>
     </div>
     <?php if (tenant_can('email_broadcast') && $bdContattabili > 0): ?>
+    <?php // Nella stessa schermata ci sono due canali: qui la campagna email (a
+          // crediti, verso chi ha dato il consenso), sulle righe WhatsApp uno per
+          // uno. Il pulsante deve dire quale dei due e' - "Invia gli auguri" da
+          // solo era ambiguo. ?>
     <a href="<?= url('dashboard/communications/create') ?>?segment=birthday_month" class="bday-cta-btn">
-        <i class="bi bi-gift"></i> Invia gli auguri
+        <i class="bi bi-envelope-heart"></i> Auguri via email a <?= $bdContattabili ?>
     </a>
     <?php endif; ?>
 </div>
@@ -207,8 +211,9 @@ if (!empty($stats['con_compleanno'])) {
                 <span class="unsub-badge"><i class="bi bi-envelope-slash"></i></span>
                 <?php endif; ?>
                 <?php if ($waLink): ?>
-                <a href="<?= e($waLink) ?>" target="_blank" rel="noopener" class="wa-btn" title="Manda gli auguri su WhatsApp">
-                    <i class="bi bi-whatsapp"></i>
+                <?php // Icona + parola: la sola icona verde non diceva a cosa serve. ?>
+                <a href="<?= e($waLink) ?>" target="_blank" rel="noopener" class="wa-btn" title="Apre WhatsApp con gli auguri gia' scritti">
+                    <i class="bi bi-whatsapp"></i> Auguri
                 </a>
                 <?php endif; ?>
             </div>
@@ -305,8 +310,8 @@ if (!empty($stats['con_compleanno'])) {
             <span class="noshow-count has"><?= (int)$c['total_noshow'] ?></span>
             <?php endif; ?>
             <?php if ($waLink): ?>
-            <a href="<?= e($waLink) ?>" target="_blank" rel="noopener" class="wa-btn" title="Manda gli auguri su WhatsApp">
-                <i class="bi bi-whatsapp"></i>
+            <a href="<?= e($waLink) ?>" target="_blank" rel="noopener" class="wa-btn" title="Apre WhatsApp con gli auguri gia' scritti">
+                <i class="bi bi-whatsapp"></i> Auguri
             </a>
             <?php endif; ?>
             <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>

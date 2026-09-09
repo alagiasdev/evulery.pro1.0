@@ -73,12 +73,10 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
         </div>
         <div>
             <?php
-                $waNum = preg_replace('/[^0-9]/', '', $reservation['phone']);
-                if (str_starts_with($waNum, '0')) $waNum = '39' . substr($waNum, 1);
-                elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . $waNum;
+                $waNum = wa_phone($reservation['phone']);   // helper condiviso: vedi functions.php
             ?>
             <div class="detail-label"><i class="bi bi-whatsapp me-1"></i>WhatsApp</div>
-            <div class="detail-value"><a href="https://wa.me/<?= e($waNum) ?>" target="_blank" rel="noopener">Inizia a Chattare</a></div>
+            <div class="detail-value"><?php if ($waNum): ?><a href="https://wa.me/<?= e($waNum) ?>" target="_blank" rel="noopener">Inizia a Chattare</a><?php else: ?><span style="color:#9aa4ab;">non disponibile</span><?php endif; ?></div>
         </div>
         <div>
             <div class="detail-label"><i class="bi bi-envelope me-1"></i>Email</div>

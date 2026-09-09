@@ -1,9 +1,7 @@
 <?php
 $isDelivery = $order['order_type'] === 'delivery';
 $transitions = (new \App\Models\Order())->getValidTransitions($order['status']);
-$waNum = preg_replace('/[^0-9]/', '', $order['customer_phone']);
-if (str_starts_with($waNum, '0')) $waNum = '39' . substr($waNum, 1);
-elseif (!str_starts_with($waNum, '39') && strlen($waNum) <= 10) $waNum = '39' . $waNum;
+$waNum = wa_phone($order['customer_phone']);   // helper condiviso: vedi functions.php
 
 // Status badge helper (pill, same pattern as reservations)
 $statusColors = [
@@ -55,7 +53,7 @@ $statusClass = $statusColors[$order['status']] ?? 'pending';
         </div>
         <div>
             <div class="detail-label"><i class="bi bi-whatsapp me-1"></i>WhatsApp</div>
-            <div class="detail-value"><a href="https://wa.me/<?= e($waNum) ?>" target="_blank" rel="noopener">Chatta</a></div>
+            <div class="detail-value"><?php if ($waNum): ?><a href="https://wa.me/<?= e($waNum) ?>" target="_blank" rel="noopener">Chatta</a><?php else: ?><span style="color:#9aa4ab;">non disponibile</span><?php endif; ?></div>
         </div>
         <?php if ($order['customer_email']): ?>
         <div>

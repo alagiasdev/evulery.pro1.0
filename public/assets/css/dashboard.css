@@ -5879,10 +5879,12 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 /* Icona WhatsApp accanto al nome (filtro compleanni): il ristoratore manda gli
    auguri uno per uno, senza passare da una campagna e senza consumare crediti. */
 .wa-btn {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 26px; height: 26px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+    height: 24px; padding: 0 9px; border-radius: 999px;
     background: #25D366; color: #fff; text-decoration: none;
-    font-size: .95rem; vertical-align: middle; margin-left: 6px;
+    font-size: .72rem; font-weight: 600;
+    vertical-align: middle; margin-left: 6px; white-space: nowrap;
     flex-shrink: 0;
 }
+.wa-btn i { font-size: .85rem; }
 .wa-btn:hover { background: #1DA851; color: #fff; }
