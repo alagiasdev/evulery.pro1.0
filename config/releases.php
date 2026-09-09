@@ -23,6 +23,20 @@ return [
 
     'releases' => [
         [
+            'date'     => '2026-09-09',
+            'category' => 'clienti',
+            'title'    => 'I compleanni dei clienti, e come fargli gli auguri',
+            'desc'     => 'Nell’elenco clienti trovi il filtro “Compleanni del mese”: vedi chi festeggia e quando. Da lì mandi gli auguri su WhatsApp uno per uno, col messaggio già pronto, oppure lanci una campagna email a chi ha dato il consenso.',
+            'audience' => ['owner', 'reseller'],
+        ],
+        [
+            'date'     => '2026-09-09',
+            'category' => 'prenotazioni',
+            'title'    => 'Confronto settimana, non più di un giorno solo',
+            'desc'     => 'La card in dashboard somma i coperti da lunedì a oggi e li confronta con gli stessi giorni della settimana scorsa: un numero più stabile del confronto fra due singole giornate.',
+            'audience' => ['owner'],
+        ],
+        [
             'date'     => '2026-08-21',
             'category' => 'widget',
             'title'    => 'Il cliente non trova più “tutto esaurito” a vuoto',
