@@ -17,9 +17,11 @@
 <div class="wrap">
 
     <div class="lbl">Navigazione per categoria</div>
-    <!-- Nella pagina vera e position:fixed in cima: qui la si riporta nel flusso
-         per poterla mostrare accanto agli altri componenti. -->
-    <div class="dm-cat-nav" style="position:static;">
+    <!-- Nella pagina vera e' fissa in cima e compare solo dopo che si scorre:
+         parte a opacita' zero e alzata di tutta la sua altezza, e la classe
+         dm-nav-visible la fa scendere. Qui serve sia riportarla nel flusso sia
+         darle quella classe, altrimenti resta invisibile. -->
+    <div class="dm-cat-nav dm-nav-visible" style="position:static;">
         <div class="dm-cat-nav-inner">
             <a href="#" class="dm-cat-nav-item active">Antipasti</a>
             <a href="#" class="dm-cat-nav-item">Primi</a>
@@ -39,8 +41,8 @@
                     </div>
                     <div class="dm-item-desc">Sfoglia tirata a mano, ragù di manzo cotto otto ore.</div>
                     <div class="dm-allergen-tags">
-                        <span class="dm-allergen-tag dm-at-gluten"><span class="dm-allergen-tag-dot"></span> Glutine</span>
-                        <span class="dm-allergen-tag dm-at-eggs"><span class="dm-allergen-tag-dot"></span> Uova</span>
+                        <span class="dm-allergen-tag dm-at-gluten"><span class="dm-allergen-tag-dot"></span>Glutine</span>
+                        <span class="dm-allergen-tag dm-at-eggs"><span class="dm-allergen-tag-dot"></span>Uova</span>
                     </div>
                 </div>
             </div>
@@ -52,7 +54,7 @@
                     </div>
                     <div class="dm-item-desc">Mascarpone, savoiardi, caffè della torrefazione sotto casa.</div>
                     <div class="dm-allergen-tags">
-                        <span class="dm-allergen-tag dm-at-milk"><span class="dm-allergen-tag-dot"></span> Latte</span>
+                        <span class="dm-allergen-tag dm-at-milk"><span class="dm-allergen-tag-dot"></span>Latte</span>
                     </div>
                 </div>
             </div>
@@ -60,8 +62,17 @@
     </div>
 
     <div class="lbl">Richiamo all'azione in fondo alla pagina</div>
-    <div class="dm-cta dm-cta-bg--plain">
-        <a href="#" class="dm-cta-btn">Prenota un tavolo</a>
+    <!-- Lo sfondo e' un livello a se': con la foto del locale se c'e', altrimenti
+         dm-cta-bg--plain, la sfumatura scura. E' l'unico punto scuro del menu. -->
+    <div class="dm-cta">
+        <div class="dm-cta-bg dm-cta-bg--plain"></div>
+        <div class="dm-cta-inner">
+            <div class="dm-cta-icon"><i class="bi bi-calendar-check"></i></div>
+            <div class="dm-cta-over">Prenotazioni</div>
+            <h3 class="dm-cta-title">Ti abbiamo fatto venire fame?</h3>
+            <p class="dm-cta-sub">Prenota per la prossima cena o il prossimo pranzo</p>
+            <a href="#" class="dm-cta-btn"><i class="bi bi-calendar-check me-1"></i> Prenota un tavolo</a>
+        </div>
     </div>
 
 </div>

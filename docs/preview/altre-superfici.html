@@ -11,7 +11,9 @@
 <link href="../../public/assets/css/delivery-board.css" rel="stylesheet">
 <link href="../../public/assets/css/reseller.css" rel="stylesheet">
 <style>
-    body { margin: 0; padding: 18px; background: #eef0f3; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+    /* delivery-board.css centra il body, reseller.css (caricato dopo) rimette
+       margin:0 e lascia solo il max-width: il centraggio va ridichiarato. */
+    body { max-width: 560px; margin: 0 auto; padding: 18px; background: #eef0f3; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
     .sec { max-width: 520px; margin: 0 auto 30px; }
     .sec > h3 { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #00844A; margin: 0 0 4px; }
     .sec > p { font-size: .78rem; color: #6c757d; margin: 0 0 12px; }
@@ -63,13 +65,15 @@
 <div class="sec">
     <h3>Area reseller</h3>
     <p>Riprende l'impianto della dashboard con barra laterale più larga (220 px). I lead
-       hanno un badge per stato.</p>
+       hanno un badge per stato: sono i sette di <code>DemoRequest::STATUSES</code>,
+       con la demo divisa in programmata e effettuata.</p>
     <div class="rs-card">
         <div class="rs-card-body">
             <div class="lbl">Badge di stato lead</div>
             <span class="rs-badge rs-b-new">Nuovo</span>
             <span class="rs-badge rs-b-contacted">Contattato</span>
-            <span class="rs-badge rs-b-demo">Demo</span>
+            <span class="rs-badge rs-b-demo_scheduled">Demo programmata</span>
+            <span class="rs-badge rs-b-demo_done">Demo effettuata</span>
             <span class="rs-badge rs-b-negotiating">In trattativa</span>
             <span class="rs-badge rs-b-customer">Cliente</span>
             <span class="rs-badge rs-b-lost">Perso</span>
