@@ -50,7 +50,10 @@ $MESI_IT = ['', 'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno',
             'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
 $meseCorrente = $MESI_IT[(int)date('n')];
 if (!empty($stats['con_compleanno'])) {
-    $segTabs[] = ['key' => 'compleanno', 'label' => 'Compleanni ' . $meseCorrente,
+    // Etichetta corta e fissa: "Compleanni <mese>" misura 141px contro gli 85
+    // disponibili nella card su telefono, e cambierebbe lunghezza ogni mese.
+    // Il mese resta scritto nella barra sotto ("Compleanni di settembre: ...").
+    $segTabs[] = ['key' => 'compleanno', 'label' => 'Compleanni',
                   'count' => $stats['compleanno'], 'color' => '#D81B60',
                   'bg' => '#fce4ec', 'icon' => 'gift-fill'];
 }
