@@ -834,25 +834,28 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
 .seg-tabs {
     display: flex; gap: .5rem; margin-bottom: 1.25rem; overflow-x: auto;
 }
+/* Stesse misure delle card statistiche del Menu (.dh-stat-card): padding 14/16,
+   raggio 12, ombra leggera, NESSUN bordo visibile. Il bordo c'e' ma trasparente:
+   serve solo a colorarsi sul filtro attivo, e tenendolo sempre presente la card
+   non "salta" di 2px quando viene selezionata. */
 .seg-tab {
-    display: flex; align-items: center; gap: .6rem;
-    padding: .5rem .8rem; border-radius: 12px;
-    background: #fff; border: 2px solid #dee2e6;
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; border-radius: 12px;
+    background: #fff; border: 2px solid transparent;
     cursor: pointer; transition: all .15s;
     text-decoration: none; color: #495057; white-space: nowrap;
     box-shadow: 0 1px 3px rgba(0,0,0,.06);
 }
-/* Icona in riquadro colorato, come le card statistiche del Menu. */
 .seg-icon {
-    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+    width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
-    font-size: 1rem;
+    font-size: 1.15rem;
 }
 .seg-text { min-width: 0; }
-.seg-tab:hover { border-color: #adb5bd; color: #495057; }
+.seg-tab:hover { border-color: #dee2e6; color: #495057; }
 .seg-tab.active { border-color: var(--seg-color); background: #fff; }
-.seg-count { font-size: 1.1rem; font-weight: 800; color: var(--seg-color); }
-.seg-label { font-size: .78rem; font-weight: 600; color: #6c757d; }
+.seg-count { font-size: 1.45rem; font-weight: 700; line-height: 1; color: var(--seg-color); }
+.seg-label { font-size: .7rem; font-weight: 500; color: #6c757d; text-transform: uppercase; letter-spacing: .3px; }
 .seg-tab.active .seg-label { color: var(--seg-color); }
 .seg-tab-stats {
     margin-left: auto; border-style: dashed;
