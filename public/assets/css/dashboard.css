@@ -5663,12 +5663,18 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
     display: flex; flex-direction: column; gap: .2rem;
     font-size: .66rem; font-weight: 700; letter-spacing: .05em;
     text-transform: uppercase; color: #9aa4ab;
+    /* Senza questo la colonna non scende sotto la larghezza "naturale"
+       dell'input (circa 180px): in modalita' modifica i due campi affiancati
+       sforavano il riquadro e Cognome/Email finivano tagliati fuori. */
+    min-width: 0;
 }
 .cs-edit-field input {
     font-size: .92rem; font-weight: 500; color: #1f2a33;
     letter-spacing: normal; text-transform: none;
     padding: .45rem .6rem; border: 1px solid #dee2e6; border-radius: 8px;
     background: #fff; transition: border-color .15s, box-shadow .15s;
+    /* L'input si adatta alla colonna, bordo e padding inclusi. */
+    width: 100%; min-width: 0; box-sizing: border-box;
 }
 .cs-edit-field input::placeholder { color: #c4cbd0; font-weight: 400; }
 .cs-edit-field input:focus {
