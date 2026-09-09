@@ -636,3 +636,56 @@ function releases_card_visible(string $audience, int $days = 30): bool
     $dismissed = $_COOKIE['novita_card_dismissed_' . $audience] ?? '';
     return $dismissed < $latest;
 }
+
+/**
+ * Normalizza un numero di telefono per i link wa.me (WhatsApp), che vogliono
+ * il formato internazionale di sole cifre: niente +, spazi o trattini.
+ *
+ * In archivio i numeri stanno in formati misti ("3331234567", "+39 333 123
+ * 4567", "0039...", "333-1234567"), quindi:
+ *  - si tengono solo le cifre (il + iniziale viene ricordato prima);
+ *  - 00 iniziale (prefisso internazionale all'europea) diventa nulla;
+ *  - se il numero non ha gia' un prefisso paese si antepone 39 (Italia).
+ *
+ * Ritorna null quando il numero non e' plausibile: meglio nessun pulsante che
+ * un pulsante che apre una chat sbagliata.
+ */
+function wa_phone(?string $raw): ?string
+{
+    $raw = trim((string) $raw);
+    if ($raw === '') {
+        return null;
+    }
+
+    $hadPlus = str_starts_with($raw, '+');
+    $digits  = preg_replace('/\D+/', '', $raw);
+    if ($digits === '') {
+        return null;
+    }
+
+    // 00 39 ... -> 39 ...
+    if (!$hadPlus && str_starts_with($digits, '00')) {
+        $digits = substr($digits, 2);
+        $hadPlus = true;
+    }
+
+    // Senza + davanti si decide dalla LUNGHEZZA, non dal fatto che cominci per
+    // 39: esistono cellulari italiani 391/392/393, e scambiarli per numeri gia
+    // prefissati aprirebbe la chat di un altro (o nessuna).
+    if (!$hadPlus) {
+        $n = strlen($digits);
+        if ($n >= 9 && $n <= 11) {
+            $digits = '39' . $digits;          // numero nazionale
+        } elseif (!($n >= 12 && $n <= 13 && str_starts_with($digits, '39'))) {
+            return null;                        // ne nazionale ne internazionale: si scarta
+        }
+    }
+
+    // Lunghezza plausibile per E.164 (prefisso paese incluso).
+    $len = strlen($digits);
+    if ($len < 11 || $len > 15) {
+        return null;
+    }
+
+    return $digits;
+}

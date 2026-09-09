@@ -16,6 +16,23 @@ $avatarColors = ['vip' => '#E65100', 'abituale' => '#2E7D32', 'occasionale' => '
 
 $currentSeg = $segment ?? '';
 
+/**
+ * Link "auguri su WhatsApp" per un cliente, o null se il numero manca/non e'
+ * utilizzabile. Definita una volta sola perche' serve in DUE cicli (tabella
+ * desktop e card mobile): calcolarla in uno solo lasciava alle card mobili il
+ * link dell'ultimo cliente del ciclo precedente - cioe' gli auguri alla persona
+ * sbagliata.
+ */
+$makeWaLink = static function (array $c) use ($tenant): ?string {
+    $num = wa_phone($c['phone'] ?? '');
+    if (!$num) {
+        return null;
+    }
+    $text = 'Ciao ' . trim((string)$c['first_name']) . ', tanti auguri di buon compleanno da tutti noi!'
+          . "\n" . trim((string)($tenant['name'] ?? ''));
+    return 'https://wa.me/' . $num . '?text=' . rawurlencode($text);
+};
+
 $segTabs = [
     ['key' => '',            'label' => 'Tutti',       'count' => $stats['totale'],      'color' => '#0d6efd'],
     ['key' => 'nuovo',       'label' => 'Nuovi',       'count' => $stats['nuovo'],       'color' => '#6c757d'],
@@ -159,13 +176,21 @@ if (!empty($stats['con_compleanno'])) {
         // Nel filtro compleanni la riga sotto il nome mostra la data (e gli anni
         // che compie): e' l'informazione per cui si sta guardando l'elenco.
         $bdayLine = null;
+        $waLink = null;
         if ($currentSeg === 'compleanno' && !empty($c['birthday'])) {
             $bd = date_create($c['birthday']);
             if ($bd) {
                 $eta = (int)date('Y') - (int)$bd->format('Y');
-                $bdayLine = '🎂 ' . (int)$bd->format('j') . ' ' . $MESI_IT[(int)$bd->format('n')]
-                          . ' · compie ' . $eta . ' anni';
+                $bdayLine = '🎂 ' . (int)$bd->format('j') . ' ' . $MESI_IT[(int)$bd->format('n')];
+                // L'eta' si mostra solo se plausibile: con un anno segnaposto
+                // (1900, tipico degli archivi importati) verrebbe "compie 126 anni".
+                if ($eta >= 5 && $eta <= 110) {
+                    $bdayLine .= ' · compie ' . $eta . ' anni';
+                }
             }
+            // Auguri via WhatsApp, uno per uno: per il locale piccolo e' la strada
+            // piu' diretta, e non serve il consenso alle comunicazioni commerciali.
+            $waLink = $makeWaLink($c);
         }
     ?>
     <div class="cust-row<?= !empty($c['is_blocked']) ? ' cust-blocked' : '' ?>" data-url="<?= url("dashboard/customers/{$c['id']}") ?>">
@@ -180,6 +205,11 @@ if (!empty($stats['con_compleanno'])) {
                 <?php endif; ?>
                 <?php if (!empty($c['unsubscribed'])): ?>
                 <span class="unsub-badge"><i class="bi bi-envelope-slash"></i></span>
+                <?php endif; ?>
+                <?php if ($waLink): ?>
+                <a href="<?= e($waLink) ?>" target="_blank" rel="noopener" class="wa-btn" title="Manda gli auguri su WhatsApp">
+                    <i class="bi bi-whatsapp"></i>
+                </a>
                 <?php endif; ?>
             </div>
             <?php if ($bdayLine): ?>
@@ -240,8 +270,13 @@ if (!empty($stats['con_compleanno'])) {
         [$seg, $segLabel] = customerSegment((int)$c['total_bookings'], $thOcc, $thAbi, $thVip);
         $initials = mb_strtoupper(mb_substr($c['first_name'], 0, 1) . mb_substr($c['last_name'], 0, 1));
         $avatarColor = $avatarColors[$seg] ?? '#757575';
+        // Ricalcolato per QUESTO cliente: vedi la nota su $makeWaLink in cima.
+        $waLink = $currentSeg === 'compleanno' ? $makeWaLink($c) : null;
     ?>
-    <a href="<?= url("dashboard/customers/{$c['id']}") ?>" class="mobile-card<?= !empty($c['is_blocked']) ? ' cust-blocked' : '' ?>">
+    <?php // Non piu' un <a> che avvolge tutto: dentro c'e' il link WhatsApp, e un
+          // link dentro un link non e' valido. Con data-url la card resta cliccabile
+          // (gestore globale in layouts/dashboard.php, che ignora i click sui link). ?>
+    <div data-url="<?= url("dashboard/customers/{$c['id']}") ?>" class="mobile-card<?= !empty($c['is_blocked']) ? ' cust-blocked' : '' ?>">
         <div class="mc-avatar" style="background:<?= !empty($c['is_blocked']) ? '#dc3545' : $avatarColor ?>;"><?= $initials ?></div>
         <div class="mc-info">
             <div class="mc-name">
@@ -258,7 +293,8 @@ if (!empty($stats['con_compleanno'])) {
             </div>
             <?php if ($currentSeg === 'compleanno' && !empty($c['birthday'])):
                 $bdM = date_create($c['birthday']); ?>
-            <div class="mc-meta" style="color:#D81B60;font-weight:600;">🎂 <?= (int)$bdM->format('j') ?> <?= $MESI_IT[(int)$bdM->format('n')] ?> · compie <?= (int)date('Y') - (int)$bdM->format('Y') ?> anni</div>
+            <?php $etaM = (int)date('Y') - (int)$bdM->format('Y'); ?>
+            <div class="mc-meta" style="color:#D81B60;font-weight:600;">🎂 <?= (int)$bdM->format('j') ?> <?= $MESI_IT[(int)$bdM->format('n')] ?><?= ($etaM >= 5 && $etaM <= 110) ? ' · compie ' . $etaM . ' anni' : '' ?></div>
             <?php else: ?>
             <div class="mc-meta"><?= e($c['phone']) ?> &middot; <?= (int)$c['total_bookings'] ?> pren.</div>
             <?php endif; ?>
@@ -268,9 +304,14 @@ if (!empty($stats['con_compleanno'])) {
             <?php if ($c['total_noshow'] > 0): ?>
             <span class="noshow-count has"><?= (int)$c['total_noshow'] ?></span>
             <?php endif; ?>
+            <?php if ($waLink): ?>
+            <a href="<?= e($waLink) ?>" target="_blank" rel="noopener" class="wa-btn" title="Manda gli auguri su WhatsApp">
+                <i class="bi bi-whatsapp"></i>
+            </a>
+            <?php endif; ?>
             <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
         </div>
-    </a>
+    </div>
     <?php endforeach; ?>
 
     <?php if (!empty($pagination)): ?>
