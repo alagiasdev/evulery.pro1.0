@@ -150,7 +150,7 @@ if (!empty($stats['con_compleanno'])) {
           // uno. Il pulsante deve dire quale dei due e' - "Invia gli auguri" da
           // solo era ambiguo. ?>
     <a href="<?= url('dashboard/communications/create') ?>?segment=birthday_month" class="bday-cta-btn">
-        <i class="bi bi-envelope-heart"></i> Auguri via email a <?= $bdContattabili ?>
+        <i class="bi bi-envelope-heart"></i> Invia auguri via email
     </a>
     <?php endif; ?>
 </div>
@@ -213,7 +213,7 @@ if (!empty($stats['con_compleanno'])) {
                 <?php if ($waLink): ?>
                 <?php // Icona + parola: la sola icona verde non diceva a cosa serve. ?>
                 <a href="<?= e($waLink) ?>" target="_blank" rel="noopener" class="wa-btn" title="Apre WhatsApp con gli auguri gia' scritti">
-                    <i class="bi bi-whatsapp"></i> Auguri
+                    <i class="bi bi-whatsapp"></i> Invia auguri
                 </a>
                 <?php endif; ?>
             </div>
@@ -311,7 +311,7 @@ if (!empty($stats['con_compleanno'])) {
             <?php endif; ?>
             <?php if ($waLink): ?>
             <a href="<?= e($waLink) ?>" target="_blank" rel="noopener" class="wa-btn" title="Apre WhatsApp con gli auguri gia' scritti">
-                <i class="bi bi-whatsapp"></i> Auguri
+                <i class="bi bi-whatsapp"></i> Invia auguri
             </a>
             <?php endif; ?>
             <i class="bi bi-chevron-right" style="color:#d0d0d0;font-size:.7rem;"></i>
