@@ -68,7 +68,7 @@ rounded:
   lg: 10px
   xl: 12px
   2xl: 16px
-  pill: 999px
+  pill: 100px          # 999px, 99px e 50px sono alias equivalenti, vedi "Forme"
 
 shadows:
   level-1: "0 1px 3px rgba(0,0,0,.06)"
@@ -351,8 +351,15 @@ l'ombra, i campi di form il bordo.
 La scala dei raggi va da `{rounded.xs}` a `{rounded.pill}`, ma tre valori coprono quasi
 tutto: **8 px** per pulsanti e campi (100 occorrenze), **10 px** per i riquadri-icona e
 i contenitori piccoli, **12 px** per le card. Le forme a pillola sono riservate a badge di stato (raggio `20px`, 16 occorrenze) e
-azioni contestuali (`100px`/`999px`): la forma dice "questo è un'etichetta o un'azione
+azioni contestuali: la forma dice "questo è un'etichetta o un'azione
 breve", mai un contenitore.
+
+La pillola nel codice è scritta in quattro modi — `100px` (16 volte), `99px` (5),
+`999px` (3), `50px` (1) — e **rendono tutti identici**: basta che il raggio superi la
+metà dell'altezza dell'elemento perché i lati diventino semicerchi, e su una pillola
+alta 20–44 px qualunque di questi quattro valori lo fa. Non c'è quindi niente da
+correggere nel CSS: il token dice `100px` perché è la forma più usata, ma trovare uno
+degli altri tre non è un errore. **Per una forma nuova usare `100px`.**
 
 I riquadri-icona sono sempre **quadrati con raggio 10 px**, 42 px di lato nelle card
 statistica, con sfondo tenue e icona nel colore pieno dello stesso tema.
@@ -412,12 +419,17 @@ contenitore**, mai trascinare la pagina.
 
 ---
 
-## Le nove superfici
+## Le dieci superfici
 
 Tutto quanto sopra descrive **la dashboard del ristoratore**, che è la superficie più
-grande (267 KB di CSS su 429 complessivi). Ma il prodotto ne ha nove, e cinque le vede
-il **cliente del ristorante**, non il nostro cliente: sono quelle su cui si gioca la
-reputazione di chi ci paga.
+grande (267 KB di CSS su 429 complessivi). Ma il prodotto ne ha **dieci**, e **sei** le
+vede il **cliente del ristorante**, non il nostro cliente: sono quelle su cui si gioca
+la reputazione di chi ci paga.
+
+Dieci superfici ma **nove fogli di stile**: la mail transazionale non ne ha uno, il suo
+stile è scritto a mano dentro `MailService` perché i client di posta ignorano il CSS
+esterno. Da qui la confusione fra i due numeri — dove si legge "nove" riferito ai
+*fogli* è corretto, riferito alle *superfici* no.
 
 | Superficie | Chi la vede | Fondo | Raggio | Prefisso |
 |---|---|---|---|---|
