@@ -38,6 +38,7 @@ class LeadsController
         $leads      = $leadModel->listFiltered($filters, $limit, $offset);
         $totalCount = $leadModel->countFiltered($filters);
         $statusCounts = $leadModel->countByStatus();
+        $toAssignCount = $leadModel->countUnassignedOpen();
 
         // Reseller list (placeholder per fase 2: vuota finche' non ci sono reseller)
         $resellers = $this->getResellers();
@@ -48,6 +49,7 @@ class LeadsController
             'leads'        => $leads,
             'totalCount'   => $totalCount,
             'statusCounts' => $statusCounts,
+            'toAssignCount' => $toAssignCount,
             'statuses'     => DemoRequest::STATUSES,
             'filters'      => $filters,
             'period'       => $period,

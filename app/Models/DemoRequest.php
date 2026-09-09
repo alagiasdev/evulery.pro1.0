@@ -210,6 +210,20 @@ class DemoRequest
         return $stmt->fetchAll();
     }
 
+    /**
+     * Richieste arrivate dal sito che nessuno ha ancora preso in carico:
+     * senza reseller assegnato e non concluse. I lead inseriti dai reseller
+     * nascono gia' auto-assegnati, quindi non compaiono qui — resta il lavoro
+     * di smistamento che spetta all'admin.
+     */
+    public function countUnassignedOpen(): int
+    {
+        return (int) $this->db
+            ->query("SELECT COUNT(*) FROM demo_requests
+                     WHERE assigned_reseller_id IS NULL AND status NOT IN ('customer','lost')")
+            ->fetchColumn();
+    }
+
     /** Quanti lead sono ancora aperti (nessuno escluso: e' il totale di sistema). */
     public function countOpen(): int
     {

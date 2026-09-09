@@ -32,6 +32,17 @@ $totalPages = max(1, (int)ceil($totalCount / $limit));
 
 <style>
 .leads-stats { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+.leads-toassign {
+    display: flex; align-items: center; gap: 12px;
+    background: #FFF8E1; border: 1px solid #FFE082; border-left: 4px solid #F57F17;
+    border-radius: 10px; padding: 12px 16px; margin-bottom: 1rem;
+    color: #5D4037; text-decoration: none; font-size: .88rem;
+}
+.leads-toassign:hover { background: #FFF3CD; }
+.leads-toassign-num {
+    font-size: 1.5rem; font-weight: 800; color: #E65100; line-height: 1;
+    min-width: 34px; text-align: center;
+}
 /* Sette card in riga stanno solo sul desktop: sotto vanno mandate a capo,
    altrimenti su telefono diventano colonnine illeggibili. */
 @media (max-width: 1100px) { .leads-stats { grid-template-columns: repeat(4, 1fr); } }
@@ -129,6 +140,22 @@ $totalPages = max(1, (int)ceil($totalCount / $limit));
         <div style="font-size:.85rem;color:#6c757d;margin-top:4px;">Gestione richieste demo dal sito + assegnazione manuale ai reseller</div>
     </div>
 </div>
+
+<!-- Da smistare: le richieste arrivate dal sito che nessuno ha ancora preso in
+     carico. Il badge in sidebar mostra il totale dei lead aperti (stato della
+     pipeline); questo invece e' il lavoro che spetta all'admin, e compare solo
+     quando ce n'e'. Il link apre esattamente questi lead. -->
+<?php if (!empty($toAssignCount)): ?>
+    <a href="<?= url('admin/leads') ?>?assigned=unassigned&status=open" class="leads-toassign">
+        <span class="leads-toassign-num"><?= (int)$toAssignCount ?></span>
+        <span>
+            <?php $unaSola = (int)$toAssignCount === 1; ?>
+            <strong><?= $unaSola ? 'richiesta dal sito da assegnare' : 'richieste dal sito da assegnare' ?></strong><br>
+            <span style="font-size:.78rem;opacity:.85;">Nessun reseller <?= $unaSola ? 'la' : 'le' ?> sta ancora seguendo.</span>
+        </span>
+        <i class="bi bi-arrow-right" style="margin-left:auto;"></i>
+    </a>
+<?php endif; ?>
 
 <!-- Stats counter -->
 <div class="leads-stats">
