@@ -469,6 +469,31 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
 .comm-card-seg { font-size: .72rem; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
 .comm-card-date { margin-left: auto; }
 
+/* ===== Nuova comunicazione: composizione =====
+   Erano due griglie scritte inline nella view, quindi impossibili da correggere
+   da qui: uno stile inline batte qualsiasi media query. La colonna del riepilogo
+   era fissa a 320px e su telefono non poteva rientrare. */
+.comm-compose {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 1.25rem;
+    align-items: start;
+}
+.comm-segments { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+
+@media (max-width: 768px) {
+    .comm-compose { grid-template-columns: 1fr; gap: 1rem; }
+    /* Il riepilogo sale sopra il modulo: contiene l'avviso "crediti insufficienti",
+       che e' l'unica spiegazione del pulsante Invia disabilitato. Sotto, il
+       ristoratore vedrebbe un pulsante spento senza sapere perche'. */
+    .comm-compose-side { order: -1; }
+    .comm-segments { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 576px) {
+    /* "Compleanni da oggi a fine mese" non sta in mezza schermata. */
+    .comm-segments { grid-template-columns: 1fr; }
+}
+
 /* ===== Meal divider (reservation list) ===== */
 .meal-divider {
     display: flex; align-items: center; gap: .5rem;

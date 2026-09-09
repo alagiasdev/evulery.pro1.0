@@ -11,7 +11,7 @@
 <form method="POST" action="<?= url('dashboard/communications') ?>" id="broadcast-form">
     <?= csrf_field() ?>
 
-    <div style="display:grid;grid-template-columns:1fr 320px;gap:1.25rem;align-items:start;">
+    <div class="comm-compose">
         <!-- Left: Form -->
         <div>
             <div class="card" style="padding:1.25rem;">
@@ -56,7 +56,7 @@
                 <!-- Segment selection -->
                 <div style="margin-bottom:.5rem;">
                     <label style="font-weight:600;font-size:.85rem;margin-bottom:.5rem;display:block;">Destinatari</label>
-                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;" id="segment-radios">
+                    <div class="comm-segments" id="segment-radios">
                         <?php
                         $segments = [
                             'all'            => ['Tutti i clienti', 'bi-people-fill', '#6c757d'],
@@ -93,7 +93,7 @@
         </div>
 
         <!-- Right: Preview panel -->
-        <div>
+        <div class="comm-compose-side">
             <div class="card" style="padding:1rem;">
                 <div style="font-weight:700;font-size:.85rem;margin-bottom:.75rem;">
                     <i class="bi bi-bar-chart me-1"></i> Riepilogo
