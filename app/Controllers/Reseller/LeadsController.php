@@ -37,7 +37,8 @@ class LeadsController
         $filters = [
             'assigned_reseller_id' => $userId,
         ];
-        if ($statusFilter && array_key_exists($statusFilter, DemoRequest::STATUSES)) {
+        if ($statusFilter === DemoRequest::STATUS_OPEN
+            || ($statusFilter && array_key_exists($statusFilter, DemoRequest::STATUSES))) {
             $filters['status'] = $statusFilter;
         }
         if ($search) {

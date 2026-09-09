@@ -66,7 +66,7 @@
         <a class="rs-sidebar-link <?= ($activeMenu ?? '') === 'reseller-home' ? 'active' : '' ?>" href="<?= url('reseller') ?>">
             <i class="bi bi-speedometer2"></i> Dashboard
         </a>
-        <a class="rs-sidebar-link <?= ($activeMenu ?? '') === 'reseller-leads' ? 'active' : '' ?>" href="<?= url('reseller/leads') ?>">
+        <a class="rs-sidebar-link <?= ($activeMenu ?? '') === 'reseller-leads' ? 'active' : '' ?>" href="<?= url('reseller/leads') ?><?= $rsOpenLeadsCount > 0 ? '?status=open' : '' ?>">
             <i class="bi bi-funnel"></i> I miei lead
             <?php if ($rsOpenLeadsCount > 0): ?>
                 <span class="rs-sidebar-badge"><?= $rsOpenLeadsCount ?></span>

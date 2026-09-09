@@ -138,10 +138,15 @@ class DashboardController
             $resTrend = round((($monthReservations - $lastMonthReservations) / $lastMonthReservations) * 100);
         }
 
-        // Upcoming follow-ups (lead da contattare)
+        // Upcoming follow-ups (lead da contattare). La lista e' volutamente corta,
+        // i due contatori invece devono guardare TUTTI i lead: vengono da una query
+        // dedicata, non dal conteggio delle righe mostrate.
         $upcomingFollowups = [];
+        $followupsDue = ['overdue' => 0, 'today' => 0];
         try {
-            $upcomingFollowups = (new DemoRequest())->getUpcomingFollowups(5);
+            $leadModel = new DemoRequest();
+            $upcomingFollowups = $leadModel->getUpcomingFollowups(5);
+            $followupsDue = $leadModel->countFollowupsDue();
         } catch (\Throwable $e) { /* tabella non ancora migrata */ }
 
         view('admin/dashboard', [
@@ -162,6 +167,7 @@ class DashboardController
             'expiredSubs'           => $expiredSubs,
             'expiringSubs'          => $expiringSubs,
             'upcomingFollowups'     => $upcomingFollowups,
+            'followupsDue'          => $followupsDue,
         ], 'admin');
     }
 }

@@ -43,7 +43,12 @@
         $pendingCreditsCount = 0;
         try {
             $db = \App\Core\Database::getInstance();
-            $newLeadsCount = (int)$db->query("SELECT COUNT(*) FROM demo_requests WHERE status = 'new'")->fetchColumn();
+            // Lead APERTI, non solo i "nuovi": stessa definizione del badge nell'area
+            // reseller, cosi' i due numeri sono confrontabili (prima l'admin contava
+            // gli status='new' e il reseller tutti i suoi non conclusi: 87 contro 90).
+            $newLeadsCount = (int)$db->query(
+                "SELECT COUNT(*) FROM demo_requests WHERE status NOT IN ('customer','lost')"
+            )->fetchColumn();
             $pendingCreditsCount = (int)$db->query("SELECT COUNT(*) FROM credit_recharge_requests WHERE status = 'pending'")->fetchColumn();
         } catch (\Throwable $e) { /* tabelle non ancora migrate */ }
     ?>
@@ -58,7 +63,7 @@
         <a class="sidebar-link <?= ($activeMenu ?? '') === 'users' ? 'active' : '' ?>" href="<?= url('admin/users') ?>">
             <i class="bi bi-people"></i> Utenti
         </a>
-        <a class="sidebar-link <?= ($activeMenu ?? '') === 'leads' ? 'active' : '' ?>" href="<?= url('admin/leads') ?>">
+        <a class="sidebar-link <?= ($activeMenu ?? '') === 'leads' ? 'active' : '' ?>" href="<?= url('admin/leads') ?><?= $newLeadsCount > 0 ? '?status=open' : '' ?>">
             <i class="bi bi-funnel"></i> Lead
             <?php if ($newLeadsCount > 0): ?>
                 <span class="sidebar-badge"><?= $newLeadsCount ?></span>

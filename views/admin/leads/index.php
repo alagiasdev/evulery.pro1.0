@@ -163,6 +163,7 @@ $totalPages = max(1, (int)ceil($totalCount / $limit));
         <span class="lbl">Stato:</span>
         <select name="status" class="lead-filter-auto">
             <option value="">Tutti</option>
+            <option value="open" <?= ($filters['status'] ?? '') === 'open' ? 'selected' : '' ?>>Aperti (non conclusi)</option>
             <?php foreach ($statuses as $key => $label): ?>
                 <option value="<?= e($key) ?>" <?= ($filters['status'] ?? '') === $key ? 'selected' : '' ?>><?= e($label) ?></option>
             <?php endforeach; ?>

@@ -10,8 +10,10 @@
     </div>
 </div>
 
-<!-- Counter status -->
-<div class="rs-kpi-grid rs-kpi-5">
+<!-- Counter status: tutti e 7 gli stati, come nell'area admin. Prima ne erano
+     mostrati 5: i lead in "Demo effettuata" e "Perso" non comparivano in nessuna
+     card, pur restando in elenco, e i conti non tornavano mai. -->
+<div class="rs-kpi-grid rs-kpi-4">
     <a href="<?= url('reseller/leads') ?>?status=new" class="rs-kpi-card" style="text-decoration:none;color:inherit;padding:.7rem;">
         <div>
             <div class="val" style="color:#0277bd;font-size:1.1rem;"><?= (int)($statusCounts['new'] ?? 0) ?></div>
@@ -30,6 +32,12 @@
             <div class="lbl">Demo prog.</div>
         </div>
     </a>
+    <a href="<?= url('reseller/leads') ?>?status=demo_done" class="rs-kpi-card" style="text-decoration:none;color:inherit;padding:.7rem;">
+        <div>
+            <div class="val" style="color:#1976d2;font-size:1.1rem;"><?= (int)($statusCounts['demo_done'] ?? 0) ?></div>
+            <div class="lbl">Demo fatte</div>
+        </div>
+    </a>
     <a href="<?= url('reseller/leads') ?>?status=negotiating" class="rs-kpi-card" style="text-decoration:none;color:inherit;padding:.7rem;">
         <div>
             <div class="val" style="color:#c2185b;font-size:1.1rem;"><?= (int)($statusCounts['negotiating'] ?? 0) ?></div>
@@ -42,6 +50,12 @@
             <div class="lbl">Clienti</div>
         </div>
     </a>
+    <a href="<?= url('reseller/leads') ?>?status=lost" class="rs-kpi-card" style="text-decoration:none;color:inherit;padding:.7rem;">
+        <div>
+            <div class="val" style="color:#757575;font-size:1.1rem;"><?= (int)($statusCounts['lost'] ?? 0) ?></div>
+            <div class="lbl">Persi</div>
+        </div>
+    </a>
 </div>
 
 <!-- Filtri -->
@@ -50,6 +64,7 @@
         <form method="GET" action="<?= url('reseller/leads') ?>" style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
             <select name="status" style="padding:.45rem .7rem;border:1px solid var(--rs-line);border-radius:8px;font-size:.85rem;">
                 <option value="">Tutti gli stati</option>
+                <option value="open" <?= $filterStatus === 'open' ? 'selected' : '' ?>>Aperti (non conclusi)</option>
                 <?php foreach ($statuses as $key => $label): ?>
                     <option value="<?= e($key) ?>" <?= $filterStatus === $key ? 'selected' : '' ?>><?= e($label) ?></option>
                 <?php endforeach; ?>

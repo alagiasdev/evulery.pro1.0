@@ -14,6 +14,13 @@ use PDO;
  */
 class DemoRequest
 {
+    /**
+     * Pseudo-stato per i filtri: "aperti" = tutto cio' che non e' concluso.
+     * Non e' uno stato salvato a DB, e' una scorciatoia di ricerca (usata dal
+     * badge in sidebar, che conta gli aperti e deve aprire proprio quell'elenco).
+     */
+    public const STATUS_OPEN = 'open';
+
     public const STATUSES = [
         'new'             => 'Nuovo',
         'contacted'       => 'Contattato',
@@ -203,6 +210,45 @@ class DemoRequest
         return $stmt->fetchAll();
     }
 
+    /** Quanti lead sono ancora aperti (nessuno escluso: e' il totale di sistema). */
+    public function countOpen(): int
+    {
+        return (int) $this->db
+            ->query("SELECT COUNT(*) FROM demo_requests WHERE status NOT IN ('customer','lost')")
+            ->fetchColumn();
+    }
+
+    /**
+     * Quanti follow-up sono scaduti e quanti scadono oggi. Serve alla dashboard:
+     * i due numeri NON vanno dedotti da getUpcomingFollowups(), che restituisce
+     * al massimo N righe per la lista — contarle li fermerebbe a N (bug 2026-09-09,
+     * l'admin leggeva "5 scaduti" anche con molti di piu').
+     *
+     * @return array{overdue:int, today:int}
+     */
+    public function countFollowupsDue(?int $resellerId = null): array
+    {
+        $where = "next_followup_at IS NOT NULL AND status NOT IN ('customer','lost')";
+        $params = [];
+        if ($resellerId !== null) {
+            $where .= ' AND assigned_reseller_id = :uid';
+            $params['uid'] = $resellerId;
+        }
+        $stmt = $this->db->prepare(
+            "SELECT
+                SUM(CASE WHEN DATE(next_followup_at) <  CURDATE() THEN 1 ELSE 0 END) AS overdue,
+                SUM(CASE WHEN DATE(next_followup_at) =  CURDATE() THEN 1 ELSE 0 END) AS today
+             FROM demo_requests
+             WHERE {$where}"
+        );
+        $stmt->execute($params);
+        $row = $stmt->fetch() ?: [];
+        return [
+            'overdue' => (int) ($row['overdue'] ?? 0),
+            'today'   => (int) ($row['today'] ?? 0),
+        ];
+    }
+
     /**
      * Counter per dashboard admin. Chiave = status, valore = count.
      */
@@ -227,8 +273,12 @@ class DemoRequest
         $params = [];
 
         if (!empty($filters['status'])) {
-            $where[] = 'status = :status';
-            $params['status'] = $filters['status'];
+            if ($filters['status'] === self::STATUS_OPEN) {
+                $where[] = "status NOT IN ('customer','lost')";
+            } else {
+                $where[] = 'status = :status';
+                $params['status'] = $filters['status'];
+            }
         }
 
         if (isset($filters['assigned_reseller_id'])) {
@@ -272,8 +322,12 @@ class DemoRequest
         $params = [];
 
         if (!empty($filters['status'])) {
-            $where[] = 'status = :status';
-            $params['status'] = $filters['status'];
+            if ($filters['status'] === self::STATUS_OPEN) {
+                $where[] = "status NOT IN ('customer','lost')";
+            } else {
+                $where[] = 'status = :status';
+                $params['status'] = $filters['status'];
+            }
         }
         if (isset($filters['assigned_reseller_id'])) {
             if ($filters['assigned_reseller_id'] === 'unassigned') {

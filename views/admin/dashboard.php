@@ -200,12 +200,11 @@ $defaultStyle = ['icon' => 'bi-circle', 'bg' => '#F5F5F5', 'color' => '#757575']
             <?php if (!empty($upcomingFollowups)): ?>
             <?php
                 // Separa follow-up scaduti / oggi / futuri per il box
-                $followupOverdue = 0;
-                $followupToday = 0;
-                foreach ($upcomingFollowups as $f) {
-                    if ((int)$f['days_diff'] < 0) $followupOverdue++;
-                    elseif ((int)$f['days_diff'] === 0) $followupToday++;
-                }
+                // NON contare le righe di $upcomingFollowups: quella lista e'
+                // limitata a 5, quindi i totali si fermerebbero a 5. Arrivano
+                // dal controller con una query su tutti i lead.
+                $followupOverdue = (int)($followupsDue['overdue'] ?? 0);
+                $followupToday   = (int)($followupsDue['today'] ?? 0);
                 $hasUrgent = $followupOverdue > 0 || $followupToday > 0;
                 $boxBg = $hasUrgent ? '#FFEBEE' : '#E3F2FD';
                 $titleColor = $hasUrgent ? '#C62828' : '#1565C0';

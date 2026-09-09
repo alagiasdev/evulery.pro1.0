@@ -119,6 +119,7 @@ body {
    lo stile inline vince sulle media query, quindi su mobile restavano
    schiacciate in 5 colonne. Come classi, invece, il breakpoint le riprende. */
 .rs-kpi-grid.rs-kpi-3 { grid-template-columns: repeat(3, 1fr); }
+.rs-kpi-grid.rs-kpi-4 { grid-template-columns: repeat(4, 1fr); }
 .rs-kpi-grid.rs-kpi-5 { grid-template-columns: repeat(5, 1fr); }
 .rs-kpi-card {
     background: #fff; border: 1px solid var(--rs-line); border-radius: 12px;
@@ -280,6 +281,7 @@ body {
        .rs-kpi-grid da sola non le sovrascrive nemmeno qui dentro. */
     .rs-kpi-grid,
     .rs-kpi-grid.rs-kpi-3,
+    .rs-kpi-grid.rs-kpi-4,
     .rs-kpi-grid.rs-kpi-5 { grid-template-columns: repeat(2, 1fr); }
     .rs-row2 { grid-template-columns: 1fr; }
     .rs-detail-grid { grid-template-columns: 1fr; }
