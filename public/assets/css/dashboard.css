@@ -2014,6 +2014,10 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     display: grid; grid-template-columns: repeat(6, 1fr);
     gap: 12px; margin-bottom: 1.5rem;
 }
+/* Variante a 4 colonne (Menu). Era scritta inline nella view, e lo stile inline
+   vince su qualsiasi media query: sul telefono restavano 4 colonne, la griglia
+   diventava larga 539px e trascinava l'intera pagina fuori schermo. */
+.dh-stat-cards.dh-stat-4 { grid-template-columns: repeat(4, 1fr); }
 .dh-stat-card {
     background: #fff; border-radius: 12px; padding: 14px 16px;
     box-shadow: 0 1px 3px rgba(0,0,0,.06);
@@ -2259,7 +2263,7 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     .detail-grid { grid-template-columns: 1fr; }
     .side-panel { flex-direction: row; flex-wrap: wrap; }
     .side-panel > * { flex: 1; min-width: 250px; }
-    .dh-stat-cards { grid-template-columns: repeat(3, 1fr); }
+    .dh-stat-cards, .dh-stat-cards.dh-stat-4 { grid-template-columns: repeat(3, 1fr); }
     .dh-two-col { grid-template-columns: 1fr; }
     /* C4: su mobile mostra il telefono (link tel:), nascondi solo l'email per compattezza. */
     .res-email { display: none; }
@@ -2283,7 +2287,7 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     .cap-divider { display: none; }
     .cap-bar-wrap { width: 100%; flex-basis: 100%; }
     .dh-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-    .dh-stat-cards { grid-template-columns: repeat(2, 1fr); }
+    .dh-stat-cards, .dh-stat-cards.dh-stat-4 { grid-template-columns: repeat(2, 1fr); }
     .dh-meal-split { grid-template-columns: 1fr; }
     .dh-meal-half + .dh-meal-half { border-left: none; border-top: 1px solid #e9ecef; }
     .dh-meal-grid { grid-template-columns: 1fr; }
@@ -2308,7 +2312,15 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
     .res-row .bi-chevron-right { display: none; }
     .hero-details { grid-template-columns: repeat(2, 1fr); }
     .actions-bar .btn-action { flex: 1; justify-content: center; }
-    .seg-tabs { gap: .35rem; }
+    /* I tab segmento su telefono: griglia a 2 colonne come le altre schermate,
+       invece della barra che scorre di lato. Scorrere per scoprire che esiste
+       un filtro non e' un gran modo di mostrarlo. */
+    .seg-tabs {
+        display: grid; grid-template-columns: repeat(2, 1fr);
+        gap: .4rem; overflow-x: visible;
+    }
+    .seg-tab { justify-content: flex-start; padding: .5rem .7rem; }
+    .seg-tab .seg-label { font-size: .7rem; }
     .seg-tab { padding: .4rem .75rem; }
     .desktop-table { display: none !important; }
     .mobile-list { display: block !important; }
@@ -2426,7 +2438,7 @@ a.stat-pill:hover { border-color: #c4ccd2; background: #fbfdfc; }
 }
 @media (max-width: 576px) {
     /* Phase B/C: stat cards single column */
-    .dh-stat-cards { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .dh-stat-cards, .dh-stat-cards.dh-stat-4 { grid-template-columns: 1fr 1fr; gap: 8px; }
     .dh-stat-card { padding: 10px; }
     .dh-stat-value { font-size: 1.3rem; }
     /* Phase B: hero details full width */

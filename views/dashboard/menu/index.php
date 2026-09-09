@@ -31,7 +31,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
 <?php else: ?>
 
 <!-- KPI Cards -->
-<div class="dh-stat-cards" style="grid-template-columns: repeat(4, 1fr);">
+<div class="dh-stat-cards dh-stat-4">
     <div class="dh-stat-card">
         <div class="dh-stat-icon green"><i class="bi bi-egg-fried"></i></div>
         <div>
