@@ -132,10 +132,12 @@ if (!empty($stats['con_compleanno'])) {
      questi. -->
 <div class="bday-cta">
     <?php $bdContattabili = (int)($stats['compleanno_contattabili'] ?? 0); ?>
+    <?php $bdPassati = (int)($stats['compleanno_passati'] ?? 0); ?>
     <div>
         <strong>Compleanni di <?= e($meseCorrente) ?>:</strong>
         <?= (int)$stats['compleanno'] ?> client<?= (int)$stats['compleanno'] === 1 ? 'e' : 'i' ?><?php
-            if ((int)$stats['compleanno'] > 0): ?>, di cui <strong><?= $bdContattabili ?></strong> con email e consenso<?php
+            if ($bdPassati > 0): ?>, <?= $bdPassati ?> gi&agrave; festeggiat<?= $bdPassati === 1 ? 'o' : 'i' ?><?php endif; ?><?php
+            if ((int)$stats['compleanno'] > 0): ?>. Ancora da festeggiare con email e consenso: <strong><?= $bdContattabili ?></strong><?php
             endif; ?>.
         <span style="color:#6c757d;">Data di nascita nota per <?= (int)$stats['con_compleanno'] ?> client<?= (int)$stats['con_compleanno'] === 1 ? 'e' : 'i' ?> su <?= (int)$stats['totale'] ?>.</span>
         <?php if ((int)$stats['compleanno'] > 0 && $bdContattabili === 0): ?>
@@ -181,10 +183,14 @@ if (!empty($stats['con_compleanno'])) {
         // che compie): e' l'informazione per cui si sta guardando l'elenco.
         $bdayLine = null;
         $waLink = null;
+        $bdayPassato = false;
         if ($currentSeg === 'compleanno' && !empty($c['birthday'])) {
             $bd = date_create($c['birthday']);
             if ($bd) {
                 $eta = (int)date('Y') - (int)$bd->format('Y');
+                // Chi ha gia' festeggiato resta in elenco (si puo' sempre salutarlo
+                // su WhatsApp) ma e' fuori dalla campagna email: va distinto.
+                $bdayPassato = (int)$bd->format('j') < (int)date('j');
                 $bdayLine = '🎂 ' . (int)$bd->format('j') . ' ' . $MESI_IT[(int)$bd->format('n')];
                 // L'eta' si mostra solo se plausibile: con un anno segnaposto
                 // (1900, tipico degli archivi importati) verrebbe "compie 126 anni".
@@ -218,7 +224,9 @@ if (!empty($stats['con_compleanno'])) {
                 <?php endif; ?>
             </div>
             <?php if ($bdayLine): ?>
-            <div class="c-sub" style="color:#D81B60;font-weight:600;"><?= e($bdayLine) ?></div>
+            <div class="c-sub" style="color:<?= $bdayPassato ? '#9aa4ab' : '#D81B60' ?>;font-weight:600;">
+                <?= e($bdayLine) ?><?= $bdayPassato ? ' · già festeggiato' : '' ?>
+            </div>
             <?php elseif ($createdDate): ?>
             <div class="c-sub">Cliente dal <?= $createdDate ?></div>
             <?php endif; ?>
@@ -298,8 +306,9 @@ if (!empty($stats['con_compleanno'])) {
             </div>
             <?php if ($currentSeg === 'compleanno' && !empty($c['birthday'])):
                 $bdM = date_create($c['birthday']); ?>
-            <?php $etaM = (int)date('Y') - (int)$bdM->format('Y'); ?>
-            <div class="mc-meta" style="color:#D81B60;font-weight:600;">🎂 <?= (int)$bdM->format('j') ?> <?= $MESI_IT[(int)$bdM->format('n')] ?><?= ($etaM >= 5 && $etaM <= 110) ? ' · compie ' . $etaM . ' anni' : '' ?></div>
+            <?php $etaM = (int)date('Y') - (int)$bdM->format('Y');
+                  $passatoM = (int)$bdM->format('j') < (int)date('j'); ?>
+            <div class="mc-meta" style="color:<?= $passatoM ? '#9aa4ab' : '#D81B60' ?>;font-weight:600;">🎂 <?= (int)$bdM->format('j') ?> <?= $MESI_IT[(int)$bdM->format('n')] ?><?= ($etaM >= 5 && $etaM <= 110) ? ' · compie ' . $etaM . ' anni' : '' ?><?= $passatoM ? ' · già festeggiato' : '' ?></div>
             <?php else: ?>
             <div class="mc-meta"><?= e($c['phone']) ?> &middot; <?= (int)$c['total_bookings'] ?> pren.</div>
             <?php endif; ?>

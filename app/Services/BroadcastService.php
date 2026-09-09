@@ -107,7 +107,11 @@ class BroadcastService
             'abituale'       => ' AND total_bookings >= ' . (int)$thresholds['abi'] . ' AND total_bookings < ' . (int)$thresholds['vip'],
             'vip'            => ' AND total_bookings >= ' . (int)$thresholds['vip'],
             'inactive'       => ' AND (last_booking_at IS NULL OR last_booking_at < DATE_SUB(NOW(), INTERVAL ' . max(1, (int)$inactiveDays) . ' DAY))',
-            'birthday_month' => ' AND birthday IS NOT NULL AND MONTH(birthday) = MONTH(CURDATE())',
+            // Solo i compleanni ANCORA DA FESTEGGIARE nel mese in corso (oggi
+            // incluso): mandare gli auguri a chi ha spento le candeline la
+            // settimana scorsa e' una figura storta, e sono crediti spesi male.
+            'birthday_month' => ' AND birthday IS NOT NULL AND MONTH(birthday) = MONTH(CURDATE())'
+                              . ' AND DAY(birthday) >= DAY(CURDATE())',
             default          => '', // 'all'
         };
     }

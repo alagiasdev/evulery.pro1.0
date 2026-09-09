@@ -195,9 +195,13 @@ class Customer
                 SUM(CASE WHEN total_bookings >= :th_vip2 THEN 1 ELSE 0 END) as vip,
                 SUM(CASE WHEN birthday IS NOT NULL AND MONTH(birthday) = MONTH(CURDATE()) THEN 1 ELSE 0 END) as compleanno,
                 SUM(CASE WHEN birthday IS NOT NULL AND MONTH(birthday) = MONTH(CURDATE())
+                          AND DAY(birthday) >= DAY(CURDATE())
                           AND email IS NOT NULL AND email <> ""
                           AND marketing_consent = 1 AND unsubscribed = 0 AND is_blocked = 0
                      THEN 1 ELSE 0 END) as compleanno_contattabili,
+                SUM(CASE WHEN birthday IS NOT NULL AND MONTH(birthday) = MONTH(CURDATE())
+                          AND DAY(birthday) < DAY(CURDATE())
+                     THEN 1 ELSE 0 END) as compleanno_passati,
                 SUM(CASE WHEN birthday IS NOT NULL THEN 1 ELSE 0 END) as con_compleanno
              FROM customers WHERE tenant_id = :tenant_id' . $this->visibleClause()
         );
@@ -221,10 +225,14 @@ class Customer
             // 'birthday_month' delle campagne email, cosi' chi vedi nell'elenco
             // e' esattamente chi ricevera' gli auguri.
             'compleanno'     => (int)$row['compleanno'],
-            // Quanti di quei festeggiati riceverebbero davvero l'email: gli auguri
-            // partono solo verso chi ha email e consenso marketing (GDPR). Senza
-            // questo dato si vedono "3 compleanni" e poi "0 destinatari".
+            // Quanti riceverebbero davvero l'email: solo chi deve ancora
+            // festeggiare (oggi incluso) ed ha email + consenso marketing (GDPR).
+            // Stessa condizione del segmento 'birthday_month' in BroadcastService,
+            // cosi' il numero mostrato e i destinatari reali coincidono sempre.
             'compleanno_contattabili' => (int)$row['compleanno_contattabili'],
+            // Gia' festeggiati questo mese: restano in elenco (utile saperlo), ma
+            // fuori dalla campagna - gli auguri in ritardo non si mandano.
+            'compleanno_passati'      => (int)$row['compleanno_passati'],
             'con_compleanno' => (int)$row['con_compleanno'],
         ];
     }

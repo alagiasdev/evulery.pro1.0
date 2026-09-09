@@ -65,7 +65,7 @@
                             'abituale'       => ['Abituali', 'bi-person-check', '#198754'],
                             'vip'            => ['VIP', 'bi-star-fill', '#E65100'],
                             'inactive'       => ['Inattivi', 'bi-person-x', '#dc3545'],
-                            'birthday_month' => ['Compleanno questo mese', 'bi-gift-fill', '#D81B60'],
+                            'birthday_month' => ['Compleanni da oggi a fine mese', 'bi-gift-fill', '#D81B60'],
                         ];
                         foreach ($segments as $key => $seg): ?>
                         <label class="segment-option" style="display:flex;align-items:center;gap:.5rem;padding:.6rem .75rem;border:2px solid #dee2e6;border-radius:8px;cursor:pointer;font-size:.82rem;transition:all .15s;">
