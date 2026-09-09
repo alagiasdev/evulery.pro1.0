@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recensioni, consegne, reseller — componenti</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<!-- Tre superfici piccole in una pagina sola: i loro prefissi (rv-, db-, rs-)
+     non collidono, quindi i tre fogli possono convivere qui. -->
+<link href="../../public/assets/css/reviews.css" rel="stylesheet">
+<link href="../../public/assets/css/delivery-board.css" rel="stylesheet">
+<link href="../../public/assets/css/reseller.css" rel="stylesheet">
+<style>
+    body { margin: 0; padding: 18px; background: #eef0f3; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+    .sec { max-width: 520px; margin: 0 auto 30px; }
+    .sec > h3 { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #00844A; margin: 0 0 4px; }
+    .sec > p { font-size: .78rem; color: #6c757d; margin: 0 0 12px; }
+    .lbl { font-size: .66rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #adb5bd; margin: 14px 0 6px; }
+</style>
+</head>
+<body>
+
+<div class="sec">
+    <h3>Recensioni</h3>
+    <p>Landing dopo la visita: la domanda a stelle decide se il cliente va su Google o
+       lascia un riscontro privato. Stella piena <code>#FFC107</code>, vuota <code>#e9ecef</code>.</p>
+    <div class="rv-stars-card">
+        <div class="rv-stars-question">Com'è andata da noi?</div>
+        <div class="rv-stars-row">
+            <button type="button" class="rv-star-btn active"><i class="bi bi-star-fill"></i></button>
+            <button type="button" class="rv-star-btn active"><i class="bi bi-star-fill"></i></button>
+            <button type="button" class="rv-star-btn active"><i class="bi bi-star-fill"></i></button>
+            <button type="button" class="rv-star-btn active"><i class="bi bi-star-fill"></i></button>
+            <button type="button" class="rv-star-btn"><i class="bi bi-star"></i></button>
+        </div>
+        <div class="rv-star-labels"><span>Male</span><span>Benissimo</span></div>
+    </div>
+</div>
+
+<div class="sec">
+    <h3>Board consegne</h3>
+    <p>Sta aperta su un tablet in cucina e si guarda da un metro: colori di stato più
+       saturi del resto del prodotto.</p>
+    <div class="db-order-card">
+        <div class="db-order-customer">
+            <div class="db-customer-info">
+                <strong>Marta Rossi</strong>
+                <div class="db-order-address"><span class="db-address-text">Via Roma 12</span> <span class="db-address-cap">40100</span></div>
+            </div>
+            <div class="db-customer-actions">
+                <a href="#" class="db-action-btn db-action-call"><i class="bi bi-telephone-fill"></i></a>
+                <a href="#" class="db-action-btn db-action-wa"><i class="bi bi-whatsapp"></i></a>
+            </div>
+        </div>
+        <div class="db-order-items">
+            <div class="db-items-label">Ordine</div>
+            <div class="db-item-row"><span class="db-item-qty">2×</span> <span class="db-item-name">Tagliatelle al ragù</span></div>
+            <div class="db-item-row"><span class="db-item-qty">1×</span> <span class="db-item-name">Tiramisù</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="sec">
+    <h3>Area reseller</h3>
+    <p>Riprende l'impianto della dashboard con barra laterale più larga (220 px). I lead
+       hanno un badge per stato.</p>
+    <div class="rs-card">
+        <div class="rs-card-body">
+            <div class="lbl">Badge di stato lead</div>
+            <span class="rs-badge rs-b-new">Nuovo</span>
+            <span class="rs-badge rs-b-contacted">Contattato</span>
+            <span class="rs-badge rs-b-demo">Demo</span>
+            <span class="rs-badge rs-b-negotiating">In trattativa</span>
+            <span class="rs-badge rs-b-customer">Cliente</span>
+            <span class="rs-badge rs-b-lost">Perso</span>
+
+            <div class="lbl">Pulsanti</div>
+            <a href="#" class="rs-btn rs-btn-primary rs-btn-sm"><i class="bi bi-plus-circle"></i> Nuovo lead</a>
+            <a href="#" class="rs-btn rs-btn-ghost rs-btn-sm">Reset</a>
+        </div>
+    </div>
+</div>
+
+<div class="sec">
+    <h3>Email transazionali</h3>
+    <p>Stile scritto a mano dentro <code>MailService</code>: nessun CSS esterno, nessun
+       webfont — i client di posta li ignorano. Contenitore 600 px, palette della
+       dashboard.</p>
+    <div style="background:#f5f6f8;padding:18px;border-radius:12px;">
+        <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;">
+            <div style="background:#00844A;color:#fff;padding:18px 22px;font-size:16px;font-weight:700;">Prenotazione confermata</div>
+            <div style="padding:20px 22px;">
+                <p style="margin:0 0 12px;color:#1a1d23;font-size:14px;">Ciao Marta,</p>
+                <p style="margin:0 0 16px;color:#6c757d;font-size:14px;line-height:1.5;">
+                    ti aspettiamo <strong style="color:#1a1d23;">giovedì 12 settembre alle 20:00</strong> per 2 persone.
+                </p>
+                <div style="background:#f8f9fa;border-radius:10px;padding:14px;font-size:13px;color:#6c757d;">
+                    Trattoria Da Mario · Via Roma 12 · 051 234567
+                </div>
+                <a href="#" style="display:inline-block;margin-top:16px;background:#00844A;color:#fff;text-decoration:none;padding:11px 20px;border-radius:10px;font-size:14px;font-weight:600;">Gestisci la prenotazione</a>
+            </div>
+            <div style="padding:14px 22px;border-top:1px solid #e9ecef;font-size:11px;color:#adb5bd;">
+                © 2026 Evulery · by alagias. - Soluzioni per il web
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

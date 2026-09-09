@@ -56,6 +56,12 @@
     .pv-dont { border-left: 3px solid #dc3545; padding-left: 12px; margin-top: 12px; }
     .pv-dont b { color: #dc3545; font-size: .78rem; }
     .pv-dont p { font-size: .78rem; color: #6c757d; margin: 2px 0 0; }
+    .pv-surface { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 16px; }
+    .pv-surface-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; padding: 12px 16px; border-bottom: 1px solid #e9ecef; }
+    .pv-surface-head b { font-size: .85rem; color: #1a1d23; }
+    .pv-surface-head span { font-size: .74rem; color: #6c757d; }
+    .pv-surface-head a { margin-left: auto; font-size: .72rem; color: #00844A; text-decoration: none; font-weight: 600; white-space: nowrap; }
+    .pv-surface iframe { width: 100%; border: 0; display: block; background: #fff; }
 </style>
 </head>
 <body>
@@ -86,6 +92,7 @@
         <a href="#mobile">Mobile</a>
         <a href="#vuoti">Stati vuoti</a>
         <a href="#nonfare">Da non fare</a>
+        <a href="#superfici" style="background:#00844A;color:#fff;">Le altre superfici ↓</a>
     </div>
 
     <!-- ============ COLORI ============ -->
@@ -433,6 +440,52 @@
                 <p>La riga cliccabile si fa con <code>data-url</code>: il gestore globale ignora i
                    clic sui link interni.</p>
             </div>
+        </div>
+    </div>
+
+    <!-- ============ ALTRE SUPERFICI ============ -->
+    <div class="pv-sec" id="superfici">
+        <h2>Le altre superfici</h2>
+        <p class="pv-note">Tutto quanto sopra è la <strong>dashboard</strong>. Il prodotto ne ha
+           altre otto, e cinque le vede il cliente del ristorante. Ognuna ha il proprio foglio di
+           stile, quindi qui sono incorporate in riquadri separati: caricare nove CSS nella stessa
+           pagina li farebbe sovrascrivere a vicenda. Le regole di ciascuna stanno nel capitolo
+           “Le nove superfici” di <code>DESIGN.md</code>.</p>
+
+        <div class="pv-surface">
+            <div class="pv-surface-head">
+                <b>Widget di prenotazione</b>
+                <span>vive dentro il sito del ristorante · fondo bianco, raggio 16px, ombra marcata</span>
+                <a href="preview/widget.html" target="_blank" rel="noopener">apri a schermo intero ↗</a>
+            </div>
+            <iframe src="preview/widget.html" title="Widget di prenotazione" style="height:1080px;"></iframe>
+        </div>
+
+        <div class="pv-surface">
+            <div class="pv-surface-head">
+                <b>Menù digitale</b>
+                <span>si legge al tavolo · fondo avorio, raggio 14px, ambra per le voci in evidenza</span>
+                <a href="preview/menu.html" target="_blank" rel="noopener">apri a schermo intero ↗</a>
+            </div>
+            <iframe src="preview/menu.html" title="Menù digitale" style="height:620px;"></iframe>
+        </div>
+
+        <div class="pv-surface">
+            <div class="pv-surface-head">
+                <b>Ordini online</b>
+                <span>asporto e consegna · fondo avorio, arancio per i richiami secondari</span>
+                <a href="preview/ordering.html" target="_blank" rel="noopener">apri a schermo intero ↗</a>
+            </div>
+            <iframe src="preview/ordering.html" title="Ordini online" style="height:640px;"></iframe>
+        </div>
+
+        <div class="pv-surface">
+            <div class="pv-surface-head">
+                <b>Recensioni, consegne, reseller, email</b>
+                <span>le quattro superfici minori, con la mail transazionale a fondo pagina</span>
+                <a href="preview/altre-superfici.html" target="_blank" rel="noopener">apri a schermo intero ↗</a>
+            </div>
+            <iframe src="preview/altre-superfici.html" title="Altre superfici" style="height:1360px;"></iframe>
         </div>
     </div>
 
