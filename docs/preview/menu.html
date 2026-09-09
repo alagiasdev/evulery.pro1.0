@@ -16,6 +16,78 @@
 <body>
 <div class="wrap">
 
+    <div class="lbl">Intestazione del locale</div>
+    <!-- Due varianti: con la foto del locale (dm-hero--photo, che accende lo sfondo
+         e la sfumatura) o senza (dm-hero--plain). Qui la seconda, perche' la vetrina
+         non carica immagini da fuori. Il selettore di lingua compare solo se il menu
+         e' tradotto in almeno due lingue. -->
+    <div class="dm-hero dm-hero--plain">
+        <div class="dm-lang-switch">
+            <a href="#" class="dm-lang-opt active">IT</a>
+            <a href="#" class="dm-lang-opt">EN</a>
+            <a href="#" class="dm-lang-opt">DE</a>
+        </div>
+        <div class="dm-hero-content">
+            <div class="dm-hero-over">Menù</div>
+            <h1 class="dm-hero-name">Trattoria Da Mario</h1>
+            <p class="dm-hero-tagline">Cucina emiliana, sfoglia tirata a mano</p>
+            <div class="dm-hero-info">
+                <a class="dm-hero-chip" href="#"><i class="bi bi-geo-alt-fill"></i> Via Roma 12, Bologna</a>
+                <a class="dm-hero-chip" href="#"><i class="bi bi-telephone-fill"></i> +39 051 234567</a>
+                <span class="dm-hero-chip"><i class="bi bi-clock-fill"></i> 12:00–14:30 · 19:00–23:00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- La scelta rapida sale sopra l'intestazione con un margine negativo: nella
+         pagina vera e' voluto, qui va compensato o si mangia l'etichetta. -->
+    <div class="lbl" style="margin-bottom:30px;">Scelta rapida della categoria</div>
+    <!-- E' la prima cosa sotto l'intestazione: porta direttamente alla sezione
+         invece di far scorrere. Il riquadro delle specialita' ha un trattamento
+         suo (dm-landing-card--special). -->
+    <div class="dm-landing">
+        <div class="dm-landing-title">Cosa vuoi mangiare?</div>
+        <div class="dm-landing-grid">
+            <a class="dm-landing-card dm-landing-card--special">
+                <div class="dm-landing-icon"><i class="bi bi-star-fill"></i></div>
+                <span class="dm-landing-label">Specialità</span>
+                <span class="dm-landing-count">3 piatti</span>
+            </a>
+            <a class="dm-landing-card">
+                <div class="dm-landing-icon"><i class="bi bi-egg-fried"></i></div>
+                <span class="dm-landing-label">Antipasti</span>
+                <span class="dm-landing-count">6 piatti</span>
+            </a>
+            <a class="dm-landing-card">
+                <div class="dm-landing-icon"><i class="bi bi-basket"></i></div>
+                <span class="dm-landing-label">Primi</span>
+                <span class="dm-landing-count">8 piatti</span>
+            </a>
+            <a class="dm-landing-card">
+                <div class="dm-landing-icon"><i class="bi bi-cup-straw"></i></div>
+                <span class="dm-landing-label">Carta dei vini</span>
+                <span class="dm-landing-count">24 etichette</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="lbl">Ricerca</div>
+    <div class="dm-search-wrap">
+        <input type="text" class="dm-search" placeholder="Cerca un piatto...">
+    </div>
+
+    <div class="lbl">Piatto in evidenza</div>
+    <!-- Il ristoratore ne sceglie uno o pochi. L'etichetta e' modificabile: non e'
+         detto che dica "Specialita'". Senza foto passa a dm-feature--nophoto. -->
+    <div class="dm-feature dm-feature--nophoto">
+        <div class="dm-feature-bd">
+            <div class="dm-feature-tag">Il piatto del giorno</div>
+            <div class="dm-feature-name">Tortellini in brodo di cappone</div>
+            <div class="dm-feature-desc">Il brodo cuoce dalle sei del mattino. Finche' ce n'e'.</div>
+            <div class="dm-feature-price">14,00 &euro;</div>
+        </div>
+    </div>
+
     <div class="lbl">Navigazione per categoria</div>
     <!-- Nella pagina vera e' fissa in cima e compare solo dopo che si scorre:
          parte a opacita' zero e alzata di tutta la sua altezza, e la classe
@@ -30,8 +102,9 @@
         </div>
     </div>
 
-    <div class="lbl">Voce di menù</div>
+    <div class="lbl">Titolo di sezione e voci</div>
     <div class="dm-section">
+        <h2 class="dm-section-title">Primi piatti</h2>
         <div class="dm-items-grid">
             <div class="dm-item">
                 <div class="dm-item-content">
@@ -61,6 +134,88 @@
         </div>
     </div>
 
+    <div class="lbl">Scala colori degli allergeni</div>
+    <!-- I quattordici obbligatori per legge, ognuno col suo colore: e' l'unico punto
+         del prodotto con una scala cosi' ampia, ed e' la stessa negli ordini online.
+         Va bene per la pillola sul piatto, non per un elenco lungo. -->
+    <div class="dm-allergen-tags">
+        <span class="dm-allergen-tag dm-at-gluten"><span class="dm-allergen-tag-dot"></span>Glutine</span>
+        <span class="dm-allergen-tag dm-at-crustaceans"><span class="dm-allergen-tag-dot"></span>Crostacei</span>
+        <span class="dm-allergen-tag dm-at-eggs"><span class="dm-allergen-tag-dot"></span>Uova</span>
+        <span class="dm-allergen-tag dm-at-fish"><span class="dm-allergen-tag-dot"></span>Pesce</span>
+        <span class="dm-allergen-tag dm-at-peanuts"><span class="dm-allergen-tag-dot"></span>Arachidi</span>
+        <span class="dm-allergen-tag dm-at-soy"><span class="dm-allergen-tag-dot"></span>Soia</span>
+        <span class="dm-allergen-tag dm-at-milk"><span class="dm-allergen-tag-dot"></span>Latte</span>
+        <span class="dm-allergen-tag dm-at-nuts"><span class="dm-allergen-tag-dot"></span>Frutta a guscio</span>
+        <span class="dm-allergen-tag dm-at-celery"><span class="dm-allergen-tag-dot"></span>Sedano</span>
+        <span class="dm-allergen-tag dm-at-mustard"><span class="dm-allergen-tag-dot"></span>Senape</span>
+        <span class="dm-allergen-tag dm-at-sesame"><span class="dm-allergen-tag-dot"></span>Sesamo</span>
+        <span class="dm-allergen-tag dm-at-sulphites"><span class="dm-allergen-tag-dot"></span>Anidride solforosa</span>
+        <span class="dm-allergen-tag dm-at-lupin"><span class="dm-allergen-tag-dot"></span>Lupini</span>
+        <span class="dm-allergen-tag dm-at-molluscs"><span class="dm-allergen-tag-dot"></span>Molluschi</span>
+    </div>
+
+    <div class="lbl">Legenda in fondo al menù</div>
+    <!-- Qui gli stessi quattordici sono deliberatamente spenti: una regola in coda a
+         menu.css li riporta tutti a grigio con !important. In un elenco di
+         quattordici voci il colore diventerebbe rumore, non informazione. -->
+    <div class="dm-legend-section">
+        <button class="dm-legend-toggle" type="button">
+            <span class="dm-legend-toggle-left">
+                <i class="bi bi-info-circle-fill"></i>
+                <span class="dm-legend-toggle-title">Allergeni</span>
+            </span>
+            <i class="bi bi-chevron-down dm-legend-toggle-arrow"></i>
+        </button>
+        <div class="dm-legend-body">
+            <p class="dm-legend-note">Le informazioni sugli allergeni sono fornite ai sensi del Reg. UE 1169/2011.</p>
+            <div class="dm-legend-grid">
+                <div class="dm-legend-item">
+                    <span class="dm-legend-tag dm-at-gluten"><span class="dm-allergen-tag-dot"></span>Glutine</span>
+                </div>
+                <div class="dm-legend-item">
+                    <span class="dm-legend-tag dm-at-crustaceans"><span class="dm-allergen-tag-dot"></span>Crostacei</span>
+                </div>
+                <div class="dm-legend-item">
+                    <span class="dm-legend-tag dm-at-eggs"><span class="dm-allergen-tag-dot"></span>Uova</span>
+                </div>
+                <div class="dm-legend-item">
+                    <span class="dm-legend-tag dm-at-fish"><span class="dm-allergen-tag-dot"></span>Pesce</span>
+                </div>
+                <div class="dm-legend-item">
+                    <span class="dm-legend-tag dm-at-peanuts"><span class="dm-allergen-tag-dot"></span>Arachidi</span>
+                </div>
+                <div class="dm-legend-item">
+                    <span class="dm-legend-tag dm-at-soy"><span class="dm-allergen-tag-dot"></span>Soia</span>
+                </div>
+                <div class="dm-legend-item">
+                    <span class="dm-legend-tag dm-at-milk"><span class="dm-allergen-tag-dot"></span>Latte</span>
+                </div>
+                <div class="dm-legend-item">
+                    <span class="dm-legend-tag dm-at-nuts"><span class="dm-allergen-tag-dot"></span>Frutta a guscio</span>
+                </div>
+                <div class="dm-legend-item">
+                    <span class="dm-legend-tag dm-at-celery"><span class="dm-allergen-tag-dot"></span>Sedano</span>
+                </div>
+                <div class="dm-legend-item">
+                    <span class="dm-legend-tag dm-at-mustard"><span class="dm-allergen-tag-dot"></span>Senape</span>
+                </div>
+                <div class="dm-legend-item">
+                    <span class="dm-legend-tag dm-at-sesame"><span class="dm-allergen-tag-dot"></span>Sesamo</span>
+                </div>
+                <div class="dm-legend-item">
+                    <span class="dm-legend-tag dm-at-sulphites"><span class="dm-allergen-tag-dot"></span>Anidride solforosa</span>
+                </div>
+                <div class="dm-legend-item">
+                    <span class="dm-legend-tag dm-at-lupin"><span class="dm-allergen-tag-dot"></span>Lupini</span>
+                </div>
+                <div class="dm-legend-item">
+                    <span class="dm-legend-tag dm-at-molluscs"><span class="dm-allergen-tag-dot"></span>Molluschi</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="lbl">Richiamo all'azione in fondo alla pagina</div>
     <!-- Lo sfondo e' un livello a se': con la foto del locale se c'e', altrimenti
          dm-cta-bg--plain, la sfumatura scura. E' l'unico punto scuro del menu. -->
@@ -73,6 +228,11 @@
             <p class="dm-cta-sub">Prenota per la prossima cena o il prossimo pranzo</p>
             <a href="#" class="dm-cta-btn"><i class="bi bi-calendar-check me-1"></i> Prenota un tavolo</a>
         </div>
+    </div>
+
+    <div class="lbl">Piede</div>
+    <div class="dm-footer">
+        &copy; 2026 Evulery &middot; by alagias. - Soluzioni per il web
     </div>
 
 </div>

@@ -94,6 +94,120 @@
         </div>
     </div>
 
+
+    <div class="lbl">Legenda allergeni</div>
+    <!-- Come nel menu: tutti e quattordici, sempre, con lo stesso codice colore. -->
+    <div class="os-allergen-legend" style="position:static;">
+        <div class="os-legend-grid">
+            <span class="os-allergen-tag os-at-gluten"><span class="os-allergen-tag-dot"></span>Glutine</span>
+            <span class="os-allergen-tag os-at-crustaceans"><span class="os-allergen-tag-dot"></span>Crostacei</span>
+            <span class="os-allergen-tag os-at-eggs"><span class="os-allergen-tag-dot"></span>Uova</span>
+            <span class="os-allergen-tag os-at-fish"><span class="os-allergen-tag-dot"></span>Pesce</span>
+            <span class="os-allergen-tag os-at-peanuts"><span class="os-allergen-tag-dot"></span>Arachidi</span>
+            <span class="os-allergen-tag os-at-soy"><span class="os-allergen-tag-dot"></span>Soia</span>
+            <span class="os-allergen-tag os-at-milk"><span class="os-allergen-tag-dot"></span>Latte</span>
+            <span class="os-allergen-tag os-at-nuts"><span class="os-allergen-tag-dot"></span>Frutta a guscio</span>
+            <span class="os-allergen-tag os-at-celery"><span class="os-allergen-tag-dot"></span>Sedano</span>
+            <span class="os-allergen-tag os-at-mustard"><span class="os-allergen-tag-dot"></span>Senape</span>
+            <span class="os-allergen-tag os-at-sesame"><span class="os-allergen-tag-dot"></span>Sesamo</span>
+            <span class="os-allergen-tag os-at-sulphites"><span class="os-allergen-tag-dot"></span>Anidride solforosa</span>
+            <span class="os-allergen-tag os-at-lupin"><span class="os-allergen-tag-dot"></span>Lupini</span>
+            <span class="os-allergen-tag os-at-molluscs"><span class="os-allergen-tag-dot"></span>Molluschi</span>
+        </div>
+    </div>
+
+    <div class="lbl">Checkout</div>
+    <!-- Nella pagina vera e' un pannello che sale dal basso sopra un velo scuro
+         (position:fixed, inset:0). Qui e' riportato nel flusso ma il velo resta,
+         perche' fa parte di com'e' fatto. Il pannello e' l'unico punto degli ordini
+         in cui si chiedono dati: righe del carrello con le note, indirizzo se e'
+         una consegna, orario, dati di chi ordina, pagamento, totali. -->
+    <div class="os-checkout-overlay" style="position:static;inset:auto;background:transparent;">
+        <div class="os-checkout-panel">
+            <div class="os-checkout-header">
+                <h2>Il tuo ordine</h2>
+                <button type="button" class="os-checkout-close"><i class="bi bi-x-lg"></i></button>
+            </div>
+
+            <div class="os-checkout-cart">
+                <div class="os-cart-item">
+                    <span class="os-cart-item-qty">2</span>
+                    <div class="os-cart-item-detail">
+                        <span class="os-cart-item-name">Tagliatelle al ragù</span>
+                        <div class="os-cart-item-note-preview"><i class="bi bi-chat-left-text"></i> senza formaggio</div>
+                        <button type="button" class="os-cart-item-note-toggle has-note"><i class="bi bi-pencil-square"></i> Modifica nota</button>
+                    </div>
+                    <span class="os-cart-item-price">€24,00</span>
+                    <button type="button" class="os-cart-item-remove"><i class="bi bi-trash"></i></button>
+                </div>
+                <div class="os-cart-item">
+                    <span class="os-cart-item-qty">1</span>
+                    <div class="os-cart-item-detail">
+                        <span class="os-cart-item-name">Tiramisù della casa</span>
+                        <button type="button" class="os-cart-item-note-toggle"><i class="bi bi-pencil-square"></i> Aggiungi nota</button>
+                    </div>
+                    <span class="os-cart-item-price">€4,80</span>
+                    <button type="button" class="os-cart-item-remove"><i class="bi bi-trash"></i></button>
+                </div>
+            </div>
+
+            <div class="os-checkout-delivery">
+                <h3>Indirizzo di consegna</h3>
+                <input type="text" class="os-input" value="Via Roma 12">
+                <div class="os-input-row">
+                    <input type="text" class="os-input" value="40100">
+                    <span class="os-delivery-fee">+ €2,50</span>
+                </div>
+                <textarea class="os-input" rows="2" placeholder="Note per il corriere (citofono, piano...)"></textarea>
+            </div>
+
+            <div class="os-checkout-section">
+                <h3>Orario di ritiro</h3>
+                <!-- Il locale chiuso non nasconde il pannello: lo dice e basta. -->
+                <div class="os-closed-banner os-closed-banner--checkout">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div class="os-closed-banner-body">
+                        <p class="os-closed-banner-title">Oggi non accettiamo ordini online</p>
+                        <p class="os-closed-banner-text">Riapriamo domani alle 12:00.</p>
+                    </div>
+                </div>
+                <select class="os-select"><option>20:30</option></select>
+            </div>
+
+            <div class="os-checkout-section">
+                <h3>I tuoi dati</h3>
+                <input type="text" class="os-input" value="Marta Rossi">
+                <input type="tel" class="os-input" placeholder="Telefono *">
+            </div>
+
+            <div class="os-checkout-section">
+                <h3>Pagamento</h3>
+                <div class="os-payment-options">
+                    <div class="os-pay-option os-pay-selected">
+                        <span class="os-pay-radio"></span>
+                        <i class="bi bi-cash-stack os-pay-icon"></i>
+                        <div class="os-pay-label">Pago al ritiro<small>Contanti o carta al locale</small></div>
+                    </div>
+                    <div class="os-pay-option">
+                        <span class="os-pay-radio"></span>
+                        <i class="bi bi-credit-card-2-back os-pay-icon"></i>
+                        <div class="os-pay-label">Paga ora con carta<small>Visa, Mastercard, Apple Pay</small></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="os-checkout-totals">
+                <div class="os-total-row"><span>Subtotale</span><span>€28,80</span></div>
+                <div class="os-total-row"><span>Consegna</span><span>€2,50</span></div>
+                <div class="os-total-row os-total-final"><span>Totale</span><span>€31,30</span></div>
+            </div>
+
+            <button type="button" class="os-btn-submit">
+                <span>Invia ordine</span>
+            </button>
+        </div>
+    </div>
+
 </div>
 </body>
 </html>

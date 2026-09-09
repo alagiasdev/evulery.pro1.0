@@ -38,6 +38,63 @@
         </div>
     </div>
 
+    <div class="lbl">Calendario — il componente piu' fitto di stati del prodotto</div>
+    <!-- Sei stati nella stessa griglia, e si sommano: oggi (cerchio), selezionato
+         (pieno verde), passato/fuori finestra (spento), chiuso per chiusura
+         straordinaria, giorno non operativo (nessun turno attivo quel giorno della
+         settimana), e le celle vuote che allineano il primo del mese. La settimana
+         parte da lunedi'. -->
+    <div class="bw-calendar">
+        <div class="bw-cal-header">
+            <button type="button" class="bw-cal-nav">&#8249;</button>
+            <span class="bw-cal-month">Settembre 2026</span>
+            <button type="button" class="bw-cal-nav">&#8250;</button>
+        </div>
+        <div class="bw-cal-days-header">
+            <div class="bw-cal-day-name">Lun</div>
+            <div class="bw-cal-day-name">Mar</div>
+            <div class="bw-cal-day-name">Mer</div>
+            <div class="bw-cal-day-name">Gio</div>
+            <div class="bw-cal-day-name">Ven</div>
+            <div class="bw-cal-day-name">Sab</div>
+            <div class="bw-cal-day-name">Dom</div>
+        </div>
+        <div class="bw-cal-grid">
+                <div class="bw-cal-cell bw-cal-empty"></div>
+                <div class="bw-cal-cell bw-cal-disabled" data-date="2026-09-01">1</div>
+                <div class="bw-cal-cell bw-cal-disabled" data-date="2026-09-02">2</div>
+                <div class="bw-cal-cell bw-cal-disabled" data-date="2026-09-03">3</div>
+                <div class="bw-cal-cell bw-cal-disabled" data-date="2026-09-04">4</div>
+                <div class="bw-cal-cell bw-cal-disabled" data-date="2026-09-05">5</div>
+                <div class="bw-cal-cell bw-cal-disabled" data-date="2026-09-06">6</div>
+                <div class="bw-cal-cell bw-cal-disabled" data-date="2026-09-07">7</div>
+                <div class="bw-cal-cell bw-cal-disabled" data-date="2026-09-08">8</div>
+                <div class="bw-cal-cell bw-cal-today" data-date="2026-09-09">9</div>
+                <div class="bw-cal-cell" data-date="2026-09-10">10</div>
+                <div class="bw-cal-cell" data-date="2026-09-11">11</div>
+                <div class="bw-cal-cell bw-cal-selected" data-date="2026-09-12">12</div>
+                <div class="bw-cal-cell" data-date="2026-09-13">13</div>
+                <div class="bw-cal-cell bw-cal-disabled bw-cal-nonworking" data-date="2026-09-14" title="Non operativo">14</div>
+                <div class="bw-cal-cell bw-cal-disabled bw-cal-closed" data-date="2026-09-15" title="Chiuso">15</div>
+                <div class="bw-cal-cell" data-date="2026-09-16">16</div>
+                <div class="bw-cal-cell" data-date="2026-09-17">17</div>
+                <div class="bw-cal-cell" data-date="2026-09-18">18</div>
+                <div class="bw-cal-cell" data-date="2026-09-19">19</div>
+                <div class="bw-cal-cell" data-date="2026-09-20">20</div>
+                <div class="bw-cal-cell bw-cal-disabled bw-cal-nonworking" data-date="2026-09-21" title="Non operativo">21</div>
+                <div class="bw-cal-cell" data-date="2026-09-22">22</div>
+                <div class="bw-cal-cell" data-date="2026-09-23">23</div>
+                <div class="bw-cal-cell" data-date="2026-09-24">24</div>
+                <div class="bw-cal-cell" data-date="2026-09-25">25</div>
+                <div class="bw-cal-cell" data-date="2026-09-26">26</div>
+                <div class="bw-cal-cell" data-date="2026-09-27">27</div>
+                <div class="bw-cal-cell bw-cal-disabled bw-cal-nonworking" data-date="2026-09-28" title="Non operativo">28</div>
+                <div class="bw-cal-cell" data-date="2026-09-29">29</div>
+                <div class="bw-cal-cell" data-date="2026-09-30">30</div>
+        </div>
+        <div class="bw-cal-hint">I lunedi' siamo chiusi. Il 15 chiusura straordinaria.</div>
+    </div>
+
     <div class="lbl">Scelta persone</div>
     <h5 class="bw-step-title">Numero di persone</h5>
     <div class="bw-party-grid">
@@ -80,6 +137,32 @@
         </div>
     </div>
 
+    <div class="lbl">Compleanno — il campo che alimenta gli auguri</div>
+    <!-- Riquadro arancione, dichiaratamente opzionale: e' l'unico punto del widget
+         in cui si chiede un dato che non serve alla prenotazione. Da qui arriva il
+         segmento "compleanno del mese" delle comunicazioni. -->
+    <div class="bw-optional-label">
+        <i class="bi bi-gift-fill"></i>
+        Opzionale &middot; aiutaci a personalizzare il servizio
+    </div>
+    <div class="bw-optional-block">
+        <div class="bw-birthday-row">
+            <div class="bw-birthday-icon">&#127874;</div>
+            <div class="bw-birthday-content">
+                <label>Data di nascita <span class="bw-opt-tag">(opzionale)</span></label>
+                <div class="bw-birthday-selects">
+                    <select class="bw-bd-select"><option>18</option></select>
+                    <select class="bw-bd-select"><option>Settembre</option></select>
+                    <select class="bw-bd-select"><option>1985</option></select>
+                </div>
+                <div class="bw-birthday-hint">
+                    <i class="bi bi-info-circle"></i>
+                    Per inviarti gli auguri il giorno del tuo compleanno
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="lbl">Azioni</div>
     <button type="button" class="bw-conf-btn-primary" style="width:100%;margin-bottom:8px;">Conferma prenotazione</button>
     <button type="button" class="bw-btn-secondary" style="width:100%;">Annulla</button>
@@ -88,6 +171,75 @@
     <div class="bw-social-proof" style="display:flex;">
         <span class="bw-fire">&#128293;</span>
         <span>Già 8 prenotazioni per oggi</span>
+    </div>
+    <div class="lbl">Badge del locale, sotto l'insegna</div>
+    <div class="bw-badges">
+        <span class="bw-badge bw-badge--pet"><i class="bi bi-emoji-heart-eyes"></i> Pet Friendly</span>
+        <span class="bw-badge bw-badge--kids"><i class="bi bi-balloon"></i> Kids Friendly</span>
+    </div>
+</div>
+
+<!-- La conferma non e' un passo del widget: e' una pagina a se', con una card che
+     si prende tutta la larghezza. Per questo sta fuori dal riquadro qui sopra. -->
+<div class="lbl" style="max-width:420px;margin:26px auto 7px;">Pagina di conferma</div>
+<div class="bw-conf-card">
+    <div class="bw-conf-header">
+        <div class="bw-conf-check"><i class="bi bi-check-lg"></i></div>
+        <div class="bw-conf-title">Prenotazione Confermata!</div>
+        <div class="bw-conf-subtitle">Riceverai una conferma via email</div>
+    </div>
+
+    <div class="bw-conf-body">
+        <div class="bw-conf-grid">
+            <div class="bw-conf-detail">
+                <div class="bw-conf-detail-icon"><i class="bi bi-calendar3"></i></div>
+                <div class="bw-conf-detail-value">Sab 12 settembre</div>
+                <div class="bw-conf-detail-label">Data</div>
+            </div>
+            <div class="bw-conf-detail">
+                <div class="bw-conf-detail-icon"><i class="bi bi-clock"></i></div>
+                <div class="bw-conf-detail-value">20:00</div>
+                <div class="bw-conf-detail-label">Orario</div>
+            </div>
+            <div class="bw-conf-detail">
+                <div class="bw-conf-detail-icon"><i class="bi bi-people"></i></div>
+                <div class="bw-conf-detail-value">2 persone</div>
+                <div class="bw-conf-detail-label">Coperti</div>
+            </div>
+            <div class="bw-conf-detail">
+                <div class="bw-conf-detail-icon"><i class="bi bi-hash"></i></div>
+                <div class="bw-conf-detail-value">n. 148</div>
+                <div class="bw-conf-detail-label">Prenotazione</div>
+            </div>
+        </div>
+
+        <!-- Compare solo se e' stata incassata una caparra o registrata una carta
+             a garanzia: due varianti dello stesso blocco, icona diversa. -->
+        <div class="bw-conf-deposit">
+            <div class="bw-conf-deposit-icon"><i class="bi bi-shield-check"></i></div>
+            <div class="bw-conf-deposit-text">
+                Caparra di <strong>&euro;20,00</strong> pagata con successo
+            </div>
+        </div>
+
+        <div class="bw-conf-instructions">
+            <div class="bw-conf-instructions-title"><i class="bi bi-megaphone me-1"></i> Informazioni dal ristorante</div>
+            <div class="bw-conf-instructions-text">Il parcheggio interno ha dieci posti: se sono pieni, in via Roma si trova sempre.</div>
+        </div>
+
+        <div class="bw-conf-note">
+            <i class="bi bi-info-circle"></i>
+            <span>Controlla la tua email per il riepilogo completo con il link per gestire la prenotazione.</span>
+        </div>
+
+        <div class="bw-conf-actions">
+            <a href="#" class="bw-conf-btn-primary"><i class="bi bi-book"></i> Consulta il menu</a>
+            <a href="#" class="bw-conf-btn-secondary"><i class="bi bi-plus-circle"></i> Prenota un altro tavolo</a>
+        </div>
+    </div>
+
+    <div class="bw-conf-footer">
+        &copy; 2026 Evulery &middot; by alagias. - Soluzioni per il web
     </div>
 </div>
 

@@ -17,15 +17,26 @@
     .sec { max-width: 520px; margin: 0 auto 30px; }
     .sec > h3 { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #00844A; margin: 0 0 4px; }
     .sec > p { font-size: .78rem; color: #6c757d; margin: 0 0 12px; }
-    .lbl { font-size: .66rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #adb5bd; margin: 14px 0 6px; }
+    .pv-lbl { font-size: .66rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #adb5bd; margin: 14px 0 6px; }
 </style>
 </head>
 <body>
 
 <div class="sec">
     <h3>Recensioni</h3>
-    <p>Landing dopo la visita: la domanda a stelle decide se il cliente va su Google o
-       lascia un riscontro privato. Stella piena <code>#FFC107</code>, vuota <code>#e9ecef</code>.</p>
+    <p>Landing dopo la visita. La domanda a stelle e' un filtro: chi e' contento
+       viene mandato su Google, chi non lo e' finisce su un modulo privato che legge
+       solo il ristoratore. Stella piena <code>#FFC107</code>, vuota <code>#e9ecef</code>.</p>
+
+    <div class="pv-lbl">Intestazione</div>
+    <div class="rv-header">
+        <div class="rv-logo-placeholder"><i class="bi bi-shop"></i></div>
+        <div class="rv-restaurant">Trattoria Da Mario</div>
+    </div>
+
+    <div class="pv-lbl">La domanda</div>
+    <div class="rv-greeting">Ciao <strong>Marta</strong>, com'&egrave; andata la tua esperienza?</div>
+    <div class="rv-res-info"><i class="bi bi-calendar3"></i> Sabato 12 settembre</div>
     <div class="rv-stars-card">
         <div class="rv-stars-question">Com'è andata da noi?</div>
         <div class="rv-stars-row">
@@ -37,39 +48,243 @@
         </div>
         <div class="rv-star-labels"><span>Male</span><span>Benissimo</span></div>
     </div>
+
+    <div class="pv-lbl">Voto alto → si va su Google</div>
+    <div class="rv-state-card">
+        <p class="rv-greeting">Ciao <strong>Marta</strong>, grazie per aver cenato da Trattoria Da Mario!</p>
+        <p class="rv-state-text">Ci farebbe molto piacere se condividessi la tua esperienza.</p>
+        <a href="#" class="rv-cta-btn"><i class="bi bi-star"></i> Lascia una recensione su Google</a>
+    </div>
+
+    <div class="pv-lbl">Voto basso → riscontro privato</div>
+    <!-- Non e' un modo per nascondere le recensioni negative: e' che una lamentela
+         arriva prima al ristoratore, che puo' rimediare. Il cliente resta libero di
+         scrivere su Google. -->
+    <div class="rv-feedback-card">
+        <div class="rv-feedback-title">Aiutaci a migliorare</div>
+        <div class="rv-feedback-subtitle">Il tuo commento resterà privato e verrà letto direttamente dal ristorante</div>
+        <textarea class="rv-feedback-textarea" placeholder="Raccontaci cosa non ha funzionato: servizio, tempi di attesa, qualità del cibo, ambiente..."></textarea>
+        <div class="rv-feedback-hint">Minimo 10 caratteri</div>
+        <button type="button" class="rv-cta-btn" style="width:100%; margin-top:.75rem;">Invia il tuo commento</button>
+        <div class="rv-privacy"><i class="bi bi-shield-check"></i> Il tuo feedback è privato</div>
+    </div>
+
+    <div class="pv-lbl">Stati di chiusura</div>
+    <div class="rv-state-card">
+        <div class="rv-state-icon" style="background:#FFF3E0; color:#FF9800;"><i class="bi bi-clock-history"></i></div>
+        <h3 class="rv-state-title">Link scaduto</h3>
+        <p class="rv-state-text">Questo link per la recensione non è più valido.<br>Se desideri lasciare un feedback, contatta direttamente il ristorante.</p>
+    </div>
+    <div class="rv-state-card">
+        <div class="rv-state-icon" style="background:#E3F2FD; color:#42A5F5;"><i class="bi bi-check2-circle"></i></div>
+        <h3 class="rv-state-title">Grazie!</h3>
+        <p class="rv-state-text">Hai già lasciato la tua valutazione.<br>Il tuo feedback è prezioso per noi!</p>
+    </div>
 </div>
 
 <div class="sec">
     <h3>Board consegne</h3>
     <p>Sta aperta su un tablet in cucina e si guarda da un metro: colori di stato più
-       saturi del resto del prodotto.</p>
-    <div class="db-order-card">
-        <div class="db-order-customer">
-            <div class="db-customer-info">
-                <strong>Marta Rossi</strong>
-                <div class="db-order-address"><span class="db-address-text">Via Roma 12</span> <span class="db-address-cap">40100</span></div>
+       saturi del resto del prodotto, testo grande, niente sfumature. Non e' dietro
+       login: si entra con un PIN, perche' la usa chi consegna, non chi amministra.</p>
+
+    <div class="pv-lbl">Ingresso col PIN</div>
+    <!-- Nella pagina vera occupa tutto lo schermo e centra la card; qui basta la card. -->
+    <div class="db-pin-screen" style="min-height:0;padding:0;">
+        <div class="db-pin-card">
+            <div class="db-pin-icon"><i class="bi bi-truck"></i></div>
+            <h1 class="db-pin-title">Trattoria Da Mario</h1>
+            <p class="db-pin-subtitle">Board Consegne</p>
+            <div class="db-pin-error"><i class="bi bi-exclamation-circle me-1"></i> PIN non valido</div>
+            <label class="db-pin-label">Inserisci il PIN di accesso</label>
+            <input type="tel" class="db-pin-input" placeholder="- - - -">
+            <button type="button" class="db-pin-submit"><i class="bi bi-unlock me-1"></i> Accedi</button>
+        </div>
+    </div>
+
+    <div class="pv-lbl">Intestazione, col numero di consegne in corso</div>
+    <header class="db-header">
+        <div class="db-header-inner">
+            <div class="db-header-text">
+                <h1 class="db-header-name">Trattoria Da Mario</h1>
+                <p class="db-header-sub"><i class="bi bi-truck me-1"></i> Board Consegne</p>
             </div>
+            <div class="db-header-count">3</div>
+        </div>
+    </header>
+
+    <div class="pv-lbl">Consegna completa</div>
+    <div class="db-order-card">
+        <div class="db-order-top">
+            <span class="db-order-number">#A-148</span>
+            <span class="db-status-badge db-status-ready">Pronto</span>
+        </div>
+        <!-- Il colore del rider e' scelto dal ristoratore: serve a chi consegna per
+             riconoscere i propri ordini su una board condivisa. -->
+        <div class="db-order-rider">
+            <span class="db-rider-badge" style="background:#7048e8;"><i class="bi bi-bicycle"></i> Luca</span>
+        </div>
+        <div class="db-order-time"><i class="bi bi-clock"></i> Consegna: <strong>20:45</strong></div>
+        <div class="db-order-address">
+            <i class="bi bi-geo-alt-fill"></i>
+            <div>
+                <div class="db-address-text">Via Roma 12</div>
+                <span class="db-address-cap">CAP 40100</span>
+            </div>
+        </div>
+        <div class="db-order-customer">
+            <div class="db-customer-info"><i class="bi bi-person-fill"></i> Marta Rossi</div>
             <div class="db-customer-actions">
                 <a href="#" class="db-action-btn db-action-call"><i class="bi bi-telephone-fill"></i></a>
                 <a href="#" class="db-action-btn db-action-wa"><i class="bi bi-whatsapp"></i></a>
             </div>
         </div>
+        <div class="db-order-notes"><i class="bi bi-chat-left-text"></i> Citofono Rossi, terzo piano</div>
         <div class="db-order-items">
-            <div class="db-items-label">Ordine</div>
-            <div class="db-item-row"><span class="db-item-qty">2×</span> <span class="db-item-name">Tagliatelle al ragù</span></div>
-            <div class="db-item-row"><span class="db-item-qty">1×</span> <span class="db-item-name">Tiramisù</span></div>
+            <div class="db-items-label"><i class="bi bi-receipt"></i> Articoli</div>
+            <div class="db-item-row">
+                <span class="db-item-qty">2x</span> <span class="db-item-name">Tagliatelle al ragù</span>
+                <div class="db-item-note"><i class="bi bi-pencil-square"></i> senza formaggio</div>
+            </div>
+            <div class="db-item-row"><span class="db-item-qty">1x</span> <span class="db-item-name">Tiramisù</span></div>
         </div>
+        <div class="db-order-total">
+            Totale: <strong>&euro;31,30</strong>
+            <span class="db-payment-badge">Pagato online</span>
+        </div>
+        <form class="db-complete-form">
+            <button type="button" class="db-complete-btn"><i class="bi bi-check-circle-fill me-1"></i> Consegnato</button>
+        </form>
+    </div>
+
+    <div class="pv-lbl">Consegna senza rider, e altri stati</div>
+    <!-- Senza rider il pulsante resta bloccato: e' voluto, tiene puliti i tempi medi
+         di consegna nelle statistiche. -->
+    <div class="db-order-card">
+        <div class="db-order-top">
+            <span class="db-order-number">#A-149</span>
+            <span class="db-status-badge db-status-preparing">In preparazione</span>
+        </div>
+        <div class="db-order-rider db-order-rider--empty">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            Rider non ancora assegnato — il ristoratore deve assegnarlo dal dashboard
+        </div>
+        <div class="db-order-total">
+            Totale: <strong>&euro;18,00</strong>
+            <span class="db-payment-badge">Contanti</span>
+        </div>
+        <button type="button" class="db-complete-btn" disabled style="opacity:.5;cursor:not-allowed;">
+            <i class="bi bi-lock-fill me-1"></i> Assegnare rider per consegnare
+        </button>
+    </div>
+
+    <div class="pv-lbl">Ordine accettato ma non ancora pronto</div>
+    <!-- Finche' non e' "pronto" non c'e' nulla da consegnare: al posto del pulsante
+         compare un promemoria, non un bottone spento. -->
+    <div class="db-order-card">
+        <div class="db-order-top">
+            <span class="db-order-number">#A-150</span>
+            <span class="db-status-badge db-status-accepted">Accettato</span>
+        </div>
+        <div class="db-waiting-badge">
+            <i class="bi bi-hourglass-split me-1"></i> In attesa — non ancora pronto
+        </div>
+    </div>
+
+    <div class="pv-lbl">Board vuota</div>
+    <div class="db-empty">
+        <i class="bi bi-inbox"></i>
+        <p>Nessuna consegna in corso</p>
+        <span>Le nuove consegne appariranno automaticamente</span>
     </div>
 </div>
 
 <div class="sec">
     <h3>Area reseller</h3>
-    <p>Riprende l'impianto della dashboard con barra laterale più larga (220 px). I lead
-       hanno un badge per stato: sono i sette di <code>DemoRequest::STATUSES</code>,
-       con la demo divisa in programmata e effettuata.</p>
+    <p>Riprende l'impianto della dashboard ma con barra laterale piu' larga (220 px)
+       e sfondo scuro: chi la usa non e' il ristoratore, e' chi vende. Le tabelle
+       qui restano tabelle vere, non griglie CSS come nella dashboard.</p>
+
+    <div class="pv-lbl">Barra laterale</div>
+    <div class="rs-sidebar" style="position:static;height:auto;">
+        <div class="rs-sidebar-brand">
+            <div class="rs-sidebar-brand-role">Area Reseller</div>
+        </div>
+        <nav class="rs-sidebar-nav">
+            <div class="rs-sidebar-section">Principale</div>
+            <a class="rs-sidebar-link active" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a class="rs-sidebar-link" href="#"><i class="bi bi-funnel"></i> I miei lead <span class="rs-sidebar-badge">4</span></a>
+            <a class="rs-sidebar-link" href="#"><i class="bi bi-shop"></i> I miei clienti</a>
+            <a class="rs-sidebar-link" href="#"><i class="bi bi-cash-stack"></i> Le mie commissioni</a>
+            <div class="rs-sidebar-section">Strumenti</div>
+            <a class="rs-sidebar-link" href="#"><i class="bi bi-file-earmark-text"></i> Materiali</a>
+            <a class="rs-sidebar-link" href="#"><i class="bi bi-folder-check"></i> Documenti</a>
+        </nav>
+    </div>
+
+    <div class="pv-lbl">Intestazione di pagina e riquadri sintetici</div>
+    <div class="rs-page-header">
+        <h1 class="rs-page-title">Dashboard</h1>
+        <p class="rs-page-sub">Il quadro dei tuoi lead e delle tue commissioni.</p>
+    </div>
+    <!-- Il colore dell'icona e' scritto sul posto, uno per riquadro: non c'e' una
+         classe per ciascuno. -->
+    <div class="rs-kpi-grid">
+        <div class="rs-kpi-card">
+            <div class="rs-kpi-icon" style="background:#E3F2FD;color:#0277bd;"><i class="bi bi-funnel-fill"></i></div>
+            <div>
+                <div class="val">4</div>
+                <div class="lbl">Lead aperti</div>
+            </div>
+        </div>
+        <div class="rs-kpi-card">
+            <div class="rs-kpi-icon" style="background:#E8F5E9;color:#00844A;"><i class="bi bi-shop"></i></div>
+            <div>
+                <div class="val">11</div>
+                <div class="lbl">Clienti attivi</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pv-lbl">Card con tabella e stati del follow-up</div>
+    <div class="rs-card">
+        <div class="rs-card-hdr">
+            <span>Da ricontattare</span>
+            <a href="#" class="rs-card-hdr-link">Vai ai lead →</a>
+        </div>
+        <table class="rs-tbl">
+            <tbody>
+                <tr>
+                    <td style="width:50%;">
+                        <div class="name">Osteria del Borgo</div>
+                        <div class="sub">Giulia Ferri</div>
+                    </td>
+                    <td><span class="rs-fu-overdue"><i class="bi bi-exclamation-circle-fill"></i> Scaduto 3gg</span></td>
+                    <td style="text-align:right;"><a href="#" class="rs-btn rs-btn-ghost rs-btn-sm"><i class="bi bi-eye"></i> Apri</a></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="name">Pizzeria Vesuvio</div>
+                        <div class="sub">Antonio Esposito</div>
+                    </td>
+                    <td><span class="rs-fu-today"><i class="bi bi-bell-fill"></i> Oggi</span></td>
+                    <td style="text-align:right;"><a href="#" class="rs-btn rs-btn-ghost rs-btn-sm"><i class="bi bi-eye"></i> Apri</a></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="name">Trattoria Da Mario</div>
+                        <div class="sub">Mario Bianchi</div>
+                    </td>
+                    <td><span class="rs-fu-future"><i class="bi bi-calendar3"></i> Tra 5gg</span></td>
+                    <td style="text-align:right;"><a href="#" class="rs-btn rs-btn-ghost rs-btn-sm"><i class="bi bi-eye"></i> Apri</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
     <div class="rs-card">
         <div class="rs-card-body">
-            <div class="lbl">Badge di stato lead</div>
+            <div class="pv-lbl">Badge di stato lead</div>
             <span class="rs-badge rs-b-new">Nuovo</span>
             <span class="rs-badge rs-b-contacted">Contattato</span>
             <span class="rs-badge rs-b-demo_scheduled">Demo programmata</span>
@@ -78,9 +293,19 @@
             <span class="rs-badge rs-b-customer">Cliente</span>
             <span class="rs-badge rs-b-lost">Perso</span>
 
-            <div class="lbl">Pulsanti</div>
+            <div class="pv-lbl">Pulsanti</div>
             <a href="#" class="rs-btn rs-btn-primary rs-btn-sm"><i class="bi bi-plus-circle"></i> Nuovo lead</a>
             <a href="#" class="rs-btn rs-btn-ghost rs-btn-sm">Reset</a>
+
+            <div class="pv-lbl">Campo di modulo</div>
+            <div class="rs-field">
+                <label for="pv-credits">Quantità *</label>
+                <input type="number" id="pv-credits" value="1000">
+                <div class="rs-field-help">Min 500, max 50.000, a step di 500.</div>
+            </div>
+
+            <div class="pv-lbl">Elenco vuoto</div>
+            <div class="rs-card-empty">Nessun follow-up programmato per i prossimi 7 giorni.</div>
         </div>
     </div>
 </div>
