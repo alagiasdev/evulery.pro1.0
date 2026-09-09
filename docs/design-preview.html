@@ -3,69 +3,207 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Evulery — Componenti dell'interfaccia</title>
+<title>Evulery — Vetrina dei componenti</title>
 <!-- Stessi fogli di stile della dashboard: questa pagina mostra i componenti VERI.
-     Se il CSS cambia, cambia anche la vetrina - non c'e' una copia da tenere allineata. -->
+     Se il CSS cambia, cambia anche la vetrina — non c'è una copia da tenere allineata.
+     Le regole scritte stanno in DESIGN.md, nella radice del progetto. -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <link href="../public/assets/css/dashboard.css" rel="stylesheet">
 <style>
-    body { background: #f5f6fa; padding: 24px; }
-    .pv-wrap { max-width: 1100px; margin: 0 auto; }
-    .pv-head { margin-bottom: 28px; }
-    .pv-head h1 { font-size: 1.5rem; font-weight: 800; margin: 0 0 6px; color: #1a1d23; }
-    .pv-head p { font-size: .88rem; color: #6c757d; margin: 0; max-width: 70ch; }
-    .pv-sec { margin: 34px 0; }
+    body { background: #f5f6fa; padding: 0 0 60px; }
+    .pv-top { background: #1a1d23; color: #fff; padding: 22px 24px; margin-bottom: 26px; }
+    .pv-top h1 { font-size: 1.35rem; font-weight: 800; margin: 0 0 4px; }
+    .pv-top p { font-size: .82rem; color: #adb5bd; margin: 0; max-width: 76ch; }
+    .pv-top code { color: #7ee2b0; }
+    .pv-wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    .pv-nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 26px; }
+    .pv-nav a {
+        font-size: .72rem; font-weight: 600; text-decoration: none; color: #495057;
+        background: #fff; border-radius: 999px; padding: 5px 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .pv-nav a:hover { color: #00844A; }
+    .pv-sec { margin: 0 0 38px; scroll-margin-top: 16px; }
     .pv-sec > h2 {
         font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
         color: #00844A; margin: 0 0 4px;
     }
-    .pv-sec > .pv-note { font-size: .8rem; color: #6c757d; margin: 0 0 14px; max-width: 70ch; }
+    .pv-note { font-size: .8rem; color: #6c757d; margin: 0 0 14px; max-width: 76ch; }
+    .pv-note code { background: #eef1f4; padding: 1px 5px; border-radius: 4px; font-size: .74rem; color: #495057; }
     .pv-box { background: #fff; border-radius: 12px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
     .pv-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-    .pv-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
-    .pv-sw { border-radius: 10px; overflow: hidden; border: 1px solid #e9ecef; background: #fff; }
-    .pv-sw-color { height: 46px; }
-    .pv-sw-txt { padding: 6px 9px; font-size: .7rem; }
-    .pv-sw-txt b { display: block; font-size: .74rem; color: #1a1d23; }
-    .pv-sw-txt code { color: #6c757d; font-size: .68rem; }
-    .pv-mobile { width: 390px; max-width: 100%; border: 8px solid #1a1d23; border-radius: 26px; overflow: hidden; background: #f5f6fa; padding: 12px; }
-    .pv-label { font-size: .7rem; color: #adb5bd; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+    .pv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: 10px; }
+    .pv-sw { border-radius: 10px; overflow: hidden; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+    .pv-sw-c { height: 46px; }
+    .pv-sw-t { padding: 6px 9px; }
+    .pv-sw-t b { display: block; font-size: .74rem; color: #1a1d23; }
+    .pv-sw-t code { color: #6c757d; font-size: .68rem; }
+    .pv-type-row { display: flex; align-items: baseline; gap: 14px; padding: 9px 0; border-bottom: 1px solid #f0f0f0; }
+    .pv-type-row:last-child { border-bottom: 0; }
+    .pv-type-tok { font-size: .68rem; color: #adb5bd; min-width: 92px; font-family: ui-monospace, Menlo, monospace; }
+    .pv-type-meta { font-size: .68rem; color: #adb5bd; margin-left: auto; font-family: ui-monospace, Menlo, monospace; }
+    .pv-scale { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+    .pv-scale div { text-align: center; font-size: .65rem; color: #6c757d; }
+    .pv-scale i { display: block; background: #00844A; opacity: .18; border-radius: 3px; margin-bottom: 5px; }
+    .pv-shape { display: flex; gap: 12px; flex-wrap: wrap; }
+    .pv-shape div { width: 76px; height: 62px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.06);
+                    display: flex; align-items: flex-end; justify-content: center; font-size: .62rem; color: #6c757d; padding-bottom: 5px; }
+    .pv-elev { display: flex; gap: 16px; flex-wrap: wrap; }
+    .pv-elev div { width: 150px; height: 76px; background: #fff; border-radius: 12px;
+                   display: flex; align-items: center; justify-content: center; font-size: .7rem; color: #6c757d; }
+    .pv-phone { width: 390px; max-width: 100%; border: 9px solid #1a1d23; border-radius: 28px; overflow: hidden; background: #f5f6fa; padding: 12px; }
+    .pv-lbl { font-size: .68rem; color: #adb5bd; text-transform: uppercase; letter-spacing: .5px; margin: 0 0 7px; font-weight: 700; }
+    .pv-dont { border-left: 3px solid #dc3545; padding-left: 12px; margin-top: 12px; }
+    .pv-dont b { color: #dc3545; font-size: .78rem; }
+    .pv-dont p { font-size: .78rem; color: #6c757d; margin: 2px 0 0; }
 </style>
 </head>
 <body>
+
+<div class="pv-top">
+    <div class="pv-wrap" style="padding:0 24px;">
+        <h1>Vetrina dei componenti</h1>
+        <p>Questa pagina carica <code>public/assets/css/dashboard.css</code>: quello che vedi è
+           esattamente ciò che vede il ristoratore. Le regole scritte stanno in <code>DESIGN.md</code>.
+           Restringi la finestra sotto i 768 px per osservare il comportamento su telefono.</p>
+    </div>
+</div>
+
 <div class="pv-wrap">
 
-    <div class="pv-head">
-        <h1>Componenti dell'interfaccia</h1>
-        <p>Questa pagina carica <code>public/assets/css/dashboard.css</code>: quello che vedi è
-           esattamente ciò che vedono i ristoratori. Le regole scritte stanno in <code>DESIGN.md</code>.
-           Restringi la finestra sotto i 768px per vedere il comportamento su telefono.</p>
+    <div class="pv-nav">
+        <a href="#colori">Colori</a>
+        <a href="#stati">Stati</a>
+        <a href="#tipografia">Tipografia</a>
+        <a href="#spazi">Spaziature</a>
+        <a href="#forme">Forme</a>
+        <a href="#elevazione">Elevazione</a>
+        <a href="#card">Card</a>
+        <a href="#azioni">Azioni</a>
+        <a href="#form">Form</a>
+        <a href="#elenchi">Elenchi</a>
+        <a href="#avvisi">Avvisi</a>
+        <a href="#mobile">Mobile</a>
+        <a href="#vuoti">Stati vuoti</a>
+        <a href="#nonfare">Da non fare</a>
     </div>
 
-    <div class="pv-sec">
-        <h2>Colori del marchio e stati</h2>
-        <p class="pv-note">Il verde è il marchio: le azioni principali sono verdi. Il blu è riservato
-           allo stato “arrivato”, il rosso a no-show e azioni distruttive.</p>
-        <div class="pv-swatches">
-            <div class="pv-sw"><div class="pv-sw-color" style="background:#00844A"></div><div class="pv-sw-txt"><b>Brand</b><code>#00844A</code></div></div>
-            <div class="pv-sw"><div class="pv-sw-color" style="background:#006837"></div><div class="pv-sw-txt"><b>Brand scuro</b><code>#006837</code></div></div>
-            <div class="pv-sw"><div class="pv-sw-color" style="background:#E8F5E9"></div><div class="pv-sw-txt"><b>Brand chiaro</b><code>#E8F5E9</code></div></div>
-            <div class="pv-sw"><div class="pv-sw-color" style="background:#198754"></div><div class="pv-sw-txt"><b>Confermato</b><code>#198754</code></div></div>
-            <div class="pv-sw"><div class="pv-sw-color" style="background:#ffc107"></div><div class="pv-sw-txt"><b>In attesa</b><code>#ffc107</code></div></div>
-            <div class="pv-sw"><div class="pv-sw-color" style="background:#1565C0"></div><div class="pv-sw-txt"><b>Arrivato</b><code>#1565C0</code></div></div>
-            <div class="pv-sw"><div class="pv-sw-color" style="background:#dc3545"></div><div class="pv-sw-txt"><b>No-show / distruttivo</b><code>#dc3545</code></div></div>
-            <div class="pv-sw"><div class="pv-sw-color" style="background:#D81B60"></div><div class="pv-sw-txt"><b>Compleanni</b><code>#D81B60</code></div></div>
-            <div class="pv-sw"><div class="pv-sw-color" style="background:#25D366"></div><div class="pv-sw-txt"><b>WhatsApp</b><code>#25D366</code></div></div>
-            <div class="pv-sw"><div class="pv-sw-color" style="background:#6c757d"></div><div class="pv-sw-txt"><b>Testo secondario</b><code>#6c757d</code></div></div>
+    <!-- ============ COLORI ============ -->
+    <div class="pv-sec" id="colori">
+        <h2>Colori — marchio e superfici</h2>
+        <p class="pv-note">Un solo verde di marca. Il blu non è un accento: appartiene allo stato
+           “arrivato” e all'area amministrativa.</p>
+        <div class="pv-grid">
+            <div class="pv-sw"><div class="pv-sw-c" style="background:#00844A"></div><div class="pv-sw-t"><b>brand</b><code>#00844A</code></div></div>
+            <div class="pv-sw"><div class="pv-sw-c" style="background:#006837"></div><div class="pv-sw-t"><b>brand-dark</b><code>#006837</code></div></div>
+            <div class="pv-sw"><div class="pv-sw-c" style="background:#E8F5E9"></div><div class="pv-sw-t"><b>brand-light</b><code>#E8F5E9</code></div></div>
+            <div class="pv-sw"><div class="pv-sw-c" style="background:#1a1d23"></div><div class="pv-sw-t"><b>ink / sidebar</b><code>#1a1d23</code></div></div>
+            <div class="pv-sw"><div class="pv-sw-c" style="background:#495057"></div><div class="pv-sw-t"><b>body</b><code>#495057</code></div></div>
+            <div class="pv-sw"><div class="pv-sw-c" style="background:#6c757d"></div><div class="pv-sw-t"><b>mute</b><code>#6c757d</code></div></div>
+            <div class="pv-sw"><div class="pv-sw-c" style="background:#adb5bd"></div><div class="pv-sw-t"><b>faint</b><code>#adb5bd</code></div></div>
+            <div class="pv-sw"><div class="pv-sw-c" style="background:#e9ecef"></div><div class="pv-sw-t"><b>hairline</b><code>#e9ecef</code></div></div>
+            <div class="pv-sw"><div class="pv-sw-c" style="background:#f5f6fa"></div><div class="pv-sw-t"><b>canvas</b><code>#f5f6fa</code></div></div>
+            <div class="pv-sw"><div class="pv-sw-c" style="background:#fafbfc"></div><div class="pv-sw-t"><b>surface-soft</b><code>#fafbfc</code></div></div>
         </div>
     </div>
 
-    <div class="pv-sec">
-        <h2>Card statistica</h2>
-        <p class="pv-note">Il modello per qualunque riquadro numerico: riquadro icona 42px, numero
-           1.45rem, etichetta maiuscoletta. Nessun bordo, solo l'ombra leggera.</p>
-        <div class="dh-stat-cards dh-stat-4">
+    <!-- ============ STATI ============ -->
+    <div class="pv-sec" id="stati">
+        <h2>Colori — stati</h2>
+        <p class="pv-note">Ogni stato ha un colore per il puntino, uno per il testo e uno di sfondo.
+           Usarli fuori dal loro significato rompe la lettura a colpo d'occhio.</p>
+        <div class="pv-box">
+            <div class="pv-lbl">Badge — <code>20px</code> di raggio, padding <code>.3rem .75rem</code></div>
+            <div class="pv-row" style="margin-bottom:18px;">
+                <span class="status-badge confirmed">Confermata</span>
+                <span class="status-badge pending">In attesa</span>
+                <span class="status-badge arrived">Arrivato</span>
+            </div>
+            <div class="pv-lbl">Puntini di stato</div>
+            <div class="pv-row">
+                <span><span class="status-dot confirmed" style="display:inline-block;width:10px;height:10px;border-radius:50%;"></span> <small>Confermato #198754</small></span>
+                <span><span class="status-dot pending" style="display:inline-block;width:10px;height:10px;border-radius:50%;"></span> <small>In attesa #ffc107</small></span>
+                <span><span class="status-dot arrived" style="display:inline-block;width:10px;height:10px;border-radius:50%;"></span> <small>Arrivato #1565C0</small></span>
+                <span><span class="status-dot noshow" style="display:inline-block;width:10px;height:10px;border-radius:50%;"></span> <small>No-show #dc3545</small></span>
+                <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#D81B60;"></span> <small>Compleanni #D81B60</small></span>
+                <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#25D366;"></span> <small>WhatsApp #25D366</small></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ TIPOGRAFIA ============ -->
+    <div class="pv-sec" id="tipografia">
+        <h2>Tipografia</h2>
+        <p class="pv-note">Font di sistema, nessun webfont da scaricare. La scala vive quasi tutta
+           sotto il rem: la densità conta più dell'aria, perché si legge in servizio.</p>
+        <div class="pv-box">
+            <div class="pv-type-row"><span class="pv-type-tok">kpi-xl</span><span style="font-size:1.45rem;font-weight:700;line-height:1;">47</span><span class="pv-type-meta">1.45rem / 700</span></div>
+            <div class="pv-type-row"><span class="pv-type-tok">title-page</span><span style="font-size:1.5rem;font-weight:800;letter-spacing:-.5px;">Titolo di pagina</span><span class="pv-type-meta">1.5rem / 800</span></div>
+            <div class="pv-type-row"><span class="pv-type-tok">title-card</span><span style="font-size:.95rem;font-weight:700;">Titolo di un pannello</span><span class="pv-type-meta">.95rem / 700</span></div>
+            <div class="pv-type-row"><span class="pv-type-tok">body-md</span><span style="font-size:.85rem;">Testo corrente della pagina</span><span class="pv-type-meta">.85rem</span></div>
+            <div class="pv-type-row"><span class="pv-type-tok">body-sm</span><span style="font-size:.82rem;color:#6c757d;">Descrizione secondaria</span><span class="pv-type-meta">.82rem · mute</span></div>
+            <div class="pv-type-row"><span class="pv-type-tok">meta</span><span style="font-size:.78rem;color:#6c757d;font-weight:500;">Riga sotto un nome</span><span class="pv-type-meta">.78rem</span></div>
+            <div class="pv-type-row"><span class="pv-type-tok">label</span><span style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:#6c757d;">Etichetta sotto il numero</span><span class="pv-type-meta">.72rem · maiuscoletto</span></div>
+            <div class="pv-type-row"><span class="pv-type-tok">label-sm</span><span style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#495057;">Intestazione di elenco</span><span class="pv-type-meta">.68rem / 700</span></div>
+        </div>
+    </div>
+
+    <!-- ============ SPAZIATURE ============ -->
+    <div class="pv-sec" id="spazi">
+        <h2>Spaziature</h2>
+        <p class="pv-note">Base 4 px, espressa in rem nel CSS. Il <code>gap</code> più usato del
+           progetto è <code>.5rem</code>; i pannelli respirano con <code>1rem 1.25rem</code>.</p>
+        <div class="pv-box">
+            <div class="pv-scale">
+                <div><i style="width:4px;height:34px"></i>4</div>
+                <div><i style="width:6px;height:34px"></i>6</div>
+                <div><i style="width:8px;height:34px"></i>8</div>
+                <div><i style="width:12px;height:34px"></i>12</div>
+                <div><i style="width:16px;height:34px"></i>16</div>
+                <div><i style="width:20px;height:34px"></i>20</div>
+                <div><i style="width:24px;height:34px"></i>24</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ FORME ============ -->
+    <div class="pv-sec" id="forme">
+        <h2>Forme</h2>
+        <p class="pv-note">Tre raggi coprono quasi tutto: <code>8px</code> per pulsanti e campi,
+           <code>10px</code> per i riquadri-icona, <code>12px</code> per le card. Le forme a pillola
+           sono riservate a badge e azioni brevi.</p>
+        <div class="pv-shape">
+            <div style="border-radius:4px">4px</div>
+            <div style="border-radius:6px">6px</div>
+            <div style="border-radius:8px">8px</div>
+            <div style="border-radius:10px">10px</div>
+            <div style="border-radius:12px">12px</div>
+            <div style="border-radius:20px">20px</div>
+            <div style="border-radius:999px">pill</div>
+        </div>
+    </div>
+
+    <!-- ============ ELEVAZIONE ============ -->
+    <div class="pv-sec" id="elevazione">
+        <h2>Elevazione</h2>
+        <p class="pv-note">Tre livelli, e si usano quasi solo i primi due. Mai bordo <em>e</em> ombra
+           sullo stesso elemento: i pannelli usano l'ombra, i campi il bordo.</p>
+        <div class="pv-elev">
+            <div style="box-shadow:0 1px 3px rgba(0,0,0,.06)">livello 1 · pannelli</div>
+            <div style="box-shadow:0 1px 4px rgba(0,0,0,.06)">livello 2 · barre fisse</div>
+            <div style="box-shadow:0 8px 24px rgba(0,0,0,.12)">livello 3 · dialoghi</div>
+        </div>
+    </div>
+
+    <!-- ============ CARD ============ -->
+    <div class="pv-sec" id="card">
+        <h2>Card statistica e card filtro</h2>
+        <p class="pv-note">Stesse misure: riquadro icona 42 px, numero 1.45rem, etichetta
+           maiuscoletta. La card filtro in più è cliccabile, e il bordo — sempre presente ma
+           trasparente — si colora sull'attiva, così la card non si sposta di 2 px al clic.</p>
+
+        <div class="pv-lbl">Statistica (non cliccabile)</div>
+        <div class="dh-stat-cards dh-stat-4" style="margin-bottom:18px;">
             <div class="dh-stat-card">
                 <div class="dh-stat-icon green"><i class="bi bi-egg-fried"></i></div>
                 <div><div class="dh-stat-value">24</div><div class="dh-stat-label">Voci totali</div></div>
@@ -83,79 +221,150 @@
                 <div><div class="dh-stat-value">11</div><div class="dh-stat-label">Categorie</div></div>
             </div>
         </div>
-    </div>
 
-    <div class="pv-sec">
-        <h2>Filtri a card</h2>
-        <p class="pv-note">Stesse misure della card statistica, ma cliccabili: il bordo esiste sempre,
-           trasparente a riposo e colorato sul filtro attivo, così la card non si sposta di 2px.</p>
+        <div class="pv-lbl">Filtro (la prima è attiva)</div>
         <div class="seg-tabs">
-            <a href="#" class="seg-tab active" style="--seg-color:#0d6efd;">
+            <a href="#card" class="seg-tab active" style="--seg-color:#0d6efd;">
                 <div class="seg-icon" style="background:#e8f0fe;color:#0d6efd;"><i class="bi bi-people-fill"></i></div>
                 <div class="seg-text"><div class="seg-count">47</div><div class="seg-label">Tutti</div></div>
             </a>
-            <a href="#" class="seg-tab" style="--seg-color:#6c757d;">
+            <a href="#card" class="seg-tab" style="--seg-color:#6c757d;">
                 <div class="seg-icon" style="background:#f1f3f5;color:#6c757d;"><i class="bi bi-person-plus"></i></div>
                 <div class="seg-text"><div class="seg-count">25</div><div class="seg-label">Nuovi</div></div>
             </a>
-            <a href="#" class="seg-tab" style="--seg-color:#198754;">
+            <a href="#card" class="seg-tab" style="--seg-color:#198754;">
                 <div class="seg-icon" style="background:#e8f5e9;color:#198754;"><i class="bi bi-person-check"></i></div>
                 <div class="seg-text"><div class="seg-count">7</div><div class="seg-label">Abituali</div></div>
             </a>
-            <a href="#" class="seg-tab" style="--seg-color:#D81B60;">
+            <a href="#card" class="seg-tab" style="--seg-color:#D81B60;">
                 <div class="seg-icon" style="background:#fce4ec;color:#D81B60;"><i class="bi bi-gift-fill"></i></div>
                 <div class="seg-text"><div class="seg-count">3</div><div class="seg-label">Compleanni</div></div>
             </a>
         </div>
     </div>
 
-    <div class="pv-sec">
-        <h2>Stati e azioni</h2>
-        <p class="pv-note">I badge di stato usano sfondo tenue e testo saturo. Le pillole d'azione
-           hanno sempre icona <em>e</em> verbo: la sola icona non si spiega, e su telefono non c'è
-           tooltip che tenga.</p>
+    <!-- ============ AZIONI ============ -->
+    <div class="pv-sec" id="azioni">
+        <h2>Azioni</h2>
+        <p class="pv-note">Una sola azione principale per schermata. Sempre icona più verbo — e il
+           canale quando ne esiste più d'uno, altrimenti “Invia auguri” non dice se parte una email
+           o un messaggio.</p>
         <div class="pv-box">
-            <div class="pv-label">Stati prenotazione</div>
+            <div class="pv-lbl">Pulsanti</div>
             <div class="pv-row" style="margin-bottom:18px;">
-                <span class="status-badge confirmed">Confermata</span>
-                <span class="status-badge pending">In attesa</span>
-                <span class="status-badge arrived">Arrivato</span>
+                <button class="btn btn-sm btn-success"><i class="bi bi-plus-circle me-1"></i> Nuova prenotazione</button>
+                <button class="btn btn-sm btn-outline-success"><i class="bi bi-graph-up-arrow me-1"></i> Statistiche</button>
+                <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-cloud-upload me-1"></i> Importa CSV</button>
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3 me-1"></i> Elimina</button>
             </div>
-            <div class="pv-label">Azioni</div>
+            <div class="pv-lbl">Pillola d'azione in riga</div>
             <div class="pv-row">
-                <a href="#" class="wa-btn"><i class="bi bi-whatsapp"></i> Invia auguri</a>
-                <button class="btn btn-sm btn-success"><i class="bi bi-plus-circle me-1"></i> Azione principale</button>
-                <button class="btn btn-sm btn-outline-success"><i class="bi bi-graph-up-arrow me-1"></i> Azione secondaria</button>
-                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3 me-1"></i> Azione distruttiva</button>
+                <a href="#azioni" class="wa-btn"><i class="bi bi-whatsapp"></i> Invia auguri</a>
+                <span style="font-size:.78rem;color:#6c757d;">← icona <em>e</em> parola: su telefono non c'è tooltip</span>
             </div>
         </div>
     </div>
 
-    <div class="pv-sec">
-        <h2>Barra d'avviso</h2>
-        <p class="pv-note">Bordo sinistro colorato, sfondo tenue, e compare solo quando c'è davvero
-           qualcosa da segnalare: una barra sempre accesa smette di essere letta.</p>
-        <div class="bday-cta">
+    <!-- ============ FORM ============ -->
+    <div class="pv-sec" id="form">
+        <h2>Form</h2>
+        <p class="pv-note">Etichetta sopra il campo in maiuscoletto, bordo tenue, alone verde al
+           fuoco. Le schede di dettaglio partono in sola lettura e si sbloccano con “Modifica”:
+           evita di cambiare un'email per sbaglio e perdere le notifiche di un cliente.</p>
+        <div class="pv-box">
+            <div class="cs-edit-grid" style="max-width:560px;">
+                <label class="cs-edit-field">Nome *
+                    <input type="text" value="Marta" >
+                </label>
+                <label class="cs-edit-field">Cognome
+                    <input type="text" value="Rossi">
+                </label>
+                <label class="cs-edit-field">Telefono
+                    <input type="text" value="+39 333 4455667">
+                </label>
+                <label class="cs-edit-field">Email
+                    <input type="text" placeholder="nome@dominio.it">
+                </label>
+            </div>
+            <div class="cs-data-actions" style="margin-top:14px;">
+                <button class="btn btn-sm btn-success"><i class="bi bi-check2 me-1"></i> Salva</button>
+                <button class="cs-data-cancel" type="button">Annulla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ ELENCHI ============ -->
+    <div class="pv-sec" id="elenchi">
+        <h2>Elenchi</h2>
+        <p class="pv-note">Gli elenchi della dashboard non sono tabelle: sono griglie di righe
+           (<code>.cust-row</code>), con intestazione tenue e riga cliccabile. Sotto i 768 px
+           lasciano il posto alle card.</p>
+        <div class="card desktop-table" style="box-shadow:0 1px 3px rgba(0,0,0,.06);border:0;">
+            <div class="cust-header">
+                <span>Cliente</span><span>Segmento</span><span>Email</span><span>Telefono</span>
+                <span style="text-align:center;">Pren.</span><span style="text-align:center;">N/S</span><span></span>
+            </div>
+            <div class="cust-row">
+                <div>
+                    <div class="c-name">Marta Rossi</div>
+                    <div class="c-sub">Cliente dal 12/03/2026</div>
+                </div>
+                <div><span class="seg-badge vip">VIP</span></div>
+                <div class="c-email">marta@example.it</div>
+                <div class="c-phone">+39 333 4455667</div>
+                <div class="c-bookings">37</div>
+                <div class="c-noshow"><span class="noshow-count none">0</span></div>
+                <i class="bi bi-chevron-right c-arrow"></i>
+            </div>
+            <div class="cust-row">
+                <div>
+                    <div class="c-name">Paolo Gialli</div>
+                    <div class="c-sub" style="color:#D81B60;font-weight:600;">🎂 15 settembre · compie 51 anni</div>
+                </div>
+                <div><span class="seg-badge abituale">Abituale</span></div>
+                <div class="c-email">paolo@example.it</div>
+                <div class="c-phone">06 4455667</div>
+                <div class="c-bookings">6</div>
+                <div class="c-noshow"><span class="noshow-count has">1</span></div>
+                <i class="bi bi-chevron-right c-arrow"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ AVVISI ============ -->
+    <div class="pv-sec" id="avvisi">
+        <h2>Barre d'avviso</h2>
+        <p class="pv-note">Bordo sinistro colorato, fondo tenue, e comparsa condizionata: una barra
+           sempre accesa smette di essere letta. Dice anche quanti destinatari ci sono davvero,
+           perché l'azione costa crediti.</p>
+        <div class="bday-cta" style="margin-bottom:12px;">
             <div>
                 <strong>Compleanni di settembre:</strong> 5 clienti, 1 già festeggiato.
                 Ancora da festeggiare con email e consenso: <strong>4</strong>.
             </div>
-            <a href="#" class="bday-cta-btn"><i class="bi bi-envelope-heart"></i> Invia auguri via email</a>
+            <a href="#avvisi" class="bday-cta-btn"><i class="bi bi-envelope-heart"></i> Invia auguri via email</a>
+        </div>
+        <div class="leads-toassign" style="display:flex;align-items:center;gap:12px;background:#FFF8E1;border:1px solid #FFE082;border-left:4px solid #F57F17;border-radius:10px;padding:12px 16px;color:#5D4037;text-decoration:none;font-size:.88rem;">
+            <span style="font-size:1.5rem;font-weight:800;color:#E65100;min-width:34px;text-align:center;">3</span>
+            <span><strong>richieste dal sito da assegnare</strong><br>
+                  <span style="font-size:.78rem;opacity:.85;">Nessun reseller le sta ancora seguendo.</span></span>
+            <i class="bi bi-arrow-right" style="margin-left:auto;"></i>
         </div>
     </div>
 
-    <div class="pv-sec">
+    <!-- ============ MOBILE ============ -->
+    <div class="pv-sec" id="mobile">
         <h2>Su telefono</h2>
-        <p class="pv-note">Sotto i 768px le griglie vanno a capo su due colonne; le tabelle lasciano
-           il posto alle card. Nessuna schermata deve richiedere uno scorrimento laterale per
-           mostrare i propri filtri.</p>
-        <div class="pv-mobile">
+        <p class="pv-note">Sotto i 768 px le griglie vanno a capo su due colonne e le tabelle
+           diventano card. Nessuna schermata deve richiedere uno scorrimento laterale per mostrare
+           i propri filtri.</p>
+        <div class="pv-phone">
             <div class="seg-tabs" style="display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem;">
-                <a href="#" class="seg-tab active" style="--seg-color:#0d6efd;">
+                <a href="#mobile" class="seg-tab active" style="--seg-color:#0d6efd;">
                     <div class="seg-icon" style="background:#e8f0fe;color:#0d6efd;"><i class="bi bi-people-fill"></i></div>
                     <div class="seg-text"><div class="seg-count">47</div><div class="seg-label">Tutti</div></div>
                 </a>
-                <a href="#" class="seg-tab" style="--seg-color:#D81B60;">
+                <a href="#mobile" class="seg-tab" style="--seg-color:#D81B60;">
                     <div class="seg-icon" style="background:#fce4ec;color:#D81B60;"><i class="bi bi-gift-fill"></i></div>
                     <div class="seg-text"><div class="seg-count">3</div><div class="seg-label">Compleanni</div></div>
                 </a>
@@ -167,20 +376,62 @@
                     <div class="mc-meta" style="color:#D81B60;font-weight:600;">🎂 9 settembre · compie 38 anni</div>
                 </div>
                 <div class="mc-right">
-                    <span class="seg-badge nuovo">Nuovo</span>
-                    <a href="#" class="wa-btn"><i class="bi bi-whatsapp"></i> Invia auguri</a>
+                    <a href="#mobile" class="wa-btn"><i class="bi bi-whatsapp"></i> Invia auguri</a>
                 </div>
+            </div>
+            <div class="mobile-card">
+                <div class="mc-avatar" style="background:#2E7D32;">PG</div>
+                <div class="mc-info">
+                    <div class="mc-name">Paolo Gialli</div>
+                    <div class="mc-meta">06 4455667 · 6 pren.</div>
+                </div>
+                <div class="mc-right"><span class="seg-badge abituale">Abituale</span></div>
             </div>
         </div>
     </div>
 
-    <div class="pv-sec">
-        <h2>Stato vuoto</h2>
-        <p class="pv-note">Dice cosa comparirà lì, invece di lasciare il riquadro muto.</p>
+    <!-- ============ STATI VUOTI ============ -->
+    <div class="pv-sec" id="vuoti">
+        <h2>Stati vuoti</h2>
+        <p class="pv-note">Dicono cosa comparirà lì, invece di lasciare il riquadro muto — e quando
+           serve offrono l'azione per creare il primo elemento.</p>
         <div class="pv-box">
-            <div class="empty-state" style="padding:40px 20px;text-align:center;color:#6c757d;">
+            <div class="empty-state" style="padding:50px 20px;text-align:center;color:#6c757d;">
                 <i class="bi bi-people" style="font-size:2.5rem;color:#adb5bd;"></i>
-                <p style="margin-top:12px;">Nessun cliente trovato.</p>
+                <h3 style="font-size:1.05rem;font-weight:600;margin-top:12px;color:#495057;">Nessun cliente trovato</h3>
+                <p style="font-size:.88rem;margin-top:6px;">Compariranno qui appena arriva la prima prenotazione.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ DA NON FARE ============ -->
+    <div class="pv-sec" id="nonfare">
+        <h2>Da non fare</h2>
+        <p class="pv-note">Errori già commessi in questo progetto, non ipotesi di scuola.</p>
+        <div class="pv-box">
+            <div class="pv-dont">
+                <b>Stile inline sulle griglie</b>
+                <p><code>style="grid-template-columns:…"</code> batte ogni media query: il responsive
+                   smette di esistere. È successo due volte, in aree diverse, e in un caso trascinava
+                   l'intera pagina fuori schermo.</p>
+            </div>
+            <div class="pv-dont">
+                <b>Icona senza parola</b>
+                <p>Su telefono non esiste il tooltip: un cerchietto colorato non dice cosa farà.</p>
+            </div>
+            <div class="pv-dont">
+                <b>Blu per le azioni</b>
+                <p>Il blu è lo stato “arrivato”. Le azioni sono verdi.</p>
+            </div>
+            <div class="pv-dont">
+                <b>Totali nei badge della barra laterale</b>
+                <p>Un numero che non scende mai smette di essere letto. Il badge segnala cose da fare
+                   e deve aprire esattamente l'elenco che ha contato.</p>
+            </div>
+            <div class="pv-dont">
+                <b>Un link dentro un altro link</b>
+                <p>La riga cliccabile si fa con <code>data-url</code>: il gestore globale ignora i
+                   clic sui link interni.</p>
             </div>
         </div>
     </div>
