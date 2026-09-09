@@ -2,7 +2,7 @@
     "name": "Evulery",
     "short_name": "Evulery",
     "description": "Gestisci prenotazioni, ordini, menu e reputazione del tuo ristorante in un'unica piattaforma.",
-    "start_url": "/dashboard",
+    "start_url": "/",
     "scope": "/",
     "display": "standalone",
     "background_color": "#f5f6f8",
