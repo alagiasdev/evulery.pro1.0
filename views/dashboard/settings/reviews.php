@@ -5,7 +5,7 @@ $platformLabel = $tenant['review_platform_label'] ?? '';
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <?php $activeKey = 'settings-reviews'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
@@ -39,13 +39,13 @@ $platformLabel = $tenant['review_platform_label'] ?? '';
 
                 <!-- 2. Link Recensione -->
                 <div class="card section-card mb-3">
-                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid #e9ecef; padding:.85rem 1.1rem;">
+                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid var(--hairline); padding:.85rem 1.1rem;">
                         <div style="background:var(--brand, #00844A); color:#fff; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.85rem;">
                             <i class="bi bi-link-45deg"></i>
                         </div>
                         <div>
                             <div style="font-size:.85rem; font-weight:700;">Link recensione</div>
-                            <div style="font-size:.7rem; color:#6c757d;">Dove vuoi mandare i clienti a lasciare la recensione?</div>
+                            <div style="font-size:.7rem; color:var(--mute);">Dove vuoi mandare i clienti a lasciare la recensione?</div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -62,7 +62,7 @@ $platformLabel = $tenant['review_platform_label'] ?? '';
                         </div>
                         <div class="mb-2">
                             <label class="form-label" style="font-size:.78rem; font-weight:600;">
-                                Nome piattaforma <span style="font-weight:400; color:#adb5bd;">(opzionale)</span>
+                                Nome piattaforma <span style="font-weight:400; color:var(--faint);">(opzionale)</span>
                             </label>
                             <input type="text" name="review_platform_label" class="form-control form-control-sm"
                                    value="<?= e($platformLabel) ?>"
@@ -76,13 +76,13 @@ $platformLabel = $tenant['review_platform_label'] ?? '';
 
                 <!-- 3. Tempistica -->
                 <div class="card section-card mb-3">
-                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid #e9ecef; padding:.85rem 1.1rem;">
+                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid var(--hairline); padding:.85rem 1.1rem;">
                         <div style="background:#7C4DFF; color:#fff; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.85rem;">
                             <i class="bi bi-clock-history"></i>
                         </div>
                         <div>
                             <div style="font-size:.85rem; font-weight:700;">Tempistica invio</div>
-                            <div style="font-size:.7rem; color:#6c757d;">Quando inviare la richiesta dopo la visita</div>
+                            <div style="font-size:.7rem; color:var(--mute);">Quando inviare la richiesta dopo la visita</div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -122,13 +122,13 @@ $platformLabel = $tenant['review_platform_label'] ?? '';
 
                 <!-- 4. Filtro sentimento -->
                 <div class="card section-card mb-3">
-                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid #e9ecef; padding:.85rem 1.1rem;">
+                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid var(--hairline); padding:.85rem 1.1rem;">
                         <div style="background:#FF7043; color:#fff; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.85rem;">
                             <i class="bi bi-emoji-smile"></i>
                         </div>
                         <div>
                             <div style="font-size:.85rem; font-weight:700;">Filtro sentimento</div>
-                            <div style="font-size:.7rem; color:#6c757d;">Filtra i clienti insoddisfatti prima che lascino una recensione pubblica</div>
+                            <div style="font-size:.7rem; color:var(--mute);">Filtra i clienti insoddisfatti prima che lascino una recensione pubblica</div>
                         </div>
                         <div class="ms-auto">
                             <div class="form-check form-switch" style="margin:0; padding-left:2.5rem;">
@@ -168,13 +168,13 @@ $platformLabel = $tenant['review_platform_label'] ?? '';
 
                 <!-- 5. Template email -->
                 <div class="card section-card mb-3">
-                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid #e9ecef; padding:.85rem 1.1rem;">
+                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid var(--hairline); padding:.85rem 1.1rem;">
                         <div style="background:#42A5F5; color:#fff; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.85rem;">
                             <i class="bi bi-envelope-paper"></i>
                         </div>
                         <div>
                             <div style="font-size:.85rem; font-weight:700;">Personalizza email</div>
-                            <div style="font-size:.7rem; color:#6c757d;">Modifica il messaggio inviato ai clienti</div>
+                            <div style="font-size:.7rem; color:var(--mute);">Modifica il messaggio inviato ai clienti</div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -228,11 +228,11 @@ $platformLabel = $tenant['review_platform_label'] ?? '';
                 foreach ($steps as $i => $s): ?>
                 <div class="d-flex gap-2 mb-2">
                     <div style="width:24px; height:24px; border-radius:50%; background:var(--brand, #00844A); color:#fff; font-size:.68rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><?= $i + 1 ?></div>
-                    <div style="font-size:.75rem; color:#495057;"><strong style="color:#1a1d23;"><?= $s[0] ?></strong> &mdash; <?= $s[1] ?></div>
+                    <div style="font-size:.75rem; color:var(--body);"><strong style="color:var(--ink);"><?= $s[0] ?></strong> &mdash; <?= $s[1] ?></div>
                 </div>
                 <?php endforeach; ?>
                 <hr style="margin:.75rem 0;">
-                <div style="font-size:.72rem; color:#6c757d;">
+                <div style="font-size:.72rem; color:var(--mute);">
                     <i class="bi bi-shield-check" style="color:var(--brand, #00844A);"></i>
                     <strong>Privacy:</strong> Il cliente pu&ograve; disiscriversi in qualsiasi momento. Max 1 email per prenotazione, 1 ogni 30 giorni per cliente.
                 </div>

@@ -1,5 +1,5 @@
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <?php $activeKey = 'collaborators'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
@@ -16,10 +16,10 @@
             </div>
             <div class="form-body">
                 <?php if (empty($staff)): ?>
-                <p style="font-size:.85rem;color:#6c757d;margin:0;">Nessun collaboratore. Aggiungine uno dal modulo qui a fianco.</p>
+                <p style="font-size:.85rem;color:var(--mute);margin:0;">Nessun collaboratore. Aggiungine uno dal modulo qui a fianco.</p>
                 <?php else: ?>
                 <?php foreach ($staff as $s): ?>
-                <div style="border-bottom:1px solid #e9ecef;padding:.6rem 0;">
+                <div style="border-bottom:1px solid var(--hairline);padding:.6rem 0;">
                     <div style="display:flex;align-items:center;justify-content:space-between;gap:.75rem;">
                         <div style="min-width:0;">
                             <div style="font-weight:600;font-size:.9rem;">
@@ -28,7 +28,7 @@
                                 <span style="font-size:.68rem;color:#E65100;background:#FFF3E0;padding:1px 7px;border-radius:10px;margin-left:.3rem;">disattivato</span>
                                 <?php endif; ?>
                             </div>
-                            <div style="font-size:.77rem;color:#6c757d;overflow:hidden;text-overflow:ellipsis;">
+                            <div style="font-size:.77rem;color:var(--mute);overflow:hidden;text-overflow:ellipsis;">
                                 <?= e($s['email']) ?> · accesso: <?= !empty($s['last_login_at']) ? format_date($s['last_login_at'], 'd/m/Y H:i') : 'mai' ?>
                             </div>
                         </div>
@@ -54,7 +54,7 @@
                                 <input class="field-input js-pw-input" type="text" name="password" placeholder="Nuova password" required style="max-width:220px;">
                                 <button class="btn btn-sm btn-outline-secondary" type="submit">Salva</button>
                             </div>
-                            <div class="pw-check" style="font-size:.7rem;color:#6c757d;margin-top:.3rem;display:flex;gap:.7rem;flex-wrap:wrap;">
+                            <div class="pw-check" style="font-size:.7rem;color:var(--mute);margin-top:.3rem;display:flex;gap:.7rem;flex-wrap:wrap;">
                                 <span data-rule="len"><i class="bi bi-circle"></i> 8+</span>
                                 <span data-rule="upper"><i class="bi bi-circle"></i> maiuscola</span>
                                 <span data-rule="num"><i class="bi bi-circle"></i> numero</span>
@@ -92,7 +92,7 @@
                     <div class="field-row">
                         <label class="field-label">Password *</label>
                         <input class="field-input js-pw-input" type="text" name="password" required autocomplete="new-password">
-                        <div class="pw-check" style="font-size:.72rem;color:#6c757d;margin-top:.35rem;display:flex;gap:.8rem;flex-wrap:wrap;">
+                        <div class="pw-check" style="font-size:.72rem;color:var(--mute);margin-top:.35rem;display:flex;gap:.8rem;flex-wrap:wrap;">
                             <span data-rule="len"><i class="bi bi-circle"></i> 8+ caratteri</span>
                             <span data-rule="upper"><i class="bi bi-circle"></i> 1 maiuscola</span>
                             <span data-rule="num"><i class="bi bi-circle"></i> 1 numero</span>
@@ -107,8 +107,8 @@
 
         <div class="card section-card">
             <div class="form-body">
-                <div style="font-weight:600;font-size:.82rem;margin-bottom:.4rem;color:#495057;"><i class="bi bi-shield-lock me-1"></i> Cosa vede un collaboratore</div>
-                <div style="font-size:.78rem;color:#6c757d;line-height:1.6;">
+                <div style="font-weight:600;font-size:.82rem;margin-bottom:.4rem;color:var(--body);"><i class="bi bi-shield-lock me-1"></i> Cosa vede un collaboratore</div>
+                <div style="font-size:.78rem;color:var(--mute);line-height:1.6;">
                     ✅ Prenotazioni, Sala, Ordini, Clienti (sola lettura).<br>
                     ❌ Impostazioni, abbonamento, caparra/Stripe, comunicazioni, marketing, eliminazioni e addebiti.
                 </div>

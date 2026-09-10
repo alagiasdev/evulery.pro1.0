@@ -7,7 +7,7 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <?php $activeKey = 'settings'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
@@ -81,7 +81,7 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                                 <input type="hidden" name="remove_logo" id="remove-logo-input" value="">
                                 <?php else: ?>
                                 <label class="logo-dropzone" id="logo-dropzone">
-                                    <i class="bi bi-image" style="font-size:1.5rem;color:#adb5bd;"></i>
+                                    <i class="bi bi-image" style="font-size:1.5rem;color:var(--faint);"></i>
                                     <span class="logo-dropzone-text">Clicca per caricare il logo</span>
                                     <span class="logo-dropzone-hint">JPG, PNG, WebP o SVG &middot; Max 2 MB</span>
                                     <input type="file" name="logo" accept="image/jpeg,image/png,image/webp" class="d-none" id="logo-input">
@@ -107,11 +107,11 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                         <div class="col-12 field-row">
                             <label class="field-label">Modalità conferma</label>
                             <div style="display:flex;gap:.5rem;margin-top:.25rem;">
-                                <label style="display:flex;align-items:center;gap:.4rem;padding:.45rem .85rem;border:1.5px solid <?= ($tenant['confirmation_mode'] ?? 'auto') === 'auto' ? 'var(--brand)' : '#dee2e6' ?>;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:500;background:<?= ($tenant['confirmation_mode'] ?? 'auto') === 'auto' ? 'var(--brand-light)' : '#fff' ?>;">
+                                <label style="display:flex;align-items:center;gap:.4rem;padding:.45rem .85rem;border:1.5px solid <?= ($tenant['confirmation_mode'] ?? 'auto') === 'auto' ? 'var(--brand)' : 'var(--hairline-strong)' ?>;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:500;background:<?= ($tenant['confirmation_mode'] ?? 'auto') === 'auto' ? 'var(--brand-light)' : '#fff' ?>;">
                                     <input type="radio" name="confirmation_mode" value="auto" <?= ($tenant['confirmation_mode'] ?? 'auto') === 'auto' ? 'checked' : '' ?> style="accent-color:var(--brand);">
                                     <i class="bi bi-check-circle" style="color:var(--brand);"></i> Automatica
                                 </label>
-                                <label style="display:flex;align-items:center;gap:.4rem;padding:.45rem .85rem;border:1.5px solid <?= ($tenant['confirmation_mode'] ?? 'auto') === 'manual' ? '#E65100' : '#dee2e6' ?>;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:500;background:<?= ($tenant['confirmation_mode'] ?? 'auto') === 'manual' ? '#FFF3E0' : '#fff' ?>;">
+                                <label style="display:flex;align-items:center;gap:.4rem;padding:.45rem .85rem;border:1.5px solid <?= ($tenant['confirmation_mode'] ?? 'auto') === 'manual' ? '#E65100' : 'var(--hairline-strong)' ?>;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:500;background:<?= ($tenant['confirmation_mode'] ?? 'auto') === 'manual' ? '#FFF3E0' : '#fff' ?>;">
                                     <input type="radio" name="confirmation_mode" value="manual" <?= ($tenant['confirmation_mode'] ?? 'auto') === 'manual' ? 'checked' : '' ?> style="accent-color:#E65100;">
                                     <i class="bi bi-hand-index" style="color:#E65100;"></i> Manuale
                                 </label>
@@ -241,20 +241,20 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                     </div>
                     <div class="seg-preview">
                         <div class="seg-preview-item">
-                            <span class="seg-preview-dot" style="background:#6c757d;"></span>
-                            Nuovo <span style="color:#adb5bd;">&lt; <?= $segOcc ?></span>
+                            <span class="seg-preview-dot" style="background:var(--mute);"></span>
+                            Nuovo <span style="color:var(--faint);">&lt; <?= $segOcc ?></span>
                         </div>
                         <div class="seg-preview-item">
                             <span class="seg-preview-dot" style="background:#0dcaf0;"></span>
-                            Occasionale <span style="color:#adb5bd;"><?= $segOcc ?> &ndash; <?= $segAbi - 1 ?></span>
+                            Occasionale <span style="color:var(--faint);"><?= $segOcc ?> &ndash; <?= $segAbi - 1 ?></span>
                         </div>
                         <div class="seg-preview-item">
                             <span class="seg-preview-dot" style="background:#198754;"></span>
-                            Abituale <span style="color:#adb5bd;"><?= $segAbi ?> &ndash; <?= $segVip - 1 ?></span>
+                            Abituale <span style="color:var(--faint);"><?= $segAbi ?> &ndash; <?= $segVip - 1 ?></span>
                         </div>
                         <div class="seg-preview-item">
                             <span class="seg-preview-dot" style="background:#ffc107;"></span>
-                            VIP <span style="color:#adb5bd;"><?= $segVip ?>+</span>
+                            VIP <span style="color:var(--faint);"><?= $segVip ?>+</span>
                         </div>
                     </div>
                 </div>
@@ -295,15 +295,15 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                         . '<script>(function(){var u=new URLSearchParams(location.search),e="";["utm_source","utm_medium","utm_campaign"].forEach(function(k){if(u.get(k))e+="&"+k+"="+encodeURIComponent(u.get(k))});if(e)document.getElementById("evry-bk").src="' . $embedUrl . '"+e;})();</script>';
                     ?>
                     <?php if (tenant_can('marketing')): ?>
-                    <div class="link-label" style="margin-top:1rem;">Codice Embed <span style="font-weight:500;color:#6c757d;">— con tracciamento campagne</span></div>
-                    <p style="font-size:.8rem;color:#6c757d;margin:.1rem 0 .5rem;">Traccia da quale campagna arrivano le prenotazioni fatte dal tuo sito (le vedi in <a href="<?= url('dashboard/marketing') ?>" style="color:var(--brand);">Marketing → Provenienza</a>).</p>
+                    <div class="link-label" style="margin-top:1rem;">Codice Embed <span style="font-weight:500;color:var(--mute);">— con tracciamento campagne</span></div>
+                    <p style="font-size:.8rem;color:var(--mute);margin:.1rem 0 .5rem;">Traccia da quale campagna arrivano le prenotazioni fatte dal tuo sito (le vedi in <a href="<?= url('dashboard/marketing') ?>" style="color:var(--brand);">Marketing → Provenienza</a>).</p>
                     <div class="embed-code" style="white-space:pre-wrap;">
                         <button type="button" class="embed-copy" data-copy-text="<?= e($smartSnippet) ?>"><i class="bi bi-clipboard me-1"></i>Copia</button>
 <?= e($smartSnippet) ?>
                     </div>
                     <details style="margin-top:.6rem;">
                         <summary style="font-size:.8rem;color:var(--brand-dark);cursor:pointer;font-weight:600;">Mostra versione semplice (solo iframe)</summary>
-                        <p style="font-size:.78rem;color:#6c757d;margin:.4rem 0 .4rem;">Se il tuo sito non permette gli script, usa questa (senza tracciamento campagne):</p>
+                        <p style="font-size:.78rem;color:var(--mute);margin:.4rem 0 .4rem;">Se il tuo sito non permette gli script, usa questa (senza tracciamento campagne):</p>
                         <div class="embed-code">
                             <button type="button" class="embed-copy" data-copy-text="<?= e($simpleSnippet) ?>"><i class="bi bi-clipboard me-1"></i>Copia</button>
                             <?= e($simpleSnippet) ?>
@@ -401,7 +401,7 @@ document.querySelectorAll('[data-copy-text]').forEach(function(btn) {
             removeInput.value = '1';
             var preview = document.getElementById('logo-preview');
             if (preview) {
-                preview.innerHTML = '<div style="padding:1rem;text-align:center;color:#dc3545;font-size:.85rem;"><i class="bi bi-trash me-1"></i>Logo rimosso. Salva per applicare.</div>';
+                preview.innerHTML = '<div style="padding:1rem;text-align:center;color:var(--danger);font-size:.85rem;"><i class="bi bi-trash me-1"></i>Logo rimosso. Salva per applicare.</div>';
             }
         });
     }

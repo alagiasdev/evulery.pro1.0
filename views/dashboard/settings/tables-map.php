@@ -56,7 +56,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
 
 <?php if ($mode === 'setup'): ?>
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Configura il tuo ristorante</p>
 <?php $activeKey = 'settings-tables'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 <?php else: ?>
 <?php
@@ -295,7 +295,7 @@ $opBack   = 'dashboard/sala?date=' . urlencode($opDate) . '&time=' . urlencode($
         <?php endif; ?>
         <span class="tm-op-legend">
             <span><span class="tm-dot" style="background:#E6F4ED;box-shadow:inset 0 0 0 1.5px #b3dec7;"></span> Libero</span>
-            <span><span class="tm-dot" style="background:#00844A;"></span> Confermato</span>
+            <span><span class="tm-dot" style="background:var(--brand);"></span> Confermato</span>
             <span><span class="tm-dot" style="background:#cfe2ff;box-shadow:inset 0 0 0 2px #0EA5E9;"></span> Arrivato</span>
             <span><i class="bi bi-clock" style="color:#B26500;"></i> Prossima prenotazione</span>
         </span>

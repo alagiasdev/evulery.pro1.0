@@ -5,7 +5,7 @@ $enabled = !empty($settings['enabled']);
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <?php $activeKey = 'settings-hub'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
@@ -145,21 +145,21 @@ $enabled = !empty($settings['enabled']);
                     <div class="hub-custom-colors-block <?= $customEnabled ? '' : 'is-disabled' ?>" id="hub-custom-colors-block">
                         <div class="hub-grid-2">
                             <div class="hub-field">
-                                <label>Primario <span style="color:#adb5bd; font-weight:normal;">(CTA, icone)</span></label>
+                                <label>Primario <span style="color:var(--faint); font-weight:normal;">(CTA, icone)</span></label>
                                 <div class="hub-color-row">
                                     <input type="color" name="custom_primary" value="<?= e($settings['custom_primary'] ?? '#00844A') ?>">
                                     <input type="text" value="<?= e($settings['custom_primary'] ?? '#00844A') ?>" data-color-text>
                                 </div>
                             </div>
                             <div class="hub-field">
-                                <label>Scuro <span style="color:#adb5bd; font-weight:normal;">(gradiente cover)</span></label>
+                                <label>Scuro <span style="color:var(--faint); font-weight:normal;">(gradiente cover)</span></label>
                                 <div class="hub-color-row">
                                     <input type="color" name="custom_dark" value="<?= e($settings['custom_dark'] ?? '#006837') ?>">
                                     <input type="text" value="<?= e($settings['custom_dark'] ?? '#006837') ?>" data-color-text>
                                 </div>
                             </div>
                             <div class="hub-field">
-                                <label>Accento <span style="color:#adb5bd; font-weight:normal;">(hover, badge)</span></label>
+                                <label>Accento <span style="color:var(--faint); font-weight:normal;">(hover, badge)</span></label>
                                 <div class="hub-color-row">
                                     <input type="color" name="custom_accent" value="<?= e($settings['custom_accent'] ?? '#E8F5E9') ?>">
                                     <input type="text" value="<?= e($settings['custom_accent'] ?? '#E8F5E9') ?>" data-color-text>
@@ -279,7 +279,7 @@ $enabled = !empty($settings['enabled']);
                 </div>
                 <div class="hub-hint">I link personalizzati appaiono nella lista azioni sopra. Sono illimitati nel piano Enterprise.</div>
                 <?php else: ?>
-                <p style="font-size:.82rem; color:#6c757d; margin:0;">
+                <p style="font-size:.82rem; color:var(--mute); margin:0;">
                     Aggiungi link personalizzati (Eventi privati, Newsletter, Iscrizione VIP, ecc.) con il piano <strong>Enterprise</strong>.
                 </p>
                 <?php endif; ?>
@@ -313,7 +313,7 @@ $enabled = !empty($settings['enabled']);
                         <input type="url" name="youtube_url" value="<?= e($settings['youtube_url'] ?? '') ?>" placeholder="https://youtube.com/@...">
                     </div>
                     <div class="hub-field">
-                        <label><i class="bi bi-whatsapp" style="color:#25D366;"></i> WhatsApp</label>
+                        <label><i class="bi bi-whatsapp" style="color:var(--whatsapp);"></i> WhatsApp</label>
                         <input type="tel" name="whatsapp_number" value="<?= e($settings['whatsapp_number'] ?? '') ?>" placeholder="+39 333 1234567">
                     </div>
                 </div>

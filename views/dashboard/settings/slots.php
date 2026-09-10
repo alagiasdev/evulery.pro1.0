@@ -71,7 +71,7 @@ $DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <?php $activeKey = 'slots'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
@@ -113,7 +113,7 @@ $DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
                 <span class="info-pill" style="margin-left:.25rem;"><i class="bi bi-hourglass-split"></i> Durata tavolo: <?= $globalDur ?> min</span>
             <?php endif; ?>
         </div>
-        <div style="margin-top:.5rem; font-size:.75rem; color:#6c757d;">
+        <div style="margin-top:.5rem; font-size:.75rem; color:var(--mute);">
             <i class="bi bi-lightbulb me-1" style="color:#FFB300;"></i>
             Gli slot vengono generati ogni <strong><?= $timeStep ?> minuti</strong>. Se nelle <a href="<?= url('dashboard/settings/meal-categories') ?>" style="color:var(--brand); text-decoration:underline;">Categorie Pasto</a> hai un orario non allineato (es. 11:30 con step 60), lo slot non sar&agrave; disponibile. Modifica lo step in <a href="<?= url('dashboard/settings') ?>" style="color:var(--brand); text-decoration:underline;">Generali</a> per averli tutti.
         </div>
@@ -141,10 +141,10 @@ $DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
                 <button type="button" class="tb-btn" data-fill="30">30</button>
                 <button type="button" class="tb-btn" data-fill="40">40</button>
                 <button type="button" class="tb-btn" data-fill="50">50</button>
-                <button type="button" class="tb-btn" data-fill="0" style="color:#dc3545;border-color:#dc3545;">Azzera</button>
+                <button type="button" class="tb-btn" data-fill="0" style="color:var(--danger);border-color:var(--danger);">Azzera</button>
             </div>
             <div class="toolbar-group" style="margin-left:auto;">
-                <label class="form-check form-switch" style="display:flex; align-items:center; gap:.5rem; font-size:.78rem; color:#495057; cursor:pointer; margin:0;">
+                <label class="form-check form-switch" style="display:flex; align-items:center; gap:.5rem; font-size:.78rem; color:var(--body); cursor:pointer; margin:0;">
                     <input type="checkbox" id="hideInactiveToggle" class="form-check-input" style="cursor:pointer;">
                     Mostra solo categorie attive
                 </label>
@@ -199,8 +199,8 @@ $DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
                     <tr class="row-inactive-divider">
                         <td colspan="8" style="padding:0;">
                             <div class="meal-divider" style="background:#f8f8f8; opacity:.6;">
-                                <span class="meal-divider-icon" style="color:#adb5bd;">&#9676;</span>
-                                <span class="meal-divider-name" style="color:#adb5bd;"><?= e($inactiveCatHit['name']) ?></span>
+                                <span class="meal-divider-icon" style="color:var(--faint);">&#9676;</span>
+                                <span class="meal-divider-name" style="color:var(--faint);"><?= e($inactiveCatHit['name']) ?></span>
                                 <span class="meal-divider-range" title="Categoria configurata <?= $inactiveCatHit['start_time'] ?> &ndash; <?= $inactiveCatHit['end_time'] ?>"><?= $inactiveCatHit['start_time'] ?> &ndash; <?= $inactiveCatHit['last_slot_time'] ?? $inactiveCatHit['end_time'] ?></span>
                                 <span class="inactive-tag">DISATTIVATO</span>
                             </div>
@@ -251,7 +251,7 @@ $DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
         </div>
 
         <!-- Save bar -->
-        <div class="save-bar" style="border-radius:0 0 12px 12px; border-top:1px solid #e9ecef; box-shadow:none;">
+        <div class="save-bar" style="border-radius:0 0 12px 12px; border-top:1px solid var(--hairline); box-shadow:none;">
             <span class="save-hint">
                 <i class="bi bi-info-circle me-1"></i>
                 <?php if (!empty($phantomTimes)): ?>

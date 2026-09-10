@@ -50,7 +50,7 @@ function promoBadgeColor(string $type): string {
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <?php $activeKey = 'promotions'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
@@ -65,14 +65,14 @@ function promoBadgeColor(string $type): string {
         <div class="promo-kpi-label">Promozioni attive</div>
     </div>
     <div class="promo-kpi-card">
-        <div class="promo-kpi-value" style="color:#1a1d23;"><?= (int)$discountedLast30 ?></div>
+        <div class="promo-kpi-value" style="color:var(--ink);"><?= (int)$discountedLast30 ?></div>
         <div class="promo-kpi-label">Prenotazioni con sconto (30gg)</div>
     </div>
     <div class="promo-kpi-card">
         <?php if ($growthPercent !== null): ?>
-        <div class="promo-kpi-value" style="color:<?= $growthPercent >= 0 ? '#E65100' : '#dc3545' ?>;"><?= $growthPercent >= 0 ? '+' : '' ?><?= $growthPercent ?>%</div>
+        <div class="promo-kpi-value" style="color:<?= $growthPercent >= 0 ? '#E65100' : 'var(--danger)' ?>;"><?= $growthPercent >= 0 ? '+' : '' ?><?= $growthPercent ?>%</div>
         <?php else: ?>
-        <div class="promo-kpi-value" style="color:#adb5bd;">&mdash;</div>
+        <div class="promo-kpi-value" style="color:var(--faint);">&mdash;</div>
         <?php endif; ?>
         <div class="promo-kpi-label">Aumento prenotazioni fasce promo</div>
     </div>
@@ -95,7 +95,7 @@ function promoBadgeColor(string $type): string {
     <?php if (empty($allPromos)): ?>
     <div style="text-align:center; padding:2.5rem 1rem;">
         <i class="bi bi-percent" style="font-size:2.5rem; color:#dee2e6;"></i>
-        <p style="color:#6c757d; margin-top:.75rem; font-size:.88rem; margin-bottom:0;">Nessuna promozione creata.<br>Clicca "Nuova promozione" per crearne una.</p>
+        <p style="color:var(--mute); margin-top:.75rem; font-size:.88rem; margin-bottom:0;">Nessuna promozione creata.<br>Clicca "Nuova promozione" per crearne una.</p>
     </div>
     <?php else: ?>
     <?php foreach ($allPromos as $p):
@@ -270,7 +270,7 @@ function promoBadgeColor(string $type): string {
                         <label class="form-label fw-semibold" style="font-size:.82rem;">Fascia oraria</label>
                         <div class="d-flex align-items-center gap-2">
                             <input type="time" name="time_from" class="form-control form-control-sm" value="<?= e($old['time_from'] ?? '') ?>">
-                            <span style="font-size:.82rem; color:#6c757d;">&mdash;</span>
+                            <span style="font-size:.82rem; color:var(--mute);">&mdash;</span>
                             <input type="time" name="time_to" class="form-control form-control-sm" value="<?= e($old['time_to'] ?? '') ?>">
                         </div>
                         <div class="promo-field-hint">Lascia vuoto per tutto il giorno</div>
@@ -281,15 +281,15 @@ function promoBadgeColor(string $type): string {
                         <label class="form-label fw-semibold" style="font-size:.82rem;">Date</label>
                         <div class="d-flex align-items-center gap-2">
                             <input type="date" name="date_from" class="form-control form-control-sm" value="<?= e($old['date_from'] ?? '') ?>">
-                            <span style="font-size:.82rem; color:#6c757d;">&mdash;</span>
+                            <span style="font-size:.82rem; color:var(--mute);">&mdash;</span>
                             <input type="date" name="date_to" class="form-control form-control-sm" value="<?= e($old['date_to'] ?? '') ?>">
                         </div>
                         <div class="promo-field-hint">Data fine opzionale (per range)</div>
                     </div>
 
                     <!-- Submit -->
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:1.25rem; padding-top:1rem; border-top:1px solid #e9ecef;">
-                        <span style="font-size:.72rem; color:#adb5bd;"><i class="bi bi-info-circle me-1"></i>La promozione sara visibile immediatamente nel widget</span>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:1.25rem; padding-top:1rem; border-top:1px solid var(--hairline);">
+                        <span style="font-size:.72rem; color:var(--faint);"><i class="bi bi-info-circle me-1"></i>La promozione sara visibile immediatamente nel widget</span>
                         <button type="submit" class="btn-save" style="padding:.45rem 1.25rem;">
                             <i class="bi bi-check-circle me-1"></i> Crea promozione
                         </button>

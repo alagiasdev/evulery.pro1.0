@@ -12,7 +12,7 @@ $groupMeta = [
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1.25rem;">Configura il tuo ristorante — scegli un'area</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1.25rem;">Configura il tuo ristorante — scegli un'area</p>
 
 <div class="set-grid">
     <?php foreach ($groups as $label => $items): ?>

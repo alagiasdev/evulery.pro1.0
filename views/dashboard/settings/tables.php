@@ -32,7 +32,7 @@ foreach ($tables as $t) {
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <?php $activeKey = 'settings-tables'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
@@ -268,7 +268,7 @@ foreach ($tables as $t) {
                     <input type="text" class="tm-fi" name="name" id="tm-f-name" maxlength="60" placeholder="es. Tavolo 1, Finestra A" required>
                 </div>
                 <div class="tm-fg">
-                    <label class="tm-fl">Capacità <span style="text-transform:none;font-weight:400;color:#adb5bd;">— quante persone può ospitare il tavolo</span></label>
+                    <label class="tm-fl">Capacità <span style="text-transform:none;font-weight:400;color:var(--faint);">— quante persone può ospitare il tavolo</span></label>
                     <div class="tm-cap-row">
                         <div class="tm-cap-field">
                             <label class="tm-cap-sublabel" for="tm-f-min-capacity">Posti minimi</label>
@@ -291,14 +291,14 @@ foreach ($tables as $t) {
                     <div class="tm-fhint">Scegli un'area esistente o scrivine una nuova.</div>
                 </div>
                 <div class="tm-fg">
-                    <label class="tm-fl">Forma <span style="text-transform:none;font-weight:400;color:#adb5bd;">— usata nella mappa sala</span></label>
+                    <label class="tm-fl">Forma <span style="text-transform:none;font-weight:400;color:var(--faint);">— usata nella mappa sala</span></label>
                     <div class="tm-shape-sel">
                         <label class="tm-shape-opt"><input type="radio" name="shape" value="square" checked> <i class="bi bi-square"></i> Quadrato</label>
                         <label class="tm-shape-opt"><input type="radio" name="shape" value="round"> <i class="bi bi-circle"></i> Rotondo</label>
                     </div>
                 </div>
                 <div class="tm-fg">
-                    <label class="tm-fl">Combinabile con <span style="text-transform:none;font-weight:400;color:#adb5bd;">— per gruppi grandi</span></label>
+                    <label class="tm-fl">Combinabile con <span style="text-transform:none;font-weight:400;color:var(--faint);">— per gruppi grandi</span></label>
                     <div class="tm-combo-list" id="tm-f-combinable">
                         <span class="tm-combo-empty">Aggiungi altri tavoli per poterli combinare.</span>
                     </div>
@@ -350,7 +350,7 @@ foreach ($tables as $t) {
 
                     <!-- Campo Motivo: appare solo se blocked = on -->
                     <div class="tm-fg" id="tm-f-block-reason-wrap" style="display:none; margin-top:10px; padding:10px 12px; background:#fff8e0; border:1px solid #ffe082; border-radius:8px;">
-                        <label class="tm-fl" style="text-transform:none; font-size:.74rem; font-weight:600;">Motivo del blocco <span style="font-weight:400; color:#adb5bd;">(opzionale, visibile come tooltip)</span></label>
+                        <label class="tm-fl" style="text-transform:none; font-size:.74rem; font-weight:600;">Motivo del blocco <span style="font-weight:400; color:var(--faint);">(opzionale, visibile come tooltip)</span></label>
                         <input type="text" class="tm-fi" name="block_reason" id="tm-f-block-reason" maxlength="255" placeholder="es. Sedia rotta — in attesa di sostituzione">
                     </div>
                 </div>

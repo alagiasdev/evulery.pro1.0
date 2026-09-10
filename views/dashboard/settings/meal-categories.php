@@ -14,7 +14,7 @@ $tlStart = 9; $tlEnd = 24; $tlSpan = $tlEnd - $tlStart;
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <?php $activeKey = 'meal-categories'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
@@ -23,7 +23,7 @@ $tlStart = 9; $tlEnd = 24; $tlSpan = $tlEnd - $tlStart;
     <div class="row g-4">
         <div class="col-lg-7">
 
-            <p style="font-size:.82rem;color:#6c757d;margin-bottom:1rem;">
+            <p style="font-size:.82rem;color:var(--mute);margin-bottom:1rem;">
                 Le categorie raggruppano gli orari nel widget di prenotazione (es. "Pranzo", "Cena").
             </p>
 
@@ -107,7 +107,7 @@ $tlStart = 9; $tlEnd = 24; $tlSpan = $tlEnd - $tlStart;
                         </div>
                         <div>
                             <label class="edit-label">Chiave (sistema)</label>
-                            <input type="text" class="edit-input" value="<?= e($cat['name']) ?>" readonly style="background:#f8f9fa;color:#adb5bd;">
+                            <input type="text" class="edit-input" value="<?= e($cat['name']) ?>" readonly style="background:var(--surface-softer);color:var(--faint);">
                         </div>
                         <div>
                             <label class="edit-label">Ora inizio</label>
@@ -213,7 +213,7 @@ $tlStart = 9; $tlEnd = 24; $tlSpan = $tlEnd - $tlStart;
                     <i class="bi bi-lightbulb" style="color:#FFC107;font-size:1rem;margin-top:.1rem;"></i>
                     <div>
                         <div class="tip-title">Come funzionano le categorie</div>
-                        <ul style="font-size:.78rem;color:#6c757d;line-height:1.6;padding-left:1rem;margin:0;">
+                        <ul style="font-size:.78rem;color:var(--mute);line-height:1.6;padding-left:1rem;margin:0;">
                             <li>Il widget mostra gli slot raggruppati per categoria (es. <strong>Pranzo</strong>, <strong>Cena</strong>)</li>
                             <li>Le categorie disattivate nascondono i relativi slot nella tabella <strong>Orari e Coperti</strong></li>
                             <li>Slot senza categoria finiscono nel gruppo <strong>"Altro"</strong></li>

@@ -16,7 +16,7 @@ $mealCategories = $mealCategories ?? [];
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <?php $activeKey = 'deposit'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
@@ -200,7 +200,7 @@ $mealCategories = $mealCategories ?? [];
                         <div class="field-hint">La caparra si applica solo alle prenotazioni che ricadono nelle fasce selezionate. Se non selezioni nulla, vale per tutte.</div>
                     </div>
                     <?php else: ?>
-                    <div style="margin-top:1rem;font-size:.78rem;color:#6c757d;">
+                    <div style="margin-top:1rem;font-size:.78rem;color:var(--mute);">
                         <i class="bi bi-info-circle me-1"></i>
                         Non hai ancora configurato fasce orarie. Puoi crearle in
                         <a href="<?= url('dashboard/settings/meal-categories') ?>">Impostazioni &gt; Fasce orarie</a>.
@@ -278,7 +278,7 @@ $mealCategories = $mealCategories ?? [];
                             <div style="font-size:.78rem;color:var(--brand);font-weight:600;margin-bottom:.25rem;">
                                 <i class="bi bi-shield-lock me-1"></i> Come funziona la carta a garanzia
                             </div>
-                            <div style="font-size:.73rem;color:#6c757d;">
+                            <div style="font-size:.73rem;color:var(--mute);">
                                 Il cliente salva la carta in fase di prenotazione: <strong>nessun addebito</strong>.
                                 In caso di mancata presentazione potrai addebitare la penale dalla scheda della prenotazione.
                                 Servono comunque le chiavi Stripe qui sotto.
@@ -288,7 +288,7 @@ $mealCategories = $mealCategories ?? [];
                             <div style="font-size:.78rem;color:#635BFF;font-weight:600;margin-bottom:.25rem;">
                                 <i class="bi bi-info-circle me-1"></i> Come ottenere le chiavi
                             </div>
-                            <div style="font-size:.73rem;color:#6c757d;">
+                            <div style="font-size:.73rem;color:var(--mute);">
                                 Vai su <strong>dashboard.stripe.com</strong> &rarr; Sviluppatori &rarr; Chiavi API.<br>
                                 Per il Webhook Secret: Sviluppatori &rarr; Webhook &rarr; Aggiungi endpoint.
                             </div>
@@ -327,11 +327,11 @@ $mealCategories = $mealCategories ?? [];
                             </div>
 
                             <!-- Verifica webhook (read-only via API Stripe) -->
-                            <div style="margin-top:1rem;padding-top:.9rem;border-top:1px solid #e9ecef;">
+                            <div style="margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--hairline);">
                                 <button type="button" id="whVerifyBtn" class="btn btn-sm" style="background:#635BFF;color:#fff;border:none;font-weight:600;font-size:.8rem;">
                                     <i class="bi bi-broadcast me-1"></i> Verifica webhook
                                 </button>
-                                <span style="font-size:.72rem;color:#6c757d;margin-left:.5rem;">Controlla che il webhook nel tuo Stripe sia attivo e iscritto agli eventi giusti.</span>
+                                <span style="font-size:.72rem;color:var(--mute);margin-left:.5rem;">Controlla che il webhook nel tuo Stripe sia attivo e iscritto agli eventi giusti.</span>
                                 <div id="whResult" style="margin-top:.8rem;font-size:.8rem;"></div>
                             </div>
                             <script nonce="<?= csp_nonce() ?>">
@@ -349,7 +349,7 @@ $mealCategories = $mealCategories ?? [];
                                 }
                                 function evLine(okFlag, code){
                                     var icon = okFlag
-                                        ? '<i class="bi bi-check-circle-fill" style="color:#00844A;"></i>'
+                                        ? '<i class="bi bi-check-circle-fill" style="color:var(--brand);"></i>'
                                         : '<i class="bi bi-x-circle-fill" style="color:#C62828;"></i>';
                                     return '<div style="display:flex;align-items:center;gap:.4rem;padding:.1rem 0;">'+icon
                                         +'<code style="background:rgba(0,0,0,.06);padding:1px 5px;border-radius:4px;">'+code+'</code>'
@@ -379,7 +379,7 @@ $mealCategories = $mealCategories ?? [];
                                     }
                                 }
                                 btn.addEventListener('click', function(){
-                                    out.innerHTML = '<span style="color:#6c757d;"><i class="bi bi-arrow-repeat me-1"></i> Interrogo Stripe&hellip;</span>';
+                                    out.innerHTML = '<span style="color:var(--mute);"><i class="bi bi-arrow-repeat me-1"></i> Interrogo Stripe&hellip;</span>';
                                     fetch(statusUrl + '?_=' + Date.now(), { headers:{'X-Requested-With':'XMLHttpRequest'} })
                                         .then(function(r){ return r.json(); })
                                         .then(render)

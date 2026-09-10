@@ -32,7 +32,7 @@ $hostForDns = $isSubdomain ? $domainParts[0] : '@';
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <?php $activeKey = 'domain'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
@@ -78,7 +78,7 @@ $hostForDns = $isSubdomain ? $domainParts[0] : '@';
                             <i class="bi bi-hourglass-split"></i>
                         </div>
                         <?php else: ?>
-                        <div class="status-icon" style="background:#e9ecef;color:#6c757d;">
+                        <div class="status-icon" style="background:var(--hairline);color:var(--mute);">
                             <i class="bi bi-gear"></i>
                         </div>
                         <?php endif; ?>
@@ -100,7 +100,7 @@ $hostForDns = $isSubdomain ? $domainParts[0] : '@';
                         <i class="bi bi-clock-history me-1"></i>In attesa DNS
                     </span>
                     <?php else: ?>
-                    <span class="dns-status-badge" style="background:#e9ecef;color:#6c757d;">
+                    <span class="dns-status-badge" style="background:var(--hairline);color:var(--mute);">
                         Non configurato
                     </span>
                     <?php endif; ?>
@@ -185,7 +185,7 @@ $hostForDns = $isSubdomain ? $domainParts[0] : '@';
                             </div>
                             <?php endif; ?>
 
-                            <div style="margin-top:.6rem; font-size:.78rem; color:#6c757d;">
+                            <div style="margin-top:.6rem; font-size:.78rem; color:var(--mute);">
                                 <i class="bi bi-info-circle me-1"></i>
                                 Se il tuo registrar (es. Aruba) non permette CNAME su un nome host specifico o sull'apex del dominio, usa l'<strong>Opzione B</strong>.
                             </div>
@@ -268,7 +268,7 @@ $hostForDns = $isSubdomain ? $domainParts[0] : '@';
 
         <!-- Current URLs -->
         <div class="url-card">
-            <div style="font-size:.78rem;font-weight:700;color:#adb5bd;text-transform:uppercase;margin-bottom:.5rem;">
+            <div style="font-size:.78rem;font-weight:700;color:var(--faint);text-transform:uppercase;margin-bottom:.5rem;">
                 <i class="bi bi-link-45deg me-1"></i> URL attivi
             </div>
             <div class="url-row">

@@ -10,7 +10,7 @@ $defaults = [
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <?php $activeKey = 'settings-notifications'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
@@ -84,7 +84,7 @@ $defaults = [
                         <input type="range" name="notification_sound_volume" id="sound-volume" min="0" max="100" step="5"
                                value="<?= (int)($tenant['notification_sound_volume'] ?? 70) ?>"
                                style="flex:1;">
-                        <span id="sound-volume-label" style="font-size:.85rem;font-weight:600;min-width:36px;text-align:right;color:#495057;"><?= (int)($tenant['notification_sound_volume'] ?? 70) ?>%</span>
+                        <span id="sound-volume-label" style="font-size:.85rem;font-weight:600;min-width:36px;text-align:right;color:var(--body);"><?= (int)($tenant['notification_sound_volume'] ?? 70) ?>%</span>
                     </div>
                 </div>
                 <div class="col-md-6 field-row" style="display:flex;align-items:flex-end;">
@@ -94,8 +94,8 @@ $defaults = [
                 </div>
             </div>
 
-            <div style="border-top:1px solid #e9ecef;padding-top:.75rem;margin-top:.25rem;">
-                <div style="font-size:.78rem;font-weight:600;color:#495057;margin-bottom:.5rem;">Eventi che riprodurranno il suono:</div>
+            <div style="border-top:1px solid var(--hairline);padding-top:.75rem;margin-top:.25rem;">
+                <div style="font-size:.78rem;font-weight:600;color:var(--body);margin-bottom:.5rem;">Eventi che riprodurranno il suono:</div>
                 <div class="row g-2">
                     <div class="col-md-6">
                         <div class="form-check form-switch" style="padding-left:2.5em;">
@@ -268,7 +268,7 @@ $defaults = [
         <div class="form-body">
 
             <!-- Placeholders legend -->
-            <div style="background:#f0faf4;border:1px solid #c8e6c9;border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:.78rem;color:#495057;">
+            <div style="background:#f0faf4;border:1px solid #c8e6c9;border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:.78rem;color:var(--body);">
                 <strong>Segnaposto disponibili:</strong>
                 <code>{nome}</code> nome cliente &middot;
                 <code>{data}</code> data prenotazione &middot;
@@ -279,7 +279,7 @@ $defaults = [
             </div>
 
             <!-- New reservation -->
-            <div style="border:1px solid #e9ecef;border-radius:10px;padding:1rem;margin-bottom:1rem;">
+            <div style="border:1px solid var(--hairline);border-radius:10px;padding:1rem;margin-bottom:1rem;">
                 <div style="font-weight:600;font-size:.88rem;margin-bottom:.75rem;"><i class="bi bi-plus-circle me-1" style="color:var(--brand);"></i> Nuova prenotazione</div>
                 <div class="row g-3">
                     <div class="col-md-4 field-row">
@@ -298,8 +298,8 @@ $defaults = [
             </div>
 
             <!-- Cancellation -->
-            <div style="border:1px solid #e9ecef;border-radius:10px;padding:1rem;margin-bottom:1rem;">
-                <div style="font-weight:600;font-size:.88rem;margin-bottom:.75rem;"><i class="bi bi-x-circle me-1" style="color:#dc3545;"></i> Cancellazione</div>
+            <div style="border:1px solid var(--hairline);border-radius:10px;padding:1rem;margin-bottom:1rem;">
+                <div style="font-weight:600;font-size:.88rem;margin-bottom:.75rem;"><i class="bi bi-x-circle me-1" style="color:var(--danger);"></i> Cancellazione</div>
                 <div class="row g-3">
                     <div class="col-md-4 field-row">
                         <label class="field-label">Titolo</label>
@@ -317,7 +317,7 @@ $defaults = [
             </div>
 
             <!-- Deposit received -->
-            <div style="border:1px solid #e9ecef;border-radius:10px;padding:1rem;">
+            <div style="border:1px solid var(--hairline);border-radius:10px;padding:1rem;">
                 <div style="font-weight:600;font-size:.88rem;margin-bottom:.75rem;"><i class="bi bi-cash-coin me-1" style="color:#E65100;"></i> Caparra ricevuta</div>
                 <div class="row g-3">
                     <div class="col-md-4 field-row">

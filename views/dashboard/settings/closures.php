@@ -10,7 +10,7 @@ foreach (array_merge($upcoming, $past) as $c) {
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <?php $activeKey = 'closures'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
@@ -26,7 +26,7 @@ foreach (array_merge($upcoming, $past) as $c) {
 </div>
 
 <!-- Emergenza: ingresso alla chiusura straordinaria -->
-<div class="card d-flex flex-column flex-sm-row align-items-sm-center gap-3 mb-3" style="padding:1rem 1.25rem;border-left:4px solid #dc3545;">
+<div class="card d-flex flex-column flex-sm-row align-items-sm-center gap-3 mb-3" style="padding:1rem 1.25rem;border-left:4px solid var(--danger);">
     <div class="d-flex align-items-center gap-3 flex-grow-1">
         <i class="bi bi-exclamation-octagon-fill" style="font-size:1.6rem;color:#b3261e;flex-shrink:0;"></i>
         <div style="font-size:.86rem;">
@@ -58,7 +58,7 @@ foreach (array_merge($upcoming, $past) as $c) {
                     <div class="cl-sel-dates" id="cl-sel-dates">
                         <span class="cl-sel-placeholder">Nessuna data selezionata</span>
                     </div>
-                    <div style="font-size:.72rem; color:#adb5bd; margin-top:.25rem;">
+                    <div style="font-size:.72rem; color:var(--faint); margin-top:.25rem;">
                         Clicca una data per giorno singolo. Clicca due date per un range.
                     </div>
                 </div>
@@ -84,7 +84,7 @@ foreach (array_merge($upcoming, $past) as $c) {
 
                 <!-- Quick buttons -->
                 <div style="margin-bottom:.85rem;">
-                    <div style="font-size:.78rem; color:#6c757d; margin-bottom:.4rem;">Scorciatoie:</div>
+                    <div style="font-size:.78rem; color:var(--mute); margin-bottom:.4rem;">Scorciatoie:</div>
                     <div class="cl-quick-btns">
                         <button type="button" class="cl-quick-btn" data-preset="today">Oggi</button>
                         <button type="button" class="cl-quick-btn" data-preset="tomorrow">Domani</button>
@@ -96,7 +96,7 @@ foreach (array_merge($upcoming, $past) as $c) {
                 </div>
 
                 <div class="cl-form-group">
-                    <label class="cl-label">Motivo <span style="color:#adb5bd; font-weight:400;">(opzionale)</span></label>
+                    <label class="cl-label">Motivo <span style="color:var(--faint); font-weight:400;">(opzionale)</span></label>
                     <input type="text" name="note" id="cl-note" class="cl-input" placeholder="Es. Ferie estive, Festa patronale..."
                            maxlength="255">
                 </div>
@@ -121,8 +121,8 @@ foreach (array_merge($upcoming, $past) as $c) {
 
         <?php if (empty($upcomingGroups)): ?>
         <div class="card" style="padding:2rem; text-align:center;">
-            <i class="bi bi-calendar-check" style="font-size:2rem; color:#adb5bd;"></i>
-            <p style="color:#6c757d; margin-top:.5rem; font-size:.88rem;">Nessuna chiusura programmata.</p>
+            <i class="bi bi-calendar-check" style="font-size:2rem; color:var(--faint);"></i>
+            <p style="color:var(--mute); margin-top:.5rem; font-size:.88rem;">Nessuna chiusura programmata.</p>
         </div>
         <?php else: ?>
         <div class="card" style="padding:0;">

@@ -13,7 +13,7 @@ if (isset($old['days'])) {
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Impostazioni</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Configura il tuo ristorante</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Configura il tuo ristorante</p>
 
 <?php $activeKey = 'promotions'; include __DIR__ . '/../../partials/settings-tabs.php'; ?>
 
@@ -45,7 +45,7 @@ if (isset($old['days'])) {
                     <textarea name="description" class="form-control form-control-sm" rows="2" maxlength="280"
                               placeholder="Es. Sconto valido sul totale del conto, esclusi vini pregiati e bevande alcoliche."
                               data-promo-desc><?= e($old['description'] ?? '') ?></textarea>
-                    <div class="d-flex justify-content-between" style="font-size:.72rem; color:#6c757d; margin-top:.25rem;">
+                    <div class="d-flex justify-content-between" style="font-size:.72rem; color:var(--mute); margin-top:.25rem;">
                         <span>Mostrata sotto il nome nella pagina /promo</span>
                         <span data-promo-desc-counter>0/280</span>
                     </div>
@@ -133,7 +133,7 @@ if (isset($old['days'])) {
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Fascia oraria</label>
                     <div class="d-flex align-items-center gap-2">
                         <input type="time" name="time_from" class="form-control form-control-sm" value="<?= e(substr($old['time_from'] ?? '', 0, 5)) ?>">
-                        <span style="font-size:.82rem; color:#6c757d;">—</span>
+                        <span style="font-size:.82rem; color:var(--mute);">—</span>
                         <input type="time" name="time_to" class="form-control form-control-sm" value="<?= e(substr($old['time_to'] ?? '', 0, 5)) ?>">
                     </div>
                     <div class="promo-field-hint">Lascia vuoto per tutto il giorno</div>
@@ -144,7 +144,7 @@ if (isset($old['days'])) {
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Date</label>
                     <div class="d-flex align-items-center gap-2">
                         <input type="date" name="date_from" class="form-control form-control-sm" value="<?= e($old['date_from'] ?? '') ?>">
-                        <span style="font-size:.82rem; color:#6c757d;">—</span>
+                        <span style="font-size:.82rem; color:var(--mute);">—</span>
                         <input type="date" name="date_to" class="form-control form-control-sm" value="<?= e($old['date_to'] ?? '') ?>">
                     </div>
                     <div class="promo-field-hint">Data fine opzionale (per range)</div>
