@@ -96,7 +96,7 @@
 <style>
 .mk-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
 .mk-pill{border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:6px 12px;font-weight:600;font-size:.8rem;cursor:pointer;text-decoration:none;color:#1a1d23;}
-.mk-pill.on{background:#e8f5ee;border-color:var(--brand,#00844A);color:var(--brand-d,#006b3c);}
+.mk-pill.on{background:#e8f5ee;border-color:var(--brand,#00844A);color:var(--brand-dark);}
 .mk-custom-form{display:flex;gap:6px;align-items:center;}
 .mk-kpis{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
 .mk-kpi{flex:1;min-width:120px;border:1px solid #eceff2;border-radius:11px;padding:12px 14px;background:#fff;}

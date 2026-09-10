@@ -12,8 +12,47 @@
        barra "Sett. scorsa" del confronto restava senza colore e sembrava vuota
        anche quando era piena al 100%. Valori Bootstrap, gli stessi che il resto
        del file usa gia' scritti per esteso. */
-    --gray-500: #adb5bd;
-    --gray-600: #6c757d;
+    --gray-500: var(--faint);
+    --gray-600: var(--mute);
+
+    /* ===== Tavolozza, come da DESIGN.md =====
+       Fino al 10/09/2026 di questi colori esistevano solo i tre del marchio e due
+       grigi: tutto il resto era scritto a mano, 874 volte fra fogli e view. Da qui
+       in poi il valore sta in un punto solo. I nomi sono gli stessi del documento,
+       cosi' guida e codice si chiamano allo stesso modo.
+       NB: manca di proposito il grigio neutro #f0f0f0 — appartiene alle superfici
+       calde (widget, menu, board consegne) e qui sarebbe un errore. */
+    --ink: #1a1d23;              /* titoli e numeri */
+    --body: #495057;             /* testo forte */
+    --mute: #6c757d;             /* testo secondario, il colore piu' usato */
+    --faint: #adb5bd;            /* etichette tenui, testo disabilitato */
+    --hairline: #e9ecef;         /* separatori */
+    --hairline-strong: #dee2e6;  /* contorni percepibili, campi di form */
+    --canvas: #f5f6fa;           /* fondo pagina */
+    --surface: #ffffff;          /* pannelli */
+    --surface-soft: #fafbfc;     /* intestazioni di tabella */
+    --surface-softer: #f8f9fa;   /* righe in evidenza al passaggio del mouse */
+    --sidebar: #1a1d23;          /* barra laterale (stesso valore di ink, ruolo diverso) */
+    --admin-accent: #1565C0;     /* solo area admin */
+
+    /* Alias di un token che nel foglio era usato 29 volte senza esistere:
+       compariva sempre come var(--border, #e9ecef), quindi vinceva il ripiego. */
+    --border: var(--hairline);
+
+    /* ===== Stati delle prenotazioni =====
+       Tre valori per stato: il puntino, il testo, lo sfondo della pillola.
+       Usarli fuori dal loro significato rompe la lettura a colpo d'occhio. */
+    --confirmed-dot: #198754;  --confirmed-text: #2E7D32;  --confirmed-bg: #E8F5E9;
+    --pending-dot:   #ffc107;  --pending-text:   #E65100;  --pending-bg:   #FFF8E1;
+    --arrived-dot:   #1565C0;  --arrived-text:   #1565C0;  --arrived-bg:   #E3F2FD;
+    --noshow-dot:    #dc3545;  --noshow-text:    #dc3545;  --noshow-bg:    #fde8e8;
+    --cancelled-dot: #dc3545;  --cancelled-text: #dc3545;  --cancelled-bg: #fde8e8;
+    --birthday-dot:  #D81B60;  --birthday-text:  #880E4F;  --birthday-bg:  #fce4ec;
+    --whatsapp: #25D366;       --whatsapp-hover: #1DA851;
+
+    /* Rosso delle azioni distruttive e dei numeri in calo. Stesso valore di
+       noshow e annullata: e' un rosso solo, con tre ruoli. */
+    --danger: #dc3545;
 }
 
 body { background: #f5f6fa; }
@@ -4773,7 +4812,7 @@ tr.slot-inactive input { background-color: #f1f3f5; color: #ced4da; cursor: not-
 .tm-svc-microlabel { font-size: .64rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #9aa3aa; }
 .tm-svc-row .tm-occ { flex: 1; min-width: 0; padding: 0; }
 .tm-svc { position: relative; }
-.tm-svc-btn { display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid var(--border, #d4dade); background: #fff; border-radius: 9px; padding: 7px 13px; font-weight: 800; font-size: .84rem; cursor: pointer; color: #1a1d23; }
+.tm-svc-btn { display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid #d4dade; background: #fff; border-radius: 9px; padding: 7px 13px; font-weight: 800; font-size: .84rem; cursor: pointer; color: #1a1d23; }
 .tm-svc-btn > .bi:first-child { color: var(--brand, #00844A); }
 .tm-svc-rng { color: #6c757d; font-weight: 500; }
 .tm-svc-cnt { background: #eef3f0; color: #006b3c; border-radius: 20px; padding: 1px 9px; font-size: .74rem; font-weight: 700; }

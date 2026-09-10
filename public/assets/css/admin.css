@@ -10,6 +10,28 @@
     --brand-dark: #006837;
     --admin-accent: #1565C0;
     --admin-accent-dark: #0D47A1;
+
+    /* Stessa tavolozza di dashboard.css, con gli stessi nomi: l'area admin e' una
+       superficie fredda e condivide tutto tranne l'accento blu. Vedi DESIGN.md. */
+    --ink: #1a1d23;
+    --body: #495057;
+    --mute: #6c757d;
+    --faint: #adb5bd;
+    --hairline: #e9ecef;
+    --hairline-strong: #dee2e6;
+    --border: var(--hairline);
+    --canvas: #f5f6fa;
+    --surface: #ffffff;
+    --surface-soft: #fafbfc;
+    --surface-softer: #f8f9fa;
+    --sidebar: #1a1d23;
+
+    --confirmed-dot: #198754;  --confirmed-text: #2E7D32;  --confirmed-bg: #E8F5E9;
+    --pending-dot:   #ffc107;  --pending-text:   #E65100;  --pending-bg:   #FFF8E1;
+    --arrived-dot:   #1565C0;  --arrived-text:   #1565C0;  --arrived-bg:   #E3F2FD;
+    --noshow-dot:    #dc3545;  --noshow-text:    #dc3545;  --noshow-bg:    #fde8e8;
+    --cancelled-dot: #dc3545;  --cancelled-text: #dc3545;  --cancelled-bg: #fde8e8;
+    --danger: #dc3545;
 }
 
 body {

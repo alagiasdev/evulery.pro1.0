@@ -374,7 +374,7 @@ $sourceColors = ['widget' => 'var(--brand)', 'dashboard' => '#6f42c1', 'phone' =
                 </div>
                 <?php if ($weekDiff !== 0): ?>
                 <div style="text-align:center;margin-top:8px;">
-                    <span style="font-size:.85rem;font-weight:700;color:<?= $weekDiff > 0 ? 'var(--brand)' : 'var(--red)' ?>;">
+                    <span style="font-size:.85rem;font-weight:700;color:<?= $weekDiff > 0 ? 'var(--brand)' : 'var(--danger)' ?>;">
                         <i class="bi bi-arrow-<?= $weekDiff > 0 ? 'up' : 'down' ?>"></i> <?= ($weekDiff > 0 ? '+' : '') . $weekDiff ?>%
                     </span>
                     <span style="font-size:.72rem;color:var(--gray-600);margin-left:6px;">rispetto alla settimana precedente</span>

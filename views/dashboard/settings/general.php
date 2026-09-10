@@ -302,7 +302,7 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
 <?= e($smartSnippet) ?>
                     </div>
                     <details style="margin-top:.6rem;">
-                        <summary style="font-size:.8rem;color:var(--brand-d,#006b3c);cursor:pointer;font-weight:600;">Mostra versione semplice (solo iframe)</summary>
+                        <summary style="font-size:.8rem;color:var(--brand-dark);cursor:pointer;font-weight:600;">Mostra versione semplice (solo iframe)</summary>
                         <p style="font-size:.78rem;color:#6c757d;margin:.4rem 0 .4rem;">Se il tuo sito non permette gli script, usa questa (senza tracciamento campagne):</p>
                         <div class="embed-code">
                             <button type="button" class="embed-copy" data-copy-text="<?= e($simpleSnippet) ?>"><i class="bi bi-clipboard me-1"></i>Copia</button>

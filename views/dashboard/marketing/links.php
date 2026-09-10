@@ -157,9 +157,9 @@ foreach ($saved as $s) {
 <style>
 .mk-seg{display:flex;gap:8px;flex-wrap:wrap;}
 .mk-segbtn{border:1.5px solid #d4dade;background:#fff;border-radius:9px;padding:8px 13px;font-weight:600;font-size:.82rem;cursor:pointer;}
-.mk-segbtn.on{background:#e8f5ee;border-color:var(--brand,#00844A);color:var(--brand-d,#006b3c);}
+.mk-segbtn.on{background:#e8f5ee;border-color:var(--brand,#00844A);color:var(--brand-dark);}
 .mk-segbtn.disabled{opacity:.55;cursor:not-allowed;background:#f5f5f5;color:#9aa3aa;}
-.mk-rec{font-size:.62rem;background:#d6f0e2;color:var(--brand-d,#006b3c);border-radius:4px;padding:1px 5px;margin-left:4px;}
+.mk-rec{font-size:.62rem;background:#d6f0e2;color:var(--brand-dark);border-radius:4px;padding:1px 5px;margin-left:4px;}
 .mk-chans{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;}
 .mk-chan{border:2px solid #eceff2;border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;font-size:.78rem;font-weight:600;}
 .mk-chan.on{border-color:var(--brand,#00844A);background:#f6fbf8;}
@@ -175,12 +175,12 @@ foreach ($saved as $s) {
 .mk-sname{font-weight:700;font-size:.9rem;}
 .mk-smeta{font-size:.73rem;color:#9aa3aa;font-family:ui-monospace,Menlo,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mk-perf{flex-shrink:0;text-align:center;min-width:60px;}
-.mk-perf .pn{font-size:1.05rem;font-weight:800;line-height:1;color:var(--brand-d,#006b3c);}
+.mk-perf .pn{font-size:1.05rem;font-weight:800;line-height:1;color:var(--brand-dark);}
 .mk-perf .pl{font-size:.66rem;color:#9aa3aa;}
 .mk-sact{display:flex;gap:6px;flex-shrink:0;}
 .mk-sact form{margin:0;}
 .mk-iconbtn{border:1.5px solid #e4e8eb;background:#fff;border-radius:7px;width:30px;height:30px;display:grid;place-items:center;cursor:pointer;color:#555;font-size:.85rem;}
-.mk-iconbtn:hover{background:#f6fbf8;border-color:var(--brand,#00844A);color:var(--brand-d,#006b3c);}
+.mk-iconbtn:hover{background:#f6fbf8;border-color:var(--brand,#00844A);color:var(--brand-dark);}
 .mk-iconbtn.del:hover{background:#fdecea;border-color:#f5c2c0;color:#b3261e;}
 .mk-dest-badge{font-size:.62rem;background:#eef2ff;color:#3730a3;border-radius:5px;padding:1px 6px;font-weight:700;margin-left:6px;}
 .mk-row-qr{width:100%;}

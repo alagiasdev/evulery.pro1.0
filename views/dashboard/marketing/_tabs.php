@@ -21,6 +21,6 @@
 <style>
 .mk-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.1rem;border-bottom:1px solid #eceff2;padding-bottom:.1rem;}
 .mk-tab{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem .9rem;font-size:.85rem;font-weight:600;color:#6c757d;text-decoration:none;border-radius:8px 8px 0 0;border-bottom:2px solid transparent;}
-.mk-tab:hover{color:var(--brand-d,#006b3c);}
+.mk-tab:hover{color:var(--brand-dark);}
 .mk-tab.active{color:var(--brand,#00844A);border-bottom-color:var(--brand,#00844A);background:#f6fbf8;}
 </style>
