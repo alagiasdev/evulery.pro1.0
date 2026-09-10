@@ -23,8 +23,8 @@
         <a href="<?= e($url) ?>"
            style="padding:.5rem .9rem;border-radius:8px;font-size:.82rem;font-weight:600;text-decoration:none;
                   background:<?= $isActive ? '#1565C0' : '#fff' ?>;
-                  color:<?= $isActive ? '#fff' : '#495057' ?>;
-                  border:1px solid <?= $isActive ? '#1565C0' : '#dee2e6' ?>;">
+                  color:<?= $isActive ? '#fff' : 'var(--body)' ?>;
+                  border:1px solid <?= $isActive ? '#1565C0' : 'var(--hairline-strong)' ?>;">
             <?= e($label) ?>
         </a>
     <?php endforeach; ?>
@@ -32,20 +32,20 @@
 
 <div class="adm-card">
     <?php if (empty($requests)): ?>
-        <div style="padding:2rem;text-align:center;color:#6c757d;">
+        <div style="padding:2rem;text-align:center;color:var(--mute);">
             Nessuna richiesta in questa lista.
         </div>
     <?php else: ?>
         <table class="adm-table" style="width:100%;border-collapse:collapse;">
             <thead>
-                <tr style="background:#fafbfc;border-bottom:1px solid #e9ecef;">
-                    <th style="padding:12px 14px;text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:#495057;">Ricevuta</th>
-                    <th style="padding:12px 14px;text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:#495057;">Reseller</th>
-                    <th style="padding:12px 14px;text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:#495057;">Cliente</th>
-                    <th style="padding:12px 14px;text-align:right;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:#495057;">Crediti</th>
-                    <th style="padding:12px 14px;text-align:right;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:#495057;">Saldo attuale</th>
-                    <th style="padding:12px 14px;text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:#495057;">Stato</th>
-                    <th style="padding:12px 14px;text-align:right;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:#495057;">Azioni</th>
+                <tr style="background:var(--surface-soft);border-bottom:1px solid var(--hairline);">
+                    <th style="padding:12px 14px;text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:var(--body);">Ricevuta</th>
+                    <th style="padding:12px 14px;text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:var(--body);">Reseller</th>
+                    <th style="padding:12px 14px;text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:var(--body);">Cliente</th>
+                    <th style="padding:12px 14px;text-align:right;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:var(--body);">Crediti</th>
+                    <th style="padding:12px 14px;text-align:right;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:var(--body);">Saldo attuale</th>
+                    <th style="padding:12px 14px;text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:var(--body);">Stato</th>
+                    <th style="padding:12px 14px;text-align:right;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:var(--body);">Azioni</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,7 +59,7 @@
                             default    => 'background:#eceff1;color:#6c757d;border-color:#6c757d;',
                         };
                     ?>
-                    <tr style="border-bottom:1px solid #e9ecef;vertical-align:top;">
+                    <tr style="border-bottom:1px solid var(--hairline);vertical-align:top;">
                         <td style="padding:14px;font-size:.82rem;">
                             <?= format_date($r['created_at'], 'd/m/Y H:i') ?>
                         </td>
@@ -68,7 +68,7 @@
                         </td>
                         <td style="padding:14px;">
                             <div style="font-weight:600;font-size:.85rem;"><?= e($r['tenant_name']) ?></div>
-                            <div style="font-size:.74rem;color:#6c757d;">/<?= e($r['tenant_slug']) ?></div>
+                            <div style="font-size:.74rem;color:var(--mute);">/<?= e($r['tenant_slug']) ?></div>
                         </td>
                         <td style="padding:14px;text-align:right;font-weight:700;font-size:.95rem;color:#1565C0;">
                             +<?= number_format((int)$r['credits_requested'], 0, ',', '.') ?>
@@ -76,7 +76,7 @@
                         <td style="padding:14px;text-align:right;font-size:.82rem;">
                             <?= number_format((int)$r['email_credits_balance'], 0, ',', '.') ?>
                             <?php if ($r['status'] === 'pending'): ?>
-                                <div style="font-size:.72rem;color:#00844A;font-weight:600;">→ <?= number_format($balanceAfter, 0, ',', '.') ?></div>
+                                <div style="font-size:.72rem;color:var(--brand);font-weight:600;">→ <?= number_format($balanceAfter, 0, ',', '.') ?></div>
                             <?php endif; ?>
                         </td>
                         <td style="padding:14px;">
@@ -84,7 +84,7 @@
                                 <?= e($statuses[$r['status']] ?? $r['status']) ?>
                             </span>
                             <?php if ($r['status'] !== 'pending' && $r['processed_at']): ?>
-                                <div style="font-size:.7rem;color:#6c757d;margin-top:4px;">
+                                <div style="font-size:.7rem;color:var(--mute);margin-top:4px;">
                                     <?= format_date($r['processed_at'], 'd/m H:i') ?>
                                 </div>
                             <?php endif; ?>
@@ -95,7 +95,7 @@
                                     <form method="POST" action="<?= url('admin/credit-requests/' . (int)$r['id'] . '/approve') ?>" style="display:inline;"
                                           data-confirm="Confermi l'approvazione? I crediti verranno accreditati subito.">
                                         <?= csrf_field() ?>
-                                        <button type="submit" class="adm-btn adm-btn-success adm-btn-sm" style="background:#00844A;color:#fff;border:none;padding:.4rem .8rem;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;">
+                                        <button type="submit" class="adm-btn adm-btn-success adm-btn-sm" style="background:var(--brand);color:#fff;border:none;padding:.4rem .8rem;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;">
                                             <i class="bi bi-check"></i> Approva
                                         </button>
                                     </form>
@@ -107,14 +107,14 @@
                         </td>
                     </tr>
                     <?php if (!empty($r['notes_reseller'])): ?>
-                        <tr style="border-bottom:1px solid #e9ecef;">
-                            <td colspan="7" style="padding:0 14px 14px;font-size:.78rem;color:#495057;">
-                                <strong style="color:#1a1d23;">Nota reseller:</strong> <?= nl2br(e($r['notes_reseller'])) ?>
+                        <tr style="border-bottom:1px solid var(--hairline);">
+                            <td colspan="7" style="padding:0 14px 14px;font-size:.78rem;color:var(--body);">
+                                <strong style="color:var(--ink);">Nota reseller:</strong> <?= nl2br(e($r['notes_reseller'])) ?>
                             </td>
                         </tr>
                     <?php endif; ?>
                     <?php if ($r['status'] === 'rejected' && !empty($r['notes_admin'])): ?>
-                        <tr style="border-bottom:1px solid #e9ecef;">
+                        <tr style="border-bottom:1px solid var(--hairline);">
                             <td colspan="7" style="padding:0 14px 14px;">
                                 <div style="padding:8px 12px;background:#FFEBEE;border-left:3px solid #C62828;border-radius:4px;font-size:.78rem;color:#C62828;">
                                     <strong>Motivo rifiuto:</strong> <?= e($r['notes_admin']) ?>
@@ -125,7 +125,7 @@
 
                     <!-- Form rifiuto nascosto, attivato da JS -->
                     <?php if ($r['status'] === 'pending'): ?>
-                        <tr id="reject-form-<?= (int)$r['id'] ?>" style="display:none;border-bottom:1px solid #e9ecef;background:#FFEBEE;">
+                        <tr id="reject-form-<?= (int)$r['id'] ?>" style="display:none;border-bottom:1px solid var(--hairline);background:#FFEBEE;">
                             <td colspan="7" style="padding:14px;">
                                 <form method="POST" action="<?= url('admin/credit-requests/' . (int)$r['id'] . '/reject') ?>" style="display:flex;gap:.5rem;align-items:flex-start;">
                                     <?= csrf_field() ?>
@@ -135,7 +135,7 @@
                                         <button type="submit" style="background:#C62828;color:#fff;border:none;padding:.4rem .8rem;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;">
                                             Conferma rifiuto
                                         </button>
-                                        <button type="button" data-cancel-id="<?= (int)$r['id'] ?>" style="background:#fff;color:#6c757d;border:1px solid #dee2e6;padding:.4rem .8rem;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;">
+                                        <button type="button" data-cancel-id="<?= (int)$r['id'] ?>" style="background:#fff;color:var(--mute);border:1px solid var(--hairline-strong);padding:.4rem .8rem;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;">
                                             Annulla
                                         </button>
                                     </div>

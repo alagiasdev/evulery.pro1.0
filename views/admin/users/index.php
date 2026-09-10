@@ -8,7 +8,7 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
         <h1 class="admin-page-title">Utenti</h1>
         <p class="admin-page-sub">Gestisci tutti gli utenti della piattaforma</p>
     </div>
-    <a href="<?= url('admin/users/reseller/create') ?>" style="background:#00844A;color:#fff;padding:.55rem 1rem;border-radius:6px;font-weight:600;font-size:.85rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;">
+    <a href="<?= url('admin/users/reseller/create') ?>" style="background:var(--brand);color:#fff;padding:.55rem 1rem;border-radius:6px;font-weight:600;font-size:.85rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;">
         <i class="bi bi-person-plus"></i> Nuovo reseller
     </a>
 </div>
@@ -67,7 +67,7 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
     <div class="adm-card-hdr">
         <span class="adm-card-hdr-title"><i class="bi bi-people me-1"></i> Elenco utenti</span>
         <?php if (!empty($pagination)): ?>
-        <span style="font-size:.75rem;color:#6c757d;"><?= $pagination['from'] ?>-<?= $pagination['to'] ?> di <?= $pagination['totalItems'] ?></span>
+        <span style="font-size:.75rem;color:var(--mute);"><?= $pagination['from'] ?>-<?= $pagination['to'] ?> di <?= $pagination['totalItems'] ?></span>
         <?php endif; ?>
     </div>
 
@@ -94,7 +94,7 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
         }
         $u['_lastLogin'] = $u['last_login_at']
             ? format_date($u['last_login_at'], 'd/m/Y H:i')
-            : '<span style="font-style:italic;color:#adb5bd;">Mai</span>';
+            : '<span style="font-style:italic;color:var(--faint);">Mai</span>';
         $u['_canImpersonate'] = $u['role'] !== 'super_admin' && $u['tenant_id'];
     }
     unset($u);
@@ -145,7 +145,7 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
                             <a href="<?= url("admin/tenants/{$u['tenant_id']}/edit") ?>" style="color:var(--admin-accent);text-decoration:none;font-size:.82rem;"><?= e($u['tenant_name']) ?></a>
                             <?php if (empty($u['tenant_active'])): ?><span style="display:block;font-size:.68rem;color:#c0392b;" title="Ristorante disattivato">⛔ disattivato</span><?php endif; ?>
                         <?php else: ?>
-                            <span style="color:#adb5bd;">&mdash;</span>
+                            <span style="color:var(--faint);">&mdash;</span>
                         <?php endif; ?>
                     </span>
                 </div>
@@ -188,11 +188,11 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
                             <?= e($u['tenant_name']) ?>
                         </a>
                     <?php else: ?>
-                        <span style="color:#adb5bd;">&mdash;</span>
+                        <span style="color:var(--faint);">&mdash;</span>
                     <?php endif; ?>
                 </td>
                 <td><?= $u['_statusBadge'] ?></td>
-                <td style="font-size:.78rem;color:#6c757d;"><?= $u['_lastLogin'] ?></td>
+                <td style="font-size:.78rem;color:var(--mute);"><?= $u['_lastLogin'] ?></td>
                 <td style="white-space:nowrap;">
                     <?php if ($u['role'] === 'reseller'): ?>
                     <a href="<?= url("admin/users/reseller/{$u['id']}/edit") ?>" class="adm-action-btn" title="Modifica reseller" style="font-size:.78rem;">
@@ -216,7 +216,7 @@ $roleColors = ['super_admin' => '#7B1FA2', 'owner' => '#1565C0', 'staff' => '#61
 
     <?php if (!empty($pagination)): ?>
     <div class="pagination-bar" style="padding:.75rem 1rem;border-top:1px solid #eee;">
-        <span class="pagination-info" style="font-size:.8rem;color:#6c757d;"><?= $pagination['from'] ?>-<?= $pagination['to'] ?> di <?= $pagination['totalItems'] ?> utenti</span>
+        <span class="pagination-info" style="font-size:.8rem;color:var(--mute);"><?= $pagination['from'] ?>-<?= $pagination['to'] ?> di <?= $pagination['totalItems'] ?> utenti</span>
         <div class="pagination-nav">
             <?php if ($pagination['prev']): ?>
             <a href="<?= $pagination['prev'] ?>" class="pg-btn"><i class="bi bi-chevron-left"></i></a>

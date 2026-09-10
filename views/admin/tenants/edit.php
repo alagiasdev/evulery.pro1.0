@@ -95,25 +95,25 @@
             <div class="adm-info-hdr"><i class="bi bi-people me-1"></i> Utenti associati</div>
             <div class="adm-info-body">
                 <?php if (empty($users)): ?>
-                    <p style="color:#adb5bd;font-size:.82rem;margin:0;">Nessun utente.</p>
+                    <p style="color:var(--faint);font-size:.82rem;margin:0;">Nessun utente.</p>
                 <?php else: ?>
                     <?php foreach ($users as $u): ?>
-                    <form method="POST" action="<?= url("admin/tenants/{$tenant['id']}/users/{$u['id']}") ?>" style="margin-bottom:.75rem;padding:.75rem;background:#f8f9fa;border-radius:8px;">
+                    <form method="POST" action="<?= url("admin/tenants/{$tenant['id']}/users/{$u['id']}") ?>" style="margin-bottom:.75rem;padding:.75rem;background:var(--surface-softer);border-radius:8px;">
                         <?= csrf_field() ?>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
                             <input type="text" name="first_name" value="<?= e($u['first_name']) ?>" placeholder="Nome"
-                                   style="width:100%;min-width:0;box-sizing:border-box;padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                                   style="width:100%;min-width:0;box-sizing:border-box;padding:.4rem .6rem;border:1px solid var(--hairline-strong);border-radius:6px;font-size:.82rem;">
                             <input type="text" name="last_name" value="<?= e($u['last_name']) ?>" placeholder="Cognome"
-                                   style="width:100%;min-width:0;box-sizing:border-box;padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                                   style="width:100%;min-width:0;box-sizing:border-box;padding:.4rem .6rem;border:1px solid var(--hairline-strong);border-radius:6px;font-size:.82rem;">
                         </div>
                         <div style="margin-bottom:.5rem;">
                             <input type="email" name="email" value="<?= e($u['email']) ?>" placeholder="Email"
-                                   style="width:100%;box-sizing:border-box;padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                                   style="width:100%;box-sizing:border-box;padding:.4rem .6rem;border:1px solid var(--hairline-strong);border-radius:6px;font-size:.82rem;">
                         </div>
                         <div style="margin-bottom:.5rem;">
                             <input type="password" name="password" placeholder="Nuova password (vuoto = invariata)" autocomplete="new-password"
-                                   style="width:100%;box-sizing:border-box;padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
-                            <span style="font-size:.68rem;color:#adb5bd;">Min 8 caratteri, una maiuscola, un numero.</span>
+                                   style="width:100%;box-sizing:border-box;padding:.4rem .6rem;border:1px solid var(--hairline-strong);border-radius:6px;font-size:.82rem;">
+                            <span style="font-size:.68rem;color:var(--faint);">Min 8 caratteri, una maiuscola, un numero.</span>
                         </div>
                         <div style="display:flex;align-items:center;justify-content:space-between;">
                             <span class="adm-badge <?= $u['is_active'] ? 'adm-badge-active' : 'adm-badge-inactive' ?>" style="font-size:.7rem;">
@@ -140,7 +140,7 @@
         <div class="adm-info-card" style="border:1px solid #ffe0b2;">
             <div class="adm-info-hdr" style="background:#fff8f0;"><i class="bi bi-stars me-1"></i> Dati demo (vetrina)</div>
             <div class="adm-info-body">
-                <p style="font-size:.8rem;color:#6c757d;margin:0 0 .6rem;">Rigenera ~30 clienti e ~100 prenotazioni con date aggiornate. Sostituisce i soli dati demo (marcati); tavoli e menu restano. Rilancia ~ogni mese.</p>
+                <p style="font-size:.8rem;color:var(--mute);margin:0 0 .6rem;">Rigenera ~30 clienti e ~100 prenotazioni con date aggiornate. Sostituisce i soli dati demo (marcati); tavoli e menu restano. Rilancia ~ogni mese.</p>
                 <form method="POST" action="<?= url("admin/tenants/{$tenant['id']}/seed-demo") ?>" data-confirm="Rigenerare i dati demo di <?= e($tenant['name']) ?>? I clienti e le prenotazioni demo attuali verranno sostituiti.">
                     <?= csrf_field() ?>
                     <button type="submit" class="adm-btn adm-btn-primary" style="width:100%;">
@@ -156,30 +156,30 @@
             <div class="adm-info-hdr"><i class="bi bi-envelope me-1"></i> Crediti Email</div>
             <div class="adm-info-body">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;">
-                    <span style="font-size:.82rem;color:#6c757d;">Saldo attuale</span>
-                    <span style="font-size:1.1rem;font-weight:700;color:#00844A;"><?= number_format((int)($tenant['email_credits_balance'] ?? 0), 0, ',', '.') ?></span>
+                    <span style="font-size:.82rem;color:var(--mute);">Saldo attuale</span>
+                    <span style="font-size:1.1rem;font-weight:700;color:var(--brand);"><?= number_format((int)($tenant['email_credits_balance'] ?? 0), 0, ',', '.') ?></span>
                 </div>
                 <form method="POST" action="<?= url("admin/tenants/{$tenant['id']}/credits") ?>" style="display:flex;gap:.5rem;margin-bottom:.5rem;">
                     <?= csrf_field() ?>
                     <input type="number" name="credits_amount" min="-10000" max="10000" placeholder="Es. 1000 oppure -500" required
-                           style="flex:1;padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                           style="flex:1;padding:.4rem .6rem;border:1px solid var(--hairline-strong);border-radius:6px;font-size:.82rem;">
                     <button type="submit" class="adm-btn adm-btn-primary" style="padding:.3rem .7rem;font-size:.75rem;white-space:nowrap;">
                         <i class="bi bi-check2"></i> Conferma
                     </button>
                 </form>
-                <div style="font-size:.7rem;color:#adb5bd;margin-bottom:.75rem;line-height:1.4;">
+                <div style="font-size:.7rem;color:var(--faint);margin-bottom:.75rem;line-height:1.4;">
                     Inserisci un numero positivo per ricaricare, negativo per rimuovere (es. <code>-500</code>).
                 </div>
                 <?php if (!empty($creditHistory)): ?>
                 <div style="border-top:1px solid #eee;padding-top:.5rem;">
-                    <div style="font-size:.72rem;color:#adb5bd;margin-bottom:.4rem;text-transform:uppercase;font-weight:600;">Ultime transazioni</div>
+                    <div style="font-size:.72rem;color:var(--faint);margin-bottom:.4rem;text-transform:uppercase;font-weight:600;">Ultime transazioni</div>
                     <?php foreach (array_slice($creditHistory, 0, 5) as $tx): ?>
                     <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:.25rem 0;border-bottom:1px solid #f5f5f5;">
-                        <span style="color:#6c757d;">
-                            <?= (int)$tx['amount'] >= 0 ? '<i class="bi bi-plus-circle" style="color:#00844A;"></i>' : '<i class="bi bi-dash-circle" style="color:#dc3545;"></i>' ?>
+                        <span style="color:var(--mute);">
+                            <?= (int)$tx['amount'] >= 0 ? '<i class="bi bi-plus-circle" style="color:var(--brand);"></i>' : '<i class="bi bi-dash-circle" style="color:var(--danger);"></i>' ?>
                             <?= e(substr($tx['description'] ?? $tx['type'], 0, 40)) ?>
                         </span>
-                        <span style="font-weight:600;color:<?= $tx['amount'] > 0 ? '#00844A' : '#dc3545' ?>;">
+                        <span style="font-weight:600;color:<?= $tx['amount'] > 0 ? 'var(--brand)' : 'var(--danger)' ?>;">
                             <?= $tx['amount'] > 0 ? '+' : '' ?><?= $tx['amount'] ?>
                         </span>
                     </div>

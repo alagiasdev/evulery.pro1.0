@@ -179,8 +179,8 @@ $statusLabel = $statuses[$lead['status']] ?? $lead['status'];
                 <span style="width:7px;height:7px;border-radius:50%;background:currentColor;"></span>
                 <?= e($statusLabel) ?>
             </span>
-            <span style="font-size:.8rem;color:#6c757d;">·</span>
-            <span style="font-size:.8rem;color:#495057;">Ricevuto il <strong><?= date('d/m/Y', strtotime($lead['created_at'])) ?></strong> alle <?= date('H:i', strtotime($lead['created_at'])) ?></span>
+            <span style="font-size:.8rem;color:var(--mute);">·</span>
+            <span style="font-size:.8rem;color:var(--body);">Ricevuto il <strong><?= date('d/m/Y', strtotime($lead['created_at'])) ?></strong> alle <?= date('H:i', strtotime($lead['created_at'])) ?></span>
         </div>
     </div>
     <div>
@@ -201,20 +201,20 @@ $statusLabel = $statuses[$lead['status']] ?? $lead['status'];
                 <div class="lead-info-row"><div class="lbl">Telefono</div><div class="val"><?= e($lead['phone']) ?></div></div>
 
                 <details style="margin-top:12px;">
-                    <summary style="cursor:pointer;font-size:.78rem;font-weight:600;color:#00844A;user-select:none;">
+                    <summary style="cursor:pointer;font-size:.78rem;font-weight:600;color:var(--brand);user-select:none;">
                         <i class="bi bi-pencil"></i> Correggi anagrafica
                     </summary>
                     <form method="POST" action="<?= url("admin/leads/{$lead['id']}/contact") ?>" style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
                         <?= csrf_field() ?>
                         <input type="text" name="name" value="<?= e($lead['name']) ?>" placeholder="Nome" required
-                               style="padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                               style="padding:.4rem .6rem;border:1px solid var(--hairline-strong);border-radius:6px;font-size:.82rem;">
                         <input type="text" name="restaurant" value="<?= e($lead['restaurant']) ?>" placeholder="Ristorante" required
-                               style="padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                               style="padding:.4rem .6rem;border:1px solid var(--hairline-strong);border-radius:6px;font-size:.82rem;">
                         <input type="email" name="email" value="<?= e($lead['email']) ?>" placeholder="Email" required
-                               style="padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
+                               style="padding:.4rem .6rem;border:1px solid var(--hairline-strong);border-radius:6px;font-size:.82rem;">
                         <input type="tel" name="phone" value="<?= e($lead['phone']) ?>" placeholder="Telefono"
-                               style="padding:.4rem .6rem;border:1px solid #dee2e6;border-radius:6px;font-size:.82rem;">
-                        <button type="submit" style="background:#00844A;color:#fff;border:none;padding:.45rem;border-radius:6px;font-size:.8rem;font-weight:600;cursor:pointer;">
+                               style="padding:.4rem .6rem;border:1px solid var(--hairline-strong);border-radius:6px;font-size:.82rem;">
+                        <button type="submit" style="background:var(--brand);color:#fff;border:none;padding:.45rem;border-radius:6px;font-size:.8rem;font-weight:600;cursor:pointer;">
                             Salva anagrafica
                         </button>
                     </form>
@@ -230,13 +230,13 @@ $statusLabel = $statuses[$lead['status']] ?? $lead['status'];
                 <?php endif; ?>
 
                 <?php if (!empty($lead['message'])): ?>
-                    <div style="margin-top:14px;font-size:.72rem;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:.5px;">Messaggio</div>
+                    <div style="margin-top:14px;font-size:.72rem;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;">Messaggio</div>
                     <div class="lead-message-box">"<?= e($lead['message']) ?>"</div>
                 <?php endif; ?>
 
                 <?php if (!empty($lead['notes'])): ?>
-                    <div style="margin-top:18px;font-size:.72rem;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:.5px;">Note admin (private)</div>
-                    <div class="lead-message-box" style="border-left-color:#c2185b;background:#fce4ec;color:#1a1d23;font-style:normal;"><?= nl2br(e($lead['notes'])) ?></div>
+                    <div style="margin-top:18px;font-size:.72rem;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;">Note admin (private)</div>
+                    <div class="lead-message-box" style="border-left-color:#c2185b;background:#fce4ec;color:var(--ink);font-style:normal;"><?= nl2br(e($lead['notes'])) ?></div>
                 <?php endif; ?>
             </div>
         </div>
@@ -298,7 +298,7 @@ $statusLabel = $statuses[$lead['status']] ?? $lead['status'];
                             <?php endforeach; ?>
                         </select>
                         <?php if (empty($resellers)): ?>
-                            <div style="font-size:.72rem;color:#6c757d;margin-top:6px;font-style:italic;">
+                            <div style="font-size:.72rem;color:var(--mute);margin-top:6px;font-style:italic;">
                                 <i class="bi bi-info-circle"></i> Nessun reseller registrato. La lista si popolerà quando avrai utenti con ruolo reseller.
                             </div>
                         <?php endif; ?>
@@ -326,12 +326,12 @@ $statusLabel = $statuses[$lead['status']] ?? $lead['status'];
 
         <!-- Conversion CTA -->
         <?php if ($lead['status'] !== 'customer' && $lead['status'] !== 'lost'): ?>
-            <div class="lead-card" style="background:linear-gradient(180deg, #E8F5E9 0%, #fff 100%);border-color:#00844A;">
+            <div class="lead-card" style="background:linear-gradient(180deg, var(--brand-light) 0%, #fff 100%);border-color:var(--brand);">
                 <div class="lead-card-body">
-                    <div style="font-size:.75rem;font-weight:800;color:#00844A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">
+                    <div style="font-size:.75rem;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">
                         <i class="bi bi-trophy"></i> Pronto per convertire?
                     </div>
-                    <div style="font-size:.85rem;color:#1a1d23;margin-bottom:12px;line-height:1.5;">
+                    <div style="font-size:.85rem;color:var(--ink);margin-bottom:12px;line-height:1.5;">
                         Quando il cliente è pronto a partire, crea il tenant Evulery con i dati di questo lead già pre-compilati.
                     </div>
                     <a href="<?= url("admin/leads/{$lead['id']}/convert") ?>" class="lead-btn-success">
@@ -349,7 +349,7 @@ $statusLabel = $statuses[$lead['status']] ?? $lead['status'];
                     <div style="font-size:.72rem;font-weight:800;color:#c0392b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">
                         <i class="bi bi-trash"></i> Elimina lead
                     </div>
-                    <div style="font-size:.82rem;color:#6c757d;margin-bottom:12px;line-height:1.5;">
+                    <div style="font-size:.82rem;color:var(--mute);margin-bottom:12px;line-height:1.5;">
                         Se è spam o contiene dati non validi, puoi rimuoverlo definitivamente. Operazione irreversibile.
                     </div>
                     <form method="POST" action="<?= url("admin/leads/{$lead['id']}/delete") ?>" data-confirm="Eliminare definitivamente questo lead? L'operazione non è reversibile.">

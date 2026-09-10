@@ -12,7 +12,7 @@
 $tabs = ['active' => 'Attivi', 'inactive' => 'Inattivi', 'all' => 'Tutti'];
 $cur = $status ?? 'active';
 ?>
-<div style="display:flex;gap:.2rem;margin-bottom:1rem;border-bottom:1px solid #e9ecef;">
+<div style="display:flex;gap:.2rem;margin-bottom:1rem;border-bottom:1px solid var(--hairline);">
     <?php foreach ($tabs as $key => $label):
         $qs = [];
         if (!empty($search)) $qs[] = 'q=' . urlencode($search);
@@ -20,8 +20,8 @@ $cur = $status ?? 'active';
         $href = url('admin/tenants') . ($qs ? '?' . implode('&', $qs) : '');
         $on = ($cur === $key);
     ?>
-    <a href="<?= $href ?>" style="padding:.55rem .9rem;text-decoration:none;font-size:.85rem;font-weight:600;color:<?= $on ? '#00844A' : '#6c757d' ?>;border-bottom:2px solid <?= $on ? '#00844A' : 'transparent' ?>;margin-bottom:-1px;">
-        <?= e($label) ?> <span style="font-size:.75rem;color:#adb5bd;">(<?= (int)($counts[$key] ?? 0) ?>)</span>
+    <a href="<?= $href ?>" style="padding:.55rem .9rem;text-decoration:none;font-size:.85rem;font-weight:600;color:<?= $on ? 'var(--brand)' : 'var(--mute)' ?>;border-bottom:2px solid <?= $on ? 'var(--brand)' : 'transparent' ?>;margin-bottom:-1px;">
+        <?= e($label) ?> <span style="font-size:.75rem;color:var(--faint);">(<?= (int)($counts[$key] ?? 0) ?>)</span>
     </a>
     <?php endforeach; ?>
 </div>
@@ -31,9 +31,9 @@ $cur = $status ?? 'active';
     <?php if (($status ?? 'active') !== 'active'): ?><input type="hidden" name="status" value="<?= e($status) ?>"><?php endif; ?>
     <div style="display:flex;gap:.5rem;align-items:center;">
         <div style="position:relative;flex:1;max-width:400px;">
-            <i class="bi bi-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#adb5bd;"></i>
+            <i class="bi bi-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--faint);"></i>
             <input type="text" name="q" value="<?= e($search ?? '') ?>" placeholder="Cerca ristorante..."
-                   style="width:100%;padding:.5rem .75rem .5rem 2.25rem;border:1px solid #dee2e6;border-radius:8px;font-size:.85rem;">
+                   style="width:100%;padding:.5rem .75rem .5rem 2.25rem;border:1px solid var(--hairline-strong);border-radius:8px;font-size:.85rem;">
         </div>
         <button type="submit" class="adm-btn adm-btn-primary" style="padding:.5rem 1rem;"><i class="bi bi-search"></i></button>
         <?php if (!empty($search)): ?>
@@ -151,7 +151,7 @@ $cur = $status ?? 'active';
 
     <?php if (!empty($pagination)): ?>
     <div class="pagination-bar" style="padding:.75rem 1rem;border-top:1px solid #eee;">
-        <span class="pagination-info" style="font-size:.8rem;color:#6c757d;"><?= $pagination['from'] ?>-<?= $pagination['to'] ?> di <?= $pagination['totalItems'] ?> ristoranti</span>
+        <span class="pagination-info" style="font-size:.8rem;color:var(--mute);"><?= $pagination['from'] ?>-<?= $pagination['to'] ?> di <?= $pagination['totalItems'] ?> ristoranti</span>
         <div class="pagination-nav">
             <?php if ($pagination['prev']): ?>
             <a href="<?= $pagination['prev'] ?>" class="pg-btn"><i class="bi bi-chevron-left"></i></a>

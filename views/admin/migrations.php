@@ -35,9 +35,9 @@ $nPending = count($pending);
     <div class="col-md-4">
         <div class="card border-0 shadow-sm" style="background:<?= $nPending > 0 ? '#fff3cd' : '#f5f5f5' ?>;">
             <div class="card-body">
-                <div class="text-muted small text-uppercase fw-bold mb-1" style="color:<?= $nPending > 0 ? '#664d03' : '#6c757d' ?>;">Pending</div>
-                <div class="fs-2 fw-bold" style="color:<?= $nPending > 0 ? '#664d03' : '#6c757d' ?>;"><?= (int)$nPending ?></div>
-                <div class="small" style="color:<?= $nPending > 0 ? '#664d03' : '#6c757d' ?>;">in attesa di esecuzione</div>
+                <div class="text-muted small text-uppercase fw-bold mb-1" style="color:<?= $nPending > 0 ? '#664d03' : 'var(--mute)' ?>;">Pending</div>
+                <div class="fs-2 fw-bold" style="color:<?= $nPending > 0 ? '#664d03' : 'var(--mute)' ?>;"><?= (int)$nPending ?></div>
+                <div class="small" style="color:<?= $nPending > 0 ? '#664d03' : 'var(--mute)' ?>;">in attesa di esecuzione</div>
             </div>
         </div>
     </div>

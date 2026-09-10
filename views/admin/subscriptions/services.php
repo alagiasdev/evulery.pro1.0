@@ -20,7 +20,7 @@ $tabs = [
 
 <!-- Info + New button -->
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem;">
-    <div style="font-size:.82rem;color:#6c757d;">
+    <div style="font-size:.82rem;color:var(--mute);">
         <i class="bi bi-info-circle me-1"></i>
         Ogni servizio pu&ograve; essere associato a uno o pi&ugrave; piani.
     </div>
@@ -46,7 +46,7 @@ $tabs = [
                     <div>
                         <label class="adm-form-label">Chiave tecnica *</label>
                         <input type="text" name="key" class="adm-form-input" required maxlength="50" placeholder="Es. sms_marketing" pattern="[a-z0-9_]+">
-                        <div style="font-size:.68rem;color:#adb5bd;margin-top:.2rem;">Solo lettere minuscole, numeri e underscore</div>
+                        <div style="font-size:.68rem;color:var(--faint);margin-top:.2rem;">Solo lettere minuscole, numeri e underscore</div>
                     </div>
                 </div>
                 <div>
@@ -92,7 +92,7 @@ $tabs = [
                 </span>
                 <?php endforeach; ?>
                 <?php if (empty($svc['plans'])): ?>
-                <span style="font-size:.68rem;color:#adb5bd;font-style:italic;">Nessun piano</span>
+                <span style="font-size:.68rem;color:var(--faint);font-style:italic;">Nessun piano</span>
                 <?php endif; ?>
             </div>
             <div class="adm-svc-row-actions">
@@ -111,7 +111,7 @@ $tabs = [
         </div>
         <!-- Inline edit form -->
         <div class="collapse" id="editSvc<?= $svc['id'] ?>">
-            <div style="padding:.75rem 1.25rem;background:#fafbfc;border-bottom:1px solid #e9ecef;">
+            <div style="padding:.75rem 1.25rem;background:var(--surface-soft);border-bottom:1px solid var(--hairline);">
                 <form method="POST" action="<?= url("admin/subscriptions/services/{$svc['id']}") ?>">
                     <?= csrf_field() ?>
                     <div class="adm-form-grid">

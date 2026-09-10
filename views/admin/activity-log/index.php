@@ -124,7 +124,7 @@ $defaultStyle = ['icon' => 'bi-circle', 'bg' => '#F5F5F5', 'color' => '#757575']
 <!-- Purge -->
 <?php if ($totalLogs > 0): ?>
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem;">
-    <div style="font-size:.78rem;color:#6c757d;">
+    <div style="font-size:.78rem;color:var(--mute);">
         <i class="bi bi-database me-1"></i> Totale log nel database: <strong><?= number_format($totalLogs, 0, ',', '.') ?></strong>
     </div>
     <form method="POST" action="<?= url('admin/activity-log/purge') ?>" style="display:flex;align-items:center;gap:.5rem;"
@@ -157,7 +157,7 @@ document.querySelector('[data-confirm-purge]').addEventListener('submit', functi
     <div class="adm-card-hdr">
         <span class="adm-card-hdr-title"><i class="bi bi-clock-history me-1"></i> Registro eventi</span>
         <?php if (!empty($pagination)): ?>
-        <span style="font-size:.75rem;color:#6c757d;"><?= $pagination['from'] ?>-<?= $pagination['to'] ?> di <?= $pagination['totalItems'] ?></span>
+        <span style="font-size:.75rem;color:var(--mute);"><?= $pagination['from'] ?>-<?= $pagination['to'] ?> di <?= $pagination['totalItems'] ?></span>
         <?php endif; ?>
     </div>
 
@@ -185,7 +185,7 @@ document.querySelector('[data-confirm-purge]').addEventListener('submit', functi
             <tr>
                 <td style="font-size:.78rem;white-space:nowrap;">
                     <?= date('d/m/Y', strtotime($log['created_at'])) ?><br>
-                    <span style="color:#6c757d;"><?= date('H:i:s', strtotime($log['created_at'])) ?></span>
+                    <span style="color:var(--mute);"><?= date('H:i:s', strtotime($log['created_at'])) ?></span>
                 </td>
                 <td>
                     <span style="display:inline-flex;align-items:center;gap:.35rem;font-size:.78rem;font-weight:600;padding:.25rem .55rem;border-radius:6px;background:<?= $style['bg'] ?>;color:<?= $style['color'] ?>;">
@@ -199,20 +199,20 @@ document.querySelector('[data-confirm-purge]').addEventListener('submit', functi
                     <?php elseif ($log['user_email'] ?? ''): ?>
                         <?= e($log['user_email']) ?>
                     <?php else: ?>
-                        <span style="color:#adb5bd;font-style:italic;">Sistema</span>
+                        <span style="color:var(--faint);font-style:italic;">Sistema</span>
                     <?php endif; ?>
                 </td>
                 <td style="font-size:.82rem;">
                     <?php if ($log['tenant_name'] ?? ''): ?>
                         <?= e($log['tenant_name']) ?>
                     <?php else: ?>
-                        <span style="color:#adb5bd;">&mdash;</span>
+                        <span style="color:var(--faint);">&mdash;</span>
                     <?php endif; ?>
                 </td>
                 <td style="font-size:.8rem;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
                     <?= e($log['description'] ?? '') ?>
                 </td>
-                <td style="font-size:.75rem;font-family:monospace;color:#6c757d;">
+                <td style="font-size:.75rem;font-family:monospace;color:var(--mute);">
                     <?= e($log['ip_address'] ?? '') ?>
                 </td>
             </tr>
@@ -223,7 +223,7 @@ document.querySelector('[data-confirm-purge]').addEventListener('submit', functi
 
     <?php if (!empty($pagination)): ?>
     <div class="pagination-bar" style="padding:.75rem 1rem;border-top:1px solid #eee;">
-        <span class="pagination-info" style="font-size:.8rem;color:#6c757d;"><?= $pagination['from'] ?>-<?= $pagination['to'] ?> di <?= $pagination['totalItems'] ?> eventi</span>
+        <span class="pagination-info" style="font-size:.8rem;color:var(--mute);"><?= $pagination['from'] ?>-<?= $pagination['to'] ?> di <?= $pagination['totalItems'] ?> eventi</span>
         <div class="pagination-nav">
             <?php if ($pagination['prev']): ?>
             <a href="<?= $pagination['prev'] ?>" class="pg-btn"><i class="bi bi-chevron-left"></i></a>

@@ -61,7 +61,7 @@
             <button type="submit" class="adm-btn adm-btn-primary">
                 <i class="bi bi-check-circle"></i> Salva
             </button>
-            <button type="button" class="adm-btn" style="background:#e9ecef;color:#495057;"
+            <button type="button" class="adm-btn" style="background:var(--hairline);color:var(--body);"
                     data-bs-toggle="collapse" data-bs-target="#<?= $editCollapseId ?>">Annulla</button>
         </div>
     </form>

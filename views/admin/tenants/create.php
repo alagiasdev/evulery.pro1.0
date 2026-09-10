@@ -19,7 +19,7 @@ $valOf = function(string $key, $default = '') use ($prefill) {
 </div>
 
 <?php if ($sourceLead ?? null): ?>
-<div style="max-width:720px;margin-bottom:1rem;background:#E8F5E9;border-left:4px solid #00844A;border-radius:8px;padding:14px 18px;font-size:.88rem;line-height:1.5;color:#1a1d23;">
+<div style="max-width:720px;margin-bottom:1rem;background:var(--brand-light);border-left:4px solid var(--brand);border-radius:8px;padding:14px 18px;font-size:.88rem;line-height:1.5;color:var(--ink);">
     <strong style="color:#006837;"><i class="bi bi-arrow-right-circle"></i> Conversione da lead #<?= (int)$sourceLead['id'] ?></strong>
     <div style="margin-top:4px;">
         Stai creando un tenant dal lead "<strong><?= e($sourceLead['restaurant']) ?></strong>".

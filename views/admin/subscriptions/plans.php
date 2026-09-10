@@ -21,7 +21,7 @@ $colors = ['#1565C0', '#7B1FA2', '#E65100', '#2E7D32', '#C62828'];
 
 <!-- Info + New button -->
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem;">
-    <div style="font-size:.82rem;color:#6c757d;">
+    <div style="font-size:.82rem;color:var(--mute);">
         <i class="bi bi-info-circle me-1"></i>
         Coperti illimitati per tutti i piani. La differenza &egrave; nei <strong>servizi inclusi</strong>.
     </div>
@@ -53,24 +53,24 @@ $colors = ['#1565C0', '#7B1FA2', '#E65100', '#2E7D32', '#C62828'];
                     <div>
                         <label class="adm-form-label">Prezzo semestrale (&euro;)</label>
                         <input type="number" name="price_semiannual" class="adm-form-input" min="0" step="0.01" placeholder="Es. 279.00">
-                        <div style="font-size:.68rem;color:#6c757d;margin-top:.2rem;">Cifra esatta. Lascia vuoto per calcolo automatico da "mesi pagati".</div>
+                        <div style="font-size:.68rem;color:var(--mute);margin-top:.2rem;">Cifra esatta. Lascia vuoto per calcolo automatico da "mesi pagati".</div>
                     </div>
                     <div>
                         <label class="adm-form-label">Prezzo annuale (&euro;)</label>
                         <input type="number" name="price_annual" class="adm-form-input" min="0" step="0.01" placeholder="Es. 1290.00">
-                        <div style="font-size:.68rem;color:#6c757d;margin-top:.2rem;">Cifra esatta. Lascia vuoto per calcolo automatico.</div>
+                        <div style="font-size:.68rem;color:var(--mute);margin-top:.2rem;">Cifra esatta. Lascia vuoto per calcolo automatico.</div>
                     </div>
                 </div>
                 <div class="adm-form-grid">
                     <div>
                         <label class="adm-form-label">Mesi pagati (Semestrale) <span style="font-weight:400;color:#999;">— fallback</span></label>
                         <input type="number" name="billing_months_semi" class="adm-form-input" min="1" max="6" value="5">
-                        <div style="font-size:.68rem;color:#6c757d;margin-top:.2rem;">Usato solo se "Prezzo semestrale" lasciato vuoto.</div>
+                        <div style="font-size:.68rem;color:var(--mute);margin-top:.2rem;">Usato solo se "Prezzo semestrale" lasciato vuoto.</div>
                     </div>
                     <div>
                         <label class="adm-form-label">Mesi pagati (Annuale) <span style="font-weight:400;color:#999;">— fallback</span></label>
                         <input type="number" name="billing_months_annual" class="adm-form-input" min="1" max="12" value="10">
-                        <div style="font-size:.68rem;color:#6c757d;margin-top:.2rem;">Usato solo se "Prezzo annuale" lasciato vuoto.</div>
+                        <div style="font-size:.68rem;color:var(--mute);margin-top:.2rem;">Usato solo se "Prezzo annuale" lasciato vuoto.</div>
                     </div>
                 </div>
                 <div class="adm-form-grid">
@@ -143,26 +143,26 @@ $colors = ['#1565C0', '#7B1FA2', '#E65100', '#2E7D32', '#C62828'];
                     <input type="number" name="price_semiannual" class="adm-form-input" min="0" step="0.01"
                            value="<?= !empty($editPlan['price_semiannual']) ? number_format((float)$editPlan['price_semiannual'], 2, '.', '') : '' ?>"
                            placeholder="Es. 279.00">
-                    <div style="font-size:.68rem;color:#6c757d;margin-top:.2rem;">Cifra esatta. Lascia vuoto per calcolo automatico da "mesi pagati".</div>
+                    <div style="font-size:.68rem;color:var(--mute);margin-top:.2rem;">Cifra esatta. Lascia vuoto per calcolo automatico da "mesi pagati".</div>
                 </div>
                 <div>
                     <label class="adm-form-label">Prezzo annuale (&euro;)</label>
                     <input type="number" name="price_annual" class="adm-form-input" min="0" step="0.01"
                            value="<?= !empty($editPlan['price_annual']) ? number_format((float)$editPlan['price_annual'], 2, '.', '') : '' ?>"
                            placeholder="Es. 1290.00">
-                    <div style="font-size:.68rem;color:#6c757d;margin-top:.2rem;">Cifra esatta. Lascia vuoto per calcolo automatico.</div>
+                    <div style="font-size:.68rem;color:var(--mute);margin-top:.2rem;">Cifra esatta. Lascia vuoto per calcolo automatico.</div>
                 </div>
             </div>
             <div class="adm-form-grid">
                 <div>
                     <label class="adm-form-label">Mesi pagati (Semestrale) <span style="font-weight:400;color:#999;">— fallback</span></label>
                     <input type="number" name="billing_months_semi" class="adm-form-input" min="1" max="6" value="<?= (int)($editPlan['billing_months_semi'] ?? 5) ?>">
-                    <div style="font-size:.68rem;color:#6c757d;margin-top:.2rem;">Usato solo se "Prezzo semestrale" lasciato vuoto.</div>
+                    <div style="font-size:.68rem;color:var(--mute);margin-top:.2rem;">Usato solo se "Prezzo semestrale" lasciato vuoto.</div>
                 </div>
                 <div>
                     <label class="adm-form-label">Mesi pagati (Annuale) <span style="font-weight:400;color:#999;">— fallback</span></label>
                     <input type="number" name="billing_months_annual" class="adm-form-input" min="1" max="12" value="<?= (int)($editPlan['billing_months_annual'] ?? 10) ?>">
-                    <div style="font-size:.68rem;color:#6c757d;margin-top:.2rem;">Usato solo se "Prezzo annuale" lasciato vuoto.</div>
+                    <div style="font-size:.68rem;color:var(--mute);margin-top:.2rem;">Usato solo se "Prezzo annuale" lasciato vuoto.</div>
                 </div>
             </div>
             <div class="adm-form-grid">
@@ -240,7 +240,7 @@ $colors = ['#1565C0', '#7B1FA2', '#E65100', '#2E7D32', '#C62828'];
                 <span class="adm-plan-svc-tag"><?= e($svc['name']) ?></span>
                 <?php endforeach; ?>
                 <?php if (empty($plan['services'])): ?>
-                <span style="font-size:.72rem;color:#adb5bd;font-style:italic;">Nessun servizio associato</span>
+                <span style="font-size:.72rem;color:var(--faint);font-style:italic;">Nessun servizio associato</span>
                 <?php endif; ?>
             </div>
         </div>

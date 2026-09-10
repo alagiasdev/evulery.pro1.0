@@ -28,14 +28,14 @@ $tabs = [
             <div class="admin-stat-value">&euro;<?= number_format($mrr, 0, ',', '.') ?></div>
             <div class="admin-stat-label"><?= ($mrrCommission ?? 0) > 0 ? 'MRR netto' : 'MRR totale' ?></div>
             <?php if (($mrrReseller ?? 0) > 0 || ($mrrDirect ?? 0) > 0): ?>
-                <div style="font-size:.68rem;color:#6c757d;margin-top:4px;line-height:1.45;">
-                    <span style="color:#00844A;font-weight:600;">€<?= number_format($mrrDirect ?? 0, 0, ',', '.') ?> diretto</span>
+                <div style="font-size:.68rem;color:var(--mute);margin-top:4px;line-height:1.45;">
+                    <span style="color:var(--brand);font-weight:600;">€<?= number_format($mrrDirect ?? 0, 0, ',', '.') ?> diretto</span>
                     &middot;
                     <span style="color:#7B1FA2;font-weight:600;">€<?= number_format($mrrReseller ?? 0, 0, ',', '.') ?> reseller</span>
                 </div>
             <?php endif; ?>
             <?php if (($mrrCommission ?? 0) > 0): ?>
-                <div style="font-size:.64rem;color:#adb5bd;margin-top:2px;line-height:1.4;" title="Il canone reseller è già al netto della commissione ricorrente riconosciuta al reseller (revenue-share lifetime). Il setup una-tantum non è incluso.">
+                <div style="font-size:.64rem;color:var(--faint);margin-top:2px;line-height:1.4;" title="Il canone reseller è già al netto della commissione ricorrente riconosciuta al reseller (revenue-share lifetime). Il setup una-tantum non è incluso.">
                     lordo €<?= number_format($mrrGross ?? 0, 0, ',', '.') ?> &middot; &minus;€<?= number_format($mrrCommission ?? 0, 0, ',', '.') ?> commissioni/mese
                 </div>
             <?php endif; ?>
@@ -200,7 +200,7 @@ $tabs = [
                                 <i class="bi bi-person-check-fill"></i> <?= e($rName ?: 'Reseller #' . $s['acquired_by_reseller_id']) ?>
                             </span>
                         <?php else: ?>
-                            <span style="font-size:.72rem;color:#adb5bd;">— diretto</span>
+                            <span style="font-size:.72rem;color:var(--faint);">— diretto</span>
                         <?php endif; ?>
                     </span>
                 </div>
@@ -246,13 +246,13 @@ $tabs = [
                                 <?= e($rName ?: 'Reseller #' . $s['acquired_by_reseller_id']) ?>
                             </span>
                         <?php else: ?>
-                            <span style="font-size:.72rem;color:#adb5bd;">— diretto</span>
+                            <span style="font-size:.72rem;color:var(--faint);">— diretto</span>
                         <?php endif; ?>
                     </td>
                     <td>
                         <div style="font-weight:600;">&euro;<?= number_format($s['_calcPrice']['total'], 2, ',', '.') ?></div>
-                        <div style="font-size:.68rem;color:#6c757d;"><?= $s['_cycleLabel'] ?><?php if ($s['_extraDisc'] > 0): ?> &middot; <span style="color:#2E7D32;">-<?= number_format($s['_extraDisc'], 0) ?>%</span><?php endif; ?></div>
-                        <div style="font-size:.65rem;color:#adb5bd;">&euro;<?= number_format($s['_calcPrice']['monthly'], 2, ',', '.') ?>/mese</div>
+                        <div style="font-size:.68rem;color:var(--mute);"><?= $s['_cycleLabel'] ?><?php if ($s['_extraDisc'] > 0): ?> &middot; <span style="color:#2E7D32;">-<?= number_format($s['_extraDisc'], 0) ?>%</span><?php endif; ?></div>
+                        <div style="font-size:.65rem;color:var(--faint);">&euro;<?= number_format($s['_calcPrice']['monthly'], 2, ',', '.') ?>/mese</div>
                     </td>
                     <td><?= $s['_statusBadge'] ?></td>
                     <td class="cell-date"><?= $s['_expiryHtml'] ?></td>

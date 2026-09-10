@@ -284,7 +284,7 @@ $defaultStyle = ['icon' => 'bi-circle', 'bg' => '#F5F5F5', 'color' => '#757575']
             </div>
             <?php endif; ?>
             <?php if (!$hasAlerts): ?>
-            <div style="text-align:center;padding:1.5rem;color:#adb5bd;">
+            <div style="text-align:center;padding:1.5rem;color:var(--faint);">
                 <i class="bi bi-check-circle" style="font-size:1.5rem;display:block;margin-bottom:.35rem;color:#2E7D32;"></i>
                 <span style="font-size:.82rem;">Tutto in ordine, nessun avviso</span>
             </div>

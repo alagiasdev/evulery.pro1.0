@@ -105,7 +105,7 @@ $notes  = $profile['notes'] ?? ($old['notes'] ?? '');
         <h1 style="font-size:1.5rem;font-weight:800;letter-spacing:-.5px;margin:0;">
             <?= $isEdit ? 'Modifica reseller' : 'Nuovo reseller' ?>
         </h1>
-        <div style="font-size:.85rem;color:#6c757d;margin-top:4px;">
+        <div style="font-size:.85rem;color:var(--mute);margin-top:4px;">
             <?= $isEdit
                 ? 'Gestisci dati utente e commissioni concordate'
                 : 'Crea un account con ruolo reseller e definisci le commissioni personalizzate' ?>
@@ -128,15 +128,15 @@ $notes  = $profile['notes'] ?? ($old['notes'] ?? '');
             ? url("admin/users/reseller/{$exId}/edit")
             : url('admin/users') . '?q=' . urlencode($existingUser['email'] ?? '');
     ?>
-    <div style="background:#FFEBEE;border-left:4px solid #C62828;border-radius:8px;padding:14px 18px;margin-bottom:1rem;font-size:.88rem;color:#1a1d23;line-height:1.6;">
+    <div style="background:#FFEBEE;border-left:4px solid #C62828;border-radius:8px;padding:14px 18px;margin-bottom:1rem;font-size:.88rem;color:var(--ink);line-height:1.6;">
         <strong style="color:#C62828;"><i class="bi bi-exclamation-triangle-fill"></i> Esiste già un account con questa email</strong>
         <div style="margin-top:8px;">
             <strong><?= e($exFullName ?: '(senza nome)') ?></strong> ·
             ruolo <strong><?= e($exRole) ?></strong> ·
             <?php if ($exActive): ?>
-                <span style="color:#00844A;font-weight:600;">attivo</span>
+                <span style="color:var(--brand);font-weight:600;">attivo</span>
             <?php else: ?>
-                <span style="color:#6c757d;font-weight:600;">disattivato</span>
+                <span style="color:var(--mute);font-weight:600;">disattivato</span>
             <?php endif; ?>
             <?php if (!empty($existingUser['created_at'])): ?>
                 · creato il <?= format_date($existingUser['created_at'], 'd/m/Y') ?>
@@ -146,7 +146,7 @@ $notes  = $profile['notes'] ?? ($old['notes'] ?? '');
             <a href="<?= e($exEditUrl) ?>" style="display:inline-flex;align-items:center;gap:6px;background:#C62828;color:#fff;padding:.45rem .9rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:.82rem;">
                 <i class="bi bi-arrow-up-right-circle"></i> Apri scheda utente
             </a>
-            <span style="margin-left:8px;color:#6c757d;font-size:.78rem;">
+            <span style="margin-left:8px;color:var(--mute);font-size:.78rem;">
                 Cambia l'email se vuoi davvero creare un nuovo reseller.
             </span>
         </div>

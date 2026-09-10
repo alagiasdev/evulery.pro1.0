@@ -137,7 +137,7 @@ $totalPages = max(1, (int)ceil($totalCount / $limit));
 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;">
     <div>
         <h1 style="font-size:1.5rem;font-weight:800;letter-spacing:-.5px;margin:0;">Lead</h1>
-        <div style="font-size:.85rem;color:#6c757d;margin-top:4px;">Gestione richieste demo dal sito + assegnazione manuale ai reseller</div>
+        <div style="font-size:.85rem;color:var(--mute);margin-top:4px;">Gestione richieste demo dal sito + assegnazione manuale ai reseller</div>
     </div>
 </div>
 
@@ -206,7 +206,7 @@ $totalPages = max(1, (int)ceil($totalCount / $limit));
             <option value="all" <?= $per === 'all' ? 'selected' : '' ?>>Sempre</option>
         </select>
     </div>
-    <button type="submit" style="background:#00844A;color:#fff;padding:.45rem .9rem;border:0;border-radius:6px;font-weight:600;font-size:.82rem;cursor:pointer;">
+    <button type="submit" style="background:var(--brand);color:#fff;padding:.45rem .9rem;border:0;border-radius:6px;font-weight:600;font-size:.82rem;cursor:pointer;">
         <i class="bi bi-funnel"></i> Filtra
     </button>
 </form>
@@ -254,7 +254,7 @@ document.querySelectorAll('.lead-filter-auto').forEach(function (s) {
                             <td>
                                 <?php
                                 if (empty($l['next_followup_at'])) {
-                                    echo '<span style="font-size:.78rem;color:#adb5bd;">&mdash;</span>';
+                                    echo '<span style="font-size:.78rem;color:var(--faint);">&mdash;</span>';
                                 } else {
                                     $today = strtotime(date('Y-m-d'));
                                     $fu    = strtotime(date('Y-m-d', strtotime($l['next_followup_at'])));
@@ -266,8 +266,8 @@ document.querySelectorAll('.lead-filter-auto').forEach(function (s) {
                                     } elseif ($diff === 1) {
                                         echo '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:600;color:#1565C0;background:#E3F2FD;border:1px solid #1565C0;">Domani</span>';
                                     } else {
-                                        echo '<span style="font-size:.78rem;color:#495057;">tra ' . $diff . ' giorni</span>';
-                                        echo '<span style="display:block;font-size:.7rem;color:#adb5bd;margin-top:2px;">' . date('d/m/Y', $fu) . '</span>';
+                                        echo '<span style="font-size:.78rem;color:var(--body);">tra ' . $diff . ' giorni</span>';
+                                        echo '<span style="display:block;font-size:.7rem;color:var(--faint);margin-top:2px;">' . date('d/m/Y', $fu) . '</span>';
                                     }
                                 }
                                 ?>
