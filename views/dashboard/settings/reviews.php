@@ -39,7 +39,7 @@ $platformLabel = $tenant['review_platform_label'] ?? '';
 
                 <!-- 2. Link Recensione -->
                 <div class="card section-card mb-3">
-                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid #f0f0f0; padding:.85rem 1.1rem;">
+                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid #e9ecef; padding:.85rem 1.1rem;">
                         <div style="background:var(--brand, #00844A); color:#fff; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.85rem;">
                             <i class="bi bi-link-45deg"></i>
                         </div>
@@ -76,7 +76,7 @@ $platformLabel = $tenant['review_platform_label'] ?? '';
 
                 <!-- 3. Tempistica -->
                 <div class="card section-card mb-3">
-                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid #f0f0f0; padding:.85rem 1.1rem;">
+                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid #e9ecef; padding:.85rem 1.1rem;">
                         <div style="background:#7C4DFF; color:#fff; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.85rem;">
                             <i class="bi bi-clock-history"></i>
                         </div>
@@ -122,7 +122,7 @@ $platformLabel = $tenant['review_platform_label'] ?? '';
 
                 <!-- 4. Filtro sentimento -->
                 <div class="card section-card mb-3">
-                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid #f0f0f0; padding:.85rem 1.1rem;">
+                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid #e9ecef; padding:.85rem 1.1rem;">
                         <div style="background:#FF7043; color:#fff; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.85rem;">
                             <i class="bi bi-emoji-smile"></i>
                         </div>
@@ -168,7 +168,7 @@ $platformLabel = $tenant['review_platform_label'] ?? '';
 
                 <!-- 5. Template email -->
                 <div class="card section-card mb-3">
-                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid #f0f0f0; padding:.85rem 1.1rem;">
+                    <div class="card-header d-flex align-items-center gap-2" style="background:none; border-bottom:1px solid #e9ecef; padding:.85rem 1.1rem;">
                         <div style="background:#42A5F5; color:#fff; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.85rem;">
                             <i class="bi bi-envelope-paper"></i>
                         </div>

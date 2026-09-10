@@ -171,7 +171,7 @@
                 ?>
                 <div class="d-flex align-items-center gap-2 mb-1">
                     <div style="font-size:.72rem; color:#FFC107; min-width:30px; text-align:right;"><?= str_repeat('★', $star) ?></div>
-                    <div style="flex:1; height:8px; background:#f0f0f0; border-radius:4px; overflow:hidden;">
+                    <div style="flex:1; height:8px; background:#e9ecef; border-radius:4px; overflow:hidden;">
                         <div style="height:100%; width:<?= $pct ?>%; background:<?= $colors[$star] ?>; border-radius:4px;"></div>
                     </div>
                     <div style="font-size:.68rem; color:#6c757d; min-width:20px;"><?= $cnt ?></div>

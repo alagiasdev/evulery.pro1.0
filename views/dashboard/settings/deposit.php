@@ -327,7 +327,7 @@ $mealCategories = $mealCategories ?? [];
                             </div>
 
                             <!-- Verifica webhook (read-only via API Stripe) -->
-                            <div style="margin-top:1rem;padding-top:.9rem;border-top:1px solid #f0f0f0;">
+                            <div style="margin-top:1rem;padding-top:.9rem;border-top:1px solid #e9ecef;">
                                 <button type="button" id="whVerifyBtn" class="btn btn-sm" style="background:#635BFF;color:#fff;border:none;font-weight:600;font-size:.8rem;">
                                     <i class="bi bi-broadcast me-1"></i> Verifica webhook
                                 </button>

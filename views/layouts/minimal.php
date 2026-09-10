@@ -15,7 +15,7 @@
         .manage-header h1{font-size:1.25rem;font-weight:700;margin:0 0 4px;}
         .manage-header p{font-size:.82rem;opacity:.8;margin:0;}
         .manage-body{padding:24px;}
-        .manage-detail{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #f0f0f0;}
+        .manage-detail{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #e9ecef;}
         .manage-detail:last-child{border-bottom:none;}
         .manage-detail-icon{width:40px;height:40px;border-radius:10px;background:#f8f9fa;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#00844A;flex-shrink:0;}
         .manage-detail-label{font-size:.7rem;color:#6c757d;text-transform:uppercase;letter-spacing:.3px;font-weight:500;}
@@ -30,11 +30,11 @@
         .manage-btn{display:block;width:100%;padding:12px;border-radius:10px;font-size:.88rem;font-weight:600;text-align:center;cursor:pointer;border:none;text-decoration:none;transition:all .15s;}
         .manage-btn-cancel{background:#FFEBEE;color:#C62828;}
         .manage-btn-cancel:hover{background:#C62828;color:#fff;}
-        .manage-btn-back{background:#f0f0f0;color:#495057;}
+        .manage-btn-back{background:#e9ecef;color:#495057;}
         .manage-btn-back:hover{background:#e0e0e0;color:#1a1d23;}
         .manage-note{background:#FFF3E0;border-radius:10px;padding:12px 16px;font-size:.82rem;color:#E65100;margin-bottom:16px;}
         .manage-policy{background:#f8f9fa;border-radius:10px;padding:12px 16px;font-size:.78rem;color:#6c757d;margin-top:16px;}
-        .manage-footer{text-align:center;padding:16px 24px;background:#f8f9fa;border-top:1px solid #f0f0f0;font-size:.72rem;color:#adb5bd;}
+        .manage-footer{text-align:center;padding:16px 24px;background:#f8f9fa;border-top:1px solid #e9ecef;font-size:.72rem;color:#adb5bd;}
         .flash-msg{padding:10px 16px;border-radius:8px;font-size:.85rem;margin-bottom:16px;font-weight:500;}
         .flash-success{background:#E8F5E9;color:#2E7D32;}
         .flash-danger{background:#FFEBEE;color:#C62828;}

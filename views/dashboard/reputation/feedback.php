@@ -46,7 +46,7 @@ $currentStatus = $filters['feedback_status'] ?? '';
 
 <div class="card section-card">
     <?php foreach ($items as $idx => $fb): ?>
-    <div class="rv-feedback-item" style="<?= $idx > 0 ? 'border-top:1px solid #f0f0f0;' : '' ?>">
+    <div class="rv-feedback-item" style="<?= $idx > 0 ? 'border-top:1px solid #e9ecef;' : '' ?>">
         <div class="d-flex gap-3 p-3">
             <!-- Avatar -->
             <?php

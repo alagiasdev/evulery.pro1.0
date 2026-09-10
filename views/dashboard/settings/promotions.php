@@ -288,7 +288,7 @@ function promoBadgeColor(string $type): string {
                     </div>
 
                     <!-- Submit -->
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:1.25rem; padding-top:1rem; border-top:1px solid #f0f0f0;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:1.25rem; padding-top:1rem; border-top:1px solid #e9ecef;">
                         <span style="font-size:.72rem; color:#adb5bd;"><i class="bi bi-info-circle me-1"></i>La promozione sara visibile immediatamente nel widget</span>
                         <button type="submit" class="btn-save" style="padding:.45rem 1.25rem;">
                             <i class="bi bi-check-circle me-1"></i> Crea promozione

@@ -19,6 +19,7 @@ colors:
   faint: "#adb5bd"
   hairline: "#e9ecef"
   hairline-strong: "#dee2e6"
+  hairline-neutral: "#f0f0f0"   # SOLO superfici calde/pubbliche, vedi "Superfici"
   canvas: "#f5f6fa"
   canvas-reseller: "#f5f6f8"
   surface: "#ffffff"
@@ -238,6 +239,20 @@ badge e riquadri-icona.
 e `{colors.surface-softer}` per intestazioni di tabella e righe in evidenza al passaggio
 del mouse. I separatori sono `{colors.hairline}`; `{colors.hairline-strong}` solo dove
 serve un contorno percepibile, come i campi di un form.
+
+Esiste un **terzo grigio di linea**, `{colors.hairline-neutral}`, e la differenza non è
+un capriccio: `#e9ecef` e `#dee2e6` sono grigi **freddi** (il blu è più alto del rosso),
+`#f0f0f0` è **neutro puro** (R = G = B). Il neutro appartiene alle superfici calde, che
+stanno su fondi avorio e dove un grigio bluastro stonerebbe: widget di prenotazione e
+menù digitale, dove ha già un nome (`--bw-border-light`, `--dm-border-light`), e la
+board consegne. Nelle superfici fredde — dashboard, admin, vetrina, reseller — la linea
+è `{colors.hairline}` e basta.
+
+Fino al 10/09/2026 questa regola non era scritta e il neutro era finito in 103 punti
+delle superfici fredde, dove conviveva con `{colors.hairline}` senza alcun criterio: nella
+dashboard `.cal-nav button:hover` usava l'uno e `.page-back a:hover` l'altro, per fare
+la stessa identica cosa. Sono stati riportati tutti a `{colors.hairline}`. **Su una
+superficie fredda, `#f0f0f0` è un errore.**
 
 ### Testo
 Quattro livelli, non di più: `{colors.ink}` per titoli e numeri, `{colors.body}` per il

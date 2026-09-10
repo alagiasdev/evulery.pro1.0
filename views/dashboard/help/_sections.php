@@ -631,7 +631,7 @@ HTML
         <strong>Configura il record DNS sul tuo registrar</strong><br>
         Accedi al pannello del registrar dove hai comprato il dominio. Vai nella sezione <strong>Gestione DNS</strong> (o &ldquo;Zone DNS&rdquo;) del tuo dominio. Aggiungi un record di tipo <strong>CNAME</strong>:
         <table style="margin-top:.5rem; font-size:.85rem; border-collapse: collapse;">
-            <tr style="background:#f0f0f0;"><th style="padding:4px 8px; text-align:left;">Campo</th><th style="padding:4px 8px; text-align:left;">Valore</th></tr>
+            <tr style="background:#e9ecef;"><th style="padding:4px 8px; text-align:left;">Campo</th><th style="padding:4px 8px; text-align:left;">Valore</th></tr>
             <tr><td style="padding:4px 8px; border-top: 1px solid #ddd;"><strong>Tipo</strong></td><td style="padding:4px 8px; border-top: 1px solid #ddd;">CNAME</td></tr>
             <tr><td style="padding:4px 8px;"><strong>Nome / Host</strong></td><td style="padding:4px 8px;"><code>prenotazioni</code> (solo la parte prima del dominio)</td></tr>
             <tr><td style="padding:4px 8px;"><strong>Valore / Punta a</strong></td><td style="padding:4px 8px;"><code>dash.evulery.it</code></td></tr>

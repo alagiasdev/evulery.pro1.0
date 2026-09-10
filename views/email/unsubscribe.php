@@ -16,7 +16,7 @@
         .unsub-text { font-size: .9rem; color: #6c757d; line-height: 1.6; margin-bottom: 1.5rem; }
         .unsub-btn { display: inline-block; background: #dc3545; color: #fff; border: none; border-radius: 10px; padding: .75rem 1.5rem; font-size: .92rem; font-weight: 700; cursor: pointer; transition: background .15s; }
         .unsub-btn:hover { background: #b02a37; }
-        .unsub-footer { font-size: .75rem; color: #ced4da; border-top: 1px solid #f0f0f0; padding-top: 1.25rem; margin-top: 1.5rem; }
+        .unsub-footer { font-size: .75rem; color: #ced4da; border-top: 1px solid #e9ecef; padding-top: 1.25rem; margin-top: 1.5rem; }
     </style>
 </head>
 <body>

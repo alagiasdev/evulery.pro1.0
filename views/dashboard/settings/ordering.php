@@ -295,7 +295,7 @@ $isZones = ($tenant['delivery_mode'] ?? '') === 'zones';
                 <!-- Existing zones -->
                 <?php if (!empty($deliveryZones)): ?>
                 <?php foreach ($deliveryZones as $zone): ?>
-                <div class="d-flex align-items-center gap-2 py-2" style="border-bottom:1px solid #f0f0f0;">
+                <div class="d-flex align-items-center gap-2 py-2" style="border-bottom:1px solid #e9ecef;">
                     <div style="min-width:90px;">
                         <div style="font-weight:600; font-size:.82rem;"><?= e($zone['name']) ?></div>
                     </div>

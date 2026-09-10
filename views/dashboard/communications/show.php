@@ -93,29 +93,29 @@ $segLabels = [
                 <i class="bi bi-bar-chart me-1"></i> Statistiche
             </div>
 
-            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #f0f0f0;">
+            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #e9ecef;">
                 <span style="font-size:.82rem;color:#6c757d;">Segmento</span>
                 <span style="font-size:.82rem;font-weight:600;"><?= $segLabels[$campaign['segment_filter']] ?? '—' ?></span>
             </div>
             <?php if ($campaign['segment_filter'] === 'inactive' && $campaign['inactive_days']): ?>
-            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #f0f0f0;">
+            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #e9ecef;">
                 <span style="font-size:.82rem;color:#6c757d;">Inattivi da</span>
                 <span style="font-size:.82rem;font-weight:600;"><?= (int)$campaign['inactive_days'] ?> giorni</span>
             </div>
             <?php endif; ?>
-            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #f0f0f0;">
+            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #e9ecef;">
                 <span style="font-size:.82rem;color:#6c757d;">Destinatari</span>
                 <span style="font-size:.9rem;font-weight:700;"><?= (int)$campaign['total_recipients'] ?></span>
             </div>
-            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #f0f0f0;">
+            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #e9ecef;">
                 <span style="font-size:.82rem;color:#6c757d;">Inviate</span>
                 <span style="font-size:.9rem;font-weight:700;color:#198754;"><?= (int)$campaign['sent_count'] ?></span>
             </div>
-            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #f0f0f0;">
+            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #e9ecef;">
                 <span style="font-size:.82rem;color:#6c757d;">Fallite</span>
                 <span style="font-size:.9rem;font-weight:700;color:<?= (int)$campaign['failed_count'] > 0 ? '#dc3545' : '#adb5bd' ?>;"><?= (int)$campaign['failed_count'] ?></span>
             </div>
-            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #f0f0f0;">
+            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #e9ecef;">
                 <span style="font-size:.82rem;color:#6c757d;">Crediti usati</span>
                 <span style="font-size:.82rem;font-weight:600;"><?= (int)$campaign['credits_used'] ?></span>
             </div>

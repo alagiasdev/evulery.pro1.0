@@ -39,7 +39,7 @@
             transition: transform .12s, box-shadow .12s;
         }
         .un-cta:hover { color: #fff; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,132,74,.32); }
-        .un-contacts { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #f0f0f0; font-size: .85rem; color: #6c757d; }
+        .un-contacts { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #e9ecef; font-size: .85rem; color: #6c757d; }
         .un-contacts a { color: #00844A; text-decoration: none; font-weight: 600; }
         .un-contacts a:hover { text-decoration: underline; }
         .un-contacts-row { margin-top: .35rem; display: flex; align-items: center; justify-content: center; gap: .35rem; }

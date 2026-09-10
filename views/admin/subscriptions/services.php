@@ -111,7 +111,7 @@ $tabs = [
         </div>
         <!-- Inline edit form -->
         <div class="collapse" id="editSvc<?= $svc['id'] ?>">
-            <div style="padding:.75rem 1.25rem;background:#fafbfc;border-bottom:1px solid #f0f0f0;">
+            <div style="padding:.75rem 1.25rem;background:#fafbfc;border-bottom:1px solid #e9ecef;">
                 <form method="POST" action="<?= url("admin/subscriptions/services/{$svc['id']}") ?>">
                     <?= csrf_field() ?>
                     <div class="adm-form-grid">

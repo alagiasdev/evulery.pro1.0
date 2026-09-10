@@ -99,13 +99,13 @@
                     <i class="bi bi-bar-chart me-1"></i> Riepilogo
                 </div>
 
-                <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #f0f0f0;">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #e9ecef;">
                     <span style="font-size:.82rem;color:#6c757d;">Destinatari</span>
                     <span style="font-size:1.1rem;font-weight:700;color:#1a1d23;" id="recipient-count">
                         <i class="bi bi-arrow-repeat" style="animation:spin 1s linear infinite;font-size:.85rem;color:#adb5bd;"></i>
                     </span>
                 </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #f0f0f0;">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #e9ecef;">
                     <span style="font-size:.82rem;color:#6c757d;">Crediti necessari</span>
                     <span style="font-size:.95rem;font-weight:700;color:#dc3545;" id="credits-needed">—</span>
                 </div>

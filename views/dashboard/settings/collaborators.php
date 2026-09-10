@@ -19,7 +19,7 @@
                 <p style="font-size:.85rem;color:#6c757d;margin:0;">Nessun collaboratore. Aggiungine uno dal modulo qui a fianco.</p>
                 <?php else: ?>
                 <?php foreach ($staff as $s): ?>
-                <div style="border-bottom:1px solid #f0f0f0;padding:.6rem 0;">
+                <div style="border-bottom:1px solid #e9ecef;padding:.6rem 0;">
                     <div style="display:flex;align-items:center;justify-content:space-between;gap:.75rem;">
                         <div style="min-width:0;">
                             <div style="font-weight:600;font-size:.9rem;">

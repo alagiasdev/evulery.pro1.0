@@ -78,7 +78,7 @@ $hostForDns = $isSubdomain ? $domainParts[0] : '@';
                             <i class="bi bi-hourglass-split"></i>
                         </div>
                         <?php else: ?>
-                        <div class="status-icon" style="background:#f0f0f0;color:#6c757d;">
+                        <div class="status-icon" style="background:#e9ecef;color:#6c757d;">
                             <i class="bi bi-gear"></i>
                         </div>
                         <?php endif; ?>
@@ -100,7 +100,7 @@ $hostForDns = $isSubdomain ? $domainParts[0] : '@';
                         <i class="bi bi-clock-history me-1"></i>In attesa DNS
                     </span>
                     <?php else: ?>
-                    <span class="dns-status-badge" style="background:#f0f0f0;color:#6c757d;">
+                    <span class="dns-status-badge" style="background:#e9ecef;color:#6c757d;">
                         Non configurato
                     </span>
                     <?php endif; ?>

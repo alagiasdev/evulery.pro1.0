@@ -479,7 +479,7 @@ $sourceLabelsPrivacy = [
                             <button type="button" class="cs-data-cancel" id="csDataCancel">Annulla</button>
                         </div>
                     </form>
-                    <hr style="margin:.75rem 0;border-color:#f0f0f0;">
+                    <hr style="margin:.75rem 0;border-color:#e9ecef;">
                     <?php endif; ?>
 
                     <div class="cs-profile-section-title"><i class="bi bi-cake2"></i> Data di nascita</div>
@@ -494,7 +494,7 @@ $sourceLabelsPrivacy = [
                     </form>
 
                     <?php if (!empty($insights)): ?>
-                    <hr style="margin: .75rem 0; border-color: #f0f0f0;">
+                    <hr style="margin: .75rem 0; border-color: #e9ecef;">
                     <div class="cs-profile-section-title"><i class="bi bi-lightbulb"></i> Insight</div>
                     <div style="margin-bottom: .75rem;">
                         <?php foreach ($insights as $ins): ?>
@@ -504,7 +504,7 @@ $sourceLabelsPrivacy = [
                     <?php endif; ?>
 
                     <?php if (!empty($reservations)): ?>
-                    <hr style="margin: .75rem 0; border-color: #f0f0f0;">
+                    <hr style="margin: .75rem 0; border-color: #e9ecef;">
                     <div class="cs-profile-section-title"><i class="bi bi-graph-up"></i> Frequenza visite</div>
                     <div style="font-size:.75rem;color:#868e96;margin-bottom:.25rem;">Ultimi 6 mesi</div>
                     <div class="cs-frequency-chart">

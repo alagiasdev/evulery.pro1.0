@@ -125,7 +125,7 @@ $currentSource = $filters['source'] ?? '';
         <!-- Mobile cards -->
         <div class="d-md-none">
             <?php foreach ($items as $idx => $item): ?>
-            <div style="padding:.75rem 1rem; <?= $idx > 0 ? 'border-top:1px solid #f0f0f0;' : '' ?>">
+            <div style="padding:.75rem 1rem; <?= $idx > 0 ? 'border-top:1px solid #e9ecef;' : '' ?>">
                 <div class="d-flex align-items-center justify-content-between mb-1">
                     <div>
                         <?php if (!empty($item['first_name'])): ?>

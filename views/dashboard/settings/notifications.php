@@ -94,7 +94,7 @@ $defaults = [
                 </div>
             </div>
 
-            <div style="border-top:1px solid #f0f0f0;padding-top:.75rem;margin-top:.25rem;">
+            <div style="border-top:1px solid #e9ecef;padding-top:.75rem;margin-top:.25rem;">
                 <div style="font-size:.78rem;font-weight:600;color:#495057;margin-bottom:.5rem;">Eventi che riprodurranno il suono:</div>
                 <div class="row g-2">
                     <div class="col-md-6">
