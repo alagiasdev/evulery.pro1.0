@@ -263,9 +263,10 @@
 })();
 </script>
 <style nonce="<?= csp_nonce() ?>">
+/* Le due regole responsive che stavano qui (#broadcast-form > div e
+   #segment-radios, entrambe !important) sono state spostate in dashboard.css
+   come .comm-compose e .comm-segments. Erano selettori ID con !important:
+   vincevano su qualunque regola del foglio, quindi bloccavano il passaggio dei
+   segmenti a una colonna sola sotto i 576px. */
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@media (max-width: 768px) {
-    #broadcast-form > div { grid-template-columns: 1fr !important; }
-    #segment-radios { grid-template-columns: 1fr 1fr !important; }
-}
 </style>
