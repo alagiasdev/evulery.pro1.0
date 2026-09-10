@@ -607,7 +607,13 @@ Onestà su ciò che il sistema **non ha ancora**, così chi legge non crede di t
 
 ---
 
-*La vetrina dei componenti è in `docs/design-preview.html`: carica lo stesso
-`dashboard.css` della dashboard, quindi mostra sempre lo stato attuale. Aggiornare
-questo documento quando nasce un componente o cambia una convenzione — non per il
-colore di una singola pagina, che va invece ricondotto alle tabelle qui sopra.*
+*La vetrina dei componenti è in `docs/design-preview.html`: carica i fogli di stile
+veri, quindi mostra sempre lo stato attuale, e dal 10/09/2026 copre **tutte e dieci le
+superfici** — la dashboard in pagina, le altre nove in riquadri separati che stanno in
+`docs/preview/`. Sono file distinti per necessità: i nove fogli hanno regole su `body` e
+su classi generiche, caricarli insieme li farebbe sovrascrivere a vicenda.*
+
+*Aggiornare questo documento **e la vetrina** quando nasce un componente o cambia una
+convenzione — non per il colore di una singola pagina, che va invece ricondotto alle
+tabelle qui sopra. Se si aggiornasse solo uno dei due, in sei mesi tornerebbero a
+divergere, ed è già successo.*

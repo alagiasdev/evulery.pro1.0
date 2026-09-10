@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vetrina digitale (hub) — componenti</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="../../public/assets/css/hub.css" rel="stylesheet">
+<style>
+    /* hub.css serve DUE pagine diverse: la vetrina pubblica, che il cliente del
+       ristorante apre dal link in bio, e il pannello nelle impostazioni dove il
+       ristoratore la costruisce. Le classi del pannello usano var(--brand*), che
+       hub.css non dichiara: sulla pagina vera arrivano da dashboard.css, che il
+       controller carica insieme. Qui vanno dichiarate a mano. */
+    :root { --brand: #00844A; --brand-light: #E8F5E9; --brand-dark: #006837; }
+    body { margin: 0; padding: 18px; background: #eef0f3; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+    .sec { max-width: 520px; margin: 0 auto 34px; }
+    .sec > h3 { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #00844A; margin: 0 0 4px; }
+    .sec > p { font-size: .78rem; color: #6c757d; margin: 0 0 12px; line-height: 1.5; }
+    .pv-lbl { font-size: .66rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #adb5bd; margin: 16px 0 6px; }
+    /* .hub-public-page e' alta quanto lo schermo, com'e' giusto sulla pagina
+       vera: qui va riportata all'altezza del contenuto, o resta mezzo riquadro
+       bianco sotto il piede. */
+    .frame { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    .frame.hub-public-page { min-height: 0; }
+</style>
+</head>
+<body>
+
+<div class="sec">
+    <h3>Vetrina pubblica</h3>
+    <p>È il “link in bio” del ristorante: una pagina sola, un'azione grande in
+       evidenza e poche righe sotto. Il ristoratore sceglie una palette, quindi i
+       colori non sono il verde di marca ma i suoi — qui la palette predefinita.
+       Fondo bianco, nessun Bootstrap: carica solo le icone.</p>
+
+    <!-- Le variabili --hub-* sono dichiarate da .hub-public-page dentro hub.css,
+         e la view le riscrive sul body con la palette scelta dal ristoratore. -->
+    <div class="frame hub-public-page">
+        <div class="hub-public-cover gradient">
+            <div class="hub-public-logo">TM</div>
+        </div>
+        <div class="hub-public-body">
+            <h1 class="hub-public-name">Trattoria Da Mario</h1>
+            <p class="hub-public-tag">Cucina emiliana, sfoglia tirata a mano</p>
+
+            <a href="#" class="hub-public-cta">
+                <i class="bi bi-calendar-check"></i>
+                <div class="hub-public-cta-label">PRENOTA UN TAVOLO</div>
+                <div class="hub-public-cta-hint">Conferma immediata</div>
+            </a>
+
+            <div class="hub-public-sep">Altre cose che puoi fare</div>
+            <div class="hub-public-list">
+                <a href="#" class="hub-public-row">
+                    <span class="hub-public-row-icon"><i class="bi bi-book"></i></span>
+                    <div class="hub-public-row-text">
+                        <div class="hub-public-row-label">Guarda il menù</div>
+                        <div class="hub-public-row-sub">Aggiornato ogni settimana</div>
+                    </div>
+                    <i class="bi bi-chevron-right hub-public-row-chev"></i>
+                </a>
+                <a href="#" class="hub-public-row">
+                    <span class="hub-public-row-icon"><i class="bi bi-bag"></i></span>
+                    <div class="hub-public-row-text">
+                        <div class="hub-public-row-label">Ordina d'asporto</div>
+                        <div class="hub-public-row-sub">Pronto in 25 minuti</div>
+                    </div>
+                    <i class="bi bi-chevron-right hub-public-row-chev"></i>
+                </a>
+                <a href="#" class="hub-public-row">
+                    <span class="hub-public-row-icon"><i class="bi bi-geo-alt"></i></span>
+                    <div class="hub-public-row-text">
+                        <div class="hub-public-row-label">Come raggiungerci</div>
+                    </div>
+                    <i class="bi bi-chevron-right hub-public-row-chev"></i>
+                </a>
+            </div>
+        </div>
+        <footer class="hub-public-footer">
+            <div class="hub-public-social">
+                <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+            </div>
+            &copy; 2026 Evulery &middot; by alagias. - Soluzioni per il web
+        </footer>
+    </div>
+</div>
+
+<div class="sec">
+    <h3>Promozioni</h3>
+    <p>Pagina figlia della vetrina. Lo sconto è il primo elemento e occupa un
+       riquadro suo: si legge prima del nome. Quella in corso adesso porta
+       <code>is-live</code> e si stacca dalle altre.</p>
+    <div class="hub-promo-list">
+        <div class="hub-promo-card is-live">
+            <div class="hub-promo-discount">
+                <span class="hub-promo-discount-sign">&minus;</span><span class="hub-promo-discount-num">20</span><span class="hub-promo-discount-pct">%</span>
+            </div>
+            <div class="hub-promo-info">
+                <div class="hub-promo-head">
+                    <div class="hub-promo-name">Aperitivo del giovedì</div>
+                    <span class="hub-promo-badge"><i class="bi bi-broadcast"></i> Attiva adesso</span>
+                </div>
+                <div class="hub-promo-desc">Su tutti i cocktail, dalle 18 alle 20.</div>
+                <div class="hub-promo-meta">
+                    <span><i class="bi bi-clock"></i> Giovedì 18:00–20:00</span>
+                    <span><i class="bi bi-tag"></i> Solo bevande</span>
+                </div>
+            </div>
+        </div>
+        <div class="hub-promo-card">
+            <div class="hub-promo-discount">
+                <span class="hub-promo-discount-sign">&minus;</span><span class="hub-promo-discount-num">10</span><span class="hub-promo-discount-pct">%</span>
+            </div>
+            <div class="hub-promo-info">
+                <div class="hub-promo-head">
+                    <div class="hub-promo-name">Pranzo di lavoro</div>
+                </div>
+                <div class="hub-promo-desc">Dal lunedì al venerdì, primo e secondo.</div>
+                <div class="hub-promo-meta">
+                    <span><i class="bi bi-clock"></i> Lun–Ven 12:00–14:30</span>
+                    <span><i class="bi bi-tag"></i> Tutto il menù</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sec">
+    <h3>Il pannello che la costruisce</h3>
+    <p>Sta in <em>Impostazioni &rarr; Vetrina</em>, quindi dentro la dashboard: eredita
+       il verde di marca e le forme del gestionale, non la palette del ristoratore.</p>
+
+    <div class="pv-lbl">Interruttore generale, acceso e spento</div>
+    <!-- Il bordo sinistro dice a colpo d'occhio se la vetrina e' online: verde
+         accesa, rosso spenta. E' l'unico punto della pagina con quel segnale. -->
+    <div class="hub-master-card enabled" style="background:#fff;padding:14px 16px;border-radius:12px;margin-bottom:8px;">
+        <div class="hub-toggle-row">
+            <div>
+                <div class="hub-toggle-label">Vetrina attiva</div>
+                <div class="hub-toggle-sub">La pagina pubblica è raggiungibile.</div>
+            </div>
+        </div>
+    </div>
+    <div class="hub-master-card disabled" style="background:#fff;padding:14px 16px;border-radius:12px;">
+        <div class="hub-toggle-row">
+            <div>
+                <div class="hub-toggle-label">Vetrina disattivata</div>
+                <div class="hub-toggle-sub">Chi apre il link vede una pagina di cortesia.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pv-lbl">Caricamento di logo e copertina</div>
+    <div class="hub-uploader" data-field="logo">
+        <label class="hub-uploader-drop">
+            <i class="bi bi-cloud-upload"></i>
+            <span class="hub-uploader-text">Trascina qui o <strong>sfoglia</strong></span>
+            <span class="hub-uploader-meta">PNG/JPG/WebP · 200x200 min · max 2 MB</span>
+        </label>
+    </div>
+
+    <div class="pv-lbl">Palette scelta dal ristoratore</div>
+    <div class="hub-palette-grid">
+        <label class="hub-palette-card selected">
+            <div class="hub-palette-swatch">
+                <div style="background:#00844A;"></div><div style="background:#E8F5E9;"></div><div style="background:#006837;"></div>
+            </div>
+            <div class="hub-palette-name">Verde Evulery</div>
+        </label>
+        <label class="hub-palette-card">
+            <div class="hub-palette-swatch">
+                <div style="background:#B71C1C;"></div><div style="background:#FFEBEE;"></div><div style="background:#7F0000;"></div>
+            </div>
+            <div class="hub-palette-name">Rosso osteria</div>
+        </label>
+        <label class="hub-palette-card">
+            <div class="hub-palette-swatch">
+                <div style="background:#1A237E;"></div><div style="background:#E8EAF6;"></div><div style="background:#0D1257;"></div>
+            </div>
+            <div class="hub-palette-name">Blu notte</div>
+        </label>
+    </div>
+
+    <div class="pv-lbl">Righe riordinabili, con quelle bloccate</div>
+    <!-- La maniglia diventa un lucchetto sulle voci di sistema: si vede subito
+         che quella riga non si tocca, invece di scoprirlo trascinandola. -->
+    <ul class="hub-actions-list" style="list-style:none;padding:0;margin:0;">
+        <li class="hub-action-item">
+            <i class="bi bi-grip-vertical hub-drag-handle"></i>
+            <span class="hub-action-icon"><i class="bi bi-book"></i></span>
+            <div class="hub-action-text">
+                <div class="hub-action-label">Guarda il menù</div>
+                <div class="hub-action-sub">Aggiornato ogni settimana</div>
+            </div>
+            <button type="button" class="hub-action-delete"><i class="bi bi-trash"></i></button>
+        </li>
+        <li class="hub-action-item">
+            <i class="bi bi-lock-fill hub-drag-handle locked"></i>
+            <span class="hub-action-icon"><i class="bi bi-calendar-check"></i></span>
+            <div class="hub-action-text">
+                <div class="hub-action-label">Prenota un tavolo</div>
+                <div class="hub-action-sub">Voce di sistema, non eliminabile</div>
+            </div>
+        </li>
+    </ul>
+
+    <div class="pv-lbl">Indirizzo pubblico e codice QR</div>
+    <div class="hub-vurl-card">
+        <div class="hub-vurl-label"><i class="bi bi-link-45deg"></i> La tua Vetrina è online</div>
+        <div class="hub-vurl-url">evulery.it/trattoria-da-mario/hub</div>
+        <div class="hub-vurl-hint">Inseriscilo nella bio Instagram, sul biglietto da visita, sui volantini.</div>
+    </div>
+    <div class="hub-qr-card" style="margin-top:10px;">
+        <div class="hub-qr-url">evulery.it/trattoria-da-mario/hub</div>
+        <div class="hub-qr-actions">
+            <button type="button" class="hub-qr-btn"><i class="bi bi-download me-1"></i> Scarica PNG</button>
+            <button type="button" class="hub-qr-btn"><i class="bi bi-printer me-1"></i> Stampa</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
