@@ -11,6 +11,7 @@ return array(
     'App\\Controllers\\Admin\\DashboardController' => $baseDir . '/app/Controllers/Admin/DashboardController.php',
     'App\\Controllers\\Admin\\DocumentsController' => $baseDir . '/app/Controllers/Admin/DocumentsController.php',
     'App\\Controllers\\Admin\\LeadsController' => $baseDir . '/app/Controllers/Admin/LeadsController.php',
+    'App\\Controllers\\Admin\\LogsController' => $baseDir . '/app/Controllers/Admin/LogsController.php',
     'App\\Controllers\\Admin\\MigrationsController' => $baseDir . '/app/Controllers/Admin/MigrationsController.php',
     'App\\Controllers\\Admin\\SubscriptionsController' => $baseDir . '/app/Controllers/Admin/SubscriptionsController.php',
     'App\\Controllers\\Admin\\TenantsController' => $baseDir . '/app/Controllers/Admin/TenantsController.php',

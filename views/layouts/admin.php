@@ -88,6 +88,9 @@
         <a class="sidebar-link <?= ($activeMenu ?? '') === 'activity-log' ? 'active' : '' ?>" href="<?= url('admin/activity-log') ?>">
             <i class="bi bi-clock-history"></i> Log Attivit&agrave;
         </a>
+        <a class="sidebar-link <?= ($activeMenu ?? '') === 'logs' ? 'active' : '' ?>" href="<?= url('admin/logs') ?>">
+            <i class="bi bi-journal-text"></i> Log applicativi
+        </a>
         <a class="sidebar-link <?= ($activeMenu ?? '') === 'migrations' ? 'active' : '' ?>" href="<?= url('admin/migrations') ?>">
             <i class="bi bi-database-fill-gear"></i> Migration DB
         </a>

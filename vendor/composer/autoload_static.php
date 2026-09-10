@@ -124,6 +124,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Controllers\\Admin\\DashboardController' => __DIR__ . '/../..' . '/app/Controllers/Admin/DashboardController.php',
         'App\\Controllers\\Admin\\DocumentsController' => __DIR__ . '/../..' . '/app/Controllers/Admin/DocumentsController.php',
         'App\\Controllers\\Admin\\LeadsController' => __DIR__ . '/../..' . '/app/Controllers/Admin/LeadsController.php',
+        'App\\Controllers\\Admin\\LogsController' => __DIR__ . '/../..' . '/app/Controllers/Admin/LogsController.php',
         'App\\Controllers\\Admin\\MigrationsController' => __DIR__ . '/../..' . '/app/Controllers/Admin/MigrationsController.php',
         'App\\Controllers\\Admin\\SubscriptionsController' => __DIR__ . '/../..' . '/app/Controllers/Admin/SubscriptionsController.php',
         'App\\Controllers\\Admin\\TenantsController' => __DIR__ . '/../..' . '/app/Controllers/Admin/TenantsController.php',

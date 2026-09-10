@@ -11,6 +11,7 @@ use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\TenantsController;
 use App\Controllers\Admin\SubscriptionsController;
 use App\Controllers\Admin\ActivityLogController;
+use App\Controllers\Admin\LogsController;
 use App\Controllers\Admin\MigrationsController;
 use App\Controllers\Admin\UsersController;
 use App\Controllers\Admin\LeadsController;
@@ -322,6 +323,9 @@ $router->group('/admin', ['auth', 'admin', 'csrf', 'dashboard-ratelimit'], funct
     // Activity Log
     $r->get('/activity-log', [ActivityLogController::class, 'index']);
     $r->post('/activity-log/purge', [ActivityLogController::class, 'purge']);
+    // Log applicativi (storage/logs) — lettura + ricerca + pulizia
+    $r->get('/logs', [LogsController::class, 'index']);
+    $r->post('/logs/purge', [LogsController::class, 'purge']);
     // Migrations DB
     $r->get('/migrations', [MigrationsController::class, 'index']);
     $r->post('/migrations/run', [MigrationsController::class, 'run']);
