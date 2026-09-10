@@ -153,6 +153,18 @@ surfaces:
     canvas: "#f5f6f8"
     rounded: "10px / 12px"
     style: inline (MailService)
+  accesso:
+    audience: ristoratore, reseller, noi
+    canvas: "#f5f6f8"
+    rounded: 8px
+    prefix: "auth-"
+    style: inline (views/layouts/auth.php) — nessun foglio, nessun CDN
+  gestisci-prenotazione:
+    audience: cliente del ristorante
+    canvas: "#f5f6f8"
+    rounded: "16px card / 10px dettagli"
+    prefix: "manage-"
+    style: inline (views/layouts/minimal.php)
 
 components:
   stat-card:
@@ -434,17 +446,24 @@ contenitore**, mai trascinare la pagina.
 
 ---
 
-## Le dieci superfici
+## Le dodici superfici
 
 Tutto quanto sopra descrive **la dashboard del ristoratore**, che è la superficie più
-grande (267 KB di CSS su 429 complessivi). Ma il prodotto ne ha **dieci**, e **sei** le
-vede il **cliente del ristorante**, non il nostro cliente: sono quelle su cui si gioca
-la reputazione di chi ci paga.
+grande (267 KB di CSS su 429 complessivi). Ma il prodotto ne ha **dodici**, e **sette**
+le vede il **cliente del ristorante**, non il nostro cliente: sono quelle su cui si
+gioca la reputazione di chi ci paga.
 
-Dieci superfici ma **nove fogli di stile**: la mail transazionale non ne ha uno, il suo
-stile è scritto a mano dentro `MailService` perché i client di posta ignorano il CSS
-esterno. Da qui la confusione fra i due numeri — dove si legge "nove" riferito ai
-*fogli* è corretto, riferito alle *superfici* no.
+Dodici superfici ma **nove fogli di stile**: tre non ne hanno uno e portano lo stile
+scritto a mano dentro il PHP — la mail transazionale in `MailService`, perché i client
+di posta ignorano il CSS esterno, e le due pagine servite da un layout proprio,
+*Accesso* e *Gestisci prenotazione*. Da qui la confusione fra i due numeri: dove si
+legge "nove" riferito ai *fogli* è corretto, riferito alle *superfici* no.
+
+Le ultime due sono rimaste fuori da questo documento fino al 10/09/2026, ed è
+significativo quali fossero: la pagina di **accesso**, che il ristoratore vede ogni
+giorno prima di tutto il resto, e **gestisci prenotazione**, che il cliente del
+ristorante raggiunge dal link di ogni email di conferma. Non essendo in nessun foglio
+non comparivano in nessuna ricerca fatta sui `.css`.
 
 | Superficie | Chi la vede | Fondo | Raggio | Prefisso |
 |---|---|---|---|---|
@@ -458,6 +477,8 @@ esterno. Da qui la confusione fra i due numeri — dove si legge "nove" riferito
 | Area reseller | rivenditore | `#f5f6f8` | 12px | `rs-` |
 | Area admin | noi | — | 12px | `adm- admin-` |
 | Email | cliente | `#f5f6f8`, 600px | 10–12px | inline in `MailService` |
+| Accesso | ristoratore e noi | `#f5f6f8` | 8px | `auth-`, inline in `layouts/auth.php` |
+| Gestisci prenotazione | cliente | `#f5f6f8` | 16px | `manage-`, inline in `layouts/minimal.php` |
 
 ### La regola implicita che le tiene insieme
 Il **verde di marca è identico ovunque** — `#00844A`, `#006837`, `#E8F5E9` compaiono con
@@ -597,6 +618,17 @@ Onestà su ciò che il sistema **non ha ancora**, così chi legge non crede di t
 5. **Nove palette parallele.** Ogni superficie ridichiara i propri colori con un prefisso
    diverso (`--bw-*`, `--dm-*`, `--os-*`, `--rs-*`…). Il verde di marca è per fortuna
    identico ovunque, ma è ripetuto nove volte: cambiarlo significa toccare nove file.
+   Le variabili `--brand*` sono dichiarate **quattro volte** (`dashboard.css`,
+   `admin.css`, `layouts/auth.php`, e `hub.css` che le usa senza dichiararle, contando
+   su `dashboard.css` caricato accanto).
+
+5-bis. **Un ottavo del CSS non sta nei fogli di stile.** 321 classi su 2.475 — il 12% —
+   sono definite dentro un blocco `<style>` di una view, e 31 view ne hanno uno. In
+   sedici casi non è una correzione locale ma un sistema intero: `marketing/vetrina.php`
+   ne definisce 30, `admin/leads/show.php` 27, `layouts/auth.php` 28. Sono invisibili a
+   qualunque ricerca fatta sui `.css`, ed è così che due superfici sono rimaste fuori da
+   questo documento fino al 10/09/2026. **Prima di toccare una view, controllare se ha
+   un `<style>` proprio**: può contenere regole con `!important` che vincono su tutto.
 6. **Nessun componente condiviso fra superfici.** Un pulsante del widget e uno della
    dashboard non hanno una riga di CSS in comune. È il prezzo dell'isolamento del widget
    (che vive dentro siti altrui e non può ereditare nulla), ma vale anche dove non

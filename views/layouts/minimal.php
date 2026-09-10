@@ -25,7 +25,7 @@
         .manage-status.pending{background:#FFF8E1;color:#E65100;}
         .manage-status.cancelled{background:#FFEBEE;color:#C62828;}
         .manage-status.arrived{background:#E3F2FD;color:#1565C0;}
-        .manage-status.noshow{background:#F3E5F5;color:#6A1B9A;}
+        .manage-status.noshow{background:#fde8e8;color:#dc3545;}
         .manage-actions{padding:0 24px 24px;display:flex;flex-direction:column;gap:8px;}
         .manage-btn{display:block;width:100%;padding:12px;border-radius:10px;font-size:.88rem;font-weight:600;text-align:center;cursor:pointer;border:none;text-decoration:none;transition:all .15s;}
         .manage-btn-cancel{background:#FFEBEE;color:#C62828;}
