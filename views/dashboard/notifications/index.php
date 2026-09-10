@@ -1,5 +1,5 @@
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Notifiche</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Cronologia delle notifiche ricevute</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Cronologia delle notifiche ricevute</p>
 
 <?php if ($total > 0): ?>
 <div class="d-flex justify-content-end gap-2 mb-3">
@@ -21,8 +21,8 @@
 
 <?php if (empty($notifications)): ?>
     <div class="card" style="padding:3rem 2rem;text-align:center;">
-        <i class="bi bi-bell-slash" style="font-size:2.5rem;color:#adb5bd;"></i>
-        <p style="margin-top:1rem;color:#6c757d;font-size:.9rem;">Nessuna notifica al momento.</p>
+        <i class="bi bi-bell-slash" style="font-size:2.5rem;color:var(--faint);"></i>
+        <p style="margin-top:1rem;color:var(--mute);font-size:.9rem;">Nessuna notifica al momento.</p>
     </div>
 <?php else: ?>
     <div class="card" style="border-radius:10px;overflow:hidden;">

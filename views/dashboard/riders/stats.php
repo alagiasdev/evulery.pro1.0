@@ -57,7 +57,7 @@ $periodLabel = (int)date('Y', $fromTs) === (int)date('Y', $toTs)
             <span class="rd-date-trigger-label">Da</span>
             <span class="rd-date-trigger-value" id="rd-stats-from-label"><?= date('d/m/Y', strtotime($dateFrom)) ?></span>
         </button>
-        <span style="font-size:.78rem;color:#6c757d;">→</span>
+        <span style="font-size:.78rem;color:var(--mute);">→</span>
         <button type="button" class="rd-date-trigger" id="rd-stats-to-trigger" data-target="to">
             <i class="bi bi-calendar3"></i>
             <span class="rd-date-trigger-label">A</span>
@@ -209,9 +209,9 @@ $periodLabel = (int)date('Y', $fromTs) === (int)date('Y', $toTs)
         <div class="rd-kpi-label">Tempo medio consegna</div>
         <div class="rd-kpi-value">
             <?php if ($kpi['avg_minutes'] !== null): ?>
-                <?= (int)$kpi['avg_minutes'] ?> <span style="font-size:.7em;color:#6c757d;font-weight:500;">min</span>
+                <?= (int)$kpi['avg_minutes'] ?> <span style="font-size:.7em;color:var(--mute);font-weight:500;">min</span>
             <?php else: ?>
-                <span style="color:#adb5bd;">—</span>
+                <span style="color:var(--faint);">—</span>
             <?php endif; ?>
         </div>
         <div class="rd-kpi-sub">dal momento dell'assegnazione</div>
@@ -227,7 +227,7 @@ $periodLabel = (int)date('Y', $fromTs) === (int)date('Y', $toTs)
             <?php if ($kpi['completion_rate'] !== null): ?>
                 <?= (int)$kpi['completion_rate'] ?>%
             <?php else: ?>
-                <span style="color:#adb5bd;">—</span>
+                <span style="color:var(--faint);">—</span>
             <?php endif; ?>
         </div>
         <div class="rd-kpi-sub">completate / totali</div>
@@ -240,9 +240,9 @@ $activeRiders = array_filter($stats, fn($s) => (int)$s['is_active'] === 1 || (in
 ?>
 <?php if (empty($activeRiders)): ?>
 <div class="card" style="padding:2rem;text-align:center;">
-    <i class="bi bi-graph-up" style="font-size:2rem;color:#adb5bd;"></i>
+    <i class="bi bi-graph-up" style="font-size:2rem;color:var(--faint);"></i>
     <h2 style="font-size:1rem;margin:.75rem 0 .25rem;">Nessun dato in questo periodo</h2>
-    <p style="font-size:.82rem;color:#6c757d;margin:0;">Aggiungi rider e assegna ordini per vedere le statistiche.</p>
+    <p style="font-size:.82rem;color:var(--mute);margin:0;">Aggiungi rider e assegna ordini per vedere le statistiche.</p>
 </div>
 <?php else: ?>
 <div class="card rd-card d-none d-md-block">

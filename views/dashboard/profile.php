@@ -1,5 +1,5 @@
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Profilo</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Gestisci il tuo account</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Gestisci il tuo account</p>
 
 <div class="row g-4">
     <div class="col-lg-7">
@@ -110,9 +110,9 @@
                 <!-- Dettagli abbonamento -->
                 <?php if ($sub): ?>
                 <?php $cyclePeriod = $cycle === 'semiannual' ? 'semestre' : 'anno'; ?>
-                <div style="display:flex;gap:1.5rem;margin-bottom:1rem;font-size:.82rem;color:#6c757d;">
+                <div style="display:flex;gap:1.5rem;margin-bottom:1rem;font-size:.82rem;color:var(--mute);">
                     <div>
-                        <div style="font-weight:600;color:#1a1d23;">&euro;<?= number_format($calc['total'], 2, ',', '.') ?> / <?= $cyclePeriod ?></div>
+                        <div style="font-weight:600;color:var(--ink);">&euro;<?= number_format($calc['total'], 2, ',', '.') ?> / <?= $cyclePeriod ?></div>
                         <div>&euro;<?= number_format($calc['monthly'], 2, ',', '.') ?>/mese</div>
                     </div>
                     <?php if ($sub['current_period_end']): ?>
@@ -122,10 +122,10 @@
                         $daysLeft = max(0, (int)ceil(($endTs - time()) / 86400));
                         $isExpiring = $daysLeft <= 30;
                         ?>
-                        <div style="font-weight:600;color:<?= $isExpiring ? '#E65100' : '#1a1d23' ?>;">
+                        <div style="font-weight:600;color:<?= $isExpiring ? 'var(--pending-text)' : 'var(--ink)' ?>;">
                             <?= date('d/m/Y', $endTs) ?>
                         </div>
-                        <div>Scadenza <?php if ($isExpiring): ?><span style="color:#E65100;">(<?= $daysLeft ?>gg)</span><?php endif; ?></div>
+                        <div>Scadenza <?php if ($isExpiring): ?><span style="color:var(--pending-text);">(<?= $daysLeft ?>gg)</span><?php endif; ?></div>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -148,7 +148,7 @@
                         return $aIn !== $bIn ? $aIn - $bIn : ($a['sort_order'] ?? 0) - ($b['sort_order'] ?? 0);
                     });
                 ?>
-                <div style="font-weight:600;font-size:.82rem;margin-bottom:.5rem;color:#495057;">Servizi</div>
+                <div style="font-weight:600;font-size:.82rem;margin-bottom:.5rem;color:var(--body);">Servizi</div>
                 <div style="display:flex;flex-direction:column;gap:.35rem;margin-bottom:1rem;">
                     <?php foreach ($sortedServices as $svc): ?>
                     <?php $included = in_array($svc['key'], $includedKeys); ?>
@@ -157,8 +157,8 @@
                         <i class="bi bi-check-circle-fill" style="color:var(--brand);font-size:.75rem;"></i>
                         <span><?= e($svc['name']) ?></span>
                         <?php else: ?>
-                        <i class="bi bi-x-circle" style="color:#adb5bd;font-size:.75rem;"></i>
-                        <span style="color:#adb5bd;"><?= e($svc['name']) ?></span>
+                        <i class="bi bi-x-circle" style="color:var(--faint);font-size:.75rem;"></i>
+                        <span style="color:var(--faint);"><?= e($svc['name']) ?></span>
                         <?php endif; ?>
                     </div>
                     <?php endforeach; ?>
@@ -167,7 +167,7 @@
 
                 <!-- CTA upgrade -->
                 <div style="border-top:1px solid #eee;padding-top:.75rem;">
-                    <div style="font-size:.78rem;color:#6c757d;margin-bottom:.5rem;">
+                    <div style="font-size:.78rem;color:var(--mute);margin-bottom:.5rem;">
                         Vuoi accedere a pi&ugrave; funzionalit&agrave;?
                     </div>
                     <a href="mailto:<?= e(env('SUPPORT_EMAIL', '')) ?>" class="btn btn-outline-success btn-sm" style="width:100%;">

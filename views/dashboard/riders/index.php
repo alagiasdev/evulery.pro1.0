@@ -20,9 +20,9 @@ $defaultColor = '#dc3545';
 
 <?php if (empty($riders)): ?>
 <div class="card" style="padding:2rem;text-align:center;">
-    <i class="bi bi-bicycle" style="font-size:2.5rem;color:#adb5bd;"></i>
+    <i class="bi bi-bicycle" style="font-size:2.5rem;color:var(--faint);"></i>
     <h2 style="font-size:1.05rem;margin:.75rem 0 .25rem;">Nessun rider configurato</h2>
-    <p style="font-size:.82rem;color:#6c757d;margin-bottom:1rem;">Aggiungi il primo rider per iniziare a tracciare le consegne.</p>
+    <p style="font-size:.82rem;color:var(--mute);margin-bottom:1rem;">Aggiungi il primo rider per iniziare a tracciare le consegne.</p>
     <div>
         <button type="button" class="btn btn-success" data-rd-open="" data-rd-name="" data-rd-phone="" data-rd-color="<?= e($defaultColor) ?>" data-rd-active="1">
             <i class="bi bi-plus-lg me-1"></i> Aggiungi rider
@@ -173,7 +173,7 @@ $defaultColor = '#dc3545';
         <form method="POST" id="rd-modal-form" action="<?= url('dashboard/riders') ?>">
             <?= csrf_field() ?>
             <div class="rd-field">
-                <label class="rd-field-label" for="rd-name">Nome <span style="color:#dc3545;">*</span></label>
+                <label class="rd-field-label" for="rd-name">Nome <span style="color:var(--danger);">*</span></label>
                 <input type="text" class="form-control" id="rd-name" name="name" required maxlength="100" placeholder="Es. Mario Rossi">
             </div>
             <div class="rd-field">
@@ -194,7 +194,7 @@ $defaultColor = '#dc3545';
             <div class="rd-toggle-row">
                 <div>
                     <div style="font-size:.85rem;font-weight:600;">Attivo</div>
-                    <div style="font-size:.72rem;color:#6c757d;">Riceve nuove assegnazioni</div>
+                    <div style="font-size:.72rem;color:var(--mute);">Riceve nuove assegnazioni</div>
                 </div>
                 <label class="rd-switch">
                     <input type="checkbox" name="is_active" value="1" id="rd-active" checked>
