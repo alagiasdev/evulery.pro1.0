@@ -24,7 +24,7 @@ $segLabels = [
     </a>
     <div style="flex:1;">
         <h5 style="font-weight:700;margin:0;"><?= e($campaign['subject']) ?></h5>
-        <p style="font-size:.82rem;color:#6c757d;margin:0;">
+        <p style="font-size:.82rem;color:var(--mute);margin:0;">
             Creata il <?= date('d/m/Y H:i', strtotime($campaign['created_at'])) ?>
         </p>
     </div>
@@ -35,10 +35,10 @@ $segLabels = [
     <!-- Left: Message content -->
     <div>
         <div class="card" style="padding:1.25rem;">
-            <div style="font-weight:600;font-size:.85rem;color:#6c757d;margin-bottom:.5rem;">
+            <div style="font-weight:600;font-size:.85rem;color:var(--mute);margin-bottom:.5rem;">
                 <i class="bi bi-chat-text me-1"></i> Messaggio
             </div>
-            <div style="font-size:.9rem;line-height:1.7;white-space:pre-wrap;color:#1a1d23;"><?= e($campaign['body_text']) ?></div>
+            <div style="font-size:.9rem;line-height:1.7;white-space:pre-wrap;color:var(--ink);"><?= e($campaign['body_text']) ?></div>
         </div>
 
         <?php if (in_array($campaign['status'], ['draft', 'queued'])): ?>
@@ -93,35 +93,35 @@ $segLabels = [
                 <i class="bi bi-bar-chart me-1"></i> Statistiche
             </div>
 
-            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #e9ecef;">
-                <span style="font-size:.82rem;color:#6c757d;">Segmento</span>
+            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--hairline);">
+                <span style="font-size:.82rem;color:var(--mute);">Segmento</span>
                 <span style="font-size:.82rem;font-weight:600;"><?= $segLabels[$campaign['segment_filter']] ?? '—' ?></span>
             </div>
             <?php if ($campaign['segment_filter'] === 'inactive' && $campaign['inactive_days']): ?>
-            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #e9ecef;">
-                <span style="font-size:.82rem;color:#6c757d;">Inattivi da</span>
+            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--hairline);">
+                <span style="font-size:.82rem;color:var(--mute);">Inattivi da</span>
                 <span style="font-size:.82rem;font-weight:600;"><?= (int)$campaign['inactive_days'] ?> giorni</span>
             </div>
             <?php endif; ?>
-            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #e9ecef;">
-                <span style="font-size:.82rem;color:#6c757d;">Destinatari</span>
+            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--hairline);">
+                <span style="font-size:.82rem;color:var(--mute);">Destinatari</span>
                 <span style="font-size:.9rem;font-weight:700;"><?= (int)$campaign['total_recipients'] ?></span>
             </div>
-            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #e9ecef;">
-                <span style="font-size:.82rem;color:#6c757d;">Inviate</span>
+            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--hairline);">
+                <span style="font-size:.82rem;color:var(--mute);">Inviate</span>
                 <span style="font-size:.9rem;font-weight:700;color:#198754;"><?= (int)$campaign['sent_count'] ?></span>
             </div>
-            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #e9ecef;">
-                <span style="font-size:.82rem;color:#6c757d;">Fallite</span>
-                <span style="font-size:.9rem;font-weight:700;color:<?= (int)$campaign['failed_count'] > 0 ? '#dc3545' : '#adb5bd' ?>;"><?= (int)$campaign['failed_count'] ?></span>
+            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--hairline);">
+                <span style="font-size:.82rem;color:var(--mute);">Fallite</span>
+                <span style="font-size:.9rem;font-weight:700;color:<?= (int)$campaign['failed_count'] > 0 ? 'var(--danger)' : 'var(--faint)' ?>;"><?= (int)$campaign['failed_count'] ?></span>
             </div>
-            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #e9ecef;">
-                <span style="font-size:.82rem;color:#6c757d;">Crediti usati</span>
+            <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--hairline);">
+                <span style="font-size:.82rem;color:var(--mute);">Crediti usati</span>
                 <span style="font-size:.82rem;font-weight:600;"><?= (int)$campaign['credits_used'] ?></span>
             </div>
             <?php if ($campaign['sent_at']): ?>
             <div style="display:flex;justify-content:space-between;padding:.4rem 0;">
-                <span style="font-size:.82rem;color:#6c757d;">Inviata il</span>
+                <span style="font-size:.82rem;color:var(--mute);">Inviata il</span>
                 <span style="font-size:.82rem;font-weight:600;"><?= date('d/m/Y H:i', strtotime($campaign['sent_at'])) ?></span>
             </div>
             <?php endif; ?>

@@ -474,7 +474,7 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
                     <div class="hs-label">Prenotazioni</div>
                 </div>
                 <div class="hs-item">
-                    <div class="hs-num" style="color:#dc3545;"><?= (int)$reservation['total_noshow'] ?></div>
+                    <div class="hs-num" style="color:var(--danger);"><?= (int)$reservation['total_noshow'] ?></div>
                     <div class="hs-label">No-show</div>
                 </div>
                 <div class="hs-item">
@@ -539,7 +539,7 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
                             <div class="tl-user">da <?= e($log['first_name'] . ' ' . $log['last_name']) ?></div>
                         <?php endif; ?>
                         <?php if ($log['note']): ?>
-                            <div class="tl-text" style="font-size:.82rem;color:#6c757d;"><?= e($log['note']) ?></div>
+                            <div class="tl-text" style="font-size:.82rem;color:var(--mute);"><?= e($log['note']) ?></div>
                         <?php endif; ?>
                     </div>
                 </div>

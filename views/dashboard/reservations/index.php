@@ -213,7 +213,7 @@ $kpiUrl = function (string $st) use ($isUpcoming, $date, $dateTo, $source): stri
 <div class="card" style="margin-bottom:1.25rem;">
     <div class="card-header">
         <h6><i class="bi bi-search me-1"></i> Risultati per "<?= e($searchQuery) ?>"</h6>
-        <span style="font-size:.82rem;color:#6c757d;"><?= count($searchResults) ?> trovate</span>
+        <span style="font-size:.82rem;color:var(--mute);"><?= count($searchResults) ?> trovate</span>
     </div>
     <?php if (empty($searchResults)): ?>
         <div class="text-center text-muted py-4">
@@ -224,7 +224,7 @@ $kpiUrl = function (string $st) use ($isUpcoming, $date, $dateTo, $source): stri
         <?php foreach ($searchResults as $sr): ?>
         <div class="res-row" data-url="<?= url("dashboard/reservations/{$sr['id']}") ?>">
             <div class="res-time"><?= format_date($sr['reservation_date'], 'd/m') ?></div>
-            <div class="res-time" style="color:#6c757d;"><?= format_time($sr['reservation_time']) ?></div>
+            <div class="res-time" style="color:var(--mute);"><?= format_time($sr['reservation_time']) ?></div>
             <div class="status-dot <?= e($sr['status']) ?>" title="<?= status_label($sr['status']) ?>"></div>
             <div class="res-info">
                 <div class="res-name"><?= e($sr['first_name'] . ' ' . $sr['last_name']) ?> <?= getSegmentBadge((int)$sr['total_bookings']) ?> <span class="res-id">#<?= (int)($sr['booking_number'] ?? $sr['id']) ?></span></div>

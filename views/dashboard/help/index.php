@@ -18,7 +18,7 @@ foreach ($sections as $slug => $data) {
 ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.15rem;"><i class="bi bi-book" style="color:var(--brand);"></i> Guida Evulery</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1.25rem;">Impara a gestire il tuo ristorante con Evulery. Tutto quello che serve per iniziare e diventare autonomo.</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1.25rem;">Impara a gestire il tuo ristorante con Evulery. Tutto quello che serve per iniziare e diventare autonomo.</p>
 
 <!-- Hero con ricerca -->
 <div class="hg-hero">

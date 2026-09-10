@@ -304,10 +304,10 @@ HTML
 <p>Nella modalit&agrave; Operativa ogni tavolo ha un colore in base a cosa sta succedendo a quell&rsquo;ora:</p>
 <ul>
     <li><span style="display:inline-block;width:14px;height:14px;background:#E6F4ED;border:1px solid #b8dcc6;border-radius:3px;vertical-align:middle;margin-right:4px;"></span> <strong>Verde chiaro</strong> &mdash; tavolo libero, nessuna prenotazione in quella fascia.</li>
-    <li><span style="display:inline-block;width:14px;height:14px;background:#00844A;border-radius:3px;vertical-align:middle;margin-right:4px;"></span> <strong>Verde brand</strong> &mdash; prenotazione <strong>confermata</strong>, cliente atteso.</li>
+    <li><span style="display:inline-block;width:14px;height:14px;background:var(--brand);border-radius:3px;vertical-align:middle;margin-right:4px;"></span> <strong>Verde brand</strong> &mdash; prenotazione <strong>confermata</strong>, cliente atteso.</li>
     <li><span style="display:inline-block;width:14px;height:14px;background:#cfe2ff;border:1px solid #0EA5E9;border-radius:3px;vertical-align:middle;margin-right:4px;"></span> <strong>Azzurro</strong> &mdash; cliente <strong>arrivato</strong>, seduto al tavolo ora.</li>
     <li><span style="display:inline-block;width:14px;height:14px;background:#f1f3f5;border:3px dashed #F59E0B;box-sizing:border-box;border-radius:3px;vertical-align:middle;margin-right:4px;"></span> <strong>Bordo ambra tratteggiato</strong> &mdash; tavolo <strong>jolly</strong> (solo manuale, non assegnato dal widget).</li>
-    <li><span style="display:inline-block;width:14px;height:14px;background:#9ca3af;border-radius:3px;vertical-align:middle;margin-right:4px;color:#dc3545;text-align:center;line-height:14px;font-size:10px;">&#128274;</span> <strong>Grigio con lucchetto rosso</strong> &mdash; tavolo <strong>bloccato</strong>.</li>
+    <li><span style="display:inline-block;width:14px;height:14px;background:#9ca3af;border-radius:3px;vertical-align:middle;margin-right:4px;color:var(--danger);text-align:center;line-height:14px;font-size:10px;">&#128274;</span> <strong>Grigio con lucchetto rosso</strong> &mdash; tavolo <strong>bloccato</strong>.</li>
 </ul>
 <p>Cliccando un tavolo occupato o una prenotazione nella lista si apre il <strong>popup di dettaglio</strong>, da cui vedi i contatti del cliente, cambi lo stato (Confermata, Arrivato, No-show) e sposti la prenotazione su un altro tavolo. Due tavoli uniti per lo stesso gruppo sono collegati da una barra con l&rsquo;icona catena.</p>
 
@@ -631,7 +631,7 @@ HTML
         <strong>Configura il record DNS sul tuo registrar</strong><br>
         Accedi al pannello del registrar dove hai comprato il dominio. Vai nella sezione <strong>Gestione DNS</strong> (o &ldquo;Zone DNS&rdquo;) del tuo dominio. Aggiungi un record di tipo <strong>CNAME</strong>:
         <table style="margin-top:.5rem; font-size:.85rem; border-collapse: collapse;">
-            <tr style="background:#e9ecef;"><th style="padding:4px 8px; text-align:left;">Campo</th><th style="padding:4px 8px; text-align:left;">Valore</th></tr>
+            <tr style="background:var(--hairline);"><th style="padding:4px 8px; text-align:left;">Campo</th><th style="padding:4px 8px; text-align:left;">Valore</th></tr>
             <tr><td style="padding:4px 8px; border-top: 1px solid #ddd;"><strong>Tipo</strong></td><td style="padding:4px 8px; border-top: 1px solid #ddd;">CNAME</td></tr>
             <tr><td style="padding:4px 8px;"><strong>Nome / Host</strong></td><td style="padding:4px 8px;"><code>prenotazioni</code> (solo la parte prima del dominio)</td></tr>
             <tr><td style="padding:4px 8px;"><strong>Valore / Punta a</strong></td><td style="padding:4px 8px;"><code>dash.evulery.it</code></td></tr>

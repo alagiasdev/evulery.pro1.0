@@ -6,7 +6,7 @@
     <div class="res-page-header">
         <h1><i class="bi bi-exclamation-octagon-fill" style="color:#b3261e;"></i> Chiusura straordinaria</h1>
     </div>
-    <p style="color:#6c757d;font-size:.9rem;margin:.25rem 0 1.25rem;">
+    <p style="color:var(--mute);font-size:.9rem;margin:.25rem 0 1.25rem;">
         Per imprevisti (guasto, allagamento, emergenza). Blocca le nuove prenotazioni nel periodo
         e gestisce quelle già prese avvisando i clienti. Diversa da
         <a href="<?= url('dashboard/settings/closures') ?>" style="color:var(--brand);">Chiusure e Ferie</a>, che serve per le chiusure programmate.

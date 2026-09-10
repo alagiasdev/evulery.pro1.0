@@ -16,7 +16,7 @@ $categoryLabel = $categoryLabels[$section['category'] ?? 'supporto'] ?? '';
     <span class="sep">/</span>
     <span><?= $categoryLabel ?></span>
     <span class="sep">/</span>
-    <span style="color:#1a1d23; font-weight:500;"><?= $section['title'] ?></span>
+    <span style="color:var(--ink); font-weight:500;"><?= $section['title'] ?></span>
 </div>
 
 <div class="hg-detail-layout">

@@ -142,7 +142,7 @@ if (!empty($stats['con_compleanno'])) {
             if ($bdPassati > 0): ?>, <?= $bdPassati ?> gi&agrave; festeggiat<?= $bdPassati === 1 ? 'o' : 'i' ?><?php endif; ?><?php
             if ((int)$stats['compleanno'] > 0): ?>. Ancora da festeggiare con email e consenso: <strong><?= $bdContattabili ?></strong><?php
             endif; ?>.
-        <span style="color:#6c757d;">Data di nascita nota per <?= (int)$stats['con_compleanno'] ?> client<?= (int)$stats['con_compleanno'] === 1 ? 'e' : 'i' ?> su <?= (int)$stats['totale'] ?>.</span>
+        <span style="color:var(--mute);">Data di nascita nota per <?= (int)$stats['con_compleanno'] ?> client<?= (int)$stats['con_compleanno'] === 1 ? 'e' : 'i' ?> su <?= (int)$stats['totale'] ?>.</span>
         <?php if ((int)$stats['compleanno'] > 0 && $bdContattabili === 0): ?>
         <div style="margin-top:4px;font-size:.8rem;">
             Nessuno di loro pu&ograve; ricevere email: serve il consenso alle comunicazioni, che il cliente d&agrave; prenotando dal widget.
@@ -227,7 +227,7 @@ if (!empty($stats['con_compleanno'])) {
                 <?php endif; ?>
             </div>
             <?php if ($bdayLine): ?>
-            <div class="c-sub" style="color:<?= $bdayPassato ? '#9aa4ab' : '#D81B60' ?>;font-weight:600;">
+            <div class="c-sub" style="color:<?= $bdayPassato ? '#9aa4ab' : 'var(--birthday-dot)' ?>;font-weight:600;">
                 <?= e($bdayLine) ?><?= $bdayPassato ? ' · già festeggiato' : '' ?>
             </div>
             <?php elseif ($createdDate): ?>
@@ -293,7 +293,7 @@ if (!empty($stats['con_compleanno'])) {
           // link dentro un link non e' valido. Con data-url la card resta cliccabile
           // (gestore globale in layouts/dashboard.php, che ignora i click sui link). ?>
     <div data-url="<?= url("dashboard/customers/{$c['id']}") ?>" class="mobile-card<?= !empty($c['is_blocked']) ? ' cust-blocked' : '' ?>">
-        <div class="mc-avatar" style="background:<?= !empty($c['is_blocked']) ? '#dc3545' : $avatarColor ?>;"><?= $initials ?></div>
+        <div class="mc-avatar" style="background:<?= !empty($c['is_blocked']) ? 'var(--danger)' : $avatarColor ?>;"><?= $initials ?></div>
         <div class="mc-info">
             <div class="mc-name">
                 <?= e($c['first_name'] . ' ' . $c['last_name']) ?>
@@ -311,7 +311,7 @@ if (!empty($stats['con_compleanno'])) {
                 $bdM = date_create($c['birthday']); ?>
             <?php $etaM = (int)date('Y') - (int)$bdM->format('Y');
                   $passatoM = (int)$bdM->format('j') < (int)date('j'); ?>
-            <div class="mc-meta" style="color:<?= $passatoM ? '#9aa4ab' : '#D81B60' ?>;font-weight:600;">🎂 <?= (int)$bdM->format('j') ?> <?= $MESI_IT[(int)$bdM->format('n')] ?><?= ($etaM >= 5 && $etaM <= 110) ? ' · compie ' . $etaM . ' anni' : '' ?><?= $passatoM ? ' · già festeggiato' : '' ?></div>
+            <div class="mc-meta" style="color:<?= $passatoM ? '#9aa4ab' : 'var(--birthday-dot)' ?>;font-weight:600;">🎂 <?= (int)$bdM->format('j') ?> <?= $MESI_IT[(int)$bdM->format('n')] ?><?= ($etaM >= 5 && $etaM <= 110) ? ' · compie ' . $etaM . ' anni' : '' ?><?= $passatoM ? ' · già festeggiato' : '' ?></div>
             <?php else: ?>
             <div class="mc-meta"><?= e($c['phone']) ?> &middot; <?= (int)$c['total_bookings'] ?> pren.</div>
             <?php endif; ?>
@@ -362,18 +362,18 @@ if (!empty($stats['con_compleanno'])) {
             <i class="bi bi-exclamation-triangle"></i>
         </div>
         <h5 style="font-weight:800;margin:0 0 .5rem;">Elimina clienti importati</h5>
-        <p style="font-size:.88rem;color:#495057;margin:0 0 .2rem;">Stai per eliminare definitivamente:</p>
+        <p style="font-size:.88rem;color:var(--body);margin:0 0 .2rem;">Stai per eliminare definitivamente:</p>
         <div style="font-size:2rem;font-weight:800;color:#B71C1C;text-align:center;margin:.3rem 0;"><?= (int)$deletableImportedCount ?> client<?= (int)$deletableImportedCount === 1 ? 'e' : 'i' ?></div>
-        <p style="text-align:center;font-size:.82rem;color:#6c757d;margin:0 0 .6rem;">importati che non hanno mai prenotato né ordinato.</p>
+        <p style="text-align:center;font-size:.82rem;color:var(--mute);margin:0 0 .6rem;">importati che non hanno mai prenotato né ordinato.</p>
         <div style="background:#E8F5E9;border-radius:8px;padding:.6rem .8rem;font-size:.8rem;color:#1B5E20;margin:.2rem 0 .8rem;">
             <i class="bi bi-shield-check me-1"></i> Restano <strong>protetti</strong> i clienti che hanno prenotato o ordinato — non vengono toccati.
         </div>
         <p style="color:#B71C1C;font-size:.82rem;font-weight:600;margin:0 0 .5rem;"><i class="bi bi-exclamation-octagon me-1"></i> Operazione NON reversibile.</p>
         <form method="POST" action="<?= url('dashboard/customers/bulk-delete-imported') ?>">
             <?= csrf_field() ?>
-            <label style="font-size:.8rem;color:#6c757d;display:block;">Per confermare, digita il numero <strong><?= (int)$deletableImportedCount ?></strong>:</label>
+            <label style="font-size:.8rem;color:var(--mute);display:block;">Per confermare, digita il numero <strong><?= (int)$deletableImportedCount ?></strong>:</label>
             <input type="text" name="confirm_count" id="bulkDelConfirmInput" autocomplete="off" inputmode="numeric"
-                   style="width:100%;border:2px solid #dee2e6;border-radius:8px;padding:.5rem .7rem;font-size:1rem;font-weight:700;text-align:center;margin-top:.3rem;">
+                   style="width:100%;border:2px solid var(--hairline-strong);border-radius:8px;padding:.5rem .7rem;font-size:1rem;font-weight:700;text-align:center;margin-top:.3rem;">
             <div style="display:flex;justify-content:flex-end;gap:.5rem;margin-top:1.1rem;">
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="bulkDelCancel">Annulla</button>
                 <button type="submit" class="btn btn-sm btn-danger" id="bulkDelSubmit" disabled>Elimina <?= (int)$deletableImportedCount ?></button>

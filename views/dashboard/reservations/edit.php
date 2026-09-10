@@ -31,11 +31,11 @@
                         <i class="bi bi-person-lines-fill"></i> Cliente
                     </div>
                     <div class="dr-customer-fields" style="pointer-events:none;opacity:.7;">
-                        <div class="dr-field-input" style="background:#f8f9fa;">
+                        <div class="dr-field-input" style="background:var(--surface-softer);">
                             <?= e($reservation['first_name'] . ' ' . $reservation['last_name']) ?>
                         </div>
-                        <div class="dr-field-input" style="background:#f8f9fa;">
-                            <i class="bi bi-telephone me-1" style="color:#adb5bd;"></i><?= e($reservation['phone']) ?>
+                        <div class="dr-field-input" style="background:var(--surface-softer);">
+                            <i class="bi bi-telephone me-1" style="color:var(--faint);"></i><?= e($reservation['phone']) ?>
                         </div>
                     </div>
                 </div>

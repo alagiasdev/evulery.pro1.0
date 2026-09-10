@@ -5,8 +5,8 @@
 <!-- KPI cards -->
 <div class="stats-mini" style="margin-bottom:1.25rem;">
     <a href="<?= url('dashboard/communications/credits') ?>" class="stat-pill" style="text-decoration:none;color:inherit;">
-        <div class="sp-dot" style="background:#00844A;"></div>
-        <span class="sp-num" style="color:#00844A;"><?= number_format($credits, 0, ',', '.') ?></span>
+        <div class="sp-dot" style="background:var(--brand);"></div>
+        <span class="sp-num" style="color:var(--brand);"><?= number_format($credits, 0, ',', '.') ?></span>
         <span class="sp-label">Crediti disponibili <i class="bi bi-chevron-right" style="font-size:.6rem;"></i></span>
     </a>
     <div class="stat-pill">
@@ -21,8 +21,8 @@
     </div>
     <?php if (!empty($unsubCount)): ?>
     <div class="stat-pill">
-        <div class="sp-dot" style="background:#dc3545;"></div>
-        <span class="sp-num" style="color:#dc3545;"><?= $unsubCount ?></span>
+        <div class="sp-dot" style="background:var(--danger);"></div>
+        <span class="sp-num" style="color:var(--danger);"><?= $unsubCount ?></span>
         <span class="sp-label">Disiscritti</span>
     </div>
     <?php endif; ?>
@@ -101,11 +101,11 @@
                     </td>
                     <td class="text-center"><?= (int)$c['total_recipients'] ?></td>
                     <td class="text-center" style="color:#198754;font-weight:600;"><?= (int)$c['sent_count'] ?></td>
-                    <td class="text-center" style="color:<?= (int)$c['failed_count'] > 0 ? '#dc3545' : '#adb5bd' ?>;"><?= (int)$c['failed_count'] ?></td>
+                    <td class="text-center" style="color:<?= (int)$c['failed_count'] > 0 ? 'var(--danger)' : 'var(--faint)' ?>;"><?= (int)$c['failed_count'] ?></td>
                     <td>
                         <span style="font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:4px;background:<?= $sb[1] ?>18;color:<?= $sb[1] ?>;"><?= $sb[0] ?></span>
                     </td>
-                    <td style="color:#6c757d;font-size:.8rem;white-space:nowrap;"><?= $commDate($c) ?></td>
+                    <td style="color:var(--mute);font-size:.8rem;white-space:nowrap;"><?= $commDate($c) ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -124,7 +124,7 @@
                 <span class="comm-card-seg" style="background:<?= $seg[1] ?>15;color:<?= $seg[1] ?>;"><?= $seg[0] ?></span>
                 <span><i class="bi bi-people me-1"></i><?= (int)$c['total_recipients'] ?></span>
                 <?php if ((int)$c['failed_count'] > 0): ?>
-                <span style="color:#dc3545;"><i class="bi bi-x-circle me-1"></i><?= (int)$c['failed_count'] ?> falliti</span>
+                <span style="color:var(--danger);"><i class="bi bi-x-circle me-1"></i><?= (int)$c['failed_count'] ?> falliti</span>
                 <?php endif; ?>
                 <span class="comm-card-date"><?= $commDate($c) ?></span>
             </div>

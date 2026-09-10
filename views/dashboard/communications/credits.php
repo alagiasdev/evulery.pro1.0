@@ -12,12 +12,12 @@ $typeLabels = [
     </a>
     <div style="flex:1;">
         <h5 style="font-weight:700;margin:0;">Storico Crediti</h5>
-        <p style="font-size:.82rem;color:#6c757d;margin:0;">
+        <p style="font-size:.82rem;color:var(--mute);margin:0;">
             <?= $total ?> movimenti registrati
         </p>
     </div>
     <div style="background:#E8F5E9;border:1px solid #C8E6C9;border-radius:8px;padding:.5rem 1rem;text-align:center;">
-        <div style="font-size:.7rem;color:#6c757d;text-transform:uppercase;letter-spacing:.5px;">Saldo attuale</div>
+        <div style="font-size:.7rem;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;">Saldo attuale</div>
         <div style="font-size:1.4rem;font-weight:800;color:#198754;"><?= number_format($credits, 0, ',', '.') ?></div>
     </div>
 </div>
@@ -46,7 +46,7 @@ $typeLabels = [
                     $isPositive = $amount > 0;
                 ?>
                 <tr>
-                    <td style="white-space:nowrap;color:#6c757d;">
+                    <td style="white-space:nowrap;color:var(--mute);">
                         <?= date('d/m/Y H:i', strtotime($tx['created_at'])) ?>
                     </td>
                     <td>
@@ -63,7 +63,7 @@ $typeLabels = [
                             <?= e($tx['description'] ?? '—') ?>
                         <?php endif; ?>
                     </td>
-                    <td class="text-end" style="font-weight:700;font-size:.9rem;color:<?= $isPositive ? '#198754' : '#dc3545' ?>;">
+                    <td class="text-end" style="font-weight:700;font-size:.9rem;color:<?= $isPositive ? '#198754' : 'var(--danger)' ?>;">
                         <?= $isPositive ? '+' : '' ?><?= number_format($amount, 0, ',', '.') ?>
                     </td>
                 </tr>

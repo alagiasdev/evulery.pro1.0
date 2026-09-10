@@ -46,7 +46,7 @@ $n = count($affected);
                 <input type="radio" name="mode" value="cancel">
                 <span class="ec-pick"></span>
                 <span class="ec-mode-body">
-                    <span class="ec-mode-t"><i class="bi bi-x-circle-fill" style="color:#dc3545;"></i> Annulla subito</span>
+                    <span class="ec-mode-t"><i class="bi bi-x-circle-fill" style="color:var(--danger);"></i> Annulla subito</span>
                     <span class="ec-mode-d">Per chiusure <b>certe</b>. Le prenotazioni vengono annullate e i clienti ricevono subito le scuse + invito a riprenotare. <b>Nessun recupero</b>.</span>
                 </span>
             </label>

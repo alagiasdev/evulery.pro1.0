@@ -4,7 +4,7 @@
     </a>
     <div>
         <h5 style="font-weight:700;margin:0;">Nuova Comunicazione</h5>
-        <p style="font-size:.82rem;color:#6c757d;margin:0;">Invia un'email ai tuoi clienti</p>
+        <p style="font-size:.82rem;color:var(--mute);margin:0;">Invia un'email ai tuoi clienti</p>
     </div>
 </div>
 
@@ -22,22 +22,22 @@
                 <div style="margin-bottom:1rem;">
                     <label style="font-weight:600;font-size:.85rem;margin-bottom:.35rem;display:block;">Messaggio *</label>
                     <textarea name="body_text" class="form-control" rows="10" maxlength="5000" placeholder="Scrivi il messaggio per i tuoi clienti...&#10;&#10;Puoi scrivere pi&ugrave; paragrafi separandoli con una riga vuota." required style="resize:vertical;"></textarea>
-                    <div style="text-align:right;font-size:.72rem;color:#adb5bd;margin-top:.25rem;">
+                    <div style="text-align:right;font-size:.72rem;color:var(--faint);margin-top:.25rem;">
                         <span id="char-count">0</span>/5000 caratteri
                     </div>
                 </div>
 
                 <!-- Booking CTA toggle -->
                 <?php $slugMissing = empty($tenantSlug); ?>
-                <div style="margin-bottom:1rem;padding:.75rem .9rem;border:1px solid <?= $slugMissing ? '#ffc107' : '#e9ecef' ?>;border-radius:8px;background:<?= $slugMissing ? '#fff8e1' : '#fafbfc' ?>;">
+                <div style="margin-bottom:1rem;padding:.75rem .9rem;border:1px solid <?= $slugMissing ? '#ffc107' : 'var(--hairline)' ?>;border-radius:8px;background:<?= $slugMissing ? '#fff8e1' : 'var(--surface-soft)' ?>;">
                     <label style="display:flex;align-items:flex-start;gap:.65rem;cursor:<?= $slugMissing ? 'not-allowed' : 'pointer' ?>;margin:0;<?= $slugMissing ? 'opacity:.7;' : '' ?>">
-                        <input type="checkbox" name="include_booking_cta" value="1" id="include-booking-cta" <?= $slugMissing ? 'disabled' : '' ?> style="margin-top:.2rem;accent-color:#00844A;width:18px;height:18px;flex-shrink:0;">
+                        <input type="checkbox" name="include_booking_cta" value="1" id="include-booking-cta" <?= $slugMissing ? 'disabled' : '' ?> style="margin-top:.2rem;accent-color:var(--brand);width:18px;height:18px;flex-shrink:0;">
                         <div style="flex:1;">
-                            <div style="font-weight:600;font-size:.85rem;color:#1a1d23;">
-                                <i class="bi bi-calendar-check me-1" style="color:#00844A;"></i>
+                            <div style="font-weight:600;font-size:.85rem;color:var(--ink);">
+                                <i class="bi bi-calendar-check me-1" style="color:var(--brand);"></i>
                                 Includi pulsante &ldquo;Prenota ora&rdquo;
                             </div>
-                            <div style="font-size:.75rem;color:#6c757d;margin-top:.15rem;line-height:1.4;">
+                            <div style="font-size:.75rem;color:var(--mute);margin-top:.15rem;line-height:1.4;">
                                 Aggiunge un bottone CTA nel corpo dell&rsquo;email che porta al tuo widget di prenotazione. Utile per eventi, feste, promozioni.
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                             'birthday_month' => ['Compleanni da oggi a fine mese', 'bi-gift-fill', '#D81B60'],
                         ];
                         foreach ($segments as $key => $seg): ?>
-                        <label class="segment-option" style="display:flex;align-items:center;gap:.5rem;padding:.6rem .75rem;border:2px solid #dee2e6;border-radius:8px;cursor:pointer;font-size:.82rem;transition:all .15s;">
+                        <label class="segment-option" style="display:flex;align-items:center;gap:.5rem;padding:.6rem .75rem;border:2px solid var(--hairline-strong);border-radius:8px;cursor:pointer;font-size:.82rem;transition:all .15s;">
                             <input type="radio" name="segment_filter" value="<?= $key ?>" <?= $key === ($preselect ?? 'all') ? 'checked' : '' ?> style="accent-color:<?= $seg[2] ?>;">
                             <i class="bi <?= $seg[1] ?>" style="color:<?= $seg[2] ?>;"></i>
                             <span><?= $seg[0] ?></span>
@@ -99,19 +99,19 @@
                     <i class="bi bi-bar-chart me-1"></i> Riepilogo
                 </div>
 
-                <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #e9ecef;">
-                    <span style="font-size:.82rem;color:#6c757d;">Destinatari</span>
-                    <span style="font-size:1.1rem;font-weight:700;color:#1a1d23;" id="recipient-count">
-                        <i class="bi bi-arrow-repeat" style="animation:spin 1s linear infinite;font-size:.85rem;color:#adb5bd;"></i>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--hairline);">
+                    <span style="font-size:.82rem;color:var(--mute);">Destinatari</span>
+                    <span style="font-size:1.1rem;font-weight:700;color:var(--ink);" id="recipient-count">
+                        <i class="bi bi-arrow-repeat" style="animation:spin 1s linear infinite;font-size:.85rem;color:var(--faint);"></i>
                     </span>
                 </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #e9ecef;">
-                    <span style="font-size:.82rem;color:#6c757d;">Crediti necessari</span>
-                    <span style="font-size:.95rem;font-weight:700;color:#dc3545;" id="credits-needed">—</span>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--hairline);">
+                    <span style="font-size:.82rem;color:var(--mute);">Crediti necessari</span>
+                    <span style="font-size:.95rem;font-weight:700;color:var(--danger);" id="credits-needed">—</span>
                 </div>
                 <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;">
-                    <span style="font-size:.82rem;color:#6c757d;">Saldo crediti</span>
-                    <span style="font-size:.95rem;font-weight:700;color:#00844A;"><?= number_format($credits, 0, ',', '.') ?></span>
+                    <span style="font-size:.82rem;color:var(--mute);">Saldo crediti</span>
+                    <span style="font-size:.95rem;font-weight:700;color:var(--brand);"><?= number_format($credits, 0, ',', '.') ?></span>
                 </div>
 
                 <div id="credits-alert" style="display:none;margin-top:.75rem;padding:.5rem .75rem;background:#fff3cd;border-radius:6px;font-size:.78rem;color:#856404;">
@@ -124,13 +124,13 @@
                 informa che alcuni clienti del segmento sono esclusi dalla campagna.
                 Mostrata solo se almeno una delle due categorie e' > 0.
             -->
-            <div id="excluded-hint" style="display:none;margin-top:.75rem;padding:.6rem .75rem;background:#f8f9fa;border:1px solid #e9ecef;border-radius:6px;font-size:.78rem;color:#6c757d;line-height:1.5;">
+            <div id="excluded-hint" style="display:none;margin-top:.75rem;padding:.6rem .75rem;background:var(--surface-softer);border:1px solid var(--hairline);border-radius:6px;font-size:.78rem;color:var(--mute);line-height:1.5;">
                 <div>
-                    <i class="bi bi-info-circle me-1" style="color:#adb5bd;"></i>
-                    <span id="excluded-hint-total" style="font-weight:600;color:#495057;"></span>
+                    <i class="bi bi-info-circle me-1" style="color:var(--faint);"></i>
+                    <span id="excluded-hint-total" style="font-weight:600;color:var(--body);"></span>
                 </div>
                 <div id="excluded-hint-breakdown" style="font-size:.72rem;color:#868e96;margin-top:.25rem;padding-left:1.1rem;"></div>
-                <div style="font-size:.72rem;color:#adb5bd;margin-top:.35rem;padding-left:1.1rem;">Riattivazione possibile dalla scheda cliente.</div>
+                <div style="font-size:.72rem;color:var(--faint);margin-top:.35rem;padding-left:1.1rem;">Riattivazione possibile dalla scheda cliente.</div>
             </div>
         </div>
     </div>
@@ -169,7 +169,7 @@
             url += '&inactive_days=' + (inactiveDaysInput.value || 30);
         }
 
-        countEl.innerHTML = '<i class="bi bi-arrow-repeat" style="animation:spin 1s linear infinite;font-size:.85rem;color:#adb5bd;"></i>';
+        countEl.innerHTML = '<i class="bi bi-arrow-repeat" style="animation:spin 1s linear infinite;font-size:.85rem;color:var(--faint);"></i>';
 
         fetch(url, { credentials: 'same-origin' })
             .then(function(r) { return r.json(); })

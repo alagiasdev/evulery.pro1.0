@@ -186,7 +186,7 @@ $sourceLabelsPrivacy = [
 <!-- Breadcrumb -->
 <div class="page-back">
     <a href="<?= url('dashboard/customers') ?>"><i class="bi bi-arrow-left"></i> Clienti</a>
-    <span style="color:#adb5bd;font-size:.82rem;margin-left:.25rem;">/ <?= e($customer['first_name'] . ' ' . $customer['last_name']) ?></span>
+    <span style="color:var(--faint);font-size:.82rem;margin-left:.25rem;">/ <?= e($customer['first_name'] . ' ' . $customer['last_name']) ?></span>
 </div>
 
 <?php if (!empty($customer['is_blocked'])): ?>
@@ -231,7 +231,7 @@ $sourceLabelsPrivacy = [
 
 <!-- Hero Card -->
 <div class="hero-card hero-customer<?= !empty($customer['is_blocked']) ? ' cust-blocked' : '' ?>">
-    <div class="hero-avatar" style="background: <?= !empty($customer['is_blocked']) ? '#dc3545' : $avatarColor ?>;">
+    <div class="hero-avatar" style="background: <?= !empty($customer['is_blocked']) ? 'var(--danger)' : $avatarColor ?>;">
         <?= $initials ?>
         <?php if ($bdayDaysAway !== null && $bdayDaysAway <= 7): ?>
         <div class="cs-bday-ring"></div>
@@ -360,15 +360,15 @@ $sourceLabelsPrivacy = [
         <?php else: ?>
         <span class="cs-stat-trend neutral">—</span>
         <?php endif; ?>
-        <div class="stat-value" style="color: #dc3545;"><?= $noshow ?></div>
+        <div class="stat-value" style="color: var(--danger);"><?= $noshow ?></div>
         <div class="stat-label">No-show</div>
     </div>
     <div class="stat-card">
-        <div class="stat-value" style="color: #6c757d;"><?= $avgPartySize ?></div>
+        <div class="stat-value" style="color: var(--mute);"><?= $avgPartySize ?></div>
         <div class="stat-label">Media coperti</div>
     </div>
     <div class="stat-card">
-        <div class="stat-value" style="color: #495057;"><?= $lastVisit ? format_date($lastVisit, 'd M') : '—' ?></div>
+        <div class="stat-value" style="color: var(--body);"><?= $lastVisit ? format_date($lastVisit, 'd M') : '—' ?></div>
         <div class="stat-label">Ultima visita</div>
     </div>
     <div class="stat-card">
@@ -376,7 +376,7 @@ $sourceLabelsPrivacy = [
         <div class="stat-value" style="color: #E65100;"><?= $age ?></div>
         <div class="stat-label">Età (anni)</div>
         <?php else: ?>
-        <div class="stat-value" style="color: #adb5bd;"><?= $customerAge ?></div>
+        <div class="stat-value" style="color: var(--faint);"><?= $customerAge ?></div>
         <div class="stat-label">Cliente da</div>
         <?php endif; ?>
     </div>
@@ -479,7 +479,7 @@ $sourceLabelsPrivacy = [
                             <button type="button" class="cs-data-cancel" id="csDataCancel">Annulla</button>
                         </div>
                     </form>
-                    <hr style="margin:.75rem 0;border-color:#e9ecef;">
+                    <hr style="margin:.75rem 0;border-color:var(--hairline);">
                     <?php endif; ?>
 
                     <div class="cs-profile-section-title"><i class="bi bi-cake2"></i> Data di nascita</div>
@@ -494,7 +494,7 @@ $sourceLabelsPrivacy = [
                     </form>
 
                     <?php if (!empty($insights)): ?>
-                    <hr style="margin: .75rem 0; border-color: #e9ecef;">
+                    <hr style="margin: .75rem 0; border-color: var(--hairline);">
                     <div class="cs-profile-section-title"><i class="bi bi-lightbulb"></i> Insight</div>
                     <div style="margin-bottom: .75rem;">
                         <?php foreach ($insights as $ins): ?>
@@ -504,7 +504,7 @@ $sourceLabelsPrivacy = [
                     <?php endif; ?>
 
                     <?php if (!empty($reservations)): ?>
-                    <hr style="margin: .75rem 0; border-color: #e9ecef;">
+                    <hr style="margin: .75rem 0; border-color: var(--hairline);">
                     <div class="cs-profile-section-title"><i class="bi bi-graph-up"></i> Frequenza visite</div>
                     <div style="font-size:.75rem;color:#868e96;margin-bottom:.25rem;">Ultimi 6 mesi</div>
                     <div class="cs-frequency-chart">
@@ -619,8 +619,8 @@ $sourceLabelsPrivacy = [
                 <span class="cs-filter-chip active" data-filter="all">Tutte <span class="cs-fc-count"><?= $statusCounts['all'] ?></span></span>
                 <span class="cs-filter-chip" data-filter="confirmed"><i class="bi bi-check-circle me-1" style="color:var(--brand);font-size:.6rem;"></i>Confermate <span class="cs-fc-count"><?= $statusCounts['confirmed'] ?></span></span>
                 <span class="cs-filter-chip" data-filter="arrived"><i class="bi bi-person-check me-1" style="color:#1565C0;font-size:.6rem;"></i>Arrivati <span class="cs-fc-count"><?= $statusCounts['arrived'] ?></span></span>
-                <span class="cs-filter-chip" data-filter="noshow"><i class="bi bi-x-circle me-1" style="color:#dc3545;font-size:.6rem;"></i>No-show <span class="cs-fc-count"><?= $statusCounts['noshow'] ?></span></span>
-                <span class="cs-filter-chip" data-filter="cancelled"><i class="bi bi-dash-circle me-1" style="color:#adb5bd;font-size:.6rem;"></i>Annullate <span class="cs-fc-count"><?= $statusCounts['cancelled'] ?></span></span>
+                <span class="cs-filter-chip" data-filter="noshow"><i class="bi bi-x-circle me-1" style="color:var(--danger);font-size:.6rem;"></i>No-show <span class="cs-fc-count"><?= $statusCounts['noshow'] ?></span></span>
+                <span class="cs-filter-chip" data-filter="cancelled"><i class="bi bi-dash-circle me-1" style="color:var(--faint);font-size:.6rem;"></i>Annullate <span class="cs-fc-count"><?= $statusCounts['cancelled'] ?></span></span>
             </div>
 
             <div class="ch-scroll">

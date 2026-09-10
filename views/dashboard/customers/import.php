@@ -11,7 +11,7 @@ $step = $step ?? '1';
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">
     <i class="bi bi-cloud-upload me-1" style="color:var(--brand);"></i> Importa clienti
 </h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1.25rem;">Carica un file CSV per importare i tuoi clienti</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1.25rem;">Carica un file CSV per importare i tuoi clienti</p>
 
 <?php if ($step === '1'): ?>
 <!-- ===== STEP 1: Upload ===== -->
@@ -33,13 +33,13 @@ $step = $step ?? '1';
                     <div id="dropZone" style="border:2px dashed var(--brand); border-radius:14px; padding:2.5rem 1.5rem; text-align:center; cursor:pointer; transition: all .2s; background:#fafff8;">
                         <i class="bi bi-cloud-arrow-up" style="font-size:2.5rem; color:var(--brand); display:block; margin-bottom:.5rem;"></i>
                         <div style="font-size:.9rem; font-weight:600; margin-bottom:.25rem;">Trascina il file qui</div>
-                        <div style="font-size:.75rem; color:#6c757d; margin-bottom:.75rem;">oppure clicca per selezionare</div>
+                        <div style="font-size:.75rem; color:var(--mute); margin-bottom:.75rem;">oppure clicca per selezionare</div>
                         <input type="file" name="csv_file" id="csvFile" accept=".csv,.txt" required
                             style="position:absolute; opacity:0; width:0; height:0;">
                         <div id="fileLabel" style="font-size:.78rem; color:var(--brand); font-weight:600; display:none;"></div>
                     </div>
 
-                    <div style="font-size:.68rem; color:#adb5bd; margin-top:.75rem;">
+                    <div style="font-size:.68rem; color:var(--faint); margin-top:.75rem;">
                         <i class="bi bi-info-circle me-1"></i> Max 5 MB. La prima riga deve contenere le intestazioni (Nome, Cognome, Email, Telefono).
                     </div>
 
@@ -55,12 +55,12 @@ $step = $step ?? '1';
         <div class="card section-card">
             <div class="card-body">
                 <div style="font-size:.82rem; font-weight:700; margin-bottom:.75rem;"><i class="bi bi-lightbulb me-1" style="color:#FFC107;"></i> Formato CSV</div>
-                <div style="background:#f8f9fa; border-radius:8px; padding:.75rem; font-family:monospace; font-size:.7rem; line-height:1.6; margin-bottom:.75rem; overflow-x:auto;">
+                <div style="background:var(--surface-softer); border-radius:8px; padding:.75rem; font-family:monospace; font-size:.7rem; line-height:1.6; margin-bottom:.75rem; overflow-x:auto;">
                     Nome;Cognome;Email;Telefono<br>
                     Mario;Rossi;mario@email.it;333 1234567<br>
                     Laura;Bianchi;laura@email.it;340 9876543
                 </div>
-                <div style="font-size:.72rem; color:#6c757d;">
+                <div style="font-size:.72rem; color:var(--mute);">
                     <div class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> Separatore automatico (virgola, punto e virgola, tab)</div>
                     <div class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> Deduplica automatica per email/telefono</div>
                     <div class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> I clienti gi&agrave; presenti non vengono modificati</div>
@@ -68,7 +68,7 @@ $step = $step ?? '1';
                     <div><i class="bi bi-check-circle text-success me-1"></i> Campi extra: nascita, ultima visita, presenze, tag, consenso, note</div>
                 </div>
                 <hr>
-                <div style="font-size:.72rem; color:#6c757d;">
+                <div style="font-size:.72rem; color:var(--mute);">
                     <i class="bi bi-shield-check me-1" style="color:var(--brand);"></i>
                     <strong>GDPR:</strong> Assicurati che i clienti abbiano dato il consenso al trattamento dati e alla ricezione di comunicazioni email prima di importarli.
                 </div>
@@ -123,7 +123,7 @@ $step = $step ?? '1';
                 <?php endforeach; ?>
             </div>
 
-            <div style="font-size:.78rem;font-weight:600;margin-bottom:.4rem;"><i class="bi bi-plus-circle me-1" style="color:var(--brand);"></i> Campi aggiuntivi <span style="font-weight:400;color:#6c757d;">(opzionali)</span></div>
+            <div style="font-size:.78rem;font-weight:600;margin-bottom:.4rem;"><i class="bi bi-plus-circle me-1" style="color:var(--brand);"></i> Campi aggiuntivi <span style="font-weight:400;color:var(--mute);">(opzionali)</span></div>
             <div class="row g-3 mb-3">
                 <?php foreach ($fieldsExtra as $inputName => $field): ?>
                 <div class="col-md-4 col-lg-2">
@@ -142,7 +142,7 @@ $step = $step ?? '1';
             <div style="font-size:.78rem; font-weight:600; margin-bottom:.4rem;"><i class="bi bi-eye me-1"></i> Anteprima (prime <?= count($preview) ?> righe)</div>
             <div class="table-responsive" style="max-height:300px; overflow:auto; border:1px solid #eee; border-radius:8px;">
                 <table class="table table-sm mb-0" style="font-size:.72rem;">
-                    <thead style="position:sticky;top:0;background:#f8f9fa;">
+                    <thead style="position:sticky;top:0;background:var(--surface-softer);">
                         <tr>
                             <?php foreach ($headers as $h): ?>
                             <th style="white-space:nowrap; padding:.4rem .5rem;"><?= e($h) ?></th>
