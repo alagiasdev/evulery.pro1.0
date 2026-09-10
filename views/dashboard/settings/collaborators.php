@@ -25,7 +25,7 @@
                             <div style="font-weight:600;font-size:.9rem;">
                                 <?= e($s['first_name'] . ' ' . $s['last_name']) ?>
                                 <?php if (empty($s['is_active'])): ?>
-                                <span style="font-size:.68rem;color:#E65100;background:#FFF3E0;padding:1px 7px;border-radius:10px;margin-left:.3rem;">disattivato</span>
+                                <span style="font-size:.68rem;color:var(--attn-text);background:var(--attn-bg);padding:1px 7px;border-radius:10px;margin-left:.3rem;">disattivato</span>
                                 <?php endif; ?>
                             </div>
                             <div style="font-size:.77rem;color:var(--mute);overflow:hidden;text-overflow:ellipsis;">

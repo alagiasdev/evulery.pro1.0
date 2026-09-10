@@ -51,7 +51,7 @@ $tabs = [
         </div>
     </div>
     <div class="admin-stat">
-        <div class="admin-stat-icon" style="background:#E3F2FD;color:#1565C0;">
+        <div class="admin-stat-icon" style="background:var(--admin-accent-bg);color:var(--admin-accent);">
             <i class="bi bi-hourglass-split"></i>
         </div>
         <div>
@@ -60,7 +60,7 @@ $tabs = [
         </div>
     </div>
     <div class="admin-stat">
-        <div class="admin-stat-icon" style="background:#FFF3E0;color:#E65100;">
+        <div class="admin-stat-icon" style="background:var(--attn-bg);color:var(--attn-text);">
             <i class="bi bi-exclamation-triangle"></i>
         </div>
         <div>

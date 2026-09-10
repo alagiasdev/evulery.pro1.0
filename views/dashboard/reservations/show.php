@@ -90,7 +90,7 @@ $sourceLabel = $sourceLabels[$reservation['source']] ?? ucfirst($reservation['so
         <div>
             <div class="detail-label"><i class="bi bi-percent me-1"></i>Promozione</div>
             <div class="detail-value">
-                <span style="background:#FFF3E0;color:#E65100;font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:4px;">-<?= (int)$reservation['discount_percent'] ?>% sconto</span>
+                <span style="background:var(--attn-bg);color:var(--attn-text);font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:4px;">-<?= (int)$reservation['discount_percent'] ?>% sconto</span>
             </div>
         </div>
         <?php endif; ?>

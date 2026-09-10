@@ -47,7 +47,7 @@ $defaultStyle = ['icon' => 'bi-circle', 'bg' => '#F5F5F5', 'color' => '#757575']
 <!-- KPI -->
 <div class="admin-stats">
     <div class="admin-stat">
-        <div class="admin-stat-icon" style="background:#E3F2FD;color:#1565C0;">
+        <div class="admin-stat-icon" style="background:var(--admin-accent-bg);color:var(--admin-accent);">
             <i class="bi bi-activity"></i>
         </div>
         <div>

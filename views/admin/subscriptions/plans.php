@@ -226,7 +226,7 @@ $colors = ['#1565C0', '#7B1FA2', '#E65100', '#2E7D32', '#C62828'];
                 <span class="adm-plan-name"><?= e($plan['name']) ?></span>
                 <span class="adm-plan-price">&euro;<?= number_format($plan['price'], 0, ',', '.') ?>/mese</span>
                 <?php if ($plan['is_default']): ?>
-                <span style="font-size:.6rem;font-weight:700;background:#E3F2FD;color:#1565C0;padding:2px 6px;border-radius:4px;">PREDEFINITO</span>
+                <span style="font-size:.6rem;font-weight:700;background:var(--admin-accent-bg);color:var(--admin-accent);padding:2px 6px;border-radius:4px;">PREDEFINITO</span>
                 <?php endif; ?>
                 <?php if (!$plan['is_active']): ?>
                 <span style="font-size:.6rem;font-weight:700;background:#F5F5F5;color:#757575;padding:2px 6px;border-radius:4px;">INATTIVO</span>

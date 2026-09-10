@@ -16,7 +16,7 @@ foreach (array_merge($upcoming, $past) as $c) {
 
 <!-- Info banner -->
 <div class="info-banner">
-    <div class="info-banner-icon" style="background:#FFF3E0; color:#E65100;">
+    <div class="info-banner-icon" style="background:var(--attn-bg); color:var(--attn-text);">
         <i class="bi bi-calendar-x"></i>
     </div>
     <div class="info-banner-text">

@@ -86,7 +86,7 @@ $currentStatus = $filters['feedback_status'] ?? '';
                     if ($src === 'email'): ?>
                     <span class="badge" style="background:#E3F2FD; color:#1565C0; font-size:.6rem; font-weight:600;"><i class="bi bi-envelope me-1"></i>Email</span>
                     <?php elseif ($src === 'qr' || $src === 'nfc'): ?>
-                    <span class="badge" style="background:#FFF8E1; color:#F57F17; font-size:.6rem; font-weight:600;"><i class="bi bi-qr-code me-1"></i>QR/NFC</span>
+                    <span class="badge" style="background:var(--warn-bg); color:var(--warn-text); font-size:.6rem; font-weight:600;"><i class="bi bi-qr-code me-1"></i>QR/NFC</span>
                     <?php elseif ($src === 'embed'): ?>
                     <span class="badge" style="background:#F3E5F5; color:#7B1FA2; font-size:.6rem; font-weight:600;"><i class="bi bi-code-slash me-1"></i>Embed</span>
                     <?php endif; ?>

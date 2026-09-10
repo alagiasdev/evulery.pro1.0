@@ -74,7 +74,7 @@ $hostForDns = $isSubdomain ? $domainParts[0] : '@';
                             <i class="bi bi-gear-wide-connected"></i>
                         </div>
                         <?php elseif ($isPending): ?>
-                        <div class="status-icon" style="background:#FFF8E1;color:#F57F17;">
+                        <div class="status-icon" style="background:var(--warn-bg);color:var(--warn-text);">
                             <i class="bi bi-hourglass-split"></i>
                         </div>
                         <?php else: ?>
@@ -96,7 +96,7 @@ $hostForDns = $isSubdomain ? $domainParts[0] : '@';
                         <i class="bi bi-gear-wide-connected me-1"></i>Attivazione in corso
                     </span>
                     <?php elseif ($isPending): ?>
-                    <span class="dns-status-badge" style="background:#FFF3E0;color:#E65100;">
+                    <span class="dns-status-badge" style="background:var(--attn-bg);color:var(--attn-text);">
                         <i class="bi bi-clock-history me-1"></i>In attesa DNS
                     </span>
                     <?php else: ?>
@@ -162,7 +162,7 @@ $hostForDns = $isSubdomain ? $domainParts[0] : '@';
                             <?php if ($aTarget): ?>
                             <!-- Option B: A record (required for apex, good for Aruba) -->
                             <div class="dns-record" style="margin-top:.75rem;">
-                                <div class="dns-record-row" style="background:#FFF3E0; border-radius:6px 6px 0 0; padding:6px 10px; font-weight:700; color:#E65100;">
+                                <div class="dns-record-row" style="background:var(--attn-bg); border-radius:6px 6px 0 0; padding:6px 10px; font-weight:700; color:var(--attn-text);">
                                     <span>Opzione B — Record A <?= !$isSubdomain ? '(unica opzione per il dominio apex)' : '(alternativo)' ?></span>
                                 </div>
                                 <div class="dns-record-row">

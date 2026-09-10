@@ -111,7 +111,7 @@ $embedUrl = url($tenant['slug'] . '?embed=1');
                                     <input type="radio" name="confirmation_mode" value="auto" <?= ($tenant['confirmation_mode'] ?? 'auto') === 'auto' ? 'checked' : '' ?> style="accent-color:var(--brand);">
                                     <i class="bi bi-check-circle" style="color:var(--brand);"></i> Automatica
                                 </label>
-                                <label style="display:flex;align-items:center;gap:.4rem;padding:.45rem .85rem;border:1.5px solid <?= ($tenant['confirmation_mode'] ?? 'auto') === 'manual' ? '#E65100' : 'var(--hairline-strong)' ?>;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:500;background:<?= ($tenant['confirmation_mode'] ?? 'auto') === 'manual' ? '#FFF3E0' : '#fff' ?>;">
+                                <label style="display:flex;align-items:center;gap:.4rem;padding:.45rem .85rem;border:1.5px solid <?= ($tenant['confirmation_mode'] ?? 'auto') === 'manual' ? 'var(--attn-text)' : 'var(--hairline-strong)' ?>;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:500;background:<?= ($tenant['confirmation_mode'] ?? 'auto') === 'manual' ? 'var(--attn-bg)' : '#fff' ?>;">
                                     <input type="radio" name="confirmation_mode" value="manual" <?= ($tenant['confirmation_mode'] ?? 'auto') === 'manual' ? 'checked' : '' ?> style="accent-color:#E65100;">
                                     <i class="bi bi-hand-index" style="color:#E65100;"></i> Manuale
                                 </label>

@@ -36,7 +36,9 @@ semantic:
   cancelled: { dot: "#dc3545", text: "#dc3545", bg: "#fde8e8" }
   birthday: { dot: "#D81B60", text: "#880E4F", bg: "#fce4ec" }
   whatsapp: { dot: "#25D366", text: "#ffffff", bg: "#25D366", hover: "#1DA851" }
-  warning-bar: { border: "#F57F17", bg: "#FFF8E1", text: "#5D4037" }
+  warn:  { bg: "#FFF8E1", text: "#F57F17", border: "#FFE082" }   # famiglia AMBRA
+  attn:  { bg: "#FFF3E0", text: "#E65100" }                     # famiglia ARANCIO
+  admin-accent-bg: "#E3F2FD"
 
 typography:
   family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
@@ -629,11 +631,30 @@ Onestà su ciò che il sistema **non ha ancora**, così chi legge non crede di t
    qualunque ricerca fatta sui `.css`, ed è così che due superfici sono rimaste fuori da
    questo documento fino al 10/09/2026. **Prima di toccare una view, controllare se ha
    un `<style>` proprio**: può contenere regole con `!important` che vincono su tutto.
-6. **Nessun componente condiviso fra superfici.** Un pulsante del widget e uno della
+6. **Due famiglie d'avviso invece di una.** Nel codice convivono due scale Material —
+   ambra (`#FFF8E1` + `#F57F17`) e arancio (`#FFF3E0` + `#E65100`) — usate nelle stesse
+   aree, senza una regola che le distingua: 15 usi la prima, 20 la seconda. Entrambe
+   sono ora dichiarate come token (`--warn-*`, `--attn-*`) perché unificarle cambierebbe
+   l'aspetto di una trentina di riquadri: è una decisione di design, non di manutenzione.
+   **Per un avviso nuovo usare la famiglia ambra**, che è quella storicamente documentata.
+
+7. **Le icone degli stati vuoti hanno due colori.** Nel menù sono `{colors.hairline-strong}`
+   (`#dee2e6`), altrove `{colors.faint}` (`#adb5bd`). Sei occorrenze in tutto, trovate in
+   quattro aree diverse durante la tokenizzazione del 10/09/2026 e lasciate come stanno:
+   allinearle si vede. `#dee2e6` è per di più un colore da bordo usato come colore di
+   testo, quindi la variante giusta è quasi certamente `{colors.faint}`.
+
+8. **La tavolozza globale non è ancora dichiarata in `reseller.css`.** Le pagine reseller
+   caricano solo quel foglio, che ha i propri `--rs-*` ma non `--mute`, `--warn-bg` e
+   compagnia: scrivere `var(--attn-bg)` in una view reseller oggi lascerebbe l'elemento
+   senza colore. Va fatta la stessa dichiarazione di `dashboard.css` prima di tokenizzare
+   quell'area.
+
+9. **Nessun componente condiviso fra superfici.** Un pulsante del widget e uno della
    dashboard non hanno una riga di CSS in comune. È il prezzo dell'isolamento del widget
    (che vive dentro siti altrui e non può ereditare nulla), ma vale anche dove non
    servirebbe — menù, ordini e vetrina potrebbero condividere una base.
-7. **Il gestionale non ha un contenitore a larghezza massima**: su schermi molto larghi
+10. **Il gestionale non ha un contenitore a larghezza massima**: su schermi molto larghi
    le righe degli elenchi si allungano parecchio. Voluto per i tablet in cassa, da
    rivedere se qualcuno lavorasse su un monitor da 27 pollici.
 

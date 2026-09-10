@@ -262,9 +262,9 @@ document.querySelectorAll('.lead-filter-auto').forEach(function (s) {
                                     if ($diff < 0) {
                                         echo '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:700;color:#C62828;background:#FFEBEE;border:1.5px solid #C62828;"><i class="bi bi-exclamation-circle-fill"></i> Scaduto ' . abs($diff) . 'gg fa</span>';
                                     } elseif ($diff === 0) {
-                                        echo '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:700;color:#E65100;background:#FFF3E0;border:1.5px solid #E65100;"><i class="bi bi-bell-fill"></i> Oggi</span>';
+                                        echo '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:700;color:var(--attn-text);background:var(--attn-bg);border:1.5px solid var(--attn-text);"><i class="bi bi-bell-fill"></i> Oggi</span>';
                                     } elseif ($diff === 1) {
-                                        echo '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:600;color:#1565C0;background:#E3F2FD;border:1px solid #1565C0;">Domani</span>';
+                                        echo '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:600;color:var(--admin-accent);background:var(--admin-accent-bg);border:1px solid var(--admin-accent);">Domani</span>';
                                     } else {
                                         echo '<span style="font-size:.78rem;color:var(--body);">tra ' . $diff . ' giorni</span>';
                                         echo '<span style="display:block;font-size:.7rem;color:var(--faint);margin-top:2px;">' . date('d/m/Y', $fu) . '</span>';

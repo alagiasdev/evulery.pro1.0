@@ -12,7 +12,7 @@
             <span class="badge" style="background:var(--brand-light); color:var(--brand); font-size:.65rem; font-weight:600;"><i class="bi bi-bag-check" style="font-size:.6rem;"></i> Ordinabile</span>
             <?php endif; ?>
             <?php if ($item['is_daily_special']): ?>
-            <span class="badge" style="background:#FFF3E0; color:#E65100; font-size:.65rem; font-weight:600;">In evidenza</span>
+            <span class="badge" style="background:var(--attn-bg); color:var(--attn-text); font-size:.65rem; font-weight:600;">In evidenza</span>
             <?php endif; ?>
             <?php if (!$item['is_available']): ?>
             <span class="badge" style="background:#f8d7da; color:#842029; font-size:.65rem; font-weight:600;">Non disponibile</span>

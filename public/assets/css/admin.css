@@ -32,6 +32,19 @@
     --noshow-dot:    #dc3545;  --noshow-text:    #dc3545;  --noshow-bg:    #fde8e8;
     --cancelled-dot: #dc3545;  --cancelled-text: #dc3545;  --cancelled-bg: #fde8e8;
     --danger: #dc3545;
+
+    /* ===== Avvisi: due famiglie parallele, entrambe in uso =====
+       Nel codice convivono due scale Material — ambra e arancio — usate nelle
+       stesse aree e senza una regola che le distingua. Sono dichiarate cosi'
+       come sono: unificarle e' una decisione di design, non di manutenzione, e
+       cambierebbe l'aspetto di una trentina di riquadri. Finche' non e' presa,
+       per un avviso NUOVO usare la famiglia ambra, che e' quella documentata. */
+    --warn-bg: #FFF8E1;      --warn-text: #F57F17;   --warn-border: #FFE082;
+    --attn-bg: #FFF3E0;      --attn-text: #E65100;
+
+    /* Sfondo dei badge informativi in area admin: --admin-accent senza questo
+       era mezza coppia, e tokenizzare solo il testo le avrebbe fatte divergere. */
+    --admin-accent-bg: #E3F2FD;
 }
 
 body {
