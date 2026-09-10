@@ -154,9 +154,9 @@ $statusClass = $statusColors[$order['status']] ?? 'pending';
         <?php endif; ?>
 
         <?php if ($order['rejected_reason']): ?>
-        <div class="card section-card mt-3" style="border-left:3px solid #dc3545;">
+        <div class="card section-card mt-3" style="border-left:3px solid var(--danger);">
             <div class="section-header">
-                <div class="section-icon" style="background:#dc3545;"><i class="bi bi-exclamation-triangle"></i></div>
+                <div class="section-icon" style="background:var(--danger);"><i class="bi bi-exclamation-triangle"></i></div>
                 <div>
                     <div class="section-title">Motivo rifiuto</div>
                 </div>
@@ -185,10 +185,10 @@ $statusClass = $statusColors[$order['status']] ?? 'pending';
                 <p class="mb-1" style="font-size:.82rem;"><span class="badge bg-light text-dark">CAP <?= e($order['delivery_cap']) ?></span></p>
                 <?php endif; ?>
                 <?php if ((float)$order['delivery_fee'] > 0): ?>
-                <p class="mb-1" style="font-size:.82rem; color:#6c757d;">Costo consegna: <strong>&euro; <?= number_format((float)$order['delivery_fee'], 2, ',', '.') ?></strong></p>
+                <p class="mb-1" style="font-size:.82rem; color:var(--mute);">Costo consegna: <strong>&euro; <?= number_format((float)$order['delivery_fee'], 2, ',', '.') ?></strong></p>
                 <?php endif; ?>
                 <?php if ($order['delivery_notes']): ?>
-                <div style="margin-top:.5rem; padding:.5rem .75rem; background:#f8f9fa; border-radius:8px; font-size:.82rem; color:#495057;">
+                <div style="margin-top:.5rem; padding:.5rem .75rem; background:var(--surface-softer); border-radius:8px; font-size:.82rem; color:var(--body);">
                     <i class="bi bi-info-circle me-1"></i> <?= e($order['delivery_notes']) ?>
                 </div>
                 <?php endif; ?>
@@ -256,7 +256,7 @@ $statusClass = $statusColors[$order['status']] ?? 'pending';
                     if ($currentIdx !== false && $i <= $currentIdx || $isCancelled && $i <= $maxIdx):
                 ?>
                 <div class="do-detail-tl">
-                    <div class="do-detail-tl-dot" style="background:<?= $tlColors[$step] ?? '#adb5bd' ?>;"></div>
+                    <div class="do-detail-tl-dot" style="background:<?= $tlColors[$step] ?? 'var(--faint)' ?>;"></div>
                     <div>
                         <div class="do-detail-tl-text"><strong><?= $tlSteps[$step] ?? ucfirst($step) ?></strong></div>
                         <div class="do-detail-tl-date">

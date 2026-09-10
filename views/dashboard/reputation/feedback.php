@@ -9,7 +9,7 @@ $currentStatus = $filters['feedback_status'] ?? '';
 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
     <div>
         <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.15rem;"><i class="bi bi-star" style="color:#FFC107;"></i> Reputazione</h2>
-        <p style="font-size:.82rem; color:#6c757d; margin-bottom:0;">Monitora le recensioni e il feedback dei tuoi clienti</p>
+        <p style="font-size:.82rem; color:var(--mute); margin-bottom:0;">Monitora le recensioni e il feedback dei tuoi clienti</p>
     </div>
 </div>
 
@@ -39,14 +39,14 @@ $currentStatus = $filters['feedback_status'] ?? '';
 <?php if (empty($items)): ?>
 <div class="text-center" style="padding:3rem 1rem;">
     <i class="bi bi-chat-dots" style="font-size:2.5rem; color:#e0e0e0;"></i>
-    <h5 style="font-size:.88rem; font-weight:700; color:#6c757d; margin-top:.75rem;">Nessun feedback</h5>
-    <p style="font-size:.78rem; color:#adb5bd;">I feedback dei clienti appariranno qui.</p>
+    <h5 style="font-size:.88rem; font-weight:700; color:var(--mute); margin-top:.75rem;">Nessun feedback</h5>
+    <p style="font-size:.78rem; color:var(--faint);">I feedback dei clienti appariranno qui.</p>
 </div>
 <?php else: ?>
 
 <div class="card section-card">
     <?php foreach ($items as $idx => $fb): ?>
-    <div class="rv-feedback-item" style="<?= $idx > 0 ? 'border-top:1px solid #e9ecef;' : '' ?>">
+    <div class="rv-feedback-item" style="<?= $idx > 0 ? 'border-top:1px solid var(--hairline);' : '' ?>">
         <div class="d-flex gap-3 p-3">
             <!-- Avatar -->
             <?php
@@ -55,7 +55,7 @@ $currentStatus = $filters['feedback_status'] ?? '';
             $avatarColors = ['#E3F2FD', '#FCE4EC', '#E8F5E9', '#FFF8E1', '#F3E5F5'];
             $bgColor = $avatarColors[((int)($fb['id'] ?? 0)) % count($avatarColors)];
             ?>
-            <div style="width:36px; height:36px; border-radius:50%; background:<?= $bgColor ?>; display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; flex-shrink:0; color:#495057;">
+            <div style="width:36px; height:36px; border-radius:50%; background:<?= $bgColor ?>; display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; flex-shrink:0; color:var(--body);">
                 <?= e($initials) ?>
             </div>
 
@@ -66,21 +66,21 @@ $currentStatus = $filters['feedback_status'] ?? '';
                         <?php if (!empty($fb['first_name'])): ?>
                             <?= e($fb['first_name'] . ' ' . ($fb['last_name'] ?? '')) ?>
                         <?php else: ?>
-                            <span style="color:#adb5bd;">Anonimo</span>
+                            <span style="color:var(--faint);">Anonimo</span>
                         <?php endif; ?>
                     </span>
                     <span style="font-size:.72rem; color:#FFC107;"><?= str_repeat('★', (int)($fb['rating'] ?? 0)) ?><?= str_repeat('☆', 5 - (int)($fb['rating'] ?? 0)) ?></span>
                     <?= review_status_badge($fb['feedback_status'] ?? 'new') ?>
-                    <span style="font-size:.68rem; color:#adb5bd; margin-left:auto;"><?= format_date($fb['created_at'] ?? '', 'd/m/Y H:i') ?></span>
+                    <span style="font-size:.68rem; color:var(--faint); margin-left:auto;"><?= format_date($fb['created_at'] ?? '', 'd/m/Y H:i') ?></span>
                 </div>
 
                 <!-- Text -->
-                <div style="font-size:.78rem; color:#495057; line-height:1.45; margin-bottom:.35rem;">
+                <div style="font-size:.78rem; color:var(--body); line-height:1.45; margin-bottom:.35rem;">
                     <?= nl2br(e($fb['feedback_text'] ?? '')) ?>
                 </div>
 
                 <!-- Meta -->
-                <div class="d-flex align-items-center gap-3 flex-wrap" style="font-size:.65rem; color:#adb5bd;">
+                <div class="d-flex align-items-center gap-3 flex-wrap" style="font-size:.65rem; color:var(--faint);">
                     <?php
                     $src = $fb['source'] ?? 'email';
                     if ($src === 'email'): ?>
@@ -103,9 +103,9 @@ $currentStatus = $filters['feedback_status'] ?? '';
 
                 <!-- Reply (if replied) -->
                 <?php if (!empty($fb['feedback_reply'])): ?>
-                <div style="background:#f8f9fa; border-radius:8px; padding:.55rem .75rem; margin-top:.5rem; border-left:3px solid var(--brand, #00844A);">
+                <div style="background:var(--surface-softer); border-radius:8px; padding:.55rem .75rem; margin-top:.5rem; border-left:3px solid var(--brand, #00844A);">
                     <div style="font-size:.65rem; font-weight:600; color:var(--brand, #00844A); margin-bottom:.15rem;">La tua risposta:</div>
-                    <div style="font-size:.75rem; color:#495057;"><?= nl2br(e($fb['feedback_reply'])) ?></div>
+                    <div style="font-size:.75rem; color:var(--body);"><?= nl2br(e($fb['feedback_reply'])) ?></div>
                 </div>
                 <?php endif; ?>
 

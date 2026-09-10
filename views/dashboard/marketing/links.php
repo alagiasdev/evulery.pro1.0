@@ -29,12 +29,12 @@ foreach ($saved as $s) {
 <?php endif; ?>
 
 <div class="card" style="max-width:760px;padding:1.5rem;">
-    <p style="font-size:.86rem;color:#6c757d;margin:0 0 1rem;">
+    <p style="font-size:.86rem;color:var(--mute);margin:0 0 1rem;">
         Scegli dove mandare il cliente, il canale e (facoltativo) il nome della campagna:
         ottieni il link tracciato da incollare nell'annuncio o nella bio. Le prenotazioni che arrivano da questo link
         compaiono in <a href="<?= url('dashboard/marketing') ?>" class="text-success text-decoration-none">Provenienza</a>.
     </p>
-    <p style="font-size:.8rem;color:#6c757d;margin:-.4rem 0 1rem;">
+    <p style="font-size:.8rem;color:var(--mute);margin:-.4rem 0 1rem;">
         <i class="bi bi-info-circle"></i> Incorpori il widget sul tuo sito? Usa il
         <a href="<?= url('dashboard/settings/general') ?>" class="text-success text-decoration-none">codice embed con tracciamento</a>
         (Impostazioni → Generali) per attribuire le campagne anche dal tuo sito.

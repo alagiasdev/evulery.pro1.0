@@ -13,7 +13,7 @@ function ohPctChange(float $current, float $previous): ?int {
 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1">
     <div>
         <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.15rem;"><i class="bi bi-bag-check" style="color:var(--brand, #00844A);"></i> Storico Ordini</h2>
-        <p style="font-size:.82rem; color:#6c757d; margin-bottom:0;">Analisi e riepilogo ordini online</p>
+        <p style="font-size:.82rem; color:var(--mute); margin-bottom:0;">Analisi e riepilogo ordini online</p>
     </div>
     <div class="d-flex gap-2 align-items-center">
         <?php if ($currentTab !== 'ordini'): ?>
@@ -63,7 +63,7 @@ $pctCompletion = $ps ? ohPctChange($s['completion_rate'], $ps['completion_rate']
 <!-- KPI -->
 <div class="oh-kpi-row">
     <div class="oh-kpi-card">
-        <div class="oh-kpi-icon"><i class="bi bi-bag-check" style="color:#1a1d23;"></i></div>
+        <div class="oh-kpi-icon"><i class="bi bi-bag-check" style="color:var(--ink);"></i></div>
         <div class="oh-kpi-value"><?= $s['total_orders'] ?></div>
         <div class="oh-kpi-label">Ordini totali</div>
         <?php if ($pctOrders !== null): ?>
@@ -133,7 +133,7 @@ $pctCompletion = $ps ? ohPctChange($s['completion_rate'], $ps['completion_rate']
                 <div class="oh-legend-item"><div class="oh-legend-dot" style="background:#e0e0e0;"></div> Periodo precedente</div>
             </div>
             <?php else: ?>
-            <div class="text-center py-4" style="color:#adb5bd; font-size:.82rem;">
+            <div class="text-center py-4" style="color:var(--faint); font-size:.82rem;">
                 <i class="bi bi-graph-up" style="font-size:2rem; display:block; margin-bottom:.5rem;"></i>
                 Nessun ordine nel periodo selezionato
             </div>
@@ -207,7 +207,7 @@ $pctCompletion = $ps ? ohPctChange($s['completion_rate'], $ps['completion_rate']
 <div class="oh-filters">
     <form method="GET" action="<?= url('dashboard/orders/history/orders') ?>" class="row g-2 align-items-end">
         <div class="col-md-2">
-            <label class="form-label" style="font-size:.8rem; font-weight:600; color:#6c757d;">Stato</label>
+            <label class="form-label" style="font-size:.8rem; font-weight:600; color:var(--mute);">Stato</label>
             <select name="status" class="form-select form-select-sm">
                 <option value="">Tutti</option>
                 <?php foreach (['pending','accepted','preparing','ready','completed','cancelled','rejected'] as $sv): ?>
@@ -216,7 +216,7 @@ $pctCompletion = $ps ? ohPctChange($s['completion_rate'], $ps['completion_rate']
             </select>
         </div>
         <div class="col-md-2">
-            <label class="form-label" style="font-size:.8rem; font-weight:600; color:#6c757d;">Tipo</label>
+            <label class="form-label" style="font-size:.8rem; font-weight:600; color:var(--mute);">Tipo</label>
             <select name="type" class="form-select form-select-sm">
                 <option value="">Tutti</option>
                 <option value="takeaway" <?= ($filters['order_type'] ?? '') === 'takeaway' ? 'selected' : '' ?>>Asporto</option>
@@ -224,15 +224,15 @@ $pctCompletion = $ps ? ohPctChange($s['completion_rate'], $ps['completion_rate']
             </select>
         </div>
         <div class="col-md-2">
-            <label class="form-label" style="font-size:.8rem; font-weight:600; color:#6c757d;">Da</label>
+            <label class="form-label" style="font-size:.8rem; font-weight:600; color:var(--mute);">Da</label>
             <input type="date" name="from" class="form-control form-control-sm" value="<?= e($filters['date_from'] ?? '') ?>">
         </div>
         <div class="col-md-2">
-            <label class="form-label" style="font-size:.8rem; font-weight:600; color:#6c757d;">A</label>
+            <label class="form-label" style="font-size:.8rem; font-weight:600; color:var(--mute);">A</label>
             <input type="date" name="to" class="form-control form-control-sm" value="<?= e($filters['date_to'] ?? '') ?>">
         </div>
         <div class="col-md-2">
-            <label class="form-label" style="font-size:.8rem; font-weight:600; color:#6c757d;">Cerca</label>
+            <label class="form-label" style="font-size:.8rem; font-weight:600; color:var(--mute);">Cerca</label>
             <input type="text" name="q" class="form-control form-control-sm" placeholder="Nome, #ordine, tel..." value="<?= e($filters['search'] ?? '') ?>">
         </div>
         <div class="col-md-2">
@@ -264,17 +264,17 @@ $pctCompletion = $ps ? ohPctChange($s['completion_rate'], $ps['completion_rate']
                 <?php endif; ?>
                 <?php foreach ($orders as $o): ?>
                 <tr style="border-bottom:1px solid #f5f5f5;">
-                    <td class="oh-td"><strong style="color:#1a1d23;"><?= e($o['order_number']) ?></strong></td>
+                    <td class="oh-td"><strong style="color:var(--ink);"><?= e($o['order_number']) ?></strong></td>
                     <td class="oh-td"><?= date('d/m H:i', strtotime($o['created_at'])) ?></td>
                     <td class="oh-td">
                         <div style="font-weight:600; font-size:.8rem;"><?= e($o['customer_name']) ?></div>
-                        <div style="font-size:.78rem; color:#6c757d;"><?= e($o['customer_phone']) ?></div>
+                        <div style="font-size:.78rem; color:var(--mute);"><?= e($o['customer_phone']) ?></div>
                     </td>
                     <td class="oh-td">
                         <i class="bi <?= $o['order_type'] === 'delivery' ? 'bi-truck' : 'bi-bag' ?>" style="color:<?= $o['order_type'] === 'delivery' ? '#1565C0' : '#E65100' ?>;"></i>
                         <?= order_type_label($o['order_type']) ?>
                     </td>
-                    <td class="oh-td" style="font-size:.8rem; color:#6c757d; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                    <td class="oh-td" style="font-size:.8rem; color:var(--mute); max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
                         <?= e($itemSummaries[$o['id']] ?? '') ?>
                     </td>
                     <td class="oh-td"><strong>&euro; <?= number_format((float)$o['total'], 2, ',', '.') ?></strong></td>
@@ -318,7 +318,7 @@ $pctCompletion = $ps ? ohPctChange($s['completion_rate'], $ps['completion_rate']
 <!-- ═══════════ TAB: CLASSIFICHE ═══════════ -->
 
 <?php if (empty($topItems) && empty($topCustomers)): ?>
-<div class="text-center py-5" style="color:#adb5bd; font-size:.82rem;">
+<div class="text-center py-5" style="color:var(--faint); font-size:.82rem;">
     <i class="bi bi-trophy" style="font-size:2.5rem; display:block; margin-bottom:.5rem;"></i>
     Nessun dato nel periodo selezionato
 </div>
@@ -332,7 +332,7 @@ $pctCompletion = $ps ? ohPctChange($s['completion_rate'], $ps['completion_rate']
                 <div class="oh-chart-period">Per quantità</div>
             </div>
             <?php if (empty($topItems)): ?>
-            <div class="text-center py-3" style="color:#adb5bd; font-size:.8rem;">Nessun piatto ordinato</div>
+            <div class="text-center py-3" style="color:var(--faint); font-size:.8rem;">Nessun piatto ordinato</div>
             <?php else: ?>
             <?php $maxQty = max(1, (int)$topItems[0]['total_qty']); ?>
             <?php foreach ($topItems as $i => $item):
@@ -364,7 +364,7 @@ $pctCompletion = $ps ? ohPctChange($s['completion_rate'], $ps['completion_rate']
                 <div class="oh-chart-period">Per spesa totale</div>
             </div>
             <?php if (empty($topCustomers)): ?>
-            <div class="text-center py-3" style="color:#adb5bd; font-size:.8rem;">Nessun cliente</div>
+            <div class="text-center py-3" style="color:var(--faint); font-size:.8rem;">Nessun cliente</div>
             <?php else: ?>
             <?php $maxSpent = max(1, (float)$topCustomers[0]['total_spent']); ?>
             <?php foreach ($topCustomers as $i => $cust):

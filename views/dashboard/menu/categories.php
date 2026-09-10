@@ -9,7 +9,7 @@ $menuTabs = [
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">
     <i class="bi bi-book me-1" style="color:var(--brand);"></i> Menù Digitale
 </h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Gestisci il menù del tuo ristorante</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Gestisci il menù del tuo ristorante</p>
 
 <!-- Tabs -->
 <div class="settings-tabs">
@@ -29,7 +29,7 @@ $menuTabs = [
     <?php if (empty($hierarchy)): ?>
     <div class="card" style="padding:2.5rem; text-align:center;">
         <i class="bi bi-folder" style="font-size:2.5rem; color:#dee2e6;"></i>
-        <p style="color:#6c757d; margin-top:.75rem; font-size:.88rem;">Nessuna categoria. Creane una per iniziare ad aggiungere voci.</p>
+        <p style="color:var(--mute); margin-top:.75rem; font-size:.88rem;">Nessuna categoria. Creane una per iniziare ad aggiungere voci.</p>
     </div>
     <?php else: ?>
 
@@ -163,7 +163,7 @@ $menuTabs = [
                     <input type="radio" class="btn-check" name="is_wine" id="ct-wine" value="1">
                     <label class="btn btn-outline-secondary" for="ct-wine"><i class="bi bi-cup-straw me-1"></i> Vini</label>
                 </div>
-                <div style="font-size:.8rem; color:#6c757d; margin-top:.25rem;">Le categorie "Vini" mostrano righe-vino: doppio prezzo (calice/bottiglia), niente foto né allergeni. Le sottocategorie ereditano il tipo.</div>
+                <div style="font-size:.8rem; color:var(--mute); margin-top:.25rem;">Le categorie "Vini" mostrano righe-vino: doppio prezzo (calice/bottiglia), niente foto né allergeni. Le sottocategorie ereditano il tipo.</div>
             </div>
             <?php if (!empty($menuLangs)): ?>
             <?php foreach ($menuLangs as $lc): ?>
@@ -183,7 +183,7 @@ $menuTabs = [
         </form>
     </div>
 
-    <div style="color:#6c757d; font-size:.75rem; margin-top:.75rem; font-style:italic;">
+    <div style="color:var(--mute); font-size:.75rem; margin-top:.75rem; font-style:italic;">
         <i class="bi bi-info-circle me-1"></i> Le sottocategorie sono opzionali. Le categorie senza voci non appaiono nel menù pubblico.
     </div>
 </div>
@@ -224,7 +224,7 @@ $menuTabs = [
                             <input type="radio" class="btn-check" name="is_wine" id="ct-edit-wine" value="1">
                             <label class="btn btn-outline-secondary" for="ct-edit-wine"><i class="bi bi-cup-straw me-1"></i> Vini</label>
                         </div>
-                        <div style="font-size:.8rem; color:#6c757d; margin-top:.25rem;">Cambiando il tipo, anche le sottocategorie vengono aggiornate.</div>
+                        <div style="font-size:.8rem; color:var(--mute); margin-top:.25rem;">Cambiando il tipo, anche le sottocategorie vengono aggiornate.</div>
                     </div>
                     <div class="mb-2">
                         <label class="form-label fw-semibold" style="font-size:.82rem;">Icona</label>

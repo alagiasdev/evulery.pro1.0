@@ -32,7 +32,7 @@ $isLate = $minutes > 30;
         <div class="do-order-rider">
             <?php if (!empty($o['rider_name'])): ?>
                 <button type="button" class="rider-badge-inline do-assign-trigger"
-                        style="background:<?= e($o['rider_color_hex'] ?? '#6c757d') ?>;border:0;cursor:pointer;"
+                        style="background:<?= e($o['rider_color_hex'] ?? 'var(--mute)') ?>;border:0;cursor:pointer;"
                         data-order-id="<?= (int)$o['id'] ?>"
                         data-current-rider="<?= (int)($o['rider_id'] ?? 0) ?>">
                     <span class="dot"></span> <?= e($o['rider_name']) ?>

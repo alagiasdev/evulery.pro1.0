@@ -9,7 +9,7 @@ $currentSource = $filters['source'] ?? '';
 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
     <div>
         <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.15rem;"><i class="bi bi-star" style="color:#FFC107;"></i> Reputazione</h2>
-        <p style="font-size:.82rem; color:#6c757d; margin-bottom:0;">Monitora le recensioni e il feedback dei tuoi clienti</p>
+        <p style="font-size:.82rem; color:var(--mute); margin-bottom:0;">Monitora le recensioni e il feedback dei tuoi clienti</p>
     </div>
 </div>
 
@@ -40,8 +40,8 @@ $currentSource = $filters['source'] ?? '';
 <?php if (empty($items)): ?>
 <div class="text-center" style="padding:3rem 1rem;">
     <i class="bi bi-clock-history" style="font-size:2.5rem; color:#e0e0e0;"></i>
-    <h5 style="font-size:.88rem; font-weight:700; color:#6c757d; margin-top:.75rem;">Nessun invio</h5>
-    <p style="font-size:.78rem; color:#adb5bd;">Le richieste di recensione appariranno qui.</p>
+    <h5 style="font-size:.88rem; font-weight:700; color:var(--mute); margin-top:.75rem;">Nessun invio</h5>
+    <p style="font-size:.78rem; color:var(--faint);">Le richieste di recensione appariranno qui.</p>
 </div>
 <?php else: ?>
 
@@ -51,7 +51,7 @@ $currentSource = $filters['source'] ?? '';
         <div class="table-responsive d-none d-md-block">
             <table class="table table-sm mb-0" style="font-size:.78rem;">
                 <thead>
-                    <tr style="font-size:.72rem; color:#6c757d;">
+                    <tr style="font-size:.72rem; color:var(--mute);">
                         <th>Cliente</th>
                         <th>Canale</th>
                         <th>Prenotazione</th>
@@ -69,7 +69,7 @@ $currentSource = $filters['source'] ?? '';
                             <?php if (!empty($item['first_name'])): ?>
                             <strong><?= e($item['first_name'] . ' ' . ($item['last_name'] ?? '')) ?></strong>
                             <?php else: ?>
-                            <span style="color:#adb5bd;">Anonimo</span>
+                            <span style="color:var(--faint);">Anonimo</span>
                             <?php endif; ?>
                         </td>
                         <td>
@@ -84,7 +84,7 @@ $currentSource = $filters['source'] ?? '';
                             <?php if (!empty($item['reservation_date'])): ?>
                             <span style="font-size:.72rem;"><?= format_date($item['reservation_date'], 'd/m') ?> <?= substr($item['reservation_time'] ?? '', 0, 5) ?></span>
                             <?php else: ?>
-                            <span style="color:#adb5bd;">—</span>
+                            <span style="color:var(--faint);">—</span>
                             <?php endif; ?>
                         </td>
                         <td class="text-center">
@@ -115,7 +115,7 @@ $currentSource = $filters['source'] ?? '';
                             <span style="color:#e0e0e0;">—</span>
                             <?php endif; ?>
                         </td>
-                        <td style="font-size:.72rem; color:#adb5bd;"><?= format_date($item['created_at'] ?? '', 'd/m/Y H:i') ?></td>
+                        <td style="font-size:.72rem; color:var(--faint);"><?= format_date($item['created_at'] ?? '', 'd/m/Y H:i') ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -125,13 +125,13 @@ $currentSource = $filters['source'] ?? '';
         <!-- Mobile cards -->
         <div class="d-md-none">
             <?php foreach ($items as $idx => $item): ?>
-            <div style="padding:.75rem 1rem; <?= $idx > 0 ? 'border-top:1px solid #e9ecef;' : '' ?>">
+            <div style="padding:.75rem 1rem; <?= $idx > 0 ? 'border-top:1px solid var(--hairline);' : '' ?>">
                 <div class="d-flex align-items-center justify-content-between mb-1">
                     <div>
                         <?php if (!empty($item['first_name'])): ?>
                         <strong style="font-size:.8rem;"><?= e($item['first_name'] . ' ' . ($item['last_name'] ?? '')) ?></strong>
                         <?php else: ?>
-                        <span style="font-size:.8rem; color:#adb5bd;">Anonimo</span>
+                        <span style="font-size:.8rem; color:var(--faint);">Anonimo</span>
                         <?php endif; ?>
                     </div>
                     <div>
@@ -140,7 +140,7 @@ $currentSource = $filters['source'] ?? '';
                         <?php endif; ?>
                     </div>
                 </div>
-                <div class="d-flex align-items-center gap-2 flex-wrap" style="font-size:.68rem; color:#adb5bd;">
+                <div class="d-flex align-items-center gap-2 flex-wrap" style="font-size:.68rem; color:var(--faint);">
                     <?php
                     $src = $item['source'] ?? 'email';
                     ?>

@@ -8,7 +8,7 @@
 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
     <div>
         <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.15rem;"><i class="bi bi-star" style="color:#FFC107;"></i> Reputazione</h2>
-        <p style="font-size:.82rem; color:#6c757d; margin-bottom:0;">Monitora le recensioni e il feedback dei tuoi clienti</p>
+        <p style="font-size:.82rem; color:var(--mute); margin-bottom:0;">Monitora le recensioni e il feedback dei tuoi clienti</p>
     </div>
 </div>
 
@@ -32,8 +32,8 @@
 <!-- Empty state -->
 <div class="text-center" style="padding:3rem 1rem;">
     <i class="bi bi-star" style="font-size:2.5rem; color:#e0e0e0;"></i>
-    <h5 style="font-size:.88rem; font-weight:700; color:#6c757d; margin-top:.75rem;">Nessuna richiesta di recensione ancora</h5>
-    <p style="font-size:.78rem; color:#adb5bd;">Configura le impostazioni e attendi la prima prenotazione completata.</p>
+    <h5 style="font-size:.88rem; font-weight:700; color:var(--mute); margin-top:.75rem;">Nessuna richiesta di recensione ancora</h5>
+    <p style="font-size:.78rem; color:var(--faint);">Configura le impostazioni e attendi la prima prenotazione completata.</p>
     <a href="<?= url('dashboard/settings/reviews') ?>" class="btn btn-success btn-sm">
         <i class="bi bi-gear me-1"></i> Configura recensioni
     </a>
@@ -110,16 +110,16 @@
                     $pct = $maxVal > 0 ? round($step['value'] / $maxVal * 100) : 0;
                 ?>
                 <div class="d-flex align-items-center gap-2 mb-2">
-                    <div style="font-size:.72rem; color:#495057; min-width:60px; font-weight:600;"><?= $step['label'] ?></div>
-                    <div style="flex:1; height:28px; background:#f8f9fa; border-radius:8px; overflow:hidden;">
+                    <div style="font-size:.72rem; color:var(--body); min-width:60px; font-weight:600;"><?= $step['label'] ?></div>
+                    <div style="flex:1; height:28px; background:var(--surface-softer); border-radius:8px; overflow:hidden;">
                         <div style="height:100%; width:<?= max(5, $pct) ?>%; background:<?= $step['color'] ?>; border-radius:8px; display:flex; align-items:center; padding:0 .6rem;">
                             <span style="font-size:.7rem; font-weight:600; color:<?= $step['textColor'] ?>;"><?= $step['value'] ?></span>
                         </div>
                     </div>
-                    <div style="font-size:.68rem; color:#adb5bd; min-width:35px; text-align:right;"><?= $pct ?>%</div>
+                    <div style="font-size:.68rem; color:var(--faint); min-width:35px; text-align:right;"><?= $pct ?>%</div>
                 </div>
                 <?php endforeach; ?>
-                <div style="font-size:.65rem; color:#adb5bd; margin-top:.5rem; line-height:1.4;">
+                <div style="font-size:.65rem; color:var(--faint); margin-top:.5rem; line-height:1.4;">
                     <i class="bi bi-info-circle me-1"></i> Il dato "Aperte" è indicativo: alcuni client email bloccano il tracciamento. Il "Click" è la metrica più affidabile.
                 </div>
             </div>
@@ -171,14 +171,14 @@
                 ?>
                 <div class="d-flex align-items-center gap-2 mb-1">
                     <div style="font-size:.72rem; color:#FFC107; min-width:30px; text-align:right;"><?= str_repeat('★', $star) ?></div>
-                    <div style="flex:1; height:8px; background:#e9ecef; border-radius:4px; overflow:hidden;">
+                    <div style="flex:1; height:8px; background:var(--hairline); border-radius:4px; overflow:hidden;">
                         <div style="height:100%; width:<?= $pct ?>%; background:<?= $colors[$star] ?>; border-radius:4px;"></div>
                     </div>
-                    <div style="font-size:.68rem; color:#6c757d; min-width:20px;"><?= $cnt ?></div>
-                    <div style="font-size:.65rem; color:#adb5bd; min-width:30px; text-align:right;"><?= $pct ?>%</div>
+                    <div style="font-size:.68rem; color:var(--mute); min-width:20px;"><?= $cnt ?></div>
+                    <div style="font-size:.65rem; color:var(--faint); min-width:30px; text-align:right;"><?= $pct ?>%</div>
                 </div>
                 <?php endforeach; ?>
-                <div style="font-size:.65rem; color:#adb5bd; margin-top:.5rem; line-height:1.4;">
+                <div style="font-size:.65rem; color:var(--faint); margin-top:.5rem; line-height:1.4;">
                     <i class="bi bi-info-circle me-1"></i> Questi voti sono raccolti internamente da Evulery e non corrispondono alle recensioni pubblicate su Google o altre piattaforme.
                 </div>
             </div>
@@ -198,8 +198,8 @@
                         <span style="font-size:.72rem; color:#FFC107;"><?= str_repeat('★', (int)($fb['rating'] ?? 0)) ?></span>
                         <?= review_status_badge($fb['feedback_status'] ?? 'new') ?>
                     </div>
-                    <div style="font-size:.75rem; color:#495057; line-height:1.4;"><?= e(mb_substr($fb['feedback_text'] ?? '', 0, 120)) ?><?= mb_strlen($fb['feedback_text'] ?? '') > 120 ? '...' : '' ?></div>
-                    <div style="font-size:.65rem; color:#adb5bd; margin-top:.2rem;"><?= format_date($fb['created_at'] ?? '', 'd/m/Y H:i') ?></div>
+                    <div style="font-size:.75rem; color:var(--body); line-height:1.4;"><?= e(mb_substr($fb['feedback_text'] ?? '', 0, 120)) ?><?= mb_strlen($fb['feedback_text'] ?? '') > 120 ? '...' : '' ?></div>
+                    <div style="font-size:.65rem; color:var(--faint); margin-top:.2rem;"><?= format_date($fb['created_at'] ?? '', 'd/m/Y H:i') ?></div>
                 </div>
                 <?php endforeach; ?>
                 <a href="<?= url('dashboard/reputation/feedback') ?>" class="btn btn-outline-success btn-sm w-100 mt-2" style="font-size:.75rem;">
@@ -218,11 +218,11 @@
                 <div class="d-flex gap-3">
                     <div class="text-center" style="flex:1;">
                         <div style="font-size:1.1rem; font-weight:700;"><?= $stats['total_email'] ?? 0 ?></div>
-                        <div style="font-size:.68rem; color:#6c757d;">Email</div>
+                        <div style="font-size:.68rem; color:var(--mute);">Email</div>
                     </div>
                     <div class="text-center" style="flex:1;">
                         <div style="font-size:1.1rem; font-weight:700;"><?= $stats['total_anonymous'] ?? 0 ?></div>
-                        <div style="font-size:.68rem; color:#6c757d;">QR/Embed/NFC</div>
+                        <div style="font-size:.68rem; color:var(--mute);">QR/Embed/NFC</div>
                     </div>
                 </div>
             </div>

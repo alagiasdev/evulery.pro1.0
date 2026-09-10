@@ -1,7 +1,7 @@
 <?php $old = $old ?? []; ?>
 
 <h2 style="font-size:1.35rem; font-weight:700; margin-bottom:.25rem;">Nuova voce</h2>
-<p style="font-size:.82rem; color:#6c757d; margin-bottom:1rem;">Aggiungi una voce al menù (piatto o vino)</p>
+<p style="font-size:.82rem; color:var(--mute); margin-bottom:1rem;">Aggiungi una voce al menù (piatto o vino)</p>
 
 <div class="page-back" style="margin-bottom:1rem;">
     <a href="<?= url('dashboard/menu') ?>"><i class="bi bi-arrow-left"></i> Torna al menù</a>
@@ -42,7 +42,7 @@
                     <label class="form-label fw-semibold" style="font-size:.82rem;" id="descLabel">Descrizione</label>
                     <textarea name="description" class="form-control form-control-sm" rows="2" maxlength="2000"
                               placeholder="Ingredienti, preparazione..."><?= e($old['description'] ?? '') ?></textarea>
-                    <div id="descHint" style="font-size:.8rem; color:#6c757d; margin-top:.2rem; display:none;">Per i vini: produttore, regione, annata. Es. "Castello di Ama &middot; Toscana &middot; 2020"</div>
+                    <div id="descHint" style="font-size:.8rem; color:var(--mute); margin-top:.2rem; display:none;">Per i vini: produttore, regione, annata. Es. "Castello di Ama &middot; Toscana &middot; 2020"</div>
                 </div>
 
                 <?php if (!empty($menuLangs)): ?>
@@ -78,13 +78,13 @@
                                    placeholder="0.00" value="<?= e($old['price_bottle'] ?? '') ?>">
                         </div>
                     </div>
-                    <div id="priceHint" style="font-size:.8rem; color:#6c757d; margin-top:.2rem; display:none;">Per i vini compila almeno uno tra calice e bottiglia (es. solo bottiglia per i grandi rossi).</div>
+                    <div id="priceHint" style="font-size:.8rem; color:var(--mute); margin-top:.2rem; display:none;">Per i vini compila almeno uno tra calice e bottiglia (es. solo bottiglia per i grandi rossi).</div>
                 </div>
 
                 <div class="mb-3" id="fotoBlock">
                     <label class="form-label fw-semibold" style="font-size:.82rem;">Foto (opzionale)</label>
                     <input type="file" name="image" class="form-control form-control-sm" accept="image/jpeg,image/png,image/webp">
-                    <div style="font-size:.8rem; color:#6c757d; margin-top:.25rem;">JPG, PNG o WebP. Max 2MB.</div>
+                    <div style="font-size:.8rem; color:var(--mute); margin-top:.25rem;">JPG, PNG o WebP. Max 2MB.</div>
                 </div>
 
                 <div class="mb-3" id="allergeniBlock">
@@ -113,7 +113,7 @@
                 </div>
 
                 <?php if (tenant_can('online_ordering')): ?>
-                <div class="card mb-3" id="orderingBlock" style="background:#f8f9fa; border:1px solid #dee2e6; padding:.75rem;">
+                <div class="card mb-3" id="orderingBlock" style="background:var(--surface-softer); border:1px solid var(--hairline-strong); padding:.75rem;">
                     <label class="form-label fw-semibold" style="font-size:.82rem;"><i class="bi bi-bag-check me-1"></i> Ordini online</label>
                     <div class="mb-2">
                         <label class="d-flex align-items-center gap-2" style="font-size:.82rem; cursor:pointer;">
@@ -123,12 +123,12 @@
                     </div>
                     <div class="row g-2">
                         <div class="col-6">
-                            <label style="font-size:.82rem; color:#6c757d;">Tempo preparazione (min)</label>
+                            <label style="font-size:.82rem; color:var(--mute);">Tempo preparazione (min)</label>
                             <input type="number" name="prep_minutes" class="form-control form-control-sm" min="1" max="180"
                                    value="<?= e($old['prep_minutes'] ?? '') ?>" placeholder="Default tenant">
                         </div>
                         <div class="col-6">
-                            <label style="font-size:.82rem; color:#6c757d;">Max ordini giornalieri</label>
+                            <label style="font-size:.82rem; color:var(--mute);">Max ordini giornalieri</label>
                             <input type="number" name="max_daily_qty" class="form-control form-control-sm" min="1"
                                    value="<?= e($old['max_daily_qty'] ?? '') ?>" placeholder="Illimitato">
                         </div>

@@ -2,7 +2,7 @@
 <div class="res-page-header">
     <h1><i class="bi bi-megaphone" style="color:var(--brand);"></i> Marketing</h1>
 </div>
-<p style="color:#6c757d;font-size:.88rem;margin:.25rem 0 1rem;">
+<p style="color:var(--mute);font-size:.88rem;margin:.25rem 0 1rem;">
     Capisci da quale canale arrivano le prenotazioni e genera i link tracciati per le tue campagne.
 </p>
 
