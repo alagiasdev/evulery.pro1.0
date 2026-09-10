@@ -41,44 +41,22 @@ class CSRFMiddleware
                 return;
             }
 
-            // DIAGNOSTIC (temporaneo): cosa vediamo quando CSRF fallisce?
-            $sessionToken = $_SESSION['_csrf_token'] ?? null;
-            $lastActivity = $_SESSION['_last_activity'] ?? null;
-            $idleSec = $lastActivity ? (time() - $lastActivity) : null;
-            $hasCookie = isset($_COOKIE[session_name()]);
-            // Distingue "body perso in transito" da "manca solo _csrf":
-            // post_keys = SOLO i nomi dei campi arrivati (nessun valore/dato sensibile);
-            // content_len/type = cosa ha dichiarato il browser; ip = per incrociare con Cloudflare.
-            $postKeys    = !empty($_POST) ? implode(',', array_keys($_POST)) : '(VUOTO)';
-            $contentType = $_SERVER['CONTENT_TYPE'] ?? 'n/a';
-            $contentLen  = $_SERVER['CONTENT_LENGTH'] ?? 'n/a';
-            $clientIp    = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? 'n/a';
-            // Distingue "body assente" da "body arrivato ma non parsato da PHP":
-            // raw_len = SOLO la lunghezza del body grezzo (mai il contenuto: c'e' la password).
-            // transfer_encoding=chunked spiegherebbe content_len assente + $_POST vuoto.
-            $rawLen = strlen((string) file_get_contents('php://input'));
-            $transferEnc = $_SERVER['HTTP_TRANSFER_ENCODING'] ?? 'n/a';
-            $protocol    = $_SERVER['SERVER_PROTOCOL'] ?? 'n/a';
-            $cfRay       = $_SERVER['HTTP_CF_RAY'] ?? 'n/a';
+            // Un fallimento CSRF e' ormai un evento raro: la causa nota — cookie di
+            // sessione perso su iOS Safari — la intercetta il ramo qui sopra dal
+            // 2026-08-20. Se ricompare va indagato, quindi resta una riga di log, ma
+            // ridotta all'osso e senza dati personali: niente IP, niente user agent,
+            // niente frammenti di token.
+            //
+            // La diagnostica estesa che stava qui (aperta il 2026-04-24, ampliata il
+            // 17/07) e' stata rimossa il 2026-09-10 perche' aveva risposto alla sua
+            // domanda: l'ultimo CSRF FAIL registrato in produzione e' del 19/08 alle
+            // 20:04, il giorno PRIMA della correzione, e diceva has_cookie=no con il
+            // corpo della richiesta arrivato intero. Da allora, silenzio.
             app_log(sprintf(
-                'CSRF FAIL uri=%s method=%s session_id=%s has_cookie=%s submitted_token=%s session_token=%s idle_sec=%s post_keys=[%s] raw_len=%s transfer_encoding=%s protocol=%s cf_ray=%s content_len=%s content_type=%s ip=%s referer=%s ua=%s',
+                'CSRF non valido: uri=%s has_cookie=%s session_token=%s',
                 $uri,
-                $request->method(),
-                session_id() ?: 'NONE',
-                $hasCookie ? 'yes' : 'no',
-                $token ? substr($token, 0, 8) . '...' : 'EMPTY',
-                $sessionToken ? substr($sessionToken, 0, 8) . '...' : 'MISSING',
-                $idleSec ?? 'n/a',
-                $postKeys,
-                $rawLen,
-                $transferEnc,
-                $protocol,
-                $cfRay,
-                $contentLen,
-                $contentType,
-                $clientIp,
-                $_SERVER['HTTP_REFERER'] ?? 'n/a',
-                substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 80)
+                isset($_COOKIE[session_name()]) ? 'yes' : 'no',
+                empty($_SESSION['_csrf_token']) ? 'MISSING' : 'ok'
             ), 'warning');
 
             Session::flash('alert_type', 'danger');
