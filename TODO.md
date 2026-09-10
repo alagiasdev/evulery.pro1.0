@@ -1,3 +1,23 @@
+## Design — CONGELATO il 10/09/2026
+
+375 colori scritti a mano sono diventati token su dashboard e admin. Il resto è fermo
+di proposito: vedi il capitolo "Stato del lavoro sui colori" in `DESIGN.md` per i
+numeri e i motivi. **Non riaprirlo come progetto a sé.**
+
+Quando riprendere un pezzo, e solo allora:
+
+- [ ] **Area reseller** — quando si tocca quell'area per altro. Prerequisito: dichiarare
+      la tavolozza in `reseller.css`. Un terzo dei colori va risolto usando le classi
+      `.rs-b-*` esistenti, non tokenizzando.
+- [ ] **Widget di prenotazione** — 22 colori e 16 token propri già pronti: l'unico pezzo
+      che varrebbe da solo, quando si mette mano al widget.
+- [ ] **Gestisci prenotazione** (`layouts/minimal.php`) — solo se quella pagina va rifatta:
+      oggi non ha nessuna variabile, darle una tavolozza è costruire, non ripulire.
+- [ ] **Le due famiglie d'avviso** (ambra e arancio) — unificarle cambia ~30 riquadri ed è
+      una scelta di gusto. Farla quando c'è un motivo, non per simmetria.
+
+**Regola corrente**: quando tocchi una view per altri motivi, sistemi i suoi colori.
+
 # Evulery.Pro 1.0 - Prossimi Passi
 
 ## 📂 Dove si trovano i file di log (riferimento — agg. 2026-06-26)

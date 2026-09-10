@@ -130,7 +130,7 @@
     <?php if (empty($categories) && empty($specials)): ?>
     <!-- EMPTY STATE -->
     <div class="dm-empty">
-        <i class="bi bi-book" style="font-size:2.5rem; color:#dee2e6;"></i>
+        <i class="bi bi-book" style="font-size:2.5rem; color:var(--dm-text-light);"></i>
         <p><?= e($ui['empty']) ?></p>
     </div>
     <?php else: ?>

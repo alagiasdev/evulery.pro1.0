@@ -638,11 +638,13 @@ Onestà su ciò che il sistema **non ha ancora**, così chi legge non crede di t
    l'aspetto di una trentina di riquadri: è una decisione di design, non di manutenzione.
    **Per un avviso nuovo usare la famiglia ambra**, che è quella storicamente documentata.
 
-7. **Le icone degli stati vuoti hanno due colori.** Nel menù sono `{colors.hairline-strong}`
-   (`#dee2e6`), altrove `{colors.faint}` (`#adb5bd`). Sei occorrenze in tutto, trovate in
-   quattro aree diverse durante la tokenizzazione del 10/09/2026 e lasciate come stanno:
-   allinearle si vede. `#dee2e6` è per di più un colore da bordo usato come colore di
-   testo, quindi la variante giusta è quasi certamente `{colors.faint}`.
+7. ~~**Le icone degli stati vuoti hanno due colori.**~~ **Risolto il 10/09/2026.** Erano
+   sette (non sei: una era sul menù pubblico, superficie diversa), e usavano
+   `{colors.hairline-strong}` — un colore da bordo — come colore di testo. Ora usano tutte
+   il token tenue della propria superficie: `{colors.faint}` nella dashboard,
+   `--dm-text-light` nel menù pubblico. Stesso valore, `#adb5bd`, due nomi perché due
+   superfici. **Un'icona di stato vuoto nuova va sul token tenue, mai su un colore da
+   bordo.**
 
 8. **La tavolozza globale non è ancora dichiarata in `reseller.css`.** Le pagine reseller
    caricano solo quel foglio, che ha i propri `--rs-*` ma non `--mute`, `--warn-bg` e
@@ -665,6 +667,36 @@ veri, quindi mostra sempre lo stato attuale, e dal 10/09/2026 copre **tutte e di
 superfici** — la dashboard in pagina, le altre nove in riquadri separati che stanno in
 `docs/preview/`. Sono file distinti per necessità: i nove fogli hanno regole su `body` e
 su classi generiche, caricarli insieme li farebbe sovrascrivere a vicenda.*
+
+## Stato del lavoro sui colori (congelato il 10/09/2026)
+
+In due giorni **375 colori scritti a mano sono diventati token**, su tutta la dashboard e
+tutta l'area admin, con la tavolozza dichiarata in `dashboard.css` e `admin.css`. Ogni
+sostituzione è stata verificata identica al valore calcolato: nessun colore è cambiato,
+tranne le quattro modifiche volute e annotate nei commit.
+
+**Il resto è deliberatamente fermo**, e non per stanchezza — perché il lavoro che resta è
+di natura diversa e vale poco:
+
+- **Area reseller** (~45 colori): il prerequisito è dichiarare la tavolozza in
+  `reseller.css` (lacuna 8). Ma un terzo di quei colori sono valori dei badge lead
+  ripetuti a mano **quando le classi `.rs-b-*` esistono già**: lì il lavoro giusto non è
+  tokenizzare, è usare le classi. Tocca il markup, va fatto guardando le pagine.
+- **Superfici pubbliche** (~45 colori su sette ambienti): ognuna userebbe i **propri**
+  token (`--bw-*`, `--dm-*`, `--os-*`), non la tavolozza globale, perché sono isolate per
+  costruzione. Il widget è l'unico che varrebbe da solo: 22 colori e 16 token già pronti.
+  *Gestisci prenotazione* non ha nessuna variabile — il suo stile sta dentro
+  `layouts/minimal.php` — quindi prima andrebbe trasformato in una superficie con una
+  tavolozza: è costruire, non ripulire.
+- **Le due famiglie d'avviso** restano due (lacuna 6). Unificarle cambia una trentina di
+  riquadri e non ha un argomento tecnico: è una scelta di gusto, e va fatta quando c'è
+  motivo, non per simmetria.
+
+**La regola che sostituisce tutto questo**: quando tocchi una view per altri motivi,
+sistemi i suoi colori. Il debito si estingue dove stai già guardando, che è anche l'unico
+posto dove ti accorgi se qualcosa si sposta.
+
+---
 
 *Aggiornare questo documento **e la vetrina** quando nasce un componente o cambia una
 convenzione — non per il colore di una singola pagina, che va invece ricondotto alle

@@ -94,7 +94,7 @@ function promoBadgeColor(string $type): string {
 
     <?php if (empty($allPromos)): ?>
     <div style="text-align:center; padding:2.5rem 1rem;">
-        <i class="bi bi-percent" style="font-size:2.5rem; color:#dee2e6;"></i>
+        <i class="bi bi-percent" style="font-size:2.5rem; color:var(--faint);"></i>
         <p style="color:var(--mute); margin-top:.75rem; font-size:.88rem; margin-bottom:0;">Nessuna promozione creata.<br>Clicca "Nuova promozione" per crearne una.</p>
     </div>
     <?php else: ?>

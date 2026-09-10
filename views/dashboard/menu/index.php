@@ -79,7 +79,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
 
         <?php if (empty($categories)): ?>
         <div class="card" style="padding:2.5rem; text-align:center;">
-            <i class="bi bi-book" style="font-size:2.5rem; color:#dee2e6;"></i>
+            <i class="bi bi-book" style="font-size:2.5rem; color:var(--faint);"></i>
             <p style="color:var(--mute); margin-top:.75rem; font-size:.88rem; margin-bottom:.75rem;">
                 Crea prima una categoria nella tab <strong>Categorie</strong> per iniziare.
             </p>
@@ -149,7 +149,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
 
             <?php if (!$hasItems): ?>
             <div class="card" style="padding:2.5rem; text-align:center;">
-                <i class="bi bi-egg-fried" style="font-size:2.5rem; color:#dee2e6;"></i>
+                <i class="bi bi-egg-fried" style="font-size:2.5rem; color:var(--faint);"></i>
                 <p style="color:var(--mute); margin-top:.75rem; font-size:.88rem; margin-bottom:.75rem;">Nessuna voce nel menù.</p>
                 <a href="<?= url('dashboard/menu/items/create') ?>" class="btn btn-sm btn-save" style="display:inline-block; width:auto; margin:0 auto;">
                     <i class="bi bi-plus-circle me-1"></i> Aggiungi la prima voce
@@ -198,7 +198,7 @@ $isMenuEnabled = (bool)($tenant['menu_enabled'] ?? false);
                 </div>
                 <?php else: ?>
                 <div style="text-align:center; padding:.5rem 0;">
-                    <i class="bi bi-eye-slash" style="font-size:1.5rem; color:#dee2e6;"></i>
+                    <i class="bi bi-eye-slash" style="font-size:1.5rem; color:var(--faint);"></i>
                     <p style="font-size:.82rem; color:var(--mute); margin:.5rem 0;">Menù pubblico disattivato</p>
                     <a href="<?= url('dashboard/menu/appearance') ?>" class="btn btn-sm btn-outline-secondary">
                         <i class="bi bi-palette me-1"></i> Attiva in Aspetto

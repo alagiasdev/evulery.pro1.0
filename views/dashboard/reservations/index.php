@@ -217,7 +217,7 @@ $kpiUrl = function (string $st) use ($isUpcoming, $date, $dateTo, $source): stri
     </div>
     <?php if (empty($searchResults)): ?>
         <div class="text-center text-muted py-4">
-            <i class="bi bi-inbox" style="font-size:2rem;display:block;margin-bottom:.5rem;color:#dee2e6;"></i>
+            <i class="bi bi-inbox" style="font-size:2rem;display:block;margin-bottom:.5rem;color:var(--faint);"></i>
             Nessuna prenotazione trovata per "<?= e($searchQuery) ?>".
         </div>
     <?php else: ?>

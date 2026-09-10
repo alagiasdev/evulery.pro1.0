@@ -28,7 +28,7 @@ $menuTabs = [
 
     <?php if (empty($hierarchy)): ?>
     <div class="card" style="padding:2.5rem; text-align:center;">
-        <i class="bi bi-folder" style="font-size:2.5rem; color:#dee2e6;"></i>
+        <i class="bi bi-folder" style="font-size:2.5rem; color:var(--faint);"></i>
         <p style="color:var(--mute); margin-top:.75rem; font-size:.88rem;">Nessuna categoria. Creane una per iniziare ad aggiungere voci.</p>
     </div>
     <?php else: ?>
