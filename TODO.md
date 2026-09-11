@@ -18,6 +18,28 @@ Quando riprendere un pezzo, e solo allora:
 
 **Regola corrente**: quando tocchi una view per altri motivi, sistemi i suoi colori.
 
+## Pagina Diagnostica in area admin — AL DECIMO CLIENTE
+
+**Innesco deciso l'11/09/2026: quando i ristoranti attivi arrivano a 10.** Prima non serve.
+
+Le query di coerenza dati oggi si possono lanciare solo in locale, e in locale non dicono
+niente di utile: con 3 ristoranti non trovano nulla per costruzione. Diventano interessanti
+quando i dati veri sono abbastanza da nascondere un'anomalia.
+
+Cosa ci va, sullo schema della pagina Log (`Admin -> Sistema`):
+- prenotazioni senza cliente o senza ristorante, clienti e ordini orfani
+- utenti che dovrebbero avere un ristorante e non ce l'hanno (il caso NO_TENANT del 09/09)
+- utenti il cui ristorante e' disattivato
+- contatori `customers.total_bookings` disallineati rispetto alle prenotazioni reali
+  (`Customer::recomputeStats` li ricalcola, ma un drift indica un evento non intercettato)
+- confronto migration su disco vs applicate (oggi c'e' gia' `/admin/migrations`)
+
+Le query esistono gia': sono quelle usate nel controllo di salute dell'11/09/2026, vedi lo
+storico di quella sessione. Stima mezza giornata. Rischio zero: sola lettura.
+
+**Attenzione al ruolo**: i ruoli sono `owner`, `staff`, `reseller`, `super_admin`. Non esiste
+`admin`. Un controllo scritto con il ruolo sbagliato produce falsi positivi — mi e' successo.
+
 # Evulery.Pro 1.0 - Prossimi Passi
 
 ## 📂 Dove si trovano i file di log (riferimento — agg. 2026-06-26)
@@ -779,7 +801,11 @@ Area `/reseller/*` per procacciatori B2B che vendono Evulery a ristoratori.
 ### Pre-deploy in produzione
 - [x] Applicare migration 052 (reseller_profiles, acquired_by_reseller_id, role VARCHAR)
 - [x] Applicare migration 053 (credit_recharge_requests)
-- [ ] Cambiare password super admin (durante test era stata resettata ad `admin1234`)
+- [x] ~~Cambiare password super admin~~ — **VERIFICATO 11/09/2026**: in produzione email e
+      password del super admin sono diverse da quelle di prova (confermato da Stefano).
+      NB: sul **locale** l'account `admin@evulery.pro` ha ancora `admin1234`. Non e'
+      esposto (XAMPP), ma se quella macchina finisse su una rete non fidata va cambiata.
+      Le credenziali di produzione non sono verificabili da qui, ne' modificabili: e' giusto cosi'.
 
 ## FASE 22B-bis: Reseller refinements [COMPLETATA 2026-05-12]
 Rifiniture su area reseller + materiali commerciali.
