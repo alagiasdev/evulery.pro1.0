@@ -66,7 +66,6 @@ $now = date('Y-m-d H:i:s');
 $totalSent = 0;
 $totalFailed = 0;
 
-app_log("Cron broadcast: starting at {$now}", 'info');
 echo "[{$now}] Starting broadcast send...\n";
 
 // Find queued campaigns
@@ -95,6 +94,7 @@ foreach ($campaigns as $campaign) {
 
     if (!$tenant) {
         echo "    [SKIP] Tenant #{$tenantId} not found or inactive.\n";
+        app_log("Cron broadcast: campagna #{$campaignId} NON inviata — ristorante #{$tenantId} inesistente o disattivato", 'warning');
         $campaignModel->updateStatus($campaignId, 'failed');
         continue;
     }
@@ -102,6 +102,7 @@ foreach ($campaigns as $campaign) {
     // Service gate check
     if (!$tenantModel->canUseService($tenantId, 'email_broadcast')) {
         echo "    [SKIP] Tenant '{$tenant['name']}' plan does not include email_broadcast.\n";
+        app_log("Cron broadcast: campagna #{$campaignId} NON inviata — il piano di '{$tenant['name']}' non include email_broadcast", 'warning');
         $campaignModel->updateStatus($campaignId, 'failed');
         continue;
     }
@@ -171,3 +172,11 @@ foreach ($campaigns as $campaign) {
 }
 
 echo "\n[DONE] Total sent: {$totalSent}, total failed: {$totalFailed}\n";
+
+// Nel log resta traccia solo se e' successo davvero qualcosa. Lo stato delle
+// campagne e dei singoli destinatari sta gia' nel database (updateCounts,
+// updateStatus, updateRecipientStatus) ed e' visibile in Comunicazioni: la riga
+// "starting" che stava qui non aggiungeva nulla e scriveva 288 volte al giorno.
+if ($totalSent > 0 || $totalFailed > 0) {
+    app_log("Cron broadcast: inviate {$totalSent}, fallite {$totalFailed}", $totalFailed > 0 ? 'warning' : 'info');
+}

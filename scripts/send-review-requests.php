@@ -60,7 +60,6 @@ $sent = 0;
 $skipped = 0;
 $errors = 0;
 
-app_log("Cron review-requests: starting at {$now}", 'info');
 echo "[{$now}] Starting review request send...\n";
 
 // Find eligible reservations:
@@ -100,7 +99,6 @@ $stmt = $db->prepare(
 $stmt->execute();
 $candidates = $stmt->fetchAll();
 
-app_log("Cron review-requests: found " . count($candidates) . " candidates", 'info');
 echo "  Found " . count($candidates) . " candidates.\n";
 
 foreach ($candidates as $row) {
@@ -191,5 +189,9 @@ foreach ($candidates as $row) {
 
 // Summary
 $summary = "sent: {$sent}, skipped: {$skipped}, errors: {$errors}";
-app_log("Cron review-requests: DONE — {$summary}", 'info');
+// Solo quando c'e' qualcosa da dire. Gli [OK] e gli [ERR] per singola
+// richiesta restano sempre: sono loro a dire chi ha ricevuto cosa.
+if ($sent > 0 || $errors > 0) {
+    app_log("Cron review-requests: {$summary}", $errors > 0 ? 'warning' : 'info');
+}
 echo "\n[DONE] {$summary}\n";

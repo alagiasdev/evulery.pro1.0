@@ -43,7 +43,6 @@ $db->exec("SET time_zone = '" . date('P') . "'");
 
 $now = date('Y-m-d H:i:s');
 echo "[{$now}] Scadenza caparre manuali — start\n";
-app_log("Cron expire-manual-deposits: start {$now}", 'info');
 
 $stmt = $db->prepare(
     'SELECT r.id, r.booking_number, r.reservation_date, r.reservation_time, r.party_size,
@@ -108,4 +107,9 @@ foreach ($rows as $row) {
 }
 
 echo "[DONE] annullate: {$cancelled}, errori: {$errors}\n";
-app_log("Cron expire-manual-deposits: done — annullate {$cancelled}, errori {$errors}", 'info');
+// Solo se ha fatto qualcosa: annullare una prenotazione e' un evento, non
+// averne trovate da annullare non lo e'. Gli [OK] e gli [ERR] qui sopra
+// restano sempre, uno per prenotazione.
+if ($cancelled > 0 || $errors > 0) {
+    app_log("Cron expire-manual-deposits: annullate {$cancelled}, errori {$errors}", $errors > 0 ? 'warning' : 'info');
+}

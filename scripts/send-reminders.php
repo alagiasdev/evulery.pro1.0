@@ -64,7 +64,6 @@ $sent24h = 0;
 $sent2h = 0;
 $errors = 0;
 
-app_log("Cron reminder: starting at {$now}", 'info');
 echo "[" . $now . "] Starting reminder send...\n";
 
 // ============================================================
@@ -88,7 +87,9 @@ $stmt = $db->prepare(
 $stmt->execute();
 $reminders24h = $stmt->fetchAll();
 
-app_log("Cron reminder: found " . count($reminders24h) . " reservations for 24h reminder", 'info');
+if (count($reminders24h) > 0) {
+    app_log("Cron reminder: found " . count($reminders24h) . " reservations for 24h reminder", 'info');
+}
 echo "  Found " . count($reminders24h) . " reservations for 24h reminder.\n";
 
 foreach ($reminders24h as $row) {
@@ -143,7 +144,9 @@ $stmt = $db->prepare(
 $stmt->execute();
 $reminders2h = $stmt->fetchAll();
 
-app_log("Cron reminder: found " . count($reminders2h) . " reservations for 2h reminder", 'info');
+if (count($reminders2h) > 0) {
+    app_log("Cron reminder: found " . count($reminders2h) . " reservations for 2h reminder", 'info');
+}
 echo "  Found " . count($reminders2h) . " reservations for 2h reminder.\n";
 
 foreach ($reminders2h as $row) {
@@ -181,5 +184,9 @@ foreach ($reminders2h as $row) {
 // Summary
 // ============================================================
 $summary = "24h sent: {$sent24h}, 2h sent: {$sent2h}, errors: {$errors}";
-app_log("Cron reminder: DONE — {$summary}", 'info');
+// Solo se ha davvero mandato qualcosa o e' fallito. Gli [OK] per singolo
+// promemoria e gli [ERR] restano sempre: sono la traccia di chi ha ricevuto.
+if ($sent24h > 0 || $sent2h > 0 || $errors > 0) {
+    app_log("Cron reminder: {$summary}", $errors > 0 ? 'warning' : 'info');
+}
 echo "\n[DONE] {$summary}\n";
