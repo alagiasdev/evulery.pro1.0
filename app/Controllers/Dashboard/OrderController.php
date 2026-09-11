@@ -5,6 +5,7 @@ namespace App\Controllers\Dashboard;
 use App\Core\Auth;
 use App\Core\Request;
 use App\Core\Response;
+use App\Core\Session;
 use App\Core\TenantResolver;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -395,6 +396,7 @@ class OrderController
         if ($this->gate()) return;
 
         $tenantId = Auth::tenantId();
+        Session::closeWrite(); // endpoint pollato (15s) read-only: rilascia il lock sessione
         $orderModel = new Order();
 
         $kanban = $orderModel->getKanbanData($tenantId);
@@ -415,6 +417,7 @@ class OrderController
         if ($this->gate()) return;
 
         $tenantId = Auth::tenantId();
+        Session::closeWrite(); // endpoint pollato (15s) read-only: rilascia il lock sessione
         $stats = (new Order())->getStats($tenantId);
 
         Response::json([
