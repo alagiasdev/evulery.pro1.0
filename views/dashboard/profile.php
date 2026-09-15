@@ -90,7 +90,6 @@
         $cycle = $sub['billing_cycle'] ?? 'annual';
         $extraDisc = (float)($sub['extra_discount'] ?? 0);
         $calc = \App\Models\Plan::calculatePrice($plan, $cycle, $extraDisc);
-        $cycleLabel = $cycle === 'semiannual' ? 'Semestrale' : 'Annuale';
         ?>
         <div class="card section-card" style="margin-top:1rem;">
             <div style="padding:1.25rem;">
@@ -109,11 +108,17 @@
 
                 <!-- Dettagli abbonamento -->
                 <?php if ($sub): ?>
-                <?php $cyclePeriod = $cycle === 'semiannual' ? 'semestre' : 'anno'; ?>
+                <?php
+                    // Il ciclo mensile esiste in subscriptions.billing_cycle: senza
+                    // la sua voce qui, un abbonamento mensile leggeva "/ anno".
+                    $cyclePeriod = ['monthly' => 'mese', 'semiannual' => 'semestre'][$cycle] ?? 'anno';
+                ?>
                 <div style="display:flex;gap:1.5rem;margin-bottom:1rem;font-size:.82rem;color:var(--mute);">
                     <div>
                         <div style="font-weight:600;color:var(--ink);">&euro;<?= number_format($calc['total'], 2, ',', '.') ?> / <?= $cyclePeriod ?></div>
+                        <?php if ($cycle !== 'monthly'): // sul mensile ripeterebbe la stessa cifra ?>
                         <div>&euro;<?= number_format($calc['monthly'], 2, ',', '.') ?>/mese</div>
+                        <?php endif; ?>
                     </div>
                     <?php if ($sub['current_period_end']): ?>
                     <div>
@@ -165,12 +170,16 @@
                 </div>
                 <?php endif; ?>
 
-                <!-- CTA upgrade -->
+                <!-- Uscita verso l'abbonamento: fino a oggi questa card era un
+                     vicolo cieco, mostrava i dati e finiva li'. -->
                 <div style="border-top:1px solid #eee;padding-top:.75rem;">
-                    <div style="font-size:.78rem;color:var(--mute);margin-bottom:.5rem;">
+                    <a href="<?= url('dashboard/abbonamento') ?>" class="btn btn-outline-success btn-sm" style="width:100%;">
+                        <i class="bi bi-receipt me-1"></i> Abbonamento e dati di fatturazione
+                    </a>
+                    <div style="font-size:.78rem;color:var(--mute);margin:.75rem 0 .5rem;">
                         Vuoi accedere a pi&ugrave; funzionalit&agrave;?
                     </div>
-                    <a href="mailto:<?= e(env('SUPPORT_EMAIL', '')) ?>" class="btn btn-outline-success btn-sm" style="width:100%;">
+                    <a href="mailto:<?= e(env('SUPPORT_EMAIL', '')) ?>" class="btn btn-outline-secondary btn-sm" style="width:100%;">
                         <i class="bi bi-envelope me-1"></i> Contatta il supporto per un upgrade
                     </a>
                 </div>

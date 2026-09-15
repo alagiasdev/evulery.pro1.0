@@ -42,6 +42,14 @@ class StaffMiddleware
         '/guarantee-charge', '/guarantee-waive',
         '/deposit-paid', '/deposit-refunded', '/request-deposit',
         '/import', '/export', '/csv',
+        // Dati fiscali dell'azienda (partita IVA, ragione sociale, sede legale).
+        // Oggi vivono sotto /dashboard/abbonamento, che NON e' fra i prefissi
+        // permessi: lo staff e' gia' escluso dal fail-safe. Questa riga resta
+        // come seconda serratura, perche' il confronto sui prefissi e' per
+        // PREFISSO — il giorno in cui si volesse far VEDERE l'abbonamento a un
+        // collaboratore, basterebbe aggiungere il prefisso all'allow-list e il
+        // salvataggio dei dati fiscali resterebbe bloccato lo stesso.
+        '/billing',
     ];
 
     public function handle(Request $request): void

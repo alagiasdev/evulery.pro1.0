@@ -174,6 +174,10 @@ class Tenant
         $allowed = [
             'slug', 'name', 'email', 'phone', 'address', 'website_url', 'logo_url',
             'custom_domain', 'domain_status', 'cname_target',
+            // Dati di fatturazione (migration 088). La sede legale e' separata da
+            // 'address', che descrive dove sta il locale e puo' non coincidere.
+            'billing_name', 'billing_vat', 'billing_tax_code', 'billing_address',
+            'billing_city', 'billing_zip', 'billing_province', 'billing_sdi', 'billing_pec',
             'plan', 'plan_id', 'plan_price', 'deposit_enabled', 'deposit_amount', 'deposit_mode', 'deposit_min_party_size',
             'deposit_days', 'deposit_manual_window_minutes',
             'table_auto_assign', 'table_turnover_buffer',
@@ -342,5 +346,59 @@ class Tenant
         }
         // Fallback: longer token to guarantee uniqueness
         return bin2hex(random_bytes(10));
+    }
+
+    /**
+     * Partita IVA italiana: 11 cifre con cifra di controllo.
+     *
+     * Non e' un controllo di forma: verifica davvero la cifra finale, che e'
+     * calcolata dalle altre dieci. Serve perche' una P.IVA sbagliata di un
+     * numero manda in scarto la fattura elettronica — e il ristoratore lo
+     * scopre giorni dopo, quando l'Agenzia rifiuta il file.
+     *
+     * L'algoritmo e' quello di Luhn applicato alle prime dieci cifre: le
+     * cifre in posizione pari (contando da 1) si raddoppiano, e se il
+     * risultato supera 9 gli si sottrae 9.
+     */
+    public static function partitaIvaValida(string $piva): bool
+    {
+        $piva = preg_replace('/\s+/', '', $piva) ?? '';
+        // Tollera il prefisso nazionale, che qualcuno incolla dalla visura.
+        if (preg_match('/^IT(\d{11})$/i', $piva, $m)) {
+            $piva = $m[1];
+        }
+        if (!preg_match('/^\d{11}$/', $piva)) {
+            return false;
+        }
+        // Tutte zeri supera il calcolo ma non e' una partita IVA.
+        if ($piva === '00000000000') {
+            return false;
+        }
+
+        $somma = 0;
+        for ($i = 0; $i < 10; $i++) {
+            $cifra = (int) $piva[$i];
+            if ($i % 2 === 1) {          // posizioni pari contando da 1
+                $cifra *= 2;
+                if ($cifra > 9) {
+                    $cifra -= 9;
+                }
+            }
+            $somma += $cifra;
+        }
+
+        return ((10 - $somma % 10) % 10) === (int) $piva[10];
+    }
+
+    /**
+     * Codice fiscale: 16 caratteri per le persone fisiche, 11 cifre per le
+     * societa' (dove coincide con la partita IVA). Qui si controlla solo la
+     * forma: il codice di controllo delle 16 posizioni e' un'altra storia, e
+     * sbagliarlo non manda in scarto la fattura come fa la P.IVA.
+     */
+    public static function codiceFiscaleValido(string $cf): bool
+    {
+        $cf = strtoupper(preg_replace('/\s+/', '', $cf) ?? '');
+        return (bool) preg_match('/^[A-Z0-9]{16}$/', $cf) || (bool) preg_match('/^\d{11}$/', $cf);
     }
 }

@@ -26,6 +26,7 @@ use App\Controllers\Dashboard\ReservationsController;
 use App\Controllers\NovitaController;
 use App\Controllers\Dashboard\CustomersController;
 use App\Controllers\Dashboard\SettingsController;
+use App\Controllers\Dashboard\SubscriptionController;
 use App\Controllers\Dashboard\CollaboratorsController;
 use App\Controllers\Dashboard\SlotsController;
 use App\Controllers\Dashboard\DomainController;
@@ -274,6 +275,12 @@ $router->group('/dashboard', ['auth', 'tenant', 'staff', 'csrf', 'dashboard-rate
     $r->post('/settings/ordering/zones/{id}/delete', [SettingsController::class, 'deleteDeliveryZone']);
     $r->get('/profile', [ProfileController::class, 'show']);
     $r->post('/profile', [ProfileController::class, 'update']);
+    // Abbonamento: piano e dati di fatturazione. Pagina a se' e non una sezione
+    // del profilo, perche' il profilo dice "chi sei tu" e questa "chi e'
+    // l'azienda che paga" — e due argomenti sulla stessa pagina avevano
+    // prodotto due pulsanti "Salva" affiancati.
+    $r->get('/abbonamento', [SubscriptionController::class, 'index']);
+    $r->post('/abbonamento/billing', [SubscriptionController::class, 'updateBilling']);
 });
 
 // --- SUPER ADMIN ROUTES ---

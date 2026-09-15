@@ -52,6 +52,7 @@ return array(
     'App\\Controllers\\Dashboard\\RidersController' => $baseDir . '/app/Controllers/Dashboard/RidersController.php',
     'App\\Controllers\\Dashboard\\SettingsController' => $baseDir . '/app/Controllers/Dashboard/SettingsController.php',
     'App\\Controllers\\Dashboard\\SlotsController' => $baseDir . '/app/Controllers/Dashboard/SlotsController.php',
+    'App\\Controllers\\Dashboard\\SubscriptionController' => $baseDir . '/app/Controllers/Dashboard/SubscriptionController.php',
     'App\\Controllers\\Dashboard\\SuspendedController' => $baseDir . '/app/Controllers/Dashboard/SuspendedController.php',
     'App\\Controllers\\Dashboard\\TablesController' => $baseDir . '/app/Controllers/Dashboard/TablesController.php',
     'App\\Controllers\\Delivery\\DeliveryBoardController' => $baseDir . '/app/Controllers/Delivery/DeliveryBoardController.php',

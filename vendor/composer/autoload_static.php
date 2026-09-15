@@ -165,6 +165,7 @@ class ComposerStaticInitb68a2592dcb9ab75e5a9afca0aee3f24
         'App\\Controllers\\Dashboard\\RidersController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/RidersController.php',
         'App\\Controllers\\Dashboard\\SettingsController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/SettingsController.php',
         'App\\Controllers\\Dashboard\\SlotsController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/SlotsController.php',
+        'App\\Controllers\\Dashboard\\SubscriptionController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/SubscriptionController.php',
         'App\\Controllers\\Dashboard\\SuspendedController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/SuspendedController.php',
         'App\\Controllers\\Dashboard\\TablesController' => __DIR__ . '/../..' . '/app/Controllers/Dashboard/TablesController.php',
         'App\\Controllers\\Delivery\\DeliveryBoardController' => __DIR__ . '/../..' . '/app/Controllers/Delivery/DeliveryBoardController.php',
