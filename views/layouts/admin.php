@@ -94,7 +94,7 @@
         <a class="sidebar-link <?= ($activeMenu ?? '') === 'migrations' ? 'active' : '' ?>" href="<?= url('admin/migrations') ?>">
             <i class="bi bi-database-fill-gear"></i> Migration DB
         </a>
-        <a class="sidebar-link <?= ($activeMenu ?? '') === 'settings' ? 'active' : '' ?>" href="<?= url('admin') ?>">
+        <a class="sidebar-link <?= ($activeMenu ?? '') === 'settings' ? 'active' : '' ?>" href="<?= url('admin/settings') ?>">
             <i class="bi bi-gear"></i> Impostazioni
         </a>
     </nav>

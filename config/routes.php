@@ -16,6 +16,9 @@ use App\Controllers\Admin\MigrationsController;
 use App\Controllers\Admin\UsersController;
 use App\Controllers\Admin\LeadsController;
 use App\Controllers\Admin\DocumentsController as AdminDocumentsController;
+// Alias obbligatorio: SettingsController (senza prefisso) e' gia' preso da
+// quello della dashboard, piu' sotto in questo stesso file.
+use App\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Controllers\Dashboard\HomeController;
 use App\Controllers\Dashboard\HelpController;
 use App\Controllers\Dashboard\HeartbeatController;
@@ -329,6 +332,9 @@ $router->group('/admin', ['auth', 'admin', 'csrf', 'dashboard-ratelimit'], funct
     // Migrations DB
     $r->get('/migrations', [MigrationsController::class, 'index']);
     $r->post('/migrations/run', [MigrationsController::class, 'run']);
+    // Impostazioni globali (coordinate bancarie, dicitura fiscale, bollo, tolleranza)
+    $r->get('/settings', [AdminSettingsController::class, 'index']);
+    $r->post('/settings', [AdminSettingsController::class, 'update']);
     // Documenti (libreria condivisa con i reseller)
     $r->get('/documents', [AdminDocumentsController::class, 'index']);
     $r->get('/documents/{key}/preview', [AdminDocumentsController::class, 'preview']);
