@@ -7,9 +7,11 @@ $nApplied = count($applied);
 $nPending = count($pending);
 ?>
 
-<div class="page-head">
-    <h2><i class="bi bi-database-fill-gear me-2"></i>Migration Database</h2>
-    <p class="text-muted small mb-0">Applica le migration SQL pending direttamente da qui dopo un deploy. Equivalente al comando CLI <code>php scripts/migrate.php</code>.</p>
+<div class="admin-page-header">
+    <div>
+        <h1 class="admin-page-title"><i class="bi bi-database-fill-gear me-2"></i>Migration Database</h1>
+        <p class="admin-page-sub" style="margin-bottom:0;">Applica le migration SQL pending direttamente da qui dopo un deploy. Equivalente al comando CLI <code>php scripts/migrate.php</code>.</p>
+    </div>
 </div>
 
 <!-- KPI cards -->

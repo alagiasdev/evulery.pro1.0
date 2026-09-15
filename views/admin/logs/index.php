@@ -14,12 +14,14 @@ $colori = [
 ];
 ?>
 
-<div class="page-head">
-    <h2><i class="bi bi-journal-text me-2"></i>Log applicativi</h2>
-    <p class="text-muted small mb-0">
-        Le righe scritte da <code>app_log()</code> in <code>storage/logs/</code>.
-        Contengono indirizzi IP: restano qui dentro.
-    </p>
+<div class="admin-page-header">
+    <div>
+        <h1 class="admin-page-title"><i class="bi bi-journal-text me-2"></i>Log applicativi</h1>
+        <p class="admin-page-sub" style="margin-bottom:0;">
+            Le righe scritte da <code>app_log()</code> in <code>storage/logs/</code>.
+            Contengono indirizzi IP: restano qui dentro.
+        </p>
+    </div>
 </div>
 
 <!-- Ricerca: la ragione per cui questa pagina esiste -->
